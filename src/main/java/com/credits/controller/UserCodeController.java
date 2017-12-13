@@ -18,6 +18,7 @@ import java.io.*;
 public class UserCodeController {
 
     private final static String CLASS_EXT = "class";
+    private final static String SOURCE_FOLDER_PATH = "c:/jsource/";
 
     @Resource
     private SimpleInMemoryCompilator compilator;
@@ -28,8 +29,13 @@ public class UserCodeController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public void doPost(@RequestParam("java") MultipartFile file) {
-        File source = new File(file.getName());
+    public void doPost(@RequestParam("java") MultipartFile file, @RequestParam("address") String address, @RequestParam("params") String params) {
+        String addressPath = SOURCE_FOLDER_PATH + address;
+        File folder = new File(addressPath);
+        if (!folder.exists())
+            folder.mkdirs();
+
+        File source = new File(addressPath + "/" + file.getName());
         try (InputStream is = file.getInputStream(); OutputStream os = new FileOutputStream(source)) {
             IOUtils.copy(is, os);
         } catch (IOException e) {
