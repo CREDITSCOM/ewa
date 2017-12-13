@@ -1,5 +1,6 @@
 package com.credits.compilation;
 
+import com.credits.exception.CompilationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class SimpleInMemoryCompilator {
 
     private final static Logger logger = LoggerFactory.getLogger(SimpleInMemoryCompilator.class);
 
-    public void compile(File source) {
+    public void compile(File source) throws CompilationException {
         logger.debug("Compiling class {}", source.getName());
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -33,9 +34,11 @@ public class SimpleInMemoryCompilator {
         Boolean isCompiled = task.call();
 
         if (!isCompiled) {
-            for (Diagnostic diagnostic : diagnostics.getDiagnostics())
+            for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
                 logger.error("Error on line {} in {}. Message: {}", diagnostic.getLineNumber(), diagnostic.getSource(),
-                        diagnostic.getMessage(null));
+                    diagnostic.getMessage(null));
+            }
+            throw new CompilationException("Cannot compile the file: " + source.getName());
         }
 
         try {
