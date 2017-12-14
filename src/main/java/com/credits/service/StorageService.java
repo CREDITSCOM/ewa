@@ -1,22 +1,20 @@
 package com.credits.service;
 
+import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
-import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
-import java.util.stream.Stream;
-
 public interface StorageService {
-    void init();
 
     void store(MultipartFile file, String address) throws ContractExecutorException;
 
-    Stream<Path> loadAll();
+    default void loadAll() {
 
-    Path load(String filename);
+    }
 
-    Resource loadAsResource(String filename);
+    void load(String address) throws ClassLoadException;
 
-    void deleteAll();
+    default void deleteAll() {
+
+    }
 }
