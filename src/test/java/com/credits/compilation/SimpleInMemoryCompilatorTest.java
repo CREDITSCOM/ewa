@@ -1,5 +1,6 @@
 package com.credits.compilation;
 
+import com.credits.exception.CompilationException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,6 +20,10 @@ public class SimpleInMemoryCompilatorTest {
     public void compile() {
         URL resource = getClass().getClassLoader().getResource("com/credits/compilation/Test.java");
         File source = new File(resource.getFile());
-        compilator.compile(source);
+        try {
+            compilator.compile(source);
+        } catch (CompilationException e) {
+            e.printStackTrace();
+        }
     }
 }

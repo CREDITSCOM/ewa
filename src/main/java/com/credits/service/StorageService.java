@@ -1,5 +1,6 @@
 package com.credits.service;
 
+import com.credits.exception.ContractExecutorException;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,7 +10,7 @@ import java.util.stream.Stream;
 public interface StorageService {
     void init();
 
-    void store(MultipartFile file);
+    void store(MultipartFile file, String address) throws ContractExecutorException;
 
     Stream<Path> loadAll();
 

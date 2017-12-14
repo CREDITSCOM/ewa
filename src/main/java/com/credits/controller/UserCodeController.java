@@ -20,12 +20,6 @@ import java.io.*;
 @RequestMapping("/submitJava")
 public class UserCodeController {
 
-    private final static String CLASS_EXT = "class";
-    private final static String SOURCE_FOLDER_PATH = System.getProperty("user.dir") + File.separator + "credits";
-
-    @Resource
-    private SimpleInMemoryCompilator compilator;
-
     @Resource
     private StorageService storageService;
 
@@ -36,32 +30,8 @@ public class UserCodeController {
 
     @RequestMapping(method = RequestMethod.POST)
     public void doPost(@RequestParam("java") MultipartFile file,
-                       @RequestParam("address") String address,
-                       @RequestParam("methodName") String methodName,
-                       @RequestParam(value = "params", required = false) String params) throws ContractExecutorException {
+                       @RequestParam("address") String address) throws ContractExecutorException {
 
-        //TODO: move the logic of storing files to the service implementation
-
-        String sourceFilePath = SOURCE_FOLDER_PATH + File.separator + address + File.separator + file.getName();
-        File source = new File(sourceFilePath);
-        source.getParentFile().mkdirs();
-
-        try (InputStream is = file.getInputStream(); OutputStream os = new FileOutputStream(source)) {
-            IOUtils.copy(is, os);
-        } catch (IOException e) {
-            throw new ContractExecutorException("Cannot save the file " + file.getName() + ". Reason: "
-                + e.getMessage(), e);
-        }
-
-        String ext = FilenameUtils.getExtension(source.getName());
-        if (CLASS_EXT.equalsIgnoreCase(ext)) {
-            try {
-                compilator.compile(source);
-            } catch (CompilationException e) {
-                source.delete();
-                throw new ContractExecutorException("Cannot save the file " + file.getName() + ". Reason: "
-                    + e.getMessage(), e);
-            }
-        }
+        storageService.store(file, address);
     }
 }

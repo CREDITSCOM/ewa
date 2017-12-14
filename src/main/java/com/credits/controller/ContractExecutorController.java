@@ -12,8 +12,8 @@ import javax.annotation.Resource;
 @RequestMapping(value = "/executeContract")
 public class ContractExecutorController {
 
-    @Resource
-    private StorageService storageService;
+//    @Resource
+//    private StorageService storageService;
 
     @RequestMapping(method = RequestMethod.GET)
     public void doGet(@RequestParam("address") String address) {
