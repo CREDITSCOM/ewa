@@ -12,7 +12,7 @@ public interface StorageService {
 
     }
 
-    void load(String address) throws ClassLoadException;
+    Class<?> load(String address) throws ClassLoadException;
 
     default void deleteAll() {
 

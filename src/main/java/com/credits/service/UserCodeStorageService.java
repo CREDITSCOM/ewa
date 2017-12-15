@@ -57,7 +57,7 @@ public class UserCodeStorageService implements StorageService {
     }
 
     @Override
-    public void load(String address) throws ClassLoadException {
+    public Class<?> load(String address) throws ClassLoadException {
         File source = new File(SOURCE_FOLDER_PATH + File.separator + address);
         if (!source.exists()) {
             throw new ClassLoadException("File does not exist");
@@ -76,6 +76,7 @@ public class UserCodeStorageService implements StorageService {
         String fileName = files[0].getName();
         String className = FilenameUtils.getBaseName(fileName);
         Class<?> clazz = classPathLoader.loadClass(url, className);
+        return clazz;
     }
 
 }

@@ -18,11 +18,6 @@ public class UserCodeController {
     @Resource
     private StorageService storageService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody String doGet() {
-        return "Hello World";
-    }
-
     @RequestMapping(method = RequestMethod.POST)
     public void doPost(@RequestParam("java") MultipartFile file,
                        @RequestParam("address") String address) throws ContractExecutorException {
