@@ -69,6 +69,7 @@ public class UserCodeStorageService implements StorageService {
         } catch (MalformedURLException e) {
             throw new ClassLoadException(e.getMessage(), e);
         }
+
         File[] files = source.listFiles();
         if (files == null || files.length == 0) {
             throw new ClassLoadException("File does not exist");
@@ -78,5 +79,4 @@ public class UserCodeStorageService implements StorageService {
         Class<?> clazz = classPathLoader.loadClass(url, className);
         return clazz;
     }
-
 }

@@ -2,11 +2,9 @@ package com.credits.controller;
 
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.StorageService;
+import com.credits.vo.Transaction;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -23,5 +21,18 @@ public class UserCodeController {
                        @RequestParam("address") String address) throws ContractExecutorException {
 
         storageService.store(file, address);
+    }
+
+    //Testing DatabaseInteractionService
+    @RequestMapping(value = "do", method = RequestMethod.GET)
+    @ResponseBody
+    public Transaction[] doGetTest() {
+        Transaction[] tr = {new Transaction("1",23, '+'), new Transaction("2",24 )};
+        return tr;
+    }
+
+    @RequestMapping(value = "do", method = RequestMethod.POST)
+    public void doPostTest(@RequestBody Transaction transaction) {
+        System.out.println(transaction);
     }
 }
