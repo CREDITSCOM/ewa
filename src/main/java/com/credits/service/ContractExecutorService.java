@@ -26,28 +26,31 @@ public class ContractExecutorService {
             clazz = storageService.load(address);
         } catch (ClassLoadException e) {
             throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: "
-                    + e.getMessage(), e);
+                + e.getMessage(), e);
         }
 
         List<Method> methods = Arrays.stream(clazz.getMethods())
-                .filter(method -> {
-                    if (params == null || params.length == 0) {
-                        return method.getName().equals(methodName);
-                    } else {
-                        return method.getName().equals(methodName) && method.getParameterCount() == params.length;
-                    }
-                })
-                .collect(Collectors.toList());
+            .filter(method -> {
+                if (params == null || params.length == 0) {
+                    return method.getName().equals(methodName) && method.getParameterCount() == 0;
+                } else {
+                    return method.getName().equals(methodName) && method.getParameterCount() == params.length;
+                }
+            })
+            .collect(Collectors.toList());
 
         Method targetMethod = null;
         Object[] argValues = null;
         if (methods.isEmpty()) {
             throw new ContractExecutorException("Cannot execute the contract: " + address
-                    + ". Reason: Cannot find a method by name and parameters specified");
+                + ". Reason: Cannot find a method by name and parameters specified");
         } else {
             for (Method method : methods) {
                 try {
-                    argValues = castValues(method.getParameterTypes(), params);
+                    Class<?>[] types = method.getParameterTypes();
+                    if (types.length > 0) {
+                        argValues = castValues(types, params);
+                    }
                 } catch (ClassCastException e) {
                     continue;
                 } catch (ContractExecutorException e) {
@@ -60,7 +63,7 @@ public class ContractExecutorService {
 
         if (targetMethod == null) {
             throw new ContractExecutorException("Cannot execute the contract: " + address
-                    + ". Reason: Cannot cast parameters to the method found by name: " + methodName);
+                + ". Reason: Cannot cast parameters to the method found by name: " + methodName);
         }
 
         Object instance = null;
@@ -69,7 +72,7 @@ public class ContractExecutorService {
                 instance = clazz.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: "
-                        + e.getMessage(), e);
+                    + e.getMessage(), e);
             }
         }
 
@@ -77,7 +80,7 @@ public class ContractExecutorService {
             targetMethod.invoke(instance, argValues);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: "
-                    + e.getMessage(), e);
+                + e.getMessage(), e);
         }
     }
 
@@ -94,14 +97,16 @@ public class ContractExecutorService {
             }
 
             if (param == null) {
-                retVal = null;//retVal[i] = type.cast(null);
+                retVal[i] = type.cast(null);
+            } else if (isNullLiteral(param)) {
+                retVal[i] = type.cast(null);
             } else if (isNumberLiteralOrCastable(param)) {
                 Number numParam;
                 if (isCastedNumber(param)) {
                     numParam = createCastedNumber(param);
                     if (numParam == null) {
                         throw new ContractExecutorException("Unknown primitive type of the parameter with number: "
-                                + (i + 1));
+                            + (i + 1));
                     }
                 } else {
                     if (isDoubleLiteral(param)) {
@@ -126,28 +131,25 @@ public class ContractExecutorService {
                 }
 
             } else if (String.class.equals(type)) {
-                param = getStringOrCharLiteral(param, '"');
+                param = createFromStringOrCharLiteral(param, '"');
                 if (param == null) {
                     throw new ContractExecutorException("Illegal string literal for the parameter with number: "
-                            + (i + 1));
+                        + (i + 1));
                 }
                 retVal[i] = param;
             } else if (Character.class.equals(type)) {
-                param = getStringOrCharLiteral(param, '\'');
+                param = createFromStringOrCharLiteral(param, '\'');
                 if (param == null) {
                     throw new ContractExecutorException("Illegal char literal for the parameter with number: "
-                            + (i + 1));
+                        + (i + 1));
                 }
                 retVal[i] = param.charAt(0);
             } else if (Boolean.class.equals(type)) {
                 retVal[i] = BooleanUtils.toBoolean(param);
             } else {
                 throw new ContractExecutorException("Unknown type of the parameter with number: "
-                        + (i + 1));
+                    + (i + 1));
             }
-        }
-        if (retVal == null && types.length != 0) {
-            throw new ClassCastException();
         }
         return retVal;
     }
@@ -162,6 +164,18 @@ public class ContractExecutorService {
         String pattern = "\\((byte|short|int|long|float|double)\\)\\s*.+";
         return str.matches(pattern);
     }
+
+    private boolean isDoubleLiteral(String str) {
+        String pattern1 = "\\d*\\.\\d+(([eE])\\d+)*d?";
+        String pattern2 = "\\d+\\.\\d*(([eE])\\d+)*d?";
+        return str.matches(pattern1) || str.matches(pattern2);
+    }
+
+    private boolean isNullLiteral(String str) {
+        String pattern = "null";
+        return str.matches(pattern);
+    }
+
 
     private Number createCastedNumber(String param) {
         String pattern = "(\\((byte|short|int|long|float|double)\\)\\s*)(.+)";
@@ -184,13 +198,7 @@ public class ContractExecutorService {
         return retVal;
     }
 
-    private boolean isDoubleLiteral(String str) {
-        String pattern1 = "\\d*\\.\\d+(([eE])\\d+)*d?";
-        String pattern2 = "\\d+\\.\\d*(([eE])\\d+)*d?";
-        return str.matches(pattern1) || str.matches(pattern2);
-    }
-
-    private String getStringOrCharLiteral(String param, char literalMarker) {
+    private String createFromStringOrCharLiteral(String param, char literalMarker) {
         int firstQuotePos = param.indexOf(literalMarker);
         int lastQuotePos = param.lastIndexOf(literalMarker);
         String retVal = null;
