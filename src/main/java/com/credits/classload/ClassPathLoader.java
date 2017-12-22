@@ -17,7 +17,7 @@ public class ClassPathLoader {
         logger.debug("Loading class {} from {}", newClassPathRoot.getFile(), className);
         Class<?> clazz;
         try {
-            URL[] urls = { newClassPathRoot };
+            URL[] urls = {newClassPathRoot};
             ClassLoader classLoader = new URLClassLoader(urls);
             clazz = classLoader.loadClass(className);
         } catch (ClassNotFoundException e) {

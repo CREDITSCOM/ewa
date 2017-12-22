@@ -41,7 +41,7 @@ public class UserCodeStorageService implements StorageService {
             IOUtils.copy(is, os);
         } catch (IOException e) {
             throw new ContractExecutorException("Cannot save the file " + file.getName() + ". Reason: "
-                    + e.getMessage(), e);
+                + e.getMessage(), e);
         }
 
         String ext = FilenameUtils.getExtension(source.getName());
@@ -51,7 +51,7 @@ public class UserCodeStorageService implements StorageService {
             } catch (CompilationException e) {
                 source.delete();
                 throw new ContractExecutorException("Cannot save the file " + file.getName() + ". Reason: "
-                        + e.getMessage(), e);
+                    + e.getMessage(), e);
             }
         }
     }

@@ -3,19 +3,23 @@ package com.credits.controller;
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.StorageService;
 import com.credits.vo.Transaction;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
-@Controller
+@RestController
 @RequestMapping("/submitJava")
 public class UserCodeController {
 
     @Resource
     private StorageService storageService;
 
+    //    curl -X POST -F 'java=@/path/to/java' -F 'address=1q2w3e4r' http://localhost:8080/submitJava
     @RequestMapping(method = RequestMethod.POST)
     public void doPost(@RequestParam("java") MultipartFile file,
                        @RequestParam("address") String address) throws ContractExecutorException {
@@ -25,9 +29,8 @@ public class UserCodeController {
 
     //Testing DatabaseInteractionService
     @RequestMapping(value = "do", method = RequestMethod.GET)
-    @ResponseBody
     public Transaction[] doGetTest() {
-        Transaction[] tr = {new Transaction("1",23, '+'), new Transaction("2",24 )};
+        Transaction[] tr = {new Transaction("1", 23, '+'), new Transaction("2", 24)};
         return tr;
     }
 
