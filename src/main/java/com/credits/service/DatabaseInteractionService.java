@@ -32,12 +32,4 @@ public class DatabaseInteractionService {
     public void post(Transaction transaction) {
         String s = restTemplate.postForObject(ROOT_URL, transaction, String.class);
     }
-
-    public static void main(String[] args) {
-        RestTemplate rt = new RestTemplate();
-        DatabaseInteractionService databaseInteractionService = new DatabaseInteractionService(rt);
-        //databaseInteractionService.get("1");
-        databaseInteractionService.post(new Transaction("123", 456, '+'));
-    }
-
 }
