@@ -18,7 +18,7 @@ public class ContractExecutorController {
 
     @RequestMapping(method = RequestMethod.GET)
     public void doGet(@RequestParam("address") String address, @RequestParam("method") String methodName,
-            @RequestParam("params") String[] methodArgs) throws ContractExecutorException {
+            @RequestParam(value = "params", required = false) String[] methodArgs) throws ContractExecutorException {
 
         contractExecutor.execute(address, methodName, methodArgs);
     }

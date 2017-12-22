@@ -94,7 +94,7 @@ public class ContractExecutorService {
             }
 
             if (param == null) {
-                retVal[i] = type.cast(null);
+                retVal = null;//retVal[i] = type.cast(null);
             } else if (isNumberLiteralOrCastable(param)) {
                 Number numParam;
                 if (isCastedNumber(param)) {
@@ -145,6 +145,9 @@ public class ContractExecutorService {
                 throw new ContractExecutorException("Unknown type of the parameter with number: "
                         + (i + 1));
             }
+        }
+        if (retVal == null && types.length != 0) {
+            throw new ClassCastException();
         }
         return retVal;
     }
