@@ -1,35 +1,40 @@
 package com.credits.service;
 
+import com.credits.exception.ContractExecutorException;
 import com.credits.vo.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 
-//@Component
+@Component
 public class DatabaseInteractionService {
 
-    private final static String ROOT_URL = "http://localhost:8080/submitJava/do";
-    private final static String REQUEST_GET_FORM = "%s?id=%s";
-
+    private String dbUrl;
     private RestTemplate restTemplate;
 
-    //@Autowired
-    public DatabaseInteractionService(RestTemplate restTemplate) {
+    @Autowired
+    public DatabaseInteractionService(RestTemplate restTemplate, @Value("${leveldb.url}") String url) {
         this.restTemplate = restTemplate;
         this.restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        this.dbUrl = url;
     }
 
     public Transaction[] get(String id) {
-        String request = String.format(REQUEST_GET_FORM, ROOT_URL, id);
-        Transaction[] response = restTemplate.getForObject(request, Transaction[].class);
-        for (Transaction t : response)
-        System.out.println(t);
+        String request = dbUrl + "?id={id}";
+        Transaction[] response = restTemplate.getForObject(request, Transaction[].class, id);
         return response;
     }
 
-    public void post(Transaction transaction) {
-        String s = restTemplate.postForObject(ROOT_URL, transaction, String.class);
+    public void post(Transaction transaction) throws ContractExecutorException {
+        ResponseEntity response = restTemplate.postForEntity(dbUrl, transaction, String.class);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new ContractExecutorException("Cannot save data, http status code: "
+                + response.getStatusCode().value() + "Reason: " + response.getBody());
+        }
     }
 }
