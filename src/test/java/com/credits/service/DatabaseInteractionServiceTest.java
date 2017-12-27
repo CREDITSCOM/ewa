@@ -3,39 +3,36 @@ package com.credits.service;
 import com.credits.exception.ContractExecutorException;
 import com.credits.vo.Transaction;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.web.client.RestTemplate;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import javax.annotation.Resource;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class DatabaseInteractionServiceTest {
 
+    @Resource
     private DatabaseInteractionService service;
 
-    @Before
-    public void setUp() {
-        Properties properties = new Properties();
-        try (FileInputStream is = new FileInputStream(new File("src/test/resources/application.properties"))){
-            properties.load(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String url = properties.getProperty("leveldb.url");
-        service = new DatabaseInteractionService(new RestTemplate(), url);
+    @Test
+    public void postTest() throws ContractExecutorException {
+        service.post(new Transaction("1111", 129, '+'));
     }
 
 //    @Test
-//    public void postTest() throws ContractExecutorException {
-//        service.post(new Transaction("124", 126, '+'));
+//    public void getTest() throws ContractExecutorException {
+//        String idActual = "333";
+//        service.post(new Transaction(idActual, 129, '+'));
+//        Transaction[] transactions = service.get(idActual, 0);
+//        Assert.assertNotNull(transactions);
+//        Assert.assertNotEquals(0, transactions.length);
+//        Transaction transaction = transactions[0];
+//        Assert.assertNotNull(transaction);
+//        Assert.assertEquals(idActual, transaction.getId());
+//
 //    }
-
-    @Test
-    public void getTest() {
-        service.get("124");
-    }
 
 }
