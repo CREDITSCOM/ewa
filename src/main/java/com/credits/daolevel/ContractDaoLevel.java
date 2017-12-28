@@ -2,7 +2,7 @@ package com.credits.daolevel;
 
 import com.credits.dao.AbstractDao;
 import com.credits.dao.ContractDao;
-import com.credits.vo.Contract;
+import com.credits.vo.contract.Contract;
 
 
 public class ContractDaoLevel extends AbstractDao implements ContractDao {

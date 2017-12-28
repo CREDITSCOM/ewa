@@ -1,7 +1,7 @@
-package com.credits.controller;
+package com.credits.controller.usercode;
 
 import com.credits.exception.ContractExecutorException;
-import com.credits.service.StorageService;
+import com.credits.service.usercode.UserCodeStorageService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 public class UserCodeController {
 
     @Resource
-    private StorageService storageService;
+    private UserCodeStorageService storageService;
 
     //    curl -X POST -F 'java=@/path/to/java' -F 'address=1q2w3e4r' http://localhost:8080/submitJava
     @RequestMapping(method = RequestMethod.POST)

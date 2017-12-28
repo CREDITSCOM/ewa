@@ -1,7 +1,8 @@
-package com.credits.service;
+package com.credits.service.contract;
 
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
+import com.credits.service.usercode.UserCodeStorageService;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
@@ -15,10 +16,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ContractExecutorService {
+public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     @Resource
-    private StorageService storageService;
+    private UserCodeStorageService storageService;
 
     public void execute(String address, String methodName, String[] params) throws ContractExecutorException {
         Class<?> clazz;

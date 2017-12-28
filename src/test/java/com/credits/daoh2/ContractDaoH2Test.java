@@ -1,6 +1,6 @@
 package com.credits.daoh2;
 
-import com.credits.vo.Contract;
+import com.credits.vo.contract.Contract;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package com.credits.vo;
+package com.credits.vo.contract;
 
 public class Contract {
 

@@ -2,7 +2,7 @@ package com.credits.daoh2;
 
 import com.credits.dao.AbstractDao;
 import com.credits.dao.ContractDao;
-import com.credits.vo.Contract;
+import com.credits.vo.contract.Contract;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.stereotype.Repository;

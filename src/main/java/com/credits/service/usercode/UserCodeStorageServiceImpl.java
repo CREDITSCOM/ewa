@@ -1,4 +1,4 @@
-package com.credits.service;
+package com.credits.service.usercode;
 
 import com.credits.classload.ClassPathLoader;
 import com.credits.compilation.SimpleInMemoryCompilator;
@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 @Component
-public class UserCodeStorageService implements StorageService {
+public class UserCodeStorageServiceImpl implements UserCodeStorageService {
 
     private final static String CLASS_EXT = "class";
     private final static String SOURCE_FOLDER_PATH = System.getProperty("user.dir") + File.separator + "credits";
@@ -33,7 +33,7 @@ public class UserCodeStorageService implements StorageService {
 
     @Override
     public void store(MultipartFile file, String address) throws ContractExecutorException {
-        String sourceFilePath = SOURCE_FOLDER_PATH + File.separator + address + File.separator + file.getOriginalFilename();
+        String sourceFilePath = SOURCE_FOLDER_PATH + File.separator + address + File.separator + file.getName();
         File source = new File(sourceFilePath);
         source.getParentFile().mkdirs();
 

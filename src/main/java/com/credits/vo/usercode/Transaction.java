@@ -1,4 +1,4 @@
-package com.credits.vo;
+package com.credits.vo.usercode;
 
 public class Transaction {
 

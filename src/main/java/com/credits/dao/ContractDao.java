@@ -1,6 +1,6 @@
 package com.credits.dao;
 
-import com.credits.vo.Contract;
+import com.credits.vo.contract.Contract;
 
 public interface ContractDao {
 

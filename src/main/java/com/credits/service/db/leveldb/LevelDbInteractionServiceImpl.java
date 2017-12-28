@@ -1,7 +1,7 @@
-package com.credits.service;
+package com.credits.service.db.leveldb;
 
 import com.credits.exception.ContractExecutorException;
-import com.credits.vo.Transaction;
+import com.credits.vo.usercode.Transaction;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 
 @Component
-public class DatabaseInteractionService {
+public class LevelDbInteractionServiceImpl implements LevelDbInteractionService {
 
     private RestTemplate restTemplate;
 
@@ -45,7 +45,7 @@ public class DatabaseInteractionService {
         return response;
     }
 
-    public void post(Transaction transaction) throws ContractExecutorException {
+    public void put(Transaction transaction) throws ContractExecutorException {
         ResponseEntity response = builder.build().postForEntity(dbUrl, transaction, Void.class);
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new ContractExecutorException("Cannot save data, http status code: "

@@ -1,7 +1,7 @@
-package com.credits.controller;
+package com.credits.controller.contract;
 
 import com.credits.exception.ContractExecutorException;
-import com.credits.service.ContractExecutorService;
+import com.credits.service.contract.ContractExecutorService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
