@@ -35,4 +35,6 @@
         <property name="username" value="sa"/>
         <property name="password" value=""/>
     </bean>
+
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
 </beans>

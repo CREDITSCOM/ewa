@@ -1,24 +1,19 @@
 package com.credits.vo;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Transaction {
 
     private String id;
     private long value;
     private char operation;
 
-    public Transaction(String id, int value, char operation) {
+    public Transaction(String id, long value, char operation) {
         this.id = id;
         this.value = value;
         this.operation = operation;
     }
 
-    public Transaction(String id, int value) {
-        this.id = id;
-        this.value = value;
+    public Transaction() {
+
     }
 
     public String getId() {
