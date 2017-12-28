@@ -16,13 +16,13 @@ public class UserCodeStorageServiceTest extends ServiceTest {
     private UserCodeStorageService service;
 
     @Test
-    public void storeTest() {
+    public void storeTest() throws ContractExecutorException {
         String fileName = "UserCodeTest.java";
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("com/credits/service/usercode/" + fileName)) {
             MultipartFile file = new MockMultipartFile(fileName, fileName, null, stream);
             service.store(file, "123456abcde");
         } catch (ContractExecutorException | IOException e) {
-            e.printStackTrace();
+            throw new ContractExecutorException(e.getMessage(), e);
         }
     }
 }
