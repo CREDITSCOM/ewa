@@ -34,7 +34,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             .filter(method -> {
                 if (params == null || params.length == 0) {
                     return method.getName().equals(methodName) && method.getParameterCount() == 0;
-                } else {
+                }else if (method.getName().equals("main")) {
+                    return method.getParameterCount() == 1;
+                }else {
                     return method.getName().equals(methodName) && method.getParameterCount() == params.length;
                 }
             })
@@ -47,6 +49,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 + ". Reason: Cannot find a method by name and parameters specified");
         } else {
             for (Method method : methods) {
+                if (method.getName().equals("main")) {
+                    targetMethod = method;
+                    argValues = new Object[1];
+                    argValues[0] = params;
+                    break;
+                }
                 try {
                     Class<?>[] types = method.getParameterTypes();
                     if (types.length > 0) {
