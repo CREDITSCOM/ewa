@@ -34,7 +34,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             .filter(method -> {
                 if (params == null || params.length == 0) {
                     return method.getName().equals(methodName) && method.getParameterCount() == 0;
-                }else {
+                } else {
                     return method.getName().equals(methodName) && method.getParameterCount() == params.length;
                 }
             })
