@@ -33,7 +33,7 @@ public class UserCodeStorageServiceImpl implements UserCodeStorageService {
 
     @Override
     public void store(MultipartFile file, String address) throws ContractExecutorException {
-        String sourceFilePath = SOURCE_FOLDER_PATH + File.separator + address + File.separator + file.getName();
+        String sourceFilePath = SOURCE_FOLDER_PATH + File.separator + address + File.separator + file.getOriginalFilename();
         File source = new File(sourceFilePath);
         source.getParentFile().mkdirs();
 
