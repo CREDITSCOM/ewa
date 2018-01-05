@@ -29,7 +29,7 @@ public class UserCodeTest {
         System.out.println("Done");
     }
 
-    public void foo(String str, Integer i, Float f) {
+    public void foo(String str, int i, float f) {
         System.out.println("Method foo(String str, Integer i, Float f) has been invoked");
 
         System.out.println("String: " + str);
@@ -49,7 +49,7 @@ public class UserCodeTest {
         System.out.println("Done");
     }
 
-    public void foo(String str, Short s, Float f) {
+    public void foo(String str, short s, float f) {
         System.out.println("Method foo(String str, Short s, Float f) has been invoked");
 
         System.out.println("String: " + str);
