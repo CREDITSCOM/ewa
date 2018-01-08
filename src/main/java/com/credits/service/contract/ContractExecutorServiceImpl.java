@@ -8,6 +8,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -264,10 +265,23 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     private Object createObjectAsArray(String[] params, Class<?> typeOfArray) throws ContractExecutorException {
-        Object[] retVal = new Object[params.length];
+        String paramArray = params[0];
+        int firstBrakePos = paramArray.indexOf('{');
+        int lastBrakePos = paramArray.lastIndexOf('}');
+
+        if (firstBrakePos == -1 || lastBrakePos == -1) {
+            throw new ContractExecutorException("Illegal array representation");
+        }
+
+        paramArray = paramArray.substring(firstBrakePos + 1, lastBrakePos);
+        String[] elems = paramArray.split(",");
+        Object retVal = Array.newInstance(typeOfArray, elems.length);
+
         int i = 0;
-        for (String param : params) {
-            retVal[i++] = castValue(param, typeOfArray);
+        for (String elem : elems) {
+            elem = elem.trim();
+            Object valueCasted = castValue(elem, typeOfArray);
+            Array.set(retVal, i++, valueCasted);
         }
         return retVal;
     }

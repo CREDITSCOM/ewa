@@ -53,7 +53,13 @@ public class ContractExecutorServiceTest extends ServiceTest {
 
     @Test
     public void arrayExecutionTest() throws ContractExecutorException {
-        String[] params = {"\"test1\"", "\"test2\"", "\"test3\""};
+        String[] params = { "{\"test1\", \"test2\", \"test3\"}" };
+        service.execute(address, "main", params);
+
+        params = new String[]{"{1, 2, 3}"};
+        service.execute(address, "main", params);
+
+        params = new String[]{"{1d, 2d, 3d}"};
         service.execute(address, "main", params);
     }
 }
