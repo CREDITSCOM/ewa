@@ -19,6 +19,16 @@ public class UserCodeTest {
         System.out.println("Done");
     }
 
+    public static void main(double[] args) {
+        System.out.println("Method main(double[] args) has been invoked");
+
+        for (double arg : args) {
+            System.out.println(arg);
+        }
+
+        System.out.println("Done");
+    }
+
     public void foo(String str, Double d, Integer i) {
         System.out.println("Method foo(String str, Double d, Integer i) has been invoked");
 
