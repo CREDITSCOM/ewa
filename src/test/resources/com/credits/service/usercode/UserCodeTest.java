@@ -9,6 +9,16 @@ public class UserCodeTest {
         System.out.println("Done");
     }
 
+    public static void main(Integer[] args) {
+        System.out.println("Method main(Integer[] args) has been invoked");
+
+        for (Integer arg : args) {
+            System.out.println(arg);
+        }
+
+        System.out.println("Done");
+    }
+
     public void foo(String str, Double d, Integer i) {
         System.out.println("Method foo(String str, Double d, Integer i) has been invoked");
 
@@ -30,11 +40,11 @@ public class UserCodeTest {
     }
 
     public void foo(String str, int i, float f) {
-        System.out.println("Method foo(String str, Integer i, Float f) has been invoked");
+        System.out.println("Method foo(String str, int i, float f) has been invoked");
 
         System.out.println("String: " + str);
-        System.out.println("Integer: " + i);
-        System.out.println("Float: " + f);
+        System.out.println("int: " + i);
+        System.out.println("float: " + f);
         
         System.out.println("Done");
     }
@@ -50,11 +60,11 @@ public class UserCodeTest {
     }
 
     public void foo(String str, short s, float f) {
-        System.out.println("Method foo(String str, Short s, Float f) has been invoked");
+        System.out.println("Method foo(String str, short s, float f) has been invoked");
 
         System.out.println("String: " + str);
-        System.out.println("Short: " + s);
-        System.out.println("Float: " + f);
+        System.out.println("short: " + s);
+        System.out.println("float: " + f);
 
         System.out.println("Done");
     }
