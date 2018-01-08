@@ -133,17 +133,41 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             }
 
             if (Long.class.equals(numParam.getClass())) {
-                retVal = type.cast(numParam.longValue());
+                if (type.isPrimitive() && Long.TYPE.equals(type)) {
+                    retVal = numParam.longValue();
+                } else {
+                    retVal = type.cast(numParam.longValue());
+                }
             } else if (Integer.class.equals(numParam.getClass())) {
-                retVal = type.cast(numParam.intValue());
+                if (type.isPrimitive() && Integer.TYPE.equals(type)) {
+                    retVal = numParam.intValue();
+                } else {
+                    retVal = type.cast(numParam.intValue());
+                }
             } else if (Double.class.equals(numParam.getClass())) {
-                retVal = type.cast(numParam.doubleValue());
+                if (type.isPrimitive() && Double.TYPE.equals(type)) {
+                    retVal = numParam.doubleValue();
+                } else {
+                    retVal = type.cast(numParam.doubleValue());
+                }
             } else if (Float.class.equals(numParam.getClass())) {
-                retVal = type.cast(numParam.floatValue());
+                if (type.isPrimitive() && Float.TYPE.equals(type)) {
+                    retVal = numParam.floatValue();
+                } else {
+                    retVal = type.cast(numParam.floatValue());
+                }
             } else if (Short.class.equals(numParam.getClass())) {
-                retVal = type.cast(numParam.shortValue());
+                if (type.isPrimitive() && Short.TYPE.equals(type)) {
+                    retVal = numParam.shortValue();
+                } else {
+                    retVal = type.cast(numParam.shortValue());
+                }
             } else if (Byte.class.equals(numParam.getClass())) {
-                retVal = type.cast(numParam.byteValue());
+                if (type.isPrimitive() && Byte.TYPE.equals(type)) {
+                    retVal = numParam.byteValue();
+                } else {
+                    retVal = type.cast(numParam.byteValue());
+                }
             }
 
         } else if (isStringLiteral(param)) {
