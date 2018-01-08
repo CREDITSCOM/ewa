@@ -32,9 +32,6 @@ public class LevelDbInteractionServiceImpl implements LevelDbInteractionService 
 
     @PostConstruct
     private void postConstruct() {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM));
-        builder = builder.messageConverters(converter);
         restTemplate = builder.build();
     }
 
