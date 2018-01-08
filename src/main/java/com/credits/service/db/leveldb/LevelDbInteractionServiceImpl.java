@@ -37,8 +37,6 @@ public class LevelDbInteractionServiceImpl implements LevelDbInteractionService 
 
     public Transaction[] get(String id, int value) {
         Transaction[] response = restTemplate.getForObject(getDbUrl, Transaction[].class, id, value);
-        for (Transaction tr : response)
-            System.out.println(tr);
         return response;
     }
 
