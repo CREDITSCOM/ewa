@@ -2,15 +2,16 @@ import com.credits.exception.ContractExecutorException;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.vo.usercode.Transaction;
 
-import javax.annotation.Resource;
+import javax.inject.Inject;
 
 public class MyTest {
 
     private static final String ADDRESS1 = "1a2b3c";
     private static final String ADDRESS2 = "123";
+    private static final String ADDRESS3 = "1a2b";
 
-    @Resource
-    LevelDbInteractionService service;
+    @Inject
+    private LevelDbInteractionService service;
 
     public void addTransactions(int amount, int rounds) throws ContractExecutorException {
         System.out.println("enter method addTransactions");
@@ -37,6 +38,20 @@ public class MyTest {
             address1balance += tr.getValue();
         }
         System.out.println(ADDRESS2 + " balance: " + address2balance);
+    }
+
+    public void work() {
+        System.out.println("Method work is being involved...");
+        if (service == null) {
+            System.out.println("LevelDbInteractionService has not been initialized");
+            return;
+        }
+        Transaction[] address3Transactions = service.get(ADDRESS3, 0);
+        long address1balance = 0;
+        for (Transaction tr : address3Transactions) {
+            address1balance += tr.getValue();
+        }
+        System.out.println(ADDRESS3 + " balance: " + address1balance);
     }
 
 }

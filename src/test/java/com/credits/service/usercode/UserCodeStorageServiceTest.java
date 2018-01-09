@@ -17,7 +17,7 @@ public class UserCodeStorageServiceTest extends ServiceTest {
 
     @Test
     public void storeTest() throws ContractExecutorException {
-        String fileName = "UserCodeTest.java";
+        String fileName = "MyTest.java";
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("com/credits/service/usercode/" + fileName)) {
             MultipartFile file = new MockMultipartFile(fileName, fileName, null, stream);
             service.store(file, "123456abcde");
