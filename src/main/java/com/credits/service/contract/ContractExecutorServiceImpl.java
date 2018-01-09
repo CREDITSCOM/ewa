@@ -1,5 +1,6 @@
 package com.credits.service.contract;
 
+import com.credits.classload.RuntimeDependencyInjector;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.usercode.UserCodeStorageService;
@@ -21,6 +22,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     @Resource
     private UserCodeStorageService storageService;
+
+    @Resource
+    private RuntimeDependencyInjector dependencyInjector;
 
     public void execute(String address, String methodName, String[] params) throws ContractExecutorException {
         Class<?> clazz;
@@ -72,6 +76,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         if (!Modifier.isStatic(targetMethod.getModifiers())) {
             try {
                 instance = clazz.newInstance();
+                dependencyInjector.bind(instance);
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: "
                     + e.getMessage(), e);
