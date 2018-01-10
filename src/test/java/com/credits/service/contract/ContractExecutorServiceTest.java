@@ -62,4 +62,10 @@ public class ContractExecutorServiceTest extends ServiceTest {
         params = new String[]{"{1d, 2d, 3d}"};
         service.execute(address, "main", params);
     }
+
+    @Test
+    public void arrayBooleanTest() throws ContractExecutorException {
+        String[] params = {"{true, false}"};
+        service.execute(address, "foo", params);
+    }
 }

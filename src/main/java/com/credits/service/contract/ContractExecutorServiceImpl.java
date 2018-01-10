@@ -176,6 +176,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 }
             }
 
+        } else if (isBooleanLiteral(param)) {
+            retVal = BooleanUtils.toBoolean(param);
         } else if (isStringLiteral(param)) {
             param = createFromStringOrCharLiteral(param, '"');
             if (param == null) {
@@ -188,8 +190,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 throw new ContractExecutorException("Illegal char literal for the parameter");
             }
             retVal = type.cast(param.charAt(0));
-        } else if (isBooleanLiteral(param)) {
-            retVal = BooleanUtils.toBoolean(param);
         } else {
             throw new ContractExecutorException("Unknown literal for the parameter");
         }
@@ -286,6 +286,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         for (String elem : elems) {
             elem = elem.trim();
             Object valueCasted = castValue(elem, typeOfArray);
+            Class<?> c = valueCasted.getClass();
+            Class<?> c1 = typeOfArray;
+            if (valueCasted.getClass() != typeOfArray) {
+                throw new ClassCastException();
+            }
             Array.set(retVal, i++, valueCasted);
         }
         return retVal;
