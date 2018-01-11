@@ -62,4 +62,34 @@ public class ContractExecutorServiceTest extends ServiceTest {
         params = new String[]{"{1d, 2d, 3d}"};
         service.execute(address, "main", params);
     }
+
+    @Test
+    public void arrayBooleanTest() throws ContractExecutorException {
+        String[] params = {"{false, true}"};
+        service.execute(address, "foo", params);
+    }
+
+    @Test
+    public void arrayIntTest() throws ContractExecutorException {
+        String[] params = {"{1, 2}"};
+        service.execute(address, "foo", params);
+    }
+
+    @Test
+    public void arrayShortTest() throws ContractExecutorException {
+        String[] params = {"{(short)1, (short)2}"};
+        service.execute(address, "foo", params);
+    }
+
+    @Test
+    public void arrayLongTest() throws ContractExecutorException {
+        String[] params = {"{1l, 2l}"};
+        service.execute(address, "foo", params);
+    }
+
+    @Test
+    public void arrayFloatTest() throws ContractExecutorException {
+        String[] params = {"{1f, .2f}"};
+        service.execute(address, "foo", params);
+    }
 }

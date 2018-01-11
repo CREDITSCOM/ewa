@@ -91,4 +91,44 @@ public class UserCodeTest {
         System.out.println("Done");
     }
 
+    public void foo(boolean[] args) {
+        System.out.println("Method foo(boolean[] args) has been invoked");
+        for (boolean arg : args) {
+            System.out.println(arg);
+        }
+        System.out.println("Done");
+    }
+
+    public void foo(int[] args) {
+        System.out.println("Method foo(int[] args) has been invoked");
+        for (int arg : args) {
+            System.out.println(arg);
+        }
+        System.out.println("Done");
+    }
+
+    public void foo(short[] args) {
+        System.out.println("Method foo(short[] args) has been invoked");
+        for (short arg : args) {
+            System.out.println(arg);
+        }
+        System.out.println("Done");
+    }
+
+    public void foo(Long[] args) {
+        System.out.println("Method foo(Long[] args) has been invoked");
+        for (Long arg : args) {
+            System.out.println(arg);
+        }
+        System.out.println("Done");
+    }
+
+    public void foo(Float[] args) {
+        System.out.println("Method foo(Float[] args) has been invoked");
+        for (Float arg : args) {
+            System.out.println(arg);
+        }
+        System.out.println("Done");
+    }
+
 }
