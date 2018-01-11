@@ -17,13 +17,9 @@ public class SimpleInMemoryCompilatorTest {
     }
 
     @Test
-    public void compile() {
+    public void compile() throws CompilationException {
         URL resource = getClass().getClassLoader().getResource("com/credits/compilation/Test.java");
         File source = new File(resource.getFile());
-        try {
-            compilator.compile(source);
-        } catch (CompilationException e) {
-            e.printStackTrace();
-        }
+        compilator.compile(source);
     }
 }
