@@ -30,7 +30,7 @@ public class ContractExecutorServiceIntegrationTest extends ServiceTest {
     @MockBean
     private LevelDbInteractionService service;
 
-    private final String address = "1a2b";
+    private final String address = "1a2b3c";
 
     @Before
     public void setUp() throws ContractExecutorException {
