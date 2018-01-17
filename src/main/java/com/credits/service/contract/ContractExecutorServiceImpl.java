@@ -189,7 +189,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             }
             retVal = type.cast(param.charAt(0));
         } else if (isBooleanLiteral(param)) {
-            retVal = BooleanUtils.toBoolean(param);
+            if (type.isPrimitive() && Boolean.TYPE.equals(type)) {
+                retVal = BooleanUtils.toBoolean(param);
+            } else {
+                retVal = type.cast(param);
+            }
         } else {
             throw new ContractExecutorException("Unknown literal for the parameter");
         }
