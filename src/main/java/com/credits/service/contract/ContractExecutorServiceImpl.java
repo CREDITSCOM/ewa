@@ -3,13 +3,12 @@ package com.credits.service.contract;
 import com.credits.classload.RuntimeDependencyInjector;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
+import com.credits.service.contract.method.MethodParamValueRecognizer;
+import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
 import com.credits.service.usercode.UserCodeStorageService;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -97,201 +96,29 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         Object[] retVal = new Object[types.length];
-        for (int i = 0; i < types.length; i++) {
-            Class<?> type = types[i];
-
+        int i = 0;
+        String param;
+        Class<?> componentType;
+        for (Class<?> type : types) {
+            param = params[i];
+            componentType = type;
             if (type.isArray()) {
                 if (types.length > 1) {
                     throw new ContractExecutorException("Having array with other parameter types is not supported");
-                } else {
-                    retVal[i] = createObjectAsArray(params, type.getComponentType());
                 }
-            } else {
-                String param = params[i];
-                try {
-                    retVal[i] = castValue(param, type);
-                } catch (ContractExecutorException e) {
-                    throw new ContractExecutorException("Failed when casting the parameter given with the number: "
-                        + (i + 1), e);
-                }
-            }
-        }
-        return retVal;
-    }
-
-    private Object castValue(String param, Class<?> type) throws ContractExecutorException {
-        Object retVal = null;
-        if (param == null || isNullLiteral(param)) {
-            retVal = type.cast(null);
-        } else if (isNumberLiteralOrCastableNumber(param)) {
-            Number numParam;
-            if (isCastedNumber(param)) {
-                numParam = createCastedNumber(param);
-                if (numParam == null) {
-                    throw new ContractExecutorException("Unknown primitive type of the parameter");
-                }
-            } else {
-                if (isDoubleLiteral(param)) {
-                    numParam = NumberUtils.createDouble(param);
-                } else {
-                    numParam = NumberUtils.createNumber(param);
-                }
+                componentType = type.getComponentType();
             }
 
-            if (Long.class.equals(numParam.getClass())) {
-                if (type.isPrimitive() && Long.TYPE.equals(type)) {
-                    retVal = numParam.longValue();
-                } else {
-                    retVal = type.cast(numParam.longValue());
-                }
-            } else if (Integer.class.equals(numParam.getClass())) {
-                if (type.isPrimitive() && Integer.TYPE.equals(type)) {
-                    retVal = numParam.intValue();
-                } else {
-                    retVal = type.cast(numParam.intValue());
-                }
-            } else if (Double.class.equals(numParam.getClass())) {
-                if (type.isPrimitive() && Double.TYPE.equals(type)) {
-                    retVal = numParam.doubleValue();
-                } else {
-                    retVal = type.cast(numParam.doubleValue());
-                }
-            } else if (Float.class.equals(numParam.getClass())) {
-                if (type.isPrimitive() && Float.TYPE.equals(type)) {
-                    retVal = numParam.floatValue();
-                } else {
-                    retVal = type.cast(numParam.floatValue());
-                }
-            } else if (Short.class.equals(numParam.getClass())) {
-                if (type.isPrimitive() && Short.TYPE.equals(type)) {
-                    retVal = numParam.shortValue();
-                } else {
-                    retVal = type.cast(numParam.shortValue());
-                }
-            } else if (Byte.class.equals(numParam.getClass())) {
-                if (type.isPrimitive() && Byte.TYPE.equals(type)) {
-                    retVal = numParam.byteValue();
-                } else {
-                    retVal = type.cast(numParam.byteValue());
-                }
+            MethodParamValueRecognizer recognizer = MethodParamValueRecognizerFactory.get(param);
+            try {
+                retVal[i] = recognizer.castValue(componentType);
+            } catch (ContractExecutorException e) {
+                throw new ContractExecutorException("Failed when casting the parameter given with the number: "
+                    + (i + 1), e);
             }
-
-        } else if (isStringLiteral(param)) {
-            param = createFromStringOrCharLiteral(param, '"');
-            if (param == null) {
-                throw new ContractExecutorException("Illegal string literal for the parameter");
-            }
-            retVal = type.cast(param);
-        } else if (isCharLiteral(param)) {
-            param = createFromStringOrCharLiteral(param, '\'');
-            if (param == null) {
-                throw new ContractExecutorException("Illegal char literal for the parameter");
-            }
-            retVal = type.cast(param.charAt(0));
-        } else if (isBooleanLiteral(param)) {
-            if (type.isPrimitive() && Boolean.TYPE.equals(type)) {
-                retVal = BooleanUtils.toBoolean(param);
-            } else {
-                retVal = type.cast(param);
-            }
-        } else {
-            throw new ContractExecutorException("Unknown literal for the parameter");
+            i++;
         }
 
-        return retVal;
-    }
-
-    // Utility methods for working with literals
-    private boolean isNumberLiteralOrCastableNumber(String str) {
-        return NumberUtils.isCreatable(str) || isCastedNumber(str);
-    }
-
-    private boolean isCastedNumber(String str) {
-        String pattern = "\\((byte|short|int|long|float|double)\\)\\s*.+";
-        return str.matches(pattern);
-    }
-
-    private boolean isDoubleLiteral(String str) {
-        String pattern1 = "\\d*\\.\\d+(([eE])\\d+)*d?";
-        String pattern2 = "\\d+\\.\\d*(([eE])\\d+)*d?";
-        return str.matches(pattern1) || str.matches(pattern2);
-    }
-
-    private boolean isNullLiteral(String str) {
-        String pattern = "null";
-        return str.matches(pattern);
-    }
-
-    private boolean isStringLiteral(String str) {
-        char literalMarker = '"';
-        int firstQuotePos = str.indexOf(literalMarker);
-        int lastQuotePos = str.lastIndexOf(literalMarker);
-
-        return firstQuotePos != -1 && lastQuotePos != -1;
-    }
-
-    private boolean isCharLiteral(String str) {
-        char literalMarker = '\'';
-        int firstQuotePos = str.indexOf(literalMarker);
-        int lastQuotePos = str.lastIndexOf(literalMarker);
-
-        return firstQuotePos != -1 && lastQuotePos != -1;
-    }
-
-    private boolean isBooleanLiteral(String str) {
-        return Boolean.toString(true).equals(str) || Boolean.toString(false).equals(str);
-    }
-
-    private Number createCastedNumber(String param) {
-        String pattern = "(\\((byte|short|int|long|float|double)\\)\\s*)(.+)";
-        String number = param.replaceFirst(pattern, "$3").trim();
-        String type = param.replaceFirst(pattern, "$2").trim();
-        Number retVal = null;
-        if (Long.TYPE.getName().equals(type)) {
-            retVal = NumberUtils.createLong(number);
-        } else if (Integer.TYPE.getName().equals(type)) {
-            retVal = NumberUtils.createInteger(number);
-        } else if (Double.TYPE.getName().equals(type)) {
-            retVal = NumberUtils.createDouble(number);
-        } else if (Float.TYPE.getName().equals(type)) {
-            retVal = NumberUtils.createFloat(number);
-        } else if (Short.TYPE.getName().equals(type)) {
-            retVal = Short.valueOf(number);
-        } else if (Byte.TYPE.getName().equals(type)) {
-            retVal = Byte.valueOf(number);
-        }
-        return retVal;
-    }
-
-    private String createFromStringOrCharLiteral(String param, char literalMarker) {
-        int firstQuotePos = param.indexOf(literalMarker);
-        int lastQuotePos = param.lastIndexOf(literalMarker);
-        String retVal = null;
-        if (firstQuotePos > -1 && lastQuotePos > firstQuotePos) {
-            retVal = param.substring(firstQuotePos + 1, lastQuotePos);
-        }
-        return retVal;
-    }
-
-    private Object createObjectAsArray(String[] params, Class<?> typeOfArray) throws ContractExecutorException {
-        String paramArray = params[0];
-        int firstBrakePos = paramArray.indexOf('{');
-        int lastBrakePos = paramArray.lastIndexOf('}');
-
-        if (firstBrakePos == -1 || lastBrakePos == -1) {
-            throw new ContractExecutorException("Illegal array representation");
-        }
-
-        paramArray = paramArray.substring(firstBrakePos + 1, lastBrakePos);
-        String[] elems = paramArray.split(",");
-        Object retVal = Array.newInstance(typeOfArray, elems.length);
-
-        int i = 0;
-        for (String elem : elems) {
-            elem = elem.trim();
-            Object valueCasted = castValue(elem, typeOfArray);
-            Array.set(retVal, i++, valueCasted);
-        }
         return retVal;
     }
 }
