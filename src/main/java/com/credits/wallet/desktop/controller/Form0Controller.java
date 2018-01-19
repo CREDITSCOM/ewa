@@ -22,11 +22,11 @@ import java.util.ResourceBundle;
 public class Form0Controller extends Controller {
     @FXML
     private void handleExistingAccount() {
-        app.showForm("/fxml/form5.fxml", "Wallet", dialogStage);
+        app.showForm("/fxml/form5.fxml", "Wallet");
     }
 
     @FXML
     private void handleNewAccount() {
-        app.showForm("/fxml/form1.fxml", "Wallet", dialogStage);
+        app.showForm("/fxml/form1.fxml", "Wallet");
     }
 }

@@ -8,6 +8,6 @@ import javafx.fxml.FXML;
 public class Form5Controller extends Controller {
     @FXML
     private void handleBack() {
-        app.showForm("/fxml/form0.fxml", "Wallet", dialogStage);
+        app.showForm("/fxml/form0.fxml", "Wallet");
     }
 }
