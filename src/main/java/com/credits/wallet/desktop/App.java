@@ -42,6 +42,7 @@ public class App extends Application {
             Scene scene = new Scene(pane, bounds.getWidth(), bounds.getHeight()*0.97);
 
             dialogStage.setScene(scene);
+            dialogStage.setResizable(true);
 
             Controller controller = loader.getController();
             controller.setApp(this);
