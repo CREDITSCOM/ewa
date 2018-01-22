@@ -1,69 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form0Controller">
    <children>
       <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <bottom>
-            <BorderPane maxHeight="200.0" minHeight="200.0" prefHeight="200.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER">
-               <bottom>
-                  <Pane minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="874.0" BorderPane.alignment="CENTER" />
-               </bottom>
-               <center>
-                  <Pane maxHeight="200.0" maxWidth="874.0" minHeight="200.0" minWidth="0.0" prefHeight="200.0" prefWidth="874.0" BorderPane.alignment="CENTER">
-                     <children>
-                        <Label layoutX="7.0" layoutY="3.0" style="-fx-font-size: 12px; -fx-text-alignment: right;" styleClass="text" stylesheets="@../styles.css" text="Contacts" wrapText="true" />
-                        <Label layoutX="7.0" layoutY="4.0" prefHeight="87.0" prefWidth="219.0" style="-fx-font-size: 12px;" styleClass="text" stylesheets="@../styles.css" text="Advertising &amp; PR: pr@credits.com Press &amp; news: press@credits.com General issues: info@credits.com Tel: +65 8114 9362" wrapText="true" />
-                        <ImageView fitHeight="51.0" fitWidth="34.0" layoutX="731.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/logo_black.png" />
-                           </image>
-                        </ImageView>
-                        <Label layoutX="430.0" layoutY="164.0" style="-fx-font-size: 12px;" styleClass="text" stylesheets="@../styles.css" text="Copyright © 2017 CREDITS.COM All Rights Reserved." wrapText="true" />
-                     </children>
-                  </Pane>
-               </center>
-               <left>
-                  <AnchorPane maxHeight="200.0" minHeight="200.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER_RIGHT">
-                     <children>
-                        <Label style="-fx-font-size: 12px; -fx-text-alignment: right;" styleClass="text" stylesheets="@../styles.css" text="About CREDITS" wrapText="true" />
-                        <Label alignment="CENTER_RIGHT" layoutX="-1.0" prefHeight="87.0" prefWidth="178.0" style="-fx-font-size: 12px;" styleClass="text" stylesheets="@../styles.css" text="CREDITS.COM PTE. LTD. Reg. No.: 201725929C Check 79 Ayer Rajah Crescent #05-08 Singapore 139955" wrapText="true" AnchorPane.rightAnchor="23.0" />
-                     </children>
-                  </AnchorPane>
-               </left>
-               <right>
-                  <Pane maxHeight="200.0" maxWidth="200.0" minHeight="200.0" minWidth="0.0" prefWidth="0.0" style="-fx-background-color: #000;" BorderPane.alignment="CENTER" />
-               </right>
-               <top>
-                  <Pane maxHeight="0.0" maxWidth="874.0" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="874.0" BorderPane.alignment="CENTER" />
-               </top>
-            </BorderPane>
-         </bottom>
+         <top>
+            <fx:include source="header.fxml" />
+         </top>
          <center>
             <BorderPane maxHeight="400.0" minHeight="400.0" prefHeight="400.0" BorderPane.alignment="TOP_CENTER">
                <center>
-                  <Pane maxHeight="300.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="300.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER">
+                  <Pane maxHeight="337.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="337.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER">
                      <children>
                         <Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="0. Make your choice" />
-                        <Label layoutX="21.0" layoutY="66.0" style="-fx-font-size: 16px;" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
-                        <Button layoutX="104.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleExistingAccount" prefHeight="61.0" prefWidth="244.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="YOU HAVE ALREADY AN ACCOUNT" textAlignment="CENTER" wrapText="true" />
-                        <Label layoutX="428.0" layoutY="160.0" style="-fx-font-size: 16px;" text="or" />
-                        <Button layoutX="521.0" layoutY="140.0" mnemonicParsing="false" onAction="#handleNewAccount" prefHeight="61.0" prefWidth="244.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CREATE A NEW ACCOUNT" textAlignment="CENTER" wrapText="true" />
+                        <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
+                        <Button layoutX="104.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleExistingAccount" prefHeight="61.0" prefWidth="244.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="YOU HAVE ALREADY AN ACCOUNT" textAlignment="CENTER" wrapText="true" />
+                        <Label layoutX="428.0" layoutY="181.0" style="-fx-font-size: 16px;" text="or" />
+                        <Button layoutX="521.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleNewAccount" prefHeight="61.0" prefWidth="244.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CREATE A NEW ACCOUNT" textAlignment="CENTER" wrapText="true" />
+                        <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
                      </children>
                      <BorderPane.margin>
                         <Insets />
@@ -75,34 +34,9 @@
                </BorderPane.margin>
             </BorderPane>
          </center>
-         <top>
-            <BorderPane maxHeight="70.0" minHeight="70.0" prefHeight="70.0" style="-fx-background-color: #262626;" BorderPane.alignment="CENTER">
-               <center>
-                  <BorderPane maxHeight="70.0" maxWidth="874.0" minHeight="70.0" minWidth="0.0" prefHeight="70.0" prefWidth="874.0" BorderPane.alignment="CENTER" />
-               </center>
-               <left>
-                  <BorderPane minWidth="200.0" prefHeight="200.0" prefWidth="0.0" BorderPane.alignment="CENTER">
-                     <right>
-                        <Pane maxHeight="70.0" maxWidth="200.0" minHeight="70.0" minWidth="200.0" prefHeight="70.0" prefWidth="200.0" BorderPane.alignment="TOP_RIGHT">
-                           <children>
-                              <Label layoutX="38.0" layoutY="21.0" style="-fx-font-size: 24px;" styleClass="text" stylesheets="@../styles.css" text="CREDITS" textFill="WHITE">
-                                 <font>
-                                    <Font size="24.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="157.0" layoutY="22.0" style="-fx-font-size: 20px;" styleClass="text" stylesheets="@../styles.css" text="Wallet" textFill="#ecb32e" />
-                              <ImageView fitHeight="48.0" fitWidth="25.0" layoutX="7.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/logo.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </Pane>
-                     </right>
-                  </BorderPane>
-               </left>
-            </BorderPane>
-         </top>
+         <bottom>
+            <fx:include source="footer.fxml" />
+         </bottom>
       </BorderPane>
    </children>
 </AnchorPane>
