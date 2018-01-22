@@ -40,21 +40,20 @@ public class App extends Application {
             Controller controller = loader.getController();
             controller.setApp(this);
 
-            boolean firstShow=false;
-            if (currentStage==null) {
+            boolean firstShow = false;
+            if (currentStage == null) {
                 currentStage = new Stage();
-                firstShow=true;
+                firstShow = true;
             }
             currentStage.setTitle(title);
             currentStage.setScene(scene);
 
             if (firstShow)
                 currentStage.showAndWait();
-
-            if (currentStage!=null)
+            /*
+            if (currentStage != null)
                 currentStage.close();
-
-
+            */
         } catch (Exception e) {
             e.printStackTrace();
         }
