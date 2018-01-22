@@ -10,4 +10,9 @@ public class Form1Controller extends Controller {
     private void handleBack() {
         app.showForm("/fxml/form0.fxml", "Wallet");
     }
+
+    @FXML
+    private void handleGenerate() {
+        app.showForm("/fxml/form4.fxml", "Wallet");
+    }
 }

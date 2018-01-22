@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.App;
+import com.credits.wallet.desktop.AppState;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -22,11 +23,13 @@ import java.util.ResourceBundle;
 public class Form0Controller extends Controller {
     @FXML
     private void handleExistingAccount() {
+        AppState.newAccount=false;
         app.showForm("/fxml/form5.fxml", "Wallet");
     }
 
     @FXML
     private void handleNewAccount() {
+        AppState.newAccount=true;
         app.showForm("/fxml/form1.fxml", "Wallet");
     }
 }

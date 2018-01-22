@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="252.0" prefWidth="479.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form6Controller">
+   <children>
+      <VBox layoutX="14.0" layoutY="14.0" prefHeight="160.0" prefWidth="438.0">
+         <children>
+            <Label text="6. Make a payment">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label text="You can open the wallet and make payments in the Credits platform" />
+            <Label text="Select coin" />
+            <HBox prefHeight="28.0" prefWidth="438.0">
+               <children>
+                  <ComboBox fx:id="cbCoin" prefWidth="150.0" />
+                  <Label text="Credit balance:" />
+                  <Label fx:id="labCredit" text="0" />
+               </children>
+            </HBox>
+            <HBox prefHeight="23.0" prefWidth="438.0">
+               <children>
+                  <Label prefHeight="9.0" prefWidth="210.0" text="To address which opened on Credits (only)" />
+               </children>
+            </HBox>
+            <TextField fx:id="txKey" promptText="key..." />
+            <Label text="Amount in CS (Credits)" />
+            <Spinner fx:id="numAmount" editable="true" />
+            <Label text="Transaction Fee" />
+            <HBox prefHeight="46.0" prefWidth="438.0">
+               <children>
+                  <Spinner fx:id="numFee" editable="true" />
+                  <Label text="CS or " />
+                  <Label fx:id="labFee" text="0" />
+                  <Label text="\%" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <Button layoutX="14.0" layoutY="209.0" mnemonicParsing="false" onAction="#handleGenerate" text="GENERATE TRANSACTION" />
+   </children>
+</AnchorPane>

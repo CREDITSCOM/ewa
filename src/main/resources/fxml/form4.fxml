@@ -8,26 +8,26 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="123.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form5Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="123.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form4Controller">
    <children>
       <VBox layoutX="14.0" layoutY="14.0" prefHeight="160.0" prefWidth="438.0">
          <children>
-            <Label text="5. Put your private key">
+            <Label text="4. Save your private key to Credits account">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
             <Label text="You can open the wallet and make payments in the Credits platform" />
-            <Label text="Put below saved private key in previous step">
+            <Label text="Save this private key">
                <font>
                   <Font name="System Bold" size="11.0" />
                </font>
             </Label>
-            <TextField fx:id="txKey" promptText="put private key here" />
-            <HBox prefHeight="57.0" prefWidth="438.0">
+            <TextField fx:id="txKey" promptText="key..." />
+            <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="btnBack" mnemonicParsing="false" onAction="#handleBack" text="BACK" />
-                  <Button mnemonicParsing="false" onAction="#handleOpen" text="OPEN YOUR WALLET" />
+                  <Button mnemonicParsing="false" onAction="#handleBack" text="BACK" />
+                  <Button mnemonicParsing="false" onAction="#handleContinue" text="CONTINUE" />
                </children>
             </HBox>
          </children>

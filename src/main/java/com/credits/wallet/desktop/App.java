@@ -26,7 +26,11 @@ public class App extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(App.class.getResource(fxmlFile));
+
             AnchorPane pane = (AnchorPane) loader.load();
+
+            Controller controller = loader.getController();
+            controller.setApp(this);
 
             boolean firstShow=false;
             if (currentStage==null) {
@@ -37,12 +41,9 @@ public class App extends Application {
             Scene scene = new Scene(pane);
             currentStage.setScene(scene);
 
-            Controller controller = loader.getController();
-            controller.setApp(this);
-
             if (firstShow)
                 currentStage.showAndWait();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
