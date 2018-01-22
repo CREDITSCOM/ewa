@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -10,9 +16,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form0Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form0Controller">
    <children>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <bottom>
             <BorderPane maxHeight="200.0" minHeight="200.0" prefHeight="200.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER">
                <bottom>
@@ -22,7 +28,7 @@
                   <Pane maxHeight="200.0" maxWidth="874.0" minHeight="200.0" minWidth="0.0" prefHeight="200.0" prefWidth="874.0" BorderPane.alignment="CENTER">
                      <children>
                         <Label layoutX="7.0" layoutY="3.0" style="-fx-font-size: 12px; -fx-text-alignment: right;" styleClass="text" stylesheets="@../styles.css" text="Contacts" wrapText="true" />
-                        <Label layoutX="7.0" layoutY="4.0" prefHeight="87.0" prefWidth="219.0" style="-fx-font-size: 12px; -fx-text-alignment: right;" styleClass="text" stylesheets="@../styles.css" text="Advertising &amp; PR: pr@credits.com Press &amp; news: press@credits.com General issues: info@credits.com Tel: +65 8114 9362" wrapText="true" />
+                        <Label layoutX="7.0" layoutY="4.0" prefHeight="87.0" prefWidth="219.0" style="-fx-font-size: 12px;" styleClass="text" stylesheets="@../styles.css" text="Advertising &amp; PR: pr@credits.com Press &amp; news: press@credits.com General issues: info@credits.com Tel: +65 8114 9362" wrapText="true" />
                         <ImageView fitHeight="51.0" fitWidth="34.0" layoutX="731.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../img/logo_black.png" />
@@ -33,10 +39,10 @@
                   </Pane>
                </center>
                <left>
-                  <AnchorPane maxHeight="200.0" minHeight="200.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
+                  <AnchorPane maxHeight="200.0" minHeight="200.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER_RIGHT">
                      <children>
                         <Label style="-fx-font-size: 12px; -fx-text-alignment: right;" styleClass="text" stylesheets="@../styles.css" text="About CREDITS" wrapText="true" />
-                        <Label alignment="CENTER_RIGHT" prefHeight="87.0" prefWidth="178.0" style="-fx-font-size: 12px; -fx-text-alignment: right;" styleClass="text" stylesheets="@../styles.css" text="CREDITS.COM PTE. LTD. Reg. No.: 201725929C Check 79 Ayer Rajah Crescent #05-08 Singapore 139955" wrapText="true" />
+                        <Label alignment="CENTER_RIGHT" layoutX="-1.0" prefHeight="87.0" prefWidth="178.0" style="-fx-font-size: 12px;" styleClass="text" stylesheets="@../styles.css" text="CREDITS.COM PTE. LTD. Reg. No.: 201725929C Check 79 Ayer Rajah Crescent #05-08 Singapore 139955" wrapText="true" AnchorPane.rightAnchor="23.0" />
                      </children>
                   </AnchorPane>
                </left>
