@@ -1,10 +1,12 @@
 package com.credits.wallet.desktop;
 
+
 import com.credits.wallet.desktop.controller.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -26,8 +28,14 @@ public class App extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(App.class.getResource(fxmlFile));
+            BorderPane page = loader.load();
 
-            AnchorPane pane = (AnchorPane) loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle(title);
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
 
             Controller controller = loader.getController();
             controller.setApp(this);
@@ -38,11 +46,14 @@ public class App extends Application {
                 firstShow=true;
             }
             currentStage.setTitle(title);
-            Scene scene = new Scene(pane);
             currentStage.setScene(scene);
 
             if (firstShow)
                 currentStage.showAndWait();
+
+            if (currentStage!=null)
+                currentStage.close();
+
 
         } catch (Exception e) {
             e.printStackTrace();
