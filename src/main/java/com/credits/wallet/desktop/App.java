@@ -3,10 +3,13 @@ package com.credits.wallet.desktop;
 
 import com.credits.wallet.desktop.controller.Controller;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -28,13 +31,16 @@ public class App extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(App.class.getResource(fxmlFile));
-            AnchorPane page = (AnchorPane) loader.load();
+            AnchorPane pane = (AnchorPane) loader.load();
 
-            Stage dialogStage = new Stage();
+            final Stage dialogStage = new Stage();
             dialogStage.setTitle(title);
             dialogStage.initModality(Modality.WINDOW_MODAL);
 
-            Scene scene = new Scene(page);
+            Screen screen = Screen.getPrimary();
+            Rectangle2D bounds = screen.getVisualBounds();
+            Scene scene = new Scene(pane, bounds.getWidth(), bounds.getHeight()*0.97);
+
             dialogStage.setScene(scene);
 
             Controller controller = loader.getController();
@@ -48,12 +54,10 @@ public class App extends Application {
             currentStage.setTitle(title);
             currentStage.setScene(scene);
 
-            if (firstShow)
+            if (firstShow) {
                 currentStage.showAndWait();
-            /*
-            if (currentStage != null)
-                currentStage.close();
-            */
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
