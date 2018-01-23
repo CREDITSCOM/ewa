@@ -3,7 +3,6 @@ package com.credits.wallet.desktop;
 
 import com.credits.wallet.desktop.controller.Controller;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -37,9 +36,15 @@ public class App extends Application {
             dialogStage.setTitle(title);
             dialogStage.initModality(Modality.WINDOW_MODAL);
 
-            Screen screen = Screen.getPrimary();
-            Rectangle2D bounds = screen.getVisualBounds();
-            Scene scene = new Scene(pane, bounds.getWidth(), bounds.getHeight()*0.97);
+            Scene scene;
+            if (currentStage==null) {
+                Screen screen = Screen.getPrimary();
+                Rectangle2D bounds = screen.getVisualBounds();
+                scene = new Scene(pane, bounds.getWidth(), bounds.getHeight() * 0.97);
+            }
+            else {
+                scene = new Scene(pane, currentStage.getScene().getWidth(), currentStage.getScene().getHeight());
+            }
 
             dialogStage.setScene(scene);
             dialogStage.setResizable(true);
