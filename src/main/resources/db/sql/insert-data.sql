@@ -1,3 +1,0 @@
-INSERT INTO contracts VALUES (1, HASH('SHA256', STRINGTOUTF8('akrasnov@gmail.com'), 1000), 'akrasnov@gmail.com', 120, HASH('SHA256', STRINGTOUTF8('ebutyaev@yahoo.com'), 1000));
-INSERT INTO contracts VALUES (2, HASH('SHA256', STRINGTOUTF8('ebutyaev_account'), 1000), 'ebutyaev@yahoo.com', 50, HASH('SHA256', STRINGTOUTF8('akrasnov@gmail.com'), 1000));
-INSERT INTO contracts VALUES (3, HASH('SHA256', STRINGTOUTF8('isokolov@gmail.com'), 1000), 'isokolov@gmail.com', 200, HASH('SHA256', STRINGTOUTF8('akrasnov@gmail.com'), 1000));
