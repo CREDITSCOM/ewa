@@ -45,7 +45,7 @@ public class Form6Controller extends Controller implements Initializable {
 
     @FXML
     private void handleGenerate() {
-        System.out.println(numFee.getValue());
+        app.showForm("/fxml/form7.fxml", "Wallet");
     }
 
     @Override

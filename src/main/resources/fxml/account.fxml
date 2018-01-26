@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.*?>
+<Pane xmlns:fx="http://javafx.com/fxml/1" maxHeight="365.5" maxWidth="260.0" minHeight="365.5" minWidth="260.0" prefHeight="365.5" prefWidth="260.0"
+      style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT"
+      fx:controller="com.credits.wallet.desktop.controller.AccountController">
+   <BorderPane.margin>
+      <Insets left="20.0" top="30.0" />
+   </BorderPane.margin>
+   <children>
+      <Label layoutX="14.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="Account">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Line endX="-50.0" layoutX="116.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
+      <Label layoutX="14.0" layoutY="92.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Wallet:">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <Label fx:id="wallet" layoutX="14.0" layoutY="119.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="text" stylesheets="@../styles.css">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="172.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Balance:">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <Label fx:id="balance" layoutX="14.0" layoutY="201.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+   </children>
+</Pane>
