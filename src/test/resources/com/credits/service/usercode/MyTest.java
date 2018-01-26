@@ -32,7 +32,7 @@ public class MyTest {
 //        System.out.println(ADDRESS3 + " balance: " + address1balance);
 //    }
 
-    public void foo() {
+    public void foo() throws ContractExecutorException {
         System.out.println("get_balance()");
         Map<String,Amount> balance = service.getBalance("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC");
         System.out.println("get_balance=" + balance);
@@ -44,6 +44,12 @@ public class MyTest {
         System.out.println("get_transaction_info()");
         TransactionInfo info = service.getTransactionInfo("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC", "3QvxvxuotS5PuTjmVUpWN6sVkfzUfX3RFV", new Amount(13, 37), 0, "DASH");
         System.out.println("get_transaction_info=" + info);
+    }
+
+    public void foo1() throws ContractExecutorException {
+        System.out.println("get_balance()");
+        Map<String,Amount> balance = service.getBalance("123");
+        System.out.println("get_balance=" + balance);
     }
 
 }

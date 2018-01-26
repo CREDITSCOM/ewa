@@ -1,34 +1,54 @@
 package com.credits.service.db.leveldb;
 
-import com.credits.exception.ContractExecutorException;
-import com.credits.service.ServiceTest;
-import com.credits.vo.usercode.Transaction;
-import org.junit.Assert;
+import com.credits.thrift.gen.api.API;
+import com.credits.thrift.gen.api.Amount;
+import com.credits.thrift.gen.api.Transaction;
+import com.credits.thrift.gen.api.TransactionInfo;
+import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import javax.annotation.Resource;
+public class LevelDbInteractionServiceTest {
+    private TTransport transport;
+    private API.Client client;
 
-public class LevelDbInteractionServiceTest extends ServiceTest {
+    @Before
+    public void setUp() {
+        try {
+            transport = new TSocket("localhost", 9090);
+            transport.open();
+            TProtocol protocol = new TBinaryProtocol(transport);
+            client = new API.Client(protocol);
+        } catch (TException e) {
+            e.printStackTrace();
+        }
+    }
 
-    @Resource
-    private LevelDbInteractionService service;
-
-    @Test
-    public void postTest() throws ContractExecutorException {
-        service.put(new Transaction("1111", 129, '+'));
+    @After
+    public void close() {
+        if (transport != null) {
+            transport.close();
+        }
     }
 
     @Test
-    public void getTest() throws ContractExecutorException {
-        String idActual = "333";
-        service.put(new Transaction(idActual, 129, '+'));
-        Transaction[] transactions = service.get(idActual, 0);
-        Assert.assertNotNull(transactions);
-        Assert.assertNotEquals(0, transactions.length);
-        Transaction transaction = transactions[0];
-        Assert.assertNotNull(transaction);
-        Assert.assertEquals(idActual, transaction.getId());
+    public void perform() throws TException {
+        System.out.println("get_balance()");
+        java.util.Map<java.lang.String,Amount> balance = client.get_balance("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC");
+        System.out.println("get_balance=" + balance);
 
+        System.out.println("get_transactions()");
+        java.util.List<Transaction> transactions = client.get_transactions("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC", "BTC");
+        System.out.println("get_transactions=" + transactions);
+
+        System.out.println("get_transaction_info()");
+        TransactionInfo info = client.get_transaction_info("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC", "3QvxvxuotS5PuTjmVUpWN6sVkfzUfX3RFV", new Amount(13, 37), 0, "DASH");
+        System.out.println("get_transaction_info=" + info);
     }
 
 }

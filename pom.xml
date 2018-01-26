@@ -192,8 +192,7 @@
                         <exclude>**/MyTest.java</exclude>
                         <exclude>**/UserCodeTest.java</exclude>
                         <exclude>**/LevelDbInteractionServiceTest.java</exclude>
-                        <exclude>**/LevelDbInteractionServiceMockTest.java</exclude>
-                        <exclude>**/ContractExecutorServiceIntegrationTest.java</exclude>
+                        <exclude>**/ContractExecutorServiceThriftIntegrationTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

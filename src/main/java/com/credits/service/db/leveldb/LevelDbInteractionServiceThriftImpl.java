@@ -1,9 +1,9 @@
 package com.credits.service.db.leveldb;
 
+import com.credits.exception.ContractExecutorException;
 import com.credits.thrift.gen.api.API;
 import com.credits.thrift.gen.api.Amount;
 import com.credits.thrift.gen.api.TransactionInfo;
-import com.credits.vo.usercode.Transaction;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -42,41 +42,32 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
         }
     }
 
-    @Override
-    public Transaction[] get(String id, int value) {
-        return new Transaction[0];
-    }
-
-    @Override
-    public void put(Transaction transaction) {
-    }
-
-    public Map<String, Amount> getBalance(String address) {
-        Map<String, Amount> result = null;
+    public Map<String, Amount> getBalance(String address) throws ContractExecutorException {
+        Map<String, Amount> result;
         try {
             result = client.get_balance(address);
         } catch (TException e) {
-            e.printStackTrace();
+            throw new ContractExecutorException("Cannot get balance", e);
         }
         return result;
     }
 
-    public List<com.credits.thrift.gen.api.Transaction> getTransactions(String address, String currency) {
-        List<com.credits.thrift.gen.api.Transaction> result = null;
+    public List<com.credits.thrift.gen.api.Transaction> getTransactions(String address, String currency) throws ContractExecutorException {
+        List<com.credits.thrift.gen.api.Transaction> result;
         try {
             result = client.get_transactions(address, currency);
         } catch (TException e) {
-            e.printStackTrace();
+            throw new ContractExecutorException("Cannot get transactions", e);
         }
         return result;
     }
 
-    public TransactionInfo getTransactionInfo(String source, String destination, Amount amount, long timestamp, String currency) {
-        TransactionInfo result = null;
+    public TransactionInfo getTransactionInfo(String source, String destination, Amount amount, long timestamp, String currency) throws ContractExecutorException {
+        TransactionInfo result;
         try {
             result = client.get_transaction_info(source, destination, amount, timestamp, currency);
         } catch (TException e) {
-            e.printStackTrace();
+            throw new ContractExecutorException("Cannot get transaction info", e);
         }
         return result;
     }
