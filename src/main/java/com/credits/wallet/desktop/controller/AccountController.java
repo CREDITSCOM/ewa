@@ -1,5 +1,10 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.Utils;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -11,6 +16,7 @@ import java.util.ResourceBundle;
  * Created by Rustem.Saidaliyev on 26.11.2017.
  */
 public class AccountController extends Controller implements Initializable {
+    private static final String ERR_GETTING_BALANCE="Ошибка получения баланса";
 
     @FXML
     private Label wallet;
@@ -19,8 +25,15 @@ public class AccountController extends Controller implements Initializable {
     private Label balance;
 
     public void initialize(URL location, ResourceBundle resources) {
-        this.wallet.setText("wallet dummy");
+        this.wallet.setText(AppState.account);
 
-        this.balance.setText("balance dummy");
+        String balanceInfo= Utils.callAPI("getbalance?account=" + AppState.account, ERR_GETTING_BALANCE);
+        if (balanceInfo!=null) {
+            JsonElement jelement = new JsonParser().parse(balanceInfo);
+            JsonObject jObject=jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
+            String balStr=Long.toString(jObject.get("integral").getAsLong())+
+                    "."+Long.toString(jObject.get("fraction").getAsLong());
+            this.balance.setText(balStr);
+        }
     }
 }

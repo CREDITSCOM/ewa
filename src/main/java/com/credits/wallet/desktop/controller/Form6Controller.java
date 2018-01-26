@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.Dictionaries;
 import com.credits.wallet.desktop.Utils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,10 +15,7 @@ import javafx.util.StringConverter;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
@@ -101,27 +99,22 @@ public class Form6Controller extends Controller implements Initializable {
         labFee.setText("0.00051");
 
         // Fill coin list
-        AppState.coins.clear();
         cbCoin.getItems().clear();
-        String balanceInfo=Utils.callAPI("getbalance?account="+AppState.account, ERR_GETTING_BALANCE);
-        if (balanceInfo!=null) {
-            JsonElement jelement = new JsonParser().parse(balanceInfo);
-            JsonObject jObject=jelement.getAsJsonObject().get("response").getAsJsonObject();
-            Set<Map.Entry<String, JsonElement>> entrySet=jObject.entrySet();
-            Iterator<Map.Entry<String, JsonElement>> i = entrySet.iterator();
-            while(i.hasNext()){
-                Map.Entry<String, JsonElement> element = i.next();
-                String balStr=Long.toString(element.getValue().getAsJsonObject().get("integral").getAsLong())+
-                        "."+Long.toString(element.getValue().getAsJsonObject().get("fraction").getAsLong());
-                AppState.coins.put(element.getKey(), Double.valueOf(balStr));
-                cbCoin.getItems().add(element.getKey());
-            }
+        for (String[] coin : Dictionaries.currencies) {
+            cbCoin.getItems().add(coin[0]+" ("+coin[1]+")");
         }
 
         cbCoin.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                labCredit.setText(AppState.coins.get(cbCoin.getValue()).toString());
+                String balanceInfo=Utils.callAPI("getbalance?account="+AppState.account, ERR_GETTING_BALANCE);
+                if (balanceInfo!=null) {
+                    JsonElement jelement = new JsonParser().parse(balanceInfo);
+                    JsonObject jObject=jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
+                    String balStr=Long.toString(jObject.get("integral").getAsLong())+
+                            "."+Long.toString(jObject.get("fraction").getAsLong());
+                    labCredit.setText(balStr);
+                }
             }
         });
     }
