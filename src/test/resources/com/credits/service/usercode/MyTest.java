@@ -1,6 +1,11 @@
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
-import com.credits.vo.usercode.Transaction;
+import com.credits.thrift.gen.api.Amount;
+import com.credits.thrift.gen.api.TransactionInfo;
+import com.credits.thrift.gen.api.Transaction;
+
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -13,45 +18,32 @@ public class MyTest {
     @Inject
     private LevelDbInteractionService service;
 
-    public void addTransactions(int amount, int rounds) throws ContractExecutorException {
-        System.out.println("enter method addTransactions");
-        for (int i = 0; i < rounds; i++) {
-            if (i % 2 == 0) {
-                service.put(new Transaction(ADDRESS1, amount, '+'));
-            } else {
-                service.put(new Transaction(ADDRESS2, amount, '+'));
-            }
-        }
-    }
+//    public void work() {
+//        System.out.println("Method work is being involved...");
+//        if (service == null) {
+//            System.out.println("LevelDbInteractionService has not been initialized");
+//            return;
+//        }
+//        Transaction[] address3Transactions = service.get(ADDRESS3, 0);
+//        long address1balance = 0;
+//        for (Transaction tr : address3Transactions) {
+//            address1balance += tr.getValue();
+//        }
+//        System.out.println(ADDRESS3 + " balance: " + address1balance);
+//    }
 
-    public void getBalance() {
-        Transaction[] address1Transactions = service.get(ADDRESS1, 0);
-        long address1balance = 0;
-        for (Transaction tr : address1Transactions) {
-            address1balance += tr.getValue();
-        }
-        System.out.println(ADDRESS1 + " balance: " + address1balance);
+    public void foo() {
+        System.out.println("get_balance()");
+        Map<String,Amount> balance = service.getBalance("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC");
+        System.out.println("get_balance=" + balance);
 
-        Transaction[] address2Transactions = service.get(ADDRESS2, 0);
-        long address2balance = 0;
-        for (Transaction tr : address2Transactions) {
-            address1balance += tr.getValue();
-        }
-        System.out.println(ADDRESS2 + " balance: " + address2balance);
-    }
+        System.out.println("get_transactions()");
+        List<Transaction> transactions = service.getTransactions("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC", "BTC");
+        System.out.println("get_transactions=" + transactions);
 
-    public void work() {
-        System.out.println("Method work is being involved...");
-        if (service == null) {
-            System.out.println("LevelDbInteractionService has not been initialized");
-            return;
-        }
-        Transaction[] address3Transactions = service.get(ADDRESS3, 0);
-        long address1balance = 0;
-        for (Transaction tr : address3Transactions) {
-            address1balance += tr.getValue();
-        }
-        System.out.println(ADDRESS3 + " balance: " + address1balance);
+        System.out.println("get_transaction_info()");
+        TransactionInfo info = service.getTransactionInfo("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC", "3QvxvxuotS5PuTjmVUpWN6sVkfzUfX3RFV", new Amount(13, 37), 0, "DASH");
+        System.out.println("get_transaction_info=" + info);
     }
 
 }
