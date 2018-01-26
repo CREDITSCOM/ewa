@@ -6,15 +6,22 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
+import java.io.FileInputStream;
+import java.util.Properties;
 
 /**
  * Created by goncharov-eg on 23.11.2017.
  */
 public class App extends Application {
+    private static final String ERR_NO_PROPERTIES="Не удалось определить адрес сервера. Проверьте наличие файла settings.properties";
+    private static final String ERR_NO_API_ADDR="Не удалось определить адрес сервера. Проверьте наличие параметра api.addr в файле settings.properties";
     private Stage currentStage;
 
     public static void main(String[] args) {
@@ -23,7 +30,23 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        showForm("/fxml/form0.fxml", "Wallet");
+        try {
+            FileInputStream fis = new FileInputStream("settings.properties");
+            Properties property = new Properties();
+            property.load(fis);
+
+            String apiAddr=property.getProperty("api.addr");
+            if (apiAddr==null || apiAddr.isEmpty()) {
+                Utils.showError(ERR_NO_API_ADDR);
+            } else {
+                if (!apiAddr.endsWith("/"))
+                    apiAddr=apiAddr+"/";
+                AppState.apiAddr=apiAddr;
+                showForm("/fxml/form0.fxml", "Wallet");
+            }
+        } catch (Exception e) {
+            Utils.showError(ERR_NO_PROPERTIES);
+        }
     }
 
     public void showForm(String fxmlFile, String title) {

@@ -4,6 +4,7 @@ import com.credits.wallet.desktop.AppState;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -16,12 +17,16 @@ public class Form5Controller extends Controller implements Initializable {
     private Button btnBack;
 
     @FXML
+    private TextField txKey;
+
+    @FXML
     private void handleBack() {
         app.showForm("/fxml/form0.fxml", "Wallet");
     }
 
     @FXML
     private void handleOpen() {
+        AppState.account=txKey.getText();
         app.showForm("/fxml/form6.fxml", "Wallet");
     }
 

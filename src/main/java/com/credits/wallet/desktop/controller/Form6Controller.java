@@ -1,27 +1,38 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.Utils;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.StringConverter;
-
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
 public class Form6Controller extends Controller implements Initializable {
+    private static final String ERR_GETTING_BALANCE="Ошибка получения баланса";
+
     @FXML
     private Label labCredit;
 
     @FXML
     private TextField txKey;
+
+    @FXML
+    private ComboBox<String> cbCoin;
 
     @FXML
     private Spinner<Double> numAmount;
@@ -88,5 +99,30 @@ public class Form6Controller extends Controller implements Initializable {
         numFee.setValueFactory(feeValueFactory);
 
         labFee.setText("0.00051");
+
+        // Fill coin list
+        AppState.coins.clear();
+        cbCoin.getItems().clear();
+        String balanceInfo=Utils.callAPI("getbalance?account="+AppState.account, ERR_GETTING_BALANCE);
+        if (balanceInfo!=null) {
+            JsonElement jelement = new JsonParser().parse(balanceInfo);
+            JsonObject jObject=jelement.getAsJsonObject().get("response").getAsJsonObject();
+            Set<Map.Entry<String, JsonElement>> entrySet=jObject.entrySet();
+            Iterator<Map.Entry<String, JsonElement>> i = entrySet.iterator();
+            while(i.hasNext()){
+                Map.Entry<String, JsonElement> element = i.next();
+                String balStr=Long.toString(element.getValue().getAsJsonObject().get("integral").getAsLong())+
+                        "."+Long.toString(element.getValue().getAsJsonObject().get("fraction").getAsLong());
+                AppState.coins.put(element.getKey(), Double.valueOf(balStr));
+                cbCoin.getItems().add(element.getKey());
+            }
+        }
+
+        cbCoin.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                labCredit.setText(AppState.coins.get(cbCoin.getValue()).toString());
+            }
+        });
     }
 }
