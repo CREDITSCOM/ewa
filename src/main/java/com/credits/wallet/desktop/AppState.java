@@ -8,4 +8,10 @@ public class AppState {
 
     public static boolean newAccount;
     public static String account;
+
+    public static Double amount = 0.0;
+    public static Double transactionFeeValue = 0.0;
+    public static Double transactionFeePercent = 0.0;
+    public static String toAddress;
+    public static String transactionHash;
 }

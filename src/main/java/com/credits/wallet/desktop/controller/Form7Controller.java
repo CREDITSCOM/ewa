@@ -1,17 +1,14 @@
 package com.credits.wallet.desktop.controller;
 
+
 import com.credits.wallet.desktop.App;
+import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.utils.Convertor;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
-import javafx.util.StringConverter;
-
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.ResourceBundle;
 
 /**
@@ -36,10 +33,16 @@ public class Form7Controller extends Controller implements Initializable {
 
     @FXML
     private void handleGenerate() {
+        AppState.transactionHash = transactionCode.getText();
         App.showForm("/fxml/form8.fxml", "Wallet");
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.toAddress.setText(AppState.toAddress);
+        this.amountInCs.setText(Convertor.toString(AppState.amount) + " CS");
+        this.transactionFeeValue.setText(Convertor.toString(AppState.transactionFeeValue) + " CS");
+        this.transactionFee.setText(Convertor.toString(AppState.transactionFeePercent) + " %");
     }
+
 }

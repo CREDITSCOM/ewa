@@ -44,6 +44,9 @@ public class Form6Controller extends Controller implements Initializable {
 
     @FXML
     private void handleGenerate() {
+        AppState.amount = numAmount.getValue();
+        AppState.transactionFeeValue = numFee.getValue();
+        AppState.toAddress = txKey.getText();
         App.showForm("/fxml/form7.fxml", "Wallet");
     }
 

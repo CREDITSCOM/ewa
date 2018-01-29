@@ -32,7 +32,7 @@
                                     </Label>
                                     <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
                                     <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-                                    <Label layoutX="34.0" layoutY="264.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="To address">
+                                    <Label layoutX="31.0" layoutY="262.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="To address">
                                        <font>
                                           <Font name="System Bold" size="11.0" />
                                        </font>
@@ -42,18 +42,13 @@
                                           <Font name="System Bold" size="11.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="24.0" layoutY="576.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Transaction hash">
+                                    <Label layoutX="31.0" layoutY="575.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Transaction hash">
                                        <font>
                                           <Font name="System Bold" size="11.0" />
                                        </font>
                                     </Label>
-                                    <Button fx:id="btnBack" layoutX="360.0" layoutY="136.0" mnemonicParsing="false" onAction="#handleSeeOnMonitor" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SEE ON CREDITS MONITOR" textAlignment="CENTER" wrapText="true" />
+                                    <Button fx:id="btnBack" layoutX="259.0" layoutY="136.0" mnemonicParsing="false" onAction="#handleSeeOnMonitor" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SEE ON CREDITS MONITOR" textAlignment="CENTER" wrapText="true" />
                                     <Label fx:id="amountInCs" layoutX="29.0" layoutY="406.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="46.0" layoutY="406.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="CS">
                                        <font>
                                           <Font name="System Bold" size="11.0" />
                                        </font>
@@ -68,11 +63,6 @@
                                           <Font name="System Bold" size="11.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="46.0" layoutY="503.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="CS">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
                                     <Label layoutX="289.0" layoutY="503.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="or">
                                        <font>
                                           <Font name="System Bold" size="11.0" />
@@ -83,22 +73,17 @@
                                           <Font name="System Bold" size="11.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="570.0" layoutY="503.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="\%">
+                                    <Label layoutX="31.0" layoutY="227.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Transaction details">
                                        <font>
                                           <Font name="System Bold" size="11.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="33.0" layoutY="229.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Transaction details">
+                                    <Label fx:id="toAddress" layoutX="31.0" layoutY="294.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css">
                                        <font>
                                           <Font name="System Bold" size="11.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="toAddress" layoutX="34.0" layoutY="294.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="transactionHash" layoutX="24.0" layoutY="607.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css">
+                                    <Label fx:id="transactionHash" layoutX="31.0" layoutY="607.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css">
                                        <font>
                                           <Font name="System Bold" size="11.0" />
                                        </font>
