@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Dictionaries;
 import com.credits.wallet.desktop.Utils;
@@ -43,7 +44,7 @@ public class Form6Controller extends Controller implements Initializable {
 
     @FXML
     private void handleGenerate() {
-        app.showForm("/fxml/form7.fxml", "Wallet");
+        App.showForm("/fxml/form7.fxml", "Wallet");
     }
 
     @Override

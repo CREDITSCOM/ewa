@@ -24,12 +24,12 @@ public class Form0Controller extends Controller {
     @FXML
     private void handleExistingAccount() {
         AppState.newAccount=false;
-        app.showForm("/fxml/form5.fxml", "Wallet");
+        App.showForm("/fxml/form5.fxml", "Wallet");
     }
 
     @FXML
     private void handleNewAccount() {
         AppState.newAccount=true;
-        app.showForm("/fxml/form1.fxml", "Wallet");
+        App.showForm("/fxml/form1.fxml", "Wallet");
     }
 }

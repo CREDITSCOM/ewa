@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Utils;
 import com.google.gson.JsonElement;
@@ -23,6 +24,12 @@ public class AccountController extends Controller implements Initializable {
 
     @FXML
     private Label balance;
+
+    @FXML
+    private void handleDetails() {
+        AppState.newAccount=false;
+        App.showForm("/fxml/history.fxml", "Wallet");
+    }
 
     public void initialize(URL location, ResourceBundle resources) {
         this.wallet.setText(AppState.account);

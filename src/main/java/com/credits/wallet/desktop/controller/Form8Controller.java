@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.wallet.desktop.App;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -30,7 +31,7 @@ public class Form8Controller extends Controller implements Initializable {
 
     @FXML
     private void handleSeeOnMonitor() {
-        app.showForm("/fxml/form0.fxml", "Wallet");
+        App.showForm("/fxml/form0.fxml", "Wallet");
     }
 
     @Override

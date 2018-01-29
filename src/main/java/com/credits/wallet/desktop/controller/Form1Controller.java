@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.wallet.desktop.App;
 import javafx.fxml.FXML;
 
 /**
@@ -8,11 +9,11 @@ import javafx.fxml.FXML;
 public class Form1Controller extends Controller {
     @FXML
     private void handleBack() {
-        app.showForm("/fxml/form0.fxml", "Wallet");
+        App.showForm("/fxml/form0.fxml", "Wallet");
     }
 
     @FXML
     private void handleGenerate() {
-        app.showForm("/fxml/form4.fxml", "Wallet");
+        App.showForm("/fxml/form4.fxml", "Wallet");
     }
 }

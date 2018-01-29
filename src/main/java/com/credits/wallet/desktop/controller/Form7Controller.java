@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.wallet.desktop.App;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -35,7 +36,7 @@ public class Form7Controller extends Controller implements Initializable {
 
     @FXML
     private void handleGenerate() {
-        app.showForm("/fxml/form8.fxml", "Wallet");
+        App.showForm("/fxml/form8.fxml", "Wallet");
     }
 
     @Override

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
-<?import javafx.scene.text.*?>
-<Pane xmlns:fx="http://javafx.com/fxml/1" maxHeight="365.5" maxWidth="260.0" minHeight="365.5" minWidth="260.0" prefHeight="365.5" prefWidth="260.0"
-      style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT"
-      fx:controller="com.credits.wallet.desktop.controller.AccountController">
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="365.5" maxWidth="260.0" minHeight="365.5" minWidth="260.0" prefHeight="365.5" prefWidth="260.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.AccountController">
    <BorderPane.margin>
       <Insets left="20.0" top="30.0" />
    </BorderPane.margin>
@@ -39,5 +39,7 @@
             <Font name="System Bold" size="11.0" />
          </font>
       </Label>
+      <Label layoutX="14.0" layoutY="224.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Transaction history:" />
+      <Button onAction="#handleDetails" layoutX="14.0" layoutY="247.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DETAILS" />
    </children>
 </Pane>

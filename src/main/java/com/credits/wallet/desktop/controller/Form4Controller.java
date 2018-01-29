@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.wallet.desktop.App;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -16,12 +17,12 @@ public class Form4Controller extends Controller implements Initializable {
 
     @FXML
     private void handleBack() {
-        app.showForm("/fxml/form1.fxml", "Wallet");
+        App.showForm("/fxml/form1.fxml", "Wallet");
     }
 
     @FXML
     private void handleContinue() {
-        app.showForm("/fxml/form5.fxml", "Wallet");
+        App.showForm("/fxml/form5.fxml", "Wallet");
     }
 
     @Override

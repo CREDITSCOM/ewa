@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,7 +32,7 @@ public class Form5Controller extends Controller implements Initializable {
 
     @FXML
     private void handleBack() {
-        app.showForm("/fxml/form0.fxml", "Wallet");
+        App.showForm("/fxml/form0.fxml", "Wallet");
     }
 
     @FXML
@@ -53,7 +54,7 @@ public class Form5Controller extends Controller implements Initializable {
             }
         }
 
-        app.showForm("/fxml/form6.fxml", "Wallet");
+        App.showForm("/fxml/form6.fxml", "Wallet");
     }
 
     @Override

@@ -20,7 +20,7 @@ import java.util.Properties;
 public class App extends Application {
     private static final String ERR_NO_PROPERTIES="Не удалось определить адрес сервера. Проверьте наличие файла settings.properties";
     private static final String ERR_NO_API_ADDR="Не удалось определить адрес сервера. Проверьте наличие параметра api.addr в файле settings.properties";
-    private Stage currentStage;
+    private static Stage currentStage;
 
     public static void main(String[] args) {
         launch(args);
@@ -47,7 +47,7 @@ public class App extends Application {
         }
     }
 
-    public void showForm(String fxmlFile, String title) {
+    public static void showForm(String fxmlFile, String title) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(App.class.getResource(fxmlFile));
@@ -71,7 +71,6 @@ public class App extends Application {
             dialogStage.setResizable(true);
 
             Controller controller = loader.getController();
-            controller.setApp(this);
 
             boolean firstShow = false;
             if (currentStage == null) {
