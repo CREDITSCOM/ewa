@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="365.5" maxWidth="260.0" minHeight="365.5" minWidth="260.0" prefHeight="365.5" prefWidth="260.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.AccountController">
+<Pane maxHeight="365.5" maxWidth="260.0" minHeight="365.5" minWidth="260.0" prefHeight="365.5" prefWidth="260.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.141" fx:controller="com.credits.wallet.desktop.controller.AccountController">
    <BorderPane.margin>
       <Insets left="20.0" top="30.0" />
    </BorderPane.margin>
@@ -24,7 +24,7 @@
             <Font name="System Bold" size="11.0" />
          </font>
       </Label>
-      <Label fx:id="wallet" layoutX="14.0" layoutY="119.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="text" stylesheets="@../styles.css">
+      <Label fx:id="wallet" alignment="TOP_LEFT" layoutX="14.0" layoutY="119.0" maxHeight="55.0" maxWidth="240.0" minWidth="0.0" prefHeight="55.0" prefWidth="240.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="text" stylesheets="@../styles.css" wrapText="true">
          <font>
             <Font name="System Bold" size="11.0" />
          </font>
