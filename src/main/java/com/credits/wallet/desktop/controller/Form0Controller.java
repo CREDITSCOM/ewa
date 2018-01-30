@@ -23,13 +23,13 @@ import java.util.ResourceBundle;
 public class Form0Controller extends Controller {
     @FXML
     private void handleExistingAccount() {
-        AppState.newAccount=false;
+        AppState.newAccount = false;
         App.showForm("/fxml/form5.fxml", "Wallet");
     }
 
     @FXML
     private void handleNewAccount() {
-        AppState.newAccount=true;
+        AppState.newAccount = true;
         App.showForm("/fxml/form1.fxml", "Wallet");
     }
 }

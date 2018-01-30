@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
  * Created by Rustem.Saidaliyev on 26.11.2017.
  */
 public class AccountController extends Controller implements Initializable {
-    private static final String ERR_GETTING_BALANCE="Error getting balance";
+    private static final String ERR_GETTING_BALANCE = "Error getting balance";
 
     @FXML
     private Label wallet;
@@ -27,19 +27,25 @@ public class AccountController extends Controller implements Initializable {
 
     @FXML
     private void handleDetails() {
-        AppState.newAccount=false;
+        AppState.newAccount = false;
         App.showForm("/fxml/history.fxml", "Wallet");
+    }
+
+    @FXML
+    private void handleSmartContract() {
+        AppState.newAccount = false;
+        App.showForm("/fxml/smart_contract.fxml", "Wallet");
     }
 
     public void initialize(URL location, ResourceBundle resources) {
         this.wallet.setText(AppState.account);
 
-        String balanceInfo= Utils.callAPI("getbalance?account=" + AppState.account, ERR_GETTING_BALANCE);
-        if (balanceInfo!=null) {
+        String balanceInfo = Utils.callAPI("getbalance?account=" + AppState.account, ERR_GETTING_BALANCE);
+        if (balanceInfo != null) {
             JsonElement jelement = new JsonParser().parse(balanceInfo);
-            JsonObject jObject=jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
-            String balStr=Long.toString(jObject.get("integral").getAsLong())+
-                    "."+Long.toString(jObject.get("fraction").getAsLong());
+            JsonObject jObject = jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
+            String balStr = Long.toString(jObject.get("integral").getAsLong()) +
+                    "." + Long.toString(jObject.get("fraction").getAsLong());
             this.balance.setText(balStr);
         }
     }

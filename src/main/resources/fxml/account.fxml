@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="365.5" maxWidth="260.0" minHeight="365.5" minWidth="260.0" prefHeight="365.5" prefWidth="260.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.AccountController">
+<Pane maxHeight="456.0" maxWidth="260.0" minHeight="365.5" minWidth="232.0" prefHeight="456.0" prefWidth="260.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.AccountController">
    <BorderPane.margin>
       <Insets left="20.0" top="30.0" />
    </BorderPane.margin>
@@ -40,6 +40,7 @@
          </font>
       </Label>
       <Label layoutX="14.0" layoutY="246.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Transaction history:" />
-      <Button layoutX="14.0" layoutY="277.0" mnemonicParsing="false" onAction="#handleDetails" prefHeight="61.0" prefWidth="133.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DETAILS" />
+      <Button layoutX="14.0" layoutY="277.0" mnemonicParsing="false" onAction="#handleDetails" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DETAILS" />
+      <Button layoutX="17.0" layoutY="356.0" mnemonicParsing="false" onAction="#handleSmartContract" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SMART CONTRACT" />
    </children>
 </Pane>
