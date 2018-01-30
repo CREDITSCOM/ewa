@@ -4,103 +4,59 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form6Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.HistoryController">
    <children>
-      <ScrollPane prefHeight="790.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1000.0">
-               <children>
-                  <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                  <top>
-                     <fx:include source="header.fxml" />
-                  </top>
-                  <center>
-                     <BorderPane maxHeight="750.0" minHeight="750.0" prefHeight="750.0" BorderPane.alignment="TOP_CENTER">
-                     <center>
-                        <Pane maxHeight="688.0" maxWidth="708.0" minHeight="300.0" minWidth="0.0" prefHeight="635.0" prefWidth="708.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_LEFT">
-                           <children>
-                              <ComboBox fx:id="cbCoin" layoutX="18.0" layoutY="179.0" prefHeight="56.0" prefWidth="200.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" />
-                              <Spinner fx:id="numFee" editable="true" layoutX="17.0" layoutY="538.0" prefHeight="56.0" prefWidth="203.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-                                    <Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 32px;" styleClass="text" stylesheets="@../styles.css" text="6. Make a payment">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
-                                    <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-                                    <Label layoutX="23.0" layoutY="149.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Select coin">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="224.0" layoutY="197.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Credit balance:">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="labCredit" layoutX="354.0" layoutY="197.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="23.0" layoutY="267.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="To address which opened on Credits (only)">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                    <TextField fx:id="txKey" layoutX="18.0" layoutY="297.0" prefHeight="56.0" prefWidth="605.0" promptText="key..." style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-                                    <Label layoutX="23.0" layoutY="387.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Amount in CS (Credits)">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="18.0" layoutY="506.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Transaction Fee">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="230.0" layoutY="555.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="CS or">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="labFee" layoutX="281.0" layoutY="555.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
-                                    </Label>
-                                    <Button fx:id="btnBack" layoutX="241.0" layoutY="601.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
-                                    <Spinner fx:id="numAmount" editable="true" layoutX="17.0" layoutY="420.0" prefHeight="56.0" prefWidth="203.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-                           </children>
-                        <BorderPane.margin>
-                           <Insets left="20.0" top="30.0" />
-                        </BorderPane.margin>
-                     </Pane>
-                     </center>
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <fx:include source="header.fxml" />
+         </top>
+         <center>
+            <BorderPane maxHeight="400.0" minHeight="400.0" prefHeight="400.0" BorderPane.alignment="TOP_CENTER">
+               <center>
+                  <Pane maxHeight="429.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="337.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="Transition history" />
+                        <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can see transaction history" textFill="#818181" />
+                        <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
+                        <ComboBox fx:id="cbPageSize" layoutX="21.0" layoutY="109.0" prefHeight="22.0" prefWidth="68.0" />
+                        <Label layoutX="99.0" layoutY="113.0" text="transactions on the page" />
+                        <TableView fx:id="tabTransaction" layoutX="21.0" layoutY="131.0" prefHeight="200.0" prefWidth="562.0">
+                          <columns>
+                            <TableColumn prefWidth="153.0" text="Target" />
+                            <TableColumn prefWidth="68.0" text="Currency" />
+                              <TableColumn prefWidth="93.0" text="Amount" />
+                              <TableColumn prefWidth="89.0" text="Fee" />
+                              <TableColumn prefWidth="158.0" text="Time" />
+                          </columns>
+                        </TableView>
+                        <Label layoutX="246.0" layoutY="113.0" text="Page:" />
+                        <Button fx:id="btnFirst" layoutX="278.0" layoutY="109.0" mnemonicParsing="false" onAction="#handlePageFirst" text="&lt;&lt;" />
+                        <Button fx:id="btnPrev" layoutX="307.0" layoutY="109.0" mnemonicParsing="false" onAction="#handlePagePrev" text="&lt;" />
+                        <Label fx:id="labPage" layoutX="330.0" layoutY="113.0" text="0" />
+                        <Button layoutX="338.0" layoutY="109.0" mnemonicParsing="false" onAction="#handlePageNext" text="&gt;" />
+                        <Button layoutX="361.0" layoutY="109.0" mnemonicParsing="false" onAction="#handlePageLast" text="&gt;&gt;" />
+                        <Button layoutX="21.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
+                     </children>
                      <BorderPane.margin>
-                     <Insets />
+                        <Insets />
                      </BorderPane.margin>
-                           <left>
-                               <fx:include source="account.fxml" />
-                           </left>
-                     </BorderPane>
-                  </center>
-                  <bottom>
-                     <fx:include source="footer.fxml" />
-                  </bottom>
-                  </BorderPane>
-               </children>
-            </AnchorPane>
-        </content>
-      </ScrollPane>
+                  </Pane>
+               </center>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+            </BorderPane>
+         </center>
+         <bottom>
+            <fx:include source="footer.fxml" />
+         </bottom>
+      </BorderPane>
    </children>
 </AnchorPane>
