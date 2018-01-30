@@ -9,8 +9,11 @@ import org.junit.Test;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.URL;
+import java.util.Map;
 
 public class ContractExecutorServiceTest extends ServiceTest {
 
@@ -18,6 +21,9 @@ public class ContractExecutorServiceTest extends ServiceTest {
     private ContractExecutorService service;
 
     private final String address = "1a2b";
+
+    private File file = new File(System.getProperty("user.dir") + File.separator + "credits" +
+                                File.separator + address + File.separator + "UserCodeTest.out");
 
 
     @Before
@@ -91,5 +97,35 @@ public class ContractExecutorServiceTest extends ServiceTest {
     public void arrayFloatTest() throws ContractExecutorException {
         String[] params = {"{1f, .2f}"};
         service.execute(address, "foo", params);
+    }
+
+    @Test
+    public void globalVarInstanceTest() throws ContractExecutorException {
+        service.execute(address, "globalVarInstance", new String[0]);
+        service.execute(address, "globalVarInstance", new String[0]);
+
+        Map<String, Object> deserFields = null;
+        try (ObjectInputStream ous = new ObjectInputStream(new FileInputStream(file))){
+            deserFields = (Map<String, Object>) ous.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Assert.assertNotNull(deserFields);
+        Assert.assertEquals(3, deserFields.get("intVar"));
+    }
+
+    @Test
+    public void globalVarStaticTest() throws ContractExecutorException {
+        service.execute(address, "globalVarStatic", new String[0]);
+        service.execute(address, "globalVarStatic", new String[0]);
+
+        Map<String, Object> deserFields = null;
+        try (ObjectInputStream ous = new ObjectInputStream(new FileInputStream(file))){
+            deserFields = (Map<String, Object>) ous.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Assert.assertNotNull(deserFields);
+        Assert.assertEquals(4, deserFields.get("statIntVar"));
     }
 }

@@ -1,4 +1,9 @@
 public class UserCodeTest {
+
+    private static int statIntVar = 2;
+
+    private int intVar = 1;
+
     public static void main(String[] args) {
         System.out.println("Method main(String[] args) has been invoked");
         
@@ -129,6 +134,16 @@ public class UserCodeTest {
             System.out.println(arg);
         }
         System.out.println("Done");
+    }
+
+    public void globalVarInstance() {
+        System.out.println("intVar value = " + intVar);
+        intVar++;
+    }
+
+    public static void globalVarStatic() {
+        System.out.println("statIntVar value = " + statIntVar);
+        statIntVar++;
     }
 
 }
