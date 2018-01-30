@@ -27,13 +27,13 @@
                         <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
                         <ComboBox fx:id="cbPageSize" layoutX="21.0" layoutY="109.0" prefHeight="22.0" prefWidth="68.0" />
                         <Label layoutX="99.0" layoutY="113.0" text="transactions on the page" />
-                        <TableView fx:id="tabTransaction" layoutX="21.0" layoutY="131.0" prefHeight="200.0" prefWidth="562.0">
+                        <TableView fx:id="tabTransaction" layoutX="21.0" layoutY="131.0" prefHeight="200.0" prefWidth="778.0">
                           <columns>
                             <TableColumn prefWidth="153.0" text="Target" />
                             <TableColumn prefWidth="68.0" text="Currency" />
                               <TableColumn prefWidth="93.0" text="Amount" />
                               <TableColumn prefWidth="89.0" text="Fee" />
-                              <TableColumn prefWidth="158.0" text="Time" />
+                              <TableColumn prefWidth="374.0" text="Time" />
                           </columns>
                         </TableView>
                         <Label layoutX="246.0" layoutY="113.0" text="Page:" />
