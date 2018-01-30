@@ -9,7 +9,7 @@ import java.util.Locale;
  */
 public class Convertor {
 
-    public static String DOUBLE_FORMAT = "#############0.#######################";
+    public static String DOUBLE_FORMAT = "0.##";
 
     public static String toString(Object value) {
         if (value instanceof Double) {

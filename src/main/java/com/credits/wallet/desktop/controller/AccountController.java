@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
  * Created by Rustem.Saidaliyev on 26.11.2017.
  */
 public class AccountController extends Controller implements Initializable {
-    private static final String ERR_GETTING_BALANCE="Ошибка получения баланса";
+    private static final String ERR_GETTING_BALANCE="Error getting balance";
 
     @FXML
     private Label wallet;

@@ -13,7 +13,7 @@ public class ConvertorTest {
     private static Logger LOGGER = LoggerFactory.getLogger(ConvertorTest.class);
     @Test
     public void doubleToStringTest() {
-        Double value = 0.123;
+        Double value = 0.126;
         LOGGER.info(Convertor.toString(value));
     }
 }

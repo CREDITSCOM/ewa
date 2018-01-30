@@ -29,7 +29,7 @@ public class Form6Controller extends Controller implements Initializable {
 
     private static Logger LOGGER = LoggerFactory.getLogger(Form6Controller.class);
 
-    private static final String ERR_GETTING_BALANCE = "Ошибка получения баланса";
+    private static final String ERR_GETTING_BALANCE = "Error getting balance";
 
     @FXML
     private Label labCredit;

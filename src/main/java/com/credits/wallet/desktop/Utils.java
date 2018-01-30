@@ -18,8 +18,8 @@ public class Utils {
     public static void showError(String text) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.initStyle(StageStyle.UTILITY);
-        alert.setTitle("Ошибка");
-        alert.setHeaderText("Ошибка!");
+        alert.setTitle("Error");
+        alert.setHeaderText("Error!");
         alert.setContentText(text);
         alert.showAndWait();
     }
