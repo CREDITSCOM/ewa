@@ -18,8 +18,8 @@ import java.util.Properties;
  * Created by goncharov-eg on 23.11.2017.
  */
 public class App extends Application {
-    private static final String ERR_NO_PROPERTIES="Не удалось определить адрес сервера. Проверьте наличие файла settings.properties";
-    private static final String ERR_NO_API_ADDR="Не удалось определить адрес сервера. Проверьте наличие параметра api.addr в файле settings.properties";
+    private static final String ERR_NO_PROPERTIES="The server address could not be determined. Check the presence of the file settings.properties";
+    private static final String ERR_NO_API_ADDR="The server address could not be determined. Check the presence of the api.addr parameter in the settings.properties file";
     private static Stage currentStage;
 
     public static void main(String[] args) {
