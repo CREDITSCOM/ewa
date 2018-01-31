@@ -5,7 +5,7 @@ import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
-import com.credits.service.serialise.SerialisationService;
+import com.credits.serialise.Serializer;
 import com.credits.service.usercode.UserCodeStorageService;
 import org.springframework.stereotype.Component;
 
@@ -26,9 +26,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     @Resource
     private RuntimeDependencyInjector dependencyInjector;
-
-    @Resource
-    private SerialisationService serialisationService;
 
     public void execute(String address, String methodName, String[] params) throws ContractExecutorException {
         Class<?> clazz;
@@ -89,9 +86,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         //Injecting deserialized fields into class if present
-        File serFile = serialisationService.getSerFile(address);
+        File serFile = Serializer.getSerFile(address);
         if (serFile.exists()) {
-            serialisationService.deserialize(serFile, methodIsStatic, instance, clazz);
+            Serializer.deserialize(serFile, methodIsStatic, instance, clazz);
         }
 
         //Invoking target method
@@ -103,7 +100,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         //Serializing class or instance fields
-        serialisationService.serialize(serFile, methodIsStatic, instance, clazz);
+        Serializer.serialize(serFile, methodIsStatic, instance, clazz);
     }
 
     private Object[] castValues(Class<?>[] types, String[] params) throws ContractExecutorException {
