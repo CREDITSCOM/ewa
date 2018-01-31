@@ -7,36 +7,36 @@
 <?import javafx.scene.layout.*?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form0Controller">
-   <children>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <top>
-            <fx:include source="header.fxml" />
-         </top>
-         <center>
-            <BorderPane maxHeight="400.0" minHeight="400.0" prefHeight="400.0" BorderPane.alignment="TOP_CENTER">
-               <center>
-                  <Pane maxHeight="337.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="337.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER">
-                     <children>
-                        <Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="0. Make your choice" />
-                        <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
-                        <Button layoutX="104.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleExistingAccount" prefHeight="61.0" prefWidth="244.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="YOU HAVE ALREADY AN ACCOUNT" textAlignment="CENTER" wrapText="true" />
-                        <Label layoutX="428.0" layoutY="181.0" style="-fx-font-size: 16px;" text="or" />
-                        <Button layoutX="521.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleNewAccount" prefHeight="61.0" prefWidth="244.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CREATE A NEW ACCOUNT" textAlignment="CENTER" wrapText="true" />
-                        <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-                     </children>
-                     <BorderPane.margin>
-                        <Insets />
-                     </BorderPane.margin>
-                  </Pane>
-               </center>
-               <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin>
-            </BorderPane>
-         </center>
-         <bottom>
-            <fx:include source="footer.fxml" />
-         </bottom>
-      </BorderPane>
-   </children>
+	<children>
+		<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+			<top>
+				<fx:include source="header.fxml" />
+			</top>
+			<center>
+				<BorderPane maxHeight="400.0" minHeight="400.0" prefHeight="400.0" BorderPane.alignment="TOP_CENTER">
+					<center>
+						<Pane maxHeight="337.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="337.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER">
+							<children>
+								<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="0. Make your choice" />
+								<Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
+								<Button layoutX="104.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleExistingAccount" prefHeight="61.0" prefWidth="244.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="YOU HAVE ALREADY AN ACCOUNT" textAlignment="CENTER" wrapText="true" />
+								<Label layoutX="428.0" layoutY="181.0" style="-fx-font-size: 16px;" text="or" />
+								<Button layoutX="521.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleNewAccount" prefHeight="61.0" prefWidth="244.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CREATE A NEW ACCOUNT" textAlignment="CENTER" wrapText="true" />
+								<Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
+							</children>
+							<BorderPane.margin>
+								<Insets />
+							</BorderPane.margin>
+						</Pane>
+					</center>
+					<BorderPane.margin>
+						<Insets />
+					</BorderPane.margin>
+				</BorderPane>
+			</center>
+			<bottom>
+				<fx:include source="footer.fxml" />
+			</bottom>
+		</BorderPane>
+	</children>
 </AnchorPane>

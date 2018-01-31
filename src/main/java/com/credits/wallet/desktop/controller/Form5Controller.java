@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-class Form5Controller extends Controller implements Initializable {
+public class Form5Controller extends Controller implements Initializable {
     @FXML
     private Button btnBack;
 
