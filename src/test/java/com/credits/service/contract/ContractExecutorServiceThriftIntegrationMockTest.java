@@ -4,7 +4,6 @@ import com.credits.exception.ContractExecutorException;
 import com.credits.service.ServiceTest;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.service.usercode.UserCodeStorageService;
-import com.credits.thrift.gen.api.Amount;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

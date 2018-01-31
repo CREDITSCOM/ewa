@@ -1,9 +1,6 @@
 package com.credits.service.db.leveldb;
 
 import com.credits.exception.ContractExecutorException;
-import com.credits.thrift.gen.api.API;
-import com.credits.thrift.gen.api.Amount;
-import com.credits.thrift.gen.api.TransactionInfo;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;

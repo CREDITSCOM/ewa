@@ -1,11 +1,9 @@
 
 namespace java com.credits.thrift.gen.api
 
-typedef binary Hash;
-
 typedef string Currency;
-
 typedef string Address;
+typedef i64 Time;
 
 struct Amount 
 {
@@ -15,38 +13,106 @@ struct Amount
 
 typedef map<Currency, Amount> Balance;
 
-struct Transaction 
+//
+// Transactions
+//
+
+typedef string TransactionHash
+typedef string TransactionId
+typedef string TransactionInnerId
+
+struct Transaction
 {
-  1: required Address source;
-
-  2: required Address target;
-
-  3: required Currency currency;
-
-  4: required Amount amount;
-
-  5: required Amount fee;
-
-  6: required i64 time = 0;
-
-  7: required i64 pool = 0;
-
-  8: required i64 nonce = 0;
+    1: TransactionHash hash
+    2: TransactionInnerId innerId
+    3: Address source
+    4: Address target
+    5: Amount amount
+    6: Currency currency
 }
 
-typedef list<Transaction> Transactions;
+typedef list<Transaction> Transactions
+typedef list<TransactionId> TransactionIds
 
-struct TransactionInfo 
+//
+//  Pools
+//
+
+typedef string PoolHash
+typedef i64 PoolNumber
+
+struct Pool
 {
-  1: Hash hash;
-  2: string status;
+    1: PoolHash poolHash
+    2: PoolHash prevPoolHash
+    3: Time creationTime
+    4: PoolNumber poolNumber
+    5: i32 transactionsCount
+}
+
+typedef list<Pool> Pools
+
+//
+// API responses
+//
+
+struct APIResponse
+{
+    1: i8 code
+    2: string message
+}
+
+// PoolListGet
+
+struct PoolListGetResult
+{
+    1: APIResponse status
+    2: bool result
+    3: Pools pools
+}
+
+// PoolGet
+
+struct PoolGetResult
+{
+    1: APIResponse status
+    2: Pool pool
+    3: Transactions transactions
+}
+
+// BalanceGet
+
+struct BalanceGetResult
+{
+    1: APIResponse status
+    2: Amount amount
+}
+
+// TransactionGet
+
+struct TransactionGetResult
+{
+    1: APIResponse status
+    2: bool found
+    3: Transaction transaction
+}
+
+// TransactionsGet
+
+struct TransactionsGetResult
+{
+    1: APIResponse status
+    2: bool result
+    3: Transactions transactions
 }
 
 service API 
 {
-   Balance get_balance(1:Address address)
-
-   Transactions get_transactions(1:Address address, 2:Currency currency = '')
+    BalanceGetResult BalanceGet(1:Address address, 2:Currency currency = 'CS')
    
-   TransactionInfo get_transaction_info(1:Address source, 2:Address destination, 3:Amount amount, 4:i64 timestamp, 5:Currency currency = '')
+    TransactionGetResult TransactionGet(1:TransactionId transactionId)
+    TransactionsGetResult TransactionsGet(1:Address address, 2:i64 offset, 3:i64 limit)
+    
+    PoolListGetResult PoolListGet(1:i64 offset, 2:i64 limit)
+    PoolGetResult PoolGet(1:PoolNumber poolNumber)
 }

@@ -1,9 +1,6 @@
 package com.credits.service.db.leveldb;
 
 import com.credits.exception.ContractExecutorException;
-import com.credits.thrift.gen.api.Amount;
-import com.credits.thrift.gen.api.Transaction;
-import com.credits.thrift.gen.api.TransactionInfo;
 
 import java.util.List;
 import java.util.Map;
