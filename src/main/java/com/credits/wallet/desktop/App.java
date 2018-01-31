@@ -18,8 +18,10 @@ import java.util.Properties;
  * Created by goncharov-eg on 23.11.2017.
  */
 public class App extends Application {
-    private static final String ERR_NO_PROPERTIES="The server address could not be determined. Check the presence of the file settings.properties";
-    private static final String ERR_NO_API_ADDR="The server address could not be determined. Check the presence of the api.addr parameter in the settings.properties file";
+    private static final String ERR_NO_PROPERTIES =
+        "The server address could not be determined. Check the presence of the file settings.properties";
+    private static final String ERR_NO_API_ADDR =
+        "The server address could not be determined. Check the presence of the api.addr parameter in the settings.properties file";
     private static Stage currentStage;
 
     public static void main(String[] args) {
@@ -33,13 +35,14 @@ public class App extends Application {
             Properties property = new Properties();
             property.load(fis);
 
-            String apiAddr=property.getProperty("api.addr");
-            if (apiAddr==null || apiAddr.isEmpty()) {
+            String apiAddr = property.getProperty("api.addr");
+            if (apiAddr == null || apiAddr.isEmpty()) {
                 Utils.showError(ERR_NO_API_ADDR);
             } else {
-                if (!apiAddr.endsWith("/"))
-                    apiAddr=apiAddr+"/";
-                AppState.apiAddr=apiAddr;
+                if (!apiAddr.endsWith("/")) {
+                    apiAddr = apiAddr + "/";
+                }
+                AppState.apiAddr = apiAddr;
                 showForm("/fxml/form0.fxml", "Wallet");
             }
         } catch (Exception e) {
@@ -58,19 +61,16 @@ public class App extends Application {
             dialogStage.initModality(Modality.WINDOW_MODAL);
 
             Scene scene;
-            if (currentStage==null) {
+            if (currentStage == null) {
                 Screen screen = Screen.getPrimary();
                 Rectangle2D bounds = screen.getVisualBounds();
                 scene = new Scene(pane, bounds.getWidth(), bounds.getHeight() * 0.97);
-            }
-            else {
+            } else {
                 scene = new Scene(pane, currentStage.getScene().getWidth(), currentStage.getScene().getHeight());
             }
 
             dialogStage.setScene(scene);
             dialogStage.setResizable(true);
-
-            Controller controller = loader.getController();
 
             boolean firstShow = false;
             if (currentStage == null) {

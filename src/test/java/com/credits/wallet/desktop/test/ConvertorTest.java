@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Rustem.Saidaliyev on 29.01.2018.
  */
+@SuppressWarnings("CanBeFinal")
 public class ConvertorTest {
     private static Logger LOGGER = LoggerFactory.getLogger(ConvertorTest.class);
     @Test

@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class Form5Controller extends Controller implements Initializable {
+class Form5Controller extends Controller implements Initializable {
     @FXML
     private Button btnBack;
 
@@ -37,7 +37,7 @@ public class Form5Controller extends Controller implements Initializable {
 
     @FXML
     private void handleOpen() {
-        AppState.account=txPublic.getText();
+        AppState.account = txPublic.getText();
 
         if (chSavePublicKey.isSelected()) {
             try {
@@ -46,7 +46,7 @@ public class Form5Controller extends Controller implements Initializable {
                 Properties property = new Properties();
                 property.load(fis);
                 FileOutputStream fos = new FileOutputStream("settings.properties");
-                property.setProperty("public.key",txPublic.getText());
+                property.setProperty("public.key", txPublic.getText());
                 property.store(fos, "");
                 fos.close();
             } catch (Exception e) {
@@ -67,8 +67,9 @@ public class Form5Controller extends Controller implements Initializable {
             property.load(fis);
 
             String publicKey = property.getProperty("public.key");
-            if (publicKey!=null)
+            if (publicKey != null) {
                 txPublic.setText(publicKey);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

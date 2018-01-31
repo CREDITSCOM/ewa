@@ -43,9 +43,10 @@ public class AccountController extends Controller implements Initializable {
         String balanceInfo = Utils.callAPI("getbalance?account=" + AppState.account, ERR_GETTING_BALANCE);
         if (balanceInfo != null) {
             JsonElement jelement = new JsonParser().parse(balanceInfo);
-            JsonObject jObject = jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
+            JsonObject jObject =
+                jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
             String balStr = Long.toString(jObject.get("integral").getAsLong()) +
-                    "." + Long.toString(jObject.get("fraction").getAsLong());
+                "." + Long.toString(jObject.get("fraction").getAsLong());
             this.balance.setText(balStr);
         }
     }

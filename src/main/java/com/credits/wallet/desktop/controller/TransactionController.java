@@ -45,10 +45,10 @@ public class TransactionController extends Controller implements Initializable {
         labTime.setText(AppState.selectedTransactionRow.getTime());
 
         String transactionDetails = Utils.callAPI("gettransactioninfo?source=" + AppState.account +
-                "&destination=" + AppState.selectedTransactionRow.getTarget() +
-                "&amount=" + AppState.selectedTransactionRow.getAmount() +
-                "&timestamp=" + AppState.selectedTransactionRow.getTimeN() +
-                "&currency=" + AppState.selectedTransactionRow.getCurrency(), ERR_GETTING_TRANSACTION);
+            "&destination=" + AppState.selectedTransactionRow.getTarget() +
+            "&amount=" + AppState.selectedTransactionRow.getAmount() +
+            "&timestamp=" + AppState.selectedTransactionRow.getTimeN() +
+            "&currency=" + AppState.selectedTransactionRow.getCurrency(), ERR_GETTING_TRANSACTION);
         if (transactionDetails != null) {
             JsonElement jelement = new JsonParser().parse(transactionDetails);
             String status = jelement.getAsJsonObject().get("response").getAsJsonObject().get("status").getAsString();

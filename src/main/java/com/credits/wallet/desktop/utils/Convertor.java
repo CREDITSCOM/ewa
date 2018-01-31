@@ -9,14 +9,10 @@ import java.util.Locale;
  */
 public class Convertor {
 
-    public static String DOUBLE_FORMAT = "0.##";
+    public static final String DOUBLE_FORMAT = "0.##";
 
     public static String toString(Object value) {
         if (value instanceof Double) {
-
-            if (value == null) {
-                return "0.00";
-            }
             Locale locale = new Locale("en", "UK");
             NumberFormat nf = NumberFormat.getNumberInstance(locale);
             DecimalFormat df = (DecimalFormat) nf;

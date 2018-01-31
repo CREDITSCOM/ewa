@@ -53,7 +53,9 @@ public class Form6Controller extends Controller implements Initializable {
      * c&p from Spinner
      */
     private <T> void commitEditorText(Spinner<T> spinner) {
-        if (!spinner.isEditable()) return;
+        if (!spinner.isEditable()) {
+            return;
+        }
         String text = spinner.getEditor().getText();
         SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
         if (valueFactory != null) {
@@ -114,10 +116,11 @@ public class Form6Controller extends Controller implements Initializable {
         numFee.setEditable(true);
         numFee.getEditor().setTextFormatter(transactionFeeFormatter);
         */
-        StringConverter converter=new StringConverter<Double>() {
+        StringConverter converter = new StringConverter<Double>() {
             private final DecimalFormat df = new DecimalFormat("#.##########");
 
-            @Override public String toString(Double value) {
+            @Override
+            public String toString(Double value) {
                 // If the specified value is null, return a zero-length String
                 if (value == null) {
                     return "";
@@ -126,7 +129,8 @@ public class Form6Controller extends Controller implements Initializable {
                 return df.format(value);
             }
 
-            @Override public Double fromString(String value) {
+            @Override
+            public Double fromString(String value) {
                 try {
                     // If the specified value is null or zero-length, return null
                     if (value == null) {
@@ -148,14 +152,14 @@ public class Form6Controller extends Controller implements Initializable {
         };
 
         SpinnerValueFactory<Double> amountValueFactory =
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(-Double.MAX_VALUE, Double.MAX_VALUE,
-                        AppState.transactionFeeValue, 0.1);
+            new SpinnerValueFactory.DoubleSpinnerValueFactory(-Double.MAX_VALUE, Double.MAX_VALUE,
+                AppState.transactionFeeValue, 0.1);
         amountValueFactory.setConverter(converter);
         numAmount.setValueFactory(amountValueFactory);
 
         SpinnerValueFactory<Double> feeValueFactory =
-                new SpinnerValueFactory.DoubleSpinnerValueFactory(-Double.MAX_VALUE, Double.MAX_VALUE,
-                        AppState.transactionFeePercent, 0.1);
+            new SpinnerValueFactory.DoubleSpinnerValueFactory(-Double.MAX_VALUE, Double.MAX_VALUE,
+                AppState.transactionFeePercent, 0.1);
         feeValueFactory.setConverter(converter);
         numFee.setValueFactory(feeValueFactory);
 
@@ -163,45 +167,48 @@ public class Form6Controller extends Controller implements Initializable {
         // Fill coin list
         cbCoin.getItems().clear();
         for (String[] coin : Dictionaries.currencies) {
-            cbCoin.getItems().add(coin[0]+" ("+coin[1]+")");
+            cbCoin.getItems().add(coin[0] + " (" + coin[1] + ")");
         }
 
         cbCoin.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                String balanceInfo=Utils.callAPI("getbalance?account="+AppState.account, ERR_GETTING_BALANCE);
-                if (balanceInfo!=null) {
+                String balanceInfo = Utils.callAPI("getbalance?account=" + AppState.account, ERR_GETTING_BALANCE);
+                if (balanceInfo != null) {
                     JsonElement jelement = new JsonParser().parse(balanceInfo);
-                    JsonObject jObject=jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
-                    String balStr=Long.toString(jObject.get("integral").getAsLong())+
-                            "."+Long.toString(jObject.get("fraction").getAsLong());
+                    JsonObject jObject =
+                        jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
+                    String balStr = Long.toString(jObject.get("integral").getAsLong()) +
+                        "." + Long.toString(jObject.get("fraction").getAsLong());
                     labCredit.setText(balStr);
                 }
             }
         });
 
         this.numAmount.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) return;
+            if (newValue) {
+                return;
+            }
             //intuitive method on textField, has no effect, though
             //spinner.getEditor().commitValue();
             commitEditorText(this.numAmount);
         });
 
         this.numFee.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) return;
+            if (newValue) {
+                return;
+            }
             //intuitive method on textField, has no effect, though
             //spinner.getEditor().commitValue();
             commitEditorText(this.numFee);
         });
 
         this.numAmount.valueProperty().addListener((observable, oldValue, newValue) -> {
-                refreshTransactionFeePercent(this.numFee.getValue(), newValue);
-            }
-        );
+            refreshTransactionFeePercent(this.numFee.getValue(), newValue);
+        });
 
         this.numFee.valueProperty().addListener((observable, oldValue, newValue) -> {
-                refreshTransactionFeePercent(newValue, this.numAmount.getValue());
-            }
-        );
+            refreshTransactionFeePercent(newValue, this.numAmount.getValue());
+        });
     }
 }

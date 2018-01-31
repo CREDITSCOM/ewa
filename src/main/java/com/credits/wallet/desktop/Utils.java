@@ -28,7 +28,7 @@ public class Utils {
         try {
             HttpClient client = new DefaultHttpClient();
 
-            HttpGet get = new HttpGet(AppState.apiAddr+addrSuffix);
+            HttpGet get = new HttpGet(AppState.apiAddr + addrSuffix);
             HttpResponse response = client.execute(get);
 
             InputStream is = response.getEntity().getContent();
@@ -37,7 +37,7 @@ public class Utils {
             final StringBuilder out = new StringBuilder();
             Reader in = new InputStreamReader(is, "UTF-8");
             int rsz = in.read(buffer, 0, buffer.length);
-            while (rsz>=0) {
+            while (rsz >= 0) {
                 out.append(buffer, 0, rsz);
                 rsz = in.read(buffer, 0, buffer.length);
             }
