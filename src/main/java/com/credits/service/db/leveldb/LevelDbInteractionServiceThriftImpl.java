@@ -10,6 +10,8 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,8 @@ import java.util.Map;
 
 @Component
 public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionService {
+
+    private final static Logger logger = LoggerFactory.getLogger(LevelDbInteractionServiceThriftImpl.class);
 
     private API.Client client;
     private TTransport transport;
@@ -38,7 +42,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
             TProtocol protocol = new TBinaryProtocol(transport);
             client = new API.Client(protocol);
         } catch (TTransportException e) {
-            e.printStackTrace();
+            logger.error("Cannot connect to database. " + e);
         }
     }
 

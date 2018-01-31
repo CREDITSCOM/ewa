@@ -22,12 +22,17 @@ public class ContractExecutorServiceTest extends ServiceTest {
 
     private final String address = "1a2b";
 
-    private File file = new File(System.getProperty("user.dir") + File.separator + "credits" +
-                                File.separator + address + File.separator + "UserCodeTest.out");
+    private File file;
 
 
     @Before
     public void setUp() throws ContractExecutorException {
+        file = new File(System.getProperty("user.dir") + File.separator + "credits" +
+            File.separator + address + File.separator + "UserCodeTest.out");
+        if (file.exists()) {
+            file.delete();
+        }
+
         final String destFolder = System.getProperty("user.dir") + File.separator + "credits";
         URL resource = getClass().getClassLoader().getResource("com/credits/service/contract/UserCodeTest.class");
         Assert.assertNotNull(resource);
