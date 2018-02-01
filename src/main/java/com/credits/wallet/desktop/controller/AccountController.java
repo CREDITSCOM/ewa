@@ -46,7 +46,7 @@ public class AccountController extends Controller implements Initializable {
             JsonObject jObject =
                 jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
             String balStr = Long.toString(jObject.get("integral").getAsLong()) +
-                "." + Long.toString(jObject.get("fraction").getAsLong());
+                App.decSep + Long.toString(jObject.get("fraction").getAsLong());
             this.balance.setText(balStr);
         }
     }

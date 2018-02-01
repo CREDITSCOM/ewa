@@ -12,7 +12,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
-import java.util.Properties;
+import java.text.*;
+import java.util.*;
 
 /**
  * Created by goncharov-eg on 23.11.2017.
@@ -24,6 +25,8 @@ public class App extends Application {
         "The server address could not be determined. Check the presence of the api.addr parameter in the settings.properties file";
     private static Stage currentStage;
 
+    public static String decSep;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -31,6 +34,11 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
+            Locale loc=Locale.getDefault();
+            DecimalFormatSymbols symbols= new DecimalFormatSymbols(loc);
+            char sep=symbols.getDecimalSeparator();
+            decSep=Character.toString(sep);
+
             FileInputStream fis = new FileInputStream("settings.properties");
             Properties property = new Properties();
             property.load(fis);

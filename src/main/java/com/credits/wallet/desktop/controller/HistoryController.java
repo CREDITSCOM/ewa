@@ -104,9 +104,9 @@ public class HistoryController extends Controller implements Initializable {
                 JsonObject jAmount = jTransactions.get(i).getAsJsonObject().get("amount").getAsJsonObject();
                 JsonObject jFee = jTransactions.get(i).getAsJsonObject().get("fee").getAsJsonObject();
                 String amountStr = Long.toString(jAmount.get("integral").getAsLong()) +
-                    "." + Long.toString(jAmount.get("fraction").getAsLong());
+                    App.decSep + Long.toString(jAmount.get("fraction").getAsLong());
                 String feeStr = Long.toString(jFee.get("integral").getAsLong()) +
-                    "." + Long.toString(jFee.get("fraction").getAsLong());
+                    App.decSep + Long.toString(jFee.get("fraction").getAsLong());
                 tr.setAmount(amountStr);
                 tr.setFee(feeStr);
                 tr.setTime((new Date(jTransactions.get(i).getAsJsonObject().get("time").getAsLong())).toString());

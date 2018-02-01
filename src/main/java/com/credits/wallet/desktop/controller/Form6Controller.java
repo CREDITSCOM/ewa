@@ -48,7 +48,6 @@ public class Form6Controller extends Controller implements Initializable {
     @FXML
     private Label labFee;
 
-    private String decSep;
     private static final String digits="0123456789";
 
     /**
@@ -181,7 +180,7 @@ public class Form6Controller extends Controller implements Initializable {
                     JsonObject jObject =
                         jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
                     String balStr = Long.toString(jObject.get("integral").getAsLong()) +
-                        "." + Long.toString(jObject.get("fraction").getAsLong());
+                        App.decSep + Long.toString(jObject.get("fraction").getAsLong());
                     labCredit.setText(balStr);
                 }
             }
@@ -213,11 +212,6 @@ public class Form6Controller extends Controller implements Initializable {
             refreshTransactionFeePercent(newValue, this.numAmount.getValue());
         });
 
-        Locale loc=Locale.getDefault();
-        DecimalFormatSymbols symbols= new DecimalFormatSymbols(loc);
-        char sep=symbols.getDecimalSeparator();
-        decSep=Character.toString(sep);
-
         this.numAmount.setOnKeyReleased(event -> {
             String s1=this.numAmount.getEditor().getText();
             String s2=correctNum(s1);
@@ -242,7 +236,7 @@ public class Form6Controller extends Controller implements Initializable {
         boolean wasPoint=false;
         while (i<s.length()) {
             String c=s.substring(i,i+1);
-            if (!(c.equals(decSep) && !wasPoint) && digits.indexOf(c)<0) {
+            if (!(c.equals(App.decSep) && !wasPoint) && digits.indexOf(c)<0) {
                 if (i==0 && s.length()==1)
                     s="";
                 else if (i==0)
@@ -254,7 +248,7 @@ public class Form6Controller extends Controller implements Initializable {
             } else
                 i++;
 
-            if (c.equals(decSep))
+            if (c.equals(App.decSep))
                 wasPoint=true;
         }
         return s;

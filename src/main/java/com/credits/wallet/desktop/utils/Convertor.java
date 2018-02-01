@@ -13,7 +13,8 @@ public class Convertor {
 
     public static String toString(Object value) {
         if (value instanceof Double) {
-            Locale locale = new Locale("en", "UK");
+            //Locale locale = new Locale("en", "UK");
+            Locale locale=Locale.getDefault();
             NumberFormat nf = NumberFormat.getNumberInstance(locale);
             DecimalFormat df = (DecimalFormat) nf;
             df.applyPattern(DOUBLE_FORMAT);
