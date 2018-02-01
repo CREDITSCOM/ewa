@@ -1,6 +1,7 @@
 package com.credits.service.db.leveldb;
 
 import com.credits.exception.ContractExecutorException;
+import com.credits.thrift.gen.api.*;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -43,32 +44,57 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
         }
     }
 
-    public Map<String, Amount> getBalance(String address) throws ContractExecutorException {
-        Map<String, Amount> result;
+    @Override
+    public BalanceGetResult getBalance(String address, String currency) throws ContractExecutorException {
+        BalanceGetResult result;
         try {
-            result = client.get_balance(address);
+            result = client.BalanceGet(address, currency);
         } catch (TException e) {
-            throw new ContractExecutorException("Cannot get balance", e);
+            throw new ContractExecutorException("Cannot get balance. ", e);
         }
         return result;
     }
 
-    public List<com.credits.thrift.gen.api.Transaction> getTransactions(String address, String currency) throws ContractExecutorException {
-        List<com.credits.thrift.gen.api.Transaction> result;
+    @Override
+    public TransactionGetResult getTransaction(String transactionId) throws ContractExecutorException {
+        TransactionGetResult result;
         try {
-            result = client.get_transactions(address, currency);
+            result = client.TransactionGet(transactionId);
         } catch (TException e) {
-            throw new ContractExecutorException("Cannot get transactions", e);
+            throw new ContractExecutorException("Cannot get transaction. ", e);
         }
         return result;
     }
 
-    public TransactionInfo getTransactionInfo(String source, String destination, Amount amount, long timestamp, String currency) throws ContractExecutorException {
-        TransactionInfo result;
+    @Override
+    public TransactionsGetResult getTransactions(String address, long offset, long limit) throws ContractExecutorException {
+        TransactionsGetResult result;
         try {
-            result = client.get_transaction_info(source, destination, amount, timestamp, currency);
+            result = client.TransactionsGet(address, offset, limit);
         } catch (TException e) {
-            throw new ContractExecutorException("Cannot get transaction info", e);
+            throw new ContractExecutorException("Cannot get transactions. ", e);
+        }
+        return result;
+    }
+
+    @Override
+    public PoolListGetResult getPoolList(long offset, long limit) throws ContractExecutorException {
+        PoolListGetResult result;
+        try {
+            result = client.PoolListGet(offset, limit);
+        } catch (TException e) {
+            throw new ContractExecutorException("Cannot get pool list. ", e);
+        }
+        return result;
+    }
+
+    @Override
+    public PoolGetResult getPool(long poolNumber) throws ContractExecutorException {
+        PoolGetResult result;
+        try {
+            result = client.PoolGet(poolNumber);
+        } catch (TException e) {
+            throw new ContractExecutorException("Cannot get pool. ", e);
         }
         return result;
     }

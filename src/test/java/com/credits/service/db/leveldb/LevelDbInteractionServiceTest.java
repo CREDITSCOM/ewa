@@ -1,50 +1,33 @@
 package com.credits.service.db.leveldb;
 
+import com.credits.exception.ContractExecutorException;
+import com.credits.service.ServiceTest;
+import com.credits.thrift.gen.api.BalanceGetResult;
+import com.credits.thrift.gen.api.TransactionGetResult;
+import com.credits.thrift.gen.api.TransactionsGetResult;
 import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TSocket;
-import org.apache.thrift.transport.TTransport;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class LevelDbInteractionServiceTest {
-    private TTransport transport;
-    //private API.Client client;
+import javax.annotation.Resource;
 
-    @Before
-    public void setUp() {
-        try {
-            transport = new TSocket("localhost", 9090);
-            transport.open();
-            TProtocol protocol = new TBinaryProtocol(transport);
-            //client = new API.Client(protocol);
-        } catch (TException e) {
-            e.printStackTrace();
-        }
+public class LevelDbInteractionServiceTest extends ServiceTest{
+
+    @Resource
+    private LevelDbInteractionService service;
+
+    @Test
+    public void perform() throws TException, ContractExecutorException {
+        System.out.println("getBalance()");
+        BalanceGetResult balance = service.getBalance("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", "CS");
+        System.out.println("getBalance=" + balance.getAmount());
+
+        System.out.println("getTransaction()");
+        TransactionGetResult transaction = service.getTransaction("00000000000001adf44c7d697675870");
+        System.out.println("getTransaction=" + transaction.getTransaction());
+
+        System.out.println("getTransactions()");
+        TransactionsGetResult transactions = service.getTransactions("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", 1, 5);
+        System.out.println("getTransactions=" + transactions.getTransactions());
     }
-
-    @After
-    public void close() {
-        if (transport != null) {
-            transport.close();
-        }
-    }
-
-//    @Test
-//    public void perform() throws TException {
-//        System.out.println("get_balance()");
-//        java.util.Map<java.lang.String,Amount> balance = client.get_balance("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC");
-//        System.out.println("get_balance=" + balance);
-//
-//        System.out.println("get_transactions()");
-//        java.util.List<Transaction> transactions = client.get_transactions("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC", "BTC");
-//        System.out.println("get_transactions=" + transactions);
-//
-//        System.out.println("get_transaction_info()");
-//        TransactionInfo info = client.get_transaction_info("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC", "3QvxvxuotS5PuTjmVUpWN6sVkfzUfX3RFV", new Amount(13, 37), 0, "DASH");
-//        System.out.println("get_transaction_info=" + info);
-//    }
 
 }

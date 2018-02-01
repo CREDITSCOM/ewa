@@ -1,5 +1,6 @@
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
+import com.credits.thrift.gen.api.BalanceGetResult;
 
 import java.util.List;
 import java.util.Map;
@@ -14,20 +15,6 @@ public class MyTest {
 
     @Inject
     private LevelDbInteractionService service;
-
-//    public void work() {
-//        System.out.println("Method work is being involved...");
-//        if (service == null) {
-//            System.out.println("LevelDbInteractionService has not been initialized");
-//            return;
-//        }
-//        Transaction[] address3Transactions = service.get(ADDRESS3, 0);
-//        long address1balance = 0;
-//        for (Transaction tr : address3Transactions) {
-//            address1balance += tr.getValue();
-//        }
-//        System.out.println(ADDRESS3 + " balance: " + address1balance);
-//    }
 
     public void foo() throws ContractExecutorException {
         System.out.println("get_balance()");
@@ -44,9 +31,9 @@ public class MyTest {
     }
 
     public void foo1() throws ContractExecutorException {
-        System.out.println("get_balance()");
-        Map<String,Amount> balance = service.getBalance("123");
-        System.out.println("get_balance=" + balance);
+        System.out.println("getBalance()");
+        BalanceGetResult balance = service.getBalance("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", "CS");
+        System.out.println("getBalance=" + balance.getAmount());
     }
 
 }
