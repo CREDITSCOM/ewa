@@ -18,9 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.util.ResourceBundle;
+import java.text.*;
+import java.util.*;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
@@ -48,6 +47,9 @@ public class Form6Controller extends Controller implements Initializable {
 
     @FXML
     private Label labFee;
+
+    private String decSep;
+    private static final String digits="0123456789";
 
     /**
      * c&p from Spinner
@@ -210,5 +212,51 @@ public class Form6Controller extends Controller implements Initializable {
         this.numFee.valueProperty().addListener((observable, oldValue, newValue) -> {
             refreshTransactionFeePercent(newValue, this.numAmount.getValue());
         });
+
+        Locale loc=Locale.getDefault();
+        DecimalFormatSymbols symbols= new DecimalFormatSymbols(loc);
+        char sep=symbols.getDecimalSeparator();
+        decSep=Character.toString(sep);
+
+        this.numAmount.setOnKeyReleased(event -> {
+            String s1=this.numAmount.getEditor().getText();
+            String s2=correctNum(s1);
+            if (!s1.equals(s2)) {
+                this.numAmount.getEditor().setText(s2);
+                this.numAmount.getEditor().positionCaret(s2.length());
+            }
+        });
+
+        this.numFee.setOnKeyReleased(event -> {
+            String s1=this.numFee.getEditor().getText();
+            String s2=correctNum(s1);
+            if (!s1.equals(s2)) {
+                this.numFee.getEditor().setText(s2);
+                this.numFee.getEditor().positionCaret(s2.length());
+            }
+        });
+    }
+
+    private String correctNum(String s) {
+        int i=0;
+        boolean wasPoint=false;
+        while (i<s.length()) {
+            String c=s.substring(i,i+1);
+            if (!(c.equals(decSep) && !wasPoint) && digits.indexOf(c)<0) {
+                if (i==0 && s.length()==1)
+                    s="";
+                else if (i==0)
+                    s=s.substring(1);
+                else if (i==s.length()-1)
+                    s=s.substring(0,i);
+                else
+                    s=s.substring(0,i)+s.substring(i+1);
+            } else
+                i++;
+
+            if (c.equals(decSep))
+                wasPoint=true;
+        }
+        return s;
     }
 }
