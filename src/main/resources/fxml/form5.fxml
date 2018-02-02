@@ -4,64 +4,78 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form5Controller">
 	<children>
-		<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-			<top>
-				<fx:include source="header.fxml" />
-			</top>
+		<BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<center>
-				<BorderPane maxHeight="500.0" minHeight="500.0" prefHeight="500.0" BorderPane.alignment="TOP_CENTER">
-					<center>
-						<Pane maxHeight="441.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="441.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER">
+				<ScrollPane fitToHeight="true" fitToWidth="true">
+					<content>
+						<HBox alignment="CENTER">
 							<children>
-								<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="5. Put your private key">
-									<font>
-										<Font size="14.0" />
-									</font>
-								</Label>
-								<Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-								<Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
+								<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
+									<top>
+										<fx:include source="header.fxml" />
+									</top>
+									<center>
+										<BorderPane maxHeight="750.0" minHeight="750.0" prefHeight="750.0" BorderPane.alignment="TOP_CENTER">
+											<center>
+												<Pane maxHeight="441.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="441.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_CENTER">
+													<children>
+														<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="5. Put your private key">
+															<font>
+																<Font size="14.0" />
+															</font>
+														</Label>
+														<Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
+														<Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
 
-								<Label layoutX="23.0" layoutY="149.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put below saved private key in previous step">
-									<font>
-										<Font name="System Bold" size="11.0" />
-									</font>
-								</Label>
-								<TextField fx:id="txKey" layoutX="24.0" layoutY="183.0" prefHeight="56.0" prefWidth="605.0" promptText="put private key here" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
+														<Label layoutX="23.0" layoutY="149.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put below saved private key in previous step">
+															<font>
+																<Font name="System Bold" size="11.0" />
+															</font>
+														</Label>
+														<TextField fx:id="txKey" layoutX="24.0" layoutY="183.0" prefHeight="56.0" prefWidth="605.0" promptText="put private key here" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
 
-								<Label layoutX="24.0" layoutY="239.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put below public key">
-									<font>
-										<Font name="System Bold" size="11.0" />
-									</font>
-								</Label>
-								<TextField fx:id="txPublic" layoutX="21.0" layoutY="260.0" prefHeight="56.0" prefWidth="605.0" promptText="put public key here" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
+														<Label layoutX="24.0" layoutY="239.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put below public key">
+															<font>
+																<Font name="System Bold" size="11.0" />
+															</font>
+														</Label>
+														<TextField fx:id="txPublic" layoutX="21.0" layoutY="260.0" prefHeight="56.0" prefWidth="605.0" promptText="put public key here" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
 
-								<Button fx:id="btnBack" layoutX="21.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
-								<Button layoutX="456.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleOpen" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="OPEN YOUR WALLET" textAlignment="CENTER" wrapText="true" />
-								<CheckBox fx:id="chSavePublicKey" layoutX="24.0" layoutY="325.0" mnemonicParsing="false" text="save public key" />
+														<Button fx:id="btnBack" layoutX="21.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
+														<Button layoutX="456.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleOpen" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="OPEN YOUR WALLET" textAlignment="CENTER" wrapText="true" />
+														<CheckBox fx:id="chSavePublicKey" layoutX="24.0" layoutY="325.0" mnemonicParsing="false" text="save public key" />
 
+													</children>
+													<BorderPane.margin>
+														<Insets top="30.0" />
+													</BorderPane.margin>
+												</Pane>
+											</center>
+											<BorderPane.margin>
+												<Insets />
+											</BorderPane.margin>
+										</BorderPane>
+									</center>
+									<bottom>
+										<fx:include source="footer.fxml" />
+									</bottom>
+								</BorderPane>
 							</children>
-							<BorderPane.margin>
-								<Insets />
-							</BorderPane.margin>
-						</Pane>
-					</center>
-					<BorderPane.margin>
-						<Insets />
-					</BorderPane.margin>
-				</BorderPane>
+						</HBox>
+					</content>
+				</ScrollPane>
 			</center>
-			<bottom>
-				<fx:include source="footer.fxml" />
-			</bottom>
 		</BorderPane>
 	</children>
 </AnchorPane>
