@@ -1,22 +1,20 @@
 package com.credits.service.db.leveldb;
 
-import com.credits.exception.ContractExecutorException;
-import com.credits.thrift.gen.api.BalanceGetResult;
-import com.credits.thrift.gen.api.PoolGetResult;
-import com.credits.thrift.gen.api.PoolListGetResult;
-import com.credits.thrift.gen.api.TransactionGetResult;
-import com.credits.thrift.gen.api.TransactionsGetResult;
+import com.credits.leveldb.client.PoolData;
+import com.credits.leveldb.client.TransactionData;
+
+import java.util.List;
 
 public interface LevelDbInteractionService {
 
-    BalanceGetResult getBalance(String address, String currency) throws ContractExecutorException;
+    Double getBalance(String address, String currency) throws Exception;
 
-    TransactionGetResult getTransaction(String transactionId) throws ContractExecutorException;
+    TransactionData getTransaction(String transactionId) throws Exception;
 
-    TransactionsGetResult getTransactions(String address, long offset, long limit) throws ContractExecutorException;
+    List<TransactionData> getTransactions(String address, long offset, long limit) throws Exception;
 
-    PoolListGetResult getPoolList(long offset, long limit) throws ContractExecutorException;
+    List<PoolData> getPoolList(long offset, long limit) throws Exception;
 
-    PoolGetResult getPool(long poolNumber) throws ContractExecutorException;
+    PoolData getPool(long poolNumber) throws Exception;
 
 }

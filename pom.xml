@@ -154,9 +154,9 @@
 
         <!--thrift-->
         <dependency>
-            <groupId>org.apache.thrift</groupId>
-            <artifactId>libthrift</artifactId>
-            <version>0.11.0</version>
+            <groupId>com.credits</groupId>
+            <artifactId>leveldb-client</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
@@ -193,6 +193,7 @@
                         <exclude>**/UserCodeTest.java</exclude>
                         <exclude>**/LevelDbInteractionServiceTest.java</exclude>
                         <exclude>**/ContractExecutorServiceThriftIntegrationTest.java</exclude>
+                        <exclude>**/ContractExecutorServiceThriftIntegrationMockTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
