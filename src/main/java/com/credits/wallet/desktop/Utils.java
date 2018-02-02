@@ -23,29 +23,4 @@ public class Utils {
         alert.setContentText(text);
         alert.showAndWait();
     }
-
-    public static String callAPI(String addrSuffix, String errorText) {
-        try {
-            HttpClient client = new DefaultHttpClient();
-
-            HttpGet get = new HttpGet(AppState.apiAddr + addrSuffix);
-            HttpResponse response = client.execute(get);
-
-            InputStream is = response.getEntity().getContent();
-            final int bufferSize = 1024;
-            final char[] buffer = new char[bufferSize];
-            final StringBuilder out = new StringBuilder();
-            Reader in = new InputStreamReader(is, "UTF-8");
-            int rsz = in.read(buffer, 0, buffer.length);
-            while (rsz >= 0) {
-                out.append(buffer, 0, rsz);
-                rsz = in.read(buffer, 0, buffer.length);
-            }
-            return out.toString();
-
-        } catch (Exception e) {
-            Utils.showError(errorText + " " + e.toString());
-            return null;
-        }
-    }
 }

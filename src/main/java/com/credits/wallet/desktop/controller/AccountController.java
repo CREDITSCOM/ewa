@@ -3,9 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Utils;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.credits.wallet.desktop.utils.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -40,14 +38,13 @@ public class AccountController extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.wallet.setText(AppState.account);
 
-        String balanceInfo = Utils.callAPI("getbalance?account=" + AppState.account, ERR_GETTING_BALANCE);
-        if (balanceInfo != null) {
-            JsonElement jelement = new JsonParser().parse(balanceInfo);
-            JsonObject jObject =
-                jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
-            String balStr = Long.toString(jObject.get("integral").getAsLong()) +
-                App.decSep + Long.toString(jObject.get("fraction").getAsLong());
-            this.balance.setText(balStr);
+        try {
+            Double balance=AppState.apiClient.getBalance(AppState.account, "CS");
+            this.balance.setText(Convertor.toString(balance));
+        } catch (Exception e) {
+            this.balance.setText("");
+            e.printStackTrace();
+            Utils.showError(ERR_GETTING_BALANCE);
         }
     }
 }

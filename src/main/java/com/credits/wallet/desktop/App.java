@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop;
 
 
+import com.credits.leveldb.client.*;
 import com.credits.wallet.desktop.controller.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -25,8 +26,6 @@ public class App extends Application {
         "The server address could not be determined. Check the presence of the api.addr parameter in the settings.properties file";
     private static Stage currentStage;
 
-    public static String decSep;
-
     public static void main(String[] args) {
         launch(args);
     }
@@ -37,23 +36,22 @@ public class App extends Application {
             Locale loc=Locale.getDefault();
             DecimalFormatSymbols symbols= new DecimalFormatSymbols(loc);
             char sep=symbols.getDecimalSeparator();
-            decSep=Character.toString(sep);
+            AppState.decSep=Character.toString(sep);
 
             FileInputStream fis = new FileInputStream("settings.properties");
             Properties property = new Properties();
             property.load(fis);
 
             String apiAddr = property.getProperty("api.addr");
-            if (apiAddr == null || apiAddr.isEmpty()) {
+            String apiPort = property.getProperty("api.port");
+            if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
                 Utils.showError(ERR_NO_API_ADDR);
             } else {
-                if (!apiAddr.endsWith("/")) {
-                    apiAddr = apiAddr + "/";
-                }
-                AppState.apiAddr = apiAddr;
+                AppState.apiClient= ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
                 showForm("/fxml/form0.fxml", "Wallet");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             Utils.showError(ERR_NO_PROPERTIES);
         }
     }

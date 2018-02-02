@@ -1,13 +1,11 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.leveldb.client.*;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Utils;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.credits.wallet.desktop.utils.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -27,6 +25,7 @@ public class HistoryController extends Controller implements Initializable {
     private static final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
 
     private int pageNumber;
+    private int pageSize;
 
     @FXML
     private ComboBox<Integer> cbPageSize;
@@ -48,6 +47,7 @@ public class HistoryController extends Controller implements Initializable {
             cbPageSize.getItems().add(10 * (i + 1));
         }
         cbPageSize.getSelectionModel().select(0);
+        pageSize=10;
 
         TableColumn[] tableColumns = new TableColumn[tabTransaction.getColumns().size()];
         for (int i = 0; i < tabTransaction.getColumns().size(); i++) {
@@ -56,8 +56,7 @@ public class HistoryController extends Controller implements Initializable {
         tableColumns[0].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("target"));
         tableColumns[1].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("currency"));
         tableColumns[2].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("amount"));
-        tableColumns[3].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("fee"));
-        tableColumns[4].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("time"));
+        tableColumns[3].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("hash"));
 
         pageNumber = 1;
         setPage();
@@ -67,6 +66,7 @@ public class HistoryController extends Controller implements Initializable {
         cbPageSize.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                pageSize=cbPageSize.getItems().get((int)newValue);
                 pageNumber = 1;
                 setPage();
 
@@ -91,29 +91,24 @@ public class HistoryController extends Controller implements Initializable {
     private void fillTable() {
         tabTransaction.getItems().clear();
 
-        String transactionHistory = Utils.callAPI("gettransactions?account=" + AppState.account + "&currency=",
-            ERR_GETTING_TRANSACTION_HISTORY);
-        if (transactionHistory != null) {
-            JsonElement jelement = new JsonParser().parse(transactionHistory);
-            JsonArray jTransactions = jelement.getAsJsonObject().get("response").getAsJsonArray();
-            for (int i = 0; i < jTransactions.size(); i++) {
+        try {
+            List<TransactionData> transactionList=AppState.apiClient.getTransactions(AppState.account,
+                (pageNumber-1)*pageSize, pageSize);
+            for (TransactionData transaction : transactionList) {
                 TransactionTabRow tr = new TransactionTabRow();
 
-                tr.setTarget(jTransactions.get(i).getAsJsonObject().get("target").getAsString());
-                tr.setCurrency(jTransactions.get(i).getAsJsonObject().get("currency").getAsString());
-                JsonObject jAmount = jTransactions.get(i).getAsJsonObject().get("amount").getAsJsonObject();
-                JsonObject jFee = jTransactions.get(i).getAsJsonObject().get("fee").getAsJsonObject();
-                String amountStr = Long.toString(jAmount.get("integral").getAsLong()) +
-                    App.decSep + Long.toString(jAmount.get("fraction").getAsLong());
-                String feeStr = Long.toString(jFee.get("integral").getAsLong()) +
-                    App.decSep + Long.toString(jFee.get("fraction").getAsLong());
-                tr.setAmount(amountStr);
-                tr.setFee(feeStr);
-                tr.setTime((new Date(jTransactions.get(i).getAsJsonObject().get("time").getAsLong())).toString());
-                tr.setTimeN(jTransactions.get(i).getAsJsonObject().get("time").getAsLong());
+                tr.setTarget(transaction.getTarget());
+                tr.setCurrency(transaction.getCurrency());
+                tr.setAmount(Convertor.toString(transaction.getAmount()));
+                tr.setHash(transaction.getHash());
+                tr.setId(transaction.getInnerId());
 
                 tabTransaction.getItems().add(tr);
             }
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            Utils.showError(ERR_GETTING_TRANSACTION_HISTORY);
         }
     }
 
@@ -126,6 +121,7 @@ public class HistoryController extends Controller implements Initializable {
     private void handlePageFirst() {
         pageNumber = 1;
         setPage();
+        fillTable();
     }
 
     @FXML
@@ -134,17 +130,14 @@ public class HistoryController extends Controller implements Initializable {
             pageNumber = pageNumber - 1;
         }
         setPage();
+        fillTable();
     }
 
     @FXML
     private void handlePageNext() {
         pageNumber = pageNumber + 1;
         setPage();
-    }
-
-    @FXML
-    private void handlePageLast() {
-
+        fillTable();
     }
 
     private void setPage() {

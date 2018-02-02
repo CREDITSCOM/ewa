@@ -5,9 +5,6 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Dictionaries;
 import com.credits.wallet.desktop.Utils;
 import com.credits.wallet.desktop.utils.Convertor;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -49,6 +46,7 @@ public class Form6Controller extends Controller implements Initializable {
     private Label labFee;
 
     private static final String digits="0123456789";
+    private List<String> coins=new ArrayList<String>();
 
     /**
      * c&p from Spinner
@@ -167,21 +165,22 @@ public class Form6Controller extends Controller implements Initializable {
 
         // Fill coin list
         cbCoin.getItems().clear();
+        coins.clear();
         for (String[] coin : Dictionaries.currencies) {
             cbCoin.getItems().add(coin[0] + " (" + coin[1] + ")");
+            coins.add(coin[0]);
         }
 
         cbCoin.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                String balanceInfo = Utils.callAPI("getbalance?account=" + AppState.account, ERR_GETTING_BALANCE);
-                if (balanceInfo != null) {
-                    JsonElement jelement = new JsonParser().parse(balanceInfo);
-                    JsonObject jObject =
-                        jelement.getAsJsonObject().get("response").getAsJsonObject().get("CS").getAsJsonObject();
-                    String balStr = Long.toString(jObject.get("integral").getAsLong()) +
-                        App.decSep + Long.toString(jObject.get("fraction").getAsLong());
-                    labCredit.setText(balStr);
+                try {
+                    Double balance=AppState.apiClient.getBalance(AppState.account, coins.get((int)newValue));
+                    labCredit.setText(Convertor.toString(balance));
+                } catch (Exception e) {
+                    labCredit.setText("");
+                    e.printStackTrace();
+                    Utils.showError(ERR_GETTING_BALANCE);
                 }
             }
         });
@@ -236,7 +235,7 @@ public class Form6Controller extends Controller implements Initializable {
         boolean wasPoint=false;
         while (i<s.length()) {
             String c=s.substring(i,i+1);
-            if (!(c.equals(App.decSep) && !wasPoint) && digits.indexOf(c)<0) {
+            if (!(c.equals(AppState.decSep) && !wasPoint) && digits.indexOf(c)<0) {
                 if (i==0 && s.length()==1)
                     s="";
                 else if (i==0)
@@ -248,7 +247,7 @@ public class Form6Controller extends Controller implements Initializable {
             } else
                 i++;
 
-            if (c.equals(App.decSep))
+            if (c.equals(AppState.decSep))
                 wasPoint=true;
         }
         return s;
