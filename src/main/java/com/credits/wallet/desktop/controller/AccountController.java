@@ -39,7 +39,7 @@ public class AccountController extends Controller implements Initializable {
         this.wallet.setText(AppState.account);
 
         try {
-            Double balance=AppState.apiClient.getBalance(AppState.account, "CS");
+            Double balance=AppState.apiClient.getBalance(AppState.account, "cs");
             this.balance.setText(Convertor.toString(balance));
         } catch (Exception e) {
             this.balance.setText("");
