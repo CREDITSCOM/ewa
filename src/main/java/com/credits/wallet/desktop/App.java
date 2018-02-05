@@ -2,17 +2,14 @@ package com.credits.wallet.desktop;
 
 
 import com.credits.leveldb.client.*;
-import com.credits.wallet.desktop.controller.Controller;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
+import javafx.application.*;
+import javafx.fxml.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.layout.*;
+import javafx.stage.*;
 
-import java.io.FileInputStream;
+import java.io.*;
 import java.text.*;
 import java.util.*;
 
@@ -47,7 +44,7 @@ public class App extends Application {
             if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
                 Utils.showError(ERR_NO_API_ADDR);
             } else {
-                AppState.apiClient= ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
+                AppState.apiClient= new ApiClient(apiAddr, Integer.valueOf(apiPort));
                 showForm("/fxml/form0.fxml", "Wallet");
             }
         } catch (Exception e) {

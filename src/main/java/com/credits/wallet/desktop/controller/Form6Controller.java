@@ -84,37 +84,6 @@ public class Form6Controller extends Controller implements Initializable {
         labCredit.setText("0");
         txKey.setText("CSx5893eff21fd9c79463d127b3d3512b38dd05a42402c079e4a45d7f00a52e8");
         labFee.setText(Convertor.toString(AppState.transactionFeePercent) + " %");
-        /*
-        // get a localized format for parsing
-        NumberFormat format = NumberFormat.getNumberInstance();
-        UnaryOperator<TextFormatter.Change> filter = c -> {
-            if (c.isContentChange()) {
-                ParsePosition parsePosition = new ParsePosition(0);
-                // NumberFormat evaluates the beginning of the text
-                format.parse(c.getControlNewText(), parsePosition);
-                if (parsePosition.getIndex() == 0 ||
-                        parsePosition.getIndex() < c.getControlNewText().length()) {
-                    // reject parsing the complete text failed
-                    return null;
-                }
-            }
-            return c;
-        };
-
-        TextFormatter<Double> amountFormatter = new TextFormatter<Double>(new DoubleStringConverter(), 0.0, filter);
-
-        numAmount.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(
-                -Double.MAX_VALUE, Double.MAX_VALUE, 0.0, 1.0));
-        numAmount.setEditable(true);
-        numAmount.getEditor().setTextFormatter(amountFormatter);
-
-        TextFormatter<Double> transactionFeeFormatter = new TextFormatter<Double>(new DoubleStringConverter(), 0.0, filter);
-
-        numFee.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(
-                -Double.MAX_VALUE, Double.MAX_VALUE, 0.0, 1.0));
-        numFee.setEditable(true);
-        numFee.getEditor().setTextFormatter(transactionFeeFormatter);
-        */
         StringConverter converter = new StringConverter<Double>() {
             private final DecimalFormat df = new DecimalFormat("#.##########");
 
