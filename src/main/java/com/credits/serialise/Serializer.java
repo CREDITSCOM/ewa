@@ -49,7 +49,7 @@ public class Serializer {
         if (fieldsForSer != null && fieldsForSer.length != 0) {
             for (Field field : fieldsForSer) {
                 try {
-                    String clas = field.getType().getName();
+                    Class<?> clas = field.getType();
                     if ((!methodIsStatic || Modifier.isStatic(field.getModifiers())) && (isSupportedType(clas))) {
                         field.setAccessible(true);
                         serFields.put(field.getName(), field.get(instance));
@@ -75,44 +75,13 @@ public class Serializer {
             File.separator + serFileName);
     }
 
-    private static Boolean isSupportedType(String clas) {
-        switch (clas) {
-            case "byte":
+    private static Boolean isSupportedType(Class<?> clas) {
+        SupportedSerialisationType[] types = SupportedSerialisationType.values();
+        for (SupportedSerialisationType type : types) {
+            if (type.getClazz() == clas) {
                 return true;
-            case "short":
-                return true;
-            case "int":
-                return true;
-            case "long":
-                return true;
-            case "float":
-                return true;
-            case "double":
-                return true;
-            case "char":
-                return true;
-            case "boolean":
-                return true;
-            case "java.lang.Byte":
-                return true;
-            case "java.lang.Short":
-                return true;
-            case "java.lang.Integer":
-                return true;
-            case "java.lang.Long":
-                return true;
-            case "java.lang.Float":
-                return true;
-            case "java.lang.Double":
-                return true;
-            case "java.lang.Character":
-                return true;
-            case "java.lang.Boolean":
-                return true;
-            case "java.lang.String":
-                return true;
-            default:
-                return false;
+            }
         }
+        return false;
     }
 }
