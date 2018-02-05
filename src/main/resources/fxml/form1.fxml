@@ -18,14 +18,14 @@
             <center>
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
-                        <HBox alignment="CENTER">
+                        <HBox alignment="TOP_CENTER">
                             <children>
                                 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
                                     <top>
                                         <fx:include source="header.fxml" />
                                     </top>
                                     <center>
-                                        <BorderPane maxHeight="750.0" minHeight="750.0" prefHeight="750.0" BorderPane.alignment="TOP_CENTER">
+                                        <BorderPane minHeight="-Infinity" prefHeight="500.0" BorderPane.alignment="TOP_CENTER">
                                             <center>
                                                 <Pane maxHeight="441.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="441.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_CENTER">
                                                     <children>
