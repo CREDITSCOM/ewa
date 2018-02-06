@@ -1,5 +1,6 @@
 package com.credits.service.db.leveldb;
 
+import com.credits.leveldb.client.PoolData;
 import com.credits.leveldb.client.TransactionData;
 import com.credits.service.ServiceTest;
 import org.junit.Test;
@@ -23,8 +24,12 @@ public class LevelDbInteractionServiceTest extends ServiceTest{
         System.out.println("getTransaction=" + transaction);
 
         System.out.println("getTransactions()");
-        List<TransactionData> transactions = service.getTransactions("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", 1, 5);
+        List<TransactionData> transactions = service.getTransactions("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", 0, 5);
         System.out.println("getTransactions=" + transactions);
+
+        System.out.println("getPool()");
+        PoolData poolData = service.getPool(1);
+        System.out.println("getPool=" + poolData);
     }
 
 }

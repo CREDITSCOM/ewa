@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Serializer {
@@ -19,7 +20,7 @@ public class Serializer {
     private final static String SER_EXT = "out";
     private final static String SER_SOURCE_FOLDER_PATH = System.getProperty("user.dir") + File.separator + "credits";
 
-    public static void deserialize(File serFile, Boolean methodIsStatic, Object instance, Class<?> clazz) throws ContractExecutorException {
+    public static void deserialize(File serFile, Boolean methodIsStatic, Object instance, List<Field> fields) throws ContractExecutorException {
         Map<String, Object> deserFields;
 
         try (ObjectInputStream ous = new ObjectInputStream(new FileInputStream(serFile))){
@@ -28,9 +29,8 @@ public class Serializer {
             throw new ContractExecutorException("Cannot load saved class fields. " + e);
         }
 
-        Field[] fieldsFromClass = clazz.getDeclaredFields();
-        if (fieldsFromClass != null && fieldsFromClass.length != 0) {
-            for (Field field : fieldsFromClass) {
+        if (fields != null && fields.size() != 0) {
+            for (Field field : fields) {
                 try {
                     if ((!methodIsStatic || Modifier.isStatic(field.getModifiers())) && deserFields.containsKey(field.getName())) {
                         field.setAccessible(true);
@@ -43,14 +43,12 @@ public class Serializer {
         }
     }
 
-    public static void serialize(File serFile, Boolean methodIsStatic, Object instance, Class<?> clazz) throws ContractExecutorException {
+    public static void serialize(File serFile, Boolean methodIsStatic, Object instance, List<Field> fields) throws ContractExecutorException {
         HashMap<String, Object> serFields = new HashMap<>();
-        Field[] fieldsForSer = clazz.getDeclaredFields();
-        if (fieldsForSer != null && fieldsForSer.length != 0) {
-            for (Field field : fieldsForSer) {
+        if (fields != null && fields.size() != 0) {
+            for (Field field : fields) {
                 try {
-                    Class<?> clas = field.getType();
-                    if ((!methodIsStatic || Modifier.isStatic(field.getModifiers())) && (isSupportedType(clas))) {
+                    if (!methodIsStatic || Modifier.isStatic(field.getModifiers())) {
                         field.setAccessible(true);
                         serFields.put(field.getName(), field.get(instance));
                     }
@@ -73,15 +71,5 @@ public class Serializer {
         String serFileName = FilenameUtils.getBaseName(fileName) + "." + SER_EXT;
         return new File(SER_SOURCE_FOLDER_PATH + File.separator + address +
             File.separator + serFileName);
-    }
-
-    private static Boolean isSupportedType(Class<?> clas) {
-        SupportedSerialisationType[] types = SupportedSerialisationType.values();
-        for (SupportedSerialisationType type : types) {
-            if (type.getClazz() == clas) {
-                return true;
-            }
-        }
-        return false;
     }
 }

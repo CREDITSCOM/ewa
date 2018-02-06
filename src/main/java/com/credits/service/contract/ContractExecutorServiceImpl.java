@@ -3,6 +3,7 @@ package com.credits.service.contract;
 import com.credits.classload.RuntimeDependencyInjector;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
+import com.credits.serialise.SupportedSerialisationType;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
 import com.credits.serialise.Serializer;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -85,10 +87,21 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             }
         }
 
+        List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
+            .filter(field -> {
+                for (SupportedSerialisationType type : SupportedSerialisationType.values()) {
+                    if (type.getClazz() == field.getType()) {
+                        return true;
+                    }
+                }
+                return false;
+            })
+            .collect(Collectors.toList());
+
         //Injecting deserialized fields into class if present
         File serFile = Serializer.getSerFile(address);
         if (serFile.exists()) {
-            Serializer.deserialize(serFile, methodIsStatic, instance, clazz);
+            Serializer.deserialize(serFile, methodIsStatic, instance, fields);
         }
 
         //Invoking target method
@@ -100,7 +113,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         //Serializing class or instance fields
-        Serializer.serialize(serFile, methodIsStatic, instance, clazz);
+        Serializer.serialize(serFile, methodIsStatic, instance, fields);
     }
 
     private Object[] castValues(Class<?>[] types, String[] params) throws ContractExecutorException {

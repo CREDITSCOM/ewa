@@ -193,7 +193,6 @@
                         <exclude>**/UserCodeTest.java</exclude>
                         <exclude>**/LevelDbInteractionServiceTest.java</exclude>
                         <exclude>**/ContractExecutorServiceThriftIntegrationTest.java</exclude>
-                        <exclude>**/ContractExecutorServiceThriftIntegrationMockTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
