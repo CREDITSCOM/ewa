@@ -18,7 +18,24 @@ public enum SupportedSerialisationType {
     DOUBLE_OBJ_TYPE(java.lang.Double.class),
     CHAR_OBJ_TYPE(java.lang.Character.class),
     BOOLEAN_OBJ_TYPE(java.lang.Boolean.class),
-    STRING_TYPE(java.lang.String.class);
+    STRING_TYPE(java.lang.String.class),
+    BYTE_PRIM_TYPE_ARRAY(byte[].class),
+    SHORT_PRIM_TYPE_ARRAY(short[].class),
+    INT_PRIM_TYPE_ARRAY(int[].class),
+    LONG_PRIM_TYPE_ARRAY(long[].class),
+    FLOAT_PRIM_TYPE_ARRAY(float[].class),
+    DOUBLE_PRIM_TYPE_ARRAY(double[].class),
+    CHAR_PRIM_TYPE_ARRAY(char[].class),
+    BOOLEAN_PRIM_TYPE_ARRAY(boolean[].class),
+    BYTE_OBJ_TYPE_ARRAY(java.lang.Byte[].class),
+    SHORT_OBJ_TYPE_ARRAY(java.lang.Short[].class),
+    INT_OBJ_TYPE_ARRAY(java.lang.Integer[].class),
+    LONG_OBJ_TYPE_ARRAY(java.lang.Long[].class),
+    FLOAT_OBJ_TYPE_ARRAY(java.lang.Float[].class),
+    DOUBLE_OBJ_TYPE_ARRAY(java.lang.Double[].class),
+    CHAR_OBJ_TYPE_ARRAY(java.lang.Character[].class),
+    BOOLEAN_OBJ_TYPE_ARRAY(java.lang.Boolean[].class),
+    STRING_TYPE_ARRAY(java.lang.String[].class);
 
     private Class<?> clazz;
 
