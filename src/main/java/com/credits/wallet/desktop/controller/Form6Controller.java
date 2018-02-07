@@ -14,6 +14,9 @@ import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.*;
 import java.util.*;
@@ -44,9 +47,6 @@ public class Form6Controller extends Controller implements Initializable {
 
     @FXML
     private Label labFee;
-
-    private static final String digits="0123456789";
-    private List<String> coins=new ArrayList<String>();
 
     /**
      * c&p from Spinner
@@ -134,17 +134,30 @@ public class Form6Controller extends Controller implements Initializable {
 
         // Fill coin list
         cbCoin.getItems().clear();
-        coins.clear();
+        AppState.coins.clear();
         for (String[] coin : Dictionaries.currencies) {
             cbCoin.getItems().add(coin[0] + " (" + coin[1] + ")");
-            coins.add(coin[0]);
+            AppState.coins.add(coin[0]);
+        }
+        try {
+            FileInputStream fis = new FileInputStream("coins.csv");
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                String[] s=line.split(";");
+                cbCoin.getItems().add(s[0]+" ("+s[1]+")");
+                AppState.coins.add(s[0]);
+            }
+            br.close();
+        } catch (Exception e) {
+            // do nothing - no user's coins
         }
 
         cbCoin.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 try {
-                    Double balance=AppState.apiClient.getBalance(AppState.account, coins.get((int)newValue));
+                    double balance=getBalance(AppState.coins.get((int) newValue));
                     labCredit.setText(Convertor.toString(balance));
                 } catch (Exception e) {
                     labCredit.setText("");
@@ -182,7 +195,7 @@ public class Form6Controller extends Controller implements Initializable {
 
         this.numAmount.setOnKeyReleased(event -> {
             String s1=this.numAmount.getEditor().getText();
-            String s2=correctNum(s1);
+            String s2=Utils.correctNum(s1);
             if (!s1.equals(s2)) {
                 this.numAmount.getEditor().setText(s2);
                 this.numAmount.getEditor().positionCaret(s2.length());
@@ -191,7 +204,7 @@ public class Form6Controller extends Controller implements Initializable {
 
         this.numFee.setOnKeyReleased(event -> {
             String s1=this.numFee.getEditor().getText();
-            String s2=correctNum(s1);
+            String s2=Utils.correctNum(s1);
             if (!s1.equals(s2)) {
                 this.numFee.getEditor().setText(s2);
                 this.numFee.getEditor().positionCaret(s2.length());
@@ -199,26 +212,28 @@ public class Form6Controller extends Controller implements Initializable {
         });
     }
 
-    private String correctNum(String s) {
-        int i=0;
-        boolean wasPoint=false;
-        while (i<s.length()) {
-            String c=s.substring(i,i+1);
-            if (!(c.equals(AppState.decSep) && !wasPoint) && digits.indexOf(c)<0) {
-                if (i==0 && s.length()==1)
-                    s="";
-                else if (i==0)
-                    s=s.substring(1);
-                else if (i==s.length()-1)
-                    s=s.substring(0,i);
-                else
-                    s=s.substring(0,i)+s.substring(i+1);
-            } else
-                i++;
+    @FXML
+    private void handleNewCoin() {
+        App.showForm("/fxml/new_coin.fxml", "Wallet");
+    }
 
-            if (c.equals(AppState.decSep))
-                wasPoint=true;
+    private double getBalance(String coin) throws Exception {
+        // First try to find balance in csv-file
+        try {
+            FileInputStream fis = new FileInputStream("coins.csv");
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                String[] s=line.split(";");
+                if (s[0].equals(coin)) {
+                    return Convertor.toDouble(s[2]);
+                }
+            }
+            br.close();
+        } catch (Exception e) {
+            // do nothing - there is no coin in csv-file
         }
-        return s;
+
+        return AppState.apiClient.getBalance(AppState.account, coin);
     }
 }
