@@ -22,3 +22,5 @@ nbdist/
 
 ### Compiled output ###
 target
+
+coins.csv
