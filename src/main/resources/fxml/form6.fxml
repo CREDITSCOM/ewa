@@ -26,10 +26,19 @@
 									<top>
 										<fx:include source="header.fxml" />
 									</top>
-									<center>
-										<BorderPane maxHeight="750.0" minHeight="750.0" prefHeight="750.0" BorderPane.alignment="TOP_CENTER">
-											<center>
-												<Pane maxHeight="688.0" maxWidth="708.0" minHeight="300.0" minWidth="0.0" prefHeight="635.0" prefWidth="708.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_LEFT">
+									<bottom>
+										<fx:include source="footer.fxml" />
+									</bottom>
+                           <right>
+										<BorderPane maxHeight="750.0" minHeight="750.0" prefHeight="750.0" BorderPane.alignment="CENTER">
+											<BorderPane.margin>
+												<Insets />
+											</BorderPane.margin>
+											<left>
+												<fx:include source="account.fxml" />
+											</left>
+                                 <center>
+												<Pane maxHeight="688.0" maxWidth="708.0" minHeight="300.0" minWidth="0.0" prefHeight="635.0" prefWidth="708.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER">
 													<children>
 														<ComboBox fx:id="cbCoin" layoutX="18.0" layoutY="179.0" prefHeight="56.0" prefWidth="200.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" />
 														<Spinner fx:id="numFee" editable="true" layoutX="17.0" layoutY="538.0" prefHeight="56.0" prefWidth="203.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
@@ -81,26 +90,17 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
-														<Button fx:id="btnBack" layoutX="241.0" layoutY="601.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
+														<Button fx:id="btnBack" layoutX="68.0" layoutY="601.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
 														<Spinner fx:id="numAmount" editable="true" layoutX="17.0" layoutY="420.0" prefHeight="56.0" prefWidth="203.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-                                          <Button layoutX="427.0" layoutY="177.0" mnemonicParsing="false" onAction="#handleNewCoin" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="NEW COIN" textAlignment="CENTER" wrapText="true" />
+                                          <Button layoutX="354.0" layoutY="601.0" mnemonicParsing="false" onAction="#handleNewCoin" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="NEW COIN" textAlignment="CENTER" wrapText="true" />
 													</children>
 													<BorderPane.margin>
 														<Insets left="20.0" top="30.0" />
 													</BorderPane.margin>
 												</Pane>
-											</center>
-											<BorderPane.margin>
-												<Insets />
-											</BorderPane.margin>
-											<left>
-												<fx:include source="account.fxml" />
-											</left>
+                                 </center>
 										</BorderPane>
-									</center>
-									<bottom>
-										<fx:include source="footer.fxml" />
-									</bottom>
+                           </right>
 								</BorderPane>
 							</children>
 						</HBox>
