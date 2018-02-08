@@ -20,6 +20,7 @@ public class AppState {
     public static Double transactionFeePercent = 0.0;
     public static String toAddress;
     public static String transactionHash;
+    public static String coin;
 
     public static TransactionTabRow selectedTransactionRow;
 

@@ -157,6 +157,7 @@ public class Form6Controller extends Controller implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 try {
+                    AppState.coin=AppState.coins.get((int) newValue);
                     double balance=getBalance(AppState.coins.get((int) newValue));
                     labCredit.setText(Convertor.toString(balance));
                 } catch (Exception e) {

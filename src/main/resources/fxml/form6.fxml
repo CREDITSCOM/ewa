@@ -90,9 +90,9 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
-														<Button fx:id="btnBack" layoutX="68.0" layoutY="601.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
+														<Button fx:id="btnBack" layoutX="374.0" layoutY="601.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
 														<Spinner fx:id="numAmount" editable="true" layoutX="17.0" layoutY="420.0" prefHeight="56.0" prefWidth="203.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-                                          <Button layoutX="354.0" layoutY="601.0" mnemonicParsing="false" onAction="#handleNewCoin" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="NEW COIN" textAlignment="CENTER" wrapText="true" />
+                                          <Button layoutX="56.0" layoutY="601.0" mnemonicParsing="false" onAction="#handleNewCoin" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="NEW COIN" textAlignment="CENTER" wrapText="true" />
 													</children>
 													<BorderPane.margin>
 														<Insets left="20.0" top="30.0" />
