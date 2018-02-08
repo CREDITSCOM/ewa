@@ -38,8 +38,8 @@ public class Form7Controller extends Controller implements Initializable {
     private void handleGenerate() {
         AppState.transactionHash = transactionCode.getText();
 
-        String hash = UUID.randomUUID().toString();
-        String innerId = UUID.randomUUID().toString();
+        String hash = UUID.randomUUID().toString().replace("-","");
+        String innerId = UUID.randomUUID().toString().replace("-","");
         try {
             AppState.apiClient.transactionFlow(hash, innerId,
                     AppState.account, AppState.toAddress,
