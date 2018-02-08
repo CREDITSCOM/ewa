@@ -27,20 +27,22 @@ public class LevelDbInteractionServiceTest extends ServiceTest{
         List<TransactionData> transactions = service.getTransactions("1_GJnW172n4CdN0", 0, 20);
         System.out.println("getTransactions=" + transactions);
 
-        System.out.println("getPool()");
-        PoolData poolData = service.getPool(0);
-        System.out.println("getPool: poolNumber= " + poolData.getPoolNumber() + " transactionsCount= "
-            + poolData.getTransactionsCount() + " hash= " + poolData.getPoolHash() + " prevHash= "
-            + poolData.getPrevPoolHash() + " time= " + poolData.getCreationTime());
+        service.transactionFlow("", "", "", "", 2d, "");
 
-        System.out.println("getPoolList()");
-        List<PoolData> poolList = service.getPoolList(0, 5);
-        System.out.println("getPoolList: ");
-        for (PoolData poolData1 : poolList) {
-            System.out.println("poolNumber= " + poolData1.getPoolNumber() + " transactionsCount= "
-                + poolData1.getTransactionsCount() + " hash= " + poolData1.getPoolHash() + " prevHash= "
-                + poolData1.getPrevPoolHash() + " time= " + poolData1.getCreationTime());
-        }
+//        System.out.println("getPool()");
+//        PoolData poolData = service.getPool(0);
+//        System.out.println("getPool: poolNumber= " + poolData.getPoolNumber() + " transactionsCount= "
+//            + poolData.getTransactionsCount() + " hash= " + poolData.getPoolHash() + " prevHash= "
+//            + poolData.getPrevPoolHash() + " time= " + poolData.getCreationTime());
+//
+//        System.out.println("getPoolList()");
+//        List<PoolData> poolList = service.getPoolList(0, 5);
+//        System.out.println("getPoolList: ");
+//        for (PoolData poolData1 : poolList) {
+//            System.out.println("poolNumber= " + poolData1.getPoolNumber() + " transactionsCount= "
+//                + poolData1.getTransactionsCount() + " hash= " + poolData1.getPoolHash() + " prevHash= "
+//                + poolData1.getPrevPoolHash() + " time= " + poolData1.getCreationTime());
+//        }
     }
 
 }

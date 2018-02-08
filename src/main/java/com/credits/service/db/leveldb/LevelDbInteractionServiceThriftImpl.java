@@ -47,7 +47,12 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     }
 
     @Override
-    public PoolData getPool(long poolNumber) throws Exception {
+    public PoolData getPool(String poolNumber) throws Exception {
         return client.getPool(poolNumber);
+    }
+
+    @Override
+    public void transactionFlow(String hash, String innerId, String source, String target, Double amount, String currency) throws Exception {
+        client.transactionFlow(hash, innerId, source, target, amount, currency);
     }
 }

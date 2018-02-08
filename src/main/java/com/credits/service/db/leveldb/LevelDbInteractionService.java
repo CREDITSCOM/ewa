@@ -15,6 +15,8 @@ public interface LevelDbInteractionService {
 
     List<PoolData> getPoolList(long offset, long limit) throws Exception;
 
-    PoolData getPool(long poolNumber) throws Exception;
+    PoolData getPool(String poolNumber) throws Exception;
+
+    void transactionFlow(String hash, String innerId, String source, String target, Double amount, String currency) throws Exception;
 
 }
