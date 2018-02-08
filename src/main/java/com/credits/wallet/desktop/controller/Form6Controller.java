@@ -4,7 +4,7 @@ import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Dictionaries;
 import com.credits.wallet.desktop.Utils;
-import com.credits.wallet.desktop.utils.Convertor;
+import com.credits.wallet.desktop.utils.Converter;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -68,7 +68,7 @@ public class Form6Controller extends Controller implements Initializable {
 
     private void refreshTransactionFeePercent(Double transactionFeeValue, Double amount) {
         AppState.transactionFeePercent = (transactionFeeValue * 100) / amount;
-        this.labFee.setText(Convertor.toString(AppState.transactionFeePercent) + " %");
+        this.labFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
     }
 
     @FXML
@@ -83,7 +83,7 @@ public class Form6Controller extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         labCredit.setText("0");
         txKey.setText("CSx5893eff21fd9c79463d127b3d3512b38dd05a42402c079e4a45d7f00a52e8");
-        labFee.setText(Convertor.toString(AppState.transactionFeePercent) + " %");
+        labFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
         StringConverter converter = new StringConverter<Double>() {
             private final DecimalFormat df = new DecimalFormat("#.##########");
 
@@ -159,7 +159,7 @@ public class Form6Controller extends Controller implements Initializable {
                 try {
                     AppState.coin=AppState.coins.get((int) newValue);
                     double balance=getBalance(AppState.coins.get((int) newValue));
-                    labCredit.setText(Convertor.toString(balance));
+                    labCredit.setText(Converter.toString(balance));
                 } catch (Exception e) {
                     labCredit.setText("");
                     e.printStackTrace();
@@ -227,7 +227,7 @@ public class Form6Controller extends Controller implements Initializable {
             while ((line = br.readLine()) != null) {
                 String[] s=line.split(";");
                 if (s[0].equals(coin)) {
-                    return Convertor.toDouble(s[2]);
+                    return Converter.toDouble(s[2]);
                 }
             }
             br.close();

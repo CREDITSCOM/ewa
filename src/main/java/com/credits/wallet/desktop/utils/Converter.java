@@ -8,7 +8,7 @@ import java.util.Locale;
 /**
  * Created by Rustem.Saidaliyev on 29.01.2018.
  */
-public class Convertor {
+public class Converter {
 
     public static final String DOUBLE_FORMAT = "0.##";
 

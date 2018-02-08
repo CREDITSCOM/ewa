@@ -99,7 +99,7 @@ public class HistoryController extends Controller implements Initializable {
 
                 tr.setTarget(transaction.getTarget());
                 tr.setCurrency(transaction.getCurrency());
-                tr.setAmount(Convertor.toString(transaction.getAmount()));
+                tr.setAmount(Converter.toString(transaction.getAmount()));
                 tr.setHash(transaction.getHash());
                 tr.setId(transaction.getInnerId());
 

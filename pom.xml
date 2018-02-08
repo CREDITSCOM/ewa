@@ -23,8 +23,11 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.2</version>
         </dependency>
-
-        <!-- API -->
+        <!--
+        API
+        Для использования этой зависимости необходимо выполнить установку jar файла из проекта leveldb-client
+        mvn install:install-file -Dfile=leveldb-client.jar -DgroupId=com.credits -DartifactId=leveldb-client -Dversion=1.0-SNAPSHOT -Dpackaging=jar -DpomFile=../pom.xml
+        -->
         <dependency>
             <groupId>com.credits</groupId>
             <artifactId>leveldb-client</artifactId>

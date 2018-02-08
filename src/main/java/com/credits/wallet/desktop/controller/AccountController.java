@@ -40,7 +40,7 @@ public class AccountController extends Controller implements Initializable {
 
         try {
             Double balance=AppState.apiClient.getBalance(AppState.account, "cs");
-            this.balance.setText(Convertor.toString(balance));
+            this.balance.setText(Converter.toString(balance));
         } catch (Exception e) {
             this.balance.setText("");
             e.printStackTrace();

@@ -2,7 +2,7 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.utils.Convertor;
+import com.credits.wallet.desktop.utils.Converter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -38,9 +38,9 @@ public class Form8Controller extends Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.toAddress.setText(AppState.toAddress);
-        this.amountInCs.setText(Convertor.toString(AppState.amount) + " "+AppState.coin);
-        this.transactionFeeValue.setText(Convertor.toString(AppState.transactionFeeValue) + " "+AppState.coin);
-        this.transactionFee.setText(Convertor.toString(AppState.transactionFeePercent) + " %");
+        this.amountInCs.setText(Converter.toString(AppState.amount) + " "+AppState.coin);
+        this.transactionFeeValue.setText(Converter.toString(AppState.transactionFeeValue) + " "+AppState.coin);
+        this.transactionFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
         this.transactionHash.setText(AppState.transactionHash);
     }
 }
