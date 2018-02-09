@@ -30,9 +30,9 @@
 												<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="Transaction history" />
 												<Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can see transaction history" textFill="#818181" />
 												<Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-												<ComboBox fx:id="cbPageSize" layoutX="21.0" layoutY="109.0" prefHeight="22.0" prefWidth="68.0" />
-												<Label layoutX="99.0" layoutY="113.0" text="transactions on the page" />
-												<TableView fx:id="tabTransaction" layoutX="21.0" layoutY="131.0" prefHeight="275.0" prefWidth="925.0">
+												<ComboBox fx:id="cbPageSize" layoutX="21.0" layoutY="136.0" prefHeight="22.0" prefWidth="68.0" />
+												<Label layoutX="94.0" layoutY="140.0" text="transactions on the page" />
+												<TableView fx:id="tabTransaction" layoutX="21.0" layoutY="175.0" prefHeight="236.0" prefWidth="925.0">
 													<columns>
 														<TableColumn prefWidth="153.0" text="Target" />
 														<TableColumn prefWidth="68.0" text="Currency" />
@@ -40,11 +40,11 @@
 														<TableColumn prefWidth="374.0" text="Hash" />
 													</columns>
 												</TableView>
-												<Label layoutX="246.0" layoutY="113.0" text="Page:" />
-												<Button fx:id="btnFirst" layoutX="278.0" layoutY="109.0" mnemonicParsing="false" onAction="#handlePageFirst" text="&lt;&lt;" />
-												<Button fx:id="btnPrev" layoutX="307.0" layoutY="109.0" mnemonicParsing="false" onAction="#handlePagePrev" text="&lt;" />
-												<Label fx:id="labPage" layoutX="330.0" layoutY="113.0" text="0" />
-												<Button layoutX="338.0" layoutY="109.0" mnemonicParsing="false" onAction="#handlePageNext" text="&gt;" />
+												<Label layoutX="263.0" layoutY="140.0" text="Page:" />
+												<Button fx:id="btnFirst" layoutX="325.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePageFirst" text="&lt;&lt;" />
+												<Button fx:id="btnPrev" layoutX="356.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePagePrev" text="&lt;" />
+												<Label fx:id="labPage" layoutX="385.0" layoutY="140.0" text="0" />
+												<Button layoutX="406.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePageNext" text="&gt;" />
 												<Button layoutX="21.0" layoutY="421.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
 											</children>
 											<BorderPane.margin>
