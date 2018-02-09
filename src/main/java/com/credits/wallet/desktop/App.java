@@ -63,20 +63,14 @@ public class App extends Application {
             dialogStage.setTitle(title);
             dialogStage.initModality(Modality.WINDOW_MODAL);
 
-            double width;
-            double height;
+            Scene scene;
             if (currentStage == null) {
                 Screen screen = Screen.getPrimary();
                 Rectangle2D bounds = screen.getVisualBounds();
-                width=bounds.getWidth();
-                height=bounds.getHeight() * 0.97;
+                scene = new Scene(pane, bounds.getWidth(), bounds.getHeight() * 0.97);
             } else {
-                width=currentStage.getScene().getWidth();
-                height=currentStage.getScene().getHeight();
+                scene = new Scene(pane, currentStage.getScene().getWidth(), currentStage.getScene().getHeight());
             }
-            if (width>1075)
-                width=1075;
-            Scene scene = new Scene(pane, width, height);
 
             dialogStage.setScene(scene);
             dialogStage.setResizable(true);
