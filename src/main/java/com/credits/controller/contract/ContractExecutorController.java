@@ -21,6 +21,6 @@ public class ContractExecutorController {
     public void doGet(@RequestParam("address") String address, @RequestParam("method") String methodName,
                       @RequestParam(value = "params", required = false) String[] methodArgs) throws ContractExecutorException {
 
-        contractExecutor.execute(address, methodName, methodArgs);
+        contractExecutor.execute(address);
     }
 }

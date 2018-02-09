@@ -29,7 +29,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     @Resource
     private RuntimeDependencyInjector dependencyInjector;
 
-    public void execute(String address, String methodName, String[] params) throws ContractExecutorException {
+    public void execute(String address) throws ContractExecutorException {
         Class<?> clazz;
         try {
             clazz = storageService.load(address);
@@ -38,53 +38,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 + e.getMessage(), e);
         }
 
-        List<Method> methods = Arrays.stream(clazz.getMethods())
-            .filter(method -> {
-                if (params == null || params.length == 0) {
-                    return method.getName().equals(methodName) && method.getParameterCount() == 0;
-                } else {
-                    return method.getName().equals(methodName) && method.getParameterCount() == params.length;
-                }
-            })
-            .collect(Collectors.toList());
-
-        Method targetMethod = null;
-        Object[] argValues = null;
-        if (methods.isEmpty()) {
-            throw new ContractExecutorException("Cannot execute the contract: " + address
-                + ". Reason: Cannot find a method by name and parameters specified");
-        } else {
-            for (Method method : methods) {
-                try {
-                    Class<?>[] types = method.getParameterTypes();
-                    if (types.length > 0) {
-                        argValues = castValues(types, params);
-                    }
-                } catch (ClassCastException e) {
-                    continue;
-                } catch (ContractExecutorException e) {
-                    throw new ContractExecutorException("Cannot execute the contract: " + address, e);
-                }
-                targetMethod = method;
-                break;
-            }
-        }
-
-        if (targetMethod == null) {
-            throw new ContractExecutorException("Cannot execute the contract: " + address
-                + ". Reason: Cannot cast parameters to the method found by name: " + methodName);
-        }
-
         Object instance = null;
-        Boolean methodIsStatic = Modifier.isStatic(targetMethod.getModifiers());
-        if (!methodIsStatic) {
-            try {
-                instance = clazz.newInstance();
-                dependencyInjector.bind(instance);
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: "
-                    + e.getMessage(), e);
-            }
+        try {
+            instance = clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 
         List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
@@ -98,22 +56,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             })
             .collect(Collectors.toList());
 
-        //Injecting deserialized fields into class if present
         File serFile = Serializer.getSerFile(address);
-        if (serFile.exists()) {
-            Serializer.deserialize(serFile, methodIsStatic, instance, fields);
-        }
 
-        //Invoking target method
-        try {
-            targetMethod.invoke(instance, argValues);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: "
-                + e.getMessage(), e);
-        }
-
-        //Serializing class or instance fields
-        Serializer.serialize(serFile, methodIsStatic, instance, fields);
+        Serializer.serialize(serFile, instance, fields);
     }
 
     private Object[] castValues(Class<?>[] types, String[] params) throws ContractExecutorException {
