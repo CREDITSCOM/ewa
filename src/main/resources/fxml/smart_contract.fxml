@@ -17,9 +17,9 @@
 				<fx:include source="header.fxml" />
 			</top>
 			<center>
-				<BorderPane maxHeight="400.0" minHeight="400.0" prefHeight="400.0" BorderPane.alignment="TOP_CENTER">
+				<BorderPane maxHeight="450.0" minHeight="450.0" prefHeight="450.0" BorderPane.alignment="TOP_CENTER">
 					<center>
-						<Pane maxHeight="520.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="458.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER">
+						<Pane maxHeight="520.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="458.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_CENTER">
 							<children>
 								<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="Smart contract" />
 								<Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can check and deploy smart contract" textFill="#818181" />
@@ -35,7 +35,7 @@
 								<TextArea layoutX="14.0" layoutY="157.0" prefHeight="170.0" prefWidth="617.0" promptText="SmartContract code" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
 							</children>
 							<BorderPane.margin>
-								<Insets />
+								<Insets top="30.0" />
 							</BorderPane.margin>
 						</Pane>
 					</center>

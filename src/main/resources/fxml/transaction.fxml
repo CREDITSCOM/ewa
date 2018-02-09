@@ -18,11 +18,11 @@
 				<fx:include source="header.fxml" />
 			</top>
 			<center>
-				<BorderPane maxHeight="400.0" minHeight="400.0" prefHeight="400.0" BorderPane.alignment="TOP_CENTER">
+				<BorderPane maxHeight="450.0" minHeight="450.0" prefHeight="450.0" BorderPane.alignment="TOP_CENTER">
 					<center>
-						<Pane maxHeight="429.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="337.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="CENTER">
+						<Pane maxHeight="429.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="337.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_CENTER">
 							<children>
-								<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="Transition details" />
+								<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="Transaction details" />
 								<Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can see transaction details" textFill="#818181" />
 								<Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
 								<Button layoutX="21.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
@@ -50,7 +50,7 @@
 								</GridPane>
 							</children>
 							<BorderPane.margin>
-								<Insets />
+								<Insets top="30.0" />
 							</BorderPane.margin>
 						</Pane>
 					</center>
