@@ -219,22 +219,6 @@ public class Form6Controller extends Controller implements Initializable {
     }
 
     private double getBalance(String coin) throws Exception {
-        // First try to find balance in csv-file
-        try {
-            FileInputStream fis = new FileInputStream("coins.csv");
-            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                String[] s=line.split(";");
-                if (s[0].equals(coin)) {
-                    return Converter.toDouble(s[2]);
-                }
-            }
-            br.close();
-        } catch (Exception e) {
-            // do nothing - there is no coin in csv-file
-        }
-
         return AppState.apiClient.getBalance(AppState.account, coin);
     }
 }
