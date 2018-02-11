@@ -37,7 +37,7 @@
 												<Button layoutX="21.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
 												<Button layoutX="210.0" layoutY="337.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CHECK" textAlignment="CENTER" wrapText="true" />
 												<Button layoutX="401.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleDeploy" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DEPLOY" wrapText="true" />
-												<TextArea layoutX="14.0" layoutY="157.0" prefHeight="170.0" prefWidth="925.0" promptText="SmartContract code" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
+												<TextArea fx:id="taCode" layoutX="14.0" layoutY="157.0" prefHeight="170.0" prefWidth="925.0" promptText="SmartContract code" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
 											</children>
 											<BorderPane.margin>
 												<Insets />

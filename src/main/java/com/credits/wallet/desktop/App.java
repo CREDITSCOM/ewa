@@ -18,9 +18,11 @@ import java.util.*;
  */
 public class App extends Application {
     private static final String ERR_NO_PROPERTIES =
-        "The server address could not be determined. Check the presence of the file settings.properties";
+            "File settings.properties not found";
     private static final String ERR_NO_API_ADDR =
-        "The server address could not be determined. Check the presence of the api.addr parameter in the settings.properties file";
+            "The server address could not be determined. Check the presence of the api.addr parameter in the settings.properties file";
+    private static final String ERR_NO_CONTRACT_EXECUTOR_JAVA =
+            "Address for java contract executor could not be determined. Check the presence of the contract.executor.java parameter in the settings.properties file";
     private static Stage currentStage;
 
     public static void main(String[] args) {
@@ -30,10 +32,10 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
-            Locale loc=Locale.getDefault();
-            DecimalFormatSymbols symbols= new DecimalFormatSymbols(loc);
-            char sep=symbols.getDecimalSeparator();
-            AppState.decSep=Character.toString(sep);
+            Locale loc = Locale.getDefault();
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols(loc);
+            char sep = symbols.getDecimalSeparator();
+            AppState.decSep = Character.toString(sep);
 
             FileInputStream fis = new FileInputStream("settings.properties");
             Properties property = new Properties();
@@ -41,12 +43,17 @@ public class App extends Application {
 
             String apiAddr = property.getProperty("api.addr");
             String apiPort = property.getProperty("api.port");
+            AppState.contractExecutorJava = property.getProperty("contract.executor.java");
+
             if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
                 Utils.showError(ERR_NO_API_ADDR);
+            } else if (AppState.contractExecutorJava == null) {
+                Utils.showError(ERR_NO_CONTRACT_EXECUTOR_JAVA);
             } else {
-                AppState.apiClient= new ApiClient(apiAddr, Integer.valueOf(apiPort));
+                AppState.apiClient = new ApiClient(apiAddr, Integer.valueOf(apiPort));
                 showForm("/fxml/form0.fxml", "Wallet");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             Utils.showError(ERR_NO_PROPERTIES);

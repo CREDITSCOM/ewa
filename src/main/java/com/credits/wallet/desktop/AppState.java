@@ -11,6 +11,7 @@ import java.util.*;
 public class AppState {
     public static ApiClient apiClient;
     public static String decSep;
+    public static String contractExecutorJava;
 
     public static boolean newAccount;
     public static String account;
