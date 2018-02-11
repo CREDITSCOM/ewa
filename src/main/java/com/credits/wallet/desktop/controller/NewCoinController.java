@@ -24,8 +24,6 @@ public class NewCoinController extends Controller implements Initializable {
     private TextField txToken;
     @FXML
     private TextField txCoin;
-    @FXML
-    private TextField txBalance;
 
     @FXML
     private void handleBack() {
@@ -52,7 +50,7 @@ public class NewCoinController extends Controller implements Initializable {
             return;
         }
 
-        String strToWrite=coin+";"+token+";"+txBalance.getText();
+        String strToWrite=coin+";"+token;
 
         // Save to csv
         BufferedWriter bw = null;
@@ -86,14 +84,5 @@ public class NewCoinController extends Controller implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        txBalance.setOnKeyReleased(event -> {
-            String s1=txBalance.getText();
-            String s2= Utils.correctNum(s1);
-            if (!s1.equals(s2)) {
-                txBalance.setText(s2);
-                txBalance.positionCaret(s2.length());
-            }
-        });
     }
 }
