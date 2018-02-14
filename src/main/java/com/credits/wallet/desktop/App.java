@@ -98,4 +98,9 @@ public class App extends Application {
             e.printStackTrace();
         }
     }
-}
+
+    @Override
+    public void stop() {
+        if (AppState.executor!=null)
+            AppState.executor.shutdown();
+    }}

@@ -59,6 +59,13 @@
             <version>2.3.1</version>
         </dependency>
 
+        <!-- RichTextFX -->
+        <dependency>
+            <groupId>org.fxmisc.richtext</groupId>
+            <artifactId>richtextfx</artifactId>
+            <version>0.8.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>
