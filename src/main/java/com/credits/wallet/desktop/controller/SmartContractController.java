@@ -79,6 +79,10 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private void handleBack() {
+        if (AppState.executor!=null) {
+            AppState.executor.shutdown();
+            AppState.executor=null;
+        }
         App.showForm("/fxml/form6.fxml", "Wallet");
     }
 
@@ -146,7 +150,19 @@ public class SmartContractController extends Controller implements Initializable
                     reader.close();
 
                     JsonElement jelement = new JsonParser().parse(sbResponse.toString());
-                    Utils.showError(jelement.getAsJsonObject().get("message").getAsString());
+                    String msgStr=jelement.getAsJsonObject().get("message").getAsString();
+                    String errorStr=jelement.getAsJsonObject().get("error").getAsString();
+                    String excStr=jelement.getAsJsonObject().get("exception").getAsString();
+
+                    String errorMsg="";
+                    if (msgStr!=null)
+                        errorMsg=msgStr;
+                    if (errorStr!=null)
+                        errorMsg=errorMsg.trim()+" "+errorStr;
+                    if (excStr!=null)
+                        errorMsg=errorMsg.trim()+" "+excStr;
+
+                    Utils.showError(errorMsg);
                 }
 
                 client.close();
