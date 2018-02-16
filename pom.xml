@@ -168,6 +168,8 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <!--Quick fix in order to build fat jar with all dependencies because Spring Boot plugin builds jar with separate loader and structure-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
