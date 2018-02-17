@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionService {
@@ -58,5 +59,13 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     @Override
     public void transactionFlow(String hash, String innerId, String source, String target, Double amount, String currency) throws Exception {
         client.transactionFlow(hash, innerId, source, target, amount, currency);
+    }
+
+    public String getHash() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
+
+    public String getInnerId() {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 }
