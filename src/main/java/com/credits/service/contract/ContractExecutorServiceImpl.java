@@ -1,5 +1,6 @@
 package com.credits.service.contract;
 
+import com.credits.cglib.SimpleConstructorDelegate;
 import com.credits.classload.RuntimeDependencyInjector;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
@@ -7,7 +8,9 @@ import com.credits.serialise.SupportedSerialisationType;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
 import com.credits.serialise.Serializer;
+import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.service.usercode.UserCodeStorageService;
+import net.sf.cglib.reflect.ConstructorDelegate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -24,6 +27,9 @@ import java.util.stream.Collectors;
 public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     @Resource
+    private LevelDbInteractionService service;
+
+    @Resource
     private UserCodeStorageService storageService;
 
     @Resource
@@ -38,12 +44,16 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 + e.getMessage(), e);
         }
 
-        Object instance = null;
-        try {
-            instance = clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
-        }
+        SimpleConstructorDelegate constructorDelegate = (SimpleConstructorDelegate) ConstructorDelegate.create(
+            clazz, SimpleConstructorDelegate.class);
+        constructorDelegate.newInstance(service);
+
+//        Object instance = null;
+//        try {
+//            instance = clazz.newInstance();
+//        } catch (InstantiationException | IllegalAccessException e) {
+//            throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+//        }
 
         List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
             .filter(field -> {
@@ -58,7 +68,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         File serFile = Serializer.getSerFile(address);
 
-        Serializer.serialize(serFile, instance, fields);
+        //Serializer.serialize(serFile, instance, fields);
     }
 
     private Object[] castValues(Class<?>[] types, String[] params) throws ContractExecutorException {
