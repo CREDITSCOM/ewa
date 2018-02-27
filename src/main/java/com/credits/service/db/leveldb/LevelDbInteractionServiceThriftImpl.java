@@ -15,10 +15,6 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
 
     private ApiClient client;
 
-    public LevelDbInteractionServiceThriftImpl() {
-        client = new ApiClient("localhost", 9090);
-    }
-
     @Value("${api.server.host}")
     private String apiServerHost;
 
