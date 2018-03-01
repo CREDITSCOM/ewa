@@ -5,6 +5,7 @@ import com.google.gson.*;
 import javafx.concurrent.*;
 import javafx.fxml.*;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import org.apache.http.*;
@@ -12,6 +13,7 @@ import org.apache.http.client.methods.*;
 import org.apache.http.entity.*;
 import org.apache.http.entity.mime.*;
 import org.apache.http.impl.client.*;
+import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.*;
 import org.fxmisc.richtext.*;
 import org.fxmisc.richtext.model.*;
@@ -75,6 +77,9 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private TreeView<Label> classTreeView;
+
+    @FXML
+    private Button checkButton;
 
     //@FXML
     //private javafx.scene.control.TextArea taCode;
@@ -288,11 +293,28 @@ public class SmartContractController extends Controller implements Initializable
 
         });
 
-
-
         treeRoot.setExpanded(true);
         this.classTreeView.setRoot(treeRoot);
     }
+
+    @FXML
+    private void checkButtonAction() {
+        String code = codeArea.getText();
+
+        ASTParser parser = ASTParser.newParser(AST.JLS3);
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        parser.setSource(code.toCharArray());
+        parser.setResolveBindings(true);
+
+        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+
+        IProblem[] problemArr = cu.getProblems();
+
+        if (problemArr.length > 0) {
+            LOGGER.info("problems!!!");
+        }
+    }
+
 
     private StyleSpans<Collection<String>> computeHighlighting(String text) {
         Matcher matcher = PATTERN.matcher(text);
