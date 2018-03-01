@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
@@ -16,36 +17,42 @@
 			<center>
 				<ScrollPane fitToHeight="true" fitToWidth="true">
 					<content>
-						<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
+						<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1030.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
 							<top>
 								<fx:include source="header.fxml" />
 							</top>
 							<center>
-								<BorderPane minHeight="-Infinity" prefHeight="500.0" BorderPane.alignment="TOP_CENTER">
-									<center>
-										<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="445.0" prefWidth="975.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_CENTER">
-											<children>
-												<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="Smart contract" />
-												<Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can check and deploy smart contract" textFill="#818181" />
-												<Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-												<Label layoutX="24.0" layoutY="127.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put SmartContract code">
-													<font>
-														<Font name="System Bold" size="11.0" />
-													</font>
-												</Label>
-												<Button layoutX="21.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
-												<Button layoutX="210.0" layoutY="337.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CHECK" textAlignment="CENTER" wrapText="true" />
-												<Button layoutX="401.0" layoutY="337.0" mnemonicParsing="false" onAction="#handleDeploy" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DEPLOY" wrapText="true" />
-                                    <Pane fx:id="paneCode" layoutX="21.0" layoutY="148.0" prefHeight="177.0" prefWidth="690.0" />
-											</children>
-											<BorderPane.margin>
-												<Insets />
-											</BorderPane.margin>
-										</Pane>
-									</center>
+								<BorderPane minHeight="-Infinity" prefHeight="750.0" BorderPane.alignment="TOP_CENTER">
 									<BorderPane.margin>
 										<Insets top="30.0" />
 									</BorderPane.margin>
+                           <center>
+                              <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1000.0" BorderPane.alignment="TOP_CENTER">
+                                 <children>
+                                    <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="975.0" style="-fx-background-color: #fff;">
+                                       <children>
+                                          <Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="Smart contract" />
+                                          <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can check and deploy smart contract" textFill="#818181" />
+                                          <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
+                                          <Label layoutX="286.0" layoutY="123.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put SmartContract code">
+                                             <font>
+                                                <Font name="System Bold" size="11.0" />
+                                             </font>
+                                          </Label>
+                                          <Button layoutX="21.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
+                                          <Button layoutX="210.0" layoutY="618.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CHECK" textAlignment="CENTER" wrapText="true" />
+                                          <Button layoutX="401.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleDeploy" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DEPLOY" wrapText="true" />
+                                          <Pane fx:id="paneCode" layoutX="278.0" layoutY="148.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="455.0" prefWidth="680.0" />
+                                          <ScrollPane layoutX="24.0" layoutY="148.0" prefHeight="455.0" prefWidth="234.0">
+                                             <content>
+                                                <TreeView fx:id="classTreeView" prefHeight="5000.0" prefWidth="5000.0" />
+                                             </content>
+                                          </ScrollPane>
+                                       </children>
+                                    </Pane>
+                                 </children>
+                              </Pane>
+                           </center>
 								</BorderPane>
 							</center>
 							<bottom>

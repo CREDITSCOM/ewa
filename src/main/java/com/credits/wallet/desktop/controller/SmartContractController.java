@@ -1,42 +1,41 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.wallet.desktop.App;
-import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.Utils;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.layout.Pane;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
+import com.credits.wallet.desktop.*;
+import com.google.gson.*;
+import javafx.concurrent.*;
+import javafx.fxml.*;
+import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
+import org.apache.http.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.*;
+import org.apache.http.entity.mime.*;
+import org.apache.http.impl.client.*;
+import org.eclipse.jdt.core.dom.*;
+import org.fxmisc.richtext.*;
+import org.fxmisc.richtext.model.*;
+import org.slf4j.*;
 
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.*;
 import java.io.*;
-import java.net.URL;
-import java.time.Duration;
+import java.net.*;
+import java.time.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.regex.*;
+
+import static java.util.Arrays.*;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
  */
 public class SmartContractController extends Controller implements Initializable {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
+
     private static final String[] KEYWORDS = new String[] {
             "abstract", "assert", "boolean", "break", "byte",
             "case", "catch", "char", "class", "const",
@@ -73,6 +72,9 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private Pane paneCode;
+
+    @FXML
+    private TreeView<Label> classTreeView;
 
     //@FXML
     //private javafx.scene.control.TextArea taCode;
@@ -111,7 +113,7 @@ public class SmartContractController extends Controller implements Initializable
 
             while (javaCode.indexOf("  ")>=0)
                 javaCode=javaCode.replace("  "," ");
-            java.util.List<String> javaCodeWords= Arrays.asList(javaCode.split(" "));
+            java.util.List<String> javaCodeWords= asList(javaCode.split(" "));
             int ind=javaCodeWords.indexOf("class");
             if (ind>=0 && ind<javaCodeWords.size()-1)
                 className=javaCodeWords.get(ind+1);
@@ -203,6 +205,93 @@ public class SmartContractController extends Controller implements Initializable
         codeArea.setPrefHeight(paneCode.getPrefHeight());
         codeArea.setPrefWidth(paneCode.getPrefWidth());
         paneCode.getChildren().add(codeArea);
+    }
+
+    @FXML
+    private void panelCodeKeyReleased() {
+        refreshClassMembersTree();
+    }
+
+    private void refreshClassMembersTree() {
+        String code = codeArea.getText();
+
+        ASTParser parser = ASTParser.newParser(AST.JLS3);
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        parser.setSource(code.toCharArray());
+        parser.setResolveBindings(true);
+
+        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+
+        List typeList = cu.types();
+
+        if (typeList.size() != 1) {
+            return;
+        }
+
+        TypeDeclaration typeDeclaration = (TypeDeclaration)typeList.get(0);
+
+        String className = (typeDeclaration).getName().getFullyQualifiedName();
+
+        Label labelRoot = new Label(className);
+
+        TreeItem<Label> treeRoot = new TreeItem<Label>(labelRoot);
+
+        ASTNode root = cu.getRoot();
+
+        root.accept(new ASTVisitor() {
+
+            @Override
+            public boolean visit(FieldDeclaration node) {
+                return true;
+            }
+
+            @Override
+            public void endVisit(FieldDeclaration node) {
+                Label label = new Label(node.toString());
+
+                label.setOnMouseClicked(event -> {
+                    // TODO перемещение курсора в codeArea к строке начала члена класса
+                    LOGGER.info("click!");
+                });
+
+                TreeItem<Label> treeItem = new TreeItem();
+                treeItem.setValue(label);
+
+                treeRoot.getChildren().add(treeItem);
+            }
+
+        });
+
+        root.accept(new ASTVisitor() {
+
+            @Override
+            public boolean visit(MethodDeclaration node) {
+                return true;
+            }
+
+            @Override
+            public void endVisit(MethodDeclaration node) {
+                node.setBody(null);
+                Label label = new Label(node.toString());
+//                return str.substring(0, str.indexOf(';'));
+
+                label.setOnMouseClicked(event -> {
+                    // TODO перемещение курсора в codeArea к строке начала члена класса
+                    LOGGER.info("click!");
+                });
+
+                TreeItem<Label> treeItem = new TreeItem();
+                treeItem.setValue(label);
+
+                treeRoot.getChildren().add(treeItem);
+            }
+
+        });
+
+
+
+        treeRoot.setExpanded(true);
+        this.classTreeView.setRoot(treeRoot);
     }
 
     private StyleSpans<Collection<String>> computeHighlighting(String text) {
