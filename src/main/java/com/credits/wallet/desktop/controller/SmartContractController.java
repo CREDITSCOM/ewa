@@ -1,12 +1,16 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.*;
+import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.google.gson.*;
 import javafx.concurrent.*;
+import javafx.event.EventHandler;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import org.apache.http.*;
 import org.apache.http.client.methods.*;
@@ -70,6 +74,7 @@ public class SmartContractController extends Controller implements Initializable
     );
 
     private CodeArea codeArea;
+    private TableView tabErrors;
 
 
     @FXML
@@ -210,6 +215,39 @@ public class SmartContractController extends Controller implements Initializable
         codeArea.setPrefHeight(paneCode.getPrefHeight());
         codeArea.setPrefWidth(paneCode.getPrefWidth());
         paneCode.getChildren().add(codeArea);
+
+        tabErrors = new TableView();
+        tabErrors.setPrefHeight(paneCode.getPrefHeight()*0.3);
+        tabErrors.setPrefWidth(paneCode.getPrefWidth());
+
+        TableColumn tabErrorsColLine=new TableColumn();
+        tabErrorsColLine.setText("Line");
+        tabErrorsColLine.setPrefWidth(paneCode.getPrefWidth()*0.1);
+        TableColumn tabErrorsColText=new TableColumn();
+        tabErrorsColText.setText("Error");
+        tabErrorsColText.setPrefWidth(paneCode.getPrefWidth()*0.9);
+        tabErrors.getColumns().add(tabErrorsColLine);
+        tabErrors.getColumns().add(tabErrorsColText);
+
+        TableColumn[] tableColumns = new TableColumn[tabErrors.getColumns().size()];
+        for (int i = 0; i < tabErrors.getColumns().size(); i++) {
+            tableColumns[i] = (TableColumn) tabErrors.getColumns().get(i);
+        }
+        tableColumns[0].setCellValueFactory(new PropertyValueFactory<ErrorCodeTabRow, String>("line"));
+        tableColumns[1].setCellValueFactory(new PropertyValueFactory<ErrorCodeTabRow, String>("text"));
+
+        tabErrors.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.isPrimaryButtonDown()) {
+                    ErrorCodeTabRow tabRow = (ErrorCodeTabRow) tabErrors.getSelectionModel().getSelectedItem();
+                    if (tabRow != null) {
+                        positionCodeAreaToLine(Integer.valueOf(tabRow.getLine()));
+                    }
+                }
+            }
+        });
+
     }
 
     @FXML
@@ -311,7 +349,24 @@ public class SmartContractController extends Controller implements Initializable
         IProblem[] problemArr = cu.getProblems();
 
         if (problemArr.length > 0) {
-            LOGGER.info("problems!!!");
+            tabErrors.getItems().clear();
+
+            for (IProblem p : problemArr) {
+                ErrorCodeTabRow tr = new ErrorCodeTabRow();
+                tr.setLine(Integer.toString(p.getSourceLineNumber()));
+                tr.setText(p.getMessage());
+                tabErrors.getItems().add(tr);
+            }
+
+            codeArea.setPrefHeight(paneCode.getPrefHeight()*0.7);
+            paneCode.getChildren().clear();
+            paneCode.getChildren().add(codeArea);
+            paneCode.getChildren().add(tabErrors);
+            paneCode.getChildren().get(1).setLayoutY(paneCode.getPrefHeight()*0.7);
+        } else {
+            codeArea.setPrefHeight(paneCode.getPrefHeight());
+            paneCode.getChildren().clear();
+            paneCode.getChildren().add(codeArea);
         }
     }
 
@@ -353,5 +408,9 @@ public class SmartContractController extends Controller implements Initializable
         };
         AppState.executor.execute(task);
         return task;
+    }
+
+    private void positionCodeAreaToLine(int line) {
+        codeArea.displaceCaret(line*10);
     }
 }
