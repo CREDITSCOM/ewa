@@ -6,6 +6,7 @@ import com.google.gson.*;
 import javafx.concurrent.*;
 import javafx.event.EventHandler;
 import javafx.fxml.*;
+import javafx.geometry.Point2D;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -422,6 +423,7 @@ public class SmartContractController extends Controller implements Initializable
             pos++;
         }
         codeArea.displaceCaret(pos);
+        codeArea.showParagraphAtTop(Math.max(0,line-5));
         codeArea.requestFocus();
     }
 }
