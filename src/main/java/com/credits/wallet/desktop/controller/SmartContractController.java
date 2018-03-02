@@ -411,6 +411,17 @@ public class SmartContractController extends Controller implements Initializable
     }
 
     private void positionCodeAreaToLine(int line) {
-        codeArea.displaceCaret(line*10);
+        char[] text=codeArea.getText().toCharArray();
+        int pos=0;
+        int curLine=1;
+        while (pos<text.length) {
+            if (line<=curLine)
+                break;
+            if (text[pos]=='\n')
+                curLine++;
+            pos++;
+        }
+        codeArea.displaceCaret(pos);
+        codeArea.requestFocus();
     }
 }
