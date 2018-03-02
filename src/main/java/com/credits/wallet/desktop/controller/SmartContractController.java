@@ -257,16 +257,14 @@ public class SmartContractController extends Controller implements Initializable
     }
 
     private void refreshClassMembersTree() {
-        String code = codeArea.getText();
 
-        ASTParser parser = ASTParser.newParser(AST.JLS3);
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        parser.setSource(code.toCharArray());
-        parser.setResolveBindings(true);
+        this.classTreeView.setRoot(null);
 
-        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+        String sourceCode = codeArea.getText();
 
-        List typeList = cu.types();
+        CompilationUnit compilationUnit = createCompilationUnit(sourceCode);
+
+        List typeList = compilationUnit.types();
 
         if (typeList.size() != 1) {
             return;
@@ -280,7 +278,7 @@ public class SmartContractController extends Controller implements Initializable
 
         TreeItem<Label> treeRoot = new TreeItem<Label>(labelRoot);
 
-        ASTNode root = cu.getRoot();
+        ASTNode root = compilationUnit.getRoot();
 
         root.accept(new ASTVisitor() {
 
@@ -293,9 +291,10 @@ public class SmartContractController extends Controller implements Initializable
             public void endVisit(FieldDeclaration node) {
                 Label label = new Label(node.toString());
 
-                label.setOnMouseClicked(event -> {
-                    // TODO перемещение курсора в codeArea к строке начала члена класса
-                    LOGGER.info("click!");
+                label.setOnMousePressed(event -> {
+                    if (event.isPrimaryButtonDown()) {
+                        positionCodeAreaToLine(compilationUnit.getLineNumber(node.getStartPosition()));
+                    }
                 });
 
                 TreeItem<Label> treeItem = new TreeItem();
@@ -319,9 +318,10 @@ public class SmartContractController extends Controller implements Initializable
                 Label label = new Label(node.toString());
 //                return str.substring(0, str.indexOf(';'));
 
-                label.setOnMouseClicked(event -> {
-                    // TODO перемещение курсора в codeArea к строке начала члена класса
-                    LOGGER.info("click!");
+                label.setOnMousePressed(event -> {
+                    if (event.isPrimaryButtonDown()) {
+                        positionCodeAreaToLine(compilationUnit.getLineNumber(node.getStartPosition()));
+                    }
                 });
 
                 TreeItem<Label> treeItem = new TreeItem();
@@ -338,16 +338,11 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private void checkButtonAction() {
-        String code = codeArea.getText();
+        String sourceCode = codeArea.getText();
 
-        ASTParser parser = ASTParser.newParser(AST.JLS3);
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        parser.setSource(code.toCharArray());
-        parser.setResolveBindings(true);
+        CompilationUnit compilationUnit = createCompilationUnit(sourceCode);
 
-        CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-
-        IProblem[] problemArr = cu.getProblems();
+        IProblem[] problemArr = compilationUnit.getProblems();
 
         if (problemArr.length > 0) {
             tabErrors.getItems().clear();
@@ -369,6 +364,15 @@ public class SmartContractController extends Controller implements Initializable
             paneCode.getChildren().clear();
             paneCode.getChildren().add(codeArea);
         }
+    }
+
+    private CompilationUnit createCompilationUnit(String sourceCode) {
+        ASTParser parser = ASTParser.newParser(AST.JLS9);
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        parser.setSource(sourceCode.toCharArray());
+        parser.setResolveBindings(true);
+
+        return (CompilationUnit) parser.createAST(null);
     }
 
 
