@@ -19,4 +19,8 @@ public interface LevelDbInteractionService {
 
     void transactionFlow(String hash, String innerId, String source, String target, Double amount, String currency) throws Exception;
 
+    String getHash();
+
+    String getInnerId();
+
 }

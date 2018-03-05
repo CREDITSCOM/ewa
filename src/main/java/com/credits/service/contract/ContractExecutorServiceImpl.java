@@ -1,30 +1,30 @@
 package com.credits.service.contract;
 
-import com.credits.cglib.SimpleConstructorDelegate;
 import com.credits.classload.RuntimeDependencyInjector;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
+import com.credits.serialise.Serializer;
 import com.credits.serialise.SupportedSerialisationType;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
-import com.credits.serialise.Serializer;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.service.usercode.UserCodeStorageService;
-import net.sf.cglib.reflect.ConstructorDelegate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class ContractExecutorServiceImpl implements ContractExecutorService {
+
+    private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
 
     @Resource
     private LevelDbInteractionService service;
@@ -35,6 +35,18 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     @Resource
     private RuntimeDependencyInjector dependencyInjector;
 
+    @PostConstruct
+    private void setUp() {
+        try {
+            Class<?> contract = Class.forName("SmartContract");
+            Field interactionService = contract.getDeclaredField("service");
+            interactionService.setAccessible(true);
+            interactionService.set(null, service);
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+            logger.error("Cannot load smart contracts super class", e);
+        }
+    }
+
     public void execute(String address) throws ContractExecutorException {
         Class<?> clazz;
         try {
@@ -44,16 +56,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 + e.getMessage(), e);
         }
 
-        SimpleConstructorDelegate constructorDelegate = (SimpleConstructorDelegate) ConstructorDelegate.create(
-            clazz, SimpleConstructorDelegate.class);
-        constructorDelegate.newInstance(service);
-
-//        Object instance = null;
-//        try {
-//            instance = clazz.newInstance();
-//        } catch (InstantiationException | IllegalAccessException e) {
-//            throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
-//        }
+        Object instance = null;
+        try {
+            instance = clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+        }
 
         List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
             .filter(field -> {
@@ -68,7 +76,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         File serFile = Serializer.getSerFile(address);
 
-        //Serializer.serialize(serFile, instance, fields);
+        Serializer.serialize(serFile, instance, fields);
     }
 
     private Object[] castValues(Class<?>[] types, String[] params) throws ContractExecutorException {

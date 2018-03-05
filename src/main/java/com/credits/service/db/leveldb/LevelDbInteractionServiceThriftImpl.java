@@ -57,10 +57,12 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
         client.transactionFlow(hash, innerId, source, target, amount, currency);
     }
 
+    @Override
     public String getHash() {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
+    @Override
     public String getInnerId() {
         return UUID.randomUUID().toString().replace("-", "");
     }
