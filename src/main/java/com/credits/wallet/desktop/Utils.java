@@ -32,7 +32,7 @@ public class Utils {
         boolean wasPoint=false;
         while (i<s.length()) {
             String c=s.substring(i,i+1);
-            if (!(c.equals(AppState.decSep) && !wasPoint) && digits.indexOf(c)<0) {
+            if (!(c.equals(AppState.decSep) && !wasPoint) && !digits.contains(c)) {
                 if (i==0 && s.length()==1)
                     s="";
                 else if (i==0)

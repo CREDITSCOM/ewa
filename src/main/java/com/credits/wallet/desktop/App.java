@@ -64,7 +64,7 @@ public class App extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(App.class.getResource(fxmlFile));
-            AnchorPane pane = (AnchorPane) loader.load();
+            AnchorPane pane = loader.load();
 
             final Stage dialogStage = new Stage();
             dialogStage.setTitle(title);
