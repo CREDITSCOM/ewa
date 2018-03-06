@@ -20,48 +20,22 @@ public class Serializer {
     private final static String SER_EXT = "out";
     private final static String SER_SOURCE_FOLDER_PATH = System.getProperty("user.dir") + File.separator + "credits";
 
-    public static void deserialize(File serFile, Boolean methodIsStatic, Object instance, List<Field> fields) throws ContractExecutorException {
-        Map<String, Object> deserFields;
+    public static Object deserialize(File serFile) throws ContractExecutorException {
+        Object instance;
 
         try (ObjectInputStream ous = new ObjectInputStream(new FileInputStream(serFile))){
-            deserFields = (Map<String, Object>) ous.readObject();
+            instance = ous.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new ContractExecutorException("Cannot load saved class fields. " + e);
+            throw new ContractExecutorException("Cannot load smart contract instance. " + e);
         }
-
-        if (fields != null && fields.size() != 0) {
-            for (Field field : fields) {
-                try {
-                    if ((!methodIsStatic || Modifier.isStatic(field.getModifiers())) && deserFields.containsKey(field.getName())) {
-                        field.setAccessible(true);
-                        field.set(instance, deserFields.get(field.getName()));
-                    }
-                } catch (IllegalAccessException e) {
-                    throw new ContractExecutorException("Cannot insert class fields. " + e);
-                }
-            }
-        }
+        return instance;
     }
 
-    public static void serialize(File serFile, Boolean methodIsStatic, Object instance, List<Field> fields) throws ContractExecutorException {
-        HashMap<String, Object> serFields = new HashMap<>();
-        if (fields != null && fields.size() != 0) {
-            for (Field field : fields) {
-                try {
-                    if (!methodIsStatic || Modifier.isStatic(field.getModifiers())) {
-                        field.setAccessible(true);
-                        serFields.put(field.getName(), field.get(instance));
-                    }
-                } catch (IllegalAccessException e) {
-                    throw new ContractExecutorException("Cannot load saved class fields. " + e);
-                }
-            }
-        }
-
+    public static void serialize(File serFile, Object instance) throws ContractExecutorException {
         try (ObjectOutputStream ous = new ObjectOutputStream(new FileOutputStream(serFile))){
-            ous.writeObject(serFields);
+            ous.writeObject(instance);
         } catch (IOException e) {
-            throw new ContractExecutorException("Cannot save class fields. " + e);
+            throw new ContractExecutorException("Cannot save smart contract instance. " + e);
         }
     }
 

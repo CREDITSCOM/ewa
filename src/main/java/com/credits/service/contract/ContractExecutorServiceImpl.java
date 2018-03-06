@@ -62,20 +62,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 
-        List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
-            .filter(field -> {
-                for (SupportedSerialisationType type : SupportedSerialisationType.values()) {
-                    if (type.getClazz() == field.getType()) {
-                        return true;
-                    }
-                }
-                return false;
-            })
-            .collect(Collectors.toList());
-
         File serFile = Serializer.getSerFile(address);
 
-        Serializer.serialize(serFile, false, instance, fields);
+        Serializer.serialize(serFile, instance);
     }
 
     public void execute(String address, String methodName, String[] params) throws ContractExecutorException {
@@ -86,6 +75,16 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
+
+        Object instance;
+        File serFile = Serializer.getSerFile(address);
+        if (serFile.exists()) {
+            instance = Serializer.deserialize(serFile);
+        } else {
+            throw new ContractExecutorException("Smart contract instance doesn't exist.");
+        }
+
+
 
         List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
             if (params == null || params.length == 0) {
@@ -122,31 +121,30 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 ". Reason: Cannot cast parameters to the method found by name: " + methodName);
         }
 
-        Object instance = null;
-        Boolean methodIsStatic = Modifier.isStatic(targetMethod.getModifiers());
-        if (!methodIsStatic) {
-            try {
-                instance = clazz.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new ContractExecutorException(
-                    "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
-            }
-        }
+//        Boolean methodIsStatic = Modifier.isStatic(targetMethod.getModifiers());
+//        if (!methodIsStatic) {
+//            try {
+//                instance = clazz.newInstance();
+//            } catch (InstantiationException | IllegalAccessException e) {
+//                throw new ContractExecutorException(
+//                    "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+//            }
+//        }
 
-        List<Field> fields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> {
-            for (SupportedSerialisationType type : SupportedSerialisationType.values()) {
-                if (type.getClazz() == field.getType()) {
-                    return true;
-                }
-            }
-            return false;
-        }).collect(Collectors.toList());
+//        List<Field> fields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> {
+//            for (SupportedSerialisationType type : SupportedSerialisationType.values()) {
+//                if (type.getClazz() == field.getType()) {
+//                    return true;
+//                }
+//            }
+//            return false;
+//        }).collect(Collectors.toList());
 
-        //Injecting deserialized fields into class if present
-        File serFile = Serializer.getSerFile(address);
-        if (serFile.exists()) {
-            Serializer.deserialize(serFile, methodIsStatic, instance, fields);
-        }
+//        //Injecting deserialized fields into class if present
+//        File serFile = Serializer.getSerFile(address);
+//        if (serFile.exists()) {
+//            Serializer.deserialize(serFile, methodIsStatic, instance, fields);
+//        }
 
         //Invoking target method
         try {
@@ -156,8 +154,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 
-        //Serializing class or instance fields
-        Serializer.serialize(serFile, methodIsStatic, instance, fields);
+        //Serializing object
+        Serializer.serialize(serFile, instance);
     }
 
     private Object[] castValues(Class<?>[] types, String[] params) throws ContractExecutorException {

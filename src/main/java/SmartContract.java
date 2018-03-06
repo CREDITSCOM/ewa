@@ -2,9 +2,10 @@ import com.credits.leveldb.client.PoolData;
 import com.credits.leveldb.client.TransactionData;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class SmartContract {
+public class SmartContract implements Serializable {
 
     protected static LevelDbInteractionService service;
 
