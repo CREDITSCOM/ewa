@@ -43,7 +43,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             interactionService.setAccessible(true);
             interactionService.set(null, service);
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Cannot load smart contracts super class", e);
+            logger.error("Cannot load smart contract's super class", e);
         }
     }
 
@@ -56,7 +56,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 + e.getMessage(), e);
         }
 
-        Object instance = null;
+        Object instance;
         try {
             instance = clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
