@@ -43,15 +43,17 @@ public class Serializer {
         }
     }
 
-    public static void serialize(File serFile, Object instance, List<Field> fields) throws ContractExecutorException {
+    public static void serialize(File serFile, Boolean methodIsStatic, Object instance, List<Field> fields) throws ContractExecutorException {
         HashMap<String, Object> serFields = new HashMap<>();
         if (fields != null && fields.size() != 0) {
             for (Field field : fields) {
                 try {
-                    field.setAccessible(true);
-                    serFields.put(field.getName(), field.get(instance));
+                    if (!methodIsStatic || Modifier.isStatic(field.getModifiers())) {
+                        field.setAccessible(true);
+                        serFields.put(field.getName(), field.get(instance));
+                    }
                 } catch (IllegalAccessException e) {
-                    throw new ContractExecutorException("Cannot save class fields. " + e);
+                    throw new ContractExecutorException("Cannot load saved class fields. " + e);
                 }
             }
         }

@@ -1,13 +1,12 @@
 package com.credits.service.contract;
 
-import com.credits.classload.RuntimeDependencyInjector;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
-import com.credits.serialise.Serializer;
 import com.credits.serialise.SupportedSerialisationType;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
-import com.credits.service.db.leveldb.LevelDbInteractionService;
+import com.credits.serialise.Serializer;
+import com.credits.service.db.leveldb.*;
 import com.credits.service.usercode.UserCodeStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,13 +29,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
 
     @Resource
-    private LevelDbInteractionService service;
+    private LevelDbInteractionService dbInteractionService;
 
     @Resource
     private UserCodeStorageService storageService;
-
-    @Resource
-    private RuntimeDependencyInjector dependencyInjector;
 
     @PostConstruct
     private void setUp() {
@@ -41,7 +40,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Class<?> contract = Class.forName("SmartContract");
             Field interactionService = contract.getDeclaredField("service");
             interactionService.setAccessible(true);
-            interactionService.set(null, service);
+            interactionService.set(null, dbInteractionService);
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             logger.error("Cannot load smart contract's super class", e);
         }
@@ -76,7 +75,89 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         File serFile = Serializer.getSerFile(address);
 
-        Serializer.serialize(serFile, instance, fields);
+        Serializer.serialize(serFile, false, instance, fields);
+    }
+
+    public void execute(String address, String methodName, String[] params) throws ContractExecutorException {
+        Class<?> clazz;
+        try {
+            clazz = storageService.load(address);
+        } catch (ClassLoadException e) {
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+        }
+
+        List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
+            if (params == null || params.length == 0) {
+                return method.getName().equals(methodName) && method.getParameterCount() == 0;
+            } else {
+                return method.getName().equals(methodName) && method.getParameterCount() == params.length;
+            }
+        }).collect(Collectors.toList());
+
+        Method targetMethod = null;
+        Object[] argValues = null;
+        if (methods.isEmpty()) {
+            throw new ContractExecutorException("Cannot execute the contract: " + address +
+                ". Reason: Cannot find a method by name and parameters specified");
+        } else {
+            for (Method method : methods) {
+                try {
+                    Class<?>[] types = method.getParameterTypes();
+                    if (types.length > 0) {
+                        argValues = castValues(types, params);
+                    }
+                } catch (ClassCastException e) {
+                    continue;
+                } catch (ContractExecutorException e) {
+                    throw new ContractExecutorException("Cannot execute the contract: " + address, e);
+                }
+                targetMethod = method;
+                break;
+            }
+        }
+
+        if (targetMethod == null) {
+            throw new ContractExecutorException("Cannot execute the contract: " + address +
+                ". Reason: Cannot cast parameters to the method found by name: " + methodName);
+        }
+
+        Object instance = null;
+        Boolean methodIsStatic = Modifier.isStatic(targetMethod.getModifiers());
+        if (!methodIsStatic) {
+            try {
+                instance = clazz.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new ContractExecutorException(
+                    "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+            }
+        }
+
+        List<Field> fields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> {
+            for (SupportedSerialisationType type : SupportedSerialisationType.values()) {
+                if (type.getClazz() == field.getType()) {
+                    return true;
+                }
+            }
+            return false;
+        }).collect(Collectors.toList());
+
+        //Injecting deserialized fields into class if present
+        File serFile = Serializer.getSerFile(address);
+        if (serFile.exists()) {
+            Serializer.deserialize(serFile, methodIsStatic, instance, fields);
+        }
+
+        //Invoking target method
+        try {
+            targetMethod.invoke(instance, argValues);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+        }
+
+        //Serializing class or instance fields
+        Serializer.serialize(serFile, methodIsStatic, instance, fields);
     }
 
     private Object[] castValues(Class<?>[] types, String[] params) throws ContractExecutorException {
@@ -102,8 +183,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             try {
                 retVal[i] = recognizer.castValue(componentType);
             } catch (ContractExecutorException e) {
-                throw new ContractExecutorException("Failed when casting the parameter given with the number: "
-                    + (i + 1), e);
+                throw new ContractExecutorException(
+                    "Failed when casting the parameter given with the number: " + (i + 1), e);
             }
             i++;
         }
