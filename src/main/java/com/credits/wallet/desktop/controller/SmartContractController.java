@@ -88,9 +88,16 @@ public class SmartContractController extends Controller implements Initializable
             ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")" + "|(?<STRING>" +
             STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
 
+    private static final String dftCode="public class Contract extends SmartContract {\n" +
+            "\n" +
+            "\n" +
+            "}";
+    private static final String nonChangedStr="public class Contract extends SmartContract {";
+
     private CodeArea codeArea;
     private TableView tabErrors;
 
+    private String prevCode;
 
     @FXML
     private Pane paneCode;
@@ -217,8 +224,27 @@ public class SmartContractController extends Controller implements Initializable
             AppState.executor.shutdown();
         }
         AppState.executor = Executors.newSingleThreadExecutor();
+
+        prevCode=dftCode;
+
         codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+
+        codeArea.richChanges()
+                .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
+                .subscribe(change -> {
+                    String curCode=codeArea.getText();
+                    if (curCode.indexOf(nonChangedStr)<0) {
+                        codeArea.replaceText(0, curCode.length(), prevCode);
+                    } else {
+                        int i1=curCode.indexOf(nonChangedStr);
+                        if (curCode.indexOf(nonChangedStr,i1+1)>0) {
+                            codeArea.replaceText(0, curCode.length(), prevCode);
+                        }
+                    }
+                    prevCode=codeArea.getText();
+                });
+
         codeArea.richChanges()
             .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
             .successionEnds(Duration.ofMillis(500))
@@ -236,6 +262,7 @@ public class SmartContractController extends Controller implements Initializable
 
         codeArea.setPrefHeight(paneCode.getPrefHeight());
         codeArea.setPrefWidth(paneCode.getPrefWidth());
+        codeArea.replaceText(0, 0, dftCode);
         paneCode.getChildren().add(codeArea);
 
         tabErrors = new TableView();
