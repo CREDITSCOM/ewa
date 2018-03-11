@@ -30,15 +30,15 @@ public class SmartContract implements Serializable {
         return service.getPool(poolNumber);
     }
 
-    protected void transactionFlow(String hash, String innerId, String source, String target, Double amount, String currency) throws Exception {
+    protected void sendTransaction(String hash, String innerId, String source, String target, Double amount, String currency) throws Exception {
         service.transactionFlow(hash, innerId, source, target, amount, currency);
     }
 
-    protected String getHash() {
+    protected String generateHash() {
         return service.getHash();
     }
 
-    protected String getInnerId() {
+    protected String generateInnerId() {
         return service.getInnerId();
     }
 }
