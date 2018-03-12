@@ -132,6 +132,7 @@
 
     <build>
         <defaultGoal>install</defaultGoal>
+        <finalName>contract-executor</finalName>
 
         <plugins>
             <plugin>
@@ -163,6 +164,11 @@
                         <exclude>**/LevelDbInteractionServiceTest.java</exclude>
                         <exclude>**/ContractExecutorServiceThriftIntegrationTest.java</exclude>
                         <exclude>**/ContractExecutionReflectionTest.java</exclude>
+                        <!---->
+                        <exclude>**/ContractExecutorServiceTest.java</exclude>
+                        <exclude>**/ContractExecutorServiceThriftIntegrationMockTest.java</exclude>
+                        <exclude>**/ContractExecutorServiceThriftIntegrationTest.java</exclude>
+                        <exclude>**/UserCodeStorageServiceTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
