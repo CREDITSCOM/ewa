@@ -2,11 +2,10 @@ package com.credits.service.contract;
 
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
-import com.credits.serialise.SupportedSerialisationType;
+import com.credits.serialise.Serializer;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
-import com.credits.serialise.Serializer;
-import com.credits.service.db.leveldb.*;
+import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.service.usercode.UserCodeStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,6 +45,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     public void execute(String address) throws ContractExecutorException {
+        File serFile = Serializer.getSerFile(address);
+        if (serFile.exists()) {
+            throw new ContractExecutorException("Contract " + address + " has been already stored.");
+        }
+
         Class<?> clazz;
         try {
             clazz = storageService.load(address);
@@ -61,8 +64,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         } catch (InstantiationException | IllegalAccessException e) {
             throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
-
-        File serFile = Serializer.getSerFile(address);
 
         Serializer.serialize(serFile, instance);
     }
