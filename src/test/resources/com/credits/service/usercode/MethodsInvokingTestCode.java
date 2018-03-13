@@ -1,4 +1,4 @@
-public class UserCodeTest {
+public class MethodsInvokingTestCode extends SmartContract {
 
     private static int statIntVar = 2;
 

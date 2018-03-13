@@ -77,11 +77,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 
-        ClassLoader customLoader = clazz.getClassLoader();
-
         Object instance;
         File serFile = Serializer.getSerFile(address);
         if (serFile.exists()) {
+            ClassLoader customLoader = clazz.getClassLoader();
             instance = Serializer.deserialize(serFile, customLoader);
         } else {
             throw new ContractExecutorException("Smart contract instance doesn't exist.");

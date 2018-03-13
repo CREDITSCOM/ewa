@@ -1,6 +1,5 @@
 package com.credits.service.db.leveldb;
 
-import com.credits.leveldb.client.PoolData;
 import com.credits.leveldb.client.TransactionData;
 import com.credits.service.ServiceTest;
 import org.junit.Test;
@@ -28,21 +27,6 @@ public class LevelDbInteractionServiceTest extends ServiceTest{
         System.out.println("getTransactions=" + transactions);
 
         service.transactionFlow("", "", "", "", 2d, "");
-
-//        System.out.println("getPool()");
-//        PoolData poolData = service.getPool(0);
-//        System.out.println("getPool: poolNumber= " + poolData.getPoolNumber() + " transactionsCount= "
-//            + poolData.getTransactionsCount() + " hash= " + poolData.getPoolHash() + " prevHash= "
-//            + poolData.getPrevPoolHash() + " time= " + poolData.getCreationTime());
-//
-//        System.out.println("getPoolList()");
-//        List<PoolData> poolList = service.getPoolList(0, 5);
-//        System.out.println("getPoolList: ");
-//        for (PoolData poolData1 : poolList) {
-//            System.out.println("poolNumber= " + poolData1.getPoolNumber() + " transactionsCount= "
-//                + poolData1.getTransactionsCount() + " hash= " + poolData1.getPoolHash() + " prevHash= "
-//                + poolData1.getPrevPoolHash() + " time= " + poolData1.getCreationTime());
-//        }
     }
 
 }

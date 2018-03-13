@@ -1,53 +1,45 @@
 package com.credits.service.contract;
 
+import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
+import com.credits.serialise.Serializer;
 import com.credits.service.ServiceTest;
-import org.apache.commons.io.FileUtils;
+import com.credits.service.usercode.UserCodeStorageService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.URL;
-import java.util.Map;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 
-public class ContractExecutorServiceTest extends ServiceTest {
+public class ContractExecutorServiceMethodsInvokingTest extends ServiceTest {
 
     @Resource
     private ContractExecutorService service;
 
+    @Resource
+    private UserCodeStorageService storageService;
+
     private final String address = "1a2b";
-
-    private File file;
-
 
     @Before
     public void setUp() throws ContractExecutorException {
-        file = new File(System.getProperty("user.dir") + File.separator + "credits" +
-            File.separator + address + File.separator + "UserCodeTest.out");
-        if (file.exists()) {
-            file.delete();
-        }
+        clear(address);
 
-        final String destFolder = System.getProperty("user.dir") + File.separator + "credits";
-        URL resource = getClass().getClassLoader().getResource("com/credits/service/contract/UserCodeTest.class");
-        Assert.assertNotNull(resource);
-
-        File source = new File(resource.getFile());
-
-        String destFilePath = destFolder + File.separator + address + File.separator + source.getName();
-        File dest = new File(destFilePath);
-        dest.getParentFile().mkdirs();
-
-        try {
-            FileUtils.copyFile(source, dest);
-        } catch (IOException e) {
+        String fileName = "MethodsInvokingTestCode.java";
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("com/credits/service/usercode/" + fileName)) {
+            MultipartFile file = new MockMultipartFile(fileName, fileName, null, stream);
+            storageService.store(file, address);
+        } catch (ContractExecutorException | IOException e) {
             throw new ContractExecutorException(e.getMessage(), e);
         }
+
+        service.execute(address);
     }
 
     @Test
@@ -109,28 +101,32 @@ public class ContractExecutorServiceTest extends ServiceTest {
         service.execute(address, "globalVarInstance", new String[0]);
         service.execute(address, "globalVarInstance", new String[0]);
 
-        Map<String, Object> deserFields = null;
-        try (ObjectInputStream ous = new ObjectInputStream(new FileInputStream(file))){
-            deserFields = (Map<String, Object>) ous.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+        Class<?> clazz;
+        try {
+            clazz = storageService.load(address);
+        } catch (ClassLoadException e) {
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
-        Assert.assertNotNull(deserFields);
-        Assert.assertEquals(3, deserFields.get("intVar"));
-    }
 
-    @Test
-    public void globalVarStaticTest() throws ContractExecutorException {
-        service.execute(address, "globalVarStatic", new String[0]);
-        service.execute(address, "globalVarStatic", new String[0]);
-
-        Map<String, Object> deserFields = null;
-        try (ObjectInputStream ous = new ObjectInputStream(new FileInputStream(file))){
-            deserFields = (Map<String, Object>) ous.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+        Object instance;
+        File serFile = Serializer.getSerFile(address);
+        if (serFile.exists()) {
+            ClassLoader customLoader = clazz.getClassLoader();
+            instance = Serializer.deserialize(serFile, customLoader);
+        } else {
+            throw new ContractExecutorException("Smart contract instance doesn't exist.");
         }
-        Assert.assertNotNull(deserFields);
-        Assert.assertEquals(4, deserFields.get("statIntVar"));
+        int current;
+        try {
+            Field field = clazz.getDeclaredField("intVar");
+            field.setAccessible(true);
+            current = field.getInt(instance);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new ContractExecutorException("Cannot access field.");
+        }
+
+        Assert.assertNotNull(instance);
+        Assert.assertEquals(3, current);
     }
 }

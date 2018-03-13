@@ -9,10 +9,11 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ContractExecutionReflectionTest extends ServiceTest {
+public class ContractExecutorServiceInitialContractExecutionTest extends ServiceTest {
 
     @Resource
     private ContractExecutorService exService;
@@ -20,12 +21,16 @@ public class ContractExecutionReflectionTest extends ServiceTest {
     @Resource
     private UserCodeStorageService service;
 
+    private String address = "12345";
+
     @Before
     public void setUp() throws ContractExecutorException {
-        String fileName = "TestCode.java";
+        clear(address);
+
+        String fileName = "InitialContractExecutionTestCode.java";
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("com/credits/service/usercode/" + fileName)) {
             MultipartFile file = new MockMultipartFile(fileName, fileName, null, stream);
-            service.store(file, "12345");
+            service.store(file, address);
         } catch (ContractExecutorException | IOException e) {
             throw new ContractExecutorException(e.getMessage(), e);
         }
