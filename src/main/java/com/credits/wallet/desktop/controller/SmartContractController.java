@@ -7,15 +7,14 @@ import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -93,6 +92,17 @@ public class SmartContractController extends Controller implements Initializable
             "\n" +
             "}";
     private static final String nonChangedStr="public class Contract extends SmartContract {";
+
+    private static final String[] parentMethods = new String[] {
+            "Double getBalance(String address, String currency)",
+            "TransactionData getTransaction(String transactionId)",
+            "List<TransactionData> getTransactions(String address, long offset, long limit)",
+            "List<PoolData> getPoolList(long offset, long limit)",
+            "PoolData getPool(String poolNumber)",
+            "void sendTransaction(String hash, String innerId, String source, String target, Double amount, String currency)",
+            "String generateHash()",
+            "String getInnerId()"
+    };
 
     private CodeArea codeArea;
     private TableView tabErrors;
@@ -229,6 +239,14 @@ public class SmartContractController extends Controller implements Initializable
 
         codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+
+        codeArea.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            public void handle(KeyEvent ke) {
+                if (ke.isControlDown() && ke.getCode().equals(KeyCode.SPACE)) {
+                    codePopup();
+                }
+            }
+        });
 
         codeArea.richChanges()
                 .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
@@ -470,5 +488,48 @@ public class SmartContractController extends Controller implements Initializable
         codeArea.displaceCaret(pos);
         codeArea.showParagraphAtTop(Math.max(0, line - 5));
         codeArea.requestFocus();
+    }
+
+    private void codePopup() {
+        ContextMenu contextMenu = new ContextMenu();
+
+        String word="";
+        int pos=codeArea.getCaretPosition()-1;
+        String txt=codeArea.getText();
+        while (pos>0 && !txt.substring(pos,pos+1).equals(" ") &&
+                !txt.substring(pos,pos+1).equals("\r") && !txt.substring(pos,pos+1).equals("\n")) {
+            word=txt.substring(pos,pos+1)+word;
+            pos--;
+        }
+
+        for (String method : parentMethods) {
+            if (word.trim().isEmpty() || method.toUpperCase().indexOf(word.trim().toUpperCase())>0) {
+                MenuItem action = new MenuItem(method);
+                contextMenu.getItems().add(action);
+                action.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        int pos = codeArea.getCaretPosition();
+                        String txt = codeArea.getText();
+                        String txtToIns = normMethodName(method);
+                        codeArea.replaceText(pos, pos, txtToIns);
+                    }
+                });
+            }
+        }
+
+        if (contextMenu.getItems().isEmpty()) {
+            MenuItem action = new MenuItem("No suggestions");
+            contextMenu.getItems().add(action);
+        }
+
+        contextMenu.show(codeArea,
+                codeArea.getCaretBounds().get().getMaxX(), codeArea.getCaretBounds().get().getMaxY());
+    }
+
+    private String normMethodName (String method) {
+        int spInd=method.indexOf(" ");
+        String result=method.substring(spInd+1);
+        return result;
     }
 }
