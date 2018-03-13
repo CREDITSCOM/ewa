@@ -15,10 +15,10 @@ public class Serializer {
     private final static String SER_EXT = "out";
     private final static String SER_SOURCE_FOLDER_PATH = System.getProperty("user.dir") + File.separator + "credits";
 
-    public static Object deserialize(File serFile) throws ContractExecutorException {
+    public static Object deserialize(File serFile, ClassLoader customLoader) throws ContractExecutorException {
         Object instance;
 
-        try (ObjectInputStream ous = new ObjectInputStream(new FileInputStream(serFile))){
+        try (ObjectInputStream ous = new ObjectInputStreamWithClassLoader(new FileInputStream(serFile), customLoader)){
             instance = ous.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new ContractExecutorException("Cannot load smart contract instance. " + e);

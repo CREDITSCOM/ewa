@@ -77,15 +77,15 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 
+        ClassLoader customLoader = clazz.getClassLoader();
+
         Object instance;
         File serFile = Serializer.getSerFile(address);
         if (serFile.exists()) {
-            instance = Serializer.deserialize(serFile);
+            instance = Serializer.deserialize(serFile, customLoader);
         } else {
             throw new ContractExecutorException("Smart contract instance doesn't exist.");
         }
-
-
 
         List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
             if (params == null || params.length == 0) {
@@ -121,31 +121,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             throw new ContractExecutorException("Cannot execute the contract: " + address +
                 ". Reason: Cannot cast parameters to the method found by name: " + methodName);
         }
-
-//        Boolean methodIsStatic = Modifier.isStatic(targetMethod.getModifiers());
-//        if (!methodIsStatic) {
-//            try {
-//                instance = clazz.newInstance();
-//            } catch (InstantiationException | IllegalAccessException e) {
-//                throw new ContractExecutorException(
-//                    "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
-//            }
-//        }
-
-//        List<Field> fields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> {
-//            for (SupportedSerialisationType type : SupportedSerialisationType.values()) {
-//                if (type.getClazz() == field.getType()) {
-//                    return true;
-//                }
-//            }
-//            return false;
-//        }).collect(Collectors.toList());
-
-//        //Injecting deserialized fields into class if present
-//        File serFile = Serializer.getSerFile(address);
-//        if (serFile.exists()) {
-//            Serializer.deserialize(serFile, methodIsStatic, instance, fields);
-//        }
 
         //Invoking target method
         try {
