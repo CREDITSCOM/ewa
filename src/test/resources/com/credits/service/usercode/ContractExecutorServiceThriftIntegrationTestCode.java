@@ -1,4 +1,4 @@
-public class ThriftIntegrationTestCode extends SmartContract {
+public class ContractExecutorServiceThriftIntegrationTestCode extends SmartContract {
 
     public void foo() throws Exception {
         System.out.println("getBalance()");

@@ -159,11 +159,10 @@
                 <configuration>
                     <excludes>
                         <exclude>**/Test.java</exclude>
-                        <exclude>**/InitialContractExecutionTestCode.java</exclude>
-                        <exclude>**/MethodsInvokingTestCode.java</exclude>
-                        <exclude>**/ThriftIntegrationTestCode.java</exclude>
+                        <exclude>**/ContractExecutorServiceMethodParametersTestCode.java</exclude>
+                        <exclude>**/ContractExecutorServiceTestCode.java</exclude>
+                        <exclude>**/ContractExecutorServiceThriftIntegrationTestCode.java</exclude>
                         <exclude>**/ContractExecutorServiceThriftIntegrationTest.java</exclude>
-                        <exclude>**/LevelDbInteractionServiceTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

@@ -10,7 +10,7 @@ import java.io.File;
 @SpringBootTest
 public abstract class ServiceTest {
 
-    protected void clear(String address) {
+    protected void clean(String address) {
         File folder = new File(System.getProperty("user.dir") + File.separator + "credits" +
             File.separator + address);
         if (folder.exists()) {

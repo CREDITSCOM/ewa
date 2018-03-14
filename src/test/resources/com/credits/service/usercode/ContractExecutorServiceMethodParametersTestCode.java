@@ -1,4 +1,4 @@
-public class MethodsInvokingTestCode extends SmartContract {
+public class ContractExecutorServiceMethodParametersTestCode extends SmartContract {
 
     private static int statIntVar = 2;
 
