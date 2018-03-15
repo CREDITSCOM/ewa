@@ -95,7 +95,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <version>1.5.9.RELEASE</version>
-            <scope>test</scope>
+            <!--<scope>test</scope>-->
         </dependency>
 
         <!--thrift-->
@@ -113,6 +113,11 @@
                     <artifactId>slf4j-jdk14</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>0.11.0</version>
         </dependency>
 
     </dependencies>
@@ -163,6 +168,7 @@
                         <exclude>**/ContractExecutorServiceTestCode.java</exclude>
                         <exclude>**/ContractExecutorServiceThriftIntegrationTestCode.java</exclude>
                         <exclude>**/ContractExecutorServiceThriftIntegrationTest.java</exclude>
+                        <exclude>**/ThriftServerTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
