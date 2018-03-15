@@ -1,7 +1,14 @@
 package com.credits.wallet.desktop;
 
+import com.credits.leveldb.client.thrift.Amount;
+import com.credits.wallet.desktop.controller.Const;
+import com.credits.wallet.desktop.utils.Converter;
+import com.credits.wallet.desktop.utils.Ed25519;
 import javafx.scene.control.Alert;
 import javafx.stage.StageStyle;
+
+import java.security.PrivateKey;
+import java.util.UUID;
 
 /**
  * Created by goncharov-eg on 26.01.2018.
@@ -49,4 +56,21 @@ public class Utils {
         }
         return s;
     }
+
+    public static void prepareAndCallTransactionFlow (
+            String source,
+            String target,
+            Double amount,
+            String currency
+    ) throws Exception {
+
+        String hash = UUID.randomUUID().toString().replace("-", "");
+        String innerId = UUID.randomUUID().toString().replace("-", "");
+
+        String signature = Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency,
+                AppState.privateKey);
+        currency = String.format("%s|%s", currency, signature);
+        AppState.apiClient.transactionFlow(hash, innerId, source, target, amount, currency);
+    }
 }
+

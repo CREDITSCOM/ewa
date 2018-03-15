@@ -1,6 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.App;
+import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.utils.Converter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -21,12 +23,10 @@ public class Form4Controller extends Controller implements Initializable {
     }
 
     @FXML
-    private void handleContinue() {
-        App.showForm("/fxml/form5.fxml", "Wallet");
-    }
+    private void handleContinue() { App.showForm("/fxml/form5.fxml", "Wallet"); }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        txKey.setText("2862190ef04ece53dc725e3b8bd6baaed98f00b204e9800998ecf8427ee866fb");
+        txKey.setText(Converter.encodeToBASE64(AppState.privateKey.getEncoded()));
     }
 }

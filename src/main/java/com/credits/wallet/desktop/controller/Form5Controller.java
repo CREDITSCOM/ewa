@@ -3,6 +3,8 @@ package com.credits.wallet.desktop.controller;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Utils;
+import com.credits.wallet.desktop.utils.Converter;
+import com.credits.wallet.desktop.utils.Ed25519;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -11,9 +13,9 @@ import javafx.scene.control.TextField;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
-import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
@@ -59,17 +61,28 @@ public class Form5Controller extends Controller implements Initializable {
 
         if (AppState.newAccount) {
             // Transaction from credits
-
-            String hash = UUID.randomUUID().toString().replace("-", "");
-            String innerId = UUID.randomUUID().toString().replace("-", "");
             try {
-                AppState.apiClient.transactionFlow(hash, innerId,
-                        Const.CREDIT_ACCOUNT, txPublic.getText(),
+                Utils.prepareAndCallTransactionFlow(
+                        Const.CREDIT_ACCOUNT,
+                        txPublic.getText(),
                         Const.NEW_ACCOUNT_TRANSACTION_AMOUNT,
-                        Const.NEW_ACCOUNT_TRANSACTION_COIN);
+                        Const.NEW_ACCOUNT_TRANSACTION_COIN
+                );
             } catch (Exception e) {
                 e.printStackTrace();
                 Utils.showError("Error creating transaction " + e.toString());
+                return;
+            }
+        } else {
+            try {
+                byte[] publicKeyByteArr = Converter.decodeFromBASE64(txPublic.getText());
+                byte[] privateKeyByteArr = Converter.decodeFromBASE64(txKey.getText());
+                AppState.publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
+                AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
+            } catch (Exception e) {
+                Utils.showError(e.getMessage());
+                e.printStackTrace();
+                return;
             }
         }
 
@@ -82,21 +95,8 @@ public class Form5Controller extends Controller implements Initializable {
         txPublic.setDisable(AppState.newAccount);
 
         if (AppState.newAccount) {
-            // generate keys
-            char[] characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
-            StringBuilder sb = new StringBuilder();
-            sb.append("CSx");
-            Random random = new Random();
-            int max = characters.length - 1;
-            for (int i = 0; i < 29; i++)
-                sb.append(characters[random.nextInt(max)]);
-            txPublic.setText(sb.toString());
-
-            sb = new StringBuilder();
-            random = new Random();
-            for (int i = 0; i < 32; i++)
-                sb.append(characters[random.nextInt(max)]);
-            txKey.setText(sb.toString());
+            txKey.setText(Converter.encodeToBASE64(AppState.privateKey.getEncoded()));
+            txPublic.setText(Converter.encodeToBASE64(AppState.publicKey.getEncoded()));
         } else {
             try {
                 FileInputStream fis = new FileInputStream("settings.properties");

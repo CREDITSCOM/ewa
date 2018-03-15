@@ -5,6 +5,7 @@ import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Utils;
 import com.credits.wallet.desktop.utils.Converter;
+import com.credits.wallet.desktop.utils.Ed25519;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -38,15 +39,17 @@ public class Form7Controller extends Controller implements Initializable {
     private void handleGenerate() {
         AppState.transactionHash = transactionCode.getText();
 
-        String hash = UUID.randomUUID().toString().replace("-","");
-        String innerId = UUID.randomUUID().toString().replace("-","");
         try {
-            AppState.apiClient.transactionFlow(hash, innerId,
-                    AppState.account, AppState.toAddress,
-                    AppState.amount, AppState.coin);
+            Utils.prepareAndCallTransactionFlow(
+                    AppState.account,
+                    AppState.toAddress,
+                    AppState.amount,
+                    AppState.coin
+            );
         } catch (Exception e) {
             e.printStackTrace();
-            Utils.showError("Error creating transaction "+e.toString());
+            Utils.showError("Error creating transaction " + e.toString());
+            return;
         }
 
         App.showForm("/fxml/form8.fxml", "Wallet");
