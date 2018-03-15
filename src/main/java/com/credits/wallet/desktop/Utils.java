@@ -6,6 +6,8 @@ import com.credits.wallet.desktop.utils.Converter;
 import com.credits.wallet.desktop.utils.Ed25519;
 import javafx.scene.control.Alert;
 import javafx.stage.StageStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.PrivateKey;
 import java.util.UUID;
@@ -14,6 +16,8 @@ import java.util.UUID;
  * Created by goncharov-eg on 26.01.2018.
  */
 public class Utils {
+    private static Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+
     private static final String digits="0123456789";
 
     public static void showError(String text) {
@@ -67,10 +71,10 @@ public class Utils {
         String hash = UUID.randomUUID().toString().replace("-", "");
         String innerId = UUID.randomUUID().toString().replace("-", "");
 
-        String signature = Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency,
+        String signatureBASE64 = Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency,
                 AppState.privateKey);
-        currency = String.format("%s|%s", currency, signature);
-        AppState.apiClient.transactionFlow(hash, innerId, source, target, amount, currency);
+
+        AppState.apiClient.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
     }
 }
 
