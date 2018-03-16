@@ -53,8 +53,8 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     }
 
     @Override
-    public void transactionFlow(String hash, String innerId, String source, String target, Double amount, String currency) throws Exception {
-        client.transactionFlow(hash, innerId, source, target, amount, currency);
+    public void transactionFlow(String hash, String innerId, String source, String target, Double amount, String currency, String signatureBASE64) throws Exception {
+        client.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
     }
 
     @Override

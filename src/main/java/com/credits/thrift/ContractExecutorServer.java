@@ -41,7 +41,7 @@ public class ContractExecutorServer implements Runnable {
             TServerTransport serverTransport = new TServerSocket(port);
             TServer server = new TSimpleServer(new TServer.Args(serverTransport).processor(processor));
 
-            System.out.println("Starting the Thrift server on port " + port + " ...");
+            logger.info("Starting the Thrift server on port {}...", port);
             server.serve();
         } catch (Exception e) {
             logger.error("Cannot start Thrift server on port " + port + ". " + e.getMessage(), e);

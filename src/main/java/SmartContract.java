@@ -31,7 +31,7 @@ public class SmartContract implements Serializable {
     }
 
     protected void sendTransaction(String hash, String innerId, String source, String target, Double amount, String currency) throws Exception {
-        service.transactionFlow(hash, innerId, source, target, amount, currency);
+        service.transactionFlow(hash, innerId, source, target, amount, currency, null);
     }
 
     protected String generateHash() {
