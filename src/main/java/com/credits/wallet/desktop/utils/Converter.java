@@ -25,7 +25,13 @@ public class Converter {
             df.applyPattern(DOUBLE_FORMAT);
             return df.format(value);
         }
-        // TODO Добавить Integer, Date и т.д.
+        if (value instanceof Integer) {
+            return String.valueOf(value);
+        }
+        if (value instanceof Long) {
+            return String.valueOf(value);
+        }
+        // TODO Добавить Date и т.д.
         return null;
     }
 
