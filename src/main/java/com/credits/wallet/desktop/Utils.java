@@ -1,15 +1,11 @@
 package com.credits.wallet.desktop;
 
-import com.credits.leveldb.client.thrift.Amount;
-import com.credits.wallet.desktop.controller.Const;
-import com.credits.wallet.desktop.utils.Converter;
 import com.credits.wallet.desktop.utils.Ed25519;
 import javafx.scene.control.Alert;
 import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.PrivateKey;
 import java.util.UUID;
 
 /**

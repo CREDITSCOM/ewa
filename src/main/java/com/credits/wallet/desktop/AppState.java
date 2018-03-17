@@ -14,7 +14,9 @@ import java.util.concurrent.ExecutorService;
 public class AppState {
     public static ApiClient apiClient;
     public static String decSep;
-    public static String contractExecutorJava;
+    public static String contractExecutorHost;
+    public static Integer contractExecutorPort;
+    public static String contractExecutorDir;
 
     public static boolean newAccount;
     public static String account;

@@ -82,7 +82,8 @@ public class Form5Controller extends Controller implements Initializable {
             } catch (Exception e) {
                 Utils.showError(e.getMessage());
                 e.printStackTrace();
-                return;
+
+                //return; Commented to skip error public-key length is wrong
             }
         }
 

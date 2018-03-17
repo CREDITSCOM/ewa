@@ -4,8 +4,8 @@ import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Utils;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.credits.wallet.desktop.thrift.ContractExecutor;
+import com.credits.wallet.desktop.thrift.ContractFile;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,13 +16,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -42,23 +39,12 @@ import org.slf4j.LoggerFactory;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.time.Duration;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.util.Arrays.*;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -148,75 +134,40 @@ public class SmartContractController extends Controller implements Initializable
         clipboard.setContents(selection, selection);
 
         // Call contract executor
-        if (AppState.contractExecutorJava != null) {
-            // Parse className
-            String className = "SmartContract";
-
-            String javaCode = codeArea.getText().replace("\r", " ").replace("\n", " ").replace("{", " {");
-
-            while (javaCode.contains("  ")) {
-                javaCode = javaCode.replace("  ", " ");
-            }
-            java.util.List<String> javaCodeWords = asList(javaCode.split(" "));
-            int ind = javaCodeWords.indexOf("class");
-            if (ind >= 0 && ind < javaCodeWords.size() - 1) {
-                className = javaCodeWords.get(ind + 1);
-            }
-            // ---------------
+        if (AppState.contractExecutorHost != null &&
+                AppState.contractExecutorPort != null &&
+                AppState.contractExecutorDir != null ) {
             try {
-                String tmpDir = System.getProperty("java.io.tmpdir");
-                String tmpFileName = tmpDir + File.separator + className + ".java";
-                File tmpFile = new File(tmpFileName);
-                FileOutputStream out = new FileOutputStream(tmpFile);
-                out.write(codeArea.getText().getBytes());
-                out.close();
+                // Parse className
+                String className = "SmartContract";
 
-                CloseableHttpClient client = HttpClients.createDefault();
-                HttpPost httpPost = new HttpPost(AppState.contractExecutorJava);
-                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.addTextBody("address", AppState.account);
-                builder.addBinaryBody("java", tmpFile, ContentType.APPLICATION_OCTET_STREAM, className + ".java");
+                String javaCode = codeArea.getText().replace("\r", " ").replace("\n", " ").replace("{", " {");
 
-                HttpEntity multipart = builder.build();
-                httpPost.setEntity(multipart);
-
-                CloseableHttpResponse response = client.execute(httpPost);
-
-                if (response.getStatusLine().getStatusCode() != 200) {
-                    // Show error
-                    BufferedReader reader =
-                        new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
-                    String inputLine;
-                    StringBuilder sbResponse = new StringBuilder();
-
-                    while ((inputLine = reader.readLine()) != null) {
-                        sbResponse.append(inputLine);
-                    }
-                    reader.close();
-
-                    JsonElement jelement = new JsonParser().parse(sbResponse.toString());
-                    String msgStr = jelement.getAsJsonObject().get("message").getAsString();
-                    String errorStr = jelement.getAsJsonObject().get("error").getAsString();
-                    String excStr = jelement.getAsJsonObject().get("exception").getAsString();
-
-                    String errorMsg = "";
-                    if (msgStr != null) {
-                        errorMsg = msgStr;
-                    }
-                    if (errorStr != null) {
-                        errorMsg = errorMsg.trim() + " " + errorStr;
-                    }
-                    if (excStr != null) {
-                        errorMsg = errorMsg.trim() + " " + excStr;
-                    }
-
-                    Utils.showError(errorMsg);
+                while (javaCode.contains("  ")) {
+                    javaCode = javaCode.replace("  ", " ");
                 }
+                java.util.List<String> javaCodeWords = Arrays.asList(javaCode.split(" "));
+                int ind = javaCodeWords.indexOf("class");
+                if (ind >= 0 && ind < javaCodeWords.size() - 1) {
+                    className = javaCodeWords.get(ind + 1);
+                }
+                // ---------------
 
-                client.close();
+                TTransport transport;
 
-                tmpFile.delete();
+                transport = new TSocket(AppState.contractExecutorHost, AppState.contractExecutorPort);
+                transport.open();
+
+                TProtocol protocol = new TBinaryProtocol(transport);
+                ContractExecutor.Client client = new ContractExecutor.Client(protocol);
+
+                ContractFile contractFile = new ContractFile();
+                contractFile.setName(className+".java");
+                contractFile.setFile(codeArea.getText().getBytes());
+
+                client.store(contractFile, AppState.contractExecutorDir);
+
+                transport.close();
             } catch (Exception e) {
                 e.printStackTrace();
                 Utils.showError("Error executing smart contract " + e.toString());
