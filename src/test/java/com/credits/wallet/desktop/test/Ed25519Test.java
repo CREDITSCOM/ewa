@@ -6,13 +6,18 @@ import com.credits.wallet.desktop.controller.Const;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.Converter;
 import com.credits.wallet.desktop.utils.Ed25519;
+import net.i2p.crypto.eddsa.EdDSAPrivateKey;
+import net.i2p.crypto.eddsa.EdDSAPublicKey;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -57,6 +62,7 @@ public class Ed25519Test {
     }
 
     @Test
+    @Ignore
     public void generateSignOfTransactionTest() {
 
         KeyPair keyPair = Ed25519.generateKeyPair();
@@ -78,4 +84,63 @@ public class Ed25519Test {
         }
     }
 
+    @Test
+    @Ignore
+    public void bytesToPrivateKeyTest() {
+        try {
+            byte[] publicKeyByteArr = Converter.decodeFromBASE64("f0j9xmzh1x8m5RvY4O8B6WGNigb2xVGQfPr7JGhgjDM=");
+            byte[] privateKeyByteArr = Converter.decodeFromBASE64("6IOC+cSsndeFjx6eqEUoC1BVlo1gwGgdfK8f1O7IKYR/SP3GbOHXHyblG9jg7wHpYY2KBvbFUZB8+vskaGCMMw==");
+
+            LOGGER.info("publicKeyByteArr  = {}", Arrays.toString(publicKeyByteArr));
+            LOGGER.info("privateKeyByteArr = {}", Arrays.toString(privateKeyByteArr));
+
+            PublicKey publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
+            PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
+            LOGGER.info("");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    @Test
+    @Ignore
+    public void publicKeyToBytesTest() {
+
+        String key1 = "f0j9xmzh1x8m5RvY4O8B6WGNigb2xVGQfPr7JGhgjDM=";
+
+        try {
+            byte[] bytes = Converter.decodeFromBASE64(key1);
+            LOGGER.info("bytes = {}", Arrays.toString(bytes));
+            PublicKey publicKey = Ed25519.bytesToPublicKey(bytes);
+            EdDSAPublicKey edDSAPublicKey = (EdDSAPublicKey) publicKey;
+            String key2 = Converter.encodeToBASE64(edDSAPublicKey.getAbyte());
+            LOGGER.info("key1 = {}", key1);
+            LOGGER.info("key2 = {}", key2);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test
+//    @Ignore
+    public void privateKeyToBytesTest() {
+
+        String key1 = "6IOC+cSsndeFjx6eqEUoC1BVlo1gwGgdfK8f1O7IKYR/SP3GbOHXHyblG9jg7wHpYY2KBvbFUZB8+vskaGCMMw==";
+
+        try {
+            byte[] bytes1 = Converter.decodeFromBASE64(key1);
+            PrivateKey privateKey = Ed25519.bytesToPrivateKey(bytes1);
+            byte[] bytes2 = Ed25519.privateKeyToBytes(privateKey);
+            String key2 = Converter.encodeToBASE64(bytes2);
+            LOGGER.info("bytes1 = {}", Arrays.toString(bytes1));
+            LOGGER.info("bytes2 = {}", Arrays.toString(bytes2));
+            LOGGER.info("key1 = {}", key1);
+            LOGGER.info("key2 = {}", key2);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

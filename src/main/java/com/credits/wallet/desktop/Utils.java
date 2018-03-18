@@ -72,5 +72,19 @@ public class Utils {
 
         AppState.apiClient.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
     }
+
+    /**
+     * Gets the subarray
+     * @param array - source
+     * @param offset - starts position
+     * @param length - length
+     * @return
+     */
+    public static byte[] parseSubarray(byte[] array, int offset, int length) {
+        byte[] result = new byte[length];
+        System.arraycopy(array, offset, result, 0, length);
+        return result;
+    }
+
 }
 

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 
 /**
@@ -23,23 +24,37 @@ public class ConverterTest {
     }
 
     @Test
-    public void base64EncodeDecodeTest() {
+    //@Ignore
+    public void decodeFromBASE64Test() {
 
-        byte[] data = "Hello World!!!".getBytes();
+        String text = "MC4CAQAwBQYDK2VwBCIEIB66QUnddK6yocOUWoPv4@";
 
         try {
-            for(byte b : data) {
-                LOGGER.info(String.valueOf(b));
-            }
-            LOGGER.info("");
-            LOGGER.info("");
-
-            for(byte b : Converter.decodeFromBASE64(Converter.encodeToBASE64(data))) {
-                LOGGER.info(String.valueOf(b));
-            }
+            byte[] bytes = Converter.decodeFromBASE64(text);
+            LOGGER.info(String.valueOf(bytes.length));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
+
+    @Test
+    @Ignore
+    public void base64EncodeDecodeTest() {
+
+        byte[] data = "Hello World!!!".getBytes();
+
+        try {
+            LOGGER.info(Arrays.toString(data));
+            LOGGER.info("");
+            LOGGER.info("");
+            LOGGER.info(Arrays.toString(Converter.decodeFromBASE64(Converter.encodeToBASE64(data))));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
 }
