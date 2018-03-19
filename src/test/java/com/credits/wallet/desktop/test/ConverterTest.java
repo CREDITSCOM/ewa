@@ -13,18 +13,15 @@ import java.util.Arrays;
 /**
  * Created by Rustem.Saidaliyev on 29.01.2018.
  */
-@SuppressWarnings("CanBeFinal")
 public class ConverterTest {
     private static Logger LOGGER = LoggerFactory.getLogger(ConverterTest.class);
     @Test
-    @Ignore
     public void doubleToStringTest() {
         Double value = 0.126;
         LOGGER.info(Converter.toString(value));
     }
 
     @Test
-    //@Ignore
     public void decodeFromBASE64Test() {
 
         String text = "MC4CAQAwBQYDK2VwBCIEIB66QUnddK6yocOUWoPv4@";
@@ -33,23 +30,26 @@ public class ConverterTest {
             byte[] bytes = Converter.decodeFromBASE64(text);
             LOGGER.info(String.valueOf(bytes.length));
         } catch (IOException e) {
+            assert false;
             e.printStackTrace();
         }
 
     }
 
     @Test
-    @Ignore
     public void base64EncodeDecodeTest() {
 
-        byte[] data = "Hello World!!!".getBytes();
+        byte[] data1 = "Hello World!!!".getBytes();
 
         try {
-            LOGGER.info(Arrays.toString(data));
+            LOGGER.info(Arrays.toString(data1));
             LOGGER.info("");
             LOGGER.info("");
-            LOGGER.info(Arrays.toString(Converter.decodeFromBASE64(Converter.encodeToBASE64(data))));
+            byte[] data2 = Converter.decodeFromBASE64(Converter.encodeToBASE64(data1));
+            LOGGER.info(Arrays.toString(data2));
+            assert Arrays.equals(data1, data2);
         } catch (IOException e) {
+            assert false;
             e.printStackTrace();
         }
 

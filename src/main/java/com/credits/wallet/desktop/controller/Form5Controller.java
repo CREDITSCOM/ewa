@@ -82,8 +82,6 @@ public class Form5Controller extends Controller implements Initializable {
             try {
                 byte[] publicKeyByteArr = Converter.decodeFromBASE64(txPublic.getText());
                 byte[] privateKeyByteArr = Converter.decodeFromBASE64(txKey.getText());
-                LOGGER.info("publicKeyByteArr =  {}", Arrays.toString(publicKeyByteArr));
-                LOGGER.info("privateKeyByteArr = {}", Arrays.toString(privateKeyByteArr));
                 AppState.publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
                 AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
             } catch (Exception e) {
@@ -102,8 +100,8 @@ public class Form5Controller extends Controller implements Initializable {
         txPublic.setDisable(AppState.newAccount);
 
         if (AppState.newAccount) {
-            txKey.setText(Converter.encodeToBASE64(AppState.privateKey.getEncoded()));
-            txPublic.setText(Converter.encodeToBASE64(AppState.publicKey.getEncoded()));
+            txKey.setText(Converter.encodeToBASE64(Ed25519.privateKeyToBytes(AppState.privateKey)));
+            txPublic.setText(Converter.encodeToBASE64(Ed25519.publicKeyToBytes(AppState.publicKey)));
         } else {
             try {
                 FileInputStream fis = new FileInputStream("settings.properties");

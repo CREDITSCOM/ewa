@@ -110,7 +110,8 @@ public class Ed25519 {
 
     public static byte[] privateKeyToBytes(PrivateKey privateKey) {
         EdDSAPrivateKey edDSAPrivateKey = (EdDSAPrivateKey) privateKey;
-        return edDSAPrivateKey.getH();
+        return
+            Utils.concatinateArrays(edDSAPrivateKey.getSeed(), edDSAPrivateKey.getAbyte());
     }
 
 

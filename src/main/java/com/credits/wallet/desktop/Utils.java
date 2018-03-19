@@ -86,5 +86,18 @@ public class Utils {
         return result;
     }
 
+    /**
+     * Concatinate byte arrays
+     * @param firstArr
+     * @param secondArr
+     * @return
+     */
+    public static byte[] concatinateArrays(byte[] firstArr, byte[] secondArr) {
+        byte[] resultArr = new byte[firstArr.length + secondArr.length];
+        System.arraycopy(firstArr, 0, resultArr, 0, firstArr.length);
+        System.arraycopy(secondArr, 0, resultArr, firstArr.length, secondArr.length);
+        return resultArr;
+    }
+
 }
 
