@@ -4,8 +4,9 @@ import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Utils;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
-import com.credits.wallet.desktop.thrift.ContractExecutor;
-import com.credits.wallet.desktop.thrift.ContractFile;
+import com.credits.wallet.desktop.thrift.executor.APIResponse;
+import com.credits.wallet.desktop.thrift.executor.ContractExecutor;
+import com.credits.wallet.desktop.thrift.executor.ContractFile;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -129,10 +130,6 @@ public class SmartContractController extends Controller implements Initializable
 
         String token = sb.toString();
 
-        StringSelection selection = new StringSelection(token);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(selection, selection);
-
         // Call contract executor
         if (AppState.contractExecutorHost != null &&
                 AppState.contractExecutorPort != null &&
@@ -165,7 +162,15 @@ public class SmartContractController extends Controller implements Initializable
                 contractFile.setName(className+".java");
                 contractFile.setFile(codeArea.getText().getBytes());
 
-                client.store(contractFile, AppState.contractExecutorDir);
+                APIResponse executorResponse = client.store(contractFile, AppState.contractExecutorDir);
+                if (executorResponse.getCode()!=0 && executorResponse.getMessage()!=null) {
+                    Utils.showError("Error executing smart contract " + executorResponse.getMessage());
+                } else {
+                    StringSelection selection = new StringSelection(token);
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(selection, selection);
+                    Utils.showInfo("Token\n\n" + token + "\n\nhas generated and copied to clipboard");
+                }
 
                 transport.close();
             } catch (Exception e) {
@@ -174,8 +179,6 @@ public class SmartContractController extends Controller implements Initializable
             }
         }
         // ----------------------
-
-        Utils.showInfo("Token\n\n" + token + "\n\nhas generated and copied to clipboard");
     }
 
     @Override
