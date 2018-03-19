@@ -41,7 +41,8 @@ public class ThriftServerTest {
 
     @Test
     public void store() throws TException, IOException {
-        client.store(new ContractFile("ContractExecutorServiceTestCode.java", ByteBuffer.wrap(file.getBytes())), "987");
+        APIResponse response = client.store(new ContractFile("ContractExecutorServiceTestCode.java", ByteBuffer.wrap(file.getBytes())), "987");
+        System.out.println(response.getCode() + " " + response.getMessage());
     }
 
     @Test

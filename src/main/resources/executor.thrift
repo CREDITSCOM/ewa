@@ -7,9 +7,15 @@ struct ContractFile
     2:required binary file
 }
 
+struct APIResponse
+{
+    1: i8 code
+    2: string message
+}
+
 service ContractExecutor
 {
-    oneway void store(1:ContractFile file, 2:string address)
+    APIResponse store(1:ContractFile file, 2:string address)
 
-    oneway void execute(1:string address, 2:string method, 3:list<string> params)
+    APIResponse execute(1:string address, 2:string method, 3:list<string> params)
 }

@@ -34,11 +34,14 @@ public class SimpleInMemoryCompilator {
         Boolean isCompiled = task.call();
 
         if (!isCompiled) {
+            StringBuilder errorMessage = new StringBuilder("");
             for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
                 logger.error("Error on line {} in {}. Message: {}", diagnostic.getLineNumber(), diagnostic.getSource(),
                     diagnostic.getMessage(null));
+                errorMessage.append(String.format("Error on line %d. Message: %s\n", diagnostic.getLineNumber(),
+                    diagnostic.getMessage(null)));
             }
-            throw new CompilationException("Cannot compile the file: " + source.getName());
+            throw new CompilationException("Cannot compile the file: " + source.getName() + "\n" + errorMessage.toString());
         }
 
         try {

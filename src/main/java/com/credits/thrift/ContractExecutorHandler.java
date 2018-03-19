@@ -22,25 +22,33 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
 
     @Override
-    public void store(ContractFile file, String address) throws TException {
+    public APIResponse store(ContractFile file, String address) {
         String fileName = file.getName();
         byte[] fileContent = file.getFile();
         MultipartFile multipartFile = new MockMultipartFile(fileName, fileName, null, fileContent);
+        APIResponse response = new APIResponse((byte) 0, "");
         try {
             storageService.store(multipartFile, address);
             service.execute(address);
         } catch (ContractExecutorException e) {
-            throw new TException(e.getMessage(), e);
+            response.setCode((byte) 1);
+            response.setMessage(e.getMessage());
+            return response;
         }
+        return response;
     }
 
     @Override
-    public void execute(String address, String method, List<String> params) throws TException {
+    public APIResponse execute(String address, String method, List<String> params) {
         String[] paramsArray = params == null ? null : params.toArray(new String[0]);
+        APIResponse response = new APIResponse((byte) 0, "");
         try {
             service.execute(address, method, paramsArray);
         } catch (ContractExecutorException e) {
-            throw new TException(e.getMessage(), e);
+            response.setCode((byte) 1);
+            response.setMessage(e.getMessage());
+            return response;
         }
+        return response;
     }
 }
