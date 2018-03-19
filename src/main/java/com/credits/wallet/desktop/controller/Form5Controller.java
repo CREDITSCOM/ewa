@@ -10,11 +10,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -23,6 +26,8 @@ import java.util.UUID;
  * Created by goncharov-eg on 18.01.2018.
  */
 public class Form5Controller extends Controller implements Initializable {
+    private static Logger LOGGER = LoggerFactory.getLogger(Form5Controller.class);
+
     @FXML
     private Button btnBack;
 
@@ -82,8 +87,7 @@ public class Form5Controller extends Controller implements Initializable {
             } catch (Exception e) {
                 Utils.showError(e.getMessage());
                 e.printStackTrace();
-
-                //return; Commented to skip error public-key length is wrong
+                return;
             }
         }
 
@@ -96,8 +100,8 @@ public class Form5Controller extends Controller implements Initializable {
         txPublic.setDisable(AppState.newAccount);
 
         if (AppState.newAccount) {
-            txKey.setText(Converter.encodeToBASE64(AppState.privateKey.getEncoded()));
-            txPublic.setText(Converter.encodeToBASE64(AppState.publicKey.getEncoded()));
+            txKey.setText(Converter.encodeToBASE64(Ed25519.privateKeyToBytes(AppState.privateKey)));
+            txPublic.setText(Converter.encodeToBASE64(Ed25519.publicKeyToBytes(AppState.publicKey)));
         } else {
             try {
                 FileInputStream fis = new FileInputStream("settings.properties");

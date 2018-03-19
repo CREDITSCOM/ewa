@@ -72,5 +72,32 @@ public class Utils {
 
         AppState.apiClient.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
     }
+
+    /**
+     * Gets the subarray
+     * @param array - source
+     * @param offset - starts position
+     * @param length - length
+     * @return
+     */
+    public static byte[] parseSubarray(byte[] array, int offset, int length) {
+        byte[] result = new byte[length];
+        System.arraycopy(array, offset, result, 0, length);
+        return result;
+    }
+
+    /**
+     * Concatinate byte arrays
+     * @param firstArr
+     * @param secondArr
+     * @return
+     */
+    public static byte[] concatinateArrays(byte[] firstArr, byte[] secondArr) {
+        byte[] resultArr = new byte[firstArr.length + secondArr.length];
+        System.arraycopy(firstArr, 0, resultArr, 0, firstArr.length);
+        System.arraycopy(secondArr, 0, resultArr, firstArr.length, secondArr.length);
+        return resultArr;
+    }
+
 }
 

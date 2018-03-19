@@ -7,39 +7,54 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 
 /**
  * Created by Rustem.Saidaliyev on 29.01.2018.
  */
-@SuppressWarnings("CanBeFinal")
 public class ConverterTest {
     private static Logger LOGGER = LoggerFactory.getLogger(ConverterTest.class);
     @Test
-    @Ignore
     public void doubleToStringTest() {
         Double value = 0.126;
         LOGGER.info(Converter.toString(value));
     }
 
     @Test
-    public void base64EncodeDecodeTest() {
+    public void decodeFromBASE64Test() {
 
-        byte[] data = "Hello World!!!".getBytes();
+        String text = "MC4CAQAwBQYDK2VwBCIEIB66QUnddK6yocOUWoPv4@";
 
         try {
-            for(byte b : data) {
-                LOGGER.info(String.valueOf(b));
-            }
-            LOGGER.info("");
-            LOGGER.info("");
-
-            for(byte b : Converter.decodeFromBASE64(Converter.encodeToBASE64(data))) {
-                LOGGER.info(String.valueOf(b));
-            }
+            byte[] bytes = Converter.decodeFromBASE64(text);
+            LOGGER.info(String.valueOf(bytes.length));
         } catch (IOException e) {
+            assert false;
             e.printStackTrace();
         }
 
     }
+
+    @Test
+    public void base64EncodeDecodeTest() {
+
+        byte[] data1 = "Hello World!!!".getBytes();
+
+        try {
+            LOGGER.info(Arrays.toString(data1));
+            LOGGER.info("");
+            LOGGER.info("");
+            byte[] data2 = Converter.decodeFromBASE64(Converter.encodeToBASE64(data1));
+            LOGGER.info(Arrays.toString(data2));
+            assert Arrays.equals(data1, data2);
+        } catch (IOException e) {
+            assert false;
+            e.printStackTrace();
+        }
+
+    }
+
+
+
 }

@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.leveldb.client.thrift.Amount;
+import com.credits.wallet.desktop.Utils;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;
@@ -65,8 +66,10 @@ public class Ed25519 {
     }
 
     public static PrivateKey bytesToPrivateKey(byte[] bytes) {
+
+        byte[] seedByteArr = Utils.parseSubarray(bytes, 0, 32); // seed
         EdDSAParameterSpec spec = EdDSANamedCurveTable.getByName(ED_25519);
-        EdDSAPrivateKeySpec key = new EdDSAPrivateKeySpec(bytes, spec);
+        EdDSAPrivateKeySpec key = new EdDSAPrivateKeySpec(seedByteArr, spec);
         return new EdDSAPrivateKey(key);
     }
 
@@ -99,5 +102,17 @@ public class Ed25519 {
 
         return Converter.encodeToBASE64(signature);
     }
+
+    public static byte[] publicKeyToBytes(PublicKey publicKey) {
+        EdDSAPublicKey edDSAPublicKey = (EdDSAPublicKey) publicKey;
+        return edDSAPublicKey.getAbyte();
+    }
+
+    public static byte[] privateKeyToBytes(PrivateKey privateKey) {
+        EdDSAPrivateKey edDSAPrivateKey = (EdDSAPrivateKey) privateKey;
+        return
+            Utils.concatinateArrays(edDSAPrivateKey.getSeed(), edDSAPrivateKey.getAbyte());
+    }
+
 
 }
