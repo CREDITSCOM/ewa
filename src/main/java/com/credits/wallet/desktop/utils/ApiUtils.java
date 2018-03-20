@@ -27,14 +27,7 @@ public class ApiUtils {
     }
 
     public static String generateTransactionHash() {
-        byte[] hashBytes = new byte[8];
-        new Random().nextBytes(hashBytes);
-        StringBuilder hashBuilder = new StringBuilder();
-        for (byte b : hashBytes) {
-            int i = ((Byte)b).intValue();
-            hashBuilder.append(Integer.toString(Math.abs(i)));
-        }
-        return hashBuilder.toString();
+        return Utils.randomAlphaNumeric(8);
     }
 
 }
