@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.leveldb.client.thrift.Amount;
-import com.credits.wallet.desktop.Utils;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;
@@ -12,9 +11,8 @@ import net.i2p.crypto.eddsa.spec.EdDSAParameterSpec;
 import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec;
 import net.i2p.crypto.eddsa.spec.EdDSAPublicKeySpec;
 
+import java.nio.charset.StandardCharsets;
 import java.security.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Утилита генерации публичных, приватных ключей, подписи
@@ -98,7 +96,7 @@ public class Ed25519 {
                 currency
         );
 
-        byte[] signature = Ed25519.sign(transaction.getBytes(), privateKey);
+        byte[] signature = Ed25519.sign(transaction.getBytes(StandardCharsets.US_ASCII), privateKey);
 
         return Converter.encodeToBASE64(signature);
     }

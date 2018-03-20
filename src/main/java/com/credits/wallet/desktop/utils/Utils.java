@@ -1,6 +1,6 @@
-package com.credits.wallet.desktop;
+package com.credits.wallet.desktop.utils;
 
-import com.credits.wallet.desktop.utils.Ed25519;
+import com.credits.wallet.desktop.AppState;
 import javafx.scene.control.Alert;
 import javafx.stage.StageStyle;
 import org.slf4j.Logger;
@@ -57,22 +57,6 @@ public class Utils {
         return s;
     }
 
-    public static void prepareAndCallTransactionFlow (
-            String source,
-            String target,
-            Double amount,
-            String currency
-    ) throws Exception {
-
-        String hash = UUID.randomUUID().toString().replace("-", "");
-        String innerId = UUID.randomUUID().toString().replace("-", "");
-
-        String signatureBASE64 = Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency,
-                AppState.privateKey);
-
-        AppState.apiClient.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
-    }
-
     /**
      * Gets the subarray
      * @param array - source
@@ -97,6 +81,18 @@ public class Utils {
         System.arraycopy(firstArr, 0, resultArr, 0, firstArr.length);
         System.arraycopy(secondArr, 0, resultArr, firstArr.length, secondArr.length);
         return resultArr;
+    }
+
+
+    private static final String ALPHA_NUMERIC_STRING = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    public static String randomAlphaNumeric(int count) {
+        StringBuilder builder = new StringBuilder();
+        while (count-- != 0) {
+            int character = (int)(Math.random()*ALPHA_NUMERIC_STRING.length());
+            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
+        }
+        return builder.toString();
     }
 
 }

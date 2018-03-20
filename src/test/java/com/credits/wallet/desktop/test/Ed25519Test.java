@@ -1,14 +1,8 @@
 package com.credits.wallet.desktop.test;
 
-import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.Utils;
-import com.credits.wallet.desktop.controller.Const;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.Converter;
 import com.credits.wallet.desktop.utils.Ed25519;
-import net.i2p.crypto.eddsa.EdDSAPrivateKey;
-import net.i2p.crypto.eddsa.EdDSAPublicKey;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +12,6 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Arrays;
-import java.util.UUID;
 
 /**
  * Created by Rustem Saidaliyev on 14-Mar-18.

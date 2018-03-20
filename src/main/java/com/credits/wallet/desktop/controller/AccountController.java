@@ -2,7 +2,7 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.Utils;
+import com.credits.wallet.desktop.utils.Utils;
 import com.credits.wallet.desktop.utils.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
