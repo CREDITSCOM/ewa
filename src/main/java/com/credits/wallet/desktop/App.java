@@ -49,13 +49,11 @@ public class App extends Application {
             } catch (Exception e) {
                 // do nothing
             }
-            AppState.contractExecutorDir = property.getProperty("contract.executor.dir");
 
             if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
                 Utils.showError(ERR_NO_API_ADDR);
             } else if (AppState.contractExecutorHost == null ||
-                    AppState.contractExecutorPort == null ||
-                    AppState.contractExecutorDir == null) {
+                    AppState.contractExecutorPort == null) {
                 Utils.showError(ERR_NO_CONTRACT_EXECUTOR);
             } else {
                 AppState.apiClient = new ApiClient(apiAddr, Integer.valueOf(apiPort));

@@ -76,7 +76,7 @@ public class Form5Controller extends Controller implements Initializable {
             } catch (Exception e) {
                 e.printStackTrace();
                 Utils.showError("Error creating transaction " + e.toString());
-                return;
+                // return; Go to next step
             }
         } else {
             try {
@@ -87,7 +87,7 @@ public class Form5Controller extends Controller implements Initializable {
             } catch (Exception e) {
                 Utils.showError(e.getMessage());
                 e.printStackTrace();
-                return;
+                // return; Go to next step
             }
         }
 

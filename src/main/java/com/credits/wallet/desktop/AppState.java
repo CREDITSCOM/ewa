@@ -16,7 +16,6 @@ public class AppState {
     public static String decSep;
     public static String contractExecutorHost;
     public static Integer contractExecutorPort;
-    public static String contractExecutorDir;
 
     public static boolean newAccount;
     public static String account;

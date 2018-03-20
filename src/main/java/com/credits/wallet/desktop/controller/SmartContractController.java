@@ -132,8 +132,7 @@ public class SmartContractController extends Controller implements Initializable
 
         // Call contract executor
         if (AppState.contractExecutorHost != null &&
-                AppState.contractExecutorPort != null &&
-                AppState.contractExecutorDir != null ) {
+                AppState.contractExecutorPort != null) {
             try {
                 // Parse className
                 String className = "SmartContract";
@@ -162,7 +161,7 @@ public class SmartContractController extends Controller implements Initializable
                 contractFile.setName(className+".java");
                 contractFile.setFile(codeArea.getText().getBytes());
 
-                APIResponse executorResponse = client.store(contractFile, AppState.contractExecutorDir);
+                APIResponse executorResponse = client.store(contractFile, token);
                 if (executorResponse.getCode()!=0 && executorResponse.getMessage()!=null) {
                     Utils.showError("Error executing smart contract " + executorResponse.getMessage());
                 } else {
