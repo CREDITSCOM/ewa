@@ -8,6 +8,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -24,6 +27,11 @@ public class AccountController extends Controller implements Initializable {
     private Label balance;
 
     @FXML
+    private void handleLogout() {
+        App.showForm("/fxml/form0.fxml", "Wallet");
+    }
+
+    @FXML
     private void handleDetails() {
         AppState.newAccount = false;
         App.showForm("/fxml/history.fxml", "Wallet");
@@ -33,6 +41,14 @@ public class AccountController extends Controller implements Initializable {
     private void handleSmartContract() {
         AppState.newAccount = false;
         App.showForm("/fxml/smart_contract.fxml", "Wallet");
+    }
+
+
+    @FXML
+    private void handleCopy() {
+        StringSelection selection = new StringSelection(wallet.getText());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(selection, selection);
     }
 
     public void initialize(URL location, ResourceBundle resources) {

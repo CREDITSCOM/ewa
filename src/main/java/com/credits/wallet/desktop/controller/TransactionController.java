@@ -25,6 +25,11 @@ public class TransactionController extends Controller implements Initializable {
     private Label labHash;
 
     @FXML
+    private void handleLogout() {
+        App.showForm("/fxml/form0.fxml", "Wallet");
+    }
+
+    @FXML
     private void handleBack() {
         App.showForm("/fxml/history.fxml", "Wallet");
     }

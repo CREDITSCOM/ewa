@@ -113,6 +113,11 @@ public class HistoryController extends Controller implements Initializable {
     }
 
     @FXML
+    private void handleLogout() {
+        App.showForm("/fxml/form0.fxml", "Wallet");
+    }
+
+    @FXML
     private void handleBack() {
         App.showForm("/fxml/form6.fxml", "Wallet");
     }

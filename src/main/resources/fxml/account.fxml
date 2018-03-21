@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="456.0" maxWidth="260.0" minHeight="365.5" minWidth="232.0" prefHeight="456.0" prefWidth="260.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.AccountController">
+<Pane maxHeight="589.0" maxWidth="260.0" minHeight="365.5" minWidth="232.0" prefHeight="589.0" prefWidth="260.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.AccountController">
 	<BorderPane.margin>
 		<Insets left="20.0" top="30.0" />
 	</BorderPane.margin>
@@ -29,18 +29,20 @@
 				<Font name="System Bold" size="11.0" />
 			</font>
 		</Label>
-		<Label layoutX="14.0" layoutY="172.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Balance:">
+		<Label layoutX="17.0" layoutY="245.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Balance:">
 			<font>
 				<Font name="System Bold" size="11.0" />
 			</font>
 		</Label>
-		<Label fx:id="balance" layoutX="14.0" layoutY="201.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css">
+		<Label fx:id="balance" layoutX="17.0" layoutY="274.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css">
 			<font>
 				<Font name="System Bold" size="11.0" />
 			</font>
 		</Label>
-		<Label layoutX="14.0" layoutY="246.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Transaction history:" />
-		<Button layoutX="17.0" layoutY="277.0" mnemonicParsing="false" onAction="#handleDetails" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DETAILS" />
-		<Button layoutX="17.0" layoutY="356.0" mnemonicParsing="false" onAction="#handleSmartContract" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SMART CONTRACT" />
+		<Label layoutX="14.0" layoutY="316.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Transaction history:" />
+		<Button layoutX="17.0" layoutY="347.0" mnemonicParsing="false" onAction="#handleDetails" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DETAILS" />
+		<Button layoutX="17.0" layoutY="424.0" mnemonicParsing="false" onAction="#handleSmartContract" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SMART CONTRACT" />
+      <Button layoutX="17.0" layoutY="502.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="LOGOUT" />
+      <Button layoutX="18.0" layoutY="174.0" mnemonicParsing="false" onAction="#handleCopy" text="Copy to clipboard" />
 	</children>
 </Pane>

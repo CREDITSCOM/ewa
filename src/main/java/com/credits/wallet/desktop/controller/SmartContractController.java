@@ -109,6 +109,15 @@ public class SmartContractController extends Controller implements Initializable
     //private javafx.scene.control.TextArea taCode;
 
     @FXML
+    private void handleLogout() {
+        if (AppState.executor != null) {
+            AppState.executor.shutdown();
+            AppState.executor = null;
+        }
+        App.showForm("/fxml/form0.fxml", "Wallet");
+    }
+
+    @FXML
     private void handleBack() {
         if (AppState.executor != null) {
             AppState.executor.shutdown();
@@ -205,6 +214,13 @@ public class SmartContractController extends Controller implements Initializable
                 .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
                 .subscribe(change -> {
                     String curCode=codeArea.getText();
+
+                    // Replace TAB to 4 spaces
+                    if (curCode.indexOf("\t")>=0) {
+                        codeArea.replaceText(0, curCode.length(), curCode.replace("\t", "    "));
+                        curCode = codeArea.getText();
+                    }
+
                     if (curCode.indexOf(nonChangedStr)<0) {
                         codeArea.replaceText(0, curCode.length(), prevCode);
                     } else {
@@ -481,8 +497,23 @@ public class SmartContractController extends Controller implements Initializable
     }
 
     private String normMethodName (String method) {
-        int spInd=method.indexOf(" ");
-        String result=method.substring(spInd+1);
-        return result;
+        int ind1=method.indexOf(" ");
+        String result=method.substring(ind1+1);
+
+        ind1=result.indexOf("(");
+        int ind2=result.indexOf(")");
+        StringBuilder parametersStr=new StringBuilder();
+        String[] parameters=result.substring(ind1,ind2).trim().split(",");
+        boolean first=true;
+        for (String parameter : parameters) {
+            String[] parameterAsArr=parameter.trim().split(" ");
+            if (first)
+                parametersStr.append(parameterAsArr[1].trim());
+            else
+                parametersStr.append(", ").append(parameterAsArr[1].trim());
+            first=false;
+        }
+
+        return result.substring(0,ind1+1)+parametersStr+")";
     }
 }

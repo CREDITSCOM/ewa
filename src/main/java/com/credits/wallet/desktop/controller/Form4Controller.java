@@ -20,6 +20,11 @@ public class Form4Controller extends Controller implements Initializable {
     private TextField txKey;
 
     @FXML
+    private void handleLogout() {
+        App.showForm("/fxml/form0.fxml", "Wallet");
+    }
+
+    @FXML
     private void handleBack() {
         App.showForm("/fxml/form1.fxml", "Wallet");
     }

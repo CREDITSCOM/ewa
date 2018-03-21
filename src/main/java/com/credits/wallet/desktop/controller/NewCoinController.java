@@ -26,6 +26,11 @@ public class NewCoinController extends Controller implements Initializable {
     private TextField txCoin;
 
     @FXML
+    private void handleLogout() {
+        App.showForm("/fxml/form0.fxml", "Wallet");
+    }
+
+    @FXML
     private void handleBack() {
         App.showForm("/fxml/form6.fxml", "Wallet");
     }

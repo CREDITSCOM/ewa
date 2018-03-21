@@ -26,8 +26,8 @@
                                     <center>
                                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="441.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_CENTER">
                                             <children>
-                                                <Button layoutX="453.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleContinue" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CONTINUE" textAlignment="CENTER" wrapText="true" />
-                                                <Button layoutX="24.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
+                                                <Button layoutX="456.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleContinue" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CONTINUE" textAlignment="CENTER" wrapText="true" />
+                                                <Button layoutX="264.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
                                                 <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
                                                 <TextField fx:id="txKey" layoutX="24.0" layoutY="183.0" prefHeight="56.0" prefWidth="605.0" promptText="key ..." style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
                                                 <Label layoutX="23.0" layoutY="149.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Save this private key">
@@ -41,6 +41,7 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
+                                    <Button layoutX="70.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="LOGOUT" textAlignment="CENTER" wrapText="true" />
                                             </children>
                                             <BorderPane.margin>
                                                 <Insets />

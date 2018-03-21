@@ -15,12 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
@@ -76,7 +73,7 @@ public class Form5Controller extends Controller implements Initializable {
             } catch (Exception e) {
                 e.printStackTrace();
                 Utils.showError("Error creating transaction " + e.toString());
-                // return; Go to next step
+                //return;
             }
         } else {
             try {
@@ -85,19 +82,24 @@ public class Form5Controller extends Controller implements Initializable {
                 AppState.publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
                 AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
             } catch (Exception e) {
-                Utils.showError(e.getMessage());
+                if (e.getMessage()!=null)
+                    Utils.showError(e.getMessage());
                 e.printStackTrace();
-                // return; Go to next step
+                //return;
             }
         }
 
-        App.showForm("/fxml/form6.fxml", "Wallet");
+        if (validateKeys(txPublic.getText(), txKey.getText()))
+            App.showForm("/fxml/form6.fxml", "Wallet");
+        else
+            Utils.showError("Public and private keys pair is not valid");
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         btnBack.setVisible(!AppState.newAccount);
         txPublic.setDisable(AppState.newAccount);
+        txKey.setDisable(AppState.newAccount);
 
         if (AppState.newAccount) {
             txKey.setText(Converter.encodeToBASE64(Ed25519.privateKeyToBytes(AppState.privateKey)));
@@ -115,6 +117,26 @@ public class Form5Controller extends Controller implements Initializable {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private boolean validateKeys(String publicKey, String privateKey) {
+        try {
+            byte[] publicKeyByteArr = Converter.decodeFromBASE64(publicKey);
+            byte[] privateKeyByteArr = Converter.decodeFromBASE64(privateKey);
+
+            if (privateKeyByteArr.length<=32)
+                return false;
+
+            for (int i=0; i<publicKeyByteArr.length && i<privateKeyByteArr.length-32; i++) {
+                if (publicKeyByteArr[i]!=privateKeyByteArr[i+32])
+                    return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
