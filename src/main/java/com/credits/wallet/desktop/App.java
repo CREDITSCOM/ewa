@@ -2,6 +2,7 @@ package com.credits.wallet.desktop;
 
 
 import com.credits.leveldb.client.*;
+import com.credits.wallet.desktop.utils.Utils;
 import javafx.application.*;
 import javafx.fxml.*;
 import javafx.geometry.*;

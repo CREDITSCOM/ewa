@@ -3,7 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.leveldb.client.*;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.Utils;
+import com.credits.wallet.desktop.utils.Utils;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.*;
 import javafx.beans.value.ChangeListener;

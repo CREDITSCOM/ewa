@@ -1,8 +1,7 @@
 package com.credits.wallet.desktop.test;
 
-import com.credits.wallet.desktop.Utils;
+import com.credits.wallet.desktop.utils.Utils;
 import com.credits.wallet.desktop.utils.Converter;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +51,4 @@ public class UtilsTest {
         }
 
     }
-
-
 }

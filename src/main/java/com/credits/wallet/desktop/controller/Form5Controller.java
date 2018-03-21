@@ -2,7 +2,8 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.Utils;
+import com.credits.wallet.desktop.utils.ApiUtils;
+import com.credits.wallet.desktop.utils.Utils;
 import com.credits.wallet.desktop.utils.Converter;
 import com.credits.wallet.desktop.utils.Ed25519;
 import javafx.fxml.FXML;
@@ -64,7 +65,7 @@ public class Form5Controller extends Controller implements Initializable {
         if (AppState.newAccount) {
             // Transaction from credits
             try {
-                Utils.prepareAndCallTransactionFlow(
+                ApiUtils.prepareAndCallTransactionFlow(
                         Const.CREDIT_ACCOUNT,
                         txPublic.getText(),
                         Const.NEW_ACCOUNT_TRANSACTION_AMOUNT,
