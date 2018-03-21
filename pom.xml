@@ -16,18 +16,6 @@
     </properties>
 
     <dependencies>
-
-        <!-- Apache HTTP Client -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.5.5</version>
-        </dependency>
         <!--
         API
         Для использования этой зависимости необходимо выполнить установку jar файла из проекта leveldb-client

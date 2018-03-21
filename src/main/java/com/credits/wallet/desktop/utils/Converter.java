@@ -7,8 +7,6 @@ import java.text.ParseException;
 import java.util.Base64;
 import java.util.Locale;
 
-//import org.apache.commons.codec.binary.Base64;
-
 /**
  * Created by Rustem.Saidaliyev on 29.01.2018.
  */
