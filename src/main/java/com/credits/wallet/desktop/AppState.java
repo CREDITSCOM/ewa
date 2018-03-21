@@ -24,10 +24,10 @@ public class AppState {
     public static Double transactionFeeValue = 0.0;
     public static Double transactionFeePercent = 0.0;
     public static String toAddress;
-    public static String transactionHash;
     public static String coin;
 
     public static TransactionTabRow selectedTransactionRow;
+    public static String transactionId;
 
     public static List<String> coins=new ArrayList<>();
 

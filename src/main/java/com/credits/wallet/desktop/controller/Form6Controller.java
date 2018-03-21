@@ -28,6 +28,10 @@ public class Form6Controller extends Controller implements Initializable {
 
     private static Logger LOGGER = LoggerFactory.getLogger(Form6Controller.class);
 
+    private static final String ERR_AMOUNT="Amount must be greater than 0";
+    private static final String ERR_FEE="Fee must be greater than 0";
+    private static final String ERR_TO_ADDRESS="To address must not be empty";
+
     private static final String ERR_GETTING_BALANCE = "Error getting balance";
 
     @FXML
@@ -76,7 +80,33 @@ public class Form6Controller extends Controller implements Initializable {
         AppState.amount = numAmount.getValue();
         AppState.transactionFeeValue = numFee.getValue();
         AppState.toAddress = txKey.getText();
-        App.showForm("/fxml/form7.fxml", "Wallet");
+
+        // VALIDATE
+        String err = "";
+        if (AppState.amount<=0) {
+            if (err.isEmpty())
+                err = ERR_AMOUNT;
+            else
+                err = err+"\n"+ERR_AMOUNT;
+        }
+        if (AppState.transactionFeeValue<=0) {
+            if (err.isEmpty())
+                err = ERR_FEE;
+            else
+                err = err+"\n"+ERR_FEE;
+        }
+        if (AppState.toAddress==null || AppState.toAddress.isEmpty()) {
+            if (err.isEmpty())
+                err = ERR_TO_ADDRESS;
+            else
+                err = err+"\n"+ERR_TO_ADDRESS;
+        }
+        // --------
+
+        if (!err.isEmpty())
+            Utils.showError(err);
+        else
+            App.showForm("/fxml/form7.fxml", "Wallet");
     }
 
     @Override
@@ -120,17 +150,16 @@ public class Form6Controller extends Controller implements Initializable {
         };
 
         SpinnerValueFactory<Double> amountValueFactory =
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(-Double.MAX_VALUE, Double.MAX_VALUE,
+            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE,
                 AppState.transactionFeeValue, 0.1);
         amountValueFactory.setConverter(converter);
         numAmount.setValueFactory(amountValueFactory);
 
         SpinnerValueFactory<Double> feeValueFactory =
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(-Double.MAX_VALUE, Double.MAX_VALUE,
+            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE,
                 AppState.transactionFeePercent, 0.1);
         feeValueFactory.setConverter(converter);
         numFee.setValueFactory(feeValueFactory);
-
 
         // Fill coin list
         cbCoin.getItems().clear();

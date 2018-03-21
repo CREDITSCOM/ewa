@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class ApiUtils {
 
-    public static void prepareAndCallTransactionFlow (
+    public static String prepareAndCallTransactionFlow (
             String source,
             String target,
             Double amount,
@@ -24,6 +24,8 @@ public class ApiUtils {
                 AppState.privateKey);
 
         AppState.apiClient.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
+
+        return innerId;
     }
 
     public static String generateTransactionHash() {

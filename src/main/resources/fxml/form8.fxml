@@ -2,11 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
@@ -51,11 +48,6 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
-														<Label layoutX="31.0" layoutY="575.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Transaction hash">
-															<font>
-																<Font name="System Bold" size="11.0" />
-															</font>
-														</Label>
 														<Button fx:id="btnBack" layoutX="259.0" layoutY="136.0" mnemonicParsing="false" onAction="#handleSeeOnMonitor" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SEE ON CREDITS MONITOR" textAlignment="CENTER" wrapText="true" />
 														<Label fx:id="amountInCs" layoutX="29.0" layoutY="406.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
 															<font>
@@ -92,11 +84,7 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
-														<Label fx:id="transactionHash" layoutX="31.0" layoutY="607.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css">
-															<font>
-																<Font name="System Bold" size="11.0" />
-															</font>
-														</Label>
+                                          <Button fx:id="btnView" layoutX="253.0" layoutY="602.0" mnemonicParsing="false" onAction="#handleView" prefHeight="61.0" prefWidth="226.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="VIEW TRANSACTION DETAIL" textAlignment="CENTER" wrapText="true" />
 													</children>
 													<BorderPane.margin>
 														<Insets left="20.0" top="30.0" />

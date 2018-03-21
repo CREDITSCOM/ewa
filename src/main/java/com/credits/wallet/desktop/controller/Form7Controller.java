@@ -32,14 +32,10 @@ public class Form7Controller extends Controller implements Initializable {
     private Label transactionFee;
 
     @FXML
-    private TextField transactionCode;
-
-    @FXML
     private void handleGenerate() {
-        AppState.transactionHash = transactionCode.getText();
-
         try {
-            ApiUtils.prepareAndCallTransactionFlow(
+            AppState.transactionId=null;
+            AppState.transactionId=ApiUtils.prepareAndCallTransactionFlow(
                     AppState.account,
                     AppState.toAddress,
                     AppState.amount,

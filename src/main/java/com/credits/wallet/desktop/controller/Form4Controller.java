@@ -7,7 +7,6 @@ import com.credits.wallet.desktop.utils.Ed25519;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import net.i2p.crypto.eddsa.EdDSAPrivateKey;
 
 import java.net.URL;
 import java.util.ResourceBundle;
