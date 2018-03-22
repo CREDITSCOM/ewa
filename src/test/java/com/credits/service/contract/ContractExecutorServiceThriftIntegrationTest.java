@@ -3,12 +3,12 @@ package com.credits.service.contract;
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.ServiceTest;
 import com.credits.service.usercode.UserCodeStorageService;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -26,9 +26,11 @@ public class ContractExecutorServiceThriftIntegrationTest extends ServiceTest{
         clean(address);
 
         String fileName = "ContractExecutorServiceThriftIntegrationTestCode.java";
+        File testFile = new File(fileName);
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("com/credits/service/usercode/" + fileName)) {
-            MultipartFile file = new MockMultipartFile(fileName, fileName, null, stream);
-            userCodeService.store(file, address);
+            FileUtils.copyToFile(stream, testFile);
+            userCodeService.store(testFile, address);
+            testFile.delete();
         } catch (ContractExecutorException | IOException e) {
             throw new ContractExecutorException(e.getMessage(), e);
         }

@@ -1,6 +1,7 @@
 package com.credits.thrift;
 
 import com.credits.exception.ContractExecutorException;
+import org.apache.commons.io.FileUtils;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -9,24 +10,24 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public class ThriftServerTest {
 
-    private MultipartFile file;
+    private File file;
 
     private ContractExecutor.Client client;
 
     @Before
-    public void setUp() throws ContractExecutorException, TTransportException {
+    public void setUp() throws TTransportException {
         String fileName = "ContractExecutorServiceTestCode.java";
+        file = new File(fileName);
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("com/credits/service/usercode/" + fileName)) {
-            file = new MockMultipartFile(fileName, fileName, null, stream);
+            FileUtils.copyToFile(stream, file);
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -41,12 +42,12 @@ public class ThriftServerTest {
 
     @Test
     public void store() throws TException, IOException {
-        APIResponse response = client.store(new ContractFile("ContractExecutorServiceTestCode.java", ByteBuffer.wrap(file.getBytes())), "987");
+        APIResponse response = client.store(new ContractFile("ContractExecutorServiceTestCode.java", ByteBuffer.wrap(FileUtils.readFileToByteArray(file))), "987");
         System.out.println(response.getCode() + " " + response.getMessage());
     }
 
     @Test
-    public void execute() throws TException, IOException {
+    public void execute() throws TException {
         client.execute("987", "foo", null);
     }
 }

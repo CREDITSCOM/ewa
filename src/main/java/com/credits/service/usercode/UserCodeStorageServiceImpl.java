@@ -8,10 +8,10 @@ import com.credits.exception.ContractExecutorException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,12 +32,12 @@ public class UserCodeStorageServiceImpl implements UserCodeStorageService {
     private SimpleInMemoryCompilator compilator;
 
     @Override
-    public void store(MultipartFile file, String address) throws ContractExecutorException {
-        String sourceFilePath = SOURCE_FOLDER_PATH + File.separator + address + File.separator + file.getOriginalFilename();
+    public void store(File file, String address) throws ContractExecutorException {
+        String sourceFilePath = SOURCE_FOLDER_PATH + File.separator + address + File.separator + file.getName();
         File source = new File(sourceFilePath);
         source.getParentFile().mkdirs();
 
-        try (InputStream is = file.getInputStream(); OutputStream os = new FileOutputStream(source)) {
+        try (InputStream is = new FileInputStream(file); OutputStream os = new FileOutputStream(source)) {
             IOUtils.copy(is, os);
         } catch (IOException e) {
             throw new ContractExecutorException("Cannot save the file " + file.getName() + ". Reason: "

@@ -3,11 +3,12 @@ package com.credits.thrift;
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.usercode.UserCodeStorageService;
-import org.springframework.mock.web.MockMultipartFile;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Component
@@ -24,12 +25,15 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     public APIResponse store(ContractFile file, String address) {
         String fileName = file.getName();
         byte[] fileContent = file.getFile();
-        MultipartFile multipartFile = new MockMultipartFile(fileName, fileName, null, fileContent);
+        File sourceFile = new File(fileName);
+
         APIResponse response = new APIResponse((byte) 0, "");
         try {
-            storageService.store(multipartFile, address);
+            FileUtils.writeByteArrayToFile(sourceFile, fileContent);
+            storageService.store(sourceFile, address);
+            sourceFile.delete();
             service.execute(address);
-        } catch (ContractExecutorException e) {
+        } catch (ContractExecutorException|IOException e) {
             response.setCode((byte) 1);
             response.setMessage(e.getMessage());
             return response;

@@ -2,11 +2,12 @@ package com.credits.service.usercode;
 
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 public interface UserCodeStorageService {
 
-    void store(MultipartFile file, String address) throws ContractExecutorException;
+    void store(File file, String address) throws ContractExecutorException;
 
     default void loadAll() {
 
