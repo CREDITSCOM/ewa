@@ -100,7 +100,7 @@ public class Form6Controller extends Controller implements Initializable {
             ok=false;
         }
         if (AppState.amount<=0) {
-            labErrorAmount.setText(ERR_FEE);
+            labErrorAmount.setText(ERR_AMOUNT);
             numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             ok=false;
         }
