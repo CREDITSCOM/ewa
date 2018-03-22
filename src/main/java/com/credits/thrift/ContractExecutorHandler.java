@@ -3,7 +3,6 @@ package com.credits.thrift;
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.usercode.UserCodeStorageService;
-import org.apache.thrift.TException;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
