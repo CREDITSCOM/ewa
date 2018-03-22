@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop;
 
 import com.credits.leveldb.client.*;
+import com.credits.wallet.desktop.controller.Const;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 
 import java.security.PrivateKey;
@@ -21,7 +22,7 @@ public class AppState {
     public static String account;
 
     public static Double amount = 0.0;
-    public static Double transactionFeeValue = 0.0;
+    public static Double transactionFeeValue = Const.FEE_TRAN_AMOUNT;
     public static Double transactionFeePercent = 0.0;
     public static String toAddress;
     public static String coin;

@@ -88,7 +88,6 @@ public class Form6Controller extends Controller implements Initializable {
     @FXML
     private void handleGenerate() {
         AppState.amount = numAmount.getValue();
-        AppState.transactionFeeValue = numFee.getValue();
         AppState.toAddress = txKey.getText();
 
         // VALIDATE
@@ -173,6 +172,8 @@ public class Form6Controller extends Controller implements Initializable {
                 AppState.transactionFeePercent, 0.1);
         feeValueFactory.setConverter(converter);
         numFee.setValueFactory(feeValueFactory);
+
+        numFee.getValueFactory().setValue(AppState.transactionFeeValue);
 
         // Fill coin list
         cbCoin.getItems().clear();
