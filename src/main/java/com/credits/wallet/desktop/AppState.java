@@ -16,6 +16,10 @@ public class AppState {
     public static String decSep;
     public static String contractExecutorHost;
     public static Integer contractExecutorPort;
+    public static String sysTranPublicKeyBASE64;
+    public static String sysTranPrivateKeyBASE64;
+    public static Double sysTranAmount;
+    public static String sysTranCurrency;
 
     public static boolean newAccount;
     public static String account;

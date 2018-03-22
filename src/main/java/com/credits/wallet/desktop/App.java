@@ -50,12 +50,21 @@ public class App extends Application {
             } catch (Exception e) {
                 // do nothing
             }
+            AppState.sysTranPublicKeyBASE64 = property.getProperty("sys.tran.public.key.base64");
+            AppState.sysTranPrivateKeyBASE64 = property.getProperty("sys.tran.private.key.base64");
+            try {
+                AppState.sysTranAmount = Double.valueOf(property.getProperty("sys.tran.amount"));
+            } catch (Exception e) {}
+            AppState.sysTranCurrency = property.getProperty("sys.tran.currency");
 
             if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
                 Utils.showError(ERR_NO_API_ADDR);
             } else if (AppState.contractExecutorHost == null ||
                     AppState.contractExecutorPort == null) {
                 Utils.showError(ERR_NO_CONTRACT_EXECUTOR);
+            } else if (AppState.sysTranPublicKeyBASE64 == null || AppState.sysTranPrivateKeyBASE64 == null
+                    || AppState.sysTranAmount == null || AppState.sysTranCurrency == null) {
+                Utils.showError("Check sys.tran.public.key.base64, sys.tran.private.key.base64, sys.tran.amount, sys.tran.currency parameters in the settings.properties file");
             } else {
                 AppState.apiClient = new ApiClient(apiAddr, Integer.valueOf(apiPort));
                 showForm("/fxml/form0.fxml", "Wallet");

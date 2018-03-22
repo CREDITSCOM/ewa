@@ -63,14 +63,9 @@ public class Form5Controller extends Controller implements Initializable {
         }
 
         if (AppState.newAccount) {
-            // Transaction from credits
+            // Создание системной транзакции
             try {
-                ApiUtils.prepareAndCallTransactionFlow(
-                        Const.CREDIT_ACCOUNT,
-                        txPublic.getText(),
-                        Const.NEW_ACCOUNT_TRANSACTION_AMOUNT,
-                        Const.NEW_ACCOUNT_TRANSACTION_COIN
-                );
+                ApiUtils.prepareAndCallTransactionFlowSystem(txPublic.getText());
             } catch (Exception e) {
                 e.printStackTrace();
                 Utils.showError("Error creating transaction " + e.toString());

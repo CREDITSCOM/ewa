@@ -1,8 +1,9 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.controller.Const;
 
-import java.util.Random;
+import java.security.PrivateKey;
 import java.util.UUID;
 
 /**
@@ -27,6 +28,37 @@ public class ApiUtils {
 
         return innerId;
     }
+
+    /**
+     * Создание системной транзакции
+     * @param target
+     * @throws Exception
+     */
+    public static void prepareAndCallTransactionFlowSystem(String target) throws Exception {
+
+        String hash = ApiUtils.generateTransactionHash();
+        String innerId = UUID.randomUUID().toString();
+
+        byte[] privateKeyByteArr = Converter.decodeFromBASE64(AppState.sysTranPrivateKeyBASE64);
+        PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
+
+        String source = AppState.sysTranPublicKeyBASE64;
+        Double amount = AppState.sysTranAmount;
+        String currency = AppState.sysTranCurrency;
+
+        String signatureBASE64 = Ed25519.generateSignOfTransaction(
+                hash,
+                innerId,
+                source,
+                target,
+                amount,
+                currency,
+                privateKey
+        );
+
+        AppState.apiClient.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
+    }
+
 
     public static String generateTransactionHash() {
         return Utils.randomAlphaNumeric(8);
