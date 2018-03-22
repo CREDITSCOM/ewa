@@ -39,12 +39,12 @@ public class ApiUtils {
         String hash = ApiUtils.generateTransactionHash();
         String innerId = UUID.randomUUID().toString();
 
-        byte[] privateKeyByteArr = Converter.decodeFromBASE64(AppState.sysTranPrivateKeyBASE64);
+        byte[] privateKeyByteArr = Converter.decodeFromBASE64(Const.SYS_TRAN_PRIVATE_KEY_BASE64);
         PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
 
-        String source = AppState.sysTranPublicKeyBASE64;
-        Double amount = AppState.sysTranAmount;
-        String currency = AppState.sysTranCurrency;
+        String source = Const.SYS_TRAN_PUBLIC_KEY_BASE64;
+        Double amount = Const.SYS_TRAN_AMOUNT;
+        String currency = Const.SYS_TRAN_CURRENCY;
 
         String signatureBASE64 = Ed25519.generateSignOfTransaction(
                 hash,
