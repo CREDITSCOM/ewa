@@ -10,6 +10,8 @@ import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;
 import net.i2p.crypto.eddsa.spec.EdDSAParameterSpec;
 import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec;
 import net.i2p.crypto.eddsa.spec.EdDSAPublicKeySpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.security.*;
@@ -21,6 +23,8 @@ import java.security.*;
  * Created by Rustem Saidaliyev on 14-Mar-18.
  */
 public class Ed25519 {
+
+    private static final Logger logger = LoggerFactory.getLogger(Ed25519.class);
 
     public static final String ED_25519 = "Ed25519";
 
@@ -37,9 +41,7 @@ public class Ed25519 {
         try {
             edDSAEngine.initSign(privateKey);
             return edDSAEngine.signOneShot(data);
-        } catch (InvalidKeyException e) {
-            throw new WalletDesktopException(e);
-        } catch (SignatureException e) {
+        } catch (InvalidKeyException | SignatureException e) {
             throw new WalletDesktopException(e);
         }
     }
@@ -50,9 +52,7 @@ public class Ed25519 {
         try {
             edDSAEngine.initVerify(publicKey);
             return edDSAEngine.verifyOneShot(data, signature);
-        } catch (InvalidKeyException e) {
-            throw new WalletDesktopException(e);
-        } catch (SignatureException e) {
+        } catch (InvalidKeyException | SignatureException e) {
             throw new WalletDesktopException(e);
         }
     }
@@ -96,6 +96,7 @@ public class Ed25519 {
                 currency
         );
 
+        logger.debug("Signing the message [{}]", transaction);
         byte[] signature = Ed25519.sign(transaction.getBytes(StandardCharsets.US_ASCII), privateKey);
 
         return Converter.encodeToBASE64(signature);

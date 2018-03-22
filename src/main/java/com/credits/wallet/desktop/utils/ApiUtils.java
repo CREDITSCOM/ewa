@@ -2,6 +2,8 @@ package com.credits.wallet.desktop.utils;
 
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.controller.Const;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.PrivateKey;
 import java.util.UUID;
@@ -11,18 +13,18 @@ import java.util.UUID;
  */
 public class ApiUtils {
 
-    public static String prepareAndCallTransactionFlow (
-            String source,
-            String target,
-            Double amount,
-            String currency
-    ) throws Exception {
+    private static final Logger logger = LoggerFactory.getLogger(ApiUtils.class);
+
+    public static String prepareAndCallTransactionFlow(String source, String target, Double amount, String currency)
+        throws Exception {
 
         String hash = ApiUtils.generateTransactionHash();
         String innerId = UUID.randomUUID().toString();
 
-        String signatureBASE64 = Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency,
-                AppState.privateKey);
+        String signatureBASE64 =
+            Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency, AppState.privateKey);
+
+        logger.debug("Signature got: {}", signatureBASE64);
 
         AppState.apiClient.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
 
@@ -31,6 +33,7 @@ public class ApiUtils {
 
     /**
      * Создание системной транзакции
+     *
      * @param target
      * @throws Exception
      */
@@ -46,15 +49,8 @@ public class ApiUtils {
         Double amount = Const.SYS_TRAN_AMOUNT;
         String currency = Const.SYS_TRAN_CURRENCY;
 
-        String signatureBASE64 = Ed25519.generateSignOfTransaction(
-                hash,
-                innerId,
-                source,
-                target,
-                amount,
-                currency,
-                privateKey
-        );
+        String signatureBASE64 =
+            Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency, privateKey);
 
         AppState.apiClient.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
     }
