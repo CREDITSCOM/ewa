@@ -109,15 +109,6 @@ public class SmartContractController extends Controller implements Initializable
     //private javafx.scene.control.TextArea taCode;
 
     @FXML
-    private void handleLogout() {
-        if (AppState.executor != null) {
-            AppState.executor.shutdown();
-            AppState.executor = null;
-        }
-        App.showForm("/fxml/form0.fxml", "Wallet");
-    }
-
-    @FXML
     private void handleBack() {
         if (AppState.executor != null) {
             AppState.executor.shutdown();

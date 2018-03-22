@@ -32,6 +32,11 @@ public class Form7Controller extends Controller implements Initializable {
     private Label transactionFee;
 
     @FXML
+    private void handleBack() {
+        App.showForm("/fxml/form6.fxml", "Wallet");
+    }
+
+    @FXML
     private void handleGenerate() {
         try {
             AppState.transactionId=null;

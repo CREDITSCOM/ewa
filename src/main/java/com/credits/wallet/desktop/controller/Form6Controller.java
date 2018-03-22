@@ -28,6 +28,7 @@ public class Form6Controller extends Controller implements Initializable {
 
     private static Logger LOGGER = LoggerFactory.getLogger(Form6Controller.class);
 
+    private static final String ERR_COIN="Coin must be selected";
     private static final String ERR_AMOUNT="Amount must be greater than 0";
     private static final String ERR_FEE="Fee must be greater than 0";
     private static final String ERR_TO_ADDRESS="To address must not be empty";
@@ -36,6 +37,15 @@ public class Form6Controller extends Controller implements Initializable {
 
     @FXML
     private Label labCredit;
+
+    @FXML
+    private Label labErrorCoin;
+    @FXML
+    private Label labErrorKey;
+    @FXML
+    private Label labErrorAmount;
+    @FXML
+    private Label labErrorFee;
 
     @FXML
     private TextField txKey;
@@ -82,35 +92,38 @@ public class Form6Controller extends Controller implements Initializable {
         AppState.toAddress = txKey.getText();
 
         // VALIDATE
-        String err = "";
+        boolean ok=true;
+        clearLabErr();
+        if (AppState.coin==null || AppState.coin.isEmpty()) {
+            labErrorCoin.setText(ERR_COIN);
+            cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            ok=false;
+        }
         if (AppState.amount<=0) {
-            if (err.isEmpty())
-                err = ERR_AMOUNT;
-            else
-                err = err+"\n"+ERR_AMOUNT;
+            labErrorAmount.setText(ERR_FEE);
+            numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            ok=false;
         }
         if (AppState.transactionFeeValue<=0) {
-            if (err.isEmpty())
-                err = ERR_FEE;
-            else
-                err = err+"\n"+ERR_FEE;
+            labErrorFee.setText(ERR_FEE);
+            numFee.setStyle(numFee.getStyle().replace("-fx-border-color: #ececec","-fx-border-color: red"));
+            ok=false;
         }
         if (AppState.toAddress==null || AppState.toAddress.isEmpty()) {
-            if (err.isEmpty())
-                err = ERR_TO_ADDRESS;
-            else
-                err = err+"\n"+ERR_TO_ADDRESS;
+            labErrorKey.setText(ERR_TO_ADDRESS);
+            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec","-fx-border-color: red"));
+            ok=false;
         }
         // --------
 
-        if (!err.isEmpty())
-            Utils.showError(err);
-        else
+        if (ok)
             App.showForm("/fxml/form7.fxml", "Wallet");
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        clearLabErr();
+
         labCredit.setText("0");
         txKey.setText("CSx5893eff21fd9c79463d127b3d3512b38dd05a42402c079e4a45d7f00a52e8");
         labFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
@@ -249,5 +262,17 @@ public class Form6Controller extends Controller implements Initializable {
 
     private double getBalance(String coin) throws Exception {
         return AppState.apiClient.getBalance(AppState.account, coin);
+    }
+
+    private void clearLabErr() {
+        labErrorCoin.setText("");
+        labErrorAmount.setText("");
+        labErrorFee.setText("");
+        labErrorKey.setText("");
+
+        cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: red","-fx-border-color: #ececec"));
+        txKey.setStyle(txKey.getStyle().replace("-fx-border-color: red","-fx-border-color: #ececec"));
+        numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: red","-fx-border-color: #ececec"));
+        numFee.setStyle(numFee.getStyle().replace("-fx-border-color: red","-fx-border-color: #ececec"));
     }
 }

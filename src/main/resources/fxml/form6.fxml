@@ -23,8 +23,11 @@
                      <top>
                         <fx:include source="header.fxml" />
                      </top>
-                     <center>
-                        <BorderPane minHeight="-Infinity" prefHeight="750.0" BorderPane.alignment="TOP_CENTER">
+                     <bottom>
+                        <fx:include source="footer.fxml" />
+                     </bottom>
+                     <right>
+                        <BorderPane minHeight="-Infinity" prefHeight="750.0" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
                               <Insets top="30.0" />
                            </BorderPane.margin>
@@ -87,6 +90,10 @@
                                           <Button fx:id="btnBack" layoutX="374.0" layoutY="620.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
                                           <Spinner fx:id="numAmount" editable="true" layoutX="17.0" layoutY="420.0" prefHeight="56.0" prefWidth="203.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
                                           <Button layoutX="56.0" layoutY="620.0" mnemonicParsing="false" onAction="#handleNewCoin" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="NEW COIN" textAlignment="CENTER" wrapText="true" />
+                                          <Label fx:id="labErrorCoin" layoutX="18.0" layoutY="235.0" text="Label" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css" />
+                                          <Label fx:id="labErrorKey" layoutX="18.0" layoutY="353.0" text="Label" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css"  />
+                                          <Label fx:id="labErrorAmount" layoutX="18.0" layoutY="476.0" text="Label" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css" />
+                                          <Label fx:id="labErrorFee" layoutX="18.0" layoutY="594.0" text="Label" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css" />
                                        </children>
                                     </Pane>
                                  </children>
@@ -96,10 +103,7 @@
                               </Pane>
                            </center>
                         </BorderPane>
-                     </center>
-                     <bottom>
-                        <fx:include source="footer.fxml" />
-                     </bottom>
+                     </right>
                   </BorderPane>
                </content>
 				</ScrollPane>

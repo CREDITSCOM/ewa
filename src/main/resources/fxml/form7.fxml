@@ -50,7 +50,7 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
-														<Button fx:id="btnBack" layoutX="20.0" layoutY="469.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
+														<Button fx:id="btnGenerate" layoutX="222.0" layoutY="468.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
 														<Label fx:id="amountInCs" layoutX="23.0" layoutY="314.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
 															<font>
 																<Font name="System Bold" size="11.0" />
@@ -76,6 +76,7 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
+                                          <Button fx:id="btnBack" layoutX="32.0" layoutY="468.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
 													</children>
 													<BorderPane.margin>
 														<Insets left="20.0" top="30.0" />
