@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 
+import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -32,7 +33,21 @@ public class Form8Controller extends Controller implements Initializable {
 
     @FXML
     private void handleSeeOnMonitor() {
-        App.showForm("/fxml/form0.fxml", "Wallet");
+        if (AppState.creditMonitorURL==null) {
+            Utils.showError("URL for credit monitor not defined");
+        } else {
+            try {
+                Desktop.getDesktop().browse(new URL(AppState.creditMonitorURL).toURI());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Utils.showError(e.getMessage());
+            }
+        }
+    }
+
+    @FXML
+    private void handleOk() {
+        App.showForm("/fxml/form6.fxml", "Wallet");
     }
 
     @FXML
@@ -48,6 +63,7 @@ public class Form8Controller extends Controller implements Initializable {
                 AppState.selectedTransactionRow.setHash(transactionData.getHash());
                 AppState.selectedTransactionRow.setId(transactionData.getInnerId());
                 AppState.selectedTransactionRow.setTarget(transactionData.getTarget());
+                AppState.detailFromHistory=false;
                 App.showForm("/fxml/transaction.fxml", "Wallet");
             } catch (Exception e) {
                 Utils.showError("Error "+e.getMessage());

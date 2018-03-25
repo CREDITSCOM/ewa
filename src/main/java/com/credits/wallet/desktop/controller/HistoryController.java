@@ -81,6 +81,7 @@ public class HistoryController extends Controller implements Initializable {
                     TransactionTabRow tabRow = (TransactionTabRow) tabTransaction.getSelectionModel().getSelectedItem();
                     if (tabRow != null) {
                         AppState.selectedTransactionRow = tabRow;
+                        AppState.detailFromHistory=true;
                         App.showForm("/fxml/transaction.fxml", "Wallet");
                     }
                 }

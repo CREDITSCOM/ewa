@@ -26,7 +26,10 @@ public class TransactionController extends Controller implements Initializable {
 
     @FXML
     private void handleBack() {
-        App.showForm("/fxml/history.fxml", "Wallet");
+        if (AppState.detailFromHistory)
+            App.showForm("/fxml/history.fxml", "Wallet");
+        else
+            App.showForm("/fxml/form8.fxml", "Wallet");
     }
 
     @Override

@@ -42,6 +42,8 @@ public class App extends Application {
             Properties property = new Properties();
             property.load(fis);
 
+            AppState.creditMonitorURL=property.getProperty("creditmonitor.url");
+
             String apiAddr = property.getProperty("api.addr");
             String apiPort = property.getProperty("api.port");
             AppState.contractExecutorHost = property.getProperty("contract.executor.host");

@@ -84,7 +84,8 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
-                                          <Button fx:id="btnView" layoutX="253.0" layoutY="602.0" mnemonicParsing="false" onAction="#handleView" prefHeight="61.0" prefWidth="226.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="VIEW TRANSACTION DETAIL" textAlignment="CENTER" wrapText="true" />
+                                          <Button fx:id="btnView" layoutX="206.0" layoutY="602.0" mnemonicParsing="false" onAction="#handleView" prefHeight="61.0" prefWidth="226.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="VIEW TRANSACTION DETAIL" textAlignment="CENTER" wrapText="true" />
+                                          <Button fx:id="btnOk" layoutX="24.0" layoutY="602.0" mnemonicParsing="false" onAction="#handleOk" prefHeight="61.0" prefWidth="149.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="OK" textAlignment="CENTER" wrapText="true" />
 													</children>
 													<BorderPane.margin>
 														<Insets left="20.0" top="30.0" />

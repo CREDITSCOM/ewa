@@ -9,7 +9,6 @@ import com.credits.wallet.desktop.utils.Converter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,7 +19,7 @@ import java.util.ResourceBundle;
 public class Form7Controller extends Controller implements Initializable {
 
     @FXML
-    private TextField toAddress;
+    private Label toAddress;
 
     @FXML
     private Label amountInCs;
@@ -33,6 +32,7 @@ public class Form7Controller extends Controller implements Initializable {
 
     @FXML
     private void handleBack() {
+        AppState.noClearForm6=true;
         App.showForm("/fxml/form6.fxml", "Wallet");
     }
 

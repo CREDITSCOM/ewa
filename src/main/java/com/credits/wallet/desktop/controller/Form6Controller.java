@@ -254,6 +254,19 @@ public class Form6Controller extends Controller implements Initializable {
                 this.numFee.getEditor().positionCaret(s2.length());
             }
         });
+
+        if (AppState.noClearForm6) {
+            cbCoin.getSelectionModel().select(AppState.coin);
+            txKey.setText(AppState.toAddress);
+            numAmount.getValueFactory().setValue(AppState.amount);
+            numFee.getValueFactory().setValue(AppState.transactionFeeValue);
+            labFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
+
+            AppState.noClearForm6=false;
+        } else {
+            if (cbCoin.getItems().size()>0)
+                cbCoin.getSelectionModel().select(0);
+        }
     }
 
     @FXML

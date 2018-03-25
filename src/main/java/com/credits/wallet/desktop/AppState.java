@@ -17,8 +17,11 @@ public class AppState {
     public static String decSep;
     public static String contractExecutorHost;
     public static Integer contractExecutorPort;
+    public static String creditMonitorURL;
 
     public static boolean newAccount;
+    public static boolean detailFromHistory;
+    public static boolean noClearForm6;
     public static String account;
 
     public static Double amount = 0.0;
