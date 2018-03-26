@@ -37,7 +37,7 @@ public class Form8Controller extends Controller implements Initializable {
             Utils.showError("URL for credit monitor not defined");
         } else {
             try {
-                Desktop.getDesktop().browse(new URL(AppState.creditMonitorURL).toURI());
+                Desktop.getDesktop().browse(new URL(AppState.creditMonitorURL+AppState.account).toURI());
             } catch (Exception e) {
                 e.printStackTrace();
                 Utils.showError(e.getMessage());
