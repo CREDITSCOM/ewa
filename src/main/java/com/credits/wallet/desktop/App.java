@@ -59,7 +59,7 @@ public class App extends Application {
                     AppState.contractExecutorPort == null) {
                 Utils.showError(ERR_NO_CONTRACT_EXECUTOR);
             } else {
-                AppState.apiClient = new ApiClient(apiAddr, Integer.valueOf(apiPort));
+                AppState.apiClient = ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
                 showForm("/fxml/form0.fxml", "Wallet");
             }
 
