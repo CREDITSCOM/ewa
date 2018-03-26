@@ -1,6 +1,5 @@
 package com.credits.thrift;
 
-import com.credits.exception.ContractExecutorException;
 import org.apache.commons.io.FileUtils;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
