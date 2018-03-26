@@ -124,7 +124,6 @@ public class Form6Controller extends Controller implements Initializable {
         clearLabErr();
 
         labCredit.setText("0");
-        txKey.setText("CSx5893eff21fd9c79463d127b3d3512b38dd05a42402c079e4a45d7f00a52e8");
         labFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
         StringConverter converter = new StringConverter<Double>() {
             private final DecimalFormat df = new DecimalFormat("#.##########");
