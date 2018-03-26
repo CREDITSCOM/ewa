@@ -23,7 +23,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
 
     @PostConstruct
     public void setUp() {
-        client = new ApiClient(apiServerHost, apiServerPort);
+        client = ApiClient.getInstance(apiServerHost, apiServerPort);
     }
 
 
