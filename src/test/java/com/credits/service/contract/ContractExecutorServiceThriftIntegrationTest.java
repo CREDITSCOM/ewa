@@ -35,7 +35,7 @@ public class ContractExecutorServiceThriftIntegrationTest extends ServiceTest{
             throw new ContractExecutorException(e.getMessage(), e);
         }
 
-        ceService.execute(address);
+        ceService.execute(address, "");
     }
 
     @Test

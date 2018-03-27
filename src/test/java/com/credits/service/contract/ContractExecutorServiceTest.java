@@ -46,7 +46,7 @@ public class ContractExecutorServiceTest extends ServiceTest {
 
     @Test
     public void executeConstructor() throws ContractExecutorException {
-        exService.execute("12345");
+        exService.execute(address, "");
 
         Class<?> clazz;
         try {
@@ -79,7 +79,7 @@ public class ContractExecutorServiceTest extends ServiceTest {
 
     @Test
     public void executeMethod() throws ContractExecutorException {
-        exService.execute("12345");
+        exService.execute(address, "");
         exService.execute("12345", "foo", null);
         exService.execute("12345", "foo", null);
 
