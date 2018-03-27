@@ -1,10 +1,10 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.utils.Converter;
+import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.utils.Converter;
 import com.credits.wallet.desktop.utils.EclipseJdt;
-import com.credits.wallet.desktop.utils.Ed25519;
 import com.credits.wallet.desktop.utils.Utils;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.thrift.executor.APIResponse;
@@ -24,11 +24,8 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;

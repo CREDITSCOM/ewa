@@ -1,10 +1,10 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.TransactionData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
-import com.credits.wallet.desktop.utils.Converter;
 import com.credits.wallet.desktop.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

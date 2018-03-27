@@ -1,5 +1,7 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.common.utils.Converter;
+import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.controller.Const;
 import org.slf4j.Logger;
@@ -57,7 +59,7 @@ public class ApiUtils {
 
 
     public static String generateTransactionHash() {
-        return Utils.randomAlphaNumeric(8);
+        return com.credits.common.utils.Utils.randomAlphaNumeric(8);
     }
 
 }
