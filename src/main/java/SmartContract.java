@@ -9,6 +9,7 @@ public class SmartContract implements Serializable {
 
     protected static LevelDbInteractionService service;
 
+    protected double total = 0;
 
     protected Double getBalance(String address, String currency) throws Exception {
         return service.getBalance(address, currency);
