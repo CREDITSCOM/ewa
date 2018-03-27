@@ -15,7 +15,7 @@ struct APIResponse
 
 service ContractExecutor
 {
-    APIResponse store(1:ContractFile file, 2:string address)
+    APIResponse store(1:ContractFile file, 2:string address, 3:string specialProperty)
 
     APIResponse execute(1:string address, 2:string method, 3:list<string> params)
 }

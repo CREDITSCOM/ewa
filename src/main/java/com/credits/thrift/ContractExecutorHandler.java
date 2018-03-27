@@ -22,7 +22,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
 
     @Override
-    public APIResponse store(ContractFile file, String address) {
+    public APIResponse store(ContractFile file, String address, String specialProperty) {
         String fileName = file.getName();
         byte[] fileContent = file.getFile();
         File sourceFile = new File(fileName);
@@ -32,7 +32,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             FileUtils.writeByteArrayToFile(sourceFile, fileContent);
             storageService.store(sourceFile, address);
             sourceFile.delete();
-            service.execute(address);
+            service.execute(address, specialProperty);
         } catch (ContractExecutorException|IOException e) {
             response.setCode((byte) 1);
             response.setMessage(e.getMessage());

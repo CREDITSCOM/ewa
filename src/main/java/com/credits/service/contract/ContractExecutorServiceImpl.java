@@ -44,7 +44,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
     }
 
-    public void execute(String address) throws ContractExecutorException {
+    public void execute(String address, String specialProperty) throws ContractExecutorException {
         File serFile = Serializer.getSerFile(address);
         if (serFile.exists()) {
             throw new ContractExecutorException("Contract " + address + " has been already stored.");
@@ -61,7 +61,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Object instance;
         try {
             instance = clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            Field specPropField = clazz.getSuperclass().getDeclaredField("specialProperty");
+            specPropField.setAccessible(true);
+            specPropField.set(instance, specialProperty);
+        } catch (InstantiationException | IllegalAccessException | NoSuchFieldException e) {
             throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 

@@ -5,10 +5,11 @@ import com.credits.service.db.leveldb.LevelDbInteractionService;
 import java.io.Serializable;
 import java.util.List;
 
-public class SmartContract implements Serializable {
+public abstract class SmartContract implements Serializable {
 
     protected static LevelDbInteractionService service;
 
+    private String specialProperty;
 
     protected Double getBalance(String address, String currency) throws Exception {
         return service.getBalance(address, currency);

@@ -36,7 +36,7 @@ public class ContractExecutorServiceMethodParametersTest extends ServiceTest {
             throw new ContractExecutorException(e.getMessage(), e);
         }
 
-        service.execute(address);
+        service.execute(address, "");
     }
 
     @Test
