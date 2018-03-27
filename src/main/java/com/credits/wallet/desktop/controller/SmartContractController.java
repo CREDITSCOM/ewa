@@ -77,11 +77,15 @@ public class SmartContractController extends Controller implements Initializable
 
     private static final String dftCode="public class Contract extends SmartContract {\n" +
             "\n" +
+            "    public Contract() {\n" +
+            "        total = 0;\n" +
+            "    }" +
             "\n" +
             "}";
     private static final String nonChangedStr="public class Contract extends SmartContract {";
 
     private static final String[] parentMethods = new String[] {
+            "double total",
             "Double getBalance(String address, String currency)",
             "TransactionData getTransaction(String transactionId)",
             "List<TransactionData> getTransactions(String address, long offset, long limit)",
