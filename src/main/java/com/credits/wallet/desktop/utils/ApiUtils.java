@@ -2,7 +2,7 @@ package com.credits.wallet.desktop.utils;
 
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
-import com.credits.crypto.Blake2B;
+import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.controller.Const;
@@ -61,7 +61,7 @@ public class ApiUtils {
 
 
     public static String generateTransactionHash() throws CreditsException {
-        byte[] hashBytes = Blake2B.generateHash(4); // 4 байта
+        byte[] hashBytes = Blake2S.generateHash(4); // 4 байта
         return com.credits.leveldb.client.util.Converter.bytesToHex(hashBytes);
     }
 
