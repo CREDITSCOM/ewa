@@ -41,4 +41,8 @@ public class Serializer {
         return new File(SER_SOURCE_FOLDER_PATH + File.separator + address +
             File.separator + serFileName);
     }
+
+    public static File getPropertySerFile() {
+        return new File(SER_SOURCE_FOLDER_PATH + File.separator + "specProperty.out");
+    }
 }

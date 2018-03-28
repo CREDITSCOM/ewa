@@ -60,10 +60,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         Object instance;
         try {
+            File specPropertySerFile = Serializer.getPropertySerFile();
+            Serializer.serialize(specPropertySerFile, specialProperty);
+
             instance = clazz.newInstance();
-            Field specPropField = clazz.getSuperclass().getDeclaredField("specialProperty");
-            specPropField.setAccessible(true);
-            specPropField.set(instance, specialProperty);
 
             Field totalField = clazz.getSuperclass().getDeclaredField("total");
             totalField.setAccessible(true);
