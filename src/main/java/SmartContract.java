@@ -1,5 +1,7 @@
+import com.credits.Const;
 import com.credits.common.utils.Converter;
 import com.credits.common.utils.Utils;
+import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.PoolData;
@@ -74,10 +76,16 @@ public abstract class SmartContract implements Serializable {
     }
 
     protected void sendTransaction(String source, String target, Double amount, String currency) {
-        String hash = Utils.randomAlphaNumeric(8);
+        sendTransactionInternal(source, target, amount, currency);
+        sendTransactionInternal(source, Const.SYS_TRAN_PUBLIC_KEY_BASE64, Const.FEE_TRAN_AMOUNT, currency);
+    }
+
+    private void sendTransactionInternal(String source, String target, Double amount, String currency) {
         String innerId = UUID.randomUUID().toString();
 
         try {
+            byte[] hashBytes = Blake2S.generateHash(4);
+            String hash = com.credits.leveldb.client.util.Converter.bytesToHex(hashBytes);
             byte[] privateKeyByteArr = Converter.decodeFromBASE64(this.specialProperty);
             PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
             String signatureBASE64 =

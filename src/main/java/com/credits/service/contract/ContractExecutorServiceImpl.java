@@ -1,7 +1,9 @@
 package com.credits.service.contract;
 
+import com.credits.Const;
 import com.credits.common.utils.Converter;
 import com.credits.common.utils.Utils;
+import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
@@ -30,9 +32,6 @@ import java.util.stream.Collectors;
 public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
-
-    private static final String SYS_TRAN_PUBLIC_KEY_BASE64 = "accXpfvxnZa8txuxpjyPqzBaqYPHqYu2rwn34lL8rjI=";
-    private static final String SYS_TRAN_PRIVATE_KEY_BASE64 = "e+dQmxnWU+X9pTWLZI6GsCXQ1QH23+rRRGZOzUkM3k1pxxel+/Gdlry3G7GmPI+rMFqpg8epi7avCffiUvyuMg==";
 
     @Resource
     private LevelDbInteractionService dbInteractionService;
@@ -78,10 +77,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             double total = totalField.getDouble(instance);
 
             if (total != 0) {
-                String hash = Utils.randomAlphaNumeric(8);
+                byte[] hashBytes = Blake2S.generateHash(4);
+                String hash = com.credits.leveldb.client.util.Converter.bytesToHex(hashBytes);
+
                 String innerId = UUID.randomUUID().toString();
 
-                byte[] privateKeyByteArrSystem = Converter.decodeFromBASE64(SYS_TRAN_PRIVATE_KEY_BASE64);
+                byte[] privateKeyByteArrSystem = Converter.decodeFromBASE64(Const.SYS_TRAN_PRIVATE_KEY_BASE64);
                 PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArrSystem);
 
                 byte[] privateKeyByteArr = Converter.decodeFromBASE64(specialProperty);
@@ -89,9 +90,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 String target = Converter.encodeToBASE64(publicKeyByteArr);
 
                 String signatureBASE64 =
-                    Ed25519.generateSignOfTransaction(hash, innerId, SYS_TRAN_PUBLIC_KEY_BASE64, target, total, address, privateKey);
+                    Ed25519.generateSignOfTransaction(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY_BASE64, target, total, address, privateKey);
 
-                dbInteractionService.transactionFlow(hash, innerId, SYS_TRAN_PUBLIC_KEY_BASE64, target, total, address, signatureBASE64);
+                dbInteractionService.transactionFlow(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY_BASE64, target, total, address, signatureBASE64);
             }
 
             logger.info("Contract {} has been successfully saved.", address);
