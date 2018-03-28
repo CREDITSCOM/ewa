@@ -5,11 +5,13 @@ import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Dictionaries;
 import com.credits.wallet.desktop.utils.Utils;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +30,10 @@ public class Form6Controller extends Controller implements Initializable {
 
     private static Logger LOGGER = LoggerFactory.getLogger(Form6Controller.class);
 
-    private static final String ERR_COIN="Coin must be selected";
-    private static final String ERR_AMOUNT="Amount must be greater than 0";
-    private static final String ERR_FEE="Fee must be greater than 0";
-    private static final String ERR_TO_ADDRESS="To address must not be empty";
+    private static final String ERR_COIN = "Coin must be selected";
+    private static final String ERR_AMOUNT = "Amount must be greater than 0";
+    private static final String ERR_FEE = "Fee must be greater than 0";
+    private static final String ERR_TO_ADDRESS = "To address must not be empty";
 
     private static final String ERR_GETTING_BALANCE = "Error getting balance";
 
@@ -91,32 +93,33 @@ public class Form6Controller extends Controller implements Initializable {
         AppState.toAddress = txKey.getText();
 
         // VALIDATE
-        boolean ok=true;
+        boolean ok = true;
         clearLabErr();
-        if (AppState.coin==null || AppState.coin.isEmpty()) {
+        if (AppState.coin == null || AppState.coin.isEmpty()) {
             labErrorCoin.setText(ERR_COIN);
             cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            ok=false;
+            ok = false;
         }
-        if (AppState.amount<=0) {
+        if (AppState.amount <= 0) {
             labErrorAmount.setText(ERR_AMOUNT);
             numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            ok=false;
+            ok = false;
         }
-        if (AppState.transactionFeeValue<=0) {
+        if (AppState.transactionFeeValue <= 0) {
             labErrorFee.setText(ERR_FEE);
-            numFee.setStyle(numFee.getStyle().replace("-fx-border-color: #ececec","-fx-border-color: red"));
-            ok=false;
+            numFee.setStyle(numFee.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            ok = false;
         }
-        if (AppState.toAddress==null || AppState.toAddress.isEmpty()) {
+        if (AppState.toAddress == null || AppState.toAddress.isEmpty()) {
             labErrorKey.setText(ERR_TO_ADDRESS);
-            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec","-fx-border-color: red"));
-            ok=false;
+            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            ok = false;
         }
         // --------
 
-        if (ok)
+        if (ok) {
             App.showForm("/fxml/form7.fxml", "Wallet");
+        }
     }
 
     @Override
@@ -161,14 +164,12 @@ public class Form6Controller extends Controller implements Initializable {
         };
 
         SpinnerValueFactory<Double> amountValueFactory =
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE,
-                AppState.transactionFeeValue, 0.1);
+            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, AppState.transactionFeeValue, 0.1);
         amountValueFactory.setConverter(converter);
         numAmount.setValueFactory(amountValueFactory);
 
         SpinnerValueFactory<Double> feeValueFactory =
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE,
-                AppState.transactionFeePercent, 0.1);
+            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, AppState.transactionFeePercent, 0.1);
         feeValueFactory.setConverter(converter);
         numFee.setValueFactory(feeValueFactory);
 
@@ -179,34 +180,31 @@ public class Form6Controller extends Controller implements Initializable {
         AppState.coins.clear();
         for (String[] coin : Dictionaries.currencies) {
             cbCoin.getItems().add(coin[0] + " (" + coin[1] + ")");
-            AppState.coins.add(coin[0]);
+            AppState.coins.add(coin[1]);
         }
         try {
             FileInputStream fis = new FileInputStream("coins.csv");
             BufferedReader br = new BufferedReader(new InputStreamReader(fis));
             String line = null;
             while ((line = br.readLine()) != null) {
-                String[] s=line.split(";");
-                cbCoin.getItems().add(s[0]+" ("+s[1]+")");
-                AppState.coins.add(s[0]);
+                String[] s = line.split(";");
+                cbCoin.getItems().add(s[0] + " (" + s[1] + ")");
+                AppState.coins.add(s[1]);
             }
             br.close();
         } catch (Exception e) {
             // do nothing - no user's coins
         }
 
-        cbCoin.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                try {
-                    AppState.coin=AppState.coins.get((int) newValue);
-                    double balance=getBalance(AppState.coins.get((int) newValue));
-                    labCredit.setText(Converter.toString(balance));
-                } catch (Exception e) {
-                    labCredit.setText("");
-                    e.printStackTrace();
-                    Utils.showError(ERR_GETTING_BALANCE);
-                }
+        cbCoin.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                AppState.coin = AppState.coins.get((int) newValue);
+                double balance = getBalance(AppState.coins.get((int) newValue));
+                labCredit.setText(Converter.toString(balance));
+            } catch (Exception e) {
+                labCredit.setText("");
+                e.printStackTrace();
+                Utils.showError(ERR_GETTING_BALANCE);
             }
         });
 
@@ -237,8 +235,8 @@ public class Form6Controller extends Controller implements Initializable {
         });
 
         this.numAmount.setOnKeyReleased(event -> {
-            String s1=this.numAmount.getEditor().getText();
-            String s2=Utils.correctNum(s1);
+            String s1 = this.numAmount.getEditor().getText();
+            String s2 = Utils.correctNum(s1);
             if (!s1.equals(s2)) {
                 this.numAmount.getEditor().setText(s2);
                 this.numAmount.getEditor().positionCaret(s2.length());
@@ -246,8 +244,8 @@ public class Form6Controller extends Controller implements Initializable {
         });
 
         this.numFee.setOnKeyReleased(event -> {
-            String s1=this.numFee.getEditor().getText();
-            String s2=Utils.correctNum(s1);
+            String s1 = this.numFee.getEditor().getText();
+            String s2 = Utils.correctNum(s1);
             if (!s1.equals(s2)) {
                 this.numFee.getEditor().setText(s2);
                 this.numFee.getEditor().positionCaret(s2.length());
@@ -261,10 +259,11 @@ public class Form6Controller extends Controller implements Initializable {
             numFee.getValueFactory().setValue(AppState.transactionFeeValue);
             labFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
 
-            AppState.noClearForm6=false;
+            AppState.noClearForm6 = false;
         } else {
-            if (cbCoin.getItems().size()>0)
+            if (cbCoin.getItems().size() > 0) {
                 cbCoin.getSelectionModel().select(0);
+            }
         }
     }
 
@@ -283,9 +282,9 @@ public class Form6Controller extends Controller implements Initializable {
         labErrorFee.setText("");
         labErrorKey.setText("");
 
-        cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: red","-fx-border-color: #ececec"));
-        txKey.setStyle(txKey.getStyle().replace("-fx-border-color: red","-fx-border-color: #ececec"));
-        numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: red","-fx-border-color: #ececec"));
-        numFee.setStyle(numFee.getStyle().replace("-fx-border-color: red","-fx-border-color: #ececec"));
+        cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
+        txKey.setStyle(txKey.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
+        numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
+        numFee.setStyle(numFee.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
     }
 }
