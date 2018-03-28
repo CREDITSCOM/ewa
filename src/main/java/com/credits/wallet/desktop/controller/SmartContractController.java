@@ -91,9 +91,7 @@ public class SmartContractController extends Controller implements Initializable
             "List<TransactionData> getTransactions(String address, long offset, long limit)",
             "List<PoolData> getPoolList(long offset, long limit)",
             "PoolData getPool(String poolNumber)",
-            "void sendTransaction(String hash, String innerId, String source, String target, Double amount, String currency)",
-            "String generateHash()",
-            "String getInnerId()"
+            "void sendTransaction(String source, String target, Double amount, String currency)"
     };
 
     private CodeArea codeArea;
