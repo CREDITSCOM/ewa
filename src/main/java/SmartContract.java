@@ -15,8 +15,6 @@ import java.util.UUID;
 
 public abstract class SmartContract implements Serializable {
 
-    private static final String SYS_TRAN_PUBLIC_KEY_BASE64 = "accXpfvxnZa8txuxpjyPqzBaqYPHqYu2rwn34lL8rjI=";
-
     protected static LevelDbInteractionService service;
 
     protected double total = 0;
@@ -88,13 +86,5 @@ public abstract class SmartContract implements Serializable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void sendTransactionSystem(Double amount, String currency) throws Exception {
-        byte[] privateKeyByteArr = Converter.decodeFromBASE64(this.specialProperty);
-        byte[] publicKeyByteArr = Utils.parseSubarray(privateKeyByteArr, 32, 32);
-        String target = Converter.encodeToBASE64(publicKeyByteArr);
-
-        sendTransaction(SmartContract.SYS_TRAN_PUBLIC_KEY_BASE64, target, amount, currency);
     }
 }

@@ -1,5 +1,8 @@
 package com.credits.service.contract;
 
+import com.credits.common.utils.Converter;
+import com.credits.common.utils.Utils;
+import com.credits.crypto.Ed25519;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.serialise.Serializer;
@@ -17,14 +20,19 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
 public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
+
+    private static final String SYS_TRAN_PUBLIC_KEY_BASE64 = "accXpfvxnZa8txuxpjyPqzBaqYPHqYu2rwn34lL8rjI=";
+    private static final String SYS_TRAN_PRIVATE_KEY_BASE64 = "e+dQmxnWU+X9pTWLZI6GsCXQ1QH23+rRRGZOzUkM3k1pxxel+/Gdlry3G7GmPI+rMFqpg8epi7avCffiUvyuMg==";
 
     @Resource
     private LevelDbInteractionService dbInteractionService;
@@ -70,13 +78,24 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             double total = totalField.getDouble(instance);
 
             if (total != 0) {
-                Method sendTransactionSystem = clazz.getSuperclass().getDeclaredMethod("sendTransactionSystem", Double.class, String.class);
-                sendTransactionSystem.setAccessible(true);
-                sendTransactionSystem.invoke(instance, total, address);
+                String hash = Utils.randomAlphaNumeric(8);
+                String innerId = UUID.randomUUID().toString();
+
+                byte[] privateKeyByteArrSystem = Converter.decodeFromBASE64(SYS_TRAN_PRIVATE_KEY_BASE64);
+                PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArrSystem);
+
+                byte[] privateKeyByteArr = Converter.decodeFromBASE64(specialProperty);
+                byte[] publicKeyByteArr = Utils.parseSubarray(privateKeyByteArr, 32, 32);
+                String target = Converter.encodeToBASE64(publicKeyByteArr);
+
+                String signatureBASE64 =
+                    Ed25519.generateSignOfTransaction(hash, innerId, SYS_TRAN_PUBLIC_KEY_BASE64, target, total, address, privateKey);
+
+                dbInteractionService.transactionFlow(hash, innerId, SYS_TRAN_PUBLIC_KEY_BASE64, target, total, address, signatureBASE64);
             }
 
             logger.info("Contract {} has been successfully saved.", address);
-        } catch (InstantiationException | IllegalAccessException | NoSuchFieldException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (Exception e) {
             throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 
