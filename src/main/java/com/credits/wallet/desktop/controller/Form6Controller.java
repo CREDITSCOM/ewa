@@ -83,7 +83,11 @@ public class Form6Controller extends Controller implements Initializable {
     }
 
     private void refreshTransactionFeePercent(Double transactionFeeValue, Double amount) {
-        AppState.transactionFeePercent = (transactionFeeValue * 100) / amount;
+        if (amount == 0d) {
+            AppState.transactionFeePercent = 0d;
+        } else {
+            AppState.transactionFeePercent = (transactionFeeValue * 100) / amount;
+        }
         this.labFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
     }
 
@@ -164,12 +168,12 @@ public class Form6Controller extends Controller implements Initializable {
         };
 
         SpinnerValueFactory<Double> amountValueFactory =
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, AppState.transactionFeeValue, 0.1);
+            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 0, 0.1);
         amountValueFactory.setConverter(converter);
         numAmount.setValueFactory(amountValueFactory);
 
         SpinnerValueFactory<Double> feeValueFactory =
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, AppState.transactionFeePercent, 0.1);
+            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, AppState.transactionFeePercent, 0);
         feeValueFactory.setConverter(converter);
         numFee.setValueFactory(feeValueFactory);
 
