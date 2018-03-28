@@ -18,9 +18,4 @@ public interface LevelDbInteractionService {
     PoolData getPool(String poolNumber) throws Exception;
 
     void transactionFlow(String hash, String innerId, String source, String target, Double amount, String currency, String signatureBASE64) throws Exception;
-
-    String getHash();
-
-    String getInnerId();
-
 }
