@@ -1,11 +1,18 @@
+import com.credits.common.utils.Converter;
+import com.credits.common.utils.Utils;
+import com.credits.crypto.Ed25519;
 import com.credits.leveldb.client.PoolData;
 import com.credits.leveldb.client.TransactionData;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 
 import java.io.Serializable;
+import java.security.PrivateKey;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class SmartContract implements Serializable {
+
+    private static final String SYS_TRAN_PUBLIC_KEY_BASE64 = "accXpfvxnZa8txuxpjyPqzBaqYPHqYu2rwn34lL8rjI=";
 
     protected static LevelDbInteractionService service;
 
@@ -33,15 +40,19 @@ public abstract class SmartContract implements Serializable {
         return service.getPool(poolNumber);
     }
 
-    protected void sendTransaction(String hash, String innerId, String source, String target, Double amount, String currency) throws Exception {
-        service.transactionFlow(hash, innerId, source, target, amount, currency, null);
+    protected void sendTransaction(String source, String target, Double amount, String currency) throws Exception {
+        String hash = Utils.randomAlphaNumeric(8);
+        String innerId = UUID.randomUUID().toString();
+
+        byte[] privateKeyByteArr = Converter.decodeFromBASE64(this.specialProperty);
+        PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
+        String signatureBASE64 =
+            Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency, privateKey);
+
+        service.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
     }
 
-    protected String generateHash() {
-        return service.getHash();
-    }
-
-    protected String generateInnerId() {
-        return service.getInnerId();
+    private void sendTransactionSystem(String target, Double amount, String currency) throws Exception {
+        sendTransaction(SmartContract.SYS_TRAN_PUBLIC_KEY_BASE64, target, amount, currency);
     }
 }

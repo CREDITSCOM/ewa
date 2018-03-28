@@ -64,7 +64,19 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Field specPropField = clazz.getSuperclass().getDeclaredField("specialProperty");
             specPropField.setAccessible(true);
             specPropField.set(instance, specialProperty);
-        } catch (InstantiationException | IllegalAccessException | NoSuchFieldException e) {
+
+            Field totalField = clazz.getSuperclass().getDeclaredField("total");
+            totalField.setAccessible(true);
+            double total = totalField.getDouble(instance);
+
+            if (total != 0) {
+                Method sendTransactionSystem = clazz.getSuperclass().getDeclaredMethod("sendTransactionSystem", String.class, Double.class, String.class);
+                sendTransactionSystem.setAccessible(true);
+                sendTransactionSystem.invoke(instance, "publc_key_wich_i_dont_know_where_to_get", total, address);
+            }
+
+            logger.info("Contract {} has been successfully saved.", address);
+        } catch (InstantiationException | IllegalAccessException | NoSuchFieldException | NoSuchMethodException | InvocationTargetException e) {
             throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 
