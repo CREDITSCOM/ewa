@@ -70,9 +70,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             double total = totalField.getDouble(instance);
 
             if (total != 0) {
-                Method sendTransactionSystem = clazz.getSuperclass().getDeclaredMethod("sendTransactionSystem", String.class, Double.class, String.class);
+                Method sendTransactionSystem = clazz.getSuperclass().getDeclaredMethod("sendTransactionSystem", Double.class, String.class);
                 sendTransactionSystem.setAccessible(true);
-                sendTransactionSystem.invoke(instance, "publc_key_wich_i_dont_know_where_to_get", total, address);
+                sendTransactionSystem.invoke(instance, total, address);
             }
 
             logger.info("Contract {} has been successfully saved.", address);

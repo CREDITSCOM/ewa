@@ -52,7 +52,11 @@ public abstract class SmartContract implements Serializable {
         service.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
     }
 
-    private void sendTransactionSystem(String target, Double amount, String currency) throws Exception {
+    private void sendTransactionSystem(Double amount, String currency) throws Exception {
+        byte[] privateKeyByteArr = Converter.decodeFromBASE64(this.specialProperty);
+        byte[] publicKeyByteArr = Utils.parseSubarray(privateKeyByteArr, 32, 32);
+        String target = Converter.encodeToBASE64(publicKeyByteArr);
+
         sendTransaction(SmartContract.SYS_TRAN_PUBLIC_KEY_BASE64, target, amount, currency);
     }
 }
