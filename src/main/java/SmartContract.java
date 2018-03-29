@@ -77,7 +77,7 @@ public abstract class SmartContract implements Serializable {
 
     protected void sendTransaction(String source, String target, Double amount, String currency) {
         sendTransactionInternal(source, target, amount, currency);
-        sendTransactionInternal(source, Const.SYS_TRAN_PUBLIC_KEY_BASE64, Const.FEE_TRAN_AMOUNT, currency);
+        sendTransactionInternal(source, Const.SYS_TRAN_PUBLIC_KEY_BASE64, Const.FEE_TRAN_AMOUNT, Const.FEE_TRAN_CURRENCY);
     }
 
     private void sendTransactionInternal(String source, String target, Double amount, String currency) {
