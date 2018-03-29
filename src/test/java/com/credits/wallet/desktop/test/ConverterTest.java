@@ -30,8 +30,8 @@ public class ConverterTest {
             byte[] bytes = Converter.decodeFromBASE64(text);
             LOGGER.info(String.valueOf(bytes.length));
         } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
             assert false;
-            e.printStackTrace();
         }
 
     }
@@ -49,8 +49,8 @@ public class ConverterTest {
             LOGGER.info(Arrays.toString(data2));
             assert Arrays.equals(data1, data2);
         } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
             assert false;
-            e.printStackTrace();
         }
 
     }

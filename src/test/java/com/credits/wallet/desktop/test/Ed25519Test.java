@@ -45,8 +45,8 @@ public class Ed25519Test {
             LOGGER.info("Verified: {}", verified);
             assert verified;
         } catch (WalletDesktopException e) {
+            LOGGER.error(e.getMessage(), e);
             assert false;
-            e.printStackTrace();
         }
     }
 
@@ -68,8 +68,8 @@ public class Ed25519Test {
                     privateKey);
             LOGGER.info("signature = {}", signature);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             assert false;
-            e.printStackTrace();
         }
     }
 
@@ -85,8 +85,8 @@ public class Ed25519Test {
             PublicKey publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
             PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             assert false;
-            e.printStackTrace();
         }
 
     }
@@ -107,8 +107,8 @@ public class Ed25519Test {
             LOGGER.info("key1 = {}", key1);
             LOGGER.info("key2 = {}", key2);
         } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
             assert false;
-            e.printStackTrace();
         }
     }
 
@@ -129,8 +129,8 @@ public class Ed25519Test {
             LOGGER.info("key2 = {}", key2);
             assert Arrays.equals(bytes1, bytes2);
         } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
             assert false;
-            e.printStackTrace();
         }
     }
 }

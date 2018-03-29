@@ -9,6 +9,8 @@ import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.text.*;
@@ -25,6 +27,8 @@ public class App extends Application {
     private static final String ERR_NO_CONTRACT_EXECUTOR =
             "Parameters for java contract executor could not be determined. Check contract.executor.host, contract.executor.port, contract.executor.dir  parameters in the settings.properties file";
     private static Stage currentStage;
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
         launch(args);
@@ -64,7 +68,7 @@ public class App extends Application {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(ERR_NO_PROPERTIES, e);
             Utils.showError(ERR_NO_PROPERTIES);
         }
     }
@@ -104,7 +108,7 @@ public class App extends Application {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

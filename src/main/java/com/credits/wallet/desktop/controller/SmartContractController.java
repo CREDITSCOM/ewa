@@ -173,7 +173,7 @@ public class SmartContractController extends Controller implements Initializable
 
                 transport.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error("Error executing smart contract " + e.toString(), e);
                 Utils.showError("Error executing smart contract " + e.toString());
             }
         }

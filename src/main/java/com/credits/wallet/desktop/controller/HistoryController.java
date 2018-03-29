@@ -14,6 +14,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.*;
@@ -23,6 +25,8 @@ import java.util.*;
  */
 public class HistoryController extends Controller implements Initializable {
     private static final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(HistoryController.class);
 
     private int pageNumber;
     private int pageSize;
@@ -108,7 +112,7 @@ public class HistoryController extends Controller implements Initializable {
             }
 
         } catch(Exception e) {
-            e.printStackTrace();
+            LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
             Utils.showError(ERR_GETTING_TRANSACTION_HISTORY);
         }
     }

@@ -9,6 +9,8 @@ import com.credits.wallet.desktop.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.net.URL;
@@ -18,6 +20,7 @@ import java.util.ResourceBundle;
  * Created by Rustem.Saidaliyev on 26.01.2018.
  */
 public class Form8Controller extends Controller implements Initializable {
+    private final static Logger LOGGER = LoggerFactory.getLogger(Form8Controller.class);
 
     @FXML
     private Label toAddress;
@@ -39,7 +42,7 @@ public class Form8Controller extends Controller implements Initializable {
             try {
                 Desktop.getDesktop().browse(new URL(AppState.creditMonitorURL+AppState.account).toURI());
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
                 Utils.showError(e.getMessage());
             }
         }
@@ -67,7 +70,7 @@ public class Form8Controller extends Controller implements Initializable {
                 App.showForm("/fxml/transaction.fxml", "Wallet");
             } catch (Exception e) {
                 Utils.showError("Error "+e.getMessage());
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

@@ -204,7 +204,7 @@ public class Form6Controller extends Controller implements Initializable {
                     labCredit.setText(Converter.toString(balance));
                 } catch (Exception e) {
                     labCredit.setText("");
-                    e.printStackTrace();
+                    LOGGER.error(ERR_GETTING_BALANCE, e);
                     Utils.showError(ERR_GETTING_BALANCE);
                 }
             }

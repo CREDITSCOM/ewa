@@ -7,6 +7,8 @@ import com.credits.wallet.desktop.utils.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -19,6 +21,8 @@ import java.util.ResourceBundle;
  */
 public class AccountController extends Controller implements Initializable {
     private static final String ERR_GETTING_BALANCE = "Error getting balance";
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
     @FXML
     private Label wallet;
@@ -59,7 +63,7 @@ public class AccountController extends Controller implements Initializable {
             this.balance.setText(Converter.toString(balance));
         } catch (Exception e) {
             this.balance.setText("");
-            e.printStackTrace();
+            LOGGER.error(ERR_GETTING_BALANCE, e);
             Utils.showError(ERR_GETTING_BALANCE);
         }
     }

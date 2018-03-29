@@ -9,6 +9,8 @@ import com.credits.wallet.desktop.utils.Converter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -17,6 +19,7 @@ import java.util.ResourceBundle;
  * Created by Rustem.Saidaliyev on 26.01.2018.
  */
 public class Form7Controller extends Controller implements Initializable {
+    private final static Logger LOGGER = LoggerFactory.getLogger(Form7Controller.class);
 
     @FXML
     private Label toAddress;
@@ -55,7 +58,7 @@ public class Form7Controller extends Controller implements Initializable {
                     Const.FEE_TRAN_CURRENCY
             );
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error creating transaction " + e.toString(), e);
             Utils.showError("Error creating transaction " + e.toString());
             return;
         }

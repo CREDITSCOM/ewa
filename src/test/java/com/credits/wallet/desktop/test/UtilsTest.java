@@ -27,8 +27,8 @@ public class UtilsTest {
 
             LOGGER.info("seedByteAr        = {}", Arrays.toString(seedByteArr));
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             assert false;
-            e.printStackTrace();
         }
 
     }
@@ -46,8 +46,8 @@ public class UtilsTest {
 
             LOGGER.info("concatinatedArray   {}", Arrays.toString(concatinatedArray));
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             assert false;
-            e.printStackTrace();
         }
 
     }

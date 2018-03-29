@@ -58,7 +58,7 @@ public class Form5Controller extends Controller implements Initializable {
                 property.store(fos, "");
                 fos.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
@@ -67,7 +67,7 @@ public class Form5Controller extends Controller implements Initializable {
             try {
                 ApiUtils.prepareAndCallTransactionFlowSystem(txPublic.getText());
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
                 Utils.showError("Error creating transaction " + e.toString());
                 //return;
             }
@@ -80,7 +80,7 @@ public class Form5Controller extends Controller implements Initializable {
             } catch (Exception e) {
                 if (e.getMessage()!=null)
                     Utils.showError(e.getMessage());
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
                 //return;
             }
         }
@@ -111,7 +111,7 @@ public class Form5Controller extends Controller implements Initializable {
                     txPublic.setText(publicKey);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -131,7 +131,7 @@ public class Form5Controller extends Controller implements Initializable {
 
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
             return false;
         }
     }

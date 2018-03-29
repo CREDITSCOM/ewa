@@ -6,6 +6,8 @@ import com.credits.wallet.desktop.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -20,6 +22,8 @@ import java.util.ResourceBundle;
  * Created by goncharov-eg on 07.02.2018.
  */
 public class NewCoinController extends Controller implements Initializable {
+    private final static Logger LOGGER = LoggerFactory.getLogger(NewCoinController.class);
+
     @FXML
     private TextField txToken;
     @FXML
@@ -60,7 +64,7 @@ public class NewCoinController extends Controller implements Initializable {
             bw = new BufferedWriter(fw);
             bw.write(strToWrite+"\n");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } finally {
             try {
                 if (bw != null)
@@ -68,7 +72,7 @@ public class NewCoinController extends Controller implements Initializable {
                 if (fw != null)
                     fw.close();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOGGER.error(ex.getMessage(), ex);
             }
         }
 
@@ -82,7 +86,7 @@ public class NewCoinController extends Controller implements Initializable {
             String token = (String)clipboard.getData(DataFlavor.stringFlavor);
             txToken.setText(token);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
     }
 }
