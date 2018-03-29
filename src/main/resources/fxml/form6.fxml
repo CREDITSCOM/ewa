@@ -67,7 +67,7 @@
                                                             </font>
                                                         </Label>
                                                         <TextField fx:id="txKey" layoutX="18.0" layoutY="297.0" prefHeight="56.0" prefWidth="605.0" promptText="key..." style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-                                                        <Label layoutX="23.0" layoutY="387.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Amount in CS (Credits)">
+                                                        <Label layoutX="23.0" layoutY="387.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Amount">
                                                             <font>
                                                                 <Font name="System Bold" size="11.0" />
                                                             </font>
@@ -77,12 +77,7 @@
                                                                 <Font name="System Bold" size="11.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="230.0" layoutY="555.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="CS      or">
-                                                            <font>
-                                                                <Font name="System Bold" size="11.0" />
-                                                            </font>
-                                                        </Label>
-                                                        <Label fx:id="labFee" layoutX="328.0" layoutY="557.0" style="-fx-font-size: 14px;" styleClass="text" stylesheets="@../styles.css" text="0">
+                                                        <Label layoutX="230.0" layoutY="555.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="CS">
                                                             <font>
                                                                 <Font name="System Bold" size="11.0" />
                                                             </font>

@@ -29,9 +29,6 @@ public class Form8Controller extends Controller implements Initializable {
     private Label transactionFeeValue;
 
     @FXML
-    private Label transactionFee;
-
-    @FXML
     private void handleSeeOnMonitor() {
         if (AppState.creditMonitorURL==null) {
             Utils.showError("URL for credit monitor not defined");
@@ -76,7 +73,6 @@ public class Form8Controller extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.toAddress.setText(AppState.toAddress);
         this.amountInCs.setText(Converter.toString(AppState.amount) + " "+AppState.coin);
-        this.transactionFeeValue.setText(Converter.toString(AppState.transactionFeeValue) + " "+AppState.coin);
-        this.transactionFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
+        this.transactionFeeValue.setText(Converter.toString(AppState.transactionFeeValue) + " CS");
     }
 }

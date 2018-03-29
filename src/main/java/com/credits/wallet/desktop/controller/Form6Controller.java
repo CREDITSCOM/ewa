@@ -20,8 +20,9 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.text.*;
-import java.util.*;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.ResourceBundle;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
@@ -61,9 +62,6 @@ public class Form6Controller extends Controller implements Initializable {
     @FXML
     private Spinner<Double> numFee;
 
-    @FXML
-    private Label labFee;
-
     /**
      * c&p from Spinner
      */
@@ -88,7 +86,6 @@ public class Form6Controller extends Controller implements Initializable {
         } else {
             AppState.transactionFeePercent = (transactionFeeValue * 100) / amount;
         }
-        this.labFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
     }
 
     @FXML
@@ -131,7 +128,6 @@ public class Form6Controller extends Controller implements Initializable {
         clearLabErr();
 
         labCredit.setText("0");
-        labFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
         StringConverter converter = new StringConverter<Double>() {
             private final DecimalFormat df = new DecimalFormat("#.##########");
 
@@ -261,7 +257,6 @@ public class Form6Controller extends Controller implements Initializable {
             txKey.setText(AppState.toAddress);
             numAmount.getValueFactory().setValue(AppState.amount);
             numFee.getValueFactory().setValue(AppState.transactionFeeValue);
-            labFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
 
             AppState.noClearForm6 = false;
         } else {

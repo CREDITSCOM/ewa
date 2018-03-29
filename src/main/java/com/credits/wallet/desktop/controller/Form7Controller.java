@@ -28,9 +28,6 @@ public class Form7Controller extends Controller implements Initializable {
     private Label transactionFeeValue;
 
     @FXML
-    private Label transactionFee;
-
-    @FXML
     private void handleBack() {
         AppState.noClearForm6=true;
         App.showForm("/fxml/form6.fxml", "Wallet");
@@ -66,9 +63,8 @@ public class Form7Controller extends Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.toAddress.setText(AppState.toAddress);
-        this.amountInCs.setText(Converter.toString(AppState.amount) + " CS");
+        this.amountInCs.setText(Converter.toString(AppState.amount) + " "+AppState.coin);
         this.transactionFeeValue.setText(Converter.toString(AppState.transactionFeeValue) + " CS");
-        this.transactionFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
     }
 
 }
