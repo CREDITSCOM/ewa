@@ -1,11 +1,11 @@
 package com.credits.wallet.desktop.controller;
 
 
+import com.credits.common.utils.Converter;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.Utils;
-import com.credits.wallet.desktop.utils.Converter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -29,9 +29,6 @@ public class Form7Controller extends Controller implements Initializable {
 
     @FXML
     private Label transactionFeeValue;
-
-    @FXML
-    private Label transactionFee;
 
     @FXML
     private void handleBack() {
@@ -69,9 +66,8 @@ public class Form7Controller extends Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.toAddress.setText(AppState.toAddress);
-        this.amountInCs.setText(Converter.toString(AppState.amount) + " CS");
+        this.amountInCs.setText(Converter.toString(AppState.amount) + " "+AppState.coin);
         this.transactionFeeValue.setText(Converter.toString(AppState.transactionFeeValue) + " CS");
-        this.transactionFee.setText(Converter.toString(AppState.transactionFeePercent) + " %");
     }
 
 }

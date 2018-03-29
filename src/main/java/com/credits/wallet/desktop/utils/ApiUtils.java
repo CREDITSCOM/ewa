@@ -1,5 +1,9 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.common.exception.CreditsException;
+import com.credits.common.utils.Converter;
+import com.credits.crypto.Blake2S;
+import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.controller.Const;
 import org.slf4j.Logger;
@@ -13,7 +17,7 @@ import java.util.UUID;
  */
 public class ApiUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApiUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
     public static String prepareAndCallTransactionFlow(String source, String target, Double amount, String currency)
         throws Exception {
@@ -24,7 +28,7 @@ public class ApiUtils {
         String signatureBASE64 =
             Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency, AppState.privateKey);
 
-        logger.debug("Signature got: {}", signatureBASE64);
+        LOGGER.debug("Signature got: {}", signatureBASE64);
 
         AppState.apiClient.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
 
@@ -56,8 +60,9 @@ public class ApiUtils {
     }
 
 
-    public static String generateTransactionHash() {
-        return Utils.randomAlphaNumeric(8);
+    public static String generateTransactionHash() throws CreditsException {
+        byte[] hashBytes = Blake2S.generateHash(4); // 4 байта
+        return com.credits.leveldb.client.util.Converter.bytesToHex(hashBytes);
     }
 
 }

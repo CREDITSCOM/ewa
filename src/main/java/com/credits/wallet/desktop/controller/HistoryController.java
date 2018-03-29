@@ -1,11 +1,11 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.leveldb.client.*;
+import com.credits.common.utils.Converter;
+import com.credits.leveldb.client.TransactionData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.utils.Utils;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
-import com.credits.wallet.desktop.utils.*;
+import com.credits.wallet.desktop.utils.Utils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -18,7 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by goncharov-eg on 29.01.2018.

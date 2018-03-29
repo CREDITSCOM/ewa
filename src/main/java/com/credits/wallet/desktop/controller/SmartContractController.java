@@ -1,7 +1,10 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.utils.Converter;
+import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.utils.EclipseJdt;
 import com.credits.wallet.desktop.utils.Utils;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.thrift.executor.APIResponse;
@@ -22,9 +25,7 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -76,19 +77,21 @@ public class SmartContractController extends Controller implements Initializable
 
     private static final String dftCode="public class Contract extends SmartContract {\n" +
             "\n" +
+            "    public Contract() {\n" +
+            "        total = 0;\n" +
+            "    }" +
             "\n" +
             "}";
     private static final String nonChangedStr="public class Contract extends SmartContract {";
 
     private static final String[] parentMethods = new String[] {
+            "double total",
             "Double getBalance(String address, String currency)",
             "TransactionData getTransaction(String transactionId)",
             "List<TransactionData> getTransactions(String address, long offset, long limit)",
             "List<PoolData> getPoolList(long offset, long limit)",
             "PoolData getPool(String poolNumber)",
-            "void sendTransaction(String hash, String innerId, String source, String target, Double amount, String currency)",
-            "String generateHash()",
-            "String getInnerId()"
+            "void sendTransaction(String source, String target, Double amount, String currency)"
     };
 
     private CodeArea codeArea;
@@ -161,7 +164,11 @@ public class SmartContractController extends Controller implements Initializable
                 contractFile.setName(className+".java");
                 contractFile.setFile(codeArea.getText().getBytes());
 
-                APIResponse executorResponse = client.store(contractFile, token);
+                APIResponse executorResponse = client.store(
+                        contractFile,
+                        token,
+                        Converter.encodeToBASE64(Ed25519.privateKeyToBytes(AppState.privateKey))
+                );
                 if (executorResponse.getCode()!=0 && executorResponse.getMessage()!=null) {
                     Utils.showError("Error executing smart contract " + executorResponse.getMessage());
                 } else {
@@ -285,7 +292,7 @@ public class SmartContractController extends Controller implements Initializable
 
         String sourceCode = codeArea.getText();
 
-        CompilationUnit compilationUnit = createCompilationUnit(sourceCode);
+        CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
 
         List typeList = compilationUnit.types();
 
@@ -362,9 +369,7 @@ public class SmartContractController extends Controller implements Initializable
     private void checkButtonAction() {
         String sourceCode = codeArea.getText();
 
-        CompilationUnit compilationUnit = createCompilationUnit(sourceCode);
-
-        IProblem[] problemArr = compilationUnit.getProblems();
+        IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
 
         if (problemArr.length > 0) {
             tabErrors.getItems().clear();
@@ -387,16 +392,6 @@ public class SmartContractController extends Controller implements Initializable
             paneCode.getChildren().add(codeArea);
         }
     }
-
-    private CompilationUnit createCompilationUnit(String sourceCode) {
-        ASTParser parser = ASTParser.newParser(AST.JLS9);
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        parser.setSource(sourceCode.toCharArray());
-        parser.setResolveBindings(true);
-
-        return (CompilationUnit) parser.createAST(null);
-    }
-
 
     private StyleSpans<Collection<String>> computeHighlighting(String text) {
         Matcher matcher = PATTERN.matcher(text);

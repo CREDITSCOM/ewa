@@ -56,44 +56,5 @@ public class Utils {
         }
         return s;
     }
-
-    /**
-     * Gets the subarray
-     * @param array - source
-     * @param offset - starts position
-     * @param length - length
-     * @return
-     */
-    public static byte[] parseSubarray(byte[] array, int offset, int length) {
-        byte[] result = new byte[length];
-        System.arraycopy(array, offset, result, 0, length);
-        return result;
-    }
-
-    /**
-     * Concatinate byte arrays
-     * @param firstArr
-     * @param secondArr
-     * @return
-     */
-    public static byte[] concatinateArrays(byte[] firstArr, byte[] secondArr) {
-        byte[] resultArr = new byte[firstArr.length + secondArr.length];
-        System.arraycopy(firstArr, 0, resultArr, 0, firstArr.length);
-        System.arraycopy(secondArr, 0, resultArr, firstArr.length, secondArr.length);
-        return resultArr;
-    }
-
-
-    private static final String ALPHA_NUMERIC_STRING = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-    public static String randomAlphaNumeric(int count) {
-        StringBuilder builder = new StringBuilder();
-        while (count-- != 0) {
-            int character = (int)(Math.random()*ALPHA_NUMERIC_STRING.length());
-            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
-        }
-        return builder.toString();
-    }
-
 }
 

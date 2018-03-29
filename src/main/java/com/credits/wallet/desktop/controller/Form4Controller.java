@@ -1,9 +1,9 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.utils.Converter;
+import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.utils.Converter;
-import com.credits.wallet.desktop.utils.Ed25519;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
