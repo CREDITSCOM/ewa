@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
@@ -51,7 +50,7 @@
 
 												<Button fx:id="btnBack" layoutX="21.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
 												<Button layoutX="351.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleOpen" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="OPEN YOUR WALLET" textAlignment="CENTER" wrapText="true" />
-												<CheckBox fx:id="chSavePublicKey" layoutX="24.0" layoutY="325.0" mnemonicParsing="false" text="save public key" />
+                                    <Button fx:id="btnSaveKeys" layoutX="21.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleSaveKeys" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SAVE KEYS" textAlignment="CENTER" wrapText="true" />
 
 											</children>
 											<BorderPane.margin>

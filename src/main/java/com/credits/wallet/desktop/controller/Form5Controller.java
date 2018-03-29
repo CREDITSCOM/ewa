@@ -4,20 +4,22 @@ import com.credits.common.utils.Converter;
 import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.stage.DirectoryChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
@@ -30,13 +32,13 @@ public class Form5Controller extends Controller implements Initializable {
     private Button btnBack;
 
     @FXML
+    private Button btnSaveKeys;
+
+    @FXML
     private TextField txKey;
 
     @FXML
     private TextField txPublic;
-
-    @FXML
-    private CheckBox chSavePublicKey;
 
     @FXML
     private void handleBack() {
@@ -46,22 +48,6 @@ public class Form5Controller extends Controller implements Initializable {
     @FXML
     private void handleOpen() {
         AppState.account = txPublic.getText();
-
-        if (chSavePublicKey.isSelected()) {
-            try {
-                // Save account
-                FileInputStream fis = new FileInputStream("settings.properties");
-                Properties property = new Properties();
-                property.load(fis);
-                FileOutputStream fos = new FileOutputStream("settings.properties");
-                property.setProperty("public.key", txPublic.getText());
-                property.store(fos, "");
-                fos.close();
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-
         if (AppState.newAccount) {
             // Создание системной транзакции
             try {
@@ -91,28 +77,47 @@ public class Form5Controller extends Controller implements Initializable {
             Utils.showError("Public and private keys pair is not valid");
     }
 
+    @FXML
+    private void handleSaveKeys() throws WalletDesktopException {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Choose folder");
+        File defaultDirectory = new File(System.getProperty("user.dir"));
+        chooser.setInitialDirectory(defaultDirectory);
+        File selectedDirectory = chooser.showDialog(null);
+        if (selectedDirectory != null) {
+            LOGGER.info("Folder = {}", selectedDirectory.getAbsolutePath());
+
+            PrintWriter writer = null;
+            try {
+                String filePath = String.format("%s\\%s", selectedDirectory.getAbsolutePath(), "wallet-keys.txt");
+                writer = new PrintWriter(
+                        filePath,
+                        "UTF-8"
+                );
+
+                writer.println(String.format("Public: %s", Converter.encodeToBASE64(Ed25519.publicKeyToBytes(AppState.publicKey))));
+                writer.println(String.format("Private: %s", Converter.encodeToBASE64(Ed25519.privateKeyToBytes(AppState.privateKey))));
+
+                writer.close();
+                Utils.showInfo(String.format("Keys successfully saved in \n\n%s", filePath));
+            } catch (FileNotFoundException e) {
+                throw new WalletDesktopException(e);
+            } catch (UnsupportedEncodingException e) {
+                throw new WalletDesktopException(e);
+            }
+        }
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         btnBack.setVisible(!AppState.newAccount);
+        btnSaveKeys.setVisible(AppState.newAccount);
         txPublic.setDisable(AppState.newAccount);
         txKey.setDisable(AppState.newAccount);
 
         if (AppState.newAccount) {
             txKey.setText(Converter.encodeToBASE64(Ed25519.privateKeyToBytes(AppState.privateKey)));
             txPublic.setText(Converter.encodeToBASE64(Ed25519.publicKeyToBytes(AppState.publicKey)));
-        } else {
-            try {
-                FileInputStream fis = new FileInputStream("settings.properties");
-                Properties property = new Properties();
-                property.load(fis);
-
-                String publicKey = property.getProperty("public.key");
-                if (publicKey != null) {
-                    txPublic.setText(publicKey);
-                }
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
         }
     }
 
