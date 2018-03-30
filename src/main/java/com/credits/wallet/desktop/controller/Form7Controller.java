@@ -40,20 +40,17 @@ public class Form7Controller extends Controller implements Initializable {
     private void handleGenerate() {
         try {
             AppState.transactionId=null;
-            AppState.transactionId=ApiUtils.prepareAndCallTransactionFlow(
+            AppState.transactionId = ApiUtils.prepareAndCallTransactionFlow(
                     AppState.account,
                     AppState.toAddress,
                     AppState.amount,
-                    AppState.coin
-            );
-
-            // create fee transaction
-            ApiUtils.prepareAndCallTransactionFlow(
+                    AppState.coin,
                     AppState.account,
                     Const.FEE_TRAN_TARGET,
                     Const.FEE_TRAN_AMOUNT,
                     Const.FEE_TRAN_CURRENCY
             );
+
         } catch (Exception e) {
             LOGGER.error("Error creating transaction " + e.toString(), e);
             Utils.showError("Error creating transaction " + e.toString());
