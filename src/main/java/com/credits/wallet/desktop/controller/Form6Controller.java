@@ -1,6 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.common.utils.Converter;
+import com.credits.leveldb.client.exception.ApiClientException;
+import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Dictionaries;
@@ -9,11 +11,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +113,13 @@ public class Form6Controller extends Controller implements Initializable {
         }
         if (AppState.toAddress == null || AppState.toAddress.isEmpty()) {
             labErrorKey.setText(ERR_TO_ADDRESS);
+            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            ok = false;
+        }
+        try {
+            Validator.validateToAddress(AppState.toAddress);
+        } catch (ApiClientException e) {
+            labErrorKey.setText("Invalid Address");
             txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             ok = false;
         }
