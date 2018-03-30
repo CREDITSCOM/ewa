@@ -1,6 +1,5 @@
 import com.credits.Const;
 import com.credits.common.utils.Converter;
-import com.credits.common.utils.Utils;
 import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.exception.ContractExecutorException;
@@ -76,8 +75,28 @@ public abstract class SmartContract implements Serializable {
     }
 
     protected void sendTransaction(String source, String target, Double amount, String currency) {
+        try {
+            Double csBalance = service.getBalance(source, Const.SYS_TRAN_CURRENCY);
+            if (currency.equals(Const.SYS_TRAN_CURRENCY)) {
+                double requestedAmount = amount + Const.FEE_TRAN_AMOUNT;
+                if (csBalance < requestedAmount) {
+                    throw new ContractExecutorException("Wallet's balance in credits is not enough for executing transaction.");
+                }
+            } else {
+                Double currencyBalance = service.getBalance(source, currency);
+                if (currencyBalance < amount) {
+                    throw new ContractExecutorException("Wallet's balance in tokens is not enough for executing transaction.");
+                }
+                if (csBalance < Const.FEE_TRAN_AMOUNT) {
+                    throw new ContractExecutorException("Wallet's balance in credits is not enough for executing transaction's fee.");
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+
         sendTransactionInternal(source, target, amount, currency);
-        sendTransactionInternal(source, Const.SYS_TRAN_PUBLIC_KEY_BASE64, Const.FEE_TRAN_AMOUNT, Const.FEE_TRAN_CURRENCY);
+        sendTransactionInternal(source, Const.SYS_TRAN_PUBLIC_KEY_BASE64, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
     }
 
     private void sendTransactionInternal(String source, String target, Double amount, String currency) {
