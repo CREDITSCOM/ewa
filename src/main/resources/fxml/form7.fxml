@@ -10,7 +10,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form7Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form7Controller">
 	<children>
 		<BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<center>
@@ -48,7 +48,7 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
-														<Button fx:id="btnGenerate" layoutX="222.0" layoutY="468.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
+														<Button fx:id="btnGenerate" layoutX="222.0" layoutY="468.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="251.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
 														<Label fx:id="amountInCs" layoutX="28.0" layoutY="261.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
 															<font>
 																<Font name="System Bold" size="11.0" />

@@ -45,6 +45,8 @@ public class HistoryController extends Controller implements Initializable {
     private Button btnFirst;
     @FXML
     private Button btnPrev;
+    @FXML
+    private Button btnNext;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -100,6 +102,8 @@ public class HistoryController extends Controller implements Initializable {
         try {
             List<TransactionData> transactionList=AppState.apiClient.getTransactions(AppState.account,
                 (pageNumber-1)*pageSize, pageSize);
+            btnNext.setDisable(transactionList.size()<pageSize);
+
             for (TransactionData transaction : transactionList) {
                 TransactionTabRow tr = new TransactionTabRow();
 
@@ -111,7 +115,6 @@ public class HistoryController extends Controller implements Initializable {
 
                 tabTransaction.getItems().add(tr);
             }
-
         } catch(Exception e) {
             LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
             Utils.showError(ERR_GETTING_TRANSACTION_HISTORY);

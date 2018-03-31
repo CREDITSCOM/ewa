@@ -49,7 +49,7 @@
 												<TextField fx:id="txPublic" layoutX="21.0" layoutY="260.0" prefHeight="56.0" prefWidth="605.0" promptText="put public key here" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
 
 												<Button fx:id="btnBack" layoutX="21.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
-												<Button layoutX="351.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleOpen" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="OPEN YOUR WALLET" textAlignment="CENTER" wrapText="true" />
+												<Button layoutX="351.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleOpen" prefHeight="61.0" prefWidth="202.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="OPEN YOUR WALLET" textAlignment="CENTER" wrapText="true" />
                                     <Button fx:id="btnSaveKeys" layoutX="21.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleSaveKeys" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SAVE KEYS" textAlignment="CENTER" wrapText="true" />
 
 											</children>

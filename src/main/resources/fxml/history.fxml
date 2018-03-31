@@ -42,9 +42,9 @@
 												</TableView>
 												<Label layoutX="263.0" layoutY="140.0" text="Page:" />
 												<Button fx:id="btnFirst" layoutX="325.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePageFirst" text="&lt;&lt;" />
-												<Button fx:id="btnPrev" layoutX="356.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePagePrev" text="&lt;" />
-												<Label fx:id="labPage" layoutX="385.0" layoutY="140.0" text="0" />
-												<Button layoutX="406.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePageNext" text="&gt;" />
+												<Button fx:id="btnPrev" layoutX="369.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePagePrev" text="&lt;" />
+												<Label fx:id="labPage" layoutX="404.0" layoutY="140.0" text="0" />
+												<Button fx:id="btnNext" layoutX="428.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePageNext" text="&gt;" />
 												<Button layoutX="21.0" layoutY="425.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
 											</children>
 											<BorderPane.margin>

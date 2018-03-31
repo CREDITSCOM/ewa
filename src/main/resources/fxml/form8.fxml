@@ -10,7 +10,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form8Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form8Controller">
 	<children>
 		<BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<center>
@@ -48,7 +48,7 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
-														<Button fx:id="btnBack" layoutX="259.0" layoutY="136.0" mnemonicParsing="false" onAction="#handleSeeOnMonitor" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SEE ON CREDITS MONITOR" textAlignment="CENTER" wrapText="true" />
+														<Button fx:id="btnBack" layoutX="196.0" layoutY="136.0" mnemonicParsing="false" onAction="#handleSeeOnMonitor" prefHeight="61.0" prefWidth="283.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SEE ON CREDITS MONITOR" textAlignment="CENTER" wrapText="true" />
 														<Label fx:id="amountInCs" layoutX="29.0" layoutY="406.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
 															<font>
 																<Font name="System Bold" size="11.0" />
@@ -74,7 +74,7 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
-                                          <Button fx:id="btnView" layoutX="206.0" layoutY="602.0" mnemonicParsing="false" onAction="#handleView" prefHeight="61.0" prefWidth="226.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="VIEW TRANSACTION DETAIL" textAlignment="CENTER" wrapText="true" />
+                                          <Button fx:id="btnView" layoutX="206.0" layoutY="602.0" mnemonicParsing="false" onAction="#handleView" prefHeight="61.0" prefWidth="289.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="VIEW TRANSACTION DETAIL" textAlignment="CENTER" wrapText="true" />
                                           <Button fx:id="btnOk" layoutX="24.0" layoutY="602.0" mnemonicParsing="false" onAction="#handleOk" prefHeight="61.0" prefWidth="149.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="OK" textAlignment="CENTER" wrapText="true" />
 													</children>
 													<BorderPane.margin>
