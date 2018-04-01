@@ -21,7 +21,7 @@
 		<Pane maxHeight="200.0" maxWidth="874.0" minHeight="200.0" minWidth="0.0" prefHeight="200.0" prefWidth="874.0" BorderPane.alignment="CENTER">
 			<children>
 				<Label layoutY="17.0" style="-fx-font-size: 12px; -fx-text-alignment: right;" styleClass="text" stylesheets="@../styles.css" text="About CREDITS" wrapText="true" />
-				<Label alignment="CENTER_RIGHT" layoutY="18.0" prefHeight="87.0" prefWidth="178.0" style="-fx-font-size: 12px;" styleClass="text" stylesheets="@../styles.css" text="CREDITS.COM PTE. LTD. Reg. No.: 201725929C Check 79 Ayer Rajah Crescent #05-08 Singapore 139955" wrapText="true" />
+				<Label alignment="CENTER_RIGHT" layoutY="18.0" prefHeight="87.0" prefWidth="178.0" style="-fx-font-size: 12px;" styleClass="text" stylesheets="@../styles.css" text="CREDITS.COM PTE. LTD. Reg. No.: 201725929C 1 GEORGE STREET #10-01 ONE GEORGE STREET SINGAPORE 049145" wrapText="true" />
 				<Label layoutX="267.0" layoutY="16.0" style="-fx-font-size: 12px; -fx-text-alignment: right;" styleClass="text" stylesheets="@../styles.css" text="Contacts" wrapText="true" />
 				<Label layoutX="267.0" layoutY="16.0" prefHeight="87.0" prefWidth="219.0" style="-fx-font-size: 12px;" styleClass="text" stylesheets="@../styles.css" text="Advertising &amp; PR: pr@credits.com Press &amp; news: press@credits.com General issues: info@credits.com Tel: +65 8114 9362" wrapText="true" />
 				<ImageView fitHeight="51.0" fitWidth="34.0" layoutX="833.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
