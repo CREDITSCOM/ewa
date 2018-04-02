@@ -51,7 +51,7 @@ public class Form5Controller extends Controller implements Initializable {
         if (AppState.newAccount) {
             // Создание системной транзакции
             try {
-                ApiUtils.prepareAndCallTransactionFlowSystem(txPublic.getText());
+                ApiUtils.execSystemTransaction(txPublic.getText());
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 Utils.showError("Error creating transaction " + e.toString());

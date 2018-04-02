@@ -78,12 +78,12 @@ public class ApiUtils {
     }
 
     /**
-     * Создание системной транзакции
+     * Выполнение системной транзакции
      *
      * @param target
      * @throws Exception
      */
-    public static void prepareAndCallTransactionFlowSystem(String target) throws Exception {
+    public static void execSystemTransaction(String target) throws Exception {
 
         TcpClient.sendRequest(AppState.csSenderBotHost, AppState.csSenderBotPort, target);
     }
