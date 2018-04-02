@@ -18,6 +18,9 @@ public class AppState {
     public static String contractExecutorHost;
     public static Integer contractExecutorPort;
     public static String creditMonitorURL;
+    public static String csSenderBotHost;
+    public static Integer csSenderBotPort;
+
 
     public static boolean newAccount;
     public static boolean detailFromHistory;

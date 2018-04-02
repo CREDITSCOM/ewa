@@ -51,8 +51,10 @@ public class App extends Application {
             String apiAddr = property.getProperty("api.addr");
             String apiPort = property.getProperty("api.port");
             AppState.contractExecutorHost = property.getProperty("contract.executor.host");
+            AppState.csSenderBotHost = property.getProperty("cs.sender.bot.host");
             try {
                 AppState.contractExecutorPort = Integer.valueOf(property.getProperty("contract.executor.port"));
+                AppState.csSenderBotPort = Integer.valueOf(property.getProperty("cs.sender.bot.port"));
             } catch (Exception e) {
                 // do nothing
             }
@@ -62,6 +64,9 @@ public class App extends Application {
             } else if (AppState.contractExecutorHost == null ||
                     AppState.contractExecutorPort == null) {
                 Utils.showError(ERR_NO_CONTRACT_EXECUTOR);
+            } else if (AppState.csSenderBotHost == null ||
+                    AppState.csSenderBotPort == null) {
+                Utils.showError("Parameters for cs sender could not be determined. Check cs.sender.host, cs.sender.port parameters in the settings.properties file");
             } else {
                 AppState.apiClient = ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
                 showForm("/fxml/form0.fxml", "Wallet");

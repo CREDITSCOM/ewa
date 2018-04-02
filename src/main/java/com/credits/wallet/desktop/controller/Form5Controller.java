@@ -85,7 +85,6 @@ public class Form5Controller extends Controller implements Initializable {
         chooser.setInitialDirectory(defaultDirectory);
         File selectedDirectory = chooser.showDialog(null);
         if (selectedDirectory != null) {
-            LOGGER.info("Folder = {}", selectedDirectory.getAbsolutePath());
 
             PrintWriter writer = null;
             try {
