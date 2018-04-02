@@ -2,6 +2,7 @@ package com.credits.thrift;
 
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TSimpleServer;
+import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class ContractExecutorServer implements Runnable {
     private void serverStart(ContractExecutor.Processor processor) {
         try {
             TServerTransport serverTransport = new TServerSocket(port);
-            TServer server = new TSimpleServer(new TServer.Args(serverTransport).processor(processor));
+            TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 
             logger.info("Starting the Thrift server on port {}...", port);
             server.serve();
