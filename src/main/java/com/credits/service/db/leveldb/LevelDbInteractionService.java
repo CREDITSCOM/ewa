@@ -2,6 +2,7 @@ package com.credits.service.db.leveldb;
 
 import com.credits.leveldb.client.PoolData;
 import com.credits.leveldb.client.TransactionData;
+import com.credits.leveldb.client.data.TransactionFlowData;
 
 import java.util.List;
 
@@ -17,5 +18,7 @@ public interface LevelDbInteractionService {
 
     PoolData getPool(String poolNumber) throws Exception;
 
-    void transactionFlow(String hash, String innerId, String source, String target, Double amount, String currency, String signatureBASE64) throws Exception;
+    void transactionFlow(String hash, String innerId, String source, String target, double total, String address, String signatureBASE64) throws Exception;
+
+    void transactionFlowWithFee(TransactionFlowData transactionFlowData, TransactionFlowData transactionFlowDataFee, boolean checkBalance) throws Exception;
 }

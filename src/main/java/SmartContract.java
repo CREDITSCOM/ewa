@@ -5,6 +5,7 @@ import com.credits.crypto.Ed25519;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.PoolData;
 import com.credits.leveldb.client.TransactionData;
+import com.credits.leveldb.client.data.TransactionFlowData;
 import com.credits.serialise.Serializer;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 
@@ -75,31 +76,17 @@ public abstract class SmartContract implements Serializable {
     }
 
     protected void sendTransaction(String source, String target, Double amount, String currency) {
+        TransactionFlowData transactionData = makeTransactionFlowData(source, target, amount, currency);
+        TransactionFlowData feeTransactionData = makeTransactionFlowData(source, Const.SYS_TRAN_PUBLIC_KEY_BASE64, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
+
         try {
-            Double csBalance = service.getBalance(source, Const.SYS_TRAN_CURRENCY);
-            if (currency.equals(Const.SYS_TRAN_CURRENCY)) {
-                double requestedAmount = amount + Const.FEE_TRAN_AMOUNT;
-                if (csBalance < requestedAmount) {
-                    throw new ContractExecutorException("Wallet's balance in credits is not enough for executing transaction.");
-                }
-            } else {
-                Double currencyBalance = service.getBalance(source, currency);
-                if (currencyBalance < amount) {
-                    throw new ContractExecutorException("Wallet's balance in tokens is not enough for executing transaction.");
-                }
-                if (csBalance < Const.FEE_TRAN_AMOUNT) {
-                    throw new ContractExecutorException("Wallet's balance in credits is not enough for executing transaction's fee.");
-                }
-            }
+            service.transactionFlowWithFee(transactionData, feeTransactionData, true);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-
-        sendTransactionInternal(source, target, amount, currency);
-        sendTransactionInternal(source, Const.SYS_TRAN_PUBLIC_KEY_BASE64, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
     }
 
-    private void sendTransactionInternal(String source, String target, Double amount, String currency) {
+    private TransactionFlowData makeTransactionFlowData(String source, String target, Double amount, String currency) {
         String innerId = UUID.randomUUID().toString();
 
         try {
@@ -109,7 +96,7 @@ public abstract class SmartContract implements Serializable {
             PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
             String signatureBASE64 =
                 Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency, privateKey);
-            service.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
+            return new TransactionFlowData(hash, innerId, source, target, amount, currency, signatureBASE64);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

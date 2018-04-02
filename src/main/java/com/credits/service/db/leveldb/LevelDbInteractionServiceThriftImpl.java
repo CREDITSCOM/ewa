@@ -3,6 +3,7 @@ package com.credits.service.db.leveldb;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.PoolData;
 import com.credits.leveldb.client.TransactionData;
+import com.credits.leveldb.client.data.TransactionFlowData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +53,12 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     }
 
     @Override
-    public void transactionFlow(String hash, String innerId, String source, String target, Double amount, String currency, String signatureBASE64) throws Exception {
-        client.transactionFlow(hash, innerId, source, target, amount, currency, signatureBASE64);
+    public void transactionFlow(String hash, String innerId, String source, String target, double total, String address, String signatureBASE64) throws Exception {
+        client.transactionFlow(hash, innerId, source, target, total, address, signatureBASE64);
+    }
+
+    @Override
+    public void transactionFlowWithFee(TransactionFlowData transactionFlowData, TransactionFlowData transactionFlowDataFee, boolean checkBalance) throws Exception {
+        client.transactionFlowWithFee(transactionFlowData, transactionFlowDataFee, checkBalance);
     }
 }
