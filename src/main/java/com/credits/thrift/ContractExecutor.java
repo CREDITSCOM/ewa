@@ -46,7 +46,7 @@ public class ContractExecutor {
       super(iprot, oprot);
     }
 
-    public APIResponse store(ContractFile file, java.lang.String address, java.lang.String specialProperty) throws org.apache.thrift.TException
+    public synchronized APIResponse store(ContractFile file, java.lang.String address, java.lang.String specialProperty) throws org.apache.thrift.TException
     {
       send_store(file, address, specialProperty);
       return recv_store();

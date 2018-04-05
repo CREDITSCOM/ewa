@@ -51,7 +51,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
     }
 
-    public void execute(String address, String specialProperty) throws ContractExecutorException {
+    public synchronized void execute(String address, String specialProperty) throws ContractExecutorException {
         File serFile = Serializer.getSerFile(address);
         if (serFile.exists()) {
             throw new ContractExecutorException("Contract " + address + " has been already stored.");
