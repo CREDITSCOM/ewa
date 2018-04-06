@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,18 +57,17 @@ public class Form5Controller extends Controller implements Initializable {
 
     @FXML
     private void handleSaveKeys() throws WalletDesktopException {
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Choose folder");
+        FileChooser fileChooser = new FileChooser();
         File defaultDirectory = new File(System.getProperty("user.dir"));
-        chooser.setInitialDirectory(defaultDirectory);
-        File selectedDirectory = chooser.showDialog(null);
-        if (selectedDirectory != null) {
+        fileChooser.setInitialDirectory(defaultDirectory);
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
 
             PrintWriter writer = null;
             try {
-                String filePath = String.format("%s\\%s", selectedDirectory.getAbsolutePath(), "wallet-keys.txt");
                 writer = new PrintWriter(
-                        filePath,
+                        file.getAbsolutePath(),
                         "UTF-8"
                 );
 
@@ -81,7 +79,7 @@ public class Form5Controller extends Controller implements Initializable {
                 writer.println(new Gson().toJson(content));
 
                 writer.close();
-                Utils.showInfo(String.format("Keys successfully saved in \n\n%s", filePath));
+                Utils.showInfo(String.format("Keys successfully saved in \n\n%s", file.getAbsolutePath()));
             } catch (FileNotFoundException e) {
                 throw new WalletDesktopException(e);
             } catch (UnsupportedEncodingException e) {
@@ -95,7 +93,6 @@ public class Form5Controller extends Controller implements Initializable {
         FileChooser fileChooser = new FileChooser();
         File defaultDirectory = new File(System.getProperty("user.dir"));
         fileChooser.setInitialDirectory(defaultDirectory);
-        fileChooser.setInitialFileName("wallet-keys.txt");
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             try {
