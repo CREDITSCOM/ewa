@@ -33,3 +33,15 @@
 .paragraph-box:has-caret {
     -fx-background-color: #f2f9fc;
 }
+
+#refresh-balance-button {
+    -fx-min-height: 50px;
+    -fx-min-width: 50px;
+    -fx-background-image: url("img/refresh.jpg");
+    -fx-background-size: 70px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-color: #fff;
+    -fx-border-width: 2;
+    -fx-border-color: #000
+}

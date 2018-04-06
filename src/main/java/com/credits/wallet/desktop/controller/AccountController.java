@@ -55,9 +55,12 @@ public class AccountController extends Controller implements Initializable {
         clipboard.setContents(selection, selection);
     }
 
-    public void initialize(URL location, ResourceBundle resources) {
-        this.wallet.setText(AppState.account);
+    @FXML
+    private void handleRefreshBalance() {
+        refreshBalance();
+    }
 
+    private void refreshBalance() {
         try {
             Double balance=AppState.apiClient.getBalance(AppState.account, "cs");
             this.balance.setText(Converter.toString(balance));
@@ -66,5 +69,11 @@ public class AccountController extends Controller implements Initializable {
             LOGGER.error(ERR_GETTING_BALANCE, e);
             Utils.showError(ERR_GETTING_BALANCE);
         }
+    }
+
+    public void initialize(URL location, ResourceBundle resources) {
+        this.wallet.setText(AppState.account);
+
+        refreshBalance();
     }
 }
