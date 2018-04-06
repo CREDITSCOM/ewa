@@ -9,8 +9,6 @@ import com.credits.wallet.desktop.AppState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.UUID;
-
 /**
  * Created by Rustem Saidaliyev on 20-Mar-18.
  */
@@ -18,11 +16,15 @@ public class ApiUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
-    public static String prepareAndCallTransactionFlow(
+    public static void callTransactionFlowWithFee(
+            String hash,
+            String innerId,
             String source,
             String target,
             Double amount,
             String currency,
+            String hashFee,
+            String innerIdFee,
             String sourceFee,
             String targetFee,
             Double amountFee,
@@ -30,14 +32,9 @@ public class ApiUtils {
     )
         throws Exception {
 
-        // Формировование параметров основной транзакции
-        String hash = ApiUtils.generateTransactionHash();
-        String innerId = UUID.randomUUID().toString();
-
+        // Формировование подписи основной транзакции
         String signatureBASE64 =
             Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency, AppState.privateKey);
-
-        LOGGER.debug("Signature got: {}", signatureBASE64);
 
         TransactionFlowData transactionFlowData = new TransactionFlowData(
                 hash,
@@ -49,14 +46,9 @@ public class ApiUtils {
                 signatureBASE64
         );
 
-        // Формировование параметров транзакции для списания комиссии
-        String hashFee = ApiUtils.generateTransactionHash();
-        String innerIdFee = UUID.randomUUID().toString();
-
+        // Формировование подписи транзакции для списания комиссии
         String signatureBASE64Fee =
                 Ed25519.generateSignOfTransaction(hashFee, innerIdFee, sourceFee, targetFee, amountFee, currencyFee, AppState.privateKey);
-
-        LOGGER.debug("Signature got: {}", signatureBASE64Fee);
 
         TransactionFlowData transactionFlowDataFee = new TransactionFlowData(
                 hashFee,
@@ -73,8 +65,6 @@ public class ApiUtils {
                 transactionFlowDataFee,
                 true
         );
-
-        return innerId;
     }
 
     /**

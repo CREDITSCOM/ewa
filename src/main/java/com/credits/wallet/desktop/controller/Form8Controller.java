@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.TransactionData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
@@ -52,24 +51,13 @@ public class Form8Controller extends Controller implements Initializable {
 
     @FXML
     private void handleView() {
-        if (AppState.transactionId==null) {
-            Utils.showError("Transaction does not exists");
-        } else {
-            try {
-                TransactionData transactionData = AppState.apiClient.getTransaction(AppState.transactionId);
-                AppState.selectedTransactionRow=new TransactionTabRow();
-                AppState.selectedTransactionRow.setAmount(transactionData.getAmount().toString());
-                AppState.selectedTransactionRow.setCurrency(transactionData.getCurrency());
-                AppState.selectedTransactionRow.setHash(transactionData.getHash());
-                AppState.selectedTransactionRow.setId(transactionData.getInnerId());
-                AppState.selectedTransactionRow.setTarget(transactionData.getTarget());
-                AppState.detailFromHistory=false;
-                App.showForm("/fxml/transaction.fxml", "Wallet");
-            } catch (Exception e) {
-                Utils.showError("Error "+e.getMessage());
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
+        AppState.selectedTransactionRow = new TransactionTabRow();
+        AppState.selectedTransactionRow.setHash(AppState.hash);
+        AppState.selectedTransactionRow.setTarget(AppState.toAddress);
+        AppState.selectedTransactionRow.setCurrency(AppState.coin);
+        AppState.selectedTransactionRow.setAmount(Converter.toString(AppState.amount));
+        AppState.detailFromHistory=false;
+        App.showForm("/fxml/transaction.fxml", "Wallet");
     }
 
     @Override

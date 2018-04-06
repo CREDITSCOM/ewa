@@ -1,11 +1,13 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.exception.ApiClientException;
 import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Dictionaries;
+import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.Utils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,6 +25,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
@@ -89,9 +92,11 @@ public class Form6Controller extends Controller implements Initializable {
     }
 
     @FXML
-    private void handleGenerate() {
+    private void handleGenerate() throws CreditsException {
         AppState.amount = numAmount.getValue();
         AppState.toAddress = txKey.getText();
+        AppState.hash = ApiUtils.generateTransactionHash();
+        AppState.innerId = UUID.randomUUID().toString();
 
         // VALIDATE
         boolean ok = true;

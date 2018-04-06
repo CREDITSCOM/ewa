@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 /**
  * Created by Rustem.Saidaliyev on 26.01.2018.
@@ -39,18 +40,24 @@ public class Form7Controller extends Controller implements Initializable {
     @FXML
     private void handleGenerate() {
         try {
-            AppState.transactionId=null;
-            AppState.transactionId = ApiUtils.prepareAndCallTransactionFlow(
+
+            String hashFee = ApiUtils.generateTransactionHash();
+            String innerIdFee = UUID.randomUUID().toString();
+
+            ApiUtils.callTransactionFlowWithFee(
+                    AppState.hash,
+                    AppState.innerId,
                     AppState.account,
                     AppState.toAddress,
                     AppState.amount,
                     AppState.coin,
+                    hashFee,
+                    innerIdFee,
                     AppState.account,
                     Const.FEE_TRAN_TARGET,
                     Const.FEE_TRAN_AMOUNT,
                     Const.FEE_TRAN_CURRENCY
             );
-
         } catch (Exception e) {
             LOGGER.error("Error creating transaction " + e.toString(), e);
             Utils.showError("Error creating transaction " + e.toString());
