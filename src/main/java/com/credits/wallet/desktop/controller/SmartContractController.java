@@ -167,7 +167,7 @@ public class SmartContractController extends Controller implements Initializable
                 APIResponse executorResponse = client.store(
                         contractFile,
                         token,
-                        Converter.encodeToBASE64(Ed25519.privateKeyToBytes(AppState.privateKey))
+                        Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey))
                 );
                 if (executorResponse.getCode()!=0 && executorResponse.getMessage()!=null) {
                     Utils.showError("Error executing smart contract " + executorResponse.getMessage());

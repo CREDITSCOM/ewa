@@ -71,13 +71,10 @@ public class Form5Controller extends Controller implements Initializable {
                         "UTF-8"
                 );
 
-                //writer.println(String.format("Public: %s", Converter.encodeToBASE64(Ed25519.publicKeyToBytes(AppState.publicKey))));
-                //writer.println(String.format("Private: %s", Converter.encodeToBASE64(Ed25519.privateKeyToBytes(AppState.privateKey))));
                 Map<String, String> content = new HashMap<>();
-                content.put("public", Converter.encodeToBASE64(Ed25519.publicKeyToBytes(AppState.publicKey)));
-                content.put("private", Converter.encodeToBASE64(Ed25519.privateKeyToBytes(AppState.privateKey)));
+                content.put("public", Converter.encodeToBASE58(Ed25519.publicKeyToBytes(AppState.publicKey)));
+                content.put("private", Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
                 writer.println(new Gson().toJson(content));
-
                 writer.close();
                 Utils.showInfo(String.format("Keys successfully saved in \n\n%s", file.getAbsolutePath()));
             } catch (FileNotFoundException e) {
@@ -125,12 +122,13 @@ public class Form5Controller extends Controller implements Initializable {
         txKey.setDisable(AppState.newAccount);
 
         if (AppState.newAccount) {
-            txKey.setText(Converter.encodeToBASE64(Ed25519.privateKeyToBytes(AppState.privateKey)));
-            txPublic.setText(Converter.encodeToBASE64(Ed25519.publicKeyToBytes(AppState.publicKey)));
+            txKey.setText(Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
+            txPublic.setText(Converter.encodeToBASE58(Ed25519.publicKeyToBytes(AppState.publicKey)));
         }
     }
 
-    private void open (String pubKey, String privKey) {
+    private void open(String pubKey, String privKey) {
+
         AppState.account = pubKey;
         if (AppState.newAccount) {
             // Создание системной транзакции
@@ -143,12 +141,12 @@ public class Form5Controller extends Controller implements Initializable {
             }
         } else {
             try {
-                byte[] publicKeyByteArr = Converter.decodeFromBASE64(pubKey);
-                byte[] privateKeyByteArr = Converter.decodeFromBASE64(privKey);
+                byte[] publicKeyByteArr = Converter.decodeFromBASE58(pubKey);
+                byte[] privateKeyByteArr = Converter.decodeFromBASE58(privKey);
                 AppState.publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
                 AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
             } catch (Exception e) {
-                if (e.getMessage() != null)
+                if (e.getMessage()!=null)
                     Utils.showError(e.getMessage());
                 LOGGER.error(e.getMessage(), e);
                 //return;
@@ -163,8 +161,8 @@ public class Form5Controller extends Controller implements Initializable {
 
     private boolean validateKeys(String publicKey, String privateKey) {
         try {
-            byte[] publicKeyByteArr = Converter.decodeFromBASE64(publicKey);
-            byte[] privateKeyByteArr = Converter.decodeFromBASE64(privateKey);
+            byte[] publicKeyByteArr = Converter.decodeFromBASE58(publicKey);
+            byte[] privateKeyByteArr = Converter.decodeFromBASE58(privateKey);
 
             if (privateKeyByteArr.length <= 32)
                 return false;

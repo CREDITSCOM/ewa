@@ -32,8 +32,8 @@ public class ApiUtils {
     )
         throws Exception {
 
-        // Формировование подписи основной транзакции
-        String signatureBASE64 =
+        // Формировование параметров основной транзакции
+        String signature =
             Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency, AppState.privateKey);
 
         TransactionFlowData transactionFlowData = new TransactionFlowData(
@@ -43,11 +43,11 @@ public class ApiUtils {
                 target,
                 amount,
                 currency,
-                signatureBASE64
+                signature
         );
 
-        // Формировование подписи транзакции для списания комиссии
-        String signatureBASE64Fee =
+        // Формировование параметров транзакции для списания комиссии
+        String signatureFee =
                 Ed25519.generateSignOfTransaction(hashFee, innerIdFee, sourceFee, targetFee, amountFee, currencyFee, AppState.privateKey);
 
         TransactionFlowData transactionFlowDataFee = new TransactionFlowData(
@@ -57,7 +57,7 @@ public class ApiUtils {
                 targetFee,
                 amountFee,
                 currencyFee,
-                signatureBASE64Fee
+                signatureFee
         );
 
         AppState.apiClient.transactionFlowWithFee(
