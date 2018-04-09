@@ -90,9 +90,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 String target = Converter.encodeToBASE64(publicKeyByteArr);
 
                 String signatureBASE64 =
-                    Ed25519.generateSignOfTransaction(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY_BASE64, target, total, address, privateKey);
+                    Ed25519.generateSignOfTransaction(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, privateKey);
 
-                dbInteractionService.transactionFlow(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY_BASE64, target, total, address, signatureBASE64);
+                dbInteractionService.transactionFlow(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, signatureBASE64);
             }
 
             logger.info("Contract {} has been successfully saved.", address);

@@ -77,7 +77,7 @@ public abstract class SmartContract implements Serializable {
 
     protected void sendTransaction(String source, String target, Double amount, String currency) {
         TransactionFlowData transactionData = makeTransactionFlowData(source, target, amount, currency);
-        TransactionFlowData feeTransactionData = makeTransactionFlowData(source, Const.SYS_TRAN_PUBLIC_KEY_BASE64, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
+        TransactionFlowData feeTransactionData = makeTransactionFlowData(source, Const.SYS_TRAN_PUBLIC_KEY, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
 
         try {
             service.transactionFlowWithFee(transactionData, feeTransactionData, true);
@@ -92,11 +92,11 @@ public abstract class SmartContract implements Serializable {
         try {
             byte[] hashBytes = Blake2S.generateHash(4);
             String hash = com.credits.leveldb.client.util.Converter.bytesToHex(hashBytes);
-            byte[] privateKeyByteArr = Converter.decodeFromBASE64(this.specialProperty);
+            byte[] privateKeyByteArr = Converter.decodeFromBASE58(this.specialProperty);
             PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
-            String signatureBASE64 =
+            String signatureBASE58 =
                 Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency, privateKey);
-            return new TransactionFlowData(hash, innerId, source, target, amount, currency, signatureBASE64);
+            return new TransactionFlowData(hash, innerId, source, target, amount, currency, signatureBASE58);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
