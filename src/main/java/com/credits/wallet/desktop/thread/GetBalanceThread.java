@@ -34,9 +34,15 @@ public class GetBalanceThread implements Runnable {
                 }
             });
         } catch (Exception e) {
-            label.setText(ERR_GETTING_BALANCE);
-            LOGGER.error(ERR_GETTING_BALANCE, e);
-            Utils.showError(ERR_GETTING_BALANCE);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    label.setText(ERR_GETTING_BALANCE);
+                    LOGGER.error(ERR_GETTING_BALANCE, e);
+                    Utils.showError(ERR_GETTING_BALANCE);
+
+                }
+            });
         }
     }
 }
