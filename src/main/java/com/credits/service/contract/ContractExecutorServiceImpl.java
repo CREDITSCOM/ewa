@@ -51,7 +51,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
     }
 
-    public synchronized void execute(String address, String specialProperty) throws ContractExecutorException {
+    public void execute(String address, String specialProperty) throws ContractExecutorException {
         File serFile = Serializer.getSerFile(address);
         if (serFile.exists()) {
             throw new ContractExecutorException("Contract " + address + " has been already stored.");
@@ -82,17 +82,17 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
                 String innerId = UUID.randomUUID().toString();
 
-                byte[] privateKeyByteArrSystem = Converter.decodeFromBASE64(Const.SYS_TRAN_PRIVATE_KEY_BASE64);
+                byte[] privateKeyByteArrSystem = Converter.decodeFromBASE58(Const.SYS_TRAN_PRIVATE_KEY);
                 PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArrSystem);
 
-                byte[] privateKeyByteArr = Converter.decodeFromBASE64(specialProperty);
+                byte[] privateKeyByteArr = Converter.decodeFromBASE58(specialProperty);
                 byte[] publicKeyByteArr = Utils.parseSubarray(privateKeyByteArr, 32, 32);
-                String target = Converter.encodeToBASE64(publicKeyByteArr);
+                String target = Converter.encodeToBASE58(publicKeyByteArr);
 
-                String signatureBASE64 =
+                String signatureBASE58 =
                     Ed25519.generateSignOfTransaction(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, privateKey);
 
-                dbInteractionService.transactionFlow(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, signatureBASE64);
+                dbInteractionService.transactionFlow(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, signatureBASE58);
             }
 
             logger.info("Contract {} has been successfully saved.", address);

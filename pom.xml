@@ -102,7 +102,7 @@
                         <exclude>**/ContractExecutorServiceTestCode.java</exclude>
                         <exclude>**/ContractExecutorServiceThriftIntegrationTestCode.java</exclude>
                         <exclude>**/ContractExecutorServiceThriftIntegrationTest.java</exclude>
-                        <exclude>**/ThriftServerTest.java</exclude>
+                        <exclude>**/ThriftServerLoadTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
