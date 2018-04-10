@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.utils.Converter;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.Utils;
@@ -20,8 +19,6 @@ import java.util.ResourceBundle;
  * Created by Rustem.Saidaliyev on 26.11.2017.
  */
 public class AccountController extends Controller implements Initializable {
-    private static final String ERR_GETTING_BALANCE = "Error getting balance";
-
     private final static Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
     @FXML
@@ -61,14 +58,7 @@ public class AccountController extends Controller implements Initializable {
     }
 
     private void refreshBalance() {
-        try {
-            Double balance=AppState.apiClient.getBalance(AppState.account, "cs");
-            this.balance.setText(Converter.toString(balance));
-        } catch (Exception e) {
-            this.balance.setText("");
-            LOGGER.error(ERR_GETTING_BALANCE, e);
-            Utils.showError(ERR_GETTING_BALANCE);
-        }
+        Utils.displayBalance("cs", this.balance);
     }
 
     public void initialize(URL location, ResourceBundle resources) {

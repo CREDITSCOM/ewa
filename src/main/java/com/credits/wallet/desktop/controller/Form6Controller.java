@@ -211,15 +211,8 @@ public class Form6Controller extends Controller implements Initializable {
         cbCoin.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                try {
-                    AppState.coin=AppState.coins.get((int) newValue);
-                    double balance=getBalance(AppState.coins.get((int) newValue));
-                    labCredit.setText(Converter.toString(balance));
-                } catch (Exception e) {
-                    labCredit.setText("");
-                    LOGGER.error(ERR_GETTING_BALANCE, e);
-                    Utils.showError(ERR_GETTING_BALANCE);
-                }
+                AppState.coin=AppState.coins.get((int) newValue);
+                Utils.displayBalance(AppState.coin, labCredit);
             }
         });
 
