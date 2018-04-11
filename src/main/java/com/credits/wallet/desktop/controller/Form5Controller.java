@@ -7,7 +7,6 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.Utils;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import javafx.fxml.FXML;
@@ -20,8 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -70,11 +67,12 @@ public class Form5Controller extends Controller implements Initializable {
                         file.getAbsolutePath(),
                         "UTF-8"
                 );
-
-                Map<String, String> content = new HashMap<>();
-                content.put("public", Converter.encodeToBASE58(Ed25519.publicKeyToBytes(AppState.publicKey)));
-                content.put("private", Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
-                writer.println(new Gson().toJson(content));
+                String json = String.format(
+                        "{\"key\":{\"public\":\"%s\",\"private\":\"%s\"}}",
+                        Converter.encodeToBASE58(Ed25519.publicKeyToBytes(AppState.publicKey)),
+                        Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey))
+                        );
+                writer.println(json);
                 writer.close();
                 Utils.showInfo(String.format("Keys successfully saved in \n\n%s", file.getAbsolutePath()));
             } catch (FileNotFoundException e) {
@@ -101,9 +99,11 @@ public class Form5Controller extends Controller implements Initializable {
                     sb.append(line);
                     line = buf.readLine();
                 }
-                JsonObject jObject = new JsonParser().parse(sb.toString()).getAsJsonObject();
-                String pubKey=jObject.get("public").getAsString();
-                String privKey=jObject.get("private").getAsString();
+                JsonParser jsonParser = new JsonParser();
+                JsonObject jObject = jsonParser.parse(sb.toString()).getAsJsonObject();
+                JsonObject key = jObject.getAsJsonObject("key");
+                String pubKey = key.get("public").getAsString();
+                String privKey = key.get("private").getAsString();
 
                 open(pubKey, privKey);
             } catch (Exception e) {
