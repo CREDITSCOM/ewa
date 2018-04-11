@@ -31,7 +31,7 @@
 												<fx:include source="account.fxml" />
 												<Pane layoutX="279.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="708.0" style="-fx-background-color: #fff;">
 													<children>
-														<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="8. Your transaction send sucsesfully">
+														<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="8. Your transaction send successfully">
 															<font>
 																<Font size="14.0" />
 															</font>
