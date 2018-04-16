@@ -67,7 +67,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         Object instance;
         try {
-            File specPropertySerFile = Serializer.getPropertySerFile();
+            File specPropertySerFile = Serializer.getPropertySerFile(address);
             Serializer.serialize(specPropertySerFile, specialProperty);
 
             instance = clazz.newInstance();

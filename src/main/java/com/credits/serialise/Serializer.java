@@ -42,7 +42,7 @@ public class Serializer {
             File.separator + serFileName);
     }
 
-    public static File getPropertySerFile() {
-        return new File(SER_SOURCE_FOLDER_PATH + File.separator + "specProperty.out");
+    public static File getPropertySerFile(String loadAddress) {
+        return new File(SER_SOURCE_FOLDER_PATH + File.separator + loadAddress + ".out");
     }
 }

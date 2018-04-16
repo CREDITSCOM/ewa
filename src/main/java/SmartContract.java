@@ -11,6 +11,7 @@ import com.credits.service.db.leveldb.LevelDbInteractionService;
 
 import java.io.File;
 import java.io.Serializable;
+import java.net.URL;
 import java.security.PrivateKey;
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +25,12 @@ public abstract class SmartContract implements Serializable {
     private String specialProperty;
 
     protected SmartContract() {
-        File propertySerFile = Serializer.getPropertySerFile();
+        Class<?> clazz = this.getClass();
+        String fileName = clazz.getSimpleName() + ".class";
+        URL fileURL = clazz.getClassLoader().getResource(fileName);
+        String loadAddress = new File(fileURL.getFile()).getParentFile().getName();
+
+        File propertySerFile = Serializer.getPropertySerFile(loadAddress);
         String property;
         try {
             property = (String) Serializer.deserialize(propertySerFile, ClassLoader.getSystemClassLoader());
