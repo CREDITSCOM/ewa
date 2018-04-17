@@ -14,6 +14,9 @@ import java.util.List;
 @Component
 public class ContractExecutorHandler implements ContractExecutor.Iface {
 
+    private final static String SER_SOURCE_FOLDER_PATH = System.getProperty("user.dir") + File.separator + "credits";
+    private final static String SER_TEMP_FOLDER_PATH = File.separator + "temp" + File.separator;
+
     @Resource
     private UserCodeStorageService storageService;
 
@@ -25,13 +28,15 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     public APIResponse store(ContractFile file, String address, String specialProperty) {
         String fileName = file.getName();
         byte[] fileContent = file.getFile();
-        File sourceFile = new File(fileName);
+        File sourceFile = new File(SER_SOURCE_FOLDER_PATH + File.separator + address + SER_TEMP_FOLDER_PATH + fileName);
+        File tempFolder = sourceFile.getParentFile();
 
         APIResponse response = new APIResponse((byte) 0, "");
         try {
             FileUtils.writeByteArrayToFile(sourceFile, fileContent);
             storageService.store(sourceFile, address);
             sourceFile.delete();
+            tempFolder.delete();
             service.execute(address, specialProperty);
         } catch (ContractExecutorException|IOException e) {
             response.setCode((byte) 1);
