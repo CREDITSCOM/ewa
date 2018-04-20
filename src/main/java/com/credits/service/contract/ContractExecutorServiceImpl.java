@@ -22,6 +22,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.List;
@@ -74,9 +75,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             Field totalField = clazz.getSuperclass().getDeclaredField("total");
             totalField.setAccessible(true);
-            double total = totalField.getDouble(instance);
+            BigDecimal total = new BigDecimal(totalField.getDouble(instance));
 
-            if (total != 0) {
+            if (total.doubleValue() != 0) {
                 byte[] hashBytes = Blake2S.generateHash(4);
                 String hash = com.credits.leveldb.client.util.Converter.bytesToHex(hashBytes);
 

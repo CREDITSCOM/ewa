@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -28,7 +29,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
 
 
     @Override
-    public Double getBalance(String address, String currency) throws Exception {
+    public BigDecimal getBalance(String address, String currency) throws Exception {
         return client.getBalance(address, currency);
     }
 
@@ -53,7 +54,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     }
 
     @Override
-    public void transactionFlow(String hash, String innerId, String source, String target, double total, String address, String signatureBASE64) throws Exception {
+    public void transactionFlow(String hash, String innerId, String source, String target, BigDecimal total, String address, String signatureBASE64) throws Exception {
         client.transactionFlow(hash, innerId, source, target, total, address, signatureBASE64);
     }
 

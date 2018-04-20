@@ -4,11 +4,12 @@ import com.credits.leveldb.client.PoolData;
 import com.credits.leveldb.client.TransactionData;
 import com.credits.leveldb.client.data.TransactionFlowData;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface LevelDbInteractionService {
 
-    Double getBalance(String address, String currency) throws Exception;
+    BigDecimal getBalance(String address, String currency) throws Exception;
 
     TransactionData getTransaction(String transactionId) throws Exception;
 
@@ -18,7 +19,7 @@ public interface LevelDbInteractionService {
 
     PoolData getPool(String poolNumber) throws Exception;
 
-    void transactionFlow(String hash, String innerId, String source, String target, double total, String address, String signatureBASE64) throws Exception;
+    void transactionFlow(String hash, String innerId, String source, String target, BigDecimal total, String address, String signatureBASE64) throws Exception;
 
     void transactionFlowWithFee(TransactionFlowData transactionFlowData, TransactionFlowData transactionFlowDataFee, boolean checkBalance) throws Exception;
 }
