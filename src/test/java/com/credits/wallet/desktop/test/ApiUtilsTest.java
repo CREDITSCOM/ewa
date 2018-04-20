@@ -20,4 +20,16 @@ public class ApiUtilsTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void callTransactionFlowWithFeeTest() {
+        try {
+
+
+
+            LOGGER.info(ApiUtils.generateTransactionHash());
+        } catch (CreditsException e) {
+            e.printStackTrace();
+        }
+    }
 }

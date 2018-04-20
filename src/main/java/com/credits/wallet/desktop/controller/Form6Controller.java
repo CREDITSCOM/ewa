@@ -13,16 +13,18 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.util.StringConverter;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -57,43 +59,29 @@ public class Form6Controller extends Controller implements Initializable {
     private TextField txKey;
 
     @FXML
+    private TextField numAmount;
+
+    @FXML
     private ComboBox<String> cbCoin;
 
     @FXML
-    private Spinner<Double> numAmount;
+    private TextField numFee;
 
-    @FXML
-    private Spinner<Double> numFee;
-
-    /**
-     * c&p from Spinner
-     */
-    private <T> void commitEditorText(Spinner<T> spinner) {
-        if (!spinner.isEditable()) {
-            return;
-        }
-        String text = spinner.getEditor().getText();
-        SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
-        if (valueFactory != null) {
-            StringConverter<T> converter = valueFactory.getConverter();
-            if (converter != null) {
-                T value = converter.fromString(text);
-                valueFactory.setValue(value);
-            }
-        }
-    }
-
-    private void refreshTransactionFeePercent(Double transactionFeeValue, Double amount) {
-        if (amount == 0d) {
-            AppState.transactionFeePercent = 0d;
+    private void refreshTransactionFeePercent(BigDecimal transactionFeeValue, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            AppState.transactionFeePercent = BigDecimal.ZERO;
         } else {
-            AppState.transactionFeePercent = (transactionFeeValue * 100) / amount;
+            AppState.transactionFeePercent = (transactionFeeValue.multiply(new BigDecimal("100"))).divide(amount, 18, RoundingMode.HALF_UP);
         }
     }
 
     @FXML
     private void handleGenerate() throws CreditsException {
-        AppState.amount = numAmount.getValue();
+        try {
+            AppState.amount = Converter.toBigDecimal(numAmount.getText());
+        } catch (ParseException e) {
+            throw new CreditsException(e);
+        }
         AppState.toAddress = txKey.getText();
         AppState.hash = ApiUtils.generateTransactionHash();
         AppState.innerId = UUID.randomUUID().toString();
@@ -106,12 +94,12 @@ public class Form6Controller extends Controller implements Initializable {
             cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             ok = false;
         }
-        if (AppState.amount <= 0) {
+        if (AppState.amount.compareTo(BigDecimal.ZERO) <= 0) {
             labErrorAmount.setText(ERR_AMOUNT);
             numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             ok = false;
         }
-        if (AppState.transactionFeeValue <= 0) {
+        if (AppState.transactionFeeValue.compareTo(BigDecimal.ZERO) <= 0) {
             labErrorFee.setText(ERR_FEE);
             numFee.setStyle(numFee.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             ok = false;
@@ -140,52 +128,8 @@ public class Form6Controller extends Controller implements Initializable {
         clearLabErr();
 
         labCredit.setText("0");
-        StringConverter converter = new StringConverter<Double>() {
-            private final DecimalFormat df = new DecimalFormat("#.##########");
 
-            @Override
-            public String toString(Double value) {
-                // If the specified value is null, return a zero-length String
-                if (value == null) {
-                    return "";
-                }
-
-                return df.format(value);
-            }
-
-            @Override
-            public Double fromString(String value) {
-                try {
-                    // If the specified value is null or zero-length, return null
-                    if (value == null) {
-                        return null;
-                    }
-
-                    value = value.trim();
-
-                    if (value.length() < 1) {
-                        return null;
-                    }
-
-                    // Perform the requested parsing
-                    return df.parse(value).doubleValue();
-                } catch (ParseException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        };
-
-        SpinnerValueFactory<Double> amountValueFactory =
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 0, 0.1);
-        amountValueFactory.setConverter(converter);
-        numAmount.setValueFactory(amountValueFactory);
-
-        SpinnerValueFactory<Double> feeValueFactory =
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, AppState.transactionFeePercent, 0);
-        feeValueFactory.setConverter(converter);
-        numFee.setValueFactory(feeValueFactory);
-
-        numFee.getValueFactory().setValue(AppState.transactionFeeValue);
+        numFee.setText(Converter.toString(AppState.transactionFeeValue));
 
         // Fill coin list
         cbCoin.getItems().clear();
@@ -216,55 +160,45 @@ public class Form6Controller extends Controller implements Initializable {
             }
         });
 
-        this.numAmount.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                return;
+        this.numAmount.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                refreshTransactionFeePercent(Converter.toBigDecimal(this.numFee.getText()), Converter.toBigDecimal(newValue));
+            } catch (ParseException e) {
+                LOGGER.error(e.getMessage());
             }
-            //intuitive method on textField, has no effect, though
-            //spinner.getEditor().commitValue();
-            commitEditorText(this.numAmount);
         });
 
-        this.numFee.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                return;
+        this.numFee.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                refreshTransactionFeePercent(Converter.toBigDecimal(newValue), Converter.toBigDecimal(this.numAmount.getText()));
+            } catch (ParseException e) {
+                LOGGER.error(e.getMessage());
             }
-            //intuitive method on textField, has no effect, though
-            //spinner.getEditor().commitValue();
-            commitEditorText(this.numFee);
-        });
-
-        this.numAmount.valueProperty().addListener((observable, oldValue, newValue) -> {
-            refreshTransactionFeePercent(this.numFee.getValue(), newValue);
-        });
-
-        this.numFee.valueProperty().addListener((observable, oldValue, newValue) -> {
-            refreshTransactionFeePercent(newValue, this.numAmount.getValue());
         });
 
         this.numAmount.setOnKeyReleased(event -> {
-            String s1 = this.numAmount.getEditor().getText();
+            String s1 = this.numAmount.getText();
             String s2 = Utils.correctNum(s1);
             if (!s1.equals(s2)) {
-                this.numAmount.getEditor().setText(s2);
-                this.numAmount.getEditor().positionCaret(s2.length());
+                this.numAmount.setText(s2);
+                this.numAmount.positionCaret(s2.length());
             }
         });
 
         this.numFee.setOnKeyReleased(event -> {
-            String s1 = this.numFee.getEditor().getText();
+            String s1 = this.numFee.getText();
             String s2 = Utils.correctNum(s1);
             if (!s1.equals(s2)) {
-                this.numFee.getEditor().setText(s2);
-                this.numFee.getEditor().positionCaret(s2.length());
+                this.numFee.setText(s2);
+                this.numFee.positionCaret(s2.length());
             }
         });
 
         if (AppState.noClearForm6) {
             cbCoin.getSelectionModel().select(AppState.coin);
             txKey.setText(AppState.toAddress);
-            numAmount.getValueFactory().setValue(AppState.amount);
-            numFee.getValueFactory().setValue(AppState.transactionFeeValue);
+            numAmount.setText(Converter.toString(AppState.amount));
+            numFee.setText(Converter.toString(AppState.transactionFeeValue));
 
             AppState.noClearForm6 = false;
         } else {
@@ -279,7 +213,7 @@ public class Form6Controller extends Controller implements Initializable {
         App.showForm("/fxml/new_coin.fxml", "Wallet");
     }
 
-    private double getBalance(String coin) throws Exception {
+    private BigDecimal getBalance(String coin) throws Exception {
         return AppState.apiClient.getBalance(AppState.account, coin);
     }
 

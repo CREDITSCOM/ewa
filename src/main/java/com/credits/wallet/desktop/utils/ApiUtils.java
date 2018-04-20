@@ -9,6 +9,8 @@ import com.credits.wallet.desktop.AppState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+
 /**
  * Created by Rustem Saidaliyev on 20-Mar-18.
  */
@@ -21,13 +23,13 @@ public class ApiUtils {
             String innerId,
             String source,
             String target,
-            Double amount,
+            BigDecimal amount,
             String currency,
             String hashFee,
             String innerIdFee,
             String sourceFee,
             String targetFee,
-            Double amountFee,
+            BigDecimal amountFee,
             String currencyFee
     )
         throws Exception {
