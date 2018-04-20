@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.security.PrivateKey;
+import java.text.ParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -83,11 +84,11 @@ public abstract class SmartContract implements Serializable {
     }
 
     protected void sendTransaction(String source, String target, double amount, String currency) {
-        BigDecimal decAmount = new BigDecimal(amount);
-        TransactionFlowData transactionData = makeTransactionFlowData(source, target, decAmount, currency);
-        TransactionFlowData feeTransactionData = makeTransactionFlowData(source, Const.SYS_TRAN_PUBLIC_KEY, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
-
         try {
+            BigDecimal decAmount = Converter.toBigDecimal(amount);
+            TransactionFlowData transactionData = makeTransactionFlowData(source, target, decAmount, currency);
+            TransactionFlowData feeTransactionData = makeTransactionFlowData(source, Const.SYS_TRAN_PUBLIC_KEY, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
+
             service.transactionFlowWithFee(transactionData, feeTransactionData, true);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
