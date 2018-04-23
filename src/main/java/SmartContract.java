@@ -11,8 +11,10 @@ import com.credits.service.db.leveldb.LevelDbInteractionService;
 
 import java.io.File;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.security.PrivateKey;
+import java.text.ParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +43,7 @@ public abstract class SmartContract implements Serializable {
         propertySerFile.delete();
     }
 
-    protected Double getBalance(String address, String currency) {
+    protected BigDecimal getBalance(String address, String currency) {
         try {
             return service.getBalance(address, currency);
         } catch (Exception e) {
@@ -81,18 +83,19 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected void sendTransaction(String source, String target, Double amount, String currency) {
-        TransactionFlowData transactionData = makeTransactionFlowData(source, target, amount, currency);
-        TransactionFlowData feeTransactionData = makeTransactionFlowData(source, Const.SYS_TRAN_PUBLIC_KEY, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
-
+    protected void sendTransaction(String source, String target, double amount, String currency) {
         try {
+            BigDecimal decAmount = Converter.toBigDecimal(amount);
+            TransactionFlowData transactionData = makeTransactionFlowData(source, target, decAmount, currency);
+            TransactionFlowData feeTransactionData = makeTransactionFlowData(source, Const.SYS_TRAN_PUBLIC_KEY, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
+
             service.transactionFlowWithFee(transactionData, feeTransactionData, true);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
-    private TransactionFlowData makeTransactionFlowData(String source, String target, Double amount, String currency) {
+    private TransactionFlowData makeTransactionFlowData(String source, String target, BigDecimal amount, String currency) {
         String innerId = UUID.randomUUID().toString();
 
         try {
