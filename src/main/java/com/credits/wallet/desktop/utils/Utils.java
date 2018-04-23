@@ -16,6 +16,7 @@ import java.util.UUID;
  */
 public class Utils {
     private static final String MSG_RETRIEVE_BALANCE = "Retrieving balance...";
+    private static final int FRACTION_MAX_LENGTH=18;
 
     private static Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
@@ -59,6 +60,19 @@ public class Utils {
             if (c.equals(AppState.decSep))
                 wasPoint=true;
         }
+
+        // limit 18 positions after point
+        int indPoint=s.indexOf(AppState.decSep);
+        if (indPoint==0) {
+            s = "0" + s;
+            indPoint=1;
+        }
+        if (indPoint>0) {
+            String fract=s.substring(indPoint+1);
+            if (fract.length()>FRACTION_MAX_LENGTH)
+                s=s.substring(0,s.length()-fract.length()+FRACTION_MAX_LENGTH);
+        }
+
         return s;
     }
 
