@@ -85,7 +85,7 @@ public abstract class SmartContract implements Serializable {
 
     protected void sendTransaction(String source, String target, double amount, String currency) {
         try {
-            BigDecimal decAmount = Converter.toBigDecimal(amount);
+            BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
             TransactionFlowData transactionData = makeTransactionFlowData(source, target, decAmount, currency);
             TransactionFlowData feeTransactionData = makeTransactionFlowData(source, Const.SYS_TRAN_PUBLIC_KEY, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
 

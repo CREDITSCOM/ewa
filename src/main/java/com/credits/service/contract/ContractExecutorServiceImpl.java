@@ -75,7 +75,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             Field totalField = clazz.getSuperclass().getDeclaredField("total");
             totalField.setAccessible(true);
-            BigDecimal total = new BigDecimal(totalField.getDouble(instance));
+            String strTotalField = String.valueOf(totalField.getDouble(instance));
+            BigDecimal total = new BigDecimal(strTotalField);
 
             if (total.doubleValue() != 0) {
                 byte[] hashBytes = Blake2S.generateHash(4);
