@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+
 /**
  * Created by goncharov-eg on 10.04.2018.
  */
@@ -27,7 +29,7 @@ public class GetBalanceThread implements Runnable {
     @Override
     public void run() {
         try {
-            Double balance = AppState.apiClient.getBalance(AppState.account, coin);
+            BigDecimal balance = AppState.apiClient.getBalance(AppState.account, coin);
             Platform.runLater(new Runnable() {
                 public void run() {
                     label.setText(Converter.toString(balance));
