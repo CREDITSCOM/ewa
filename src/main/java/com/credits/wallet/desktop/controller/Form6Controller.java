@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
-import java.text.ParseException;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
@@ -77,11 +76,8 @@ public class Form6Controller extends Controller implements Initializable {
 
     @FXML
     private void handleGenerate() throws CreditsException {
-        try {
-            AppState.amount = Converter.toBigDecimal(numAmount.getText());
-        } catch (ParseException e) {
-            throw new CreditsException(e);
-        }
+
+        AppState.amount = Converter.toBigDecimal(numAmount.getText());
         AppState.toAddress = txKey.getText();
         AppState.hash = ApiUtils.generateTransactionHash();
         AppState.innerId = UUID.randomUUID().toString();
@@ -94,6 +90,11 @@ public class Form6Controller extends Controller implements Initializable {
             cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             ok = false;
         }
+        if (AppState.toAddress == null || AppState.toAddress.isEmpty()) {
+            labErrorKey.setText(ERR_TO_ADDRESS);
+            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            ok = false;
+        }
         if (AppState.amount.compareTo(BigDecimal.ZERO) <= 0) {
             labErrorAmount.setText(ERR_AMOUNT);
             numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
@@ -102,11 +103,6 @@ public class Form6Controller extends Controller implements Initializable {
         if (AppState.transactionFeeValue.compareTo(BigDecimal.ZERO) <= 0) {
             labErrorFee.setText(ERR_FEE);
             numFee.setStyle(numFee.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            ok = false;
-        }
-        if (AppState.toAddress == null || AppState.toAddress.isEmpty()) {
-            labErrorKey.setText(ERR_TO_ADDRESS);
-            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             ok = false;
         }
         try {
@@ -163,7 +159,7 @@ public class Form6Controller extends Controller implements Initializable {
         this.numAmount.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 refreshTransactionFeePercent(Converter.toBigDecimal(this.numFee.getText()), Converter.toBigDecimal(newValue));
-            } catch (ParseException e) {
+            } catch (CreditsException e) {
                 LOGGER.error(e.getMessage());
             }
         });
@@ -171,7 +167,7 @@ public class Form6Controller extends Controller implements Initializable {
         this.numFee.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 refreshTransactionFeePercent(Converter.toBigDecimal(newValue), Converter.toBigDecimal(this.numAmount.getText()));
-            } catch (ParseException e) {
+            } catch (CreditsException e) {
                 LOGGER.error(e.getMessage());
             }
         });
