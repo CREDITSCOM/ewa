@@ -7,6 +7,7 @@ import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
+import com.credits.leveldb.client.util.LevelDbClientConverter;
 import com.credits.serialise.Serializer;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
@@ -80,7 +81,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             if (total.doubleValue() != 0) {
                 byte[] hashBytes = Blake2S.generateHash(4);
-                String hash = com.credits.leveldb.client.util.Converter.bytesToHex(hashBytes);
+                String hash = LevelDbClientConverter.bytesToHex(hashBytes);
 
                 String innerId = UUID.randomUUID().toString();
 
