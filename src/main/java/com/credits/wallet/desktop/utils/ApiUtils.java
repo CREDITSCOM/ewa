@@ -5,6 +5,7 @@ import com.credits.common.utils.TcpClient;
 import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.leveldb.client.data.TransactionFlowData;
+import com.credits.leveldb.client.util.LevelDbClientConverter;
 import com.credits.wallet.desktop.AppState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +84,7 @@ public class ApiUtils {
 
     public static String generateTransactionHash() throws CreditsException {
         byte[] hashBytes = Blake2S.generateHash(4); // 4 байта
-        return com.credits.leveldb.client.util.Converter.bytesToHex(hashBytes);
+        return LevelDbClientConverter.bytesToHex(hashBytes);
     }
 
 }
