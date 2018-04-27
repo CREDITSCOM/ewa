@@ -6,7 +6,6 @@ import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.PoolData;
 import com.credits.leveldb.client.TransactionData;
 import com.credits.leveldb.client.data.TransactionFlowData;
-import com.credits.leveldb.client.util.LevelDbClientConverter;
 import com.credits.serialise.Serializer;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 
@@ -100,7 +99,7 @@ public abstract class SmartContract implements Serializable {
 
         try {
             byte[] hashBytes = Blake2S.generateHash(4);
-            String hash = LevelDbClientConverter.bytesToHex(hashBytes);
+            String hash = Converter.bytesToHex(hashBytes);
             byte[] privateKeyByteArr = Converter.decodeFromBASE58(this.specialProperty);
             PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
             String signatureBASE58 =
