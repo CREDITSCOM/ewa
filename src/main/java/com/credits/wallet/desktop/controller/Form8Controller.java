@@ -52,7 +52,6 @@ public class Form8Controller extends Controller implements Initializable {
     @FXML
     private void handleView() {
         AppState.selectedTransactionRow = new TransactionTabRow();
-        AppState.selectedTransactionRow.setHash(AppState.hash);
         AppState.selectedTransactionRow.setTarget(AppState.toAddress);
         AppState.selectedTransactionRow.setCurrency(AppState.coin);
         AppState.selectedTransactionRow.setAmount(Converter.toString(AppState.amount));

@@ -63,7 +63,6 @@ public class HistoryController extends Controller implements Initializable {
         tableColumns[0].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("target"));
         tableColumns[1].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("currency"));
         tableColumns[2].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("amount"));
-        tableColumns[3].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("hash"));
 
         pageNumber = 1;
         setPage();
@@ -110,7 +109,6 @@ public class HistoryController extends Controller implements Initializable {
                 tr.setTarget(transaction.getTarget());
                 tr.setCurrency(transaction.getCurrency());
                 tr.setAmount(Converter.toString(transaction.getAmount()));
-                tr.setHash(transaction.getHash());
                 tr.setId(transaction.getInnerId());
 
                 tabTransaction.getItems().add(tr);

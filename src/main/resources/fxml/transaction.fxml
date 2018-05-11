@@ -40,17 +40,14 @@
 														<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 														<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 														<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-														<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 													</rowConstraints>
 													<children>
 														<Label text="Target" />
 														<Label text="Currency" GridPane.rowIndex="1" />
 														<Label text="Amount" GridPane.rowIndex="2" />
-														<Label text="Hash" GridPane.rowIndex="3" />
 														<Label fx:id="labTarget" text="Label" GridPane.columnIndex="1" />
 														<Label fx:id="labCurrency" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 														<Label fx:id="labAmount" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-														<Label fx:id="labHash" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 													</children>
 												</GridPane>
 											</children>

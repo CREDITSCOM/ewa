@@ -8,7 +8,6 @@ public class TransactionTabRow {
     private String target;
     private String currency;
     private String amount;
-    private String hash;
 
     public String getId() {
         return id;
@@ -40,13 +39,5 @@ public class TransactionTabRow {
 
     public void setAmount(String amount) {
         this.amount = amount;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash(String hash) {
-        this.hash = hash;
     }
 }

@@ -20,13 +20,11 @@ public class ApiUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
     public static void callTransactionFlowWithFee(
-            String hash,
             String innerId,
             String source,
             String target,
             BigDecimal amount,
             String currency,
-            String hashFee,
             String innerIdFee,
             String sourceFee,
             String targetFee,
@@ -37,10 +35,9 @@ public class ApiUtils {
 
         // Формировование параметров основной транзакции
         String signature =
-            Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency, AppState.privateKey);
+            Ed25519.generateSignOfTransaction(innerId, source, target, amount, currency, AppState.privateKey);
 
         TransactionFlowData transactionFlowData = new TransactionFlowData(
-                hash,
                 innerId,
                 source,
                 target,
@@ -51,10 +48,9 @@ public class ApiUtils {
 
         // Формировование параметров транзакции для списания комиссии
         String signatureFee =
-                Ed25519.generateSignOfTransaction(hashFee, innerIdFee, sourceFee, targetFee, amountFee, currencyFee, AppState.privateKey);
+                Ed25519.generateSignOfTransaction(innerIdFee, sourceFee, targetFee, amountFee, currencyFee, AppState.privateKey);
 
         TransactionFlowData transactionFlowDataFee = new TransactionFlowData(
-                hashFee,
                 innerIdFee,
                 sourceFee,
                 targetFee,
@@ -66,7 +62,8 @@ public class ApiUtils {
         AppState.apiClient.transactionFlowWithFee(
                 transactionFlowData,
                 transactionFlowDataFee,
-                true
+                //true
+                false
         );
     }
 

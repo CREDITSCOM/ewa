@@ -34,7 +34,6 @@ public class AppState {
     public static BigDecimal transactionFeePercent = BigDecimal.ZERO;
     public static String toAddress;
     public static String coin;
-    public static String hash;
     public static String innerId;
 
     public static TransactionTabRow selectedTransactionRow;

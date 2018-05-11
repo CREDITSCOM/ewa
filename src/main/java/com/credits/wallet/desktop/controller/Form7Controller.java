@@ -41,17 +41,14 @@ public class Form7Controller extends Controller implements Initializable {
     private void handleGenerate() {
         try {
 
-            String hashFee = ApiUtils.generateTransactionHash();
             String innerIdFee = UUID.randomUUID().toString();
 
             ApiUtils.callTransactionFlowWithFee(
-                    AppState.hash,
                     AppState.innerId,
                     AppState.account,
                     AppState.toAddress,
                     AppState.amount,
                     AppState.coin,
-                    hashFee,
                     innerIdFee,
                     AppState.account,
                     Const.FEE_TRAN_TARGET,
