@@ -7,6 +7,7 @@ import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
+import com.credits.secure.Sandbox;
 import com.credits.serialise.Serializer;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
@@ -23,6 +24,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.security.Permissions;
 import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.List;
@@ -61,6 +63,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Class<?> clazz;
         try {
             clazz = storageService.load(address);
+//            Sandbox.confine(clazz, new Permissions());
         } catch (ClassLoadException e) {
             throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: "
                 + e.getMessage(), e);
@@ -109,6 +112,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Class<?> clazz;
         try {
             clazz = storageService.load(address);
+            Sandbox.confine(clazz, new Permissions());
         } catch (ClassLoadException e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
@@ -194,7 +198,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 retVal[i] = recognizer.castValue(componentType);
             } catch (ContractExecutorException e) {
                 throw new ContractExecutorException(
-                    "Failed when casting the parameter given with the number: " + (i + 1), e);
+                        "Failed when casting the parameter given with the number: " + (i + 1), e);
             }
             i++;
         }
