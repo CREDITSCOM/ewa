@@ -28,8 +28,6 @@ public class ContractExecutorServiceSecurityTest extends ServiceTest {
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Resource
-    private ContractExecutorService exService;
-    @Resource
     private ContractExecutorService service;
     @Resource
     private UserCodeStorageService storageService;

@@ -53,13 +53,13 @@ public final class Sandbox {
     }
 
     private static final Map<Class<?>, AccessControlContext>
-            CHECKED_CLASSES = Collections.synchronizedMap(new WeakHashMap<Class<?>, AccessControlContext>());
+            CHECKED_CLASSES = Collections.synchronizedMap(new WeakHashMap<>());
 
     private static final Map<String, AccessControlContext>
-            CHECKED_CLASS_NAMES = Collections.synchronizedMap(new HashMap<String, AccessControlContext>());
+            CHECKED_CLASS_NAMES = Collections.synchronizedMap(new HashMap<>());
 
     private static final Map<ClassLoader, AccessControlContext>
-            CHECKED_CLASS_LOADERS = Collections.synchronizedMap(new WeakHashMap<ClassLoader, AccessControlContext>());
+            CHECKED_CLASS_LOADERS = Collections.synchronizedMap(new WeakHashMap<>());
 
     static {
 
@@ -70,28 +70,26 @@ public final class Sandbox {
         System.setSecurityManager(new SecurityManager() {
 
             @Override
-            public void
-            checkPermission(@Nullable Permission perm) {
+            public void checkPermission(@Nullable Permission perm) {
                 assert perm != null;
 
                 for (Class<?> clasS : this.getClassContext()) {
-
                     // Check if an ACC was set for the class.
-                    {
-                        AccessControlContext acc = Sandbox.CHECKED_CLASSES.get(clasS);
-                        if (acc != null) acc.checkPermission(perm);
+                    AccessControlContext acc = Sandbox.CHECKED_CLASSES.get(clasS);
+                    if (acc != null) {
+                        acc.checkPermission(perm);
                     }
 
                     // Check if an ACC was set for the class name.
-                    {
-                        AccessControlContext acc = Sandbox.CHECKED_CLASS_NAMES.get(clasS.getName());
-                        if (acc != null) acc.checkPermission(perm);
+                    acc = Sandbox.CHECKED_CLASS_NAMES.get(clasS.getName());
+                    if (acc != null) {
+                        acc.checkPermission(perm);
                     }
 
                     // Check if an ACC was set for the class loader.
-                    {
-                        AccessControlContext acc = Sandbox.CHECKED_CLASS_LOADERS.get(clasS.getClassLoader());
-                        if (acc != null) acc.checkPermission(perm);
+                    acc = Sandbox.CHECKED_CLASS_LOADERS.get(clasS.getClassLoader());
+                    if (acc != null) {
+                        acc.checkPermission(perm);
                     }
                 }
             }
@@ -122,8 +120,7 @@ public final class Sandbox {
      * @throws SecurityException Permissions are already confined for the {@code clasS}
      */
     public static void confine(Class<?> clasS, ProtectionDomain protectionDomain) {
-        Sandbox.confine( clasS, new AccessControlContext(new ProtectionDomain[]{protectionDomain})
-        );
+        Sandbox.confine(clasS, new AccessControlContext(new ProtectionDomain[] {protectionDomain}));
     }
 
     /**

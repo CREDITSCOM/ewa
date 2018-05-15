@@ -31,7 +31,7 @@ public class SandboxTest {
 
         public void openSocket() throws IOException {
             System.out.println("opening socket...");
-            new ServerSocket(124);
+            new ServerSocket(10000);
             System.out.println("success");
         }
     }
