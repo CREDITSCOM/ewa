@@ -3,8 +3,8 @@ import com.credits.common.utils.Converter;
 import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.exception.ContractExecutorException;
-import com.credits.leveldb.client.PoolData;
-import com.credits.leveldb.client.TransactionData;
+import com.credits.leveldb.client.data.PoolData;
+import com.credits.leveldb.client.data.TransactionData;
 import com.credits.leveldb.client.data.TransactionFlowData;
 import com.credits.serialise.Serializer;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
@@ -74,9 +74,9 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected PoolData getPool(String poolNumber) {
+    protected PoolData getPoolInfo(byte[] hash, long index) {
         try {
-            return service.getPool(poolNumber);
+            return service.getPoolInfo(hash, index);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -95,16 +95,15 @@ public abstract class SmartContract implements Serializable {
     }
 
     private TransactionFlowData makeTransactionFlowData(String source, String target, BigDecimal amount, String currency) {
-        String innerId = UUID.randomUUID().toString();
-
         try {
-            byte[] hashBytes = Blake2S.generateHash(4);
-            String hash = Converter.bytesToHex(hashBytes);
+            byte[] innerIdhashBytes = Blake2S.generateHash(4);
+            String innerId = Converter.bytesToHex(innerIdhashBytes);
+
             byte[] privateKeyByteArr = Converter.decodeFromBASE58(this.specialProperty);
             PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
             String signatureBASE58 =
-                Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency, privateKey);
-            return new TransactionFlowData(hash, innerId, source, target, amount, currency, signatureBASE58);
+                Ed25519.generateSignOfTransaction(innerId, source, target, amount, currency, privateKey);
+            return new TransactionFlowData(innerId, source, target, amount, currency, signatureBASE58, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

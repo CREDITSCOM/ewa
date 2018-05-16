@@ -1,7 +1,8 @@
 package com.credits.service.db.leveldb;
 
-import com.credits.leveldb.client.PoolData;
-import com.credits.leveldb.client.TransactionData;
+import com.credits.leveldb.client.data.PoolData;
+import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.data.TransactionData;
 import com.credits.leveldb.client.data.TransactionFlowData;
 
 import java.math.BigDecimal;
@@ -17,9 +18,15 @@ public interface LevelDbInteractionService {
 
     List<PoolData> getPoolList(long offset, long limit) throws Exception;
 
-    PoolData getPool(String poolNumber) throws Exception;
+    PoolData getPoolInfo(byte[] hash, long index) throws Exception;
 
-    void transactionFlow(String hash, String innerId, String source, String target, BigDecimal total, String address, String signatureBASE64) throws Exception;
+    void transactionFlow(String innerId,
+                         String source,
+                         String target,
+                         BigDecimal amount,
+                         String currency,
+                         String signature,
+                         SmartContractData smartContractData) throws Exception;
 
     void transactionFlowWithFee(TransactionFlowData transactionFlowData, TransactionFlowData transactionFlowDataFee, boolean checkBalance) throws Exception;
 }

@@ -79,10 +79,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             BigDecimal total = new BigDecimal(strTotalField);
 
             if (total.doubleValue() != 0) {
-                byte[] hashBytes = Blake2S.generateHash(4);
-                String hash = Converter.bytesToHex(hashBytes);
-
-                String innerId = UUID.randomUUID().toString();
+                byte[] innerIdhashBytes = Blake2S.generateHash(4);
+                String innerId = Converter.bytesToHex(innerIdhashBytes);
 
                 byte[] privateKeyByteArrSystem = Converter.decodeFromBASE58(Const.SYS_TRAN_PRIVATE_KEY);
                 PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArrSystem);
@@ -92,9 +90,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 String target = Converter.encodeToBASE58(publicKeyByteArr);
 
                 String signatureBASE58 =
-                    Ed25519.generateSignOfTransaction(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, privateKey);
+                    Ed25519.generateSignOfTransaction(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, privateKey);
 
-                dbInteractionService.transactionFlow(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, signatureBASE58);
+                dbInteractionService.transactionFlow(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, signatureBASE58, null);
             }
 
             logger.info("Contract {} has been successfully saved.", address);
