@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+
 @Component
 public class ContractExecutorServiceImpl implements ContractExecutorService {
 
@@ -63,7 +65,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Class<?> clazz;
         try {
             clazz = storageService.load(address);
-//            Sandbox.confine(clazz, new Permissions());
         } catch (ClassLoadException e) {
             throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: "
                 + e.getMessage(), e);
@@ -112,7 +113,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Class<?> clazz;
         try {
             clazz = storageService.load(address);
-            Sandbox.confine(clazz, new Permissions());
         } catch (ClassLoadException e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
@@ -164,10 +164,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         //Invoking target method
         try {
+            Sandbox.confine(clazz, new Permissions());
             targetMethod.invoke(instance, argValues);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new ContractExecutorException(
-                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+                "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
 
         //Serializing object
@@ -198,7 +199,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 retVal[i] = recognizer.castValue(componentType);
             } catch (ContractExecutorException e) {
                 throw new ContractExecutorException(
-                        "Failed when casting the parameter given with the number: " + (i + 1), e);
+                    "Failed when casting the parameter given with the number: " + (i + 1), e);
             }
             i++;
         }

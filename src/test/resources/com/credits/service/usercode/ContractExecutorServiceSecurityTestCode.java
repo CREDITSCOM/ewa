@@ -1,9 +1,7 @@
-import java.net.ServerSocket;
+import java.net.*;
 import java.lang.String;
-import java.net.URI;
 import java.nio.file.Paths;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -50,7 +48,7 @@ public class ContractExecutorServiceSecurityTestCode extends SmartContract {
     }
 
     public void newThread() {
-        new Thread(()->{
+        new Thread(() -> {
             System.out.println("new Thread");
         });
     }

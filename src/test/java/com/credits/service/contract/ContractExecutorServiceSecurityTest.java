@@ -41,7 +41,7 @@ public class ContractExecutorServiceSecurityTest extends ServiceTest {
     @Parameter(2)
     public Boolean errorExpected;
 
-    @Parameters
+    @Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {"openSocket", "5555", true},
@@ -68,9 +68,13 @@ public class ContractExecutorServiceSecurityTest extends ServiceTest {
         try {
             service.execute(address, methodName, arg != null ? new String[]{arg} : null);
         } catch (ContractExecutorException e) {
-            e.printStackTrace();
-            if (!errorExpected) fail();
+            System.out.println(e.getMessage());
+            if (!errorExpected || !e.getMessage().contains("AccessControlException")) {
+                fail();
+            }
+            return;
         }
+        if (errorExpected) fail();
     }
 
     void storeContractFile(String name, String address) throws ContractExecutorException {
