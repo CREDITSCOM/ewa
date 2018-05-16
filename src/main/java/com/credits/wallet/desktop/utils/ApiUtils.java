@@ -66,8 +66,7 @@ public class ApiUtils {
         AppState.apiClient.transactionFlowWithFee(
                 transactionFlowData,
                 transactionFlowDataFee,
-                //true
-                false
+                true
         );
     }
 
