@@ -113,6 +113,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Class<?> clazz;
         try {
             clazz = storageService.load(address);
+            Sandbox.confine(clazz, new Permissions());
         } catch (ClassLoadException e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
@@ -164,7 +165,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         //Invoking target method
         try {
-            Sandbox.confine(clazz, new Permissions());
             targetMethod.invoke(instance, argValues);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new ContractExecutorException(

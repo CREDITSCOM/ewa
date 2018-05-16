@@ -40,7 +40,10 @@ public abstract class SmartContract implements Serializable {
         }
         this.specialProperty = property;
         propertySerFile.delete();
+        initialize();
     }
+
+    abstract protected void initialize();
 
     protected BigDecimal getBalance(String address, String currency) {
         try {
@@ -86,7 +89,9 @@ public abstract class SmartContract implements Serializable {
         try {
             BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
             TransactionFlowData transactionData = makeTransactionFlowData(source, target, decAmount, currency);
-            TransactionFlowData feeTransactionData = makeTransactionFlowData(source, Const.SYS_TRAN_PUBLIC_KEY, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
+            TransactionFlowData feeTransactionData =
+                makeTransactionFlowData(source, Const.SYS_TRAN_PUBLIC_KEY, Const.FEE_TRAN_AMOUNT,
+                    Const.SYS_TRAN_CURRENCY);
 
             service.transactionFlowWithFee(transactionData, feeTransactionData, true);
         } catch (Exception e) {
@@ -94,7 +99,8 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    private TransactionFlowData makeTransactionFlowData(String source, String target, BigDecimal amount, String currency) {
+    private TransactionFlowData makeTransactionFlowData(String source, String target, BigDecimal amount,
+        String currency) {
         String innerId = UUID.randomUUID().toString();
 
         try {
