@@ -65,7 +65,6 @@ public final class Sandbox {
                 assert perm != null;
 
                 for (Class<?> clasS : this.getClassContext()) {
-
                     // Check if an ACC was set for the class.
                     {
                         AccessControlContext acc = Sandbox.CHECKED_CLASSES.get(clasS);

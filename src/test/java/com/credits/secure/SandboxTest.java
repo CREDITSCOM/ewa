@@ -41,7 +41,7 @@ public class SandboxTest {
         Sandbox.confine(unsafeClass.getClass(), permissions);
     }
 
-    @Test(expected = NoClassDefFoundError.class)
+    @Test(expected = SecurityException.class)
     public void callChildMethod() throws Exception {
         UnsafeClass unsafeClass = new UnsafeClass();
         Sandbox.confine(unsafeClass.getClass(), new Permissions());
