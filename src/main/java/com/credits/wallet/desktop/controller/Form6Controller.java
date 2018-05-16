@@ -7,6 +7,7 @@ import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Dictionaries;
+import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.Utils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,7 +26,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
@@ -78,7 +78,7 @@ public class Form6Controller extends Controller implements Initializable {
 
         AppState.amount = Converter.toBigDecimal(numAmount.getText());
         AppState.toAddress = txKey.getText();
-        AppState.innerId = UUID.randomUUID().toString();
+        AppState.innerId = ApiUtils.generateTransactionInnerId();
 
         // VALIDATE
         boolean ok = true;

@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 /**
  * Created by Rustem.Saidaliyev on 26.01.2018.
@@ -41,7 +40,7 @@ public class Form7Controller extends Controller implements Initializable {
     private void handleGenerate() {
         try {
 
-            String innerIdFee = UUID.randomUUID().toString();
+            String innerIdFee = ApiUtils.generateTransactionInnerId();
 
             ApiUtils.callTransactionFlowWithFee(
                     AppState.innerId,
@@ -53,7 +52,8 @@ public class Form7Controller extends Controller implements Initializable {
                     AppState.account,
                     Const.FEE_TRAN_TARGET,
                     Const.FEE_TRAN_AMOUNT,
-                    Const.FEE_TRAN_CURRENCY
+                    Const.FEE_TRAN_CURRENCY,
+                    null
             );
         } catch (Exception e) {
             LOGGER.error("Error creating transaction " + e.toString(), e);

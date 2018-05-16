@@ -5,6 +5,7 @@ import com.credits.common.utils.Converter;
 import com.credits.common.utils.TcpClient;
 import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
+import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.data.TransactionFlowData;
 import com.credits.wallet.desktop.AppState;
 import org.slf4j.Logger;
@@ -29,7 +30,8 @@ public class ApiUtils {
             String sourceFee,
             String targetFee,
             BigDecimal amountFee,
-            String currencyFee
+            String currencyFee,
+            SmartContractData smartContractData
     )
         throws Exception {
 
@@ -43,7 +45,8 @@ public class ApiUtils {
                 target,
                 amount,
                 currency,
-                signature
+                signature,
+                smartContractData
         );
 
         // Формировование параметров транзакции для списания комиссии
@@ -56,7 +59,8 @@ public class ApiUtils {
                 targetFee,
                 amountFee,
                 currencyFee,
-                signatureFee
+                signatureFee,
+                null
         );
 
         AppState.apiClient.transactionFlowWithFee(
@@ -80,6 +84,11 @@ public class ApiUtils {
 
 
     public static String generateTransactionHash() throws CreditsException {
+        byte[] hashBytes = Blake2S.generateHash(4); // 4 байта
+        return Converter.bytesToHex(hashBytes);
+    }
+
+    public static String generateTransactionInnerId() throws CreditsException {
         byte[] hashBytes = Blake2S.generateHash(4); // 4 байта
         return Converter.bytesToHex(hashBytes);
     }
