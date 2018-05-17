@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.security.PrivateKey;
 import java.util.List;
-import java.util.UUID;
 
 public abstract class SmartContract implements Serializable {
 
@@ -103,7 +102,7 @@ public abstract class SmartContract implements Serializable {
             PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
             String signatureBASE58 =
                 Ed25519.generateSignOfTransaction(innerId, source, target, amount, currency, privateKey);
-            return new TransactionFlowData(innerId, source, target, amount, currency, signatureBASE58, null);
+            return new TransactionFlowData(innerId, source, target, amount, currency, signatureBASE58);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

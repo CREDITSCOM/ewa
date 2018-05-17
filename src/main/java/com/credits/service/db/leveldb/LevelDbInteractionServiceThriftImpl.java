@@ -62,7 +62,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
                                 String currency,
                                 String signature,
                                 SmartContractData smartContractData) throws Exception {
-        client.transactionFlow(innerId, source, target, amount, currency, signature, smartContractData);
+        client.transactionFlow(innerId, source, target, amount, currency, signature);
     }
 
     @Override
