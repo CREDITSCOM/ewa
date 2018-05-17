@@ -52,8 +52,7 @@ public class Form7Controller extends Controller implements Initializable {
                     AppState.account,
                     Const.FEE_TRAN_TARGET,
                     Const.FEE_TRAN_AMOUNT,
-                    Const.FEE_TRAN_CURRENCY,
-                    null
+                    Const.FEE_TRAN_CURRENCY
             );
         } catch (Exception e) {
             LOGGER.error("Error creating transaction " + e.toString(), e);
