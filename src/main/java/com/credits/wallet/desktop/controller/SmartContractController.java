@@ -2,21 +2,28 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.common.utils.Converter;
 import com.credits.crypto.Ed25519;
+import com.credits.leveldb.client.ApiClient;
+import com.credits.leveldb.client.data.ApiResponseData;
+import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.utils.EclipseJdt;
-import com.credits.wallet.desktop.utils.SimpleInMemoryCompilator;
-import com.credits.wallet.desktop.utils.Utils;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.thrift.executor.APIResponse;
 import com.credits.wallet.desktop.thrift.executor.ContractExecutor;
 import com.credits.wallet.desktop.thrift.executor.ContractFile;
+import com.credits.wallet.desktop.utils.ApiUtils;
+import com.credits.wallet.desktop.utils.EclipseJdt;
+import com.credits.wallet.desktop.utils.SimpleInMemoryCompilator;
+import com.credits.wallet.desktop.utils.Utils;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -26,12 +33,7 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.*;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -39,12 +41,13 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.time.Duration;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -134,26 +137,61 @@ public class SmartContractController extends Controller implements Initializable
 
         String token = sb.toString();
 
+        // Parse className
+        String className = "SmartContract";
+
+        String javaCode = codeArea.getText().replace("\r", " ").replace("\n", " ").replace("{", " {");
+
+        while (javaCode.contains("  ")) {
+            javaCode = javaCode.replace("  ", " ");
+        }
+        java.util.List<String> javaCodeWords = Arrays.asList(javaCode.split(" "));
+        int ind = javaCodeWords.indexOf("class");
+        if (ind >= 0 && ind < javaCodeWords.size() - 1) {
+            className = javaCodeWords.get(ind + 1);
+        }
+
+        try {
+            byte[] byteCode = SimpleInMemoryCompilator.compile(javaCode, className, token);
+
+            String hashState = ApiUtils.generateSmartContractHashState(byteCode);
+            SmartContractData smartContractData = new SmartContractData(
+                    javaCode,
+                    byteCode,
+                    hashState
+            );
+            String transactionInnerId = ApiUtils.generateTransactionInnerId();
+            ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(
+                    transactionInnerId,
+                    AppState.account,
+                    smartContractData
+            );
+
+            if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
+                StringSelection selection = new StringSelection(token);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(selection, selection);
+                Utils.showInfo(String.format("Token\n\n%s\n\nhas generated and copied to clipboard", token));
+            } else {
+                Utils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
+            }
+
+
+        } catch (Exception e) {
+            LOGGER.error("Error deploying smart contract " + e.toString(), e);
+            Utils.showError("Error deploying smart contract " + e.toString());
+        }
+
+
         // Call contract executor
         if (AppState.contractExecutorHost != null &&
                 AppState.contractExecutorPort != null) {
             try {
-                // Parse className
-                String className = "SmartContract";
-
-                String javaCode = codeArea.getText().replace("\r", " ").replace("\n", " ").replace("{", " {");
-
-                while (javaCode.contains("  ")) {
-                    javaCode = javaCode.replace("  ", " ");
-                }
-                java.util.List<String> javaCodeWords = Arrays.asList(javaCode.split(" "));
-                int ind = javaCodeWords.indexOf("class");
-                if (ind >= 0 && ind < javaCodeWords.size() - 1) {
-                    className = javaCodeWords.get(ind + 1);
-                }
                 // ---------------
 
-                byte[] sourceBytes = SimpleInMemoryCompilator.compile(codeArea.getText(), className, token);
+
+
+
 
                 TTransport transport;
 
@@ -172,19 +210,9 @@ public class SmartContractController extends Controller implements Initializable
                         token,
                         Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey))
                 );
-                if (executorResponse.getCode()!=0 && executorResponse.getMessage()!=null) {
-                    Utils.showError("Error executing smart contract " + executorResponse.getMessage());
-                } else {
-                    StringSelection selection = new StringSelection(token);
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    clipboard.setContents(selection, selection);
-                    Utils.showInfo("Token\n\n" + token + "\n\nhas generated and copied to clipboard");
-                }
 
                 transport.close();
             } catch (Exception e) {
-                LOGGER.error("Error executing smart contract " + e.toString(), e);
-                Utils.showError("Error executing smart contract " + e.toString());
             }
         }
         // ----------------------

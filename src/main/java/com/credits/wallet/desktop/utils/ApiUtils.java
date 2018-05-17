@@ -5,6 +5,7 @@ import com.credits.common.utils.Converter;
 import com.credits.common.utils.TcpClient;
 import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
+import com.credits.crypto.Md5;
 import com.credits.leveldb.client.data.TransactionFlowData;
 import com.credits.wallet.desktop.AppState;
 import org.slf4j.Logger;
@@ -88,4 +89,8 @@ public class ApiUtils {
         return Converter.bytesToHex(hashBytes);
     }
 
+    public static String generateSmartContractHashState(byte[] byteCode) throws CreditsException {
+        byte[] hashBytes = Md5.encrypt(byteCode);
+        return Converter.bytesToHex(hashBytes);
+    }
 }
