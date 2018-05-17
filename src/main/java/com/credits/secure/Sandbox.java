@@ -1,7 +1,5 @@
 package com.credits.secure;
 
-import com.sun.istack.internal.Nullable;
-
 import java.security.AccessControlContext;
 import java.security.Permission;
 import java.security.Permissions;
@@ -61,7 +59,7 @@ public final class Sandbox {
         System.setSecurityManager(new SecurityManager() {
 
             @Override
-            public void checkPermission(@Nullable Permission perm) {
+            public void checkPermission(Permission perm) {
                 assert perm != null;
 
                 for (Class<?> clasS : this.getClassContext()) {

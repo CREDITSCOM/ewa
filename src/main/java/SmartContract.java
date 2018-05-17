@@ -40,7 +40,6 @@ public abstract class SmartContract implements Serializable {
         }
         this.specialProperty = property;
         propertySerFile.delete();
-        initialize();
     }
 
     abstract protected void initialize();
