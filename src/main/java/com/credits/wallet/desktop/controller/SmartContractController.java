@@ -5,6 +5,7 @@ import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.EclipseJdt;
+import com.credits.wallet.desktop.utils.SimpleInMemoryCompilator;
 import com.credits.wallet.desktop.utils.Utils;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.thrift.executor.APIResponse;
@@ -151,6 +152,8 @@ public class SmartContractController extends Controller implements Initializable
                     className = javaCodeWords.get(ind + 1);
                 }
                 // ---------------
+
+                byte[] sourceBytes = SimpleInMemoryCompilator.compile(codeArea.getText(), className, token);
 
                 TTransport transport;
 
