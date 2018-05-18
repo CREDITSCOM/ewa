@@ -1,9 +1,7 @@
 package com.credits.service.db.leveldb;
 
 import com.credits.leveldb.client.data.PoolData;
-import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.data.TransactionData;
-import com.credits.leveldb.client.data.TransactionFlowData;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,9 +22,7 @@ public interface LevelDbInteractionService {
                          String source,
                          String target,
                          BigDecimal amount,
+                         BigDecimal balance,
                          String currency,
-                         String signature,
-                         SmartContractData smartContractData) throws Exception;
-
-    void transactionFlowWithFee(TransactionFlowData transactionFlowData, TransactionFlowData transactionFlowDataFee, boolean checkBalance) throws Exception;
+                         String signature) throws Exception;
 }

@@ -26,7 +26,6 @@ import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -89,10 +88,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 byte[] publicKeyByteArr = Utils.parseSubarray(privateKeyByteArr, 32, 32);
                 String target = Converter.encodeToBASE58(publicKeyByteArr);
 
+                BigDecimal balance = dbInteractionService.getBalance(Const.SYS_TRAN_PUBLIC_KEY, Const.SYS_TRAN_CURRENCY);
                 String signatureBASE58 =
-                    Ed25519.generateSignOfTransaction(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, privateKey);
+                    Ed25519.generateSignOfTransaction(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance, Const.SYS_TRAN_CURRENCY, privateKey);
 
-                dbInteractionService.transactionFlow(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, signatureBASE58, null);
+                dbInteractionService.transactionFlow(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance, Const.SYS_TRAN_CURRENCY, signatureBASE58);
             }
 
             logger.info("Contract {} has been successfully saved.", address);

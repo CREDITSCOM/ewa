@@ -1,11 +1,9 @@
-import com.credits.Const;
 import com.credits.common.utils.Converter;
 import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.data.PoolData;
 import com.credits.leveldb.client.data.TransactionData;
-import com.credits.leveldb.client.data.TransactionFlowData;
 import com.credits.serialise.Serializer;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 
@@ -84,27 +82,20 @@ public abstract class SmartContract implements Serializable {
     protected void sendTransaction(String source, String target, double amount, String currency) {
         try {
             BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
-            TransactionFlowData transactionData = makeTransactionFlowData(source, target, decAmount, currency);
-            TransactionFlowData feeTransactionData = makeTransactionFlowData(source, Const.SYS_TRAN_PUBLIC_KEY, Const.FEE_TRAN_AMOUNT, Const.SYS_TRAN_CURRENCY);
-
-            service.transactionFlowWithFee(transactionData, feeTransactionData, true);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
-
-    private TransactionFlowData makeTransactionFlowData(String source, String target, BigDecimal amount, String currency) {
-        try {
             byte[] innerIdhashBytes = Blake2S.generateHash(4);
             String innerId = Converter.bytesToHex(innerIdhashBytes);
 
             byte[] privateKeyByteArr = Converter.decodeFromBASE58(this.specialProperty);
             PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
+
+            BigDecimal balance = service.getBalance(source, currency);
+
             String signatureBASE58 =
-                Ed25519.generateSignOfTransaction(innerId, source, target, amount, currency, privateKey);
-            return new TransactionFlowData(innerId, source, target, amount, currency, signatureBASE58);
+                Ed25519.generateSignOfTransaction(innerId, source, target, decAmount, balance, currency, privateKey);
+
+            service.transactionFlow(innerId, source, target, decAmount, balance, currency, signatureBASE58);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }
