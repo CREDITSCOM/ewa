@@ -98,11 +98,13 @@ public class Form6Controller extends Controller implements Initializable {
             numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             ok = false;
         }
+        /*
         if (AppState.transactionFeeValue.compareTo(BigDecimal.ZERO) <= 0) {
             labErrorFee.setText(ERR_FEE);
             numFee.setStyle(numFee.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             ok = false;
         }
+        */
         try {
             Validator.validateToAddress(AppState.toAddress);
         } catch (ApiClientException e) {
@@ -122,8 +124,6 @@ public class Form6Controller extends Controller implements Initializable {
         clearLabErr();
 
         labCredit.setText("0");
-
-        numFee.setText(Converter.toString(AppState.transactionFeeValue));
 
         // Fill coin list
         cbCoin.getItems().clear();

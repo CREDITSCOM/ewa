@@ -63,6 +63,5 @@ public class Form8Controller extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.toAddress.setText(AppState.toAddress);
         this.amountInCs.setText(Converter.toString(AppState.amount) + " "+AppState.coin);
-        this.transactionFeeValue.setText(Converter.toString(AppState.transactionFeeValue) + " CS");
     }
 }

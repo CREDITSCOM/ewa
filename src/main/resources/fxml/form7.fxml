@@ -59,13 +59,13 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
-														<Label fx:id="transactionFeeValue" layoutX="28.0" layoutY="348.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
+														<Label fx:id="transactionFeeValue" layoutX="28.0" layoutY="348.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css">
 															<font>
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
                                           <Button fx:id="btnBack" layoutX="32.0" layoutY="468.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
-                                          <Label fx:id="toAddress" layoutX="28.0" layoutY="184.0" style="-fx-font-size: 16px;" styleClass="text" wrapText="true" maxHeight="55.0" maxWidth="540.0" minWidth="0.0" prefHeight="20.0" prefWidth="540.0" stylesheets="@../styles.css">
+                                          <Label fx:id="toAddress" layoutX="28.0" layoutY="184.0" maxHeight="55.0" maxWidth="540.0" minWidth="0.0" prefHeight="20.0" prefWidth="540.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" wrapText="true">
                                              <font>
                                                 <Font name="System Bold" size="11.0" />
                                              </font>

@@ -40,19 +40,13 @@ public class Form7Controller extends Controller implements Initializable {
     private void handleGenerate() {
         try {
 
-            String innerIdFee = ApiUtils.generateTransactionInnerId();
-
-            ApiUtils.callTransactionFlowWithFee(
+            ApiUtils.callTransactionFlow(
                     AppState.innerId,
                     AppState.account,
                     AppState.toAddress,
                     AppState.amount,
-                    AppState.coin,
-                    innerIdFee,
-                    AppState.account,
-                    Const.FEE_TRAN_TARGET,
-                    Const.FEE_TRAN_AMOUNT,
-                    Const.FEE_TRAN_CURRENCY
+                    AppState.balance,
+                    AppState.coin
             );
         } catch (Exception e) {
             LOGGER.error("Error creating transaction " + e.toString(), e);
@@ -67,7 +61,6 @@ public class Form7Controller extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.toAddress.setText(AppState.toAddress);
         this.amountInCs.setText(Converter.toString(AppState.amount) + " "+AppState.coin);
-        this.transactionFeeValue.setText(Converter.toString(AppState.transactionFeeValue) + " CS");
     }
 
 }
