@@ -15,11 +15,20 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
@@ -32,7 +41,6 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
@@ -45,6 +53,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.Executors;
+import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,6 +108,9 @@ public class SmartContractController extends Controller implements Initializable
 
     private String prevCode;
 
+    private List<String> breakPoints=new ArrayList<>();
+    private boolean dbgMode;
+
     @FXML
     private Pane paneCode;
 
@@ -110,6 +122,15 @@ public class SmartContractController extends Controller implements Initializable
 
     //@FXML
     //private javafx.scene.control.TextArea taCode;
+
+    @FXML
+    private Button dbgDebugButton;
+    @FXML
+    private Button dbgStopButton;
+    @FXML
+    private Button dbgStepButton;
+    @FXML
+    private Button dbgGoButton;
 
     @FXML
     private void handleBack() {
@@ -187,6 +208,22 @@ public class SmartContractController extends Controller implements Initializable
         // ----------------------
     }
 
+    @FXML
+    private void handleDbgDebug() {
+        if (breakPoints.size()==0) {
+            Utils.showError("Please set one or more breakpoints");
+        } else {
+            dbgMode = true;
+            showDbgButtons();
+        }
+    }
+
+    @FXML
+    private void handleDbgStop() {
+        dbgMode=false;
+        showDbgButtons();
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
@@ -198,12 +235,58 @@ public class SmartContractController extends Controller implements Initializable
         prevCode=dftCode;
 
         codeArea = new CodeArea();
-        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+
+        IntFunction<Node> lineNumberFunction = new IntFunction<Node>() {
+            @Override
+            public Node apply(int value) {
+                Label lineNo = new Label();
+                lineNo.setFont(Font.font("monospace", FontPosture.ITALIC, 13));
+
+                if (breakPoints.contains(Integer.toString(value)))
+                    lineNo.setBackground(new Background(new BackgroundFill(Color.web("red"), null, null)));
+                else
+                    lineNo.setBackground(new Background(new BackgroundFill(Color.web("#ddd"), null, null)));
+
+                lineNo.setTextFill(Color.web("#666"));
+                lineNo.setPadding(new Insets(0.0, 5.0, 0.0, 5.0));
+                lineNo.setAlignment(Pos.TOP_RIGHT);
+                lineNo.getStyleClass().add("lineno");
+
+                String result=Integer.toString(value+1);
+                while (result.length()<3)
+                    result=" "+result;
+                lineNo.setText(result);
+                return lineNo;
+            }
+        };
+
+        codeArea.setParagraphGraphicFactory(lineNumberFunction);
 
         codeArea.setOnKeyPressed(new EventHandler<KeyEvent>() {
             public void handle(KeyEvent ke) {
                 if (ke.isControlDown() && ke.getCode().equals(KeyCode.SPACE)) {
                     codePopup();
+                }
+            }
+        });
+
+        codeArea.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getClickCount()==2) {
+                    int lineNum=codeArea.getCurrentParagraph();
+                    String lineNumStr=Integer.toString(lineNum);
+                    if (breakPoints.contains(lineNumStr))
+                        breakPoints.remove(lineNumStr);
+                    else
+                        breakPoints.add(lineNumStr);
+
+                    // repaint line
+                    int caretPosition=codeArea.getCaretPosition();
+                    String txt=codeArea.getText();
+                    codeArea.replaceText(0, txt.length(), "");
+                    codeArea.replaceText(0, txt.length(), txt);
+                    codeArea.displaceCaret(caretPosition);
                 }
             }
         });
@@ -279,6 +362,8 @@ public class SmartContractController extends Controller implements Initializable
             }
         });
 
+        dbgMode=false;
+        showDbgButtons();
     }
 
     @FXML
@@ -501,5 +586,12 @@ public class SmartContractController extends Controller implements Initializable
         }
 
         return result.substring(0,ind1+1)+parametersStr+")";
+    }
+
+    private void showDbgButtons() {
+        dbgDebugButton.setVisible(!dbgMode);
+        dbgStopButton.setVisible(dbgMode);
+        dbgStepButton.setVisible(dbgMode);
+        dbgGoButton.setVisible(dbgMode);
     }
 }

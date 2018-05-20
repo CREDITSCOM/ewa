@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop.utils;
 
-import com.credits.common.utils.Converter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.thread.GetBalanceThread;
 import javafx.scene.control.Alert;
