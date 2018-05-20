@@ -28,7 +28,6 @@ import java.security.Permissions;
 import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
@@ -85,10 +84,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             BigDecimal total = new BigDecimal(strTotalField);
 
             if (total.doubleValue() != 0) {
-                byte[] hashBytes = Blake2S.generateHash(4);
-                String hash = Converter.bytesToHex(hashBytes);
-
-                String innerId = UUID.randomUUID().toString();
+                byte[] innerIdhashBytes = Blake2S.generateHash(4);
+                String innerId = Converter.bytesToHex(innerIdhashBytes);
 
                 byte[] privateKeyByteArrSystem = Converter.decodeFromBASE58(Const.SYS_TRAN_PRIVATE_KEY);
                 PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArrSystem);
@@ -97,10 +94,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 byte[] publicKeyByteArr = Utils.parseSubarray(privateKeyByteArr, 32, 32);
                 String target = Converter.encodeToBASE58(publicKeyByteArr);
 
+                BigDecimal balance = dbInteractionService.getBalance(Const.SYS_TRAN_PUBLIC_KEY, Const.SYS_TRAN_CURRENCY);
                 String signatureBASE58 =
-                    Ed25519.generateSignOfTransaction(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, privateKey);
+                    Ed25519.generateSignOfTransaction(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance, Const.SYS_TRAN_CURRENCY, privateKey);
 
-                dbInteractionService.transactionFlow(hash, innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, address, signatureBASE58);
+                dbInteractionService.transactionFlow(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance, Const.SYS_TRAN_CURRENCY, signatureBASE58);
             }
 
             logger.info("Contract {} has been successfully saved.", address);
