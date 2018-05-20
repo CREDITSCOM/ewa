@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.File;
+import java.io.FileWriter;
 import java.net.URL;
 import java.time.Duration;
 import java.util.*;
@@ -158,21 +160,6 @@ public class SmartContractController extends Controller implements Initializable
         if (AppState.contractExecutorHost != null &&
                 AppState.contractExecutorPort != null) {
             try {
-                // Parse className
-                String className = "SmartContract";
-
-                String javaCode = codeArea.getText().replace("\r", " ").replace("\n", " ").replace("{", " {");
-
-                while (javaCode.contains("  ")) {
-                    javaCode = javaCode.replace("  ", " ");
-                }
-                java.util.List<String> javaCodeWords = Arrays.asList(javaCode.split(" "));
-                int ind = javaCodeWords.indexOf("class");
-                if (ind >= 0 && ind < javaCodeWords.size() - 1) {
-                    className = javaCodeWords.get(ind + 1);
-                }
-                // ---------------
-
                 TTransport transport;
 
                 transport = new TSocket(AppState.contractExecutorHost, AppState.contractExecutorPort);
@@ -182,7 +169,7 @@ public class SmartContractController extends Controller implements Initializable
                 ContractExecutor.Client client = new ContractExecutor.Client(protocol);
 
                 ContractFile contractFile = new ContractFile();
-                contractFile.setName(className+".java");
+                contractFile.setName(parseClassName()+".java");
                 contractFile.setFile(codeArea.getText().getBytes());
 
                 APIResponse executorResponse = client.store(
@@ -210,12 +197,27 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private void handleDbgDebug() {
+        dbgMode = false;
         if (breakPoints.size()==0) {
             Utils.showError("Please set one or more breakpoints");
         } else {
-            dbgMode = true;
-            showDbgButtons();
+            try {
+                String className = parseClassName();
+                new File(className + ".java").delete();
+                new File(className + ".class").delete();
+                FileWriter writer = new FileWriter(className + ".java");
+                writer.write(codeArea.getText());
+                writer.close();
+
+                // Compile class
+
+                dbgMode = true;
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                Utils.showError("Error compiling smart contract " + e.toString());
+            }
         }
+        showDbgButtons();
     }
 
     @FXML
@@ -593,5 +595,21 @@ public class SmartContractController extends Controller implements Initializable
         dbgStopButton.setVisible(dbgMode);
         dbgStepButton.setVisible(dbgMode);
         dbgGoButton.setVisible(dbgMode);
+    }
+
+    private String parseClassName() {
+        String className = "SmartContract";
+
+        String javaCode = codeArea.getText().replace("\r", " ").replace("\n", " ").replace("{", " {");
+
+        while (javaCode.contains("  ")) {
+            javaCode = javaCode.replace("  ", " ");
+        }
+        java.util.List<String> javaCodeWords = Arrays.asList(javaCode.split(" "));
+        int ind = javaCodeWords.indexOf("class");
+        if (ind >= 0 && ind < javaCodeWords.size() - 1) {
+            className = javaCodeWords.get(ind + 1);
+        }
+        return className;
     }
 }
