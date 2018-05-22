@@ -1,6 +1,7 @@
 package com.credits.secure;
 
 import java.security.AccessControlContext;
+import java.security.CodeSource;
 import java.security.Permission;
 import java.security.Permissions;
 import java.security.ProtectionDomain;
@@ -89,7 +90,9 @@ public final class Sandbox {
             throw new SecurityException("Attempt to change the access control context for '" + clasS + "'");
         }
 
-        Sandbox.CHECKED_CLASSES.put(clasS, accessControlContext);
+        if (!Sandbox.CHECKED_CLASSES.containsKey(clasS)) {
+            Sandbox.CHECKED_CLASSES.put(clasS, accessControlContext);
+        }
     }
 
     /**
@@ -109,7 +112,8 @@ public final class Sandbox {
      * @throws SecurityException Permissions are already confined for the {@code clasS}
      */
     public static void confine(Class<?> clasS, Permissions permissions) {
-        Sandbox.confine(clasS, new ProtectionDomain(null, permissions));
+        System.out.println("codesource - " + clasS.getProtectionDomain().getCodeSource());
+        Sandbox.confine(clasS, new ProtectionDomain(clasS.getProtectionDomain().getCodeSource(), permissions));
     }
 
 }

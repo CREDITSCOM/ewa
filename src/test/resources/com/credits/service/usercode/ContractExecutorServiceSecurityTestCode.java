@@ -1,4 +1,5 @@
 import javax.sound.midi.Soundbank;
+import java.math.BigDecimal;
 import java.net.*;
 import java.lang.String;
 import java.nio.file.Paths;
@@ -57,5 +58,11 @@ public class ContractExecutorServiceSecurityTestCode extends SmartContract {
         new Thread(() -> {
             System.out.println("new Thread");
         });
+    }
+
+    public void getBalance() throws Exception {
+        System.out.println("getBalance()");
+        BigDecimal balance = getBalance("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", "CS");
+        System.out.println("getBalance=" + balance);
     }
 }

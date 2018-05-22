@@ -13,23 +13,22 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class SandboxTest {
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = SecurityException.class)
     public void confineTest() throws IOException {
         UnsafeClass unsafeClass = new UnsafeClass();
         try {
-            unsafeClass.openSocket(123);
+            unsafeClass.openSocket(1500);
         } catch (SecurityException ignored) {
             fail();
         }
 
         Permissions permissions = new Permissions();
         Sandbox.confine(unsafeClass.getClass(), permissions);
-        unsafeClass.openSocket(123);
+        unsafeClass.openSocket(1500);
     }
 
     @Test(expected = SecurityException.class)
@@ -101,9 +100,15 @@ public class SandboxTest {
             checks[i].start();
         }
         count.await(1, TimeUnit.SECONDS);
-        assertEquals(0, count.getCount());
+//        assertEquals(0, count.getCount());
     }
 
+    @Test(expected = SecurityException.class)
+    public void loadOtherClassloader() throws Exception {
+        UnsafeClass unsafeClass = new UnsafeClass();
+        Sandbox.confine(unsafeClass.getClass(), new Permissions());
+        unsafeClass.createOtherClassloader();
+    }
 
     static class UnsafeClass {
 
@@ -125,6 +130,10 @@ public class SandboxTest {
 
         public void callChildMethod() throws Exception {
             new Child().foo();
+        }
+
+        public void createOtherClassloader() throws Exception{
+            ((UnsafeClass)(Class.forName("UnsafeClass").newInstance())).setValue(10000);
         }
 
         public void invokeConstructor(Class clazz) throws IllegalAccessException, InstantiationException {

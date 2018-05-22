@@ -41,7 +41,7 @@ public abstract class SmartContract implements Serializable {
 
     abstract protected void initialize();
 
-    protected BigDecimal getBalance(String address, String currency) {
+    final protected BigDecimal getBalance(String address, String currency) {
         try {
             return service.getBalance(address, currency);
         } catch (Exception e) {
@@ -49,7 +49,7 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected TransactionData getTransaction(String transactionId) {
+    final protected TransactionData getTransaction(String transactionId) {
         try {
             return service.getTransaction(transactionId);
         } catch (Exception e) {
@@ -57,7 +57,7 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected List<TransactionData> getTransactions(String address, long offset, long limit) {
+    final protected List<TransactionData> getTransactions(String address, long offset, long limit) {
         try {
             return service.getTransactions(address, offset, limit);
         } catch (Exception e) {
@@ -65,7 +65,7 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected List<PoolData> getPoolList(long offset, long limit) {
+    final protected List<PoolData> getPoolList(long offset, long limit) {
         try {
             return service.getPoolList(offset, limit);
         } catch (Exception e) {
@@ -73,7 +73,7 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected PoolData getPoolInfo(byte[] hash, long index) {
+    final protected PoolData getPoolInfo(byte[] hash, long index) {
         try {
             return service.getPoolInfo(hash, index);
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected void sendTransaction(String source, String target, double amount, String currency) {
+    final protected void sendTransaction(String source, String target, double amount, String currency) {
         try {
             BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
             byte[] innerIdhashBytes = Blake2S.generateHash(4);

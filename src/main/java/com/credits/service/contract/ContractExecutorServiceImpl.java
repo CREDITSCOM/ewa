@@ -7,6 +7,7 @@ import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
+import com.credits.leveldb.client.thrift.SmartContract;
 import com.credits.secure.Sandbox;
 import com.credits.serialise.Serializer;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
@@ -15,6 +16,7 @@ import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.service.usercode.UserCodeStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -23,19 +25,32 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ReflectPermission;
 import java.math.BigDecimal;
+import java.net.NetPermission;
+import java.net.SocketPermission;
 import java.security.Permissions;
 import java.security.PrivateKey;
+import java.security.SecurityPermission;
 import java.util.Arrays;
 import java.util.List;
+import java.util.PropertyPermission;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 
 @Component
 public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
+
+    @Value("${api.server.host}")
+    private String apiServerHost;
+
+    @Value("${api.server.port}")
+    private Integer apiServerPort;
 
     @Resource
     private LevelDbInteractionService dbInteractionService;
@@ -65,8 +80,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             clazz = storageService.load(address);
         } catch (ClassLoadException e) {
-            throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: "
-                + e.getMessage(), e);
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 
         Object instance;
@@ -94,16 +109,20 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 byte[] publicKeyByteArr = Utils.parseSubarray(privateKeyByteArr, 32, 32);
                 String target = Converter.encodeToBASE58(publicKeyByteArr);
 
-                BigDecimal balance = dbInteractionService.getBalance(Const.SYS_TRAN_PUBLIC_KEY, Const.SYS_TRAN_CURRENCY);
+                BigDecimal balance =
+                    dbInteractionService.getBalance(Const.SYS_TRAN_PUBLIC_KEY, Const.SYS_TRAN_CURRENCY);
                 String signatureBASE58 =
-                    Ed25519.generateSignOfTransaction(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance, Const.SYS_TRAN_CURRENCY, privateKey);
+                    Ed25519.generateSignOfTransaction(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance,
+                        Const.SYS_TRAN_CURRENCY, privateKey);
 
-                dbInteractionService.transactionFlow(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance, Const.SYS_TRAN_CURRENCY, signatureBASE58);
+                dbInteractionService.transactionFlow(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance,
+                    Const.SYS_TRAN_CURRENCY, signatureBASE58);
             }
 
             logger.info("Contract {} has been successfully saved.", address);
         } catch (Exception e) {
-            throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 
         Serializer.serialize(serFile, instance);
@@ -113,10 +132,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Class<?> clazz;
         try {
             clazz = storageService.load(address);
-            Sandbox.confine(clazz, new Permissions());
         } catch (ClassLoadException e) {
             throw new ContractExecutorException(
-                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+                "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e), e);
         }
 
         Object instance;
@@ -165,14 +183,51 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         //Invoking target method
         try {
+            Permissions permissions = new Permissions();
+            //            if (isSmartContractBaseMethod(targetMethod)) {
+            permissions.add(new SocketPermission(apiServerHost + ":" + apiServerPort, "connect,listen,resolve"));
+            permissions.add(new SecurityPermission("getProperty.networkaddress.cache.ttl", "read"));
+            permissions.add(new SecurityPermission("getProperty.networkaddress.cache.negative.ttl", "read"));
+            permissions.add(new PropertyPermission("sun.net.inetaddr.ttl", "read"));
+            permissions.add(new PropertyPermission("socksProxyHost", "read"));
+            permissions.add(new PropertyPermission("java.net.useSystemProxies", "read"));
+            permissions.add(new PropertyPermission("java.home", "read"));
+            permissions.add(new NetPermission("getProxySelector"));
+            permissions.add(new RuntimePermission("readFileDescriptor"));
+            permissions.add(new RuntimePermission("writeFileDescriptor"));
+            permissions.add(new RuntimePermission("accessDeclaredMembers"));
+            permissions.add(new ReflectPermission("suppressAccessChecks"));
+            try {
+                Field f = ClassLoader.class.getDeclaredField("classes");
+                f.setAccessible(true);
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                List<Class> classes = (List<Class>) f.get(classLoader);
+                for (Class c: classes) {
+                    if(c.getName().contains("hrift"))
+                    System.out.println(c.getName());
+                }
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+            Sandbox.confine(instance.getClass(), permissions);
+            //            }
             targetMethod.invoke(instance, argValues);
         } catch (IllegalAccessException | InvocationTargetException e) {
+            System.out.println(getStackTrace(e));
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
 
         //Serializing object
         Serializer.serialize(serFile, instance);
+    }
+
+    private boolean isSmartContractBaseMethod(Method method) {
+        try {
+            return method.equals(SmartContract.class.getMethod(method.getName()));
+        } catch (NoSuchMethodException ignored) {
+        }
+        return false;
     }
 
     private Object[] castValues(Class<?>[] types, String[] params) throws ContractExecutorException {

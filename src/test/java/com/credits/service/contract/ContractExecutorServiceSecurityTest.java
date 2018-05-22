@@ -49,6 +49,7 @@ public class ContractExecutorServiceSecurityTest extends ServiceTest {
                 {"killProcess", null, true},
                 {"killThread", null, true},
                 {"newThread", null, true},
+                {"getBalance", null, false},
         });
     }
 
