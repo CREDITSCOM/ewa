@@ -49,8 +49,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.net.URL;
 import java.time.Duration;
 import java.util.*;
@@ -112,6 +111,11 @@ public class SmartContractController extends Controller implements Initializable
 
     private List<String> breakPoints=new ArrayList<>();
     private boolean dbgMode;
+    private OutputStream dbgStdIn;
+    private InputStream dbgStdOut;
+    private InputStream dbgStdErr;
+    private Process dbgProcess;
+    private int dbgCursor;
 
     @FXML
     private Pane paneCode;
@@ -133,6 +137,10 @@ public class SmartContractController extends Controller implements Initializable
     private Button dbgStepButton;
     @FXML
     private Button dbgGoButton;
+    @FXML
+    private Button dbgWatchButton;
+    @FXML
+    private TextField txDbgWatch;
 
     @FXML
     private void handleBack() {
@@ -210,8 +218,36 @@ public class SmartContractController extends Controller implements Initializable
                 writer.close();
 
                 // Compile class
+                Process process = Runtime.getRuntime().exec("javac -g " + className + ".java");
+                InputStream stderr = process.getErrorStream();
 
-                dbgMode = true;
+                String error="";
+                String line;
+                BufferedReader reader = new BufferedReader (new InputStreamReader(stderr));
+                while ((line = reader.readLine()) != null) {
+                    error=error+"+"+line+"\n";
+                }
+
+                if (!error.isEmpty())
+                    Utils.showError("Compilation errors:\n"+error);
+                else {
+                    dbgProcess = Runtime.getRuntime().exec("jdb " + className);
+                    dbgStdIn = dbgProcess.getOutputStream();
+                    dbgStdOut = dbgProcess.getInputStream();
+                    dbgStdErr = dbgProcess.getErrorStream();
+
+                    for (String lineNumber : breakPoints) {
+                        int realLineNumber=Integer.valueOf(lineNumber)+1;
+                        String cmd="stop at "+className+":"+realLineNumber;
+                        dbgExecCmd(cmd);
+                    }
+                    dbgExecCmd("run");
+                    Thread.sleep(3000);
+                    dbgExecCmd("");
+
+                    dbgMode = true;
+                    dbgSetCursor();
+                }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 Utils.showError("Error compiling smart contract " + e.toString());
@@ -222,8 +258,31 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private void handleDbgStop() {
+        dbgProcess.destroy();
         dbgMode=false;
         showDbgButtons();
+        repaintCodeArea();
+    }
+
+    @FXML
+    private void handleDbgStep() throws Exception {
+        dbgExecCmd("step");
+        Thread.sleep(1000);
+        dbgExecCmd("");
+        dbgSetCursor();
+    }
+
+    @FXML
+    private void handleDbgGo() throws Exception {
+        dbgExecCmd("cont");
+        Thread.sleep(1000);
+        dbgExecCmd("");
+        dbgSetCursor();
+    }
+
+    @FXML
+    private void handleDbgWatch() throws Exception {
+        dbgWatchExp(txDbgWatch.getText());
     }
 
     @Override
@@ -244,7 +303,9 @@ public class SmartContractController extends Controller implements Initializable
                 Label lineNo = new Label();
                 lineNo.setFont(Font.font("monospace", FontPosture.ITALIC, 13));
 
-                if (breakPoints.contains(Integer.toString(value)))
+                if (dbgMode && value==dbgCursor-1)
+                    lineNo.setBackground(new Background(new BackgroundFill(Color.web("blue"), null, null)));
+                else if (breakPoints.contains(Integer.toString(value)))
                     lineNo.setBackground(new Background(new BackgroundFill(Color.web("red"), null, null)));
                 else
                     lineNo.setBackground(new Background(new BackgroundFill(Color.web("#ddd"), null, null)));
@@ -283,12 +344,7 @@ public class SmartContractController extends Controller implements Initializable
                     else
                         breakPoints.add(lineNumStr);
 
-                    // repaint line
-                    int caretPosition=codeArea.getCaretPosition();
-                    String txt=codeArea.getText();
-                    codeArea.replaceText(0, txt.length(), "");
-                    codeArea.replaceText(0, txt.length(), txt);
-                    codeArea.displaceCaret(caretPosition);
+                    repaintCodeArea();
                 }
             }
         });
@@ -365,6 +421,7 @@ public class SmartContractController extends Controller implements Initializable
         });
 
         dbgMode=false;
+        dbgCursor=-1;
         showDbgButtons();
     }
 
@@ -595,6 +652,8 @@ public class SmartContractController extends Controller implements Initializable
         dbgStopButton.setVisible(dbgMode);
         dbgStepButton.setVisible(dbgMode);
         dbgGoButton.setVisible(dbgMode);
+        dbgWatchButton.setVisible(dbgMode);
+        txDbgWatch.setVisible(dbgMode);
     }
 
     private String parseClassName() {
@@ -611,5 +670,71 @@ public class SmartContractController extends Controller implements Initializable
             className = javaCodeWords.get(ind + 1);
         }
         return className;
+    }
+
+    private String dbgExecCmd(String cmd) {
+        try {
+            LOGGER.info("SC DEBUG: Executing jdb command " + cmd);
+
+            try {
+                dbgStdIn.write((cmd + "\n*\n").getBytes());
+                dbgStdIn.flush();
+            } catch (IOException e) {
+                dbgMode=false;
+                showDbgButtons();
+                repaintCodeArea();
+                return "";
+            }
+
+            String result="";
+            String line;
+            BufferedReader reader = new BufferedReader (new InputStreamReader(dbgStdOut));
+            while ((line = reader.readLine()) != null) {
+                if (line.toLowerCase().contains("unrecognized command: '*'"))
+                    break;
+                result=result+line+"\n";
+            }
+
+            LOGGER.info("SC DEBUG: RESULT^\n" + result);
+            LOGGER.info("SC DEBUG: RESULTv");
+
+            return result;
+        } catch (Exception e) {
+            LOGGER.error("Error executing debug command " + cmd + " " + e.toString(), e);
+            Utils.showError("Error executing debug command " + cmd + " " + e.toString());
+        }
+        return "";
+    }
+
+    private void dbgSetCursor() {
+        dbgCursor=-1;
+        if (dbgMode) {
+            try {
+                String res = dbgExecCmd("where");
+                int ind = res.indexOf(".java:");
+                res = res.substring(ind + 6);
+                ind = res.indexOf(")");
+                res = res.substring(0, ind).trim();
+                dbgCursor = Integer.valueOf(res);
+            } catch (Exception e) {
+                LOGGER.error(e.toString(), e);
+            }
+        }
+        repaintCodeArea();
+    }
+
+    private void repaintCodeArea() {
+        int caretPosition=codeArea.getCaretPosition();
+        String txt=codeArea.getText();
+        codeArea.replaceText(0, txt.length(), "");
+        codeArea.replaceText(0, txt.length(), txt);
+        codeArea.displaceCaret(caretPosition);
+    }
+
+    private void dbgWatchExp(String exp) throws Exception {
+        String res=dbgExecCmd("print "+exp);
+        Thread.sleep(1000);
+        res=res+dbgExecCmd("");
+        Utils.showInfo(res);
     }
 }
