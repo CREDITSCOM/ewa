@@ -1,16 +1,11 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.utils.Converter;
-import com.credits.crypto.Ed25519;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
-import com.credits.wallet.desktop.thrift.executor.APIResponse;
-import com.credits.wallet.desktop.thrift.executor.ContractExecutor;
-import com.credits.wallet.desktop.thrift.executor.ContractFile;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.EclipseJdt;
 import com.credits.wallet.desktop.utils.SimpleInMemoryCompilator;
@@ -28,10 +23,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TSocket;
-import org.apache.thrift.transport.TTransport;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.*;
 import org.fxmisc.richtext.CodeArea;
@@ -182,39 +173,33 @@ public class SmartContractController extends Controller implements Initializable
             Utils.showError("Error deploying smart contract " + e.toString());
         }
 
-
         // Call contract executor
-        if (AppState.contractExecutorHost != null &&
-                AppState.contractExecutorPort != null) {
-            try {
-                // ---------------
-
-
-
-
-
-                TTransport transport;
-
-                transport = new TSocket(AppState.contractExecutorHost, AppState.contractExecutorPort);
-                transport.open();
-
-                TProtocol protocol = new TBinaryProtocol(transport);
-                ContractExecutor.Client client = new ContractExecutor.Client(protocol);
-
-                ContractFile contractFile = new ContractFile();
-                contractFile.setName(className+".java");
-                contractFile.setFile(codeArea.getText().getBytes());
-
-                APIResponse executorResponse = client.store(
-                        contractFile,
-                        token,
-                        Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey))
-                );
-
-                transport.close();
-            } catch (Exception e) {
-            }
-        }
+//        if (AppState.contractExecutorHost != null &&
+//                AppState.contractExecutorPort != null) {
+//            try {
+//                // ---------------
+//                TTransport transport;
+//
+//                transport = new TSocket(AppState.contractExecutorHost, AppState.contractExecutorPort);
+//                transport.open();
+//
+//                TProtocol protocol = new TBinaryProtocol(transport);
+//                ContractExecutor.Client client = new ContractExecutor.Client(protocol);
+//
+//                ContractFile contractFile = new ContractFile();
+//                contractFile.setName(className+".java");
+//                contractFile.setFile(codeArea.getText().getBytes());
+//
+//                APIResponse executorResponse = client.store(
+//                        contractFile,
+//                        token,
+//                        Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey))
+//                );
+//
+//                transport.close();
+//            } catch (Exception e) {
+//            }
+//        }
         // ----------------------
     }
 
@@ -226,7 +211,7 @@ public class SmartContractController extends Controller implements Initializable
         }
         AppState.executor = Executors.newSingleThreadExecutor();
 
-        prevCode=dftCode;
+        prevCode = dftCode;
 
         codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
@@ -245,7 +230,7 @@ public class SmartContractController extends Controller implements Initializable
                     String curCode=codeArea.getText();
 
                     // Replace TAB to 4 spaces
-                    if (curCode.indexOf("\t")>=0) {
+                    if (curCode.indexOf("\t") >= 0) {
                         codeArea.replaceText(0, curCode.length(), curCode.replace("\t", "    "));
                         curCode = codeArea.getText();
                     }
@@ -254,11 +239,11 @@ public class SmartContractController extends Controller implements Initializable
                         codeArea.replaceText(0, curCode.length(), prevCode);
                     } else {
                         int i1=curCode.indexOf(nonChangedStr);
-                        if (curCode.indexOf(nonChangedStr,i1+1)>0) {
+                        if (curCode.indexOf(nonChangedStr,i1 + 1) > 0) {
                             codeArea.replaceText(0, curCode.length(), prevCode);
                         }
                     }
-                    prevCode=codeArea.getText();
+                    prevCode = codeArea.getText();
                 });
 
         codeArea.richChanges()
@@ -531,6 +516,6 @@ public class SmartContractController extends Controller implements Initializable
             first=false;
         }
 
-        return result.substring(0,ind1+1)+parametersStr+")";
+        return result.substring(0, ind1 + 1)+parametersStr + ")";
     }
 }

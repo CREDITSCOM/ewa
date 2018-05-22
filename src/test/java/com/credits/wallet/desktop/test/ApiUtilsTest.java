@@ -13,27 +13,6 @@ public class ApiUtilsTest {
     private static Logger LOGGER = LoggerFactory.getLogger(ApiUtilsTest.class);
 
     @Test
-    public void generateTransactionHashTest() {
-        try {
-            LOGGER.info(ApiUtils.generateTransactionHash());
-        } catch (CreditsException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void callTransactionFlowWithFeeTest() {
-        try {
-
-
-
-            LOGGER.info(ApiUtils.generateTransactionHash());
-        } catch (CreditsException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
     public void generateSmartContractHashStateTest() {
         String source =  "public class Contract extends SmartContract { public Contract() { total = 0; } }";
 
@@ -43,6 +22,4 @@ public class ApiUtilsTest {
             e.printStackTrace();
         }
     }
-
-
 }

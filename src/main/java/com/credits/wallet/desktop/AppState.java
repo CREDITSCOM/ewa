@@ -37,7 +37,7 @@ public class AppState {
 
     public static TransactionTabRow selectedTransactionRow;
 
-    public static List<String> coins=new ArrayList<>();
+    public static List<String> coins = new ArrayList<>();
 
     public static ExecutorService executor;
 
