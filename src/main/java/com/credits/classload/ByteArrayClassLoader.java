@@ -10,12 +10,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ByteArrayClassLoader extends ClassLoader {
     private static Map<String, byte[]> classes = new ConcurrentHashMap<>();
 
-    public Class<?> buildClass(String name, byte[] byteCode) throws ClassNotFoundException {
+    public void loadClass(String name, byte[] byteCode) {
         if (!classes.containsKey(name)) {
             classes.put(name, byteCode);
         }
-        byte[] bytes = classes.get(name);
-        return defineClass(name, bytes, 0, byteCode.length);
+    }
+
+    public Class<?> buildClass(String address, byte[] byteCode) throws ClassNotFoundException {
+        loadClass(address,byteCode);
+        byte[] bytes = classes.get(address);
+        return defineClass(address, bytes, 0, byteCode.length);
     }
 
     @Override
