@@ -5,6 +5,7 @@ import com.credits.exception.CompilationException;
 import com.credits.leveldb.client.data.SmartContractData;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -35,16 +36,32 @@ public class ByteArrayClassLoaderTest {
 
     @Before
     public void setUp() throws Exception {
-        String sourceCode = "public class HelloWorld {\n" + "\n" + "    public HelloWorld() {\n" +
-            "        System.out.println(\"Hello World!!\"); ;\n" + "    }\n" + "}";
-        byte[] helloWorldByteCode = SimpleInMemoryCompilator.compile(sourceCode, "HelloWorld", "TKN");
-        smartContractData = new SmartContractData(sourceCode, helloWorldByteCode, "hashState");
+        String sourceCode2 =
+            "public class HelloWorld extends SomeClass{ \n@Override \npublic void foo(){\nSystem.out.println(\"HelloWorld method called\");\n}\n}\npublic class SomeClass{\npublic void foo()\nSystem.out.println(\"SomeClass method called\");\n}\n}";
     }
 
     @Test
     public void getClassTest() throws Exception {
+        String sourceCode = "public class HelloWorld {\n" + "\n" + "    public HelloWorld() {\n" +
+            "        System.out.println(\"Hello World!!\"); ;\n" + "    }\n" + "}";
+        byte[] helloWorldByteCode = SimpleInMemoryCompilator.compile(sourceCode, "HelloWorld", "TKN");
+        smartContractData = new SmartContractData(sourceCode, helloWorldByteCode, "hashState");
         System.out.println(Arrays.toString(smartContractData.getByteCode()));
         Class clazz = classLoader.buildClass("HelloWorld", smartContractData.getByteCode());
+        clazz.newInstance();
+    }
+
+    @Test
+    @Ignore
+    public void buildMultiplyClass() throws Exception {
+        String sourceCode =
+            "class TestClass{\npublic static class HelloWorld extends SomeClass{\n@Override\npublic void foo(){\nSystem.out.println(\"HelloWorld method called\");\n}\n}\npublic static class SomeClass{\npublic void foo(){\nSystem.out.println(\"SomeClass method called\");\n}\n}\n}";
+        byte[] helloWorldByteCode = SimpleInMemoryCompilator.compile(sourceCode, "SomeClass", "TKN");
+        smartContractData = new SmartContractData(sourceCode, helloWorldByteCode, "hashState");
+        byte[] byteCode = smartContractData.getByteCode();
+        classLoader.loadClass("TestClass", byteCode);
+        classLoader.loadClass("SomeClass", byteCode);
+        Class clazz = classLoader.buildClass("HelloWorld", byteCode);
         clazz.newInstance();
     }
 
