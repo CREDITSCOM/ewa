@@ -5,6 +5,7 @@ import com.credits.exception.ContractExecutorException;
 public interface ContractExecutorService {
     /**
      * Executes a default constructor by specified address
+     *
      * @param address A contract address
      * @throws ContractExecutorException
      */
@@ -13,10 +14,14 @@ public interface ContractExecutorService {
     /**
      * Executes a method by specified address, method name and parameters.
      * It performs a default constructor to instantiate a class if necessary.
-     * @param address A contract address
+     *
+     * @param address    A contract address
      * @param methodName A name of a method
-     * @param params Parameters of a method
+     * @param params     Parameters of a method
      * @throws ContractExecutorException
      */
     void execute(String address, String methodName, String[] params) throws ContractExecutorException;
+
+
+    void execute(String address, byte[] bytecode, String methodName, String[] params) throws ContractExecutorException;
 }

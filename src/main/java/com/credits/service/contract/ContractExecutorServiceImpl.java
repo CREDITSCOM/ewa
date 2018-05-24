@@ -1,12 +1,17 @@
 package com.credits.service.contract;
 
 import com.credits.Const;
+import com.credits.classload.ByteArrayClassLoader;
+import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.common.utils.Utils;
 import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
+import com.credits.leveldb.client.ApiClient;
+import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.util.ApiClientUtils;
 import com.credits.serialise.Serializer;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
@@ -23,6 +28,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.List;
@@ -34,10 +41,16 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
 
     @Resource
+    private ApiClient ldbClient;
+
+    @Resource
     private LevelDbInteractionService dbInteractionService;
 
     @Resource
     private UserCodeStorageService storageService;
+
+    @Resource
+    private ByteArrayClassLoader byteArrayClassLoader;
 
     @PostConstruct
     private void setUp() {
@@ -51,6 +64,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
     }
 
+    @Override
     public void execute(String address, String specialProperty) throws ContractExecutorException {
         File serFile = Serializer.getSerFile(address);
         if (serFile.exists()) {
@@ -61,8 +75,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             clazz = storageService.load(address);
         } catch (ClassLoadException e) {
-            throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: "
-                + e.getMessage(), e);
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 
         Object instance;
@@ -88,21 +102,26 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 byte[] publicKeyByteArr = Utils.parseSubarray(privateKeyByteArr, 32, 32);
                 String target = Converter.encodeToBASE58(publicKeyByteArr);
 
-                BigDecimal balance = dbInteractionService.getBalance(Const.SYS_TRAN_PUBLIC_KEY, Const.SYS_TRAN_CURRENCY);
+                BigDecimal balance =
+                    dbInteractionService.getBalance(Const.SYS_TRAN_PUBLIC_KEY, Const.SYS_TRAN_CURRENCY);
                 String signatureBASE58 =
-                    Ed25519.generateSignOfTransaction(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance, Const.SYS_TRAN_CURRENCY, privateKey);
+                    Ed25519.generateSignOfTransaction(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance,
+                        Const.SYS_TRAN_CURRENCY, privateKey);
 
-                dbInteractionService.transactionFlow(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance, Const.SYS_TRAN_CURRENCY, signatureBASE58);
+                dbInteractionService.transactionFlow(innerId, Const.SYS_TRAN_PUBLIC_KEY, target, total, balance,
+                    Const.SYS_TRAN_CURRENCY, signatureBASE58);
             }
 
             logger.info("Contract {} has been successfully saved.", address);
         } catch (Exception e) {
-            throw new ContractExecutorException("Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
 
         Serializer.serialize(serFile, instance);
     }
 
+    @Override
     public void execute(String address, String methodName, String[] params) throws ContractExecutorException {
         Class<?> clazz;
         try {
@@ -166,6 +185,106 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         //Serializing object
         Serializer.serialize(serFile, instance);
+    }
+
+    @Override
+    public void execute(String address, byte[] bytecode, String methodName, String[] params)
+        throws ContractExecutorException {
+
+        Class<?> clazz;
+        try {
+            validateByteCode(address, bytecode);
+            clazz = byteArrayClassLoader.buildClass(address, bytecode);
+        } catch (ClassNotFoundException | CreditsException e) {
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+        }
+
+        Object instance;
+        try {
+            instance = clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new ContractExecutorException(
+                "Cannot create new instance of the contract: " + address + ". Reason: " + e.getMessage(), e);
+        }
+
+        List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
+            if (params == null || params.length == 0) {
+                return method.getName().equals(methodName) && method.getParameterCount() == 0;
+            } else {
+                return method.getName().equals(methodName) && method.getParameterCount() == params.length;
+            }
+        }).collect(Collectors.toList());
+
+        Method targetMethod = null;
+        Object[] argValues = null;
+        if (methods.isEmpty()) {
+            throw new ContractExecutorException("Cannot execute the contract: " + address +
+                ". Reason: Cannot find a method by name and parameters specified");
+        } else {
+            for (Method method : methods) {
+                try {
+                    Class<?>[] types = method.getParameterTypes();
+                    if (types.length > 0) {
+                        argValues = castValues(types, params);
+                    }
+                } catch (ClassCastException e) {
+                    continue;
+                } catch (ContractExecutorException e) {
+                    throw new ContractExecutorException("Cannot execute the contract: " + address, e);
+                }
+                targetMethod = method;
+                break;
+            }
+        }
+
+        if (targetMethod == null) {
+            throw new ContractExecutorException("Cannot execute the contract: " + address +
+                ". Reason: Cannot cast parameters to the method found by name: " + methodName);
+        }
+
+        //Invoking target method
+        try {
+            targetMethod.invoke(instance, argValues);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+        }
+    }
+
+    private void validateByteCode(String address, byte[] bytecode) throws ContractExecutorException, CreditsException {
+        SmartContractData smartContractData;
+        try {
+            smartContractData = ldbClient.getSmartContract(address);
+        } catch (Exception e) {
+            throw new ContractExecutorException(e.getLocalizedMessage());
+        }
+        if (!smartContractData.getHashState().equals(encrypt(bytecode))) {
+           throw new ContractExecutorException("unknown contract");
+        }
+    }
+
+    private static String encrypt(byte[] bytes) throws CreditsException {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new CreditsException(e);
+        }
+        digest.update(bytes);
+        return bytesToHex(digest.digest());
+
+    }
+
+    private static String bytesToHex(byte[] bytes) {
+        char[] hexArray = "0123456789ABCDEF".toCharArray();
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 
     private Object[] castValues(Class<?>[] types, String[] params) throws ContractExecutorException {
