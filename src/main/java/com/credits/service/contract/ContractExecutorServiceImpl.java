@@ -11,7 +11,6 @@ import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.leveldb.client.util.ApiClientUtils;
 import com.credits.serialise.Serializer;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
@@ -19,6 +18,7 @@ import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.service.usercode.UserCodeStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -40,8 +40,13 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
 
-    @Resource
     private ApiClient ldbClient;
+
+    @Value("${api.server.host}")
+    private String apiServerHost;
+
+    @Value("${api.server.port}")
+    private Integer apiServerPort;
 
     @Resource
     private LevelDbInteractionService dbInteractionService;
@@ -54,6 +59,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     @PostConstruct
     private void setUp() {
+        ldbClient = ApiClient.getInstance(apiServerHost, apiServerPort);
         try {
             Class<?> contract = Class.forName("SmartContract");
             Field interactionService = contract.getDeclaredField("service");
