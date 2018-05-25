@@ -48,6 +48,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private ApiClient ldbClient;
 
+    @Value("${api.server.host}")
+    private String apiServerHost;
+
+    @Value("${api.server.port}")
+    private Integer apiServerPort;
+
     @Resource
     private LevelDbInteractionService dbInteractionService;
 
@@ -56,6 +62,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     @PostConstruct
     private void setUp() {
+        ldbClient = ApiClient.getInstance(apiServerHost, apiServerPort);
         try {
             Class<?> contract = Class.forName("SmartContract");
             Field interactionService = contract.getDeclaredField("service");
