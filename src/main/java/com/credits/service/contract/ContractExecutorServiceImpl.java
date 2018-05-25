@@ -11,7 +11,6 @@ import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.leveldb.client.util.ApiClientUtils;
 import com.credits.serialise.Serializer;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
@@ -19,6 +18,7 @@ import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.service.usercode.UserCodeStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -40,7 +40,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
 
-    @Resource
+    @Value("${api.server.host}")
+    private String apiServerHost;
+
+    @Value("${api.server.port}")
+    private Integer apiServerPort;
+
     private ApiClient ldbClient;
 
     @Resource
@@ -59,6 +64,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Field interactionService = contract.getDeclaredField("service");
             interactionService.setAccessible(true);
             interactionService.set(null, dbInteractionService);
+            ldbClient = ApiClient.getInstance(apiServerHost, apiServerPort);
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             logger.error("Cannot load smart contract's super class", e);
         }
@@ -195,7 +201,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             validateByteCode(address, bytecode);
             clazz = byteArrayClassLoader.buildClass(address, bytecode);
-        } catch (ClassNotFoundException | CreditsException e) {
+        } catch (Exception e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
         }
@@ -257,10 +263,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             smartContractData = ldbClient.getSmartContract(address);
         } catch (Exception e) {
-            throw new ContractExecutorException(e.getLocalizedMessage());
+            throw new ContractExecutorException(e.getMessage());
         }
-        if (!smartContractData.getHashState().equals(encrypt(bytecode))) {
-           throw new ContractExecutorException("unknown contract");
+        if (smartContractData.getHashState() != null && !smartContractData.getHashState().equals(encrypt(bytecode))) {
+            throw new ContractExecutorException("unknown contract");
         }
     }
 
