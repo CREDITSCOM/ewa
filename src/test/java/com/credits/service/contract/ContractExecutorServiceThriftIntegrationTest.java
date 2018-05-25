@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import static com.credits.classload.ByteArrayClassLoaderTest.SimpleInMemoryCompilator.compile;
+import static com.credits.classload.ByteArrayContractClassLoaderTest.SimpleInMemoryCompilator.compile;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -68,6 +68,13 @@ public class ContractExecutorServiceThriftIntegrationTest extends ServiceTest {
 
         when(mockClient.getSmartContract(address)).thenReturn(new SmartContractData(sourceCode, bytecode, hashState));
         ceService.execute(address, bytecode, "foo", new String[0]);
+
+        when(mockClient.getSmartContract(address)).thenReturn(new SmartContractData(sourceCode, bytecode, "bad hash"));
+        try {
+            ceService.execute(address, bytecode, "foo", new String[0]);
+        }catch (Exception e) {
+            System.out.println("bad hash error - " + e.getMessage());
+        }
     }
 
     private static String encrypt(byte[] bytes) throws CreditsException, NoSuchAlgorithmException {
@@ -79,7 +86,6 @@ public class ContractExecutorServiceThriftIntegrationTest extends ServiceTest {
         }
         digest.update(bytes);
         return bytesToHex(digest.digest());
-
     }
 
     private static String bytesToHex(byte[] bytes) {

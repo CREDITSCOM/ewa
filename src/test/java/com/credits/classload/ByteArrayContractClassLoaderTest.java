@@ -1,19 +1,12 @@
 package com.credits.classload;
 
-import com.credits.App;
 import com.credits.exception.CompilationException;
-import com.credits.leveldb.client.data.SmartContractData;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
@@ -22,47 +15,45 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {App.class})
-public class ByteArrayClassLoaderTest {
+public class ByteArrayContractClassLoaderTest {
 
-    @Resource
-    ByteArrayClassLoader classLoader;
-
-    SmartContractData smartContractData;
+    String sourceCode;
 
     @Before
     public void setUp() throws Exception {
+        sourceCode = "public class Contract {\n" + "\n" + "    public Contract() {\n" +
+            "        System.out.println(\"Hello World!!\"); ;\n" + "    }\n" + "}";
         String sourceCode2 =
             "public class HelloWorld extends SomeClass{ \n@Override \npublic void foo(){\nSystem.out.println(\"HelloWorld method called\");\n}\n}\npublic class SomeClass{\npublic void foo()\nSystem.out.println(\"SomeClass method called\");\n}\n}";
     }
 
     @Test
-    public void getClassTest() throws Exception {
-        String sourceCode = "public class HelloWorld {\n" + "\n" + "    public HelloWorld() {\n" +
-            "        System.out.println(\"Hello World!!\"); ;\n" + "    }\n" + "}";
-        byte[] helloWorldByteCode = SimpleInMemoryCompilator.compile(sourceCode, "HelloWorld", "TKN");
-        smartContractData = new SmartContractData(sourceCode, helloWorldByteCode, "hashState");
-        System.out.println(Arrays.toString(smartContractData.getByteCode()));
-        Class clazz = classLoader.buildClass("HelloWorld", smartContractData.getByteCode());
+    public void buildClassTest() throws Exception {
+        byte[] bytecode = SimpleInMemoryCompilator.compile(sourceCode, "Contract", "TKN");
+
+        Class clazz = new ByteArrayContractClassLoader().buildClass(bytecode);
         clazz.newInstance();
     }
 
+    @Test(expected = LinkageError.class)
+    public void buildClassTwice() throws CompilationException {
+        byte[] bytecode = SimpleInMemoryCompilator.compile(sourceCode, "Contract", "TKN");
+
+        ByteArrayContractClassLoader loader = new ByteArrayContractClassLoader();
+        loader.buildClass(bytecode);
+        loader.buildClass(bytecode);
+    }
+
     @Test
-    @Ignore
-    public void buildMultiplyClass() throws Exception {
-        String sourceCode =
-            "class TestClass{\npublic static class HelloWorld extends SomeClass{\n@Override\npublic void foo(){\nSystem.out.println(\"HelloWorld method called\");\n}\n}\npublic static class SomeClass{\npublic void foo(){\nSystem.out.println(\"SomeClass method called\");\n}\n}\n}";
-        byte[] helloWorldByteCode = SimpleInMemoryCompilator.compile(sourceCode, "SomeClass", "TKN");
-        smartContractData = new SmartContractData(sourceCode, helloWorldByteCode, "hashState");
-        byte[] byteCode = smartContractData.getByteCode();
-        classLoader.loadClass("TestClass", byteCode);
-        classLoader.loadClass("SomeClass", byteCode);
-        Class clazz = classLoader.buildClass("HelloWorld", byteCode);
-        clazz.newInstance();
+    public void loadOtherClass() throws CompilationException {
+        sourceCode = "public class Contract {\n" + "\n" + "    public Contract() {\n" +
+            "try {\n new java.net.ServerSocket(5000);\n} catch (java.io.IOException e) {\ne.printStackTrace();\n}\n" + "    }\n" + "}";
+
+        byte[] bytecode = SimpleInMemoryCompilator.compile(sourceCode, "Contract", "TKN");
+        ByteArrayContractClassLoader loader = new ByteArrayContractClassLoader();
+        loader.buildClass(bytecode);
     }
 
     public static class SimpleInMemoryCompilator {

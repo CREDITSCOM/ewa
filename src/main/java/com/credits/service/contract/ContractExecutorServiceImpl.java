@@ -1,7 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.Const;
-import com.credits.classload.ByteArrayClassLoader;
+import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.common.utils.Utils;
@@ -53,9 +53,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     @Resource
     private UserCodeStorageService storageService;
-
-    @Resource
-    private ByteArrayClassLoader byteArrayClassLoader;
 
     @PostConstruct
     private void setUp() {
@@ -200,7 +197,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Class<?> clazz;
         try {
             validateByteCode(address, bytecode);
-            clazz = byteArrayClassLoader.buildClass(address, bytecode);
+            clazz = new ByteArrayContractClassLoader().buildClass(bytecode);
         } catch (Exception e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
