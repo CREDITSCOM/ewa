@@ -42,8 +42,6 @@ public class App extends Application {
             char sep = symbols.getDecimalSeparator();
             AppState.decSep = Character.toString(sep);
 
-//            AppState.decSep = ",";
-
             FileInputStream fis = new FileInputStream("settings.properties");
             Properties property = new Properties();
             property.load(fis);

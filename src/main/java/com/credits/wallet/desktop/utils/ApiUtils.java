@@ -46,7 +46,7 @@ public class ApiUtils {
 
         AppState.apiClient.transactionFlow(
                 transactionFlowData,
-                true
+                false
         );
     }
 
