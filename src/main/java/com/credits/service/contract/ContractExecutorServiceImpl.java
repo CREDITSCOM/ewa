@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.FilePermission;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,7 +37,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.PropertyPermission;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
@@ -184,7 +184,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         //Invoking target method
         try {
             Permissions permissions = new Permissions();
-            //            if (isSmartContractBaseMethod(targetMethod)) {
             permissions.add(new SocketPermission(apiServerHost + ":" + apiServerPort, "connect,listen,resolve"));
             permissions.add(new SecurityPermission("getProperty.networkaddress.cache.ttl", "read"));
             permissions.add(new SecurityPermission("getProperty.networkaddress.cache.negative.ttl", "read"));
@@ -197,20 +196,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             permissions.add(new RuntimePermission("writeFileDescriptor"));
             permissions.add(new RuntimePermission("accessDeclaredMembers"));
             permissions.add(new ReflectPermission("suppressAccessChecks"));
-            try {
-                Field f = ClassLoader.class.getDeclaredField("classes");
-                f.setAccessible(true);
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-                List<Class> classes = (List<Class>) f.get(classLoader);
-                for (Class c: classes) {
-                    if(c.getName().contains("hrift"))
-                    System.out.println(c.getName());
-                }
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
+            permissions.add(new FilePermission("\\-","read"));
             Sandbox.confine(instance.getClass(), permissions);
-            //            }
             targetMethod.invoke(instance, argValues);
         } catch (IllegalAccessException | InvocationTargetException e) {
             System.out.println(getStackTrace(e));

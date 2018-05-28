@@ -1,7 +1,7 @@
 package com.credits.secure;
 
 import java.security.AccessControlContext;
-import java.security.CodeSource;
+import java.security.AccessControlException;
 import java.security.Permission;
 import java.security.Permissions;
 import java.security.ProtectionDomain;
@@ -62,21 +62,23 @@ public final class Sandbox {
             @Override
             public void checkPermission(Permission perm) {
                 assert perm != null;
-
                 for (Class<?> clasS : this.getClassContext()) {
                     // Check if an ACC was set for the class.
                     {
                         AccessControlContext acc = Sandbox.CHECKED_CLASSES.get(clasS);
                         if (acc != null) {
-                            acc.checkPermission(perm);
+                            try {
+                                acc.checkPermission(perm);
+                            } catch (AccessControlException e) {
+                                System.out.println((e.getMessage()));
+                                throw new AccessControlException(e.getMessage());
+                            }
                         }
                     }
                 }
             }
         });
     }
-
-    // --------------------------
 
     /**
      * All future actions that are executed through the given {@code clasS} will be checked against the given {@code
@@ -112,7 +114,6 @@ public final class Sandbox {
      * @throws SecurityException Permissions are already confined for the {@code clasS}
      */
     public static void confine(Class<?> clasS, Permissions permissions) {
-        System.out.println("codesource - " + clasS.getProtectionDomain().getCodeSource());
         Sandbox.confine(clasS, new ProtectionDomain(clasS.getProtectionDomain().getCodeSource(), permissions));
     }
 
