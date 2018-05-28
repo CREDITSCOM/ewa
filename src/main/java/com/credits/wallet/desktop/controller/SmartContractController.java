@@ -152,6 +152,7 @@ public class SmartContractController extends Controller implements Initializable
                     hashState
             );
             String transactionInnerId = ApiUtils.generateTransactionInnerId();
+
             ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(
                     transactionInnerId,
                     AppState.account,
@@ -166,8 +167,6 @@ public class SmartContractController extends Controller implements Initializable
             } else {
                 Utils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
             }
-
-
         } catch (Exception e) {
             LOGGER.error("Error deploying smart contract " + e.toString(), e);
             Utils.showError("Error deploying smart contract " + e.toString());
@@ -201,6 +200,17 @@ public class SmartContractController extends Controller implements Initializable
 //            }
 //        }
         // ----------------------
+    }
+
+    private SmartContractData getSmartContract(String address) {
+        SmartContractData contractData = null;
+        try {
+            contractData = AppState.apiClient.getSmartContract(address);
+        } catch (Exception e) {
+            LOGGER.error("Error fetching smart contract. " + e.toString(), e);
+            Utils.showError("Error fetching smart contract. " + e.toString());
+        }
+        return contractData;
     }
 
     @Override
