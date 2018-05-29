@@ -2,24 +2,41 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.common.utils.Converter;
 import com.credits.crypto.Ed25519;
+import com.credits.leveldb.client.ApiClient;
+import com.credits.leveldb.client.data.ApiResponseData;
+import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+<<<<<<< HEAD
 import com.credits.wallet.desktop.service.DebugService;
 import com.credits.wallet.desktop.utils.EclipseJdt;
 import com.credits.wallet.desktop.utils.Utils;
+=======
+>>>>>>> origin/smart-contract-v2
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.thrift.executor.APIResponse;
 import com.credits.wallet.desktop.thrift.executor.ContractExecutor;
 import com.credits.wallet.desktop.thrift.executor.ContractFile;
+import com.credits.wallet.desktop.utils.ApiUtils;
+import com.credits.wallet.desktop.utils.EclipseJdt;
+import com.credits.wallet.desktop.utils.SimpleInMemoryCompilator;
+import com.credits.wallet.desktop.utils.Utils;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+<<<<<<< HEAD
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+=======
+import javafx.scene.control.Button;
+>>>>>>> origin/smart-contract-v2
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -35,24 +52,20 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.*;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.time.Duration;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.function.IntFunction;
 import java.util.regex.Matcher;
@@ -65,6 +78,7 @@ public class SmartContractController extends Controller implements Initializable
 
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
 
+<<<<<<< HEAD
     private static final String[] KEYWORDS =
         new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
             "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for",
@@ -115,17 +129,16 @@ public class SmartContractController extends Controller implements Initializable
     private DebugService dbgService;
 
 
+=======
+>>>>>>> origin/smart-contract-v2
     @FXML
-    private Pane paneCode;
+    Label address;
 
     @FXML
-    private TreeView<Label> classTreeView;
+    private TextField txAddress;
 
     @FXML
-    private Button checkButton;
-
-    //@FXML
-    //private javafx.scene.control.TextArea taCode;
+    private TreeView<Label> contractsTree;
 
     @FXML
     private Button dbgDebugButton;
@@ -142,14 +155,11 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private void handleBack() {
-        if (AppState.executor != null) {
-            AppState.executor.shutdown();
-            AppState.executor = null;
-        }
         App.showForm("/fxml/form6.fxml", "Wallet");
     }
 
     @FXML
+<<<<<<< HEAD
     private void handleDeploy() {
         char[] characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
         StringBuilder sb = new StringBuilder();
@@ -167,40 +177,35 @@ public class SmartContractController extends Controller implements Initializable
                 AppState.contractExecutorPort != null) {
             try {
                 TTransport transport;
+=======
+    private void handleCreate() {
+        App.showForm("/fxml/smart_contract_deploy.fxml", "Wallet");
+    }
+>>>>>>> origin/smart-contract-v2
 
-                transport = new TSocket(AppState.contractExecutorHost, AppState.contractExecutorPort);
-                transport.open();
+    @FXML
+    private void handleSearch() {
+        String address = txAddress.getText();
+        try {
+            SmartContractData smartContractData = AppState.apiClient.getSmartContract(address);
 
-                TProtocol protocol = new TBinaryProtocol(transport);
-                ContractExecutor.Client client = new ContractExecutor.Client(protocol);
 
+<<<<<<< HEAD
                 ContractFile contractFile = new ContractFile();
                 contractFile.setName(parseClassName()+".java");
                 contractFile.setFile(codeArea.getText().getBytes());
+=======
+>>>>>>> origin/smart-contract-v2
 
-                APIResponse executorResponse = client.store(
-                        contractFile,
-                        token,
-                        Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey))
-                );
-                if (executorResponse.getCode()!=0 && executorResponse.getMessage()!=null) {
-                    Utils.showError("Error executing smart contract " + executorResponse.getMessage());
-                } else {
-                    StringSelection selection = new StringSelection(token);
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    clipboard.setContents(selection, selection);
-                    Utils.showInfo("Token\n\n" + token + "\n\nhas generated and copied to clipboard");
-                }
+            // this.address.setText(smartContractData.getAddress);
 
-                transport.close();
-            } catch (Exception e) {
-                LOGGER.error("Error executing smart contract " + e.toString(), e);
-                Utils.showError("Error executing smart contract " + e.toString());
-            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            Utils.showError(String.format("Error %s", e.getMessage()));
         }
-        // ----------------------
     }
 
+<<<<<<< HEAD
     @FXML
     private void handleDbgDebug() {
         dbgMode = false;
@@ -267,10 +272,13 @@ public class SmartContractController extends Controller implements Initializable
     private void handleDbgWatch() throws Exception {
         dbgWatchExp(txDbgWatch.getText());
     }
+=======
+>>>>>>> origin/smart-contract-v2
 
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
+<<<<<<< HEAD
         if (AppState.executor != null) {
             AppState.executor.shutdown();
         }
@@ -406,6 +414,9 @@ public class SmartContractController extends Controller implements Initializable
         dbgMode=false;
         dbgCursor=-1;
         showDbgButtons();
+=======
+        this.contractsTree.setRoot(null);
+>>>>>>> origin/smart-contract-v2
     }
 
     @FXML
@@ -414,220 +425,6 @@ public class SmartContractController extends Controller implements Initializable
     }
 
     private void refreshClassMembersTree() {
-
-        this.classTreeView.setRoot(null);
-
-        String sourceCode = codeArea.getText();
-
-        CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
-
-        List typeList = compilationUnit.types();
-
-        if (typeList.size() != 1) {
-            return;
-        }
-
-        TypeDeclaration typeDeclaration = (TypeDeclaration) typeList.get(0);
-
-        String className = (typeDeclaration).getName().getFullyQualifiedName();
-
-        Label labelRoot = new Label(className);
-
-        TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
-
-        ASTNode root = compilationUnit.getRoot();
-
-        root.accept(new ASTVisitor() {
-
-            @Override
-            public boolean visit(FieldDeclaration node) {
-                return true;
-            }
-
-            @Override
-            public void endVisit(FieldDeclaration node) {
-                Label label = new Label(node.toString());
-
-                label.setOnMousePressed(event -> {
-                    if (event.isPrimaryButtonDown()) {
-                        positionCodeAreaToLine(compilationUnit.getLineNumber(node.getStartPosition()));
-                    }
-                });
-
-                TreeItem<Label> treeItem = new TreeItem<>();
-                treeItem.setValue(label);
-
-                treeRoot.getChildren().add(treeItem);
-            }
-
-        });
-
-        root.accept(new ASTVisitor() {
-
-            @Override
-            public boolean visit(MethodDeclaration node) {
-                return true;
-            }
-
-            @Override
-            public void endVisit(MethodDeclaration node) {
-                node.setBody(null);
-                Label label = new Label(node.toString());
-                label.setOnMousePressed(event -> {
-                    if (event.isPrimaryButtonDown()) {
-                        positionCodeAreaToLine(compilationUnit.getLineNumber(node.getStartPosition()));
-                    }
-                });
-
-                TreeItem<Label> treeItem = new TreeItem<>();
-                treeItem.setValue(label);
-
-                treeRoot.getChildren().add(treeItem);
-            }
-
-        });
-
-        treeRoot.setExpanded(true);
-        this.classTreeView.setRoot(treeRoot);
-    }
-
-    @FXML
-    @SuppressWarnings("unchecked")
-    private void checkButtonAction() {
-        String sourceCode = codeArea.getText();
-
-        IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
-
-        if (problemArr.length > 0) {
-            tabErrors.getItems().clear();
-
-            for (IProblem p : problemArr) {
-                ErrorCodeTabRow tr = new ErrorCodeTabRow();
-                tr.setLine(Integer.toString(p.getSourceLineNumber()));
-                tr.setText(p.getMessage());
-                tabErrors.getItems().add(tr);
-            }
-
-            codeArea.setPrefHeight(paneCode.getPrefHeight() * 0.7);
-            paneCode.getChildren().clear();
-            paneCode.getChildren().add(codeArea);
-            paneCode.getChildren().add(tabErrors);
-            paneCode.getChildren().get(1).setLayoutY(paneCode.getPrefHeight() * 0.7);
-        } else {
-            codeArea.setPrefHeight(paneCode.getPrefHeight());
-            paneCode.getChildren().clear();
-            paneCode.getChildren().add(codeArea);
-        }
-    }
-
-    private StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Matcher matcher = PATTERN.matcher(text);
-        int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        while (matcher.find()) {
-            String styleClass = matcher.group("KEYWORD") != null ? "keyword" : matcher.group("PAREN") != null ? "paren"
-                : matcher.group("BRACE") != null ? "brace" : matcher.group("BRACKET") != null ? "bracket"
-                    : matcher.group("SEMICOLON") != null ? "semicolon" : matcher.group("STRING") != null ? "string"
-                        : matcher.group("COMMENT") != null ? "comment" : null; /* never happens */
-            assert styleClass != null;
-            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
-            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
-            lastKwEnd = matcher.end();
-        }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
-        return spansBuilder.create();
-    }
-
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        codeArea.setStyleSpans(0, highlighting);
-    }
-
-    private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
-        String text = codeArea.getText();
-        Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
-            @Override
-            protected StyleSpans<Collection<String>> call() throws Exception {
-                return computeHighlighting(text);
-            }
-        };
-        AppState.executor.execute(task);
-        return task;
-    }
-
-    private void positionCodeAreaToLine(int line) {
-        char[] text = codeArea.getText().toCharArray();
-        int pos = 0;
-        int curLine = 1;
-        while (pos < text.length) {
-            if (line <= curLine) {
-                break;
-            }
-            if (text[pos] == '\n') {
-                curLine++;
-            }
-            pos++;
-        }
-        codeArea.displaceCaret(pos);
-        codeArea.showParagraphAtTop(Math.max(0, line - 5));
-        codeArea.requestFocus();
-    }
-
-    private void codePopup() {
-        ContextMenu contextMenu = new ContextMenu();
-
-        String word="";
-        int pos=codeArea.getCaretPosition()-1;
-        String txt=codeArea.getText();
-        while (pos>0 && !txt.substring(pos,pos+1).equals(" ") &&
-                !txt.substring(pos,pos+1).equals("\r") && !txt.substring(pos,pos+1).equals("\n")) {
-            word=txt.substring(pos,pos+1)+word;
-            pos--;
-        }
-
-        for (String method : parentMethods) {
-            if (word.trim().isEmpty() || method.toUpperCase().indexOf(word.trim().toUpperCase())>0) {
-                MenuItem action = new MenuItem(method);
-                contextMenu.getItems().add(action);
-                action.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        int pos = codeArea.getCaretPosition();
-                        String txt = codeArea.getText();
-                        String txtToIns = normMethodName(method);
-                        codeArea.replaceText(pos, pos, txtToIns);
-                    }
-                });
-            }
-        }
-
-        if (contextMenu.getItems().isEmpty()) {
-            MenuItem action = new MenuItem("No suggestions");
-            contextMenu.getItems().add(action);
-        }
-
-        contextMenu.show(codeArea,
-                codeArea.getCaretBounds().get().getMaxX(), codeArea.getCaretBounds().get().getMaxY());
-    }
-
-    private String normMethodName (String method) {
-        int ind1=method.indexOf(" ");
-        String result=method.substring(ind1+1);
-
-        ind1=result.indexOf("(");
-        int ind2=result.indexOf(")");
-        StringBuilder parametersStr=new StringBuilder();
-        String[] parameters=result.substring(ind1,ind2).trim().split(",");
-        boolean first=true;
-        for (String parameter : parameters) {
-            String[] parameterAsArr=parameter.trim().split(" ");
-            if (first)
-                parametersStr.append(parameterAsArr[1].trim());
-            else
-                parametersStr.append(", ").append(parameterAsArr[1].trim());
-            first=false;
-        }
-
-        return result.substring(0,ind1+1)+parametersStr+")";
     }
 
     private void showDbgButtons() {

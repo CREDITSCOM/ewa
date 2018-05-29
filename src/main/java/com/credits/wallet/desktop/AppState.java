@@ -23,7 +23,6 @@ public class AppState {
     public static String csSenderBotHost;
     public static Integer csSenderBotPort;
 
-
     public static boolean newAccount;
     public static boolean detailFromHistory;
     public static boolean noClearForm6;
@@ -34,7 +33,6 @@ public class AppState {
     public static BigDecimal transactionFeePercent = BigDecimal.ZERO;
     public static String toAddress;
     public static String coin;
-    public static String hash;
     public static String innerId;
 
     public static TransactionTabRow selectedTransactionRow;
@@ -45,4 +43,6 @@ public class AppState {
 
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
+
+    public static BigDecimal balance = BigDecimal.ZERO;
 }

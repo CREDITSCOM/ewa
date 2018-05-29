@@ -32,4 +32,17 @@ public class ApiUtilsTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void generateSmartContractHashStateTest() {
+        String source =  "public class Contract extends SmartContract { public Contract() { total = 0; } }";
+
+        try {
+            LOGGER.info(ApiUtils.generateSmartContractHashState(source.getBytes()));
+        } catch (CreditsException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

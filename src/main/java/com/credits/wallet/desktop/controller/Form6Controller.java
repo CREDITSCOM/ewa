@@ -26,7 +26,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
@@ -79,8 +78,7 @@ public class Form6Controller extends Controller implements Initializable {
 
         AppState.amount = Converter.toBigDecimal(numAmount.getText());
         AppState.toAddress = txKey.getText();
-        AppState.hash = ApiUtils.generateTransactionHash();
-        AppState.innerId = UUID.randomUUID().toString();
+        AppState.innerId = ApiUtils.generateTransactionInnerId();
 
         // VALIDATE
         boolean ok = true;
@@ -100,11 +98,13 @@ public class Form6Controller extends Controller implements Initializable {
             numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             ok = false;
         }
+        /*
         if (AppState.transactionFeeValue.compareTo(BigDecimal.ZERO) <= 0) {
             labErrorFee.setText(ERR_FEE);
             numFee.setStyle(numFee.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             ok = false;
         }
+        */
         try {
             Validator.validateToAddress(AppState.toAddress);
         } catch (ApiClientException e) {
@@ -124,8 +124,6 @@ public class Form6Controller extends Controller implements Initializable {
         clearLabErr();
 
         labCredit.setText("0");
-
-        numFee.setText(Converter.toString(AppState.transactionFeeValue));
 
         // Fill coin list
         cbCoin.getItems().clear();

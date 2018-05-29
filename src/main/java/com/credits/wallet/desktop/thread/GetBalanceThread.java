@@ -32,7 +32,9 @@ public class GetBalanceThread implements Runnable {
             BigDecimal balance = AppState.apiClient.getBalance(AppState.account, coin);
             Platform.runLater(new Runnable() {
                 public void run() {
-                    label.setText(Converter.toString(balance));
+                    AppState.balance = balance;
+                    label.setText(Converter.toString(balance)
+                    );
                 }
             });
         } catch (Exception e) {
@@ -42,7 +44,6 @@ public class GetBalanceThread implements Runnable {
                     label.setText(ERR_GETTING_BALANCE);
                     LOGGER.error(ERR_GETTING_BALANCE, e);
                     Utils.showError(ERR_GETTING_BALANCE);
-
                 }
             });
         }

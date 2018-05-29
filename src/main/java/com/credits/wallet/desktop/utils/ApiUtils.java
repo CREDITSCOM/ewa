@@ -5,6 +5,7 @@ import com.credits.common.utils.Converter;
 import com.credits.common.utils.TcpClient;
 import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
+import com.credits.crypto.Md5;
 import com.credits.leveldb.client.data.TransactionFlowData;
 import com.credits.wallet.desktop.AppState;
 import org.slf4j.Logger;
@@ -19,54 +20,33 @@ public class ApiUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
-    public static void callTransactionFlowWithFee(
-            String hash,
+    public static void callTransactionFlow(
             String innerId,
             String source,
             String target,
             BigDecimal amount,
-            String currency,
-            String hashFee,
-            String innerIdFee,
-            String sourceFee,
-            String targetFee,
-            BigDecimal amountFee,
-            String currencyFee
+            BigDecimal balance,
+            String currency
     )
         throws Exception {
 
         // Формировование параметров основной транзакции
         String signature =
-            Ed25519.generateSignOfTransaction(hash, innerId, source, target, amount, currency, AppState.privateKey);
+            Ed25519.generateSignOfTransaction(innerId, source, target, amount, balance, currency, AppState.privateKey);
 
         TransactionFlowData transactionFlowData = new TransactionFlowData(
-                hash,
                 innerId,
                 source,
                 target,
                 amount,
+                balance,
                 currency,
                 signature
         );
 
-        // Формировование параметров транзакции для списания комиссии
-        String signatureFee =
-                Ed25519.generateSignOfTransaction(hashFee, innerIdFee, sourceFee, targetFee, amountFee, currencyFee, AppState.privateKey);
-
-        TransactionFlowData transactionFlowDataFee = new TransactionFlowData(
-                hashFee,
-                innerIdFee,
-                sourceFee,
-                targetFee,
-                amountFee,
-                currencyFee,
-                signatureFee
-        );
-
-        AppState.apiClient.transactionFlowWithFee(
+        AppState.apiClient.transactionFlow(
                 transactionFlowData,
-                transactionFlowDataFee,
-                true
+                false
         );
     }
 
@@ -87,4 +67,13 @@ public class ApiUtils {
         return Converter.bytesToHex(hashBytes);
     }
 
+    public static String generateTransactionInnerId() throws CreditsException {
+        byte[] hashBytes = Blake2S.generateHash(4); // 4 байта
+        return Converter.bytesToHex(hashBytes);
+    }
+
+    public static String generateSmartContractHashState(byte[] byteCode) throws CreditsException {
+        byte[] hashBytes = Md5.encrypt(byteCode);
+        return Converter.bytesToHex(hashBytes);
+    }
 }
