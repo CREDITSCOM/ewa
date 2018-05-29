@@ -20,7 +20,7 @@ public abstract class SmartContract implements Serializable {
 
     protected double total = 0;
 
-//    private String specialProperty;
+    private String specialProperty;
 
     protected SmartContract() {
 //        Class<?> clazz = this.getClass();

@@ -280,10 +280,28 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         //Invoking target method
         try {
+            Permissions permissions = new Permissions();
+            permissions.add(new SocketPermission(apiServerHost + ":" + apiServerPort, "connect,listen,resolve"));
+            permissions.add(new SecurityPermission("getProperty.networkaddress.cache.ttl", "read"));
+            permissions.add(new SecurityPermission("getProperty.networkaddress.cache.negative.ttl", "read"));
+            permissions.add(new PropertyPermission("sun.net.inetaddr.ttl", "read"));
+            permissions.add(new PropertyPermission("socksProxyHost", "read"));
+            permissions.add(new PropertyPermission("java.net.useSystemProxies", "read"));
+            permissions.add(new PropertyPermission("java.home", "read"));
+            permissions.add(new NetPermission("getProxySelector"));
+            permissions.add(new RuntimePermission("readFileDescriptor"));
+            permissions.add(new RuntimePermission("writeFileDescriptor"));
+            permissions.add(new RuntimePermission("accessDeclaredMembers"));
+            permissions.add(new ReflectPermission("suppressAccessChecks"));
+            permissions.add(new FilePermission("\\-", "read"));
+            /*for test*/
+            permissions.add(new FilePermission("C:\\Users\\Igor Goryunov\\.m2\\repository\\commons-beanutils\\commons-beanutils-core\\1.8.3\\commons-beanutils-core-1.8.3.jar", "read"));
+            Sandbox.confine(instance.getClass(), permissions);
             targetMethod.invoke(instance, argValues);
         } catch (IllegalAccessException | InvocationTargetException e) {
+            System.out.println(getStackTrace(e));
             throw new ContractExecutorException(
-                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+                "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
     }
 

@@ -18,6 +18,11 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -34,8 +39,19 @@ public class ContractExecutorServiceThriftIntegrationTest extends ServiceTest {
 
     private final String address = "1a2b3c";
 
+    private byte[] contractBytecode;
+
     @Before
-    public void setUp() throws ContractExecutorException {
+    public void setUp() throws Exception{
+        String sourceCodePath = Paths.get("").toAbsolutePath() +
+            "/src/test/resources/com/credits/service/usercode/Contract.java";
+        String sourceCode = new String(Files.readAllBytes(Paths.get(sourceCodePath)));
+        contractBytecode = compile(sourceCode, "Contract", "TKN");
+        String hashState = encrypt(contractBytecode);
+        ApiClient mockClient = mock(ApiClient.class);
+        Whitebox.setInternalState(ceService, "ldbClient", mockClient);
+        when(mockClient.getSmartContract(address)).thenReturn(new SmartContractData(sourceCode, contractBytecode, hashState));
+
         clean(address);
     }
 
@@ -79,21 +95,13 @@ public class ContractExecutorServiceThriftIntegrationTest extends ServiceTest {
     }
 
     @Test
-    public void executeContractBytecodeGetBalanceTest() throws Exception{
-        String sourceCode = "public class Contract extends SmartContract {\n" +
-            "\npublic void initialize(){};" +
-            "\npublic void foo() throws Exception {" +
-            "\n     System.out.println(\"getBalance()\");\n" +
-            "        java.math.BigDecimal balance = getBalance(\"1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2\", \"CS\");\n" +
-            "        System.out.println(\"getBalance=\" + balance);\n" + "    }\n" + "}";
-        byte[] bytecode = compile(sourceCode, "Contract", "TKN");
-        String hashState = encrypt(bytecode);
+    public void executeContractBytecodeGetBalanceTest() throws Exception {
+        ceService.execute(address, contractBytecode, "balanceGet", new String[0]);
+    }
 
-        ApiClient mockClient = mock(ApiClient.class);
-        Whitebox.setInternalState(ceService, "ldbClient", mockClient);
-
-        when(mockClient.getSmartContract(address)).thenReturn(new SmartContractData(sourceCode, bytecode, hashState));
-        ceService.execute(address, bytecode, "foo", new String[0]);
+    @Test(expected = ContractExecutorException.class)
+    public void callBadCode() throws Exception {
+        ceService.execute(address, contractBytecode, "openSocket", new String[0]);
     }
 
     private static String encrypt(byte[] bytes) throws CreditsException, NoSuchAlgorithmException {
