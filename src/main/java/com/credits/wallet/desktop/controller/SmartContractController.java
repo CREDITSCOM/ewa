@@ -3,6 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.exception.ApiClientException;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
@@ -211,6 +212,17 @@ public class SmartContractController extends Controller implements Initializable
             Utils.showError("Error fetching smart contract. " + e.toString());
         }
         return contractData;
+    }
+
+    private List<SmartContractData> getSmartContracts(String address) {
+        List<SmartContractData> contractDataList = null;
+        try {
+            contractDataList = AppState.apiClient.getSmartContracts(address);
+        } catch (ApiClientException e) {
+            LOGGER.error("Error fetching smart contracts. " + e.toString(), e);
+            Utils.showError("Error fetching smart contracts. " + e.toString());
+        }
+        return contractDataList;
     }
 
     @Override
