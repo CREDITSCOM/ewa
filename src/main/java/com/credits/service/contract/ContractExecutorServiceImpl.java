@@ -209,7 +209,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             permissions.add(new RuntimePermission("accessDeclaredMembers"));
             permissions.add(new ReflectPermission("suppressAccessChecks"));
             permissions.add(new FilePermission("\\-","read"));
-            /*for test*/ permissions.add(new FilePermission("C:\\Users\\Igor Goryunov\\.m2\repository\\commons-beanutils\\commons-beanutils-core\\1.8.3\\commons-beanutils-core-1.8.3.jar", "read"));
+            /*for test*/ permissions.add(new FilePermission("C:\\Users\\Igor Goryunov\\.m2\\repository\\commons-beanutils\\commons-beanutils-core\\1.8.3\\commons-beanutils-core-1.8.3.jar", "read"));
             Sandbox.confine(instance.getClass(), permissions);
             targetMethod.invoke(instance, argValues);
         } catch (IllegalAccessException | InvocationTargetException e) {
