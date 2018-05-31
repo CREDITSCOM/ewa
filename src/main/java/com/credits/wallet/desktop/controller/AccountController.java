@@ -2,7 +2,8 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.utils.Utils;
+import com.credits.wallet.desktop.thread.GetBalanceUpdater;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -54,16 +55,11 @@ public class AccountController extends Controller implements Initializable {
 
     @FXML
     private void handleRefreshBalance() {
-        refreshBalance();
-    }
-
-    private void refreshBalance() {
-        Utils.displayBalance("cs", this.balance);
+        Platform.runLater(new GetBalanceUpdater("cs", this.balance));
     }
 
     public void initialize(URL location, ResourceBundle resources) {
         this.wallet.setText(AppState.account);
-
-        refreshBalance();
+        Platform.runLater(new GetBalanceUpdater("cs", this.balance));
     }
 }

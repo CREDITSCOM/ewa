@@ -2,7 +2,7 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.utils.Utils;
+import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -36,25 +36,25 @@ public class NewCoinController extends Controller implements Initializable {
 
     @FXML
     private void handleSave() {
-        String coin=txCoin.getText().replace(";","");
-        String token=txToken.getText().replace(";", "");
+        String coin = txCoin.getText().replace(";", "");
+        String token = txToken.getText().replace(";", "");
 
         if (coin.isEmpty()) {
-            Utils.showError("You must enter coin mnemonic");
+            FormUtils.showError("You must enter coin mnemonic");
             return;
         }
 
         if (token.isEmpty()) {
-            Utils.showError("You must enter token");
+            FormUtils.showError("You must enter token");
             return;
         }
 
         if (AppState.coins.contains(coin)) {
-            Utils.showError("Coin already exists");
+            FormUtils.showError("Coin already exists");
             return;
         }
 
-        String strToWrite=coin+";"+token;
+        String strToWrite = coin + ";" + token;
 
         // Save to csv
         BufferedWriter bw = null;
@@ -62,15 +62,17 @@ public class NewCoinController extends Controller implements Initializable {
         try {
             fw = new FileWriter(new File("coins.csv"), true);
             bw = new BufferedWriter(fw);
-            bw.write(strToWrite+"\n");
+            bw.write(strToWrite + "\n");
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
             try {
-                if (bw != null)
+                if (bw != null) {
                     bw.close();
-                if (fw != null)
+                }
+                if (fw != null) {
                     fw.close();
+                }
             } catch (Exception ex) {
                 LOGGER.error(ex.getMessage(), ex);
             }
@@ -83,7 +85,7 @@ public class NewCoinController extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         try {
-            String token = (String)clipboard.getData(DataFlavor.stringFlavor);
+            String token = (String) clipboard.getData(DataFlavor.stringFlavor);
             txToken.setText(token);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

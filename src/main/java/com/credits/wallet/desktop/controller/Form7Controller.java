@@ -5,7 +5,7 @@ import com.credits.common.utils.Converter;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.ApiUtils;
-import com.credits.wallet.desktop.utils.Utils;
+import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -32,25 +32,18 @@ public class Form7Controller extends Controller implements Initializable {
 
     @FXML
     private void handleBack() {
-        AppState.noClearForm6=true;
+        AppState.noClearForm6 = true;
         App.showForm("/fxml/form6.fxml", "Wallet");
     }
 
     @FXML
     private void handleGenerate() {
         try {
-
-            ApiUtils.callTransactionFlow(
-                    AppState.innerId,
-                    AppState.account,
-                    AppState.toAddress,
-                    AppState.amount,
-                    AppState.balance,
-                    AppState.coin
-            );
+            ApiUtils.callTransactionFlow(AppState.innerId, AppState.account, AppState.toAddress, AppState.amount,
+                AppState.balance, AppState.coin);
         } catch (Exception e) {
             LOGGER.error("Error creating transaction " + e.toString(), e);
-            Utils.showError("Error creating transaction " + e.toString());
+            FormUtils.showError("Error creating transaction " + e.toString());
             return;
         }
 
@@ -60,7 +53,7 @@ public class Form7Controller extends Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.toAddress.setText(AppState.toAddress);
-        this.amountInCs.setText(Converter.toString(AppState.amount) + " "+AppState.coin);
+        this.amountInCs.setText(Converter.toString(AppState.amount) + " " + AppState.coin);
     }
 
 }

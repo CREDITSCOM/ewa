@@ -4,22 +4,22 @@ import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.data.TransactionData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.struct.TransactionTabRow;
-import com.credits.wallet.desktop.utils.Utils;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
+import com.credits.wallet.desktop.struct.TransactionHistoryTableRow;
+import com.credits.wallet.desktop.utils.FormUtils;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * Created by goncharov-eg on 29.01.2018.
@@ -27,16 +27,19 @@ import java.util.ResourceBundle;
 public class HistoryController extends Controller implements Initializable {
     private static final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
 
+    private static final int INIT_PAGE_SIZE = 10;
+    private static final int FIRST_PAGE_NUMBER = 1;
+
     private final static Logger LOGGER = LoggerFactory.getLogger(HistoryController.class);
 
-    private int pageNumber;
-    private int pageSize;
+    private int pageNumber = FIRST_PAGE_NUMBER;
+    private int pageSize = INIT_PAGE_SIZE;
 
     @FXML
     private ComboBox<Integer> cbPageSize;
 
     @FXML
-    private TableView tabTransaction;
+    private TableView<TransactionHistoryTableRow> tabTransaction;
 
     @FXML
     private Label labPage;
@@ -50,46 +53,29 @@ public class HistoryController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        for (int i = 0; i < 10; i++) {
-            cbPageSize.getItems().add(10 * (i + 1));
+        for (int i = 1; i <= INIT_PAGE_SIZE; i++) {
+            cbPageSize.getItems().add(INIT_PAGE_SIZE * i);
         }
+
         cbPageSize.getSelectionModel().select(0);
-        pageSize=10;
-
-        TableColumn[] tableColumns = new TableColumn[tabTransaction.getColumns().size()];
-        for (int i = 0; i < tabTransaction.getColumns().size(); i++) {
-            tableColumns[i] = (TableColumn) tabTransaction.getColumns().get(i);
-        }
-        tableColumns[0].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("target"));
-        tableColumns[1].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("currency"));
-        tableColumns[2].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("amount"));
-
-        pageNumber = 1;
         setPage();
-
         fillTable();
 
-        cbPageSize.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                pageSize=cbPageSize.getItems().get((int)newValue);
-                pageNumber = 1;
-                setPage();
+        cbPageSize.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            pageSize = cbPageSize.getItems().get((int) newValue);
+            pageNumber = 1;
+            setPage();
 
-                fillTable();
-            }
+            fillTable();
         });
 
-        tabTransaction.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
-                    TransactionTabRow tabRow = (TransactionTabRow) tabTransaction.getSelectionModel().getSelectedItem();
-                    if (tabRow != null) {
-                        AppState.selectedTransactionRow = tabRow;
-                        AppState.detailFromHistory=true;
-                        App.showForm("/fxml/transaction.fxml", "Wallet");
-                    }
+        tabTransaction.setOnMousePressed(event -> {
+            if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+                TransactionHistoryTableRow tabRow = tabTransaction.getSelectionModel().getSelectedItem();
+                if (tabRow != null) {
+                    AppState.selectedTransactionRow = tabRow;
+                    AppState.detailFromHistory = true;
+                    App.showForm("/fxml/transaction.fxml", "Wallet");
                 }
             }
         });
@@ -97,26 +83,30 @@ public class HistoryController extends Controller implements Initializable {
 
     private void fillTable() {
         tabTransaction.getItems().clear();
-
+        List<TransactionData> transactionList;
         try {
-            List<TransactionData> transactionList=AppState.apiClient.getTransactions(AppState.account,
-                (pageNumber-1)*pageSize, pageSize);
-            btnNext.setDisable(transactionList.size()<pageSize);
-
-            for (TransactionData transaction : transactionList) {
-                TransactionTabRow tr = new TransactionTabRow();
-
-                tr.setTarget(transaction.getTarget());
-                tr.setCurrency(transaction.getCurrency());
-                tr.setAmount(Converter.toString(transaction.getAmount()));
-                tr.setId(transaction.getInnerId());
-
-                tabTransaction.getItems().add(tr);
-            }
-        } catch(Exception e) {
+            transactionList =
+                AppState.apiClient.getTransactions(AppState.account, (pageNumber - 1) * pageSize, pageSize);
+        } catch (Exception e) {
             LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
-            Utils.showError(ERR_GETTING_TRANSACTION_HISTORY);
+            FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
+            return;
         }
+
+        btnNext.setDisable(transactionList.size() < pageSize);
+
+        tabTransaction.setItems(
+            FXCollections.observableList(transactionList.stream()
+                .map(transaction -> {
+                    TransactionHistoryTableRow tr = new TransactionHistoryTableRow();
+                    tr.setTarget(transaction.getTarget());
+                    tr.setCurrency(transaction.getCurrency());
+                    tr.setAmount(Converter.toString(transaction.getAmount()));
+                    tr.setId(transaction.getInnerId());
+                    return tr;
+                })
+                .collect(Collectors.toList()))
+        );
     }
 
     @FXML
@@ -126,14 +116,14 @@ public class HistoryController extends Controller implements Initializable {
 
     @FXML
     private void handlePageFirst() {
-        pageNumber = 1;
+        pageNumber = FIRST_PAGE_NUMBER;
         setPage();
         fillTable();
     }
 
     @FXML
     private void handlePagePrev() {
-        if (pageNumber > 1) {
+        if (pageNumber > FIRST_PAGE_NUMBER) {
             pageNumber = pageNumber - 1;
         }
         setPage();
@@ -148,9 +138,8 @@ public class HistoryController extends Controller implements Initializable {
     }
 
     private void setPage() {
-        btnFirst.setDisable(pageNumber <= 1);
-        btnPrev.setDisable(pageNumber <= 1);
-
+        btnFirst.setDisable(pageNumber <= FIRST_PAGE_NUMBER);
+        btnPrev.setDisable(pageNumber <= FIRST_PAGE_NUMBER);
         labPage.setText(Integer.toString(pageNumber));
     }
 }

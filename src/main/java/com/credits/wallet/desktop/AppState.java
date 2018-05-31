@@ -2,7 +2,7 @@ package com.credits.wallet.desktop;
 
 import com.credits.leveldb.client.ApiClient;
 import com.credits.wallet.desktop.controller.Const;
-import com.credits.wallet.desktop.struct.TransactionTabRow;
+import com.credits.wallet.desktop.struct.TransactionHistoryTableRow;
 
 import java.math.BigDecimal;
 import java.security.PrivateKey;
@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutorService;
  */
 public class AppState {
     public static ApiClient apiClient;
-    public static String decSep;
+    public static String decimalSeparator;
     public static String contractExecutorHost;
     public static Integer contractExecutorPort;
     public static String creditMonitorURL;
@@ -35,7 +35,7 @@ public class AppState {
     public static String coin;
     public static String innerId;
 
-    public static TransactionTabRow selectedTransactionRow;
+    public static TransactionHistoryTableRow selectedTransactionRow;
 
     public static List<String> coins = new ArrayList<>();
 

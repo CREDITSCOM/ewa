@@ -9,7 +9,7 @@ import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.EclipseJdt;
 import com.credits.wallet.desktop.utils.SimpleInMemoryCompilator;
-import com.credits.wallet.desktop.utils.Utils;
+import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
  * Created by goncharov-eg on 30.01.2018.
  */
 public class SmartContractController extends Controller implements Initializable {
-
+    //TODO: This class is a GODZILLA please refactor it ASAP!
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
 
     private static final String[] KEYWORDS =
@@ -162,15 +162,15 @@ public class SmartContractController extends Controller implements Initializable
                 StringSelection selection = new StringSelection(token);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);
-                Utils.showInfo(String.format("Token\n\n%s\n\nhas generated and copied to clipboard", token));
+                FormUtils.showInfo(String.format("Token\n\n%s\n\nhas generated and copied to clipboard", token));
             } else {
-                Utils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
+                FormUtils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
             }
 
 
         } catch (Exception e) {
             LOGGER.error("Error deploying smart contract " + e.toString(), e);
-            Utils.showError("Error deploying smart contract " + e.toString());
+            FormUtils.showError("Error deploying smart contract " + e.toString());
         }
 
         // Call contract executor
