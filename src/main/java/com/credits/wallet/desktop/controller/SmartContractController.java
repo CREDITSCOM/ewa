@@ -203,28 +203,6 @@ public class SmartContractController extends Controller implements Initializable
         // ----------------------
     }
 
-    private SmartContractData getSmartContract(String address) {
-        SmartContractData contractData = null;
-        try {
-            contractData = AppState.apiClient.getSmartContract(address);
-        } catch (Exception e) {
-            LOGGER.error("Error fetching smart contract. " + e.toString(), e);
-            Utils.showError("Error fetching smart contract. " + e.toString());
-        }
-        return contractData;
-    }
-
-    private List<SmartContractData> getSmartContracts(String address) {
-        List<SmartContractData> contractDataList = null;
-        try {
-            contractDataList = AppState.apiClient.getSmartContracts(address);
-        } catch (ApiClientException e) {
-            LOGGER.error("Error fetching smart contracts. " + e.toString(), e);
-            Utils.showError("Error fetching smart contracts. " + e.toString());
-        }
-        return contractDataList;
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
