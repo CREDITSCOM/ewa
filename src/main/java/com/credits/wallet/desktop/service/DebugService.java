@@ -1,10 +1,15 @@
 package com.credits.wallet.desktop.service;
 
-import com.credits.wallet.desktop.utils.Utils;
+import com.credits.wallet.desktop.utils.FormUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 /**
  * Created by goncharov-eg on 28.05.2018.
@@ -91,7 +96,7 @@ public class DebugService {
             LOGGER.info("SC DEBUG: RESULTv");
 
             if (result.contains("Exception occurred"))
-                Utils.showError(result);
+                FormUtils.showError(result);
 
             return result;
         } catch (Exception e) {
