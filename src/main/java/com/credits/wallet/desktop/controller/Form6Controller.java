@@ -171,21 +171,11 @@ public class Form6Controller extends Controller implements Initializable {
         });
 
         this.numAmount.setOnKeyReleased(event -> {
-            String s1 = this.numAmount.getText();
-            String s2 = Utils.correctNum(s1);
-            if (!s1.equals(s2)) {
-                this.numAmount.setText(s2);
-                this.numAmount.positionCaret(s2.length());
-            }
+            Utils.correctNum(event.getText(), this.numAmount);
         });
 
         this.numFee.setOnKeyReleased(event -> {
-            String s1 = this.numFee.getText();
-            String s2 = Utils.correctNum(s1);
-            if (!s1.equals(s2)) {
-                this.numFee.setText(s2);
-                this.numFee.positionCaret(s2.length());
-            }
+            Utils.correctNum(event.getText(), this.numFee);
         });
 
         if (AppState.noClearForm6) {
