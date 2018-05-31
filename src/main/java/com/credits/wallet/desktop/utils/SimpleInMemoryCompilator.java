@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.wallet.desktop.exception.CompilationException;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +13,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collections;
 
 public class SimpleInMemoryCompilator {
@@ -38,7 +38,7 @@ public class SimpleInMemoryCompilator {
         Boolean isCompiled = task.call();
 
         if (!isCompiled) {
-            StringBuilder errorMessage = new StringBuilder("");
+            StringBuilder errorMessage = new StringBuilder();
             for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
                 LOGGER.error("Error on line {} in {}. Message: {}", diagnostic.getLineNumber(), diagnostic.getSource(),
                     diagnostic.getMessage(null));
@@ -57,7 +57,7 @@ public class SimpleInMemoryCompilator {
         byte[] sourceBytes;
         try {
             File classFile = new File(sourceFolder + File.separator + classname + ".class");
-            sourceBytes = FileUtils.readFileToByteArray(classFile);
+            sourceBytes = Files.readAllBytes(classFile.toPath());
         } catch (IOException e) {
             throw new CompilationException("Cannot read bytes from source file.", e);
         }
@@ -74,7 +74,7 @@ public class SimpleInMemoryCompilator {
         byte[] sourceBytes = sourceString.getBytes();
         File sourceFile = new File(sourceFolder + File.separator + classname + ".java");
         try {
-            FileUtils.writeByteArrayToFile(sourceFile, sourceBytes);
+            Files.write(sourceFile.toPath(), sourceBytes);
         } catch (IOException e) {
             throw new CompilationException("Cannot save source to file.", e);
         }

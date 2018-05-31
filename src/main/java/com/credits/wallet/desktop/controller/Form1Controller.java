@@ -18,7 +18,6 @@ public class Form1Controller extends Controller {
 
     @FXML
     private void handleGenerate() {
-
         KeyPair keyPair = Ed25519.generateKeyPair();
         AppState.publicKey = keyPair.getPublic();
         AppState.privateKey = keyPair.getPrivate();

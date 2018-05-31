@@ -3,8 +3,8 @@ package com.credits.wallet.desktop.controller;
 import com.credits.common.utils.Converter;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.struct.TransactionTabRow;
-import com.credits.wallet.desktop.utils.Utils;
+import com.credits.wallet.desktop.struct.TransactionHistoryTableRow;
+import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -33,13 +33,13 @@ public class Form8Controller extends Controller implements Initializable {
     @FXML
     private void handleSeeOnMonitor() {
         if (AppState.creditMonitorURL==null) {
-            Utils.showError("URL for credit monitor not defined");
+            FormUtils.showError("URL for credit monitor not defined");
         } else {
             try {
                 Desktop.getDesktop().browse(new URL(AppState.creditMonitorURL+AppState.account).toURI());
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
-                Utils.showError(e.getMessage());
+                FormUtils.showError(e.getMessage());
             }
         }
     }
@@ -51,7 +51,7 @@ public class Form8Controller extends Controller implements Initializable {
 
     @FXML
     private void handleView() {
-        AppState.selectedTransactionRow = new TransactionTabRow();
+        AppState.selectedTransactionRow = new TransactionHistoryTableRow();
         AppState.selectedTransactionRow.setTarget(AppState.toAddress);
         AppState.selectedTransactionRow.setCurrency(AppState.coin);
         AppState.selectedTransactionRow.setAmount(Converter.toString(AppState.amount));

@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.TextField?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
 	<children>
@@ -34,14 +35,20 @@
                                           <Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="Smart contract" />
                                           <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can check and deploy smart contract" textFill="#818181" />
                                           <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-                                          <Label layoutX="286.0" layoutY="123.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put SmartContract code">
+                                          <Label layoutX="286.0" layoutY="123.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put SmartContract code (to set/remove breakpoints double click the line)">
                                              <font>
                                                 <Font name="System Bold" size="11.0" />
                                              </font>
                                           </Label>
-                                          <Button layoutX="21.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
+                                          <Button layoutX="20.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
                                           <Button fx:id="checkButton" layoutX="210.0" layoutY="618.0" mnemonicParsing="false" onAction="#checkButtonAction" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CHECK" textAlignment="CENTER" wrapText="true" />
-                                          <Button layoutX="401.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleDeploy" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DEPLOY" wrapText="true" />
+                                          <Button fx:id="deployButton" layoutX="400.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleDeploy" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DEPLOY" wrapText="true" />
+                                          <Button fx:id="dbgDebugButton" layoutX="590.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleDbgDebug" prefHeight="61.0" prefWidth="123.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DEBUG" wrapText="true" />
+                                          <Button fx:id="dbgStopButton" layoutX="590.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleDbgStop" prefHeight="61.0" prefWidth="73.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="STOP" wrapText="true" />
+                                          <Button fx:id="dbgStepButton" layoutX="680.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleDbgStep" prefHeight="61.0" prefWidth="73.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="STEP" wrapText="true" />
+                                          <Button fx:id="dbgGoButton" layoutX="769.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleDbgGo" prefHeight="61.0" prefWidth="70.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GO" wrapText="true" />
+					  <TextField fx:id="txDbgWatch" layoutX="855.0" layoutY="618.0" prefHeight="30.0" prefWidth="90.0"/>
+                                          <Button fx:id="dbgWatchButton" layoutX="855.0" layoutY="649.0" mnemonicParsing="false" onAction="#handleDbgWatch" prefHeight="30.0" prefWidth="90.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="WATCH" wrapText="true" />
                                           <Pane fx:id="paneCode" layoutX="278.0" layoutY="148.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="455.0" prefWidth="680.0" />
                                           <ScrollPane layoutX="24.0" layoutY="148.0" prefHeight="455.0" prefWidth="234.0">
                                              <content>

@@ -20,34 +20,17 @@ public class ApiUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
-    public static void callTransactionFlow(
-            String innerId,
-            String source,
-            String target,
-            BigDecimal amount,
-            BigDecimal balance,
-            String currency
-    )
-        throws Exception {
+    public static void callTransactionFlow(String innerId, String source, String target, BigDecimal amount,
+        BigDecimal balance, String currency) throws Exception {
 
         // Формировование параметров основной транзакции
         String signature =
             Ed25519.generateSignOfTransaction(innerId, source, target, amount, balance, currency, AppState.privateKey);
 
-        TransactionFlowData transactionFlowData = new TransactionFlowData(
-                innerId,
-                source,
-                target,
-                amount,
-                balance,
-                currency,
-                signature
-        );
+        TransactionFlowData transactionFlowData =
+            new TransactionFlowData(innerId, source, target, amount, balance, currency, signature);
 
-        AppState.apiClient.transactionFlow(
-                transactionFlowData,
-                true
-        );
+        AppState.apiClient.transactionFlow(transactionFlowData, true);
     }
 
     /**

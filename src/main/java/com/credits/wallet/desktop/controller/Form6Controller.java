@@ -6,11 +6,10 @@ import com.credits.leveldb.client.exception.ApiClientException;
 import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.Dictionaries;
+import com.credits.wallet.desktop.CommonCurrency;
 import com.credits.wallet.desktop.utils.ApiUtils;
-import com.credits.wallet.desktop.utils.Utils;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import com.credits.wallet.desktop.utils.FormUtils;
+import com.credits.wallet.desktop.utils.NumberUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
@@ -19,12 +18,12 @@ import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 /**
@@ -36,10 +35,7 @@ public class Form6Controller extends Controller implements Initializable {
 
     private static final String ERR_COIN = "Coin must be selected";
     private static final String ERR_AMOUNT = "Amount must be greater than 0";
-    private static final String ERR_FEE = "Fee must be greater than 0";
     private static final String ERR_TO_ADDRESS = "To address must not be empty";
-
-    private static final String ERR_GETTING_BALANCE = "Error getting balance";
 
     @FXML
     private Label labCredit;
@@ -81,28 +77,28 @@ public class Form6Controller extends Controller implements Initializable {
         AppState.innerId = ApiUtils.generateTransactionInnerId();
 
         // VALIDATE
-        boolean ok = true;
+        boolean isValidationSuccessful = true;
         clearLabErr();
         if (AppState.coin == null || AppState.coin.isEmpty()) {
             labErrorCoin.setText(ERR_COIN);
             cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            ok = false;
+            isValidationSuccessful = false;
         }
         if (AppState.toAddress == null || AppState.toAddress.isEmpty()) {
             labErrorKey.setText(ERR_TO_ADDRESS);
             txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            ok = false;
+            isValidationSuccessful = false;
         }
         if (AppState.amount.compareTo(BigDecimal.ZERO) <= 0) {
             labErrorAmount.setText(ERR_AMOUNT);
             numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            ok = false;
+            isValidationSuccessful = false;
         }
         /*
         if (AppState.transactionFeeValue.compareTo(BigDecimal.ZERO) <= 0) {
             labErrorFee.setText(ERR_FEE);
             numFee.setStyle(numFee.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            ok = false;
+            isValidationSuccessful = false;
         }
         */
         try {
@@ -110,11 +106,10 @@ public class Form6Controller extends Controller implements Initializable {
         } catch (ApiClientException e) {
             labErrorKey.setText("Invalid Address");
             txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            ok = false;
+            isValidationSuccessful = false;
         }
-        // --------
 
-        if (ok) {
+        if (isValidationSuccessful) {
             App.showForm("/fxml/form7.fxml", "Wallet");
         }
     }
@@ -128,30 +123,24 @@ public class Form6Controller extends Controller implements Initializable {
         // Fill coin list
         cbCoin.getItems().clear();
         AppState.coins.clear();
-        for (String[] coin : Dictionaries.currencies) {
-            cbCoin.getItems().add(coin[0] + " (" + coin[1] + ")");
-            AppState.coins.add(coin[1]);
+        for (CommonCurrency coin : CommonCurrency.values()) {
+            cbCoin.getItems().add(coin.toString());
+            AppState.coins.add(coin.getMnemonic());
         }
         try {
-            FileInputStream fis = new FileInputStream("coins.csv");
-            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                String[] s = line.split(";");
-                cbCoin.getItems().add(s[0] + " (" + s[1] + ")");
-                AppState.coins.add(s[1]);
-            }
-            br.close();
-        } catch (Exception e) {
-            // do nothing - no user's coins
+            Files.readAllLines(Paths.get("coins.csv"))
+                .forEach(line -> {
+                    String[] s = line.split(";");
+                    cbCoin.getItems().add(s[0] + " (" + s[1] + ")");
+                    AppState.coins.add(s[1]);
+                });
+        } catch (IOException e) {
+            //TODO: Handle this somehow
         }
 
-        cbCoin.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                AppState.coin=AppState.coins.get((int) newValue);
-                Utils.displayBalance(AppState.coin, labCredit);
-            }
+        cbCoin.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            AppState.coin=AppState.coins.get((int) newValue);
+            FormUtils.displayBalance(AppState.coin, labCredit);
         });
 
         this.numAmount.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -171,11 +160,29 @@ public class Form6Controller extends Controller implements Initializable {
         });
 
         this.numAmount.setOnKeyReleased(event -> {
+<<<<<<< HEAD
             Utils.correctNum(event.getText(), this.numAmount);
         });
 
         this.numFee.setOnKeyReleased(event -> {
             Utils.correctNum(event.getText(), this.numFee);
+=======
+            String s1 = this.numAmount.getText();
+            String s2 = NumberUtils.correctNum(s1);
+            if (!s1.equals(s2)) {
+                this.numAmount.setText(s2);
+                this.numAmount.positionCaret(s2.length());
+            }
+        });
+
+        this.numFee.setOnKeyReleased(event -> {
+            String s1 = this.numFee.getText();
+            String s2 = NumberUtils.correctNum(s1);
+            if (!s1.equals(s2)) {
+                this.numFee.setText(s2);
+                this.numFee.positionCaret(s2.length());
+            }
+>>>>>>> bcf06cb654810c07def97f3c60520a5921fb7c3e
         });
 
         if (AppState.noClearForm6) {
@@ -195,10 +202,6 @@ public class Form6Controller extends Controller implements Initializable {
     @FXML
     private void handleNewCoin() {
         App.showForm("/fxml/new_coin.fxml", "Wallet");
-    }
-
-    private BigDecimal getBalance(String coin) throws Exception {
-        return AppState.apiClient.getBalance(AppState.account, coin);
     }
 
     private void clearLabErr() {
