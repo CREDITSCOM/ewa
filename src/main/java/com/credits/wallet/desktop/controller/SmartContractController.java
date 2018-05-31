@@ -3,6 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.exception.ApiClientException;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
@@ -152,6 +153,7 @@ public class SmartContractController extends Controller implements Initializable
                     hashState
             );
             String transactionInnerId = ApiUtils.generateTransactionInnerId();
+
             ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(
                     transactionInnerId,
                     AppState.account,
@@ -166,8 +168,6 @@ public class SmartContractController extends Controller implements Initializable
             } else {
                 FormUtils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
             }
-
-
         } catch (Exception e) {
             LOGGER.error("Error deploying smart contract " + e.toString(), e);
             FormUtils.showError("Error deploying smart contract " + e.toString());
@@ -201,6 +201,28 @@ public class SmartContractController extends Controller implements Initializable
 //            }
 //        }
         // ----------------------
+    }
+
+    private SmartContractData getSmartContract(String address) {
+        SmartContractData contractData = null;
+        try {
+            contractData = AppState.apiClient.getSmartContract(address);
+        } catch (Exception e) {
+            LOGGER.error("Error fetching smart contract. " + e.toString(), e);
+            Utils.showError("Error fetching smart contract. " + e.toString());
+        }
+        return contractData;
+    }
+
+    private List<SmartContractData> getSmartContracts(String address) {
+        List<SmartContractData> contractDataList = null;
+        try {
+            contractDataList = AppState.apiClient.getSmartContracts(address);
+        } catch (ApiClientException e) {
+            LOGGER.error("Error fetching smart contracts. " + e.toString(), e);
+            Utils.showError("Error fetching smart contracts. " + e.toString());
+        }
+        return contractDataList;
     }
 
     @Override
