@@ -1,7 +1,7 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.thread.GetBalanceThread;
+import com.credits.wallet.desktop.thread.GetBalanceUpdater;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -43,7 +43,7 @@ public class Utils {
 
     public static void displayBalance(String coin, Label label) {
         label.setText(MSG_RETRIEVE_BALANCE);
-        Thread getBalanceThread = new Thread(new GetBalanceThread(coin, label));
+        Thread getBalanceThread = new Thread(new GetBalanceUpdater(coin, label));
         getBalanceThread.start();
     }
 }
