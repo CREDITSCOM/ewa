@@ -23,20 +23,6 @@ public abstract class SmartContract implements Serializable {
     private String specialProperty;
 
     protected SmartContract() {
-//        Class<?> clazz = this.getClass();
-//        String fileName = clazz.getSimpleName() + ".class";
-//        URL fileURL = clazz.getClassLoader().getResource(fileName);
-//        String loadAddress = new File(fileURL.getFile()).getParentFile().getName();
-//
-//        File propertySerFile = Serializer.getPropertySerFile(loadAddress);
-//        String property;
-//        try {
-//            property = (String) Serializer.deserialize(propertySerFile, ClassLoader.getSystemClassLoader());
-//        } catch (ContractExecutorException e) {
-//            throw new RuntimeException(e);
-//        }
-//        this.specialProperty = property;
-//        propertySerFile.delete();
     }
 
     abstract protected void initialize();
@@ -87,13 +73,13 @@ public abstract class SmartContract implements Serializable {
             byte[] innerIdhashBytes = Blake2S.generateHash(4);
             String innerId = Converter.bytesToHex(innerIdhashBytes);
 
-            byte[] privateKeyByteArr = Converter.decodeFromBASE58(this.specialProperty);
-            PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
+//            byte[] privateKeyByteArr = Converter.decodeFromBASE58(this.specialProperty);
+//            PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
 
             BigDecimal balance = service.getBalance(source, currency);
 
-            String signatureBASE58 =
-                Ed25519.generateSignOfTransaction(innerId, source, target, decAmount, balance, currency, privateKey);
+            String signatureBASE58 = "";
+//                Ed25519.generateSignOfTransaction(innerId, source, target, decAmount, balance, currency, privateKey);
 
             service.transactionFlow(innerId, source, target, decAmount, balance, currency, signatureBASE58);
         } catch (Exception e) {
