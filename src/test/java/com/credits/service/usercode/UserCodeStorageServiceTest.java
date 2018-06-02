@@ -20,7 +20,6 @@ public class UserCodeStorageServiceTest extends ServiceTest {
 
     @Before
     public void setUp() {
-        clean(address);
     }
 
     @Test

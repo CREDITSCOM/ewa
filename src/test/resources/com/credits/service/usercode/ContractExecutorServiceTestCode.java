@@ -2,6 +2,9 @@ public class ContractExecutorServiceTestCode extends SmartContract {
 
     private int total;
 
+    @Override
+    public void initialize(){}
+
     public ContractExecutorServiceTestCode() throws Exception {
         String name = Thread.currentThread().getName();
         System.out.println("The constructor has been invoked. Thread: " + name);

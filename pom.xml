@@ -15,6 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.version>5.0.4.RELEASE</spring.version>
+        <powermock.version>1.7.1</powermock.version>
     </properties>
 
     <dependencies>
@@ -57,16 +58,28 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.mockito</groupId>-->
+            <!--<artifactId>mockito-all</artifactId>-->
+            <!--<version>1.9.5</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -104,13 +117,14 @@
                 <configuration>
                     <excludes>
                         <exclude>**/Test.java</exclude>
-                        <exclude>**/ContractExecutorServiceMethodParametersTestCode.java</exclude>
+                        <exclude>**/Contract.java</exclude>
                         <exclude>**/ContractExecutorServiceTestCode.java</exclude>
                         <exclude>**/ContractExecutorServiceThriftIntegrationTestCode.java</exclude>
                         <exclude>**/ContractExecutorServiceThriftIntegrationTest.java</exclude>
                         <exclude>**/ThriftServerLoadTest.java</exclude>
                         <exclude>**/ContractExecutorServiceTest.java</exclude>
                         <exclude>**/ContractExecutorServiceSecurityTestCode.java</exclude>
+                        <exclude>**/Contract.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

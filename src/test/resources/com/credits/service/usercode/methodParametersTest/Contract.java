@@ -1,8 +1,10 @@
-public class ContractExecutorServiceMethodParametersTestCode extends SmartContract {
+public class Contract extends SmartContract {
 
     private static int statIntVar = 2;
 
     private int intVar = 1;
+
+    public void initialize() {}
 
     public static void main(String[] args) {
         System.out.println("Method main(String[] args) has been invoked");

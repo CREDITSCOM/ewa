@@ -8,14 +8,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class ContractExecutorServiceSecurityTestCode extends SmartContract {
+public class Contract extends SmartContract {
 
     private int total;
 
-    public ContractExecutorServiceSecurityTestCode() throws Exception {
+    public Contract() throws Exception {
         String name = Thread.currentThread().getName();
         System.out.println("The constructor has been invoked. Thread: " + name);
-//        System.out.println("Balance is " + getBalance("accXpfvxnZa8txuxpjyPqzBaqYPHqYu2rwn34lL8rjI=", "cs") + "Thread: " + name);
     }
 
     @Override
