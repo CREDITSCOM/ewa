@@ -9,7 +9,7 @@ public interface ContractExecutorService {
      * @param address A contract address
      * @throws ContractExecutorException
      */
-    void execute(String address, String specialProperty) throws ContractExecutorException;
+//    void execute(String address, String specialProperty) throws ContractExecutorException;
 
     /**
      * Executes a method by specified address, method name and parameters.
@@ -20,7 +20,7 @@ public interface ContractExecutorService {
      * @param params     Parameters of a method
      * @throws ContractExecutorException
      */
-    void execute(String address, String methodName, String[] params) throws ContractExecutorException;
+//    void execute(String address, String methodName, String[] params) throws ContractExecutorException;
 
 
     void execute(String address, byte[] bytecode, String methodName, String[] params) throws ContractExecutorException;
