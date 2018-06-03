@@ -22,7 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 
 public class TestUtils {
-    public static String encrypt(byte[] bytes) throws CreditsException, NoSuchAlgorithmException {
+    public static String encrypt(byte[] bytes) throws CreditsException {
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("MD5");
@@ -100,7 +100,7 @@ public class TestUtils {
             Boolean isCompiled = task.call();
 
             if (!isCompiled) {
-                StringBuilder errorMessage = new StringBuilder("");
+                StringBuilder errorMessage = new StringBuilder();
                 for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
                     logger.error("Error on line {} in {}. Message: {}", diagnostic.getLineNumber(),
                         diagnostic.getSource(), diagnostic.getMessage(null));
@@ -134,7 +134,7 @@ public class TestUtils {
 
         }
 
-        private static File save(File sourceFolder, String classname, String sourceString) throws CompilationException {
+        private static File save(File sourceFolder, String classname, String sourceString) {
             byte[] sourceBytes = sourceString.getBytes();
             File sourceFile = new File(sourceFolder + File.separator + classname + ".java");
             try {

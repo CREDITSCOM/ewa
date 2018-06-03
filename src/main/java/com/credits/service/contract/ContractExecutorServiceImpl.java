@@ -160,9 +160,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new PropertyPermission("com.sun.security.preserveOldDCEncoding", "read"));
         permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
         permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
-        /*for test*/
-        //permissions.add(new FilePermission("\\-", "read"));
-        //permissions.add(new FilePermission("\\C:\\-", "read"));
         return permissions;
     }
 
