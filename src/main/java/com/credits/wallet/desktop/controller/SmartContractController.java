@@ -1,69 +1,19 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.leveldb.client.ApiClient;
-import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.service.DebugService;
-import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
-import com.credits.wallet.desktop.utils.ApiUtils;
-import com.credits.wallet.desktop.utils.EclipseJdt;
-import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.SimpleInMemoryCompilator;
-import javafx.concurrent.Task;
+import com.credits.wallet.desktop.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
+import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.TextField;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.net.URL;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-import java.util.function.IntFunction;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -72,359 +22,50 @@ public class SmartContractController extends Controller implements Initializable
     //TODO: This class is a GODZILLA please refactor it ASAP!
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
 
-    private static final String[] KEYWORDS =
-        new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
-            "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for",
-            "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package",
-            "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch",
-            "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while"};
-
-    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
-    private static final String PAREN_PATTERN = "[()]";
-    private static final String BRACE_PATTERN = "[{}]";
-    private static final String BRACKET_PATTERN = "[\\[]]";
-    private static final String SEMICOLON_PATTERN = ";";
-    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
-    private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
-
-    private static final Pattern PATTERN = Pattern.compile(
-        "(?<KEYWORD>" + KEYWORD_PATTERN + ")" + "|(?<PAREN>" + PAREN_PATTERN + ")" + "|(?<BRACE>" + BRACE_PATTERN +
-            ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")" + "|(?<STRING>" +
-            STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
-
-    private static final String dftCode =
-        "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n" +
-            "        total = 0;\n" + "    }" + "\n" + "}";
-    private static final String nonChangedStr = "public class Contract extends SmartContract {";
-
-    private static final String[] parentMethods =
-        new String[] {"double total", "Double getBalance(String address, String currency)",
-            "TransactionData getTransaction(String transactionId)",
-            "List<TransactionData> getTransactions(String address, long offset, long limit)",
-            "List<PoolData> getPoolList(long offset, long limit)", "PoolData getPool(String poolNumber)",
-            "void sendTransaction(String source, String target, Double amount, String currency)"};
-
-    private CodeArea codeArea;
-    private TableView tabErrors;
-
-    private String prevCode;
-
-    private List<String> breakPoints = new ArrayList<>();
-    private int dbgCursor;
-    private boolean dbgMode;
-    private DebugService dbgService;
-
+    @FXML
+    Label address;
 
     @FXML
-    private Pane paneCode;
+    private TextField txAddress;
 
     @FXML
-    private TreeView<Label> classTreeView;
+    private TextArea taCode;
 
     @FXML
-    private Button checkButton;
-
-    @FXML
-    private Button dbgDebugButton;
-    @FXML
-    private Button dbgStopButton;
-    @FXML
-    private Button dbgStepButton;
-    @FXML
-    private Button dbgGoButton;
-    @FXML
-    private Button dbgWatchButton;
-    @FXML
-    private TextField txDbgWatch;
+    private TreeView<Label> contractsTree;
 
     @FXML
     private void handleBack() {
-        if (AppState.executor != null) {
-            AppState.executor.shutdown();
-            AppState.executor = null;
-        }
         App.showForm("/fxml/form6.fxml", "Wallet");
     }
 
     @FXML
-    private void handleDeploy() {
-        char[] characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
-        StringBuilder sb = new StringBuilder();
-        sb.append("CST");
-        Random random = new Random();
-        int max = characters.length - 1;
-        for (int i = 0; i < 29; i++) {
-            sb.append(characters[random.nextInt(max)]);
-        }
+    private void handleCreate() {
+        App.showForm("/fxml/smart_contract_deploy.fxml", "Wallet");
+    }
 
-        String token = sb.toString();
-
-        // Parse className
-        String className = "SmartContract";
-
-        String javaCode = codeArea.getText().replace("\r", " ").replace("\n", " ").replace("{", " {");
-
-        while (javaCode.contains("  ")) {
-            javaCode = javaCode.replace("  ", " ");
-        }
-        java.util.List<String> javaCodeWords = Arrays.asList(javaCode.split(" "));
-        int ind = javaCodeWords.indexOf("class");
-        if (ind >= 0 && ind < javaCodeWords.size() - 1) {
-            className = javaCodeWords.get(ind + 1);
-        }
-
+    @FXML
+    private void handleSearch() {
+        String address = txAddress.getText();
         try {
-            byte[] byteCode = SimpleInMemoryCompilator.compile(javaCode, className, token);
+            SmartContractData smartContractData = AppState.apiClient.getSmartContract(address);
 
-            String hashState = ApiUtils.generateSmartContractHashState(byteCode);
-            SmartContractData smartContractData = new SmartContractData(javaCode, byteCode, hashState);
-            String transactionInnerId = ApiUtils.generateTransactionInnerId();
+            this.address.setText(address);
+            this.taCode.setText(smartContractData.getSourceCode());
 
-            ApiResponseData apiResponseData =
-                AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, smartContractData);
-
-            if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
-                StringSelection selection = new StringSelection(token);
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(selection, selection);
-                FormUtils.showInfo(String.format("Token\n\n%s\n\nhas generated and copied to clipboard", token));
-            } else {
-                FormUtils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
-            }
         } catch (Exception e) {
-            LOGGER.error("Error deploying smart contract " + e.toString(), e);
-            FormUtils.showError("Error deploying smart contract " + e.toString());
+            LOGGER.error(e.getMessage(), e);
+            Utils.showError(String.format("Error %s", e.getMessage()));
         }
-
-        // Call contract executor
-        //        if (AppState.contractExecutorHost != null &&
-        //                AppState.contractExecutorPort != null) {
-        //            try {
-        //                // ---------------
-        //                TTransport transport;
-        //
-        //                transport = new TSocket(AppState.contractExecutorHost, AppState.contractExecutorPort);
-        //                transport.open();
-        //
-        //                TProtocol protocol = new TBinaryProtocol(transport);
-        //                ContractExecutor.Client client = new ContractExecutor.Client(protocol);
-        //
-        //                ContractFile contractFile = new ContractFile();
-        //                contractFile.setName(className+".java");
-        //                contractFile.setFile(codeArea.getText().getBytes());
-        //
-        //                APIResponse executorResponse = client.store(
-        //                        contractFile,
-        //                        token,
-        //                        Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey))
-        //                );
-        //
-        //                transport.close();
-        //            } catch (Exception e) {
-        //            }
-        //        }
-        // ----------------------
-    }
-
-    @FXML
-    private void handleDbgDebug() {
-        dbgMode = false;
-        if (breakPoints.size() == 0) {
-            FormUtils.showError("Please set one or more breakpoints");
-        } else {
-            String className = parseClassName();
-            dbgService = new DebugService(parseClassName(), codeArea.getText());
-            String compileError = dbgService.compile();
-            if (!compileError.isEmpty()) {
-                FormUtils.showError(compileError);
-            } else {
-                String startError = dbgService.start();
-                if (!startError.isEmpty()) {
-                    FormUtils.showError(startError);
-                } else {
-                    for (String lineNumber : breakPoints) {
-                        int realLineNumber = Integer.valueOf(lineNumber) + 1;
-                        String cmd = "stop at " + className + ":" + realLineNumber;
-                        dbgService.execCmd(cmd);
-                    }
-                    dbgService.execCmd("run");
-                    try {
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                        LOGGER.error(e.getMessage(), e);
-                    }
-                    dbgService.execCmd("");
-
-                    dbgMode = true;
-                    dbgSetCursor();
-                }
-            }
-        }
-        showDbgButtons();
-    }
-
-    @FXML
-    private void handleDbgStop() {
-        dbgService.destroy();
-        dbgMode = false;
-        showDbgButtons();
-        repaintCodeArea();
-        FormUtils.showInfo("Dubug has finished");
-    }
-
-    @FXML
-    private void handleDbgStep() throws Exception {
-        dbgService.execCmd("step");
-        Thread.sleep(1000);
-        dbgService.execCmd("");
-        dbgSetCursor();
-    }
-
-    @FXML
-    private void handleDbgGo() throws Exception {
-        dbgService.execCmd("cont");
-        Thread.sleep(1000);
-        dbgService.execCmd("");
-        dbgSetCursor();
-    }
-
-    @FXML
-    private void handleDbgWatch() throws Exception {
-        dbgWatchExp(txDbgWatch.getText());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
-        if (AppState.executor != null) {
-            AppState.executor.shutdown();
-        }
-        AppState.executor = Executors.newSingleThreadExecutor();
+        this.contractsTree.setRoot(null);
 
-        prevCode = dftCode;
-
-        codeArea = new CodeArea();
-
-        IntFunction<Node> lineNumberFunction = value -> {
-            Label lineNo = new Label();
-            lineNo.setFont(Font.font("monospace", FontPosture.ITALIC, 13));
-
-            if (dbgMode && value == dbgCursor - 1) {
-                lineNo.setBackground(new Background(new BackgroundFill(Color.web("blue"), null, null)));
-            } else if (breakPoints.contains(Integer.toString(value))) {
-                lineNo.setBackground(new Background(new BackgroundFill(Color.web("red"), null, null)));
-            } else {
-                lineNo.setBackground(new Background(new BackgroundFill(Color.web("#ddd"), null, null)));
-            }
-
-            lineNo.setTextFill(Color.web("#666"));
-            lineNo.setPadding(new Insets(0.0, 5.0, 0.0, 5.0));
-            lineNo.setAlignment(Pos.TOP_RIGHT);
-            lineNo.getStyleClass().add("lineno");
-
-            String result = Integer.toString(value + 1);
-            while (result.length() < 3) {
-                result = " " + result;
-            }
-            lineNo.setText(result);
-            return lineNo;
-        };
-
-        codeArea.setParagraphGraphicFactory(lineNumberFunction);
-
-        codeArea.setOnKeyPressed(ke -> {
-            if (ke.isControlDown() && ke.getCode().equals(KeyCode.SPACE)) {
-                codePopup();
-            }
-        });
-
-        codeArea.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                int lineNum = codeArea.getCurrentParagraph();
-                String lineNumStr = Integer.toString(lineNum);
-                if (breakPoints.contains(lineNumStr)) {
-                    breakPoints.remove(lineNumStr);
-                } else {
-                    breakPoints.add(lineNumStr);
-                }
-
-                repaintCodeArea();
-            }
-        });
-
-        codeArea.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
-            .subscribe(change -> {
-                String curCode = codeArea.getText();
-
-                // Replace TAB to 4 spaces
-                if (curCode.contains("\t")) {
-                    codeArea.replaceText(0, curCode.length(), curCode.replace("\t", "    "));
-                    curCode = codeArea.getText();
-                }
-
-                if (!curCode.contains(nonChangedStr)) {
-                    codeArea.replaceText(0, curCode.length(), prevCode);
-                } else {
-                    int i1 = curCode.indexOf(nonChangedStr);
-                    if (curCode.indexOf(nonChangedStr, i1 + 1) > 0) {
-                        codeArea.replaceText(0, curCode.length(), prevCode);
-                    }
-                }
-                prevCode = codeArea.getText();
-            });
-
-        codeArea.richChanges()
-            .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
-            .successionEnds(Duration.ofMillis(500))
-            .supplyTask(this::computeHighlightingAsync)
-            .awaitLatest(codeArea.richChanges())
-            .filterMap(t -> {
-                if (t.isSuccess()) {
-                    return Optional.of(t.get());
-                } else {
-                    t.getFailure().printStackTrace();
-                    return Optional.empty();
-                }
-            })
-            .subscribe(this::applyHighlighting);
-
-        codeArea.setPrefHeight(paneCode.getPrefHeight());
-        codeArea.setPrefWidth(paneCode.getPrefWidth());
-        codeArea.replaceText(0, 0, dftCode);
-        paneCode.getChildren().add(codeArea);
-
-        tabErrors = new TableView();
-        tabErrors.setPrefHeight(paneCode.getPrefHeight() * 0.3);
-        tabErrors.setPrefWidth(paneCode.getPrefWidth());
-
-        TableColumn tabErrorsColLine = new TableColumn();
-        tabErrorsColLine.setText("Line");
-        tabErrorsColLine.setPrefWidth(paneCode.getPrefWidth() * 0.1);
-        TableColumn tabErrorsColText = new TableColumn();
-        tabErrorsColText.setText("Error");
-        tabErrorsColText.setPrefWidth(paneCode.getPrefWidth() * 0.9);
-        tabErrors.getColumns().add(tabErrorsColLine);
-        tabErrors.getColumns().add(tabErrorsColText);
-
-        TableColumn[] tableColumns = new TableColumn[tabErrors.getColumns().size()];
-        for (int i = 0; i < tabErrors.getColumns().size(); i++) {
-            tableColumns[i] = (TableColumn) tabErrors.getColumns().get(i);
-        }
-        tableColumns[0].setCellValueFactory(new PropertyValueFactory<ErrorCodeTabRow, String>("line"));
-        tableColumns[1].setCellValueFactory(new PropertyValueFactory<ErrorCodeTabRow, String>("text"));
-
-        tabErrors.setOnMousePressed(event -> {
-            if (event.isPrimaryButtonDown()) {
-                ErrorCodeTabRow tabRow = (ErrorCodeTabRow) tabErrors.getSelectionModel().getSelectedItem();
-                if (tabRow != null) {
-                    positionCodeAreaToLine(Integer.valueOf(tabRow.getLine()));
-                }
-            }
-        });
-
-        dbgMode = false;
-        dbgCursor = -1;
-        showDbgButtons();
+        //2DO
+        //AppState.apiClient.
     }
 
     @FXML
@@ -433,269 +74,5 @@ public class SmartContractController extends Controller implements Initializable
     }
 
     private void refreshClassMembersTree() {
-
-        this.classTreeView.setRoot(null);
-
-        String sourceCode = codeArea.getText();
-
-        CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
-
-        List typeList = compilationUnit.types();
-
-        if (typeList.size() != 1) {
-            return;
-        }
-
-        TypeDeclaration typeDeclaration = (TypeDeclaration) typeList.get(0);
-
-        String className = (typeDeclaration).getName().getFullyQualifiedName();
-
-        Label labelRoot = new Label(className);
-
-        TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
-
-        ASTNode root = compilationUnit.getRoot();
-
-        root.accept(new ASTVisitor() {
-
-            @Override
-            public boolean visit(FieldDeclaration node) {
-                return true;
-            }
-
-            @Override
-            public void endVisit(FieldDeclaration node) {
-                Label label = new Label(node.toString());
-
-                label.setOnMousePressed(event -> {
-                    if (event.isPrimaryButtonDown()) {
-                        positionCodeAreaToLine(compilationUnit.getLineNumber(node.getStartPosition()));
-                    }
-                });
-
-                TreeItem<Label> treeItem = new TreeItem<>();
-                treeItem.setValue(label);
-
-                treeRoot.getChildren().add(treeItem);
-            }
-
-        });
-
-        root.accept(new ASTVisitor() {
-
-            @Override
-            public boolean visit(MethodDeclaration node) {
-                return true;
-            }
-
-            @Override
-            public void endVisit(MethodDeclaration node) {
-                node.setBody(null);
-                Label label = new Label(node.toString());
-                label.setOnMousePressed(event -> {
-                    if (event.isPrimaryButtonDown()) {
-                        positionCodeAreaToLine(compilationUnit.getLineNumber(node.getStartPosition()));
-                    }
-                });
-
-                TreeItem<Label> treeItem = new TreeItem<>();
-                treeItem.setValue(label);
-
-                treeRoot.getChildren().add(treeItem);
-            }
-
-        });
-
-        treeRoot.setExpanded(true);
-        this.classTreeView.setRoot(treeRoot);
-    }
-
-    @FXML
-    @SuppressWarnings("unchecked")
-    private void checkButtonAction() {
-        String sourceCode = codeArea.getText();
-
-        IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
-
-        if (problemArr.length > 0) {
-            tabErrors.getItems().clear();
-
-            for (IProblem p : problemArr) {
-                ErrorCodeTabRow tr = new ErrorCodeTabRow();
-                tr.setLine(Integer.toString(p.getSourceLineNumber()));
-                tr.setText(p.getMessage());
-                tabErrors.getItems().add(tr);
-            }
-
-            codeArea.setPrefHeight(paneCode.getPrefHeight() * 0.7);
-            paneCode.getChildren().clear();
-            paneCode.getChildren().add(codeArea);
-            paneCode.getChildren().add(tabErrors);
-            paneCode.getChildren().get(1).setLayoutY(paneCode.getPrefHeight() * 0.7);
-        } else {
-            codeArea.setPrefHeight(paneCode.getPrefHeight());
-            paneCode.getChildren().clear();
-            paneCode.getChildren().add(codeArea);
-        }
-    }
-
-    private StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Matcher matcher = PATTERN.matcher(text);
-        int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        while (matcher.find()) {
-            String styleClass = matcher.group("KEYWORD") != null ? "keyword" : matcher.group("PAREN") != null ? "paren"
-                : matcher.group("BRACE") != null ? "brace" : matcher.group("BRACKET") != null ? "bracket"
-                    : matcher.group("SEMICOLON") != null ? "semicolon" : matcher.group("STRING") != null ? "string"
-                        : matcher.group("COMMENT") != null ? "comment" : null; /* never happens */
-            assert styleClass != null;
-            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
-            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
-            lastKwEnd = matcher.end();
-        }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
-        return spansBuilder.create();
-    }
-
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        codeArea.setStyleSpans(0, highlighting);
-    }
-
-    private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
-        String text = codeArea.getText();
-        Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
-            @Override
-            protected StyleSpans<Collection<String>> call() {
-                return computeHighlighting(text);
-            }
-        };
-        AppState.executor.execute(task);
-        return task;
-    }
-
-    private void positionCodeAreaToLine(int line) {
-        char[] text = codeArea.getText().toCharArray();
-        int pos = 0;
-        int curLine = 1;
-        while (pos < text.length) {
-            if (line <= curLine) {
-                break;
-            }
-            if (text[pos] == '\n') {
-                curLine++;
-            }
-            pos++;
-        }
-        codeArea.displaceCaret(pos);
-        codeArea.showParagraphAtTop(Math.max(0, line - 5));
-        codeArea.requestFocus();
-    }
-
-    private void codePopup() {
-        ContextMenu contextMenu = new ContextMenu();
-
-        StringBuilder word = new StringBuilder();
-        int pos = codeArea.getCaretPosition() - 1;
-        String txt = codeArea.getText();
-        while (pos > 0 && !txt.substring(pos, pos + 1).equals(" ") && !txt.substring(pos, pos + 1).equals("\r") &&
-            !txt.substring(pos, pos + 1).equals("\n")) {
-            word.insert(0, txt.substring(pos, pos + 1));
-            pos--;
-        }
-
-        for (String method : parentMethods) {
-            if (word.toString().trim().isEmpty() || method.toUpperCase().indexOf(word.toString().trim().toUpperCase()) > 0) {
-                MenuItem action = new MenuItem(method);
-                contextMenu.getItems().add(action);
-                action.setOnAction(event -> {
-                    int pos1 = codeArea.getCaretPosition();
-                    String txtToIns = normMethodName(method);
-                    codeArea.replaceText(pos1, pos1, txtToIns);
-                });
-            }
-        }
-
-        if (contextMenu.getItems().isEmpty()) {
-            MenuItem action = new MenuItem("No suggestions");
-            contextMenu.getItems().add(action);
-        }
-
-        contextMenu.show(codeArea, codeArea.getCaretBounds().get().getMaxX(),
-            codeArea.getCaretBounds().get().getMaxY());
-    }
-
-    private String normMethodName(String method) {
-        int ind1 = method.indexOf(" ");
-        String result = method.substring(ind1 + 1);
-
-        ind1 = result.indexOf("(");
-        int ind2 = result.indexOf(")");
-        StringBuilder parametersStr = new StringBuilder();
-        String[] parameters = result.substring(ind1, ind2).trim().split(",");
-        boolean first = true;
-        for (String parameter : parameters) {
-            String[] parameterAsArr = parameter.trim().split(" ");
-            if (first) {
-                parametersStr.append(parameterAsArr[1].trim());
-            } else {
-                parametersStr.append(", ").append(parameterAsArr[1].trim());
-            }
-            first = false;
-        }
-
-        return result.substring(0, ind1 + 1) + parametersStr + ")";
-    }
-
-    private void showDbgButtons() {
-        dbgDebugButton.setVisible(!dbgMode);
-        dbgStopButton.setVisible(dbgMode);
-        dbgStepButton.setVisible(dbgMode);
-        dbgGoButton.setVisible(dbgMode);
-        dbgWatchButton.setVisible(dbgMode);
-        txDbgWatch.setVisible(dbgMode);
-    }
-
-    private String parseClassName() {
-        String className = "SmartContract";
-
-        String javaCode = codeArea.getText().replace("\r", " ").replace("\n", " ").replace("{", " {");
-
-        while (javaCode.contains("  ")) {
-            javaCode = javaCode.replace("  ", " ");
-        }
-        java.util.List<String> javaCodeWords = Arrays.asList(javaCode.split(" "));
-        int ind = javaCodeWords.indexOf("class");
-        if (ind >= 0 && ind < javaCodeWords.size() - 1) {
-            className = javaCodeWords.get(ind + 1);
-        }
-        return className;
-    }
-
-    private void dbgSetCursor() {
-        dbgCursor = -1;
-        if (dbgMode) {
-            Integer cursorPosition = dbgService.cursorPosition();
-            if (cursorPosition != null) {
-                dbgCursor = cursorPosition;
-            } else {
-                handleDbgStop();
-            }
-        }
-        repaintCodeArea();
-    }
-
-    private void repaintCodeArea() {
-        int caretPosition = codeArea.getCaretPosition();
-        String txt = codeArea.getText();
-        codeArea.replaceText(0, txt.length(), "");
-        codeArea.replaceText(0, txt.length(), txt);
-        codeArea.displaceCaret(caretPosition);
-    }
-
-    private void dbgWatchExp(String exp) throws Exception {
-        String res = dbgService.execCmd("print " + exp);
-        Thread.sleep(1000);
-        res = res + dbgService.execCmd("");
-        FormUtils.showInfo(res);
     }
 }

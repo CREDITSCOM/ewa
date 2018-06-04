@@ -30,7 +30,10 @@ public class ApiUtils {
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(innerId, source, target, amount, balance, currency, signature);
 
-        AppState.apiClient.transactionFlow(transactionFlowData, true);
+        AppState.apiClient.transactionFlow(
+                transactionFlowData,
+                false
+        );
     }
 
     /**
