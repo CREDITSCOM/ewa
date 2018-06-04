@@ -3,6 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.Utils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -62,10 +63,19 @@ public class SmartContractController extends Controller implements Initializable
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
-        this.contractsTree.setRoot(null);
+        TreeItem<Label> rootItem=new TreeItem<Label>(new Label("Smart contracts"));
 
-        //2DO
-        //AppState.apiClient.
+        try {
+            List<SmartContractData> smartContracts = AppState.apiClient.getSmartContracts(AppState.account);
+            for (SmartContractData smartContractData : smartContracts) {
+                rootItem.getChildren().add(new TreeItem<Label>(new Label(smartContractData.getHashState())));
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            FormUtils.showError("Error getting Smart Contract List " + e.toString());
+        }
+
+        this.contractsTree.setRoot(rootItem);
     }
 
     @FXML
