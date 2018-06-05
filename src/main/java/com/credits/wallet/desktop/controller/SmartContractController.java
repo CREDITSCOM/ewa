@@ -33,6 +33,9 @@ public class SmartContractController extends Controller implements Initializable
     private TextArea taCode;
 
     @FXML
+    private TextArea taABI;
+
+    @FXML
     private TreeView<Label> contractsTree;
 
     @FXML
@@ -76,6 +79,9 @@ public class SmartContractController extends Controller implements Initializable
         }
 
         this.contractsTree.setRoot(rootItem);
+
+        taCode.setDisable(true);
+        taABI.setDisable(true);
     }
 
     @FXML

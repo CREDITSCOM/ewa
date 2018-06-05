@@ -39,7 +39,7 @@
                                           <Button layoutX="21.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
                                           <Pane fx:id="paneCode" layoutX="278.0" layoutY="148.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="455.0" prefWidth="680.0">
                                              <children>
-                                                <TextArea layoutX="75.0" layoutY="88.0" prefHeight="110.0" prefWidth="470.0" style="-fx-border-width: 1; -fx-background-color: #fff; -fx-border-color: #000;" />
+                                                <TextArea fx:id="taABI" layoutX="75.0" layoutY="88.0" prefHeight="110.0" prefWidth="470.0" style="-fx-border-width: 1; -fx-background-color: #fff; -fx-border-color: #000;" />
                                                 <Label layoutX="75.0" layoutY="-3.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Contract address">
                                                    <font>
                                                       <Font name="System Bold" size="11.0" />
@@ -71,7 +71,7 @@
                                           <TextField fx:id="txAddress" layoutX="21.0" layoutY="84.0" prefHeight="56.0" prefWidth="311.0" promptText="search contract" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
                                           <Button layoutX="347.0" layoutY="81.0" mnemonicParsing="false" onAction="#handleSearch" prefHeight="61.0" prefWidth="93.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="OK" textAlignment="CENTER" wrapText="true" />
                                           <Button layoutX="486.0" layoutY="81.0" mnemonicParsing="false" onAction="#handleCreate" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CREATE" textAlignment="CENTER" wrapText="true" />
-                                          <TextArea layoutX="884.0" layoutY="156.0" prefHeight="451.0" prefWidth="470.0" style="-fx-border-width: 1; -fx-background-color: #fff; -fx-border-color: #000;" />
+                                          <TextArea fx:id="taCode" layoutX="884.0" layoutY="156.0" prefHeight="451.0" prefWidth="470.0" style="-fx-border-width: 1; -fx-background-color: #fff; -fx-border-color: #000;" />
                                        </children>
                                     </Pane>
                                  </children>
