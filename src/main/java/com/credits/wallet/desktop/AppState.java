@@ -17,11 +17,7 @@ import java.util.concurrent.ExecutorService;
 public class AppState {
     public static ApiClient apiClient;
     public static String decimalSeparator;
-    public static String contractExecutorHost;
-    public static Integer contractExecutorPort;
     public static String creditMonitorURL;
-    public static String csSenderBotHost;
-    public static Integer csSenderBotPort;
 
     public static boolean newAccount;
     public static boolean detailFromHistory;

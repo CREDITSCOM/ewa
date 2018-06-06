@@ -6,7 +6,6 @@ import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
-import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -125,14 +124,14 @@ public class Form5Controller extends Controller implements Initializable {
 
         AppState.account = pubKey;
         if (AppState.newAccount) {
-            // Создание системной транзакции
-            try {
-                ApiUtils.execSystemTransaction(pubKey);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                FormUtils.showError("Error creating transaction " + e.toString());
-                //return;
-            }
+            //TODO: if there is no need to make a system transaction separately we should remove this code and refactor the method
+            //            try {
+            //                ApiUtils.execSystemTransaction(pubKey);
+            //            } catch (Exception e) {
+            //                LOGGER.error(e.getMessage(), e);
+            //                FormUtils.showError("Error creating transaction " + e.toString());
+            //                //return;
+            //            }
         } else {
             try {
                 byte[] publicKeyByteArr = Converter.decodeFromBASE58(pubKey);
@@ -156,24 +155,26 @@ public class Form5Controller extends Controller implements Initializable {
     }
 
     private boolean validateKeys(String publicKey, String privateKey) {
+        byte[] publicKeyByteArr;
+        byte[] privateKeyByteArr;
         try {
-            byte[] publicKeyByteArr = Converter.decodeFromBASE58(publicKey);
-            byte[] privateKeyByteArr = Converter.decodeFromBASE58(privateKey);
-
-            if (privateKeyByteArr.length <= 32) {
-                return false;
-            }
-
-            for (int i = 0; i < publicKeyByteArr.length && i < privateKeyByteArr.length - 32; i++) {
-                if (publicKeyByteArr[i] != privateKeyByteArr[i + 32]) {
-                    return false;
-                }
-            }
-
-            return true;
+            publicKeyByteArr = Converter.decodeFromBASE58(publicKey);
+            privateKeyByteArr = Converter.decodeFromBASE58(privateKey);
         } catch (CreditsException e) {
             LOGGER.error(e.getMessage(), e);
             return false;
         }
+
+        if (privateKeyByteArr.length <= 32) {
+            return false;
+        }
+
+        for (int i = 0; i < publicKeyByteArr.length && i < privateKeyByteArr.length - 32; i++) {
+            if (publicKeyByteArr[i] != privateKeyByteArr[i + 32]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

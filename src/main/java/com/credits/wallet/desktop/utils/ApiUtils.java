@@ -36,16 +36,6 @@ public class ApiUtils {
         );
     }
 
-    /**
-     * Выполнение системной транзакции
-     *
-     * @param target
-     * @throws Exception
-     */
-    public static void execSystemTransaction(String target) throws Exception {
-        TcpClient.sendRequest(AppState.csSenderBotHost, AppState.csSenderBotPort, target);
-    }
-
     public static String generateTransactionInnerId() throws CreditsException {
         byte[] hashBytes = Blake2S.generateHash(4); // 4 байта
         return Converter.bytesToHex(hashBytes);

@@ -1,12 +1,9 @@
 package com.credits.wallet.desktop.utils;
 
-import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.thread.GetBalanceUpdater;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.stage.StageStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by goncharov-eg on 26.01.2018.

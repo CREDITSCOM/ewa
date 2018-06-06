@@ -20,14 +20,14 @@ import java.util.*;
  * Created by goncharov-eg on 30.01.2018.
  */
 public class SmartContractController extends Controller implements Initializable {
-    //TODO: This class is a GODZILLA please refactor it ASAP!
+
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
 
     @FXML
     Label address;
 
     @FXML
-    private TextField txAddress;
+    private TextField txSearchAddress;
 
     @FXML
     private TextArea taCode;
@@ -50,7 +50,7 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private void handleSearch() {
-        String address = txAddress.getText();
+        String address = txSearchAddress.getText();
         try {
             SmartContractData smartContractData = AppState.apiClient.getSmartContract(address);
 
@@ -64,14 +64,13 @@ public class SmartContractController extends Controller implements Initializable
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
-        TreeItem<Label> rootItem=new TreeItem<Label>(new Label("Smart contracts"));
+        TreeItem<Label> rootItem= new TreeItem<>(new Label("Smart contracts"));
 
         try {
             List<SmartContractData> smartContracts = AppState.apiClient.getSmartContracts(AppState.account);
             for (SmartContractData smartContractData : smartContracts) {
-                rootItem.getChildren().add(new TreeItem<Label>(new Label(smartContractData.getHashState())));
+                rootItem.getChildren().add(new TreeItem<>(new Label(smartContractData.getHashState())));
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

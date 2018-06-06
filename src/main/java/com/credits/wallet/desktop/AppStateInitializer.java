@@ -15,9 +15,6 @@ class AppStateInitializer {
 
     private static final String ERR_NO_API_ADDR = "The server address could not be determined. Check api.addr parameter in the settings.properties file";
 
-    private static final String ERR_NO_CONTRACT_EXECUTOR = "Parameters for java contract executor could not be determined." +
-        " Check contract.executor.host, contract.executor.port, contract.executor.dir  parameters in the settings.properties file";
-
     void init() {
         Properties properties = new Properties();
         try {
@@ -37,19 +34,8 @@ class AppStateInitializer {
 
         String apiAddr = properties.getProperty("api.addr");
         String apiPort = properties.getProperty("api.port");
-        AppState.contractExecutorHost = properties.getProperty("contract.executor.host");
-        AppState.csSenderBotHost = properties.getProperty("cs.sender.bot.host");
-
-        AppState.contractExecutorPort = Integer.valueOf(properties.getProperty("contract.executor.port"));
-        AppState.csSenderBotPort = Integer.valueOf(properties.getProperty("cs.sender.bot.port"));
-
         if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
             FormUtils.showError(ERR_NO_API_ADDR);
-        } else if (AppState.contractExecutorHost == null || AppState.contractExecutorPort == null) {
-            FormUtils.showError(ERR_NO_CONTRACT_EXECUTOR);
-        } else if (AppState.csSenderBotHost == null || AppState.csSenderBotPort == null) {
-            FormUtils.showError(
-                "Parameters for cs sender could not be determined. Check cs.sender.host, cs.sender.port parameters in the settings.properties file");
         } else {
             AppState.apiClient = ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
         }

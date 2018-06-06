@@ -1,39 +1,36 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.utils.Converter;
-import com.credits.crypto.Ed25519;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
-import com.credits.wallet.desktop.thrift.executor.APIResponse;
-import com.credits.wallet.desktop.thrift.executor.ContractExecutor;
-import com.credits.wallet.desktop.thrift.executor.ContractFile;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.EclipseJdt;
 import com.credits.wallet.desktop.utils.SimpleInMemoryCompilator;
 import com.credits.wallet.desktop.utils.Utils;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.*;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TSocket;
-import org.apache.thrift.transport.TTransport;
 import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -41,13 +38,18 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.time.Duration;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +57,7 @@ import java.util.regex.Pattern;
 /**
  * Created by goncharov-eg on 30.01.2018.
  */
+//TODO: This class is a GODZILLA please refactor it ASAP!
 public class SmartContractDeployController extends Controller implements Initializable {
 
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
@@ -79,24 +82,17 @@ public class SmartContractDeployController extends Controller implements Initial
             ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")" + "|(?<STRING>" +
             STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
 
-    private static final String dftCode="public class Contract extends SmartContract {\n" +
-            "\n" +
-            "    public Contract() {\n" +
-            "        total = 0;\n" +
-            "    }" +
-            "\n" +
-            "}";
-    private static final String nonChangedStr="public class Contract extends SmartContract {";
+    private static final String dftCode =
+        "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n" +
+            "        total = 0;\n" + "    }" + "\n" + "}";
+    private static final String nonChangedStr = "public class Contract extends SmartContract {";
 
-    private static final String[] parentMethods = new String[] {
-            "double total",
-            "Double getBalance(String address, String currency)",
+    private static final String[] parentMethods =
+        new String[] {"double total", "Double getBalance(String address, String currency)",
             "TransactionData getTransaction(String transactionId)",
             "List<TransactionData> getTransactions(String address, long offset, long limit)",
-            "List<PoolData> getPoolList(long offset, long limit)",
-            "PoolData getPool(String poolNumber)",
-            "void sendTransaction(String source, String target, Double amount, String currency)"
-    };
+            "List<PoolData> getPoolList(long offset, long limit)", "PoolData getPool(String poolNumber)",
+            "void sendTransaction(String source, String target, Double amount, String currency)"};
 
     private CodeArea codeArea;
     private TableView tabErrors;
@@ -155,17 +151,10 @@ public class SmartContractDeployController extends Controller implements Initial
             byte[] byteCode = SimpleInMemoryCompilator.compile(javaCode, className, token);
 
             String hashState = ApiUtils.generateSmartContractHashState(byteCode);
-            SmartContractData smartContractData = new SmartContractData(
-                    javaCode,
-                    byteCode,
-                    hashState
-            );
+            SmartContractData smartContractData = new SmartContractData(javaCode, byteCode, hashState);
             String transactionInnerId = ApiUtils.generateTransactionInnerId();
-            ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(
-                    transactionInnerId,
-                    AppState.account,
-                    smartContractData
-            );
+            ApiResponseData apiResponseData =
+                AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, smartContractData);
 
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
                 StringSelection selection = new StringSelection(token);
@@ -175,47 +164,10 @@ public class SmartContractDeployController extends Controller implements Initial
             } else {
                 Utils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
             }
-
-
         } catch (Exception e) {
             LOGGER.error("Error deploying smart contract " + e.toString(), e);
             Utils.showError("Error deploying smart contract " + e.toString());
         }
-
-
-        // Call contract executor
-        if (AppState.contractExecutorHost != null &&
-                AppState.contractExecutorPort != null) {
-            try {
-                // ---------------
-
-
-
-
-
-                TTransport transport;
-
-                transport = new TSocket(AppState.contractExecutorHost, AppState.contractExecutorPort);
-                transport.open();
-
-                TProtocol protocol = new TBinaryProtocol(transport);
-                ContractExecutor.Client client = new ContractExecutor.Client(protocol);
-
-                ContractFile contractFile = new ContractFile();
-                contractFile.setName(className+".java");
-                contractFile.setFile(codeArea.getText().getBytes());
-
-                APIResponse executorResponse = client.store(
-                        contractFile,
-                        token,
-                        Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey))
-                );
-
-                transport.close();
-            } catch (Exception e) {
-            }
-        }
-        // ----------------------
     }
 
     @Override
@@ -226,40 +178,37 @@ public class SmartContractDeployController extends Controller implements Initial
         }
         AppState.executor = Executors.newSingleThreadExecutor();
 
-        prevCode=dftCode;
+        prevCode = dftCode;
 
         codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
 
-        codeArea.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            public void handle(KeyEvent ke) {
-                if (ke.isControlDown() && ke.getCode().equals(KeyCode.SPACE)) {
-                    codePopup();
-                }
+        codeArea.setOnKeyPressed(ke -> {
+            if (ke.isControlDown() && ke.getCode().equals(KeyCode.SPACE)) {
+                codePopup();
             }
         });
 
-        codeArea.richChanges()
-                .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
-                .subscribe(change -> {
-                    String curCode=codeArea.getText();
+        codeArea.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
+            .subscribe(change -> {
+                String curCode = codeArea.getText();
 
-                    // Replace TAB to 4 spaces
-                    if (curCode.indexOf("\t")>=0) {
-                        codeArea.replaceText(0, curCode.length(), curCode.replace("\t", "    "));
-                        curCode = codeArea.getText();
-                    }
+                // Replace TAB to 4 spaces
+                if (curCode.contains("\t")) {
+                    codeArea.replaceText(0, curCode.length(), curCode.replace("\t", "    "));
+                    curCode = codeArea.getText();
+                }
 
-                    if (curCode.indexOf(nonChangedStr)<0) {
+                if (!curCode.contains(nonChangedStr)) {
+                    codeArea.replaceText(0, curCode.length(), prevCode);
+                } else {
+                    int i1 = curCode.indexOf(nonChangedStr);
+                    if (curCode.indexOf(nonChangedStr, i1 + 1) > 0) {
                         codeArea.replaceText(0, curCode.length(), prevCode);
-                    } else {
-                        int i1=curCode.indexOf(nonChangedStr);
-                        if (curCode.indexOf(nonChangedStr,i1+1)>0) {
-                            codeArea.replaceText(0, curCode.length(), prevCode);
-                        }
                     }
-                    prevCode=codeArea.getText();
-                });
+                }
+                prevCode = codeArea.getText();
+            });
 
         codeArea.richChanges()
             .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
@@ -479,27 +428,23 @@ public class SmartContractDeployController extends Controller implements Initial
     private void codePopup() {
         ContextMenu contextMenu = new ContextMenu();
 
-        String word="";
-        int pos=codeArea.getCaretPosition()-1;
-        String txt=codeArea.getText();
-        while (pos>0 && !txt.substring(pos,pos+1).equals(" ") &&
-                !txt.substring(pos,pos+1).equals("\r") && !txt.substring(pos,pos+1).equals("\n")) {
-            word=txt.substring(pos,pos+1)+word;
+        String word = "";
+        int pos = codeArea.getCaretPosition() - 1;
+        String txt = codeArea.getText();
+        while (pos > 0 && !txt.substring(pos, pos + 1).equals(" ") && !txt.substring(pos, pos + 1).equals("\r") &&
+            !txt.substring(pos, pos + 1).equals("\n")) {
+            word = txt.substring(pos, pos + 1) + word;
             pos--;
         }
 
         for (String method : parentMethods) {
-            if (word.trim().isEmpty() || method.toUpperCase().indexOf(word.trim().toUpperCase())>0) {
+            if (word.trim().isEmpty() || method.toUpperCase().indexOf(word.trim().toUpperCase()) > 0) {
                 MenuItem action = new MenuItem(method);
                 contextMenu.getItems().add(action);
-                action.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        int pos = codeArea.getCaretPosition();
-                        String txt = codeArea.getText();
-                        String txtToIns = normMethodName(method);
-                        codeArea.replaceText(pos, pos, txtToIns);
-                    }
+                action.setOnAction(event -> {
+                    int pos1 = codeArea.getCaretPosition();
+                    String txtToIns = normMethodName(method);
+                    codeArea.replaceText(pos1, pos1, txtToIns);
                 });
             }
         }
@@ -509,28 +454,29 @@ public class SmartContractDeployController extends Controller implements Initial
             contextMenu.getItems().add(action);
         }
 
-        contextMenu.show(codeArea,
-                codeArea.getCaretBounds().get().getMaxX(), codeArea.getCaretBounds().get().getMaxY());
+        contextMenu.show(codeArea, codeArea.getCaretBounds().get().getMaxX(),
+            codeArea.getCaretBounds().get().getMaxY());
     }
 
-    private String normMethodName (String method) {
-        int ind1=method.indexOf(" ");
-        String result=method.substring(ind1+1);
+    private String normMethodName(String method) {
+        int ind1 = method.indexOf(" ");
+        String result = method.substring(ind1 + 1);
 
-        ind1=result.indexOf("(");
-        int ind2=result.indexOf(")");
-        StringBuilder parametersStr=new StringBuilder();
-        String[] parameters=result.substring(ind1,ind2).trim().split(",");
-        boolean first=true;
+        ind1 = result.indexOf("(");
+        int ind2 = result.indexOf(")");
+        StringBuilder parametersStr = new StringBuilder();
+        String[] parameters = result.substring(ind1, ind2).trim().split(",");
+        boolean first = true;
         for (String parameter : parameters) {
-            String[] parameterAsArr=parameter.trim().split(" ");
-            if (first)
+            String[] parameterAsArr = parameter.trim().split(" ");
+            if (first) {
                 parametersStr.append(parameterAsArr[1].trim());
-            else
+            } else {
                 parametersStr.append(", ").append(parameterAsArr[1].trim());
-            first=false;
+            }
+            first = false;
         }
 
-        return result.substring(0,ind1+1)+parametersStr+")";
+        return result.substring(0, ind1 + 1) + parametersStr + ")";
     }
 }
