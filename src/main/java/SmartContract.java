@@ -23,23 +23,11 @@ public abstract class SmartContract implements Serializable {
     private String specialProperty;
 
     protected SmartContract() {
-        Class<?> clazz = this.getClass();
-        String fileName = clazz.getSimpleName() + ".class";
-        URL fileURL = clazz.getClassLoader().getResource(fileName);
-        String loadAddress = new File(fileURL.getFile()).getParentFile().getName();
-
-        File propertySerFile = Serializer.getPropertySerFile(loadAddress);
-        String property;
-        try {
-            property = (String) Serializer.deserialize(propertySerFile, ClassLoader.getSystemClassLoader());
-        } catch (ContractExecutorException e) {
-            throw new RuntimeException(e);
-        }
-        this.specialProperty = property;
-        propertySerFile.delete();
     }
 
-    protected BigDecimal getBalance(String address, String currency) {
+    abstract protected void initialize();
+
+    final protected BigDecimal getBalance(String address, String currency) {
         try {
             return service.getBalance(address, currency);
         } catch (Exception e) {
@@ -47,7 +35,7 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected TransactionData getTransaction(String transactionId) {
+    final protected TransactionData getTransaction(String transactionId) {
         try {
             return service.getTransaction(transactionId);
         } catch (Exception e) {
@@ -55,7 +43,7 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected List<TransactionData> getTransactions(String address, long offset, long limit) {
+    final protected List<TransactionData> getTransactions(String address, long offset, long limit) {
         try {
             return service.getTransactions(address, offset, limit);
         } catch (Exception e) {
@@ -63,7 +51,7 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected List<PoolData> getPoolList(long offset, long limit) {
+    final protected List<PoolData> getPoolList(long offset, long limit) {
         try {
             return service.getPoolList(offset, limit);
         } catch (Exception e) {
@@ -71,7 +59,7 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected PoolData getPoolInfo(byte[] hash, long index) {
+    final protected PoolData getPoolInfo(byte[] hash, long index) {
         try {
             return service.getPoolInfo(hash, index);
         } catch (Exception e) {
@@ -79,19 +67,19 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    protected void sendTransaction(String source, String target, double amount, String currency) {
+    final protected void sendTransaction(String source, String target, double amount, String currency) {
         try {
             BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
             byte[] innerIdhashBytes = Blake2S.generateHash(4);
             String innerId = Converter.bytesToHex(innerIdhashBytes);
 
-            byte[] privateKeyByteArr = Converter.decodeFromBASE58(this.specialProperty);
-            PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
+//            byte[] privateKeyByteArr = Converter.decodeFromBASE58(this.specialProperty);
+//            PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
 
             BigDecimal balance = service.getBalance(source, currency);
 
-            String signatureBASE58 =
-                Ed25519.generateSignOfTransaction(innerId, source, target, decAmount, balance, currency, privateKey);
+            String signatureBASE58 = "";
+//                Ed25519.generateSignOfTransaction(innerId, source, target, decAmount, balance, currency, privateKey);
 
             service.transactionFlow(innerId, source, target, decAmount, balance, currency, signatureBASE58);
         } catch (Exception e) {
