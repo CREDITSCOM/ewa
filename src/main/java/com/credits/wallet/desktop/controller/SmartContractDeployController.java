@@ -6,14 +6,10 @@ import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
-import com.credits.wallet.desktop.utils.ApiUtils;
-import com.credits.wallet.desktop.utils.EclipseJdt;
-import com.credits.wallet.desktop.utils.SimpleInMemoryCompilator;
-import com.credits.wallet.desktop.utils.Utils;
+import com.credits.wallet.desktop.utils.*;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -34,7 +30,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,16 +38,11 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -62,32 +52,12 @@ public class SmartContractDeployController extends Controller implements Initial
 
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
 
-    private static final String[] KEYWORDS =
-        new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
-            "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for",
-            "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package",
-            "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch",
-            "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while"};
-
-    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
-    private static final String PAREN_PATTERN = "[()]";
-    private static final String BRACE_PATTERN = "[{}]";
-    private static final String BRACKET_PATTERN = "[\\[]]";
-    private static final String SEMICOLON_PATTERN = ";";
-    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
-    private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
-
-    private static final Pattern PATTERN = Pattern.compile(
-        "(?<KEYWORD>" + KEYWORD_PATTERN + ")" + "|(?<PAREN>" + PAREN_PATTERN + ")" + "|(?<BRACE>" + BRACE_PATTERN +
-            ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")" + "|(?<STRING>" +
-            STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
-
-    private static final String dftCode =
+    private static final String DEFAULT_SOURCE_CODE =
         "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n" +
             "        total = 0;\n" + "    }" + "\n" + "}";
-    private static final String nonChangedStr = "public class Contract extends SmartContract {";
+    private static final String NON_CHANGED_STR = "public class Contract extends SmartContract {";
 
-    private static final String[] parentMethods =
+    private static final String[] PARENT_METHODS =
         new String[] {"double total", "Double getBalance(String address, String currency)",
             "TransactionData getTransaction(String transactionId)",
             "List<TransactionData> getTransactions(String address, long offset, long limit)",
@@ -105,11 +75,96 @@ public class SmartContractDeployController extends Controller implements Initial
     @FXML
     private TreeView<Label> classTreeView;
 
-    @FXML
-    private Button checkButton;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void initialize(URL location, ResourceBundle resources) {
+        if (AppState.executor != null) {
+            AppState.executor.shutdown();
+        }
+        AppState.executor = Executors.newSingleThreadExecutor();
 
-    //@FXML
-    //private javafx.scene.control.TextArea taCode;
+        this.prevCode = DEFAULT_SOURCE_CODE;
+
+        this.codeArea = new CodeArea();
+        this.codeArea.setParagraphGraphicFactory(LineNumberFactory.get(this.codeArea));
+
+        this.codeArea.setOnKeyPressed(ke -> {
+            if (ke.isControlDown() && ke.getCode().equals(KeyCode.SPACE)) {
+                codeCompletionPopup();
+            }
+        });
+
+        this.codeArea.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
+                .subscribe(change -> {
+                    String curCode = this.codeArea.getText();
+
+                    // Replace TAB to 4 spaces
+                    if (curCode.contains("\t")) {
+                        this.codeArea.replaceText(0, curCode.length(), curCode.replace("\t", "    "));
+                        curCode = this.codeArea.getText();
+                    }
+
+                    if (!curCode.contains(NON_CHANGED_STR)) {
+                        this.codeArea.replaceText(0, curCode.length(), this.prevCode);
+                    } else {
+                        int i1 = curCode.indexOf(NON_CHANGED_STR);
+                        if (curCode.indexOf(NON_CHANGED_STR, i1 + 1) > 0) {
+                            this.codeArea.replaceText(0, curCode.length(), this.prevCode);
+                        }
+                    }
+                    this.prevCode = this.codeArea.getText();
+                });
+
+        this.codeArea.richChanges()
+                .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
+                .successionEnds(Duration.ofMillis(500))
+                .supplyTask(this::computeHighlightingAsync)
+                .awaitLatest(this.codeArea.richChanges())
+                .filterMap(t -> {
+                    if (t.isSuccess()) {
+                        return Optional.of(t.get());
+                    } else {
+                        t.getFailure().printStackTrace();
+                        return Optional.empty();
+                    }
+                })
+                .subscribe(this::applyHighlighting);
+
+        this.codeArea.setPrefHeight(this.paneCode.getPrefHeight());
+        this.codeArea.setPrefWidth(this.paneCode.getPrefWidth());
+        this.codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
+        this.paneCode.getChildren().add(this.codeArea);
+
+        this.tabErrors = new TableView();
+        this.tabErrors.setPrefHeight(this.paneCode.getPrefHeight() * 0.3);
+        this.tabErrors.setPrefWidth(this.paneCode.getPrefWidth());
+
+        TableColumn tabErrorsColLine = new TableColumn();
+        tabErrorsColLine.setText("Line");
+        tabErrorsColLine.setPrefWidth(this.paneCode.getPrefWidth() * 0.1);
+        TableColumn tabErrorsColText = new TableColumn();
+        tabErrorsColText.setText("Error");
+        tabErrorsColText.setPrefWidth(this.paneCode.getPrefWidth() * 0.9);
+        this.tabErrors.getColumns().add(tabErrorsColLine);
+        this.tabErrors.getColumns().add(tabErrorsColText);
+
+        TableColumn[] tableColumns = new TableColumn[this.tabErrors.getColumns().size()];
+        for (int i = 0; i < this.tabErrors.getColumns().size(); i++) {
+            tableColumns[i] = (TableColumn) this.tabErrors.getColumns().get(i);
+        }
+        tableColumns[0].setCellValueFactory(new PropertyValueFactory<ErrorCodeTabRow, String>("line"));
+        tableColumns[1].setCellValueFactory(new PropertyValueFactory<ErrorCodeTabRow, String>("text"));
+
+        this.tabErrors.setOnMousePressed(event -> {
+            if (event.isPrimaryButtonDown()) {
+                ErrorCodeTabRow tabRow = (ErrorCodeTabRow) this.tabErrors.getSelectionModel().getSelectedItem();
+                if (tabRow != null) {
+                    positionCursorToLine(Integer.valueOf(tabRow.getLine()));
+                }
+            }
+        });
+
+    }
 
     @FXML
     private void handleBack() {
@@ -122,32 +177,15 @@ public class SmartContractDeployController extends Controller implements Initial
 
     @FXML
     private void handleDeploy() {
-        char[] characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
         StringBuilder sb = new StringBuilder();
         sb.append("CST");
-        Random random = new Random();
-        int max = characters.length - 1;
-        for (int i = 0; i < 29; i++) {
-            sb.append(characters[random.nextInt(max)]);
-        }
-
+        sb.append(com.credits.common.utils.Utils.randomAlphaNumeric(29));
         String token = sb.toString();
 
         // Parse className
-        String className = "SmartContract";
-
-        String javaCode = codeArea.getText().replace("\r", " ").replace("\n", " ").replace("{", " {");
-
-        while (javaCode.contains("  ")) {
-            javaCode = javaCode.replace("  ", " ");
-        }
-        List<String> javaCodeWords = Arrays.asList(javaCode.split(" "));
-        int ind = javaCodeWords.indexOf("class");
-        if (ind >= 0 && ind < javaCodeWords.size() - 1) {
-            className = javaCodeWords.get(ind + 1);
-        }
-
+        String className = SourceCodeUtils.parseClassName(this.codeArea.getText(), "SmartContract");
         try {
+            String javaCode = SourceCodeUtils.normalizeSourceCode(this.codeArea.getText());
             byte[] byteCode = SimpleInMemoryCompilator.compile(javaCode, className, token);
 
             String hashState = ApiUtils.generateSmartContractHashState(byteCode);
@@ -170,97 +208,6 @@ public class SmartContractDeployController extends Controller implements Initial
         }
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void initialize(URL location, ResourceBundle resources) {
-        if (AppState.executor != null) {
-            AppState.executor.shutdown();
-        }
-        AppState.executor = Executors.newSingleThreadExecutor();
-
-        prevCode = dftCode;
-
-        codeArea = new CodeArea();
-        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-
-        codeArea.setOnKeyPressed(ke -> {
-            if (ke.isControlDown() && ke.getCode().equals(KeyCode.SPACE)) {
-                codePopup();
-            }
-        });
-
-        codeArea.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
-            .subscribe(change -> {
-                String curCode = codeArea.getText();
-
-                // Replace TAB to 4 spaces
-                if (curCode.contains("\t")) {
-                    codeArea.replaceText(0, curCode.length(), curCode.replace("\t", "    "));
-                    curCode = codeArea.getText();
-                }
-
-                if (!curCode.contains(nonChangedStr)) {
-                    codeArea.replaceText(0, curCode.length(), prevCode);
-                } else {
-                    int i1 = curCode.indexOf(nonChangedStr);
-                    if (curCode.indexOf(nonChangedStr, i1 + 1) > 0) {
-                        codeArea.replaceText(0, curCode.length(), prevCode);
-                    }
-                }
-                prevCode = codeArea.getText();
-            });
-
-        codeArea.richChanges()
-            .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
-            .successionEnds(Duration.ofMillis(500))
-            .supplyTask(this::computeHighlightingAsync)
-            .awaitLatest(codeArea.richChanges())
-            .filterMap(t -> {
-                if (t.isSuccess()) {
-                    return Optional.of(t.get());
-                } else {
-                    t.getFailure().printStackTrace();
-                    return Optional.empty();
-                }
-            })
-            .subscribe(this::applyHighlighting);
-
-        codeArea.setPrefHeight(paneCode.getPrefHeight());
-        codeArea.setPrefWidth(paneCode.getPrefWidth());
-        codeArea.replaceText(0, 0, dftCode);
-        paneCode.getChildren().add(codeArea);
-
-        tabErrors = new TableView();
-        tabErrors.setPrefHeight(paneCode.getPrefHeight() * 0.3);
-        tabErrors.setPrefWidth(paneCode.getPrefWidth());
-
-        TableColumn tabErrorsColLine = new TableColumn();
-        tabErrorsColLine.setText("Line");
-        tabErrorsColLine.setPrefWidth(paneCode.getPrefWidth() * 0.1);
-        TableColumn tabErrorsColText = new TableColumn();
-        tabErrorsColText.setText("Error");
-        tabErrorsColText.setPrefWidth(paneCode.getPrefWidth() * 0.9);
-        tabErrors.getColumns().add(tabErrorsColLine);
-        tabErrors.getColumns().add(tabErrorsColText);
-
-        TableColumn[] tableColumns = new TableColumn[tabErrors.getColumns().size()];
-        for (int i = 0; i < tabErrors.getColumns().size(); i++) {
-            tableColumns[i] = (TableColumn) tabErrors.getColumns().get(i);
-        }
-        tableColumns[0].setCellValueFactory(new PropertyValueFactory<ErrorCodeTabRow, String>("line"));
-        tableColumns[1].setCellValueFactory(new PropertyValueFactory<ErrorCodeTabRow, String>("text"));
-
-        tabErrors.setOnMousePressed(event -> {
-            if (event.isPrimaryButtonDown()) {
-                ErrorCodeTabRow tabRow = (ErrorCodeTabRow) tabErrors.getSelectionModel().getSelectedItem();
-                if (tabRow != null) {
-                    positionCodeAreaToLine(Integer.valueOf(tabRow.getLine()));
-                }
-            }
-        });
-
-    }
-
     @FXML
     private void panelCodeKeyReleased() {
         refreshClassMembersTree();
@@ -270,7 +217,7 @@ public class SmartContractDeployController extends Controller implements Initial
 
         this.classTreeView.setRoot(null);
 
-        String sourceCode = codeArea.getText();
+        String sourceCode = this.codeArea.getText();
 
         CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
 
@@ -303,7 +250,7 @@ public class SmartContractDeployController extends Controller implements Initial
 
                 label.setOnMousePressed(event -> {
                     if (event.isPrimaryButtonDown()) {
-                        positionCodeAreaToLine(compilationUnit.getLineNumber(node.getStartPosition()));
+                        positionCursorToLine(compilationUnit.getLineNumber(node.getStartPosition()));
                     }
                 });
 
@@ -312,10 +259,6 @@ public class SmartContractDeployController extends Controller implements Initial
 
                 treeRoot.getChildren().add(treeItem);
             }
-
-        });
-
-        root.accept(new ASTVisitor() {
 
             @Override
             public boolean visit(MethodDeclaration node) {
@@ -328,7 +271,7 @@ public class SmartContractDeployController extends Controller implements Initial
                 Label label = new Label(node.toString());
                 label.setOnMousePressed(event -> {
                     if (event.isPrimaryButtonDown()) {
-                        positionCodeAreaToLine(compilationUnit.getLineNumber(node.getStartPosition()));
+                        positionCursorToLine(compilationUnit.getLineNumber(node.getStartPosition()));
                     }
                 });
 
@@ -337,7 +280,6 @@ public class SmartContractDeployController extends Controller implements Initial
 
                 treeRoot.getChildren().add(treeItem);
             }
-
         });
 
         treeRoot.setExpanded(true);
@@ -347,68 +289,50 @@ public class SmartContractDeployController extends Controller implements Initial
     @FXML
     @SuppressWarnings("unchecked")
     private void checkButtonAction() {
-        String sourceCode = codeArea.getText();
+        String sourceCode = this.codeArea.getText();
 
         IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
 
         if (problemArr.length > 0) {
-            tabErrors.getItems().clear();
+            this.tabErrors.getItems().clear();
 
             for (IProblem p : problemArr) {
                 ErrorCodeTabRow tr = new ErrorCodeTabRow();
                 tr.setLine(Integer.toString(p.getSourceLineNumber()));
                 tr.setText(p.getMessage());
-                tabErrors.getItems().add(tr);
+                this.tabErrors.getItems().add(tr);
             }
 
-            codeArea.setPrefHeight(paneCode.getPrefHeight() * 0.7);
-            paneCode.getChildren().clear();
-            paneCode.getChildren().add(codeArea);
-            paneCode.getChildren().add(tabErrors);
-            paneCode.getChildren().get(1).setLayoutY(paneCode.getPrefHeight() * 0.7);
+            this.codeArea.setPrefHeight(this.paneCode.getPrefHeight() * 0.7);
+            this.paneCode.getChildren().clear();
+            this.paneCode.getChildren().add(this.codeArea);
+            this.paneCode.getChildren().add(this.tabErrors);
+            this.paneCode.getChildren().get(1).setLayoutY(this.paneCode.getPrefHeight() * 0.7);
         } else {
-            codeArea.setPrefHeight(paneCode.getPrefHeight());
-            paneCode.getChildren().clear();
-            paneCode.getChildren().add(codeArea);
+            this.codeArea.setPrefHeight(this.paneCode.getPrefHeight());
+            this.paneCode.getChildren().clear();
+            this.paneCode.getChildren().add(this.codeArea);
         }
-    }
-
-    private StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Matcher matcher = PATTERN.matcher(text);
-        int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        while (matcher.find()) {
-            String styleClass = matcher.group("KEYWORD") != null ? "keyword" : matcher.group("PAREN") != null ? "paren"
-                : matcher.group("BRACE") != null ? "brace" : matcher.group("BRACKET") != null ? "bracket"
-                    : matcher.group("SEMICOLON") != null ? "semicolon" : matcher.group("STRING") != null ? "string"
-                        : matcher.group("COMMENT") != null ? "comment" : null; /* never happens */
-            assert styleClass != null;
-            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
-            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
-            lastKwEnd = matcher.end();
-        }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
-        return spansBuilder.create();
     }
 
     private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        codeArea.setStyleSpans(0, highlighting);
+        this.codeArea.setStyleSpans(0, highlighting);
     }
 
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
-        String text = codeArea.getText();
+        String sourceCode = this.codeArea.getText();
         Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
             @Override
             protected StyleSpans<Collection<String>> call() throws Exception {
-                return computeHighlighting(text);
+                return SourceCodeUtils.computeHighlighting(sourceCode);
             }
         };
         AppState.executor.execute(task);
         return task;
     }
 
-    private void positionCodeAreaToLine(int line) {
-        char[] text = codeArea.getText().toCharArray();
+    private void positionCursorToLine(int line) {
+        char[] text = this.codeArea.getText().toCharArray();
         int pos = 0;
         int curLine = 1;
         while (pos < text.length) {
@@ -420,31 +344,31 @@ public class SmartContractDeployController extends Controller implements Initial
             }
             pos++;
         }
-        codeArea.displaceCaret(pos);
-        codeArea.showParagraphAtTop(Math.max(0, line - 5));
-        codeArea.requestFocus();
+        this.codeArea.displaceCaret(pos);
+        this.codeArea.showParagraphAtTop(Math.max(0, line - 5));
+        this.codeArea.requestFocus();
     }
 
-    private void codePopup() {
+    private void codeCompletionPopup() {
         ContextMenu contextMenu = new ContextMenu();
 
         String word = "";
-        int pos = codeArea.getCaretPosition() - 1;
-        String txt = codeArea.getText();
+        int pos = this.codeArea.getCaretPosition() - 1;
+        String txt = this.codeArea.getText();
         while (pos > 0 && !txt.substring(pos, pos + 1).equals(" ") && !txt.substring(pos, pos + 1).equals("\r") &&
             !txt.substring(pos, pos + 1).equals("\n")) {
             word = txt.substring(pos, pos + 1) + word;
             pos--;
         }
 
-        for (String method : parentMethods) {
+        for (String method : PARENT_METHODS) {
             if (word.trim().isEmpty() || method.toUpperCase().indexOf(word.trim().toUpperCase()) > 0) {
                 MenuItem action = new MenuItem(method);
                 contextMenu.getItems().add(action);
                 action.setOnAction(event -> {
-                    int pos1 = codeArea.getCaretPosition();
-                    String txtToIns = normMethodName(method);
-                    codeArea.replaceText(pos1, pos1, txtToIns);
+                    int pos1 = this.codeArea.getCaretPosition();
+                    String txtToIns = SourceCodeUtils.normalizeMethodName(method);
+                    this.codeArea.replaceText(pos1, pos1, txtToIns);
                 });
             }
         }
@@ -454,29 +378,7 @@ public class SmartContractDeployController extends Controller implements Initial
             contextMenu.getItems().add(action);
         }
 
-        contextMenu.show(codeArea, codeArea.getCaretBounds().get().getMaxX(),
-            codeArea.getCaretBounds().get().getMaxY());
-    }
-
-    private String normMethodName(String method) {
-        int ind1 = method.indexOf(" ");
-        String result = method.substring(ind1 + 1);
-
-        ind1 = result.indexOf("(");
-        int ind2 = result.indexOf(")");
-        StringBuilder parametersStr = new StringBuilder();
-        String[] parameters = result.substring(ind1, ind2).trim().split(",");
-        boolean first = true;
-        for (String parameter : parameters) {
-            String[] parameterAsArr = parameter.trim().split(" ");
-            if (first) {
-                parametersStr.append(parameterAsArr[1].trim());
-            } else {
-                parametersStr.append(", ").append(parameterAsArr[1].trim());
-            }
-            first = false;
-        }
-
-        return result.substring(0, ind1 + 1) + parametersStr + ")";
+        contextMenu.show(this.codeArea, this.codeArea.getCaretBounds().get().getMaxX(),
+            this.codeArea.getCaretBounds().get().getMaxY());
     }
 }
