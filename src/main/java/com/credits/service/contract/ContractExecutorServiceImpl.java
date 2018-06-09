@@ -75,11 +75,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         Class<?> clazz;
         try {
-            validateBytecode(address, bytecode);
+            //            validateBytecode(address, bytecode);
             clazz = new ByteArrayContractClassLoader().buildClass(bytecode);
         } catch (Exception e) {
             throw new ContractExecutorException(
-                "Cannot execute the contract: " + address + ". Reason: " + e.getMessage(), e);
+                "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
 
         Object instance;

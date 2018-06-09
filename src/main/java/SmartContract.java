@@ -70,8 +70,8 @@ public abstract class SmartContract implements Serializable {
     final protected void sendTransaction(String source, String target, double amount, String currency) {
         try {
             BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
-            byte[] innerIdhashBytes = Blake2S.generateHash(4);
-            String innerId = Converter.bytesToHex(innerIdhashBytes);
+//            byte[] innerIdhashBytes = Blake2S.generateHash(4);
+//            String innerId = Converter.bytesToHex(innerIdhashBytes);
 
 //            byte[] privateKeyByteArr = Converter.decodeFromBASE58(this.specialProperty);
 //            PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
@@ -81,7 +81,7 @@ public abstract class SmartContract implements Serializable {
             String signatureBASE58 = "";
 //                Ed25519.generateSignOfTransaction(innerId, source, target, decAmount, balance, currency, privateKey);
 
-            service.transactionFlow(innerId, source, target, decAmount, balance, currency, signatureBASE58);
+            service.transactionFlow("", source, target, decAmount, balance, currency, signatureBASE58);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
