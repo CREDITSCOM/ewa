@@ -18,6 +18,10 @@ public class AppState {
     public static ApiClient apiClient;
     public static String decimalSeparator;
     public static String creditMonitorURL;
+    public static String contractExecutorHost;
+    public static Integer contractExecutorPort;
+    public static String contractExecutorDir;
+
 
     public static boolean newAccount;
     public static boolean detailFromHistory;

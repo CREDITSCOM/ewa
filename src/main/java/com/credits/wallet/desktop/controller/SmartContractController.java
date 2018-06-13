@@ -3,6 +3,9 @@ package com.credits.wallet.desktop.controller;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.thrift.executor.APIResponse;
+import com.credits.wallet.desktop.thrift.executor.ContractExecutor;
+import com.credits.wallet.desktop.thrift.executor.ContractFile;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.Utils;
 import javafx.fxml.FXML;
@@ -10,6 +13,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,6 +93,43 @@ public class SmartContractController extends Controller implements Initializable
     @FXML
     private void panelCodeKeyReleased() {
         refreshClassMembersTree();
+    }
+
+    @FXML
+    private void handleExecute() {
+
+        // Call contract executor
+        if (AppState.contractExecutorHost != null &&
+                AppState.contractExecutorPort != null &&
+                AppState.contractExecutorDir != null ) {
+            try {
+                TTransport transport;
+
+                transport = new TSocket(AppState.contractExecutorHost, AppState.contractExecutorPort);
+                transport.open();
+
+                TProtocol protocol = new TBinaryProtocol(transport);
+                ContractExecutor.Client client = new ContractExecutor.Client(protocol);
+
+                String address = this.address.getText();
+                String method = "Method"; // TODO
+                List<String> params = new ArrayList<>();
+                params.add("par01");
+                params.add("par02");
+
+                LOGGER.info("Contract executor request: address = {}; method = {}; params = {}", address, method, params.toArray());
+
+                APIResponse apiResponse = client.execute(address, method, params);
+
+                LOGGER.info("Contract executor response: code = {}; message = {}", apiResponse.getCode(), apiResponse.getMessage());
+
+                transport.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Utils.showError("Error executing smart contract " + e.toString());
+            }
+        }
+
     }
 
     private void refreshClassMembersTree() {

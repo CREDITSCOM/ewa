@@ -2,6 +2,7 @@ package com.credits.wallet.desktop;
 
 import com.credits.leveldb.client.ApiClient;
 import com.credits.wallet.desktop.utils.FormUtils;
+import com.credits.wallet.desktop.utils.Utils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,6 +15,9 @@ class AppStateInitializer {
     private static final String ERR_NO_PROPERTIES = "File settings.properties not found";
 
     private static final String ERR_NO_API_ADDR = "The server address could not be determined. Check api.addr parameter in the settings.properties file";
+
+    private static final String ERR_NO_CONTRACT_EXECUTOR =
+            "Parameters for java contract executor could not be determined. Check contract.executor.host, contract.executor.port, contract.executor.dir  parameters in the settings.properties file";
 
     void init() {
         Properties properties = new Properties();
@@ -34,8 +38,21 @@ class AppStateInitializer {
 
         String apiAddr = properties.getProperty("api.addr");
         String apiPort = properties.getProperty("api.port");
+        AppState.contractExecutorHost = properties.getProperty("contract.executor.host");
+        try {
+            AppState.contractExecutorPort = Integer.valueOf(properties.getProperty("contract.executor.port"));
+        } catch (Exception e) {
+            // do nothing
+        }
+        AppState.contractExecutorDir = properties.getProperty("contract.executor.dir");
+
+
         if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
             FormUtils.showError(ERR_NO_API_ADDR);
+        } else if (AppState.contractExecutorHost == null ||
+                AppState.contractExecutorPort == null ||
+                AppState.contractExecutorDir == null) {
+            FormUtils.showError(ERR_NO_CONTRACT_EXECUTOR);
         } else {
             AppState.apiClient = ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
         }
