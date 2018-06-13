@@ -5,7 +5,7 @@ import com.credits.service.ServiceTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.credits.TestUtils.SimpleInMemoryCompilator.compile;
+import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
 import static org.powermock.api.mockito.PowerMockito.when;
 

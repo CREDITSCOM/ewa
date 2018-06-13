@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.net.MalformedURLException;
 
-import static com.credits.TestUtils.SimpleInMemoryCompilator;
+import static com.credits.TestUtils.SimpleInMemoryCompiler;
 
 public class ByteArrayContractClassLoaderTest {
 
@@ -22,7 +22,7 @@ public class ByteArrayContractClassLoaderTest {
 
     @Test
     public void buildClassTest() throws Exception {
-        byte[] bytecode = SimpleInMemoryCompilator.compile(sourceCode, "Contract", "TKN");
+        byte[] bytecode = SimpleInMemoryCompiler.compile(sourceCode, "Contract", "TKN");
 
         Class clazz = new ByteArrayContractClassLoader().buildClass(bytecode);
         clazz.newInstance();
@@ -30,7 +30,7 @@ public class ByteArrayContractClassLoaderTest {
 
     @Test(expected = LinkageError.class)
     public void buildClassTwice() throws CompilationException, MalformedURLException {
-        byte[] bytecode = SimpleInMemoryCompilator.compile(sourceCode, "Contract", "TKN");
+        byte[] bytecode = SimpleInMemoryCompiler.compile(sourceCode, "Contract", "TKN");
 
         ByteArrayContractClassLoader loader = new ByteArrayContractClassLoader();
         loader.buildClass(bytecode);
@@ -42,7 +42,7 @@ public class ByteArrayContractClassLoaderTest {
         sourceCode = "public class Contract {\n" + "\n" + "    public Contract() {\n" +
             "try {\n new java.net.ServerSocket(5000);\n} catch (java.io.IOException e) {\ne.printStackTrace();\n}\n" + "    }\n" + "}";
 
-        byte[] bytecode = SimpleInMemoryCompilator.compile(sourceCode, "Contract", "TKN");
+        byte[] bytecode = SimpleInMemoryCompiler.compile(sourceCode, "Contract", "TKN");
         ByteArrayContractClassLoader loader = new ByteArrayContractClassLoader();
         loader.buildClass(bytecode);
     }

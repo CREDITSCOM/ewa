@@ -20,7 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.Permissions;
 
-import static com.credits.TestUtils.SimpleInMemoryCompilator.compile;
+import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mock;

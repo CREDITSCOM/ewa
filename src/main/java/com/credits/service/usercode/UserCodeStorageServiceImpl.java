@@ -1,7 +1,7 @@
 package com.credits.service.usercode;
 
 import com.credits.classload.ClassPathLoader;
-import com.credits.compilation.SimpleInMemoryCompilator;
+import com.credits.compilation.SimpleInMemoryCompiler;
 import com.credits.exception.ClassLoadException;
 import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
@@ -29,7 +29,7 @@ public class UserCodeStorageServiceImpl implements UserCodeStorageService {
     private ClassPathLoader classPathLoader;
 
     @Resource
-    private SimpleInMemoryCompilator compilator;
+    private SimpleInMemoryCompiler compiler;
 
     @Override
     public void store(File file, String address) throws ContractExecutorException {
@@ -47,7 +47,7 @@ public class UserCodeStorageServiceImpl implements UserCodeStorageService {
         String ext = FilenameUtils.getExtension(source.getName());
         if (!CLASS_EXT.equalsIgnoreCase(ext)) {
             try {
-                compilator.compile(source);
+                compiler.compile(source);
             } catch (CompilationException e) {
                 source.delete();
                 throw new ContractExecutorException("Cannot save the file " + file.getName() + ". Reason: "
