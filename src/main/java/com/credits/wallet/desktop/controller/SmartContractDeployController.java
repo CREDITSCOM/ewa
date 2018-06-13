@@ -151,7 +151,7 @@ public class SmartContractDeployController extends Controller implements Initial
             byte[] byteCode = SimpleInMemoryCompiler.compile(javaCode, className, token);
 
             String hashState = ApiUtils.generateSmartContractHashState(byteCode);
-            SmartContractData smartContractData = new SmartContractData(javaCode, byteCode, hashState);
+            SmartContractData smartContractData = new SmartContractData(token, javaCode, byteCode, hashState);
             String transactionInnerId = ApiUtils.generateTransactionInnerId();
             ApiResponseData apiResponseData =
                 AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, smartContractData);
