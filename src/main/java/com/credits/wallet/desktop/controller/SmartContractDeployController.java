@@ -8,7 +8,7 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.EclipseJdt;
-import com.credits.wallet.desktop.utils.SimpleInMemoryCompilator;
+import com.credits.wallet.desktop.utils.SimpleInMemoryCompiler;
 import com.credits.wallet.desktop.utils.Utils;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -148,7 +148,7 @@ public class SmartContractDeployController extends Controller implements Initial
         }
 
         try {
-            byte[] byteCode = SimpleInMemoryCompilator.compile(javaCode, className, token);
+            byte[] byteCode = SimpleInMemoryCompiler.compile(javaCode, className, token);
 
             String hashState = ApiUtils.generateSmartContractHashState(byteCode);
             SmartContractData smartContractData = new SmartContractData(javaCode, byteCode, hashState);

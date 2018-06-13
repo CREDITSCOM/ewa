@@ -14,11 +14,12 @@ import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 
-public class SimpleInMemoryCompilator {
+public class SimpleInMemoryCompiler {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(SimpleInMemoryCompilator.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(SimpleInMemoryCompiler.class);
     private final static String SOURCE_FOLDER_PATH = System.getProperty("user.dir") + File.separator + "temp" + File.separator;
 
     public static byte[] compile(String sourceString, String classname, String token) throws CompilationException {
@@ -74,6 +75,10 @@ public class SimpleInMemoryCompilator {
         byte[] sourceBytes = sourceString.getBytes();
         File sourceFile = new File(sourceFolder + File.separator + classname + ".java");
         try {
+            Path parentDir = sourceFile.toPath().getParent();
+            if (!Files.exists(parentDir)) {
+                Files.createDirectories(parentDir);
+            }
             Files.write(sourceFile.toPath(), sourceBytes);
         } catch (IOException e) {
             throw new CompilationException("Cannot save source to file.", e);
