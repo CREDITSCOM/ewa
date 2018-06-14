@@ -1,5 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.utils.Converter;
+import com.credits.crypto.Ed25519;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
@@ -37,6 +39,8 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.net.URL;
+import java.security.KeyPair;
+import java.security.PublicKey;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
@@ -190,9 +194,8 @@ public class SmartContractDeployController extends Controller implements Initial
             String hashState = ApiUtils.generateSmartContractHashState(byteCode);
             SmartContractData smartContractData = new SmartContractData(token, javaCode, byteCode, hashState);
             String transactionInnerId = ApiUtils.generateTransactionInnerId();
-            ApiResponseData apiResponseData =
-                AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, "", smartContractData);
-
+            String transactionTarget = generatePublicKeyBase58();
+            ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, transactionTarget, smartContractData);
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
                 StringSelection selection = new StringSelection(token);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -379,5 +382,11 @@ public class SmartContractDeployController extends Controller implements Initial
 
         contextMenu.show(this.codeArea, this.codeArea.getCaretBounds().get().getMaxX(),
             this.codeArea.getCaretBounds().get().getMaxY());
+    }
+
+    private String generatePublicKeyBase58() {
+        KeyPair keyPair = Ed25519.generateKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
+        return Converter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey));
     }
 }
