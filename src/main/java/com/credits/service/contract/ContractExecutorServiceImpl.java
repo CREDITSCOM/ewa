@@ -2,10 +2,12 @@ package com.credits.service.contract;
 
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.common.exception.CreditsException;
+import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.secure.Sandbox;
+import com.credits.serialise.Serializer;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.FilePermission;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -33,6 +36,7 @@ import java.util.List;
 import java.util.PropertyPermission;
 import java.util.stream.Collectors;
 
+import static com.credits.serialise.Serializer.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 
@@ -73,21 +77,28 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public void execute(String address, byte[] bytecode, String methodName, String[] params)
         throws ContractExecutorException {
 
+        ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
+
         Class<?> clazz;
         try {
-            //            validateBytecode(address, bytecode);
-            clazz = new ByteArrayContractClassLoader().buildClass(bytecode);
+//            validateBytecode(address, bytecode);
+            clazz = classLoader.buildClass(bytecode);
         } catch (Exception e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
 
+        File serFile = getSerFile(address);
         Object instance;
-        try {
-            instance = clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new ContractExecutorException(
-                "Cannot create new instance of the contract: " + address + ". Reason: " + e.getMessage(), e);
+        if (serFile != null) {
+            instance = deserialize(serFile, classLoader);
+        } else {
+            try {
+                instance = clazz.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new ContractExecutorException(
+                    "Cannot create new instance of the contract: " + address + ". Reason: " + e.getMessage(), e);
+            }
         }
 
         List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
@@ -127,13 +138,14 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         //Invoking target method
         try {
-            Sandbox.confine(instance.getClass(), createPermissions());
+            Sandbox.confine(clazz, createPermissions());
             targetMethod.invoke(instance, argValues);
         } catch (IllegalAccessException | InvocationTargetException e) {
             System.out.println(getStackTrace(e));
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
+        serialize(address, instance);
     }
 
     private Permissions createPermissions() {

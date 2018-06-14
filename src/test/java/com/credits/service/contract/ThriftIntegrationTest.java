@@ -22,7 +22,7 @@ public class ThriftIntegrationTest extends ServiceTest {
         contractBytecode = compile(sourceCode, "Contract", "TKN");
 
         when(mockClient.getSmartContract(address)).thenReturn(
-            new SmartContractData(sourceCode, contractBytecode, encrypt(contractBytecode)));
+            new SmartContractData(address,sourceCode, contractBytecode, encrypt(contractBytecode)));
     }
 
     @Test

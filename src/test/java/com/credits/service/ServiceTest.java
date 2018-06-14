@@ -76,7 +76,7 @@ public abstract class ServiceTest {
         String sourceCode = readSourceCode(sourceCodePath);
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
         when(mockClient.getSmartContract(address)).thenReturn(
-            new SmartContractData(sourceCode, bytecode, encrypt(bytecode)));
+            new SmartContractData(address,sourceCode, bytecode, encrypt(bytecode)));
         return bytecode;
     }
 }

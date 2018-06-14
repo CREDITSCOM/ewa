@@ -24,7 +24,7 @@ public class ThriftServerLoadTest {
 
     @Before
     public void setUp() throws TTransportException {
-        String fileName = "ContractExecutorServiceTestCode.java";
+        String fileName = "Contract.java";
         file = new File(fileName);
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("com/credits/service/usercode/" + fileName)) {
             FileUtils.copyToFile(stream, file);
@@ -47,7 +47,7 @@ public class ThriftServerLoadTest {
                         transport.open();
                         TProtocol protocol = new TBinaryProtocol(transport);
                         ContractExecutor.Client client = new ContractExecutor.Client(protocol);
-                        APIResponse response = client.store(new ContractFile("ContractExecutorServiceTestCode.java", bytes), String.valueOf(Math.abs(new Random().nextInt())), "ekiT2ej+PL+eeaydVVpkvuuLWDXY7r9pZTsO4wosnVuvN5CHjFO2aSR65IBI8zl9T4jMDkutsGPAVRAeYvOKnQ==");
+                        APIResponse response = client.store(new ContractFile("Contract.java", bytes), String.valueOf(Math.abs(new Random().nextInt())), "ekiT2ej+PL+eeaydVVpkvuuLWDXY7r9pZTsO4wosnVuvN5CHjFO2aSR65IBI8zl9T4jMDkutsGPAVRAeYvOKnQ==");
                         System.out.println(response.getCode() + " " + response.getMessage());
                         transport.close();
                     } catch (Exception e) {
