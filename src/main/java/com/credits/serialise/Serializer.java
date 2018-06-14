@@ -10,15 +10,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import static java.io.File.*;
+
 public class Serializer {
 
-    private final static String SER_EXT = "out";
-    private final static String SER_SOURCE_FOLDER_PATH = System.getProperty("user.dir") + File.separator + "credits";
+    private static final String serFileName = "Contract.out";
+    private final static String SER_SOURCE_FOLDER_PATH = System.getProperty("user.dir") + separator + "credits" + separator;
 
-    public static Object deserialize(File serFile, ClassLoader customLoader) throws ContractExecutorException {
+    public static Object deserialize(File serFile, ClassLoader classLoader) throws ContractExecutorException {
         Object instance;
 
-        try (ObjectInputStream ous = new ObjectInputStreamWithClassLoader(new FileInputStream(serFile), customLoader)){
+        try (ObjectInputStream ous = new ObjectInputStreamWithClassLoader(new FileInputStream(serFile), classLoader)) {
             instance = ous.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new ContractExecutorException("Cannot load smart contract instance. " + e);
@@ -26,8 +28,11 @@ public class Serializer {
         return instance;
     }
 
-    public static void serialize(File serFile, Object instance) throws ContractExecutorException {
-        try (ObjectOutputStream ous = new ObjectOutputStream(new FileOutputStream(serFile))){
+    public static void serialize(String address, Object instance) throws ContractExecutorException {
+        String objFile = SER_SOURCE_FOLDER_PATH + address + separator + serFileName;
+        File serFile = new File(objFile);
+        serFile.getParentFile().mkdirs();
+        try (ObjectOutputStream ous = new ObjectOutputStream(new FileOutputStream(serFile))) {
             ous.writeObject(instance);
         } catch (IOException e) {
             throw new ContractExecutorException("Cannot save smart contract instance. " + e);
@@ -35,14 +40,11 @@ public class Serializer {
     }
 
     public static File getSerFile(String address) {
-        File sourcePath = new File(SER_SOURCE_FOLDER_PATH + File.separator + address);
-        String fileName = sourcePath.listFiles()[0].getName();
-        String serFileName = FilenameUtils.getBaseName(fileName) + "." + SER_EXT;
-        return new File(SER_SOURCE_FOLDER_PATH + File.separator + address +
-            File.separator + serFileName);
-    }
-
-    public static File getPropertySerFile(String loadAddress) {
-        return new File(SER_SOURCE_FOLDER_PATH + File.separator + loadAddress + ".out");
+        File sourcePath = new File(SER_SOURCE_FOLDER_PATH + address);
+        File[] files = sourcePath.listFiles();
+        if (files != null && files.length > 0) {
+            return new File(SER_SOURCE_FOLDER_PATH + separator + address + separator + serFileName);
+        }
+        return null;
     }
 }
