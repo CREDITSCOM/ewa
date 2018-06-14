@@ -2,11 +2,16 @@ package com.credits.service.contract;
 
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.ServiceTest;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.FileSystemUtils;
 
-import static com.credits.TestUtils.SimpleInMemoryCompilator.compile;
+import java.io.File;
+
+import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
+import static java.io.File.separator;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 public class ThriftIntegrationTest extends ServiceTest {
@@ -23,6 +28,12 @@ public class ThriftIntegrationTest extends ServiceTest {
 
         when(mockClient.getSmartContract(address)).thenReturn(
             new SmartContractData(address,sourceCode, contractBytecode, encrypt(contractBytecode)));
+    }
+
+    @After
+    public void tearDown() {
+        String dir = System.getProperty("user.dir") + separator + "credits";
+        FileSystemUtils.deleteRecursively(new File(dir));
     }
 
     @Test

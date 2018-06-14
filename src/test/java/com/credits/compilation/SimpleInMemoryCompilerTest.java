@@ -7,19 +7,19 @@ import org.junit.Test;
 import java.io.File;
 import java.net.URL;
 
-public class SimpleInMemoryCompilatorTest {
+public class SimpleInMemoryCompilerTest {
 
-    private SimpleInMemoryCompilator compilator;
+    private SimpleInMemoryCompiler compiler;
 
     @Before
     public void setUp() {
-        compilator = new SimpleInMemoryCompilator();
+        compiler = new SimpleInMemoryCompiler();
     }
 
     @Test
     public void compile() throws CompilationException {
         URL resource = getClass().getClassLoader().getResource("com/credits/compilation/Test.java");
         File source = new File(resource.getFile());
-        compilator.compile(source);
+        compiler.compile(source);
     }
 }

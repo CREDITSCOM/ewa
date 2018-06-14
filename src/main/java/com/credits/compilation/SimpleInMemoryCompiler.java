@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.util.Collections;
 
 @Component
-public class SimpleInMemoryCompilator {
+public class SimpleInMemoryCompiler {
 
-    private final static Logger logger = LoggerFactory.getLogger(SimpleInMemoryCompilator.class);
+    private final static Logger logger = LoggerFactory.getLogger(SimpleInMemoryCompiler.class);
 
     public void compile(File source) throws CompilationException {
         logger.debug("Compiling class {}", source.getName());

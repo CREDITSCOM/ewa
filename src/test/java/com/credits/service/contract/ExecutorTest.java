@@ -2,13 +2,16 @@ package com.credits.service.contract;
 
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.ServiceTest;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.FileSystemUtils;
 
+import java.io.File;
 import java.io.IOException;
-
-import static com.credits.TestUtils.SimpleInMemoryCompilator.compile;
+import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
+import static java.io.File.separator;
 import static junit.framework.TestCase.fail;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -19,9 +22,15 @@ public class ExecutorTest extends ServiceTest {
         super.setUp();
     }
 
+    @After
+    public void tearDown() {
+        String dir = System.getProperty("user.dir") + separator + "credits";
+        FileSystemUtils.deleteRecursively(new File(dir));
+    }
+
     @Test
     public void execute_bytecode() throws Exception {
-        String sourceCode = "public class Contract {\n" + "\n" + "    public Contract() {\n" +
+        String sourceCode = "public class Contract implements java.io.Serializable {\n" + "\n" + "    public Contract() {\n" +
             "        System.out.println(\"Hello World!!\"); \n" +
             "    }\npublic void foo(){\nSystem.out.println(\"Method foo executed\");\n}\n}";
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");

@@ -81,7 +81,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         Class<?> clazz;
         try {
-//            validateBytecode(address, bytecode);
+            validateBytecode(address, bytecode);
             clazz = classLoader.buildClass(bytecode);
         } catch (Exception e) {
             throw new ContractExecutorException(

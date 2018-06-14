@@ -6,8 +6,10 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +17,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Random;
+
+import static java.io.File.separator;
 
 public class ThriftServerLoadTest {
 
@@ -26,12 +30,18 @@ public class ThriftServerLoadTest {
     public void setUp() throws TTransportException {
         String fileName = "Contract.java";
         file = new File(fileName);
-        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("com/credits/service/usercode/" + fileName)) {
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("com/credits/service/usercode/thriftServerLoadTest/" + fileName)) {
             FileUtils.copyToFile(stream, file);
             bytes = ByteBuffer.wrap(FileUtils.readFileToByteArray(file));
         } catch (IOException e) {
             System.out.println(e);
         }
+    }
+
+    @After
+    public void tearDown() {
+        String dir = System.getProperty("user.dir") + separator + "credits";
+        FileSystemUtils.deleteRecursively(new File(dir));
     }
 
     @Test

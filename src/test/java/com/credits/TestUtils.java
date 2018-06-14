@@ -76,9 +76,9 @@ public class TestUtils {
         return retVal;
     }
 
-    public static class SimpleInMemoryCompilator {
+    public static class SimpleInMemoryCompiler {
 
-        private final static Logger logger = LoggerFactory.getLogger(SimpleInMemoryCompilator.class);
+        private final static Logger logger = LoggerFactory.getLogger(SimpleInMemoryCompiler.class);
         private final static String SOURCE_FOLDER_PATH =
             System.getProperty("user.dir") + File.separator + "temp" + File.separator;
 
