@@ -1,4 +1,4 @@
-package com.credits.wallet.desktop;
+package com.credits.wallet.desktop.test.init;
 
 import com.credits.leveldb.client.ApiClient;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -10,7 +10,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Properties;
 
-class AppStateInitializer {
+class TestStateInitializer {
     private static final String ERR_NO_PROPERTIES = "File settings.properties not found";
 
     private static final String ERR_NO_API_ADDR = "The server address could not be determined. Check api.addr parameter in the settings.properties file";
@@ -31,29 +31,29 @@ class AppStateInitializer {
 
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         char separator = symbols.getDecimalSeparator();
-        AppState.decimalSeparator = Character.toString(separator);
+        TestState.decimalSeparator = Character.toString(separator);
 
-        AppState.creditMonitorURL = properties.getProperty("creditmonitor.url");
+        TestState.creditMonitorURL = properties.getProperty("creditmonitor.url");
 
         String apiAddr = properties.getProperty("api.addr");
         String apiPort = properties.getProperty("api.port");
-        AppState.contractExecutorHost = properties.getProperty("contract.executor.host");
+        TestState.contractExecutorHost = properties.getProperty("contract.executor.host");
         try {
-            AppState.contractExecutorPort = Integer.valueOf(properties.getProperty("contract.executor.port"));
+            TestState.contractExecutorPort = Integer.valueOf(properties.getProperty("contract.executor.port"));
         } catch (Exception e) {
             // do nothing
         }
-        AppState.contractExecutorDir = properties.getProperty("contract.executor.dir");
+        TestState.contractExecutorDir = properties.getProperty("contract.executor.dir");
 
 
         if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
             FormUtils.showError(ERR_NO_API_ADDR);
-        } else if (AppState.contractExecutorHost == null ||
-                AppState.contractExecutorPort == null ||
-                AppState.contractExecutorDir == null) {
+        } else if (TestState.contractExecutorHost == null ||
+                TestState.contractExecutorPort == null ||
+                TestState.contractExecutorDir == null) {
             FormUtils.showError(ERR_NO_CONTRACT_EXECUTOR);
         } else {
-            AppState.apiClient = ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
+            TestState.apiClient = ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
         }
     }
 }

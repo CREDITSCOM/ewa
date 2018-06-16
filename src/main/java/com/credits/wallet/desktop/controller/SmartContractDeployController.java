@@ -9,42 +9,30 @@ import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.*;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ContextMenu;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.model.StyleSpans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.PublicKey;
-import java.time.Duration;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 
@@ -89,8 +77,7 @@ public class SmartContractDeployController extends Controller implements Initial
 
         this.prevCode = DEFAULT_SOURCE_CODE;
 
-        this.codeArea = new CodeArea();
-        this.codeArea.setParagraphGraphicFactory(LineNumberFactory.get(this.codeArea));
+        this.codeArea = SourceCodeUtils.initCodeArea(this.paneCode);
 
         this.codeArea.setOnKeyPressed(ke -> {
             if (ke.isControlDown() && ke.getCode().equals(KeyCode.SPACE)) {
@@ -119,25 +106,7 @@ public class SmartContractDeployController extends Controller implements Initial
                     this.prevCode = this.codeArea.getText();
                 });
 
-        this.codeArea.richChanges()
-                .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
-                .successionEnds(Duration.ofMillis(500))
-                .supplyTask(this::computeHighlightingAsync)
-                .awaitLatest(this.codeArea.richChanges())
-                .filterMap(t -> {
-                    if (t.isSuccess()) {
-                        return Optional.of(t.get());
-                    } else {
-                        t.getFailure().printStackTrace();
-                        return Optional.empty();
-                    }
-                })
-                .subscribe(this::applyHighlighting);
-
-        this.codeArea.setPrefHeight(this.paneCode.getPrefHeight());
-        this.codeArea.setPrefWidth(this.paneCode.getPrefWidth());
         this.codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
-        this.paneCode.getChildren().add(this.codeArea);
 
         this.tabErrors = new TableView();
         this.tabErrors.setPrefHeight(this.paneCode.getPrefHeight() * 0.3);
@@ -181,12 +150,7 @@ public class SmartContractDeployController extends Controller implements Initial
 
     @FXML
     private void handleDeploy() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("CST");
-        sb.append(com.credits.common.utils.Utils.randomAlphaNumeric(29));
-        String token = sb.toString();
-
-        // Parse className
+        String token = SourceCodeUtils.generateSmartContractToken();
         String className = SourceCodeUtils.parseClassName(this.codeArea.getText(), "SmartContract");
         try {
             String javaCode = SourceCodeUtils.normalizeSourceCode(this.codeArea.getText());
@@ -195,6 +159,7 @@ public class SmartContractDeployController extends Controller implements Initial
             SmartContractData smartContractData = new SmartContractData(token, javaCode, byteCode, hashState);
             String transactionInnerId = ApiUtils.generateTransactionInnerId();
             String transactionTarget = generatePublicKeyBase58();
+            LOGGER.info("transactionTarget = {}", transactionTarget);
             ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, transactionTarget, smartContractData);
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
                 StringSelection selection = new StringSelection(token);
@@ -218,70 +183,34 @@ public class SmartContractDeployController extends Controller implements Initial
     private void refreshClassMembersTree() {
 
         this.classTreeView.setRoot(null);
-
         String sourceCode = this.codeArea.getText();
-
-        CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
-
-        List typeList = compilationUnit.types();
-
-        if (typeList.size() != 1) {
-            return;
-        }
-
-        TypeDeclaration typeDeclaration = (TypeDeclaration) typeList.get(0);
-
-        String className = (typeDeclaration).getName().getFullyQualifiedName();
-
+        String className = SourceCodeUtils.parseClassName(sourceCode);
         Label labelRoot = new Label(className);
-
         TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
 
-        ASTNode root = compilationUnit.getRoot();
+        List<FieldDeclaration> fields = SourceCodeUtils.parseFields(sourceCode);
+        List<MethodDeclaration> constructors = SourceCodeUtils.parseConstructors(sourceCode);
+        List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
 
-        root.accept(new ASTVisitor() {
+        List<BodyDeclaration> classMembers = new ArrayList<>();
+        classMembers.addAll(fields);
+        classMembers.addAll(constructors);
+        classMembers.addAll(methods);
 
-            @Override
-            public boolean visit(FieldDeclaration node) {
-                return true;
+        classMembers.forEach(classMember -> {
+            if (classMember instanceof  MethodDeclaration) {
+                ((MethodDeclaration)classMember).setBody(null);
             }
 
-            @Override
-            public void endVisit(FieldDeclaration node) {
-                Label label = new Label(node.toString());
-
-                label.setOnMousePressed(event -> {
-                    if (event.isPrimaryButtonDown()) {
-                        positionCursorToLine(compilationUnit.getLineNumber(node.getStartPosition()));
-                    }
-                });
-
-                TreeItem<Label> treeItem = new TreeItem<>();
-                treeItem.setValue(label);
-
-                treeRoot.getChildren().add(treeItem);
-            }
-
-            @Override
-            public boolean visit(MethodDeclaration node) {
-                return true;
-            }
-
-            @Override
-            public void endVisit(MethodDeclaration node) {
-                node.setBody(null);
-                Label label = new Label(node.toString());
-                label.setOnMousePressed(event -> {
-                    if (event.isPrimaryButtonDown()) {
-                        positionCursorToLine(compilationUnit.getLineNumber(node.getStartPosition()));
-                    }
-                });
-
-                TreeItem<Label> treeItem = new TreeItem<>();
-                treeItem.setValue(label);
-
-                treeRoot.getChildren().add(treeItem);
-            }
+            Label label = new Label(classMember.toString());
+            label.setOnMousePressed(event -> {
+                if (event.isPrimaryButtonDown()) {
+                    positionCursorToLine(SourceCodeUtils.getLineNumber(sourceCode, classMember));
+                }
+            });
+            TreeItem<Label> treeItem = new TreeItem<>();
+            treeItem.setValue(label);
+            treeRoot.getChildren().add(treeItem);
         });
 
         treeRoot.setExpanded(true);
@@ -315,22 +244,6 @@ public class SmartContractDeployController extends Controller implements Initial
             this.paneCode.getChildren().clear();
             this.paneCode.getChildren().add(this.codeArea);
         }
-    }
-
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        this.codeArea.setStyleSpans(0, highlighting);
-    }
-
-    private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
-        String sourceCode = this.codeArea.getText();
-        Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
-            @Override
-            protected StyleSpans<Collection<String>> call() throws Exception {
-                return SourceCodeUtils.computeHighlighting(sourceCode);
-            }
-        };
-        AppState.executor.execute(task);
-        return task;
     }
 
     private void positionCursorToLine(int line) {

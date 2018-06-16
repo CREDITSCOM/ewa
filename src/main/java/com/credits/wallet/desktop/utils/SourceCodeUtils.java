@@ -1,12 +1,17 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.wallet.desktop.AppState;
+import javafx.concurrent.Task;
+import javafx.scene.layout.Pane;
+import org.eclipse.jdt.core.dom.*;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +38,7 @@ public class SourceCodeUtils {
 
 
     public static String normalizeSourceCode(String sourceCode) {
-        String normalizedSourceCode = sourceCode.replace("\r", " ").replace("\n", " ").replace("{", " {");
+        String normalizedSourceCode = sourceCode.replace("\r", " ").replace("\n", " ").replace("\t", " ").replace("{", " {");
 
         while (normalizedSourceCode.contains("  ")) {
             normalizedSourceCode = normalizedSourceCode.replace("  ", " ");
@@ -92,4 +97,139 @@ public class SourceCodeUtils {
         return spansBuilder.create();
     }
 
+    public static CodeArea initCodeArea(Pane paneCode) {
+        if (AppState.executor != null) {
+            AppState.executor.shutdown();
+        }
+        AppState.executor = Executors.newSingleThreadExecutor();
+
+        CodeArea codeArea = new CodeArea();
+        codeArea.setPrefHeight(paneCode.getPrefHeight());
+        codeArea.setPrefWidth(paneCode.getPrefWidth());
+        paneCode.getChildren().add(codeArea);
+        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+        codeArea.richChanges()
+                .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
+                .successionEnds(Duration.ofMillis(500))
+                .supplyTask(() -> {
+                    String sourceCode = codeArea.getText();
+                    Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
+                        @Override
+                        protected StyleSpans<Collection<String>> call() throws Exception {
+                            return SourceCodeUtils.computeHighlighting(sourceCode);
+                        }
+                    };
+                    AppState.executor.execute(task);
+                    return task;
+                })
+                .awaitLatest(codeArea.richChanges())
+                .filterMap(t -> {
+                    if (t.isSuccess()) {
+                        return Optional.of(t.get());
+                    } else {
+                        t.getFailure().printStackTrace();
+                        return Optional.empty();
+                    }
+                })
+                .subscribe(highlighting -> {
+                    codeArea.setStyleSpans(0, (StyleSpans<Collection<String>>) highlighting);
+                });
+
+        return codeArea;
+    }
+
+    public static String parseClassName(String sourceCode) {
+        CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
+
+        List typeList = compilationUnit.types();
+
+        if (typeList.size() != 1) {
+            return null;
+        }
+
+        TypeDeclaration typeDeclaration = (TypeDeclaration) typeList.get(0);
+
+        return (typeDeclaration).getName().getFullyQualifiedName();
+    }
+
+    public static List<FieldDeclaration> parseFields(String sourceCode) {
+        List<FieldDeclaration> list = new ArrayList<>();
+        CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
+        List typeList = compilationUnit.types();
+        if (typeList.size() != 1) {
+            return list;
+        }
+        ASTNode root = compilationUnit.getRoot();
+        root.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(TypeDeclaration typeNote) {
+                FieldDeclaration[] notes = typeNote.getFields();
+                for(FieldDeclaration note : notes) {
+                        list.add(note);
+                }
+                return false;
+            }
+        });
+        return list;
+    }
+
+    public static List<MethodDeclaration> parseMethods(String sourceCode) {
+        List<MethodDeclaration> list = new ArrayList<>();
+        CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
+        List typeList = compilationUnit.types();
+        if (typeList.size() != 1) {
+            return list;
+        }
+        ASTNode root = compilationUnit.getRoot();
+        root.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(TypeDeclaration typeNote) {
+                MethodDeclaration[] notes = typeNote.getMethods();
+                for(MethodDeclaration note : notes) {
+                    if (!note.isConstructor()) {
+                        list.add(note);
+                    }
+                }
+                return false;
+            }
+        });
+        return list;
+    }
+
+    public static List<MethodDeclaration> parseConstructors(String sourceCode) {
+        List<MethodDeclaration> list = new ArrayList<>();
+        CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
+        List typeList = compilationUnit.types();
+        if (typeList.size() != 1) {
+            return list;
+        }
+        ASTNode root = compilationUnit.getRoot();
+        root.accept(new ASTVisitor() {
+            @Override
+            public boolean visit(TypeDeclaration typeNote) {
+                MethodDeclaration[] notes = typeNote.getMethods();
+                for(MethodDeclaration note : notes) {
+                    if (note.isConstructor()) {
+                        list.add(note);
+                    }
+                }
+                return false;
+            }
+        });
+        return list;
+    }
+
+    public static List getMethodParameters(MethodDeclaration methodDeclaration) {
+
+        return methodDeclaration.parameters();
+    }
+
+    public static int getLineNumber(String sourceCode, BodyDeclaration bodyDeclaration) {
+        CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
+        return compilationUnit.getLineNumber(bodyDeclaration.getStartPosition());
+    }
+
+    public static String generateSmartContractToken() {
+        return "CST" + com.credits.common.utils.Utils.randomAlphaNumeric(29);
+    }
 }

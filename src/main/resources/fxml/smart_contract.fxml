@@ -55,12 +55,12 @@
                                                       <Font name="System Bold" size="11.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="75.0" layoutY="217.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Choose element">
+                                                <Label layoutX="75.0" layoutY="217.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Choose method">
                                                    <font>
                                                       <Font name="System Bold" size="11.0" />
                                                    </font>
                                                 </Label>
-                                                <ComboBox fx:id="cbCoin" layoutX="75.0" layoutY="244.0" prefHeight="56.0" prefWidth="200.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" />
+                                                <ComboBox fx:id="cbMethods" layoutX="75.0" layoutY="244.0" prefHeight="56.0" prefWidth="473.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" />
                                                 <Button layoutX="75.0" layoutY="394.0" mnemonicParsing="false" onAction="#handleExecute" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="EXECUTE" textAlignment="CENTER" wrapText="true" />
                                              </children></Pane>
                                           <ScrollPane layoutX="24.0" layoutY="148.0" prefHeight="455.0" prefWidth="309.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000;">
@@ -69,9 +69,9 @@
                                              </content>
                                           </ScrollPane>
                                           <TextField fx:id="txSearchAddress" layoutX="21.0" layoutY="84.0" prefHeight="56.0" prefWidth="311.0" promptText="search contract" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-                                          <Button layoutX="347.0" layoutY="81.0" mnemonicParsing="false" onAction="#handleSearch" prefHeight="61.0" prefWidth="93.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="OK" textAlignment="CENTER" wrapText="true" />
+                                          <Button layoutX="347.0" layoutY="81.0" mnemonicParsing="false" onAction="#handleSearch" prefHeight="61.0" prefWidth="93.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SEARCH" textAlignment="CENTER" wrapText="true" />
                                           <Button layoutX="486.0" layoutY="81.0" mnemonicParsing="false" onAction="#handleCreate" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CREATE" textAlignment="CENTER" wrapText="true" />
-                                          <TextArea fx:id="taCode" layoutX="884.0" layoutY="156.0" prefHeight="451.0" prefWidth="470.0" style="-fx-border-width: 1; -fx-background-color: #fff; -fx-border-color: #000;" />
+                                          <Pane fx:id="paneCode" layoutX="840.0" layoutY="122.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="536.0" prefWidth="475.0" />
                                        </children>
                                     </Pane>
                                  </children>
