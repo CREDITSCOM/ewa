@@ -12,6 +12,7 @@ import com.google.gson.JsonParser;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import org.slf4j.Logger;
@@ -32,6 +33,8 @@ import java.util.ResourceBundle;
 public class Form5Controller extends Controller implements Initializable {
     private static Logger LOGGER = LoggerFactory.getLogger(Form5Controller.class);
 
+    private static final String ERR_KEYS="Public and private keys pair is not valid";
+
     @FXML
     private Button btnBack;
 
@@ -46,6 +49,9 @@ public class Form5Controller extends Controller implements Initializable {
 
     @FXML
     private TextField txPublic;
+
+    @FXML
+    private Label labelError;
 
     @FXML
     private void handleBack() {
@@ -108,6 +114,8 @@ public class Form5Controller extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        clearLabErr();
+
         btnBack.setVisible(!AppState.newAccount);
         btnSaveKeys.setVisible(AppState.newAccount);
         btnUpload.setVisible(!AppState.newAccount);
@@ -121,6 +129,7 @@ public class Form5Controller extends Controller implements Initializable {
     }
 
     private void open(String pubKey, String privKey) {
+        clearLabErr();
 
         AppState.account = pubKey;
         if (AppState.newAccount) {
@@ -140,7 +149,9 @@ public class Form5Controller extends Controller implements Initializable {
                 AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
             } catch (Exception e) {
                 if (e.getMessage() != null) {
-                    FormUtils.showError(e.getMessage());
+                    labelError.setText(e.getMessage());
+                    txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+                    txPublic.setStyle(txPublic.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
                 }
                 LOGGER.error(e.getMessage(), e);
                 //return;
@@ -150,7 +161,12 @@ public class Form5Controller extends Controller implements Initializable {
         if (validateKeys(pubKey, privKey)) {
             App.showForm("/fxml/form6.fxml", "Wallet");
         } else {
-            FormUtils.showError("Public and private keys pair is not valid");
+            if (labelError.getText().isEmpty())
+                labelError.setText(ERR_KEYS);
+            else
+                labelError.setText(ERR_KEYS + "; " + labelError.getText());
+            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            txPublic.setStyle(txPublic.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
         }
     }
 
@@ -176,5 +192,12 @@ public class Form5Controller extends Controller implements Initializable {
         }
 
         return true;
+    }
+
+    private void clearLabErr() {
+        labelError.setText("");
+
+        txKey.setStyle(txKey.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
+        txPublic.setStyle(txPublic.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
     }
 }
