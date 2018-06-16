@@ -88,8 +88,12 @@ public class HistoryController extends Controller implements Initializable {
             transactionList =
                 AppState.apiClient.getTransactions(AppState.account, (pageNumber - 1) * pageSize, pageSize);
         } catch (Exception e) {
-            LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
-            FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
+            //LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
+            //FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
+
+            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
+            FormUtils.showError(AppState.NODE_ERROR);
+
             return;
         }
 

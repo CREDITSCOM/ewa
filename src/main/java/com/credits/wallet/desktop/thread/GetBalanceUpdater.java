@@ -32,9 +32,13 @@ public class GetBalanceUpdater implements Runnable {
             AppState.balance = balance;
             label.setText(Converter.toString(balance));
         } catch (Exception e) {
-            label.setText(ERR_GETTING_BALANCE);
-            LOGGER.error(ERR_GETTING_BALANCE, e);
-            FormUtils.showError(ERR_GETTING_BALANCE);
+            //label.setText(ERR_GETTING_BALANCE);
+            //LOGGER.error(ERR_GETTING_BALANCE, e);
+            //FormUtils.showError(ERR_GETTING_BALANCE);
+
+            label.setText(AppState.NODE_ERROR);
+            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
+            FormUtils.showError(AppState.NODE_ERROR);
         }
     }
 }

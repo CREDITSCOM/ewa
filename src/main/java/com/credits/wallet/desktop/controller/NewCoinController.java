@@ -2,9 +2,9 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +24,19 @@ import java.util.ResourceBundle;
 public class NewCoinController extends Controller implements Initializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(NewCoinController.class);
 
+    private static final String ERR_COIN = "You must enter coin mnemonic";
+    private static final String ERR_TOKEN = "You must enter token";
+    private static final String ERR_COIN_DUPLICATE = "Coin already exists";
+
     @FXML
     private TextField txToken;
     @FXML
     private TextField txCoin;
+
+    @FXML
+    private Label labelErrorToken;
+    @FXML
+    private Label labelErrorCoin;
 
     @FXML
     private void handleBack() {
@@ -36,23 +45,33 @@ public class NewCoinController extends Controller implements Initializable {
 
     @FXML
     private void handleSave() {
+        clearLabErr();
+
         String coin = txCoin.getText().replace(";", "");
         String token = txToken.getText().replace(";", "");
 
+        // VALIDATE
+        boolean isValidationSuccessful = true;
         if (coin.isEmpty()) {
-            FormUtils.showError("You must enter coin mnemonic");
-            return;
+            labelErrorCoin.setText(ERR_COIN);
+            txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            isValidationSuccessful = false;
         }
 
         if (token.isEmpty()) {
-            FormUtils.showError("You must enter token");
-            return;
+            labelErrorToken.setText(ERR_TOKEN);
+            txToken.setStyle(txToken.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            isValidationSuccessful = false;
         }
 
         if (AppState.coins.contains(coin)) {
-            FormUtils.showError("Coin already exists");
-            return;
+            labelErrorCoin.setText(ERR_COIN_DUPLICATE);
+            txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            isValidationSuccessful = false;
         }
+
+        if (!isValidationSuccessful)
+            return;
 
         String strToWrite = coin + ";" + token;
 
@@ -83,6 +102,8 @@ public class NewCoinController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        clearLabErr();
+
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         try {
             String token = (String) clipboard.getData(DataFlavor.stringFlavor);
@@ -90,5 +111,13 @@ public class NewCoinController extends Controller implements Initializable {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private void clearLabErr() {
+        labelErrorToken.setText("");
+        labelErrorCoin.setText("");
+
+        txToken.setStyle(txToken.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
+        txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
     }
 }

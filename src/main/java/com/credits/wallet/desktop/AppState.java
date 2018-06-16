@@ -15,6 +15,8 @@ import java.util.concurrent.ExecutorService;
  * Created by goncharov-eg on 19.01.2018.
  */
 public class AppState {
+    public static final String NODE_ERROR="A problem connecting to the Node";
+
     public static ApiClient apiClient;
     public static String decimalSeparator;
     public static String creditMonitorURL;
