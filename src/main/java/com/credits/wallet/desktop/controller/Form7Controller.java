@@ -42,8 +42,10 @@ public class Form7Controller extends Controller implements Initializable {
             ApiUtils.callTransactionFlow(AppState.innerId, AppState.account, AppState.toAddress, AppState.amount,
                 AppState.balance, AppState.coin);
         } catch (Exception e) {
-            LOGGER.error("Error creating transaction " + e.toString(), e);
-            FormUtils.showError("Error creating transaction " + e.toString());
+            //LOGGER.error("Error creating transaction " + e.toString(), e);
+            //FormUtils.showError("Error creating transaction " + e.toString());
+            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
+            FormUtils.showError(AppState.NODE_ERROR);
             return;
         }
 

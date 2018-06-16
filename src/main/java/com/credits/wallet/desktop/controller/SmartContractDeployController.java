@@ -205,8 +205,11 @@ public class SmartContractDeployController extends Controller implements Initial
                 Utils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
             }
         } catch (Exception e) {
-            LOGGER.error("Error deploying smart contract " + e.toString(), e);
-            Utils.showError("Error deploying smart contract " + e.toString());
+            //LOGGER.error("Error deploying smart contract " + e.toString(), e);
+            //Utils.showError("Error deploying smart contract " + e.toString());
+
+            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
+            FormUtils.showError(AppState.NODE_ERROR);
         }
     }
 

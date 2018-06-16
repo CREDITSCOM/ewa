@@ -65,8 +65,11 @@ public class SmartContractController extends Controller implements Initializable
             this.taCode.setText(smartContractData.getSourceCode());
 
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            Utils.showError(String.format("Error %s", e.getMessage()));
+            //LOGGER.error(e.getMessage(), e);
+            //Utils.showError(String.format("Error %s", e.getMessage()));
+
+            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
+            FormUtils.showError(AppState.NODE_ERROR);
         }
     }
 
@@ -80,8 +83,11 @@ public class SmartContractController extends Controller implements Initializable
                 rootItem.getChildren().add(new TreeItem<>(new Label(smartContractData.getHashState())));
             }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            FormUtils.showError("Error getting Smart Contract List " + e.toString());
+            //LOGGER.error(e.getMessage(), e);
+            //FormUtils.showError("Error getting Smart Contract List " + e.toString());
+
+            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
+            FormUtils.showError(AppState.NODE_ERROR);
         }
 
         this.contractsTree.setRoot(rootItem);
@@ -125,8 +131,11 @@ public class SmartContractController extends Controller implements Initializable
 
                 transport.close();
             } catch (Exception e) {
-                e.printStackTrace();
-                Utils.showError("Error executing smart contract " + e.toString());
+                //e.printStackTrace();
+                //Utils.showError("Error executing smart contract " + e.toString());
+
+                LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
+                FormUtils.showError(AppState.NODE_ERROR);
             }
         }
 
