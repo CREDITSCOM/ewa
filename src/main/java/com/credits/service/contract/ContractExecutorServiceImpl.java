@@ -97,7 +97,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 instance = clazz.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new ContractExecutorException(
-                    "Cannot create new instance of the contract: " + address + ". Reason: " + e.getMessage(), e);
+                    "Cannot create new instance of the contract: " + address + ". Reason: " + getRootCauseMessage(e),
+                    e);
             }
         }
 
@@ -124,7 +125,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 } catch (ClassCastException e) {
                     continue;
                 } catch (ContractExecutorException e) {
-                    throw new ContractExecutorException("Cannot execute the contract: " + address, e);
+                    throw new ContractExecutorException(
+                        "Cannot execute the contract: " + address + "Reason: " + getRootCauseMessage(e), e);
                 }
                 targetMethod = method;
                 break;
@@ -140,8 +142,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             Sandbox.confine(clazz, createPermissions());
             targetMethod.invoke(instance, argValues);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            System.out.println(getStackTrace(e));
+        } catch (Exception e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
