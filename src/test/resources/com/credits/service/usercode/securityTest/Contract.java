@@ -7,6 +7,9 @@ import java.net.URI;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.File;
+
+import static java.io.File.*;
 
 public class Contract extends SmartContract {
 
@@ -43,6 +46,12 @@ public class Contract extends SmartContract {
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+    public void createFileInProjectDir(String path) throws Exception {
+        File file = new File(path);
+        file.getParentFile().mkdirs();
+        Files.createFile(Paths.get(file.getPath()));
     }
 
     public void killProcess() {

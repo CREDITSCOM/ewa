@@ -29,12 +29,14 @@ public class SecurityTest extends ServiceTest {
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
+    private final static String prjDir = "\"" + System.getProperty("user.dir") + separator + "credits" + separator + "file.test" + "\"";
+
     @Parameter
     public String methodName;
     @Parameter(1)
     public String arg;
     @Parameter(2)
-    public Boolean errorExpected;
+    public boolean errorExpected;
 
     @Parameters(name = "{0}")
     public static Collection<Object[]> data() {
@@ -43,6 +45,7 @@ public class SecurityTest extends ServiceTest {
             {"setTotal", "1000", false},
             {"getTotal", null, false},
             {"createFile", null, true},
+            {"createFileInProjectDir", prjDir, true},
             {"killProcess", null, true},
             {"killThread", null, false},
             {"newThread", null, false},
