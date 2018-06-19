@@ -9,16 +9,19 @@ import com.credits.wallet.desktop.thrift.executor.ContractExecutor;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SimpleInMemoryCompiler;
 import com.credits.wallet.desktop.utils.SourceCodeUtils;
-import com.credits.wallet.desktop.utils.Utils;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,17 +48,22 @@ public class SmartContractController extends Controller implements Initializable
     private Pane paneCode;
 
     @FXML
-    private TextArea taABI;
-
-    @FXML
     private TreeView<Label> contractsTree;
 
     @FXML
-    private ComboBox cbMethods;
+    private ComboBox<MethodDeclaration> cbMethods;
+
+    @FXML
+    private AnchorPane pParams;
+
+    @FXML
+    private AnchorPane pParamsContainer;
 
     private CodeArea codeArea;
 
     private SmartContractData currentSmartContract;
+
+    private ObservableList<MethodDeclaration> methodList;
 
     @FXML
     private void handleBack() {
@@ -84,16 +92,14 @@ public class SmartContractController extends Controller implements Initializable
 
     private void refreshFormState(SmartContractData smartContractData) {
         this.currentSmartContract = smartContractData;
-
         String sourceCode = smartContractData.getSourceCode();
-
         this.address.setText(smartContractData.getAddress());
         this.codeArea.replaceText(0, 0, smartContractData.getSourceCode());
-
         List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
         cbMethods.getItems().clear();
         methods.forEach(method -> {
-            cbMethods.getItems().add(method.getName());
+            method.setBody(null);
+            cbMethods.getItems().add(method);
         });
     }
 
@@ -131,12 +137,33 @@ public class SmartContractController extends Controller implements Initializable
         this.contractsTree.setRoot(rootItem);
 
         this.codeArea.setDisable(true);
-        taABI.setDisable(true);
     }
 
     @FXML
-    private void panelCodeKeyReleased() {
-        refreshClassMembersTree();
+    private void cbMethodsOnAction() {
+        MethodDeclaration selectedMethod = this.cbMethods.getSelectionModel().getSelectedItem();
+        List<SingleVariableDeclaration> params = SourceCodeUtils.getMethodParameters(selectedMethod);
+        this.pParamsContainer.getChildren().clear();
+        if (params.size() > 0) {
+            this.pParams.setVisible(true);
+            double layoutY = 10;
+            for (SingleVariableDeclaration param : params) {
+                TextField paramValueTextField = new TextField();
+                paramValueTextField.setLayoutX(250);
+                paramValueTextField.setLayoutY(layoutY);
+                paramValueTextField.setStyle("-fx-background-color:  #fff; -fx-border-width: 1; -fx-border-color:  #000; -fx-font-size: 16px");
+                paramValueTextField.setPrefSize(150, 56);
+                Label paramNameLabel = new Label(param.toString());
+                paramNameLabel.setLayoutX(10);
+                paramNameLabel.setLayoutY(layoutY + 15);
+                paramNameLabel.setStyle("-fx-font-size: 18px");
+                paramNameLabel.setLabelFor(paramValueTextField);
+                this.pParamsContainer.getChildren().addAll(paramNameLabel, paramValueTextField);
+                layoutY += 70;
+            }
+        } else {
+            this.pParams.setVisible(false);
+        }
     }
 
     @FXML
@@ -149,10 +176,15 @@ public class SmartContractController extends Controller implements Initializable
 
             String sourceCode = this.currentSmartContract.getSourceCode();
             String address = currentSmartContract.getAddress();
-            String method = cbMethods.getValue().toString();
+            String method = cbMethods.getSelectionModel().getSelectedItem().getName().getIdentifier();
             List<String> params = new ArrayList<>();
-//                params.add("par01");
-//                params.add("par02");
+            ObservableList<Node> paramsContainerChildren = this.pParamsContainer.getChildren();
+            paramsContainerChildren.forEach(node -> {
+                if (node instanceof TextField) {
+                    String paramValue = ((TextField)node).getText();
+                    params.add(paramValue);
+                }
+            });
             String token = SourceCodeUtils.generateSmartContractToken();
             String className = SourceCodeUtils.parseClassName(sourceCode);
             try {
@@ -177,8 +209,5 @@ public class SmartContractController extends Controller implements Initializable
                 FormUtils.showError(AppState.NODE_ERROR);
             }
         }
-    }
-
-    private void refreshClassMembersTree() {
     }
 }

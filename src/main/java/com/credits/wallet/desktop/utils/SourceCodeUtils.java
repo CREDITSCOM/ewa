@@ -219,7 +219,7 @@ public class SourceCodeUtils {
         return list;
     }
 
-    public static List getMethodParameters(MethodDeclaration methodDeclaration) {
+    public static List<SingleVariableDeclaration> getMethodParameters(MethodDeclaration methodDeclaration) {
 
         return methodDeclaration.parameters();
     }
