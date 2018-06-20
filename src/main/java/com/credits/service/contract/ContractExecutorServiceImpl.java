@@ -56,8 +56,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     @Resource
     private LevelDbInteractionService dbInteractionService;
 
-    @Resource
-    private UserCodeStorageService storageService;
 
     @PostConstruct
     private void setUp() {
@@ -74,7 +72,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public byte[] execute(String address, byte[] bytecode, String methodName, String[] params)
+    public byte[] execute(String address, byte[] bytecode, byte[] contractState, String methodName, String[] params)
         throws ContractExecutorException {
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
@@ -88,10 +86,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
 
-        File serFile = getSerFile(address);
         Object instance;
-        if (serFile != null) {
-            instance = deserialize(serFile, classLoader);
+        if (contractState != null && contractState.length != 0) {
+            instance = deserialize(contractState, classLoader);
         } else {
             try {
                 instance = clazz.newInstance();

@@ -2,14 +2,19 @@ package com.credits.serialise;
 
 import com.credits.exception.ContractExecutorException;
 import com.sun.xml.internal.bind.v2.TODO;
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 
 import static java.io.File.*;
 
@@ -18,29 +23,27 @@ public class Serializer {
     private static final String serFileName = "Contract.out";
     private final static String SER_SOURCE_FOLDER_PATH = System.getProperty("user.dir") + separator + "credits" + separator;
 
-    public static Object deserialize(File serFile, ClassLoader classLoader) throws ContractExecutorException {
-        // TODO: 6/20/2018 required to implemet deserialize contract from bytes
+    public static Object deserialize(byte[] contractState, ClassLoader classLoader) throws ContractExecutorException {
         Object instance;
 
-        try (ObjectInputStream ous = new ObjectInputStreamWithClassLoader(new FileInputStream(serFile), classLoader)) {
+        try (ObjectInputStream ous = new ObjectInputStreamWithClassLoader(new ByteArrayInputStream(contractState), classLoader)) {
             instance = ous.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new ContractExecutorException("Cannot load smart contract instance. " + e);
+            throw new ContractExecutorException("Cannot deserialize smart contract instance. " + e);
         }
         return instance;
     }
 
     public static byte[] serialize(String address, Object instance) throws ContractExecutorException {
         String objFile = SER_SOURCE_FOLDER_PATH + address + separator + serFileName;
-        File serFile = new File(objFile);
-        serFile.getParentFile().mkdirs();
-        try (ObjectOutputStream ous = new ObjectOutputStream(new FileOutputStream(serFile))) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream ous = new ObjectOutputStream(baos)) {
             ous.writeObject(instance);
         } catch (IOException e) {
-            throw new ContractExecutorException("Cannot save smart contract instance. " + e);
+            throw new ContractExecutorException("Cannot serialize smart contract instance. " + e);
         }
-        // TODO: 6/20/2018 required to implement return serialize contact in bytecode
-        return new byte[0];
+        return baos.toByteArray();
     }
 
     public static File getSerFile(String address) {

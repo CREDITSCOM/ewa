@@ -69,7 +69,7 @@ public class SecurityTest extends ServiceTest {
     @Test
     public void test() throws Exception {
         try {
-            ceService.execute(address, bytecode, methodName, arg != null ? new String[] {arg} : null);
+            ceService.execute(address, bytecode, null, methodName, arg != null ? new String[] {arg} : null);
         } catch (ContractExecutorException e) {
             System.out.println(e.getMessage());
             if (!errorExpected || !e.getMessage().contains("AccessControlException")) {

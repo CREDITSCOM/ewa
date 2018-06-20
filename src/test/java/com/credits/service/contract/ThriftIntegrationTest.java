@@ -38,12 +38,12 @@ public class ThriftIntegrationTest extends ServiceTest {
 
     @Test
     public void execute_contract_using_bytecode_getBalance() throws Exception {
-        ceService.execute(address, contractBytecode, "balanceGet", new String[0]);
+        ceService.execute(address, contractBytecode, null, "balanceGet", new String[0]);
     }
 
     @Test
     public void execute_contract_using_bytecode_sendTransaction() throws Exception {
-        ceService.execute(address, contractBytecode, "sendZeroCS", new String[0]);
+        ceService.execute(address, contractBytecode, null, "sendZeroCS", new String[0]);
     }
 
 }

@@ -32,7 +32,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
         APIResponse response = new APIResponse((byte) 0, "", contractState);
         try {
-            response.contractState = ByteBuffer.wrap(service.execute(address, byteCode.array(), method, paramsArray));
+            response.contractState = ByteBuffer.wrap(service.execute(address, byteCode.array(), null, method, paramsArray));
         } catch (ContractExecutorException e) {
             response.setCode((byte) 1);
             response.setMessage(e.getMessage());

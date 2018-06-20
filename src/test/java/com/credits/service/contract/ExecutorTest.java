@@ -9,6 +9,8 @@ import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
 import static java.io.File.separator;
@@ -30,20 +32,22 @@ public class ExecutorTest extends ServiceTest {
 
     @Test
     public void execute_bytecode() throws Exception {
-        String sourceCode = "public class Contract implements java.io.Serializable {\n" + "\n" + "    public Contract() {\n" +
-            "        System.out.println(\"Hello World!!\"); \n" +
-            "    }\npublic void foo(){\nSystem.out.println(\"Method foo executed\");\n}\n}";
+        String sourceCode =
+            "public class Contract implements java.io.Serializable {\n" + "\n" + "    public Contract() {\n" +
+                "        System.out.println(\"Hello World!!\"); \n" +
+                "    }\npublic void foo(){\nSystem.out.println(\"Method foo executed\");\n}\n}";
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
 
         when(mockClient.getSmartContract(address)).thenReturn(
             new SmartContractData(address, sourceCode, bytecode, encrypt(bytecode)));
 
-        ceService.execute(address, bytecode, "foo", new String[0]);
+        ceService.execute(address, bytecode, null, "foo", new String[0]);
 
-        when(mockClient.getSmartContract(address)).thenReturn(new SmartContractData(address, sourceCode, bytecode, "bad hash"));
+        when(mockClient.getSmartContract(address)).thenReturn(
+            new SmartContractData(address, sourceCode, bytecode, "bad hash"));
 
         try {
-            ceService.execute(address, bytecode, "foo", new String[0]);
+            ceService.execute(address, bytecode, null, "foo", new String[0]);
         } catch (Exception e) {
             System.out.println("bad hash error - " + e.getMessage());
             return;
@@ -58,13 +62,13 @@ public class ExecutorTest extends ServiceTest {
         when(mockClient.getSmartContract(address)).thenReturn(
             new SmartContractData(address, sourceCode, bytecode, encrypt(bytecode)));
 
-        ceService.execute(address, bytecode, "initialize", new String[]{});
-        ceService.execute(address, bytecode, "printTotal", new String[] {});
+        byte[] contractState = ceService.execute(address, bytecode, null, "initialize", new String[] {});
+        contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
 
-        ceService.execute(address, bytecode, "addTokens", new String[] {"10"});
-        ceService.execute(address, bytecode, "printTotal", new String[] {});
+        contractState = ceService.execute(address, bytecode, contractState, "addTokens", new String[] {"10"});
+        contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
 
-        ceService.execute(address, bytecode, "addTokens", new String[] {"-11"});
-        ceService.execute(address, bytecode, "printTotal", new String[] {});
+        contractState = ceService.execute(address, bytecode, contractState, "addTokens", new String[] {"-11"});
+        contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
     }
 }
