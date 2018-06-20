@@ -68,4 +68,13 @@ public class MethodParametersTest extends ServiceTest {
         String[] params = {"{1f, .2f}"};
         ceService.execute(address, contractBytecode, "foo", params);
     }
+
+    @Test
+    public void moreVariousParameters() throws ContractExecutorException {
+        String[] params = {
+            "3f", "4f", "1", "2", "200d", "220d",
+            "{\"string01\",\"string02\",\"string03\"},{1,2,3,4},{5,6,7,8},{1d,2d,3d},{4d,5d,6d},{true,true,false},{true,true,false},{(short)1,(short)2},{1l,2l,3l},{4l,5l,6l},{1f,.2f},{3f,.4f}"
+        };
+        ceService.execute(address,contractBytecode,"foo",params);
+    }
 }
