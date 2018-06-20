@@ -1,23 +1,14 @@
-namespace java executor
+namespace java com.credits.thrift
 namespace cpp executor
-
-struct ContractFile
-{
-    1:required string name
-    2:required binary file
-}
 
 struct APIResponse
 {
     1: i8 code
     2: string message
+	3: binary contractState
 }
 
 service ContractExecutor
 {
-    APIResponse store(1:ContractFile file, 2:string address, 3:string specialProperty)
-
-    APIResponse execute(1:string address, 2:string method, 3:list<string> params)
-	
-	APIResponse executeByteCode(1:string address, 2:binary byteCode, 3:string method, 4:list<string> params)
+	APIResponse executeByteCode(1:string address, 2:binary byteCode, 3:binary contractState, 4:string method, 5:list<string> params)
 }

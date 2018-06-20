@@ -74,7 +74,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public void execute(String address, byte[] bytecode, String methodName, String[] params)
+    public byte[] execute(String address, byte[] bytecode, String methodName, String[] params)
         throws ContractExecutorException {
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
@@ -146,7 +146,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
-        serialize(address, instance);
+        return serialize(address, instance);
     }
 
     private Permissions createPermissions() {

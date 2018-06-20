@@ -57,8 +57,9 @@ public class ThriftServerLoadTest {
                         transport.open();
                         TProtocol protocol = new TBinaryProtocol(transport);
                         ContractExecutor.Client client = new ContractExecutor.Client(protocol);
-                        APIResponse response = client.store(new ContractFile("Contract.java", bytes), String.valueOf(Math.abs(new Random().nextInt())), "ekiT2ej+PL+eeaydVVpkvuuLWDXY7r9pZTsO4wosnVuvN5CHjFO2aSR65IBI8zl9T4jMDkutsGPAVRAeYvOKnQ==");
-                        System.out.println(response.getCode() + " " + response.getMessage());
+                        // TODO: 6/20/2018 required place client.executeBytecode() here
+//                        APIResponse response = client.store(new ContractFile("Contract.java", bytes), String.valueOf(Math.abs(new Random().nextInt())), "ekiT2ej+PL+eeaydVVpkvuuLWDXY7r9pZTsO4wosnVuvN5CHjFO2aSR65IBI8zl9T4jMDkutsGPAVRAeYvOKnQ==");
+//                        System.out.println(response.getCode() + " " + response.getMessage());
                         transport.close();
                     } catch (Exception e) {
                         System.out.println(e.getMessage() + e);

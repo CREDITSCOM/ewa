@@ -23,5 +23,5 @@ public interface ContractExecutorService {
 //    void execute(String address, String methodName, String[] params) throws ContractExecutorException;
 
 
-    void execute(String address, byte[] bytecode, String methodName, String[] params) throws ContractExecutorException;
+    byte[] execute(String address, byte[] bytecode, String methodName, String[] params) throws ContractExecutorException;
 }

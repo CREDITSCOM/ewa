@@ -25,50 +25,14 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     @Resource
     private ContractExecutorService service;
 
-
     @Override
-    public APIResponse store(ContractFile file, String address, String specialProperty) {
-//        String fileName = file.getName();
-//        byte[] fileContent = file.getFile();
-//        File sourceFile = new File(SER_SOURCE_FOLDER_PATH + File.separator + address + SER_TEMP_FOLDER_PATH + fileName);
-//        File tempFolder = sourceFile.getParentFile();
-//
-        APIResponse response = new APIResponse((byte) 0, "");
-//        try {
-//            FileUtils.writeByteArrayToFile(sourceFile, fileContent);
-//            storageService.store(sourceFile, address);
-//            sourceFile.delete();
-//            tempFolder.delete();
-//            service.execute(address, specialProperty);
-//        } catch (ContractExecutorException | IOException e) {
-//            response.setCode((byte) 1);
-//            response.setMessage(e.getMessage());
-//            return response;
-//        }
-        return response;
-    }
-
-    @Override
-    public APIResponse execute(String address, String method, List<String> params) {
-//        String[] paramsArray = params == null ? null : params.toArray(new String[0]);
-        APIResponse response = new APIResponse((byte) 0, "");
-//        try {
-//            service.execute(address, method, paramsArray);
-//        } catch (ContractExecutorException e) {
-//            response.setCode((byte) 1);
-//            response.setMessage(e.getMessage());
-//            return response;
-//        }
-        return response;
-    }
-
-    @Override
-    public APIResponse executeByteCode(String address, ByteBuffer byteCode, String method, List<String> params)
-        throws TException {
+    public APIResponse executeByteCode(String address, ByteBuffer byteCode, ByteBuffer contractState, String method,
+        List<String> params) throws TException {
         String[] paramsArray = params == null ? null : params.toArray(new String[0]);
-        APIResponse response = new APIResponse((byte) 0, "");
+
+        APIResponse response = new APIResponse((byte) 0, "", contractState);
         try {
-            service.execute(address, byteCode.array(), method, paramsArray);
+            response.contractState = ByteBuffer.wrap(service.execute(address, byteCode.array(), method, paramsArray));
         } catch (ContractExecutorException e) {
             response.setCode((byte) 1);
             response.setMessage(e.getMessage());

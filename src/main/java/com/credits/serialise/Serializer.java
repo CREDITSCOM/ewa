@@ -1,6 +1,7 @@
 package com.credits.serialise;
 
 import com.credits.exception.ContractExecutorException;
+import com.sun.xml.internal.bind.v2.TODO;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class Serializer {
     private final static String SER_SOURCE_FOLDER_PATH = System.getProperty("user.dir") + separator + "credits" + separator;
 
     public static Object deserialize(File serFile, ClassLoader classLoader) throws ContractExecutorException {
+        // TODO: 6/20/2018 required to implemet deserialize contract from bytes
         Object instance;
 
         try (ObjectInputStream ous = new ObjectInputStreamWithClassLoader(new FileInputStream(serFile), classLoader)) {
@@ -28,7 +30,7 @@ public class Serializer {
         return instance;
     }
 
-    public static void serialize(String address, Object instance) throws ContractExecutorException {
+    public static byte[] serialize(String address, Object instance) throws ContractExecutorException {
         String objFile = SER_SOURCE_FOLDER_PATH + address + separator + serFileName;
         File serFile = new File(objFile);
         serFile.getParentFile().mkdirs();
@@ -37,6 +39,8 @@ public class Serializer {
         } catch (IOException e) {
             throw new ContractExecutorException("Cannot save smart contract instance. " + e);
         }
+        // TODO: 6/20/2018 required to implement return serialize contact in bytecode
+        return new byte[0];
     }
 
     public static File getSerFile(String address) {
