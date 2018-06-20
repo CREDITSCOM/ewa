@@ -1,9 +1,17 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.exception.WalletDesktopException;
 import javafx.concurrent.Task;
 import javafx.scene.layout.Pane;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.formatter.CodeFormatter;
+import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.text.edits.TextEdit;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -231,5 +239,45 @@ public class SourceCodeUtils {
 
     public static String generateSmartContractToken() {
         return "CST" + com.credits.common.utils.Utils.randomAlphaNumeric(29);
+    }
+
+    public static String formatSourceCode(String source) throws WalletDesktopException {
+        // take default Eclipse formatting options
+        Map options = DefaultCodeFormatterConstants.getEclipseDefaultSettings();
+
+        // initialize the compiler settings to be able to format 1.8 code
+        options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+        options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+        options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+
+        // change the option to wrap each enum constant on a new line
+        options.put(
+                DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUM_CONSTANTS,
+                DefaultCodeFormatterConstants.createAlignmentValue(
+                        true,
+                        DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE,
+                        DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
+
+        // instantiate the default code formatter with the given options
+        final CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(options);
+
+        final TextEdit edit = codeFormatter.format(
+                CodeFormatter.K_COMPILATION_UNIT, // format a compilation unit
+                source, // source to format
+                0, // starting position
+                source.length(), // length
+                0, // initial indentation
+                System.getProperty("line.separator") // line separator
+        );
+
+        IDocument document = new Document(source);
+        try {
+            edit.apply(document);
+        } catch (Exception e) {
+            throw new WalletDesktopException(e);
+        }
+
+        // display the formatted string on the System out
+        return document.get();
     }
 }

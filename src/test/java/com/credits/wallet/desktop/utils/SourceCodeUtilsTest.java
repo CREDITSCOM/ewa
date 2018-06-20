@@ -1,5 +1,7 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.wallet.desktop.exception.WalletDesktopException;
+import com.credits.wallet.desktop.utils.SourceCodeUtils;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -36,5 +38,18 @@ public class SourceCodeUtilsTest {
             List parameters = SourceCodeUtils.getMethodParameters(methodDeclaration);
             LOGGER.info("parameters = {}", parameters);
         });
+    }
+
+    @Test
+    public void formatSourceCodeTest() {
+        String sourceCode = "public class Contract extends SmartContract {public Contract() {total = 0; }}";
+        String formattedSourceCode = null;
+        try {
+            formattedSourceCode = SourceCodeUtils.formatSourceCode(sourceCode);
+        } catch (WalletDesktopException e) {
+            e.printStackTrace();
+        }
+        LOGGER.info("formattedSourceCode = {}", formattedSourceCode);
+
     }
 }
