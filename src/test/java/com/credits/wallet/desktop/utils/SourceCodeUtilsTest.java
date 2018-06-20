@@ -1,6 +1,5 @@
-package com.credits.wallet.desktop.test;
+package com.credits.wallet.desktop.utils;
 
-import com.credits.wallet.desktop.utils.SourceCodeUtils;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.junit.Test;
 import org.slf4j.Logger;
