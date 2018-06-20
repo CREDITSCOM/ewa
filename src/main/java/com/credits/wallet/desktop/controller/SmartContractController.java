@@ -4,6 +4,7 @@ import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.thrift.executor.APIResponse;
 import com.credits.wallet.desktop.thrift.executor.ContractExecutor;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -38,20 +39,27 @@ public class SmartContractController extends Controller implements Initializable
 
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
 
+
     @FXML
-    Label address;
+    private Pane pControls;
+
+    @FXML
+    private Label lAddress;
+
+    @FXML
+    private ComboBox<MethodDeclaration> cbMethods;
 
     @FXML
     private TextField txSearchAddress;
 
     @FXML
-    private Pane paneCode;
+    private AnchorPane pCodePanel;
 
     @FXML
-    private TreeView<Label> contractsTree;
+    private ScrollPane spCodePanel;
 
     @FXML
-    private ComboBox<MethodDeclaration> cbMethods;
+    private TreeView<Label> tvContracts;
 
     @FXML
     private AnchorPane pParams;
@@ -62,8 +70,6 @@ public class SmartContractController extends Controller implements Initializable
     private CodeArea codeArea;
 
     private SmartContractData currentSmartContract;
-
-    private ObservableList<MethodDeclaration> methodList;
 
     @FXML
     private void handleBack() {
@@ -82,35 +88,44 @@ public class SmartContractController extends Controller implements Initializable
             SmartContractData smartContractData = AppState.apiClient.getSmartContract(address);
             this.refreshFormState(smartContractData);
         } catch (Exception e) {
-            //LOGGER.error(e.getMessage(), e);
-            //Utils.showError(String.format("Error %s", e.getMessage()));
-
-            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
-            FormUtils.showError(AppState.NODE_ERROR);
+            LOGGER.error(e.getMessage(), e);
+            FormUtils.showError(e.getMessage());
         }
     }
 
-    private void refreshFormState(SmartContractData smartContractData) {
-        this.currentSmartContract = smartContractData;
-        String sourceCode = smartContractData.getSourceCode();
-        this.address.setText(smartContractData.getAddress());
-        this.codeArea.replaceText(0, 0, smartContractData.getSourceCode());
-        List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
-        cbMethods.getItems().clear();
-        methods.forEach(method -> {
-            method.setBody(null);
-            cbMethods.getItems().add(method);
-        });
+    private void refreshFormState(SmartContractData smartContractData) throws WalletDesktopException {
+        if (
+                smartContractData == null
+                || smartContractData.getHashState().isEmpty()
+                || smartContractData.getAddress().isEmpty()
+                ) {
+            this.pControls.setVisible(false);
+            this.spCodePanel.setVisible(false);
+        } else {
+            this.pControls.setVisible(true);
+            this.spCodePanel.setVisible(true);
+            this.currentSmartContract = smartContractData;
+            String sourceCode = smartContractData.getSourceCode();
+            this.lAddress.setText(smartContractData.getAddress());
+            List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
+            cbMethods.getItems().clear();
+            methods.forEach(method -> {
+                method.setBody(null);
+                cbMethods.getItems().add(method);
+            });
+            this.codeArea.clear();
+            this.codeArea.replaceText(0, 0, SourceCodeUtils.formatSourceCode(sourceCode));
+        }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        this.codeArea = SourceCodeUtils.initCodeArea(this.paneCode);
-
+        this.codeArea = SourceCodeUtils.initCodeArea(this.pCodePanel);
         TreeItem<Label> rootItem = new TreeItem<>(new Label("Smart contracts"));
 
         try {
+            this.refreshFormState(null);
             List<SmartContractData> smartContracts = AppState.apiClient.getSmartContracts(AppState.account);
             smartContracts.forEach(smartContractData -> {
 
@@ -119,7 +134,12 @@ public class SmartContractController extends Controller implements Initializable
                 label.setOnMousePressed(event -> {
                     if (event.isPrimaryButtonDown()) {
                         if(event.getClickCount() == 2){
-                            this.refreshFormState(smartContractData);
+                            try {
+                                this.refreshFormState(smartContractData);
+                            } catch (Exception e) {
+                                LOGGER.error(e.getMessage(), e);
+                                FormUtils.showError(e.getMessage());
+                            }
                         }
                     }
                 });
@@ -127,21 +147,21 @@ public class SmartContractController extends Controller implements Initializable
                 rootItem.getChildren().add(new TreeItem<>(label));
             });
         } catch (Exception e) {
-            //LOGGER.error(e.getMessage(), e);
-            //FormUtils.showError("Error getting Smart Contract List " + e.toString());
-
-            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
-            FormUtils.showError(AppState.NODE_ERROR);
+            LOGGER.error(e.getMessage(), e);
+            FormUtils.showError(e.getMessage());
         }
 
-        this.contractsTree.setRoot(rootItem);
-
+        this.tvContracts.setRoot(rootItem);
         this.codeArea.setDisable(true);
     }
 
     @FXML
     private void cbMethodsOnAction() {
+        this.pParams.setVisible(false);
         MethodDeclaration selectedMethod = this.cbMethods.getSelectionModel().getSelectedItem();
+        if (selectedMethod == null) {
+            return;
+        }
         List<SingleVariableDeclaration> params = SourceCodeUtils.getMethodParameters(selectedMethod);
         this.pParamsContainer.getChildren().clear();
         if (params.size() > 0) {
@@ -161,8 +181,6 @@ public class SmartContractController extends Controller implements Initializable
                 this.pParamsContainer.getChildren().addAll(paramNameLabel, paramValueTextField);
                 layoutY += 70;
             }
-        } else {
-            this.pParams.setVisible(false);
         }
     }
 
@@ -199,14 +217,17 @@ public class SmartContractController extends Controller implements Initializable
 
                 APIResponse apiResponse = client.executeByteCode(address, Converter.bytesToByteBuffer(byteCode), method, params);
 
-                LOGGER.info("Contract executor response: code = {}; message = {}", apiResponse.getCode(), apiResponse.getMessage());
+                String contractExecutorResponse = String.format("Contract executor response: code = %s; message = %s", apiResponse.getCode(), apiResponse.getMessage());
                 transport.close();
-            } catch (Exception e) {
-                //e.printStackTrace();
-                //Utils.showError("Error executing smart contract " + e.toString());
 
-                LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
-                FormUtils.showError(AppState.NODE_ERROR);
+                if (apiResponse.getCode() != 0) {
+                    throw new WalletDesktopException(contractExecutorResponse);
+                } else {
+                    LOGGER.info(contractExecutorResponse);
+                }
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                FormUtils.showError(e.getMessage());
             }
         }
     }
