@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
@@ -27,7 +28,7 @@ public class ThriftIntegrationTest extends ServiceTest {
         contractBytecode = compile(sourceCode, "Contract", "TKN");
 
         when(mockClient.getSmartContract(address)).thenReturn(
-            new SmartContractData(address,sourceCode, contractBytecode, encrypt(contractBytecode)));
+            new SmartContractData(address,sourceCode, contractBytecode,null, encrypt(contractBytecode),"",new ArrayList<>()));
     }
 
     @After

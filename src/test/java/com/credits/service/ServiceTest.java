@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.Permissions;
+import java.util.ArrayList;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
@@ -76,7 +77,7 @@ public abstract class ServiceTest {
         String sourceCode = readSourceCode(sourceCodePath);
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
         when(mockClient.getSmartContract(address)).thenReturn(
-            new SmartContractData(address,sourceCode, bytecode, encrypt(bytecode)));
+            new SmartContractData(address,sourceCode, bytecode, null, encrypt(bytecode),"", new ArrayList<>()));
         return bytecode;
     }
 }

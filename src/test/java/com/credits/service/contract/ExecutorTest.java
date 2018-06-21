@@ -39,12 +39,12 @@ public class ExecutorTest extends ServiceTest {
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
 
         when(mockClient.getSmartContract(address)).thenReturn(
-            new SmartContractData(address, sourceCode, bytecode, encrypt(bytecode)));
+            new SmartContractData(address, sourceCode, bytecode, null, encrypt(bytecode), null, null));
 
         ceService.execute(address, bytecode, null, "foo", new String[0]);
 
         when(mockClient.getSmartContract(address)).thenReturn(
-            new SmartContractData(address, sourceCode, bytecode, "bad hash"));
+            new SmartContractData(address, sourceCode, bytecode, null, "bad hash", null, null));
 
         try {
             ceService.execute(address, bytecode, null, "foo", new String[0]);
@@ -60,7 +60,7 @@ public class ExecutorTest extends ServiceTest {
         String sourceCode = readSourceCode("/serviceTest/Contract.java");
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
         when(mockClient.getSmartContract(address)).thenReturn(
-            new SmartContractData(address, sourceCode, bytecode, encrypt(bytecode)));
+            new SmartContractData(address, sourceCode, bytecode, null, encrypt(bytecode), null, null));
 
         byte[] contractState = ceService.execute(address, bytecode, null, "initialize", new String[] {});
         contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
