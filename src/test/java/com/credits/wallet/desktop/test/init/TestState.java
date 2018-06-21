@@ -11,9 +11,6 @@ public class TestState {
     public static ApiClient apiClient;
     public static String decimalSeparator;
     public static String creditMonitorURL;
-    public static String contractExecutorHost;
-    public static Integer contractExecutorPort;
-    public static String contractExecutorDir;
 
     public static void init() {
         TestStateInitializer initializer = new TestStateInitializer();

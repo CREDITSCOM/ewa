@@ -37,21 +37,9 @@ class TestStateInitializer {
 
         String apiAddr = properties.getProperty("api.addr");
         String apiPort = properties.getProperty("api.port");
-        TestState.contractExecutorHost = properties.getProperty("contract.executor.host");
-        try {
-            TestState.contractExecutorPort = Integer.valueOf(properties.getProperty("contract.executor.port"));
-        } catch (Exception e) {
-            // do nothing
-        }
-        TestState.contractExecutorDir = properties.getProperty("contract.executor.dir");
-
 
         if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
             FormUtils.showError(ERR_NO_API_ADDR);
-        } else if (TestState.contractExecutorHost == null ||
-                TestState.contractExecutorPort == null ||
-                TestState.contractExecutorDir == null) {
-            FormUtils.showError(ERR_NO_CONTRACT_EXECUTOR);
         } else {
             TestState.apiClient = ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
         }
