@@ -1,15 +1,15 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.utils.Converter;
+import com.credits.leveldb.client.ApiClient;
+import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
-import com.credits.wallet.desktop.thrift.executor.APIResponse;
-import com.credits.wallet.desktop.thrift.executor.ContractExecutor;
+import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.SimpleInMemoryCompiler;
 import com.credits.wallet.desktop.utils.SourceCodeUtils;
+import com.credits.wallet.desktop.utils.Utils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,10 +17,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TSocket;
-import org.apache.thrift.transport.TTransport;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.fxmisc.richtext.CodeArea;
@@ -186,14 +182,7 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private void handleExecute() {
-
-        // Call contract executor
-        if (AppState.contractExecutorHost != null &&
-                AppState.contractExecutorPort != null &&
-                AppState.contractExecutorDir != null ) {
-
-            String sourceCode = this.currentSmartContract.getSourceCode();
-            String address = currentSmartContract.getAddress();
+        try {
             String method = cbMethods.getSelectionModel().getSelectedItem().getName().getIdentifier();
             List<String> params = new ArrayList<>();
             ObservableList<Node> paramsContainerChildren = this.pParamsContainer.getChildren();
@@ -203,32 +192,26 @@ public class SmartContractController extends Controller implements Initializable
                     params.add(paramValue);
                 }
             });
-            String token = SourceCodeUtils.generateSmartContractToken();
-            String className = SourceCodeUtils.parseClassName(sourceCode);
-            try {
-                byte[] byteCode = SimpleInMemoryCompiler.compile(sourceCode, className, token);
 
-                TTransport transport;
-                transport = new TSocket(AppState.contractExecutorHost, AppState.contractExecutorPort);
-                transport.open();
-                TProtocol protocol = new TBinaryProtocol(transport);
-                ContractExecutor.Client client = new ContractExecutor.Client(protocol);
-                LOGGER.info("Contract executor request: address = {}; method = {}; params = {}", address, method, params.toArray());
+            String transactionInnerId = ApiUtils.generateTransactionInnerId();
+            SmartContractData smartContractData = this.currentSmartContract;
+            smartContractData.setMethod(method);
+            smartContractData.setParams(params);
 
-                APIResponse apiResponse = client.executeByteCode(address, Converter.bytesToByteBuffer(byteCode), method, params);
-
-                String contractExecutorResponse = String.format("Contract executor response: code = %s; message = %s", apiResponse.getCode(), apiResponse.getMessage());
-                transport.close();
-
-                if (apiResponse.getCode() != 0) {
-                    throw new WalletDesktopException(contractExecutorResponse);
-                } else {
-                    LOGGER.info(contractExecutorResponse);
-                }
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                FormUtils.showError(e.getMessage());
+            ApiResponseData apiResponseData = AppState.apiClient.executeSmartContract(
+                    transactionInnerId,
+                    AppState.account,
+                    this.currentSmartContract.getAddress(),
+                    smartContractData
+            );
+            if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
+                Utils.showInfo("Smart-contract executed successfully");
+            } else {
+                Utils.showError(apiResponseData.getMessage());
             }
+        } catch (Exception e) {
+            LOGGER.error(e.toString(), e);
+            Utils.showError(e.toString());
         }
     }
 }
