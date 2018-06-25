@@ -13,21 +13,16 @@ public class ApiUtilsTest {
     private static Logger LOGGER = LoggerFactory.getLogger(ApiUtilsTest.class);
 
     @Test
-    public void generateSmartContractHashStateTest() {
+    public void generateSmartContractHashStateTest() throws CreditsException {
         String source =  "public class Contract extends SmartContract { public Contract() { total = 0; } }";
-        try {
-            LOGGER.info(ApiUtils.generateSmartContractHashState(source.getBytes()));
-        } catch (CreditsException e) {
-            Assert.assertNull(e);
-        }
+        String actual = ApiUtils.generateSmartContractHashState(source.getBytes());
+        Assert.assertEquals("A2CDBFDF50500999AEE29823F7D284D7", actual);
     }
 
     @Test
-    public void generateTransactionInnerIdTest() {
-        try {
-            LOGGER.info(ApiUtils.generateTransactionInnerId());
-        } catch (CreditsException e) {
-            Assert.assertNull(e);
-        }
+    public void generateTransactionInnerIdTest() throws CreditsException {
+        String actual = ApiUtils.generateTransactionInnerId();
+        Assert.assertNotNull(actual);
+        Assert.assertNotEquals(0, actual.length());
     }
 }
