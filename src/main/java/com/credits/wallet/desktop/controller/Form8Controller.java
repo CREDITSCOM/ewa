@@ -3,7 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.common.utils.Converter;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.struct.TransactionHistoryTableRow;
+import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -51,10 +51,13 @@ public class Form8Controller extends Controller implements Initializable {
 
     @FXML
     private void handleView() {
-        AppState.selectedTransactionRow = new TransactionHistoryTableRow();
-        AppState.selectedTransactionRow.setTarget(AppState.toAddress);
-        AppState.selectedTransactionRow.setCurrency(AppState.coin);
-        AppState.selectedTransactionRow.setAmount(Converter.toString(AppState.amount));
+        TransactionTabRow transactionTabRow = new TransactionTabRow();
+
+        transactionTabRow.setTarget(AppState.toAddress);
+        transactionTabRow.setCurrency(AppState.coin);
+        transactionTabRow.setAmount(Converter.toString(AppState.amount));
+        transactionTabRow.setInnerId(AppState.innerId);
+        AppState.selectedTransactionRow = transactionTabRow;
         AppState.detailFromHistory=false;
         App.showForm("/fxml/transaction.fxml", "Wallet");
     }

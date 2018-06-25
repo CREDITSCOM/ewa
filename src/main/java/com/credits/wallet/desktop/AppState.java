@@ -2,7 +2,7 @@ package com.credits.wallet.desktop;
 
 import com.credits.leveldb.client.ApiClient;
 import com.credits.wallet.desktop.controller.Const;
-import com.credits.wallet.desktop.struct.TransactionHistoryTableRow;
+import com.credits.wallet.desktop.struct.TransactionTabRow;
 
 import java.math.BigDecimal;
 import java.security.PrivateKey;
@@ -33,7 +33,7 @@ public class AppState {
     public static String coin;
     public static String innerId;
 
-    public static TransactionHistoryTableRow selectedTransactionRow;
+    public static TransactionTabRow selectedTransactionRow;
 
     public static List<String> coins = new ArrayList<>();
 

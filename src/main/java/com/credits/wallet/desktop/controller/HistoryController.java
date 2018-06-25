@@ -4,22 +4,18 @@ import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.data.TransactionData;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.struct.TransactionHistoryTableRow;
+import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 /**
  * Created by goncharov-eg on 29.01.2018.
@@ -39,7 +35,7 @@ public class HistoryController extends Controller implements Initializable {
     private ComboBox<Integer> cbPageSize;
 
     @FXML
-    private TableView<TransactionHistoryTableRow> tabTransaction;
+    private TableView tabTransaction;
 
     @FXML
     private Label labPage;
@@ -57,6 +53,15 @@ public class HistoryController extends Controller implements Initializable {
             cbPageSize.getItems().add(INIT_PAGE_SIZE * i);
         }
 
+        TableColumn[] tableColumns = new TableColumn[tabTransaction.getColumns().size()];
+        for (int i = 0; i < tabTransaction.getColumns().size(); i++) {
+            tableColumns[i] = (TableColumn) tabTransaction.getColumns().get(i);
+        }
+        tableColumns[0].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("innerId"));
+        tableColumns[1].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("target"));
+        tableColumns[2].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("currency"));
+        tableColumns[3].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("amount"));
+
         cbPageSize.getSelectionModel().select(0);
         setPage();
         fillTable();
@@ -71,7 +76,7 @@ public class HistoryController extends Controller implements Initializable {
 
         tabTransaction.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
-                TransactionHistoryTableRow tabRow = tabTransaction.getSelectionModel().getSelectedItem();
+                TransactionTabRow tabRow = (TransactionTabRow) tabTransaction.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
                     AppState.selectedTransactionRow = tabRow;
                     AppState.detailFromHistory = true;
@@ -99,6 +104,17 @@ public class HistoryController extends Controller implements Initializable {
 
         btnNext.setDisable(transactionList.size() < pageSize);
 
+        transactionList.forEach(transactionData -> {
+            TransactionTabRow tableRow = new TransactionTabRow();
+            tableRow.setAmount(Converter.toString(transactionData.getAmount()));
+            tableRow.setCurrency(transactionData.getCurrency());
+            tableRow.setTarget(transactionData.getTarget());
+            tableRow.setInnerId(transactionData.getInnerId());
+            tabTransaction.getItems().add(tableRow);
+
+        });
+
+        /*
         tabTransaction.setItems(
             FXCollections.observableList(transactionList.stream()
                 .map(transaction -> {
@@ -111,6 +127,7 @@ public class HistoryController extends Controller implements Initializable {
                 })
                 .collect(Collectors.toList()))
         );
+        */
     }
 
     @FXML
