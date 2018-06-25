@@ -156,7 +156,7 @@ public class SmartContractDeployController extends Controller implements Initial
             String javaCode = SourceCodeUtils.normalizeSourceCode(this.codeArea.getText());
             byte[] byteCode = SimpleInMemoryCompiler.compile(javaCode, className, token);
             String hashState = ApiUtils.generateSmartContractHashState(byteCode);
-            SmartContractData smartContractData = new SmartContractData(token, javaCode, byteCode, null, hashState, null, null);
+            SmartContractData smartContractData = new SmartContractData(token, javaCode, byteCode, new byte[]{}, hashState, new String(), new ArrayList<>());
             String transactionInnerId = ApiUtils.generateTransactionInnerId();
             String transactionTarget = generatePublicKeyBase58();
             LOGGER.info("transactionTarget = {}", transactionTarget);
