@@ -156,7 +156,7 @@ public class SmartContractDeployController extends Controller implements Initial
             String javaCode = SourceCodeUtils.normalizeSourceCode(this.codeArea.getText());
             byte[] byteCode = SimpleInMemoryCompiler.compile(javaCode, className, token);
             String hashState = ApiUtils.generateSmartContractHashState(byteCode);
-            SmartContractData smartContractData = new SmartContractData(token, javaCode, byteCode, hashState);
+            SmartContractData smartContractData = new SmartContractData(token, javaCode, byteCode, null, hashState, null, null);
             String transactionInnerId = ApiUtils.generateTransactionInnerId();
             String transactionTarget = generatePublicKeyBase58();
             LOGGER.info("transactionTarget = {}", transactionTarget);
@@ -170,11 +170,8 @@ public class SmartContractDeployController extends Controller implements Initial
                 Utils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
             }
         } catch (Exception e) {
-            //LOGGER.error("Error deploying smart contract " + e.toString(), e);
-            //Utils.showError("Error deploying smart contract " + e.toString());
-
-            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
-            FormUtils.showError(AppState.NODE_ERROR);
+            LOGGER.error(e.toString(), e);
+            Utils.showError(e.toString());
         }
     }
 
