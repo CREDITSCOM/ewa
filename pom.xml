@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.version>5.0.4.RELEASE</spring.version>
-        <powermock.version>1.7.1</powermock.version>
+        <powermock.version>1.7.4</powermock.version>
     </properties>
 
     <dependencies>
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4-rule-agent</artifactId>
-            <version>1.7.4</version>
+            <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
 
