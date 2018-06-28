@@ -2,16 +2,13 @@ package com.credits.service.contract;
 
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.common.exception.CreditsException;
-import com.credits.exception.ClassLoadException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.secure.Sandbox;
-import com.credits.serialise.Serializer;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
-import com.credits.service.usercode.UserCodeStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,10 +16,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.FilePermission;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ReflectPermission;
 import java.net.NetPermission;
@@ -36,9 +30,9 @@ import java.util.List;
 import java.util.PropertyPermission;
 import java.util.stream.Collectors;
 
-import static com.credits.serialise.Serializer.*;
+import static com.credits.serialise.Serializer.deserialize;
+import static com.credits.serialise.Serializer.serialize;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 
 @Component
 public class ContractExecutorServiceImpl implements ContractExecutorService {
@@ -79,7 +73,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         Class<?> clazz;
         try {
-            validateBytecode(address, bytecode);
+//            validateBytecode(address, bytecode);
             clazz = classLoader.buildClass(bytecode);
         } catch (Exception e) {
             throw new ContractExecutorException(
