@@ -127,7 +127,6 @@
                         <exclude>**/Contract.java</exclude>
                         <exclude>**/ContractExecutorServiceTestCode.java</exclude>
                     </excludes>
-                    <excludedGroups>com.credits.IntegrationTest</excludedGroups>
                 </configuration>
             </plugin>
             <plugin>
