@@ -4,6 +4,7 @@ import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.ServiceTest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.util.FileSystemUtils;
 
@@ -30,6 +31,7 @@ public class ExecutorTest extends ServiceTest {
         FileSystemUtils.deleteRecursively(new File(dir));
     }
 
+    @Ignore //Test ignore because hash validation disabled
     @Test
     public void execute_bytecode() throws Exception {
         String sourceCode =
@@ -69,6 +71,6 @@ public class ExecutorTest extends ServiceTest {
         contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
 
         contractState = ceService.execute(address, bytecode, contractState, "addTokens", new String[] {"-11"});
-        contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
+        ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
     }
 }

@@ -47,7 +47,6 @@ public class SecurityTest extends ServiceTest {
             {"createFile", null, true},
             {"createFileInProjectDir", prjDir, true},
             {"killProcess", null, true},
-            {"killThread", null, false},
             {"newThread", null, false},
         });
     }

@@ -1,10 +1,12 @@
 package com.credits.service.contract;
 
+import com.credits.IntegrationTest;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.ServiceTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
@@ -15,7 +17,8 @@ import static com.credits.TestUtils.encrypt;
 import static java.io.File.separator;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-public class ThriftIntegrationTest extends ServiceTest {
+@Category(IntegrationTest.class)
+public class ThriftIT extends ServiceTest {
 
     private byte[] contractBytecode;
 

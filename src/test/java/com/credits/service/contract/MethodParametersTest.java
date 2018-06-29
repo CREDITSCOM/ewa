@@ -3,6 +3,7 @@ package com.credits.service.contract;
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.ServiceTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MethodParametersTest extends ServiceTest {
@@ -69,6 +70,7 @@ public class MethodParametersTest extends ServiceTest {
         ceService.execute(address, contractBytecode,null, "foo", params);
     }
 
+    @Ignore
     @Test
     public void moreVariousParameters() throws ContractExecutorException {
         String[] params = {
