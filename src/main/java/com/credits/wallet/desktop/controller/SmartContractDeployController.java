@@ -1,12 +1,16 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.crypto.Ed25519;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.exception.CreditsNodeException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.exception.CompilationException;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.*;
 import javafx.fxml.FXML;
@@ -169,9 +173,18 @@ public class SmartContractDeployController extends Controller implements Initial
             } else {
                 Utils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
             }
-        } catch (Exception e) {
+        } catch (LevelDbClientException e) {
             LOGGER.error(e.toString(), e);
-            Utils.showError(e.toString());
+            Utils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
+        } catch (CreditsNodeException e) {
+            LOGGER.error(e.toString(), e);
+            Utils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
+        } catch (CreditsException e) {
+            LOGGER.error(e.toString(), e);
+            Utils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
+        } catch (CompilationException e) {
+            LOGGER.error(e.toString(), e);
+            Utils.showError(e.getMessage());
         }
     }
 

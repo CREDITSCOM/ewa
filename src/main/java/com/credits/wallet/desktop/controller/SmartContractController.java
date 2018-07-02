@@ -1,8 +1,11 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.exception.CreditsException;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.exception.CreditsNodeException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
@@ -83,7 +86,13 @@ public class SmartContractController extends Controller implements Initializable
         try {
             SmartContractData smartContractData = AppState.apiClient.getSmartContract(address);
             this.refreshFormState(smartContractData);
-        } catch (Exception e) {
+        } catch (LevelDbClientException e) {
+            LOGGER.error(e.getMessage(), e);
+            FormUtils.showError(e.getMessage());
+        } catch (CreditsNodeException e) {
+            LOGGER.error(e.getMessage(), e);
+            FormUtils.showError(e.getMessage());
+        } catch (WalletDesktopException e) {
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());
         }
@@ -132,7 +141,7 @@ public class SmartContractController extends Controller implements Initializable
                         if(event.getClickCount() == 2){
                             try {
                                 this.refreshFormState(smartContractData);
-                            } catch (Exception e) {
+                            } catch (WalletDesktopException e) {
                                 LOGGER.error(e.getMessage(), e);
                                 FormUtils.showError(e.getMessage());
                             }
@@ -142,7 +151,13 @@ public class SmartContractController extends Controller implements Initializable
 
                 rootItem.getChildren().add(new TreeItem<>(label));
             });
-        } catch (Exception e) {
+        } catch (LevelDbClientException e) {
+            LOGGER.error(e.getMessage(), e);
+            FormUtils.showError(e.getMessage());
+        } catch (CreditsNodeException e) {
+            LOGGER.error(e.getMessage(), e);
+            FormUtils.showError(e.getMessage());
+        } catch (WalletDesktopException e) {
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());
         }
@@ -209,7 +224,13 @@ public class SmartContractController extends Controller implements Initializable
             } else {
                 Utils.showError(apiResponseData.getMessage());
             }
-        } catch (Exception e) {
+        } catch (LevelDbClientException e) {
+            LOGGER.error(e.toString(), e);
+            Utils.showError(e.toString());
+        } catch (CreditsNodeException e) {
+            LOGGER.error(e.toString(), e);
+            Utils.showError(e.toString());
+        } catch (CreditsException e) {
             LOGGER.error(e.toString(), e);
             Utils.showError(e.toString());
         }

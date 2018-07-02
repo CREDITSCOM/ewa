@@ -2,6 +2,8 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.data.TransactionData;
+import com.credits.leveldb.client.exception.CreditsNodeException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
@@ -92,11 +94,19 @@ public class HistoryController extends Controller implements Initializable {
         try {
             transactionList =
                 AppState.apiClient.getTransactions(AppState.account, (pageNumber - 1) * pageSize, pageSize);
-        } catch (Exception e) {
-            //LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
-            //FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
+        } catch (LevelDbClientException e) {
+            LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
+            FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
 
             LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
+            FormUtils.showError(AppState.NODE_ERROR);
+
+            return;
+        } catch (CreditsNodeException e) {
+            LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
+            FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
+
+            LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);
             FormUtils.showError(AppState.NODE_ERROR);
 
             return;

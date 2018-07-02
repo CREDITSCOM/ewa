@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -37,7 +40,13 @@ public class Form8Controller extends Controller implements Initializable {
         } else {
             try {
                 Desktop.getDesktop().browse(new URL(AppState.creditMonitorURL+AppState.account).toURI());
-            } catch (Exception e) {
+            } catch (URISyntaxException e) {
+                LOGGER.error(e.getMessage(), e);
+                FormUtils.showError(e.getMessage());
+            } catch (MalformedURLException e) {
+                LOGGER.error(e.getMessage(), e);
+                FormUtils.showError(e.getMessage());
+            } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
                 FormUtils.showError(e.getMessage());
             }

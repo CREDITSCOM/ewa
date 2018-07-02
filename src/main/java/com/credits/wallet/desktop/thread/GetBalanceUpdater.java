@@ -1,6 +1,8 @@
 package com.credits.wallet.desktop.thread;
 
 import com.credits.common.utils.Converter;
+import com.credits.leveldb.client.exception.CreditsNodeException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.scene.control.Label;
@@ -31,14 +33,14 @@ public class GetBalanceUpdater implements Runnable {
             BigDecimal balance = AppState.apiClient.getBalance(AppState.account, coin);
             AppState.balance = balance;
             label.setText(Converter.toString(balance));
-        } catch (Exception e) {
-            //label.setText(ERR_GETTING_BALANCE);
-            //LOGGER.error(ERR_GETTING_BALANCE, e);
-            //FormUtils.showError(ERR_GETTING_BALANCE);
-
-            label.setText(AppState.NODE_ERROR);
-            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
-            FormUtils.showError(AppState.NODE_ERROR);
+        } catch (LevelDbClientException e) {
+            label.setText(AppState.NODE_ERROR + ": "+e.getMessage());
+            LOGGER.error(AppState.NODE_ERROR + ": LevelDbClientException" + e.toString(), e);
+            FormUtils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
+        } catch (CreditsNodeException e) {
+            label.setText(AppState.NODE_ERROR + ": "+e.getMessage());
+            LOGGER.error(AppState.NODE_ERROR + ": CreditsNodeException " + e.toString(), e);
+            FormUtils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
         }
     }
 }
