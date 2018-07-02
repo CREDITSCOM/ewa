@@ -1,14 +1,21 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.exception.WalletDesktopException;
 import javafx.concurrent.Task;
 import javafx.scene.layout.Pane;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
@@ -18,18 +25,24 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SourceCodeUtils {
     private static final String[] KEYWORDS =
-            new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
-                    "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for",
-                    "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package",
-                    "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch",
-                    "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while"};
+        new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
+            "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for",
+            "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package",
+            "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch",
+            "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while"};
 
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
     private static final String PAREN_PATTERN = "[()]";
@@ -40,13 +53,14 @@ public class SourceCodeUtils {
     private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
 
     private static final Pattern PATTERN = Pattern.compile(
-            "(?<KEYWORD>" + KEYWORD_PATTERN + ")" + "|(?<PAREN>" + PAREN_PATTERN + ")" + "|(?<BRACE>" + BRACE_PATTERN +
-                    ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")" + "|(?<STRING>" +
-                    STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
+        "(?<KEYWORD>" + KEYWORD_PATTERN + ")" + "|(?<PAREN>" + PAREN_PATTERN + ")" + "|(?<BRACE>" + BRACE_PATTERN +
+            ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")" + "|(?<STRING>" +
+            STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
 
 
     public static String normalizeSourceCode(String sourceCode) {
-        String normalizedSourceCode = sourceCode.replace("\r", " ").replace("\n", " ").replace("\t", " ").replace("{", " {");
+        String normalizedSourceCode =
+            sourceCode.replace("\r", " ").replace("\n", " ").replace("\t", " ").replace("{", " {");
 
         while (normalizedSourceCode.contains("  ")) {
             normalizedSourceCode = normalizedSourceCode.replace("  ", " ");
@@ -93,9 +107,9 @@ public class SourceCodeUtils {
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         while (matcher.find()) {
             String styleClass = matcher.group("KEYWORD") != null ? "keyword" : matcher.group("PAREN") != null ? "paren"
-                    : matcher.group("BRACE") != null ? "brace" : matcher.group("BRACKET") != null ? "bracket"
+                : matcher.group("BRACE") != null ? "brace" : matcher.group("BRACKET") != null ? "bracket"
                     : matcher.group("SEMICOLON") != null ? "semicolon" : matcher.group("STRING") != null ? "string"
-                    : matcher.group("COMMENT") != null ? "comment" : null; /* never happens */
+                        : matcher.group("COMMENT") != null ? "comment" : null; /* never happens */
             assert styleClass != null;
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
             spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
@@ -116,32 +130,25 @@ public class SourceCodeUtils {
         codeArea.setPrefWidth(paneCode.getPrefWidth());
         paneCode.getChildren().add(codeArea);
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.richChanges()
-                .filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
-                .successionEnds(Duration.ofMillis(500))
-                .supplyTask(() -> {
-                    String sourceCode = codeArea.getText();
-                    Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
-                        @Override
-                        protected StyleSpans<Collection<String>> call() throws Exception {
-                            return SourceCodeUtils.computeHighlighting(sourceCode);
-                        }
-                    };
-                    AppState.executor.execute(task);
-                    return task;
-                })
-                .awaitLatest(codeArea.richChanges())
-                .filterMap(t -> {
-                    if (t.isSuccess()) {
-                        return Optional.of(t.get());
-                    } else {
-                        t.getFailure().printStackTrace();
-                        return Optional.empty();
-                    }
-                })
-                .subscribe(highlighting -> {
-                    codeArea.setStyleSpans(0, (StyleSpans<Collection<String>>) highlighting);
-                });
+        codeArea.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
+            .successionEnds(Duration.ofMillis(500)).supplyTask(() -> {
+            String sourceCode = codeArea.getText();
+            Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
+                @Override
+                protected StyleSpans<Collection<String>> call() {
+                    return SourceCodeUtils.computeHighlighting(sourceCode);
+                }
+            };
+            AppState.executor.execute(task);
+            return task;
+        }).awaitLatest(codeArea.richChanges()).filterMap(t -> {
+            if (t.isSuccess()) {
+                return Optional.of(t.get());
+            } else {
+                t.getFailure().printStackTrace();
+                return Optional.empty();
+            }
+        }).subscribe(highlighting -> codeArea.setStyleSpans(0, highlighting));
 
         return codeArea;
     }
@@ -172,9 +179,7 @@ public class SourceCodeUtils {
             @Override
             public boolean visit(TypeDeclaration typeNote) {
                 FieldDeclaration[] notes = typeNote.getFields();
-                for(FieldDeclaration note : notes) {
-                        list.add(note);
-                }
+                list.addAll(Arrays.asList(notes));
                 return false;
             }
         });
@@ -193,7 +198,7 @@ public class SourceCodeUtils {
             @Override
             public boolean visit(TypeDeclaration typeNote) {
                 MethodDeclaration[] notes = typeNote.getMethods();
-                for(MethodDeclaration note : notes) {
+                for (MethodDeclaration note : notes) {
                     if (!note.isConstructor()) {
                         list.add(note);
                     }
@@ -216,7 +221,7 @@ public class SourceCodeUtils {
             @Override
             public boolean visit(TypeDeclaration typeNote) {
                 MethodDeclaration[] notes = typeNote.getMethods();
-                for(MethodDeclaration note : notes) {
+                for (MethodDeclaration note : notes) {
                     if (note.isConstructor()) {
                         list.add(note);
                     }
@@ -228,7 +233,6 @@ public class SourceCodeUtils {
     }
 
     public static List<SingleVariableDeclaration> getMethodParameters(MethodDeclaration methodDeclaration) {
-
         return methodDeclaration.parameters();
     }
 
@@ -241,7 +245,7 @@ public class SourceCodeUtils {
         return "CST" + com.credits.common.utils.Utils.randomAlphaNumeric(29);
     }
 
-    public static String formatSourceCode(String source) throws WalletDesktopException {
+    public static String formatSourceCode(String source) {
         // take default Eclipse formatting options
         Map options = DefaultCodeFormatterConstants.getEclipseDefaultSettings();
 
@@ -251,30 +255,26 @@ public class SourceCodeUtils {
         options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
 
         // change the option to wrap each enum constant on a new line
-        options.put(
-                DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUM_CONSTANTS,
-                DefaultCodeFormatterConstants.createAlignmentValue(
-                        true,
-                        DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE,
-                        DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
+        options.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUM_CONSTANTS,
+            DefaultCodeFormatterConstants.createAlignmentValue(true, DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE,
+                DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
 
         // instantiate the default code formatter with the given options
         final CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(options);
 
-        final TextEdit edit = codeFormatter.format(
-                CodeFormatter.K_COMPILATION_UNIT, // format a compilation unit
-                source, // source to format
-                0, // starting position
-                source.length(), // length
-                0, // initial indentation
-                System.getProperty("line.separator") // line separator
+        final TextEdit edit = codeFormatter.format(CodeFormatter.K_COMPILATION_UNIT, // format a compilation unit
+            source, // source to format
+            0, // starting position
+            source.length(), // length
+            0, // initial indentation
+            System.getProperty("line.separator") // line separator
         );
 
         IDocument document = new Document(source);
         try {
             edit.apply(document);
-        } catch (Exception e) {
-            throw new WalletDesktopException(e);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
         }
 
         // display the formatted string on the System out

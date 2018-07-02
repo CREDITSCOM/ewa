@@ -9,13 +9,19 @@ import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -70,31 +76,20 @@ public class NewCoinController extends Controller implements Initializable {
             isValidationSuccessful = false;
         }
 
-        if (!isValidationSuccessful)
+        if (!isValidationSuccessful) {
             return;
+        }
 
         String strToWrite = coin + ";" + token;
 
         // Save to csv
-        BufferedWriter bw = null;
-        FileWriter fw = null;
         try {
-            fw = new FileWriter(new File("coins.csv"), true);
-            bw = new BufferedWriter(fw);
-            bw.write(strToWrite + "\n");
-        } catch (Exception e) {
+            Path coinsPath = Paths.get("coins.csv");
+            List<String> strings = Collections.singletonList(strToWrite + "\n");
+            Files.write(coinsPath, strings, StandardCharsets.UTF_8, StandardOpenOption.APPEND,
+                StandardOpenOption.CREATE);
+        } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
-        } finally {
-            try {
-                if (bw != null) {
-                    bw.close();
-                }
-                if (fw != null) {
-                    fw.close();
-                }
-            } catch (Exception ex) {
-                LOGGER.error(ex.getMessage(), ex);
-            }
         }
 
         App.showForm("/fxml/form6.fxml", "Wallet");
@@ -108,7 +103,7 @@ public class NewCoinController extends Controller implements Initializable {
         try {
             String token = (String) clipboard.getData(DataFlavor.stringFlavor);
             txToken.setText(token);
-        } catch (Exception e) {
+        } catch (UnsupportedFlavorException | IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
     }

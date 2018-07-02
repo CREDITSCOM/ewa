@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -53,7 +54,7 @@ public class DebugService {
                 return "";
             else
                 return "Compilation errors:\n" + error;
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             return "Error compiling smart contract " + e.toString();
         }
@@ -66,7 +67,7 @@ public class DebugService {
             dbgStdOut = dbgProcess.getInputStream();
             dbgStdErr = dbgProcess.getErrorStream();
             return "";
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             return "Error starting debug "+e.toString();
         }
@@ -99,23 +100,18 @@ public class DebugService {
                 FormUtils.showError(result);
 
             return result;
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             return "Error executing debug commang\n" + cmd + "\n" + e.toString();
         }
     }
 
     public Integer cursorPosition() {
-        try {
-            String res = execCmd("where");
-            int ind = res.indexOf(".java:");
-            res = res.substring(ind + 6);
-            ind = res.indexOf(")");
-            res = res.substring(0, ind).trim();
-            return Integer.valueOf(res);
-        } catch (Exception e) {
-            LOGGER.error(e.toString(), e);
-            return null;
-        }
+        String res = execCmd("where");
+        int ind = res.indexOf(".java:");
+        res = res.substring(ind + 6);
+        ind = res.indexOf(")");
+        res = res.substring(0, ind).trim();
+        return Integer.valueOf(res);
     }
 }

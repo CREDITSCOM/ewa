@@ -2,6 +2,7 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
@@ -102,7 +103,7 @@ public class Form6Controller extends Controller implements Initializable {
         */
         try {
             Validator.validateToAddress(AppState.toAddress);
-        } catch (Exception e) {
+        } catch (LevelDbClientException e) {
             labErrorKey.setText("Invalid Address");
             txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             isValidationSuccessful = false;

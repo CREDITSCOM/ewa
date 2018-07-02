@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.crypto.Ed25519;
@@ -147,7 +148,7 @@ public class Form5Controller extends Controller implements Initializable {
                 byte[] privateKeyByteArr = Converter.decodeFromBASE58(privKey);
                 AppState.publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
                 AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
-            } catch (Exception e) {
+            } catch (CreditsCommonException e) {
                 if (e.getMessage() != null) {
                     labelError.setText(e.getMessage());
                     txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
