@@ -29,7 +29,8 @@
 				<Font name="System Bold" size="11.0" />
 			</font>
 		</Label>
-		<Label layoutX="17.0" layoutY="245.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Balance:">
+	        <Button id="refresh-balance-button" layoutX="17.0" layoutY="250.0" minHeight="16.0" minWidth="16.0" mnemonicParsing="false" onAction="#handleRefreshBalance" prefHeight="16.0" prefWidth="16.0" />
+		<Label layoutX="35.0" layoutY="248.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Balance:">
 			<font>
 				<Font name="System Bold" size="11.0" />
 			</font>
@@ -44,6 +45,5 @@
 		<Button layoutX="17.0" layoutY="424.0" mnemonicParsing="false" onAction="#handleSmartContract" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SMART CONTRACT" />
       <Button layoutX="17.0" layoutY="502.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="LOGOUT" />
       <Button layoutX="14.0" layoutY="174.0" mnemonicParsing="false" onAction="#handleCopy" prefHeight="36.0" prefWidth="79.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="COPY" />
-      <Button id="refresh-balance-button" layoutX="157.0" layoutY="220.0" minHeight="41.0" minWidth="44.0" mnemonicParsing="false" onAction="#handleRefreshBalance" prefHeight="41.0" prefWidth="44.0" stylesheets="@../styles.css" />
 	</children>
 </Pane>

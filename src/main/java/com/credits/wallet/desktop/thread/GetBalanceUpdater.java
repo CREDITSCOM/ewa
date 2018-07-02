@@ -34,11 +34,13 @@ public class GetBalanceUpdater implements Runnable {
             AppState.balance = balance;
             label.setText(Converter.toString(balance));
         } catch (LevelDbClientException e) {
-            label.setText(AppState.NODE_ERROR + ": "+e.getMessage());
+            //label.setText(AppState.NODE_ERROR + ": "+e.getMessage());
+            label.setText("");
             LOGGER.error(AppState.NODE_ERROR + ": LevelDbClientException" + e.toString(), e);
             FormUtils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
         } catch (CreditsNodeException e) {
-            label.setText(AppState.NODE_ERROR + ": "+e.getMessage());
+            //label.setText(AppState.NODE_ERROR + ": "+e.getMessage());
+            label.setText("");
             LOGGER.error(AppState.NODE_ERROR + ": CreditsNodeException " + e.toString(), e);
             FormUtils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
         }
