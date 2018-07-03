@@ -40,9 +40,6 @@ public class Form5Controller extends Controller implements Initializable {
     private Button btnBack;
 
     @FXML
-    private Button btnSaveKeys;
-
-    @FXML
     private Button btnUpload;
 
     @FXML
@@ -118,7 +115,6 @@ public class Form5Controller extends Controller implements Initializable {
         clearLabErr();
 
         btnBack.setVisible(!AppState.newAccount);
-        btnSaveKeys.setVisible(AppState.newAccount);
         btnUpload.setVisible(!AppState.newAccount);
         txPublic.setDisable(AppState.newAccount);
         txKey.setDisable(AppState.newAccount);
@@ -126,6 +122,12 @@ public class Form5Controller extends Controller implements Initializable {
         if (AppState.newAccount) {
             txKey.setText(Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
             txPublic.setText(Converter.encodeToBASE58(Ed25519.publicKeyToBytes(AppState.publicKey)));
+        }
+
+        try {
+            handleSaveKeys();
+        } catch (WalletDesktopException e) {
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

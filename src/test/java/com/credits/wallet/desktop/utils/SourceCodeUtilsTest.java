@@ -46,7 +46,7 @@ public class SourceCodeUtilsTest {
         String formattedSourceCode = null;
         try {
             formattedSourceCode = SourceCodeUtils.formatSourceCode(sourceCode);
-        } catch (WalletDesktopException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         LOGGER.info("formattedSourceCode = {}", formattedSourceCode);

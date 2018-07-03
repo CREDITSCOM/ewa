@@ -7,6 +7,7 @@ import com.credits.crypto.Blake2S;
 import com.credits.crypto.Ed25519;
 import com.credits.crypto.Md5;
 import com.credits.leveldb.client.data.TransactionFlowData;
+import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.wallet.desktop.AppState;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ public class ApiUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
     public static void callTransactionFlow(String innerId, String source, String target, BigDecimal amount,
-        BigDecimal balance, String currency) throws LevelDbClientException {
+        BigDecimal balance, String currency) throws LevelDbClientException, CreditsNodeException {
 
         // Формировование параметров основной транзакции
         String signature =
