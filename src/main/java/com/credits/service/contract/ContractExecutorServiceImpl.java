@@ -84,13 +84,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         if (contractState != null && contractState.length != 0) {
             instance = deserialize(contractState, classLoader);
         } else {
-            try {
-                instance = clazz.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new ContractExecutorException(
-                    "Cannot create new instance of the contract: " + address + ". Reason: " + getRootCauseMessage(e),
-                    e);
-            }
+            return deploy(clazz, address);
         }
 
         List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
@@ -232,5 +226,16 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         return retVal;
+    }
+
+    private byte[] deploy(Class<?> clazz, String address) throws ContractExecutorException {
+        try {
+            Object instance = clazz.newInstance();
+            return serialize(address, instance);
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new ContractExecutorException(
+                "Cannot create new instance of the contract: " + address + ". Reason: " + getRootCauseMessage(e),
+                e);
+        }
     }
 }
