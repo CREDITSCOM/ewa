@@ -5,6 +5,8 @@ import com.credits.common.exception.CreditsException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.exception.CreditsNodeException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.secure.Sandbox;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ReflectPermission;
 import java.net.NetPermission;
@@ -127,7 +130,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             Sandbox.confine(clazz, createPermissions());
             targetMethod.invoke(instance, argValues);
-        } catch (Exception e) {
+        } catch ( IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
@@ -165,7 +168,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         SmartContractData smartContractData;
         try {
             smartContractData = ldbClient.getSmartContract(address);
-        } catch (Exception e) {
+        } catch (LevelDbClientException | CreditsNodeException e) {
             throw new ContractExecutorException(e.getMessage());
         }
         if (smartContractData.getHashState() != null && !smartContractData.getHashState().equals(encrypt(bytecode))) {

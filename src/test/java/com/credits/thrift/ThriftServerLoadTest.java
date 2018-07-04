@@ -61,7 +61,7 @@ public class ThriftServerLoadTest {
 //                        APIResponse response = client.store(new ContractFile("Contract.java", bytes), String.valueOf(Math.abs(new Random().nextInt())), "ekiT2ej+PL+eeaydVVpkvuuLWDXY7r9pZTsO4wosnVuvN5CHjFO2aSR65IBI8zl9T4jMDkutsGPAVRAeYvOKnQ==");
 //                        System.out.println(response.getCode() + " " + response.getMessage());
                         transport.close();
-                    } catch (Exception e) {
+                    } catch (TTransportException e) {
                         System.out.println(e.getMessage() + e);
                     }
                 }

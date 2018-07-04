@@ -1,5 +1,6 @@
 package com.credits.service.contract;
 
+import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.ServiceTest;
 import org.junit.After;
@@ -50,7 +51,7 @@ public class ExecutorTest extends ServiceTest {
 
         try {
             ceService.execute(address, bytecode, null, "foo", new String[0]);
-        } catch (Exception e) {
+        } catch (ContractExecutorException e) {
             System.out.println("bad hash error - " + e.getMessage());
             return;
         }

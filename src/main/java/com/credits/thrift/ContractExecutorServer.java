@@ -4,6 +4,7 @@ import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
+import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +44,7 @@ public class ContractExecutorServer implements Runnable {
 
             logger.info("Starting the Thrift server on port {}...", port);
             server.serve();
-        } catch (Exception e) {
+        } catch (TTransportException e) {
             logger.error("Cannot start Thrift server on port " + port + ". " + e.getMessage(), e);
         }
     }

@@ -4,6 +4,8 @@ import com.credits.crypto.Ed25519;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.data.PoolData;
 import com.credits.leveldb.client.data.TransactionData;
+import com.credits.leveldb.client.exception.CreditsNodeException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.serialise.Serializer;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 
@@ -28,7 +30,7 @@ public abstract class SmartContract implements Serializable {
     final protected BigDecimal getBalance(String address, String currency) {
         try {
             return service.getBalance(address, currency);
-        } catch (Exception e) {
+        } catch (LevelDbClientException | CreditsNodeException e) {
             throw new RuntimeException(e);
         }
     }
@@ -36,7 +38,7 @@ public abstract class SmartContract implements Serializable {
     final protected TransactionData getTransaction(String transactionId) {
         try {
             return service.getTransaction(transactionId);
-        } catch (Exception e) {
+        } catch (LevelDbClientException | CreditsNodeException e) {
             throw new RuntimeException(e);
         }
     }
@@ -44,7 +46,7 @@ public abstract class SmartContract implements Serializable {
     final protected List<TransactionData> getTransactions(String address, long offset, long limit) {
         try {
             return service.getTransactions(address, offset, limit);
-        } catch (Exception e) {
+        } catch (LevelDbClientException | CreditsNodeException e) {
             throw new RuntimeException(e);
         }
     }
@@ -52,7 +54,7 @@ public abstract class SmartContract implements Serializable {
     final protected List<PoolData> getPoolList(long offset, long limit) {
         try {
             return service.getPoolList(offset, limit);
-        } catch (Exception e) {
+        } catch (LevelDbClientException | CreditsNodeException e) {
             throw new RuntimeException(e);
         }
     }
@@ -60,7 +62,7 @@ public abstract class SmartContract implements Serializable {
     final protected PoolData getPoolInfo(byte[] hash, long index) {
         try {
             return service.getPoolInfo(hash, index);
-        } catch (Exception e) {
+        } catch (LevelDbClientException | CreditsNodeException e) {
             throw new RuntimeException(e);
         }
     }
@@ -80,7 +82,7 @@ public abstract class SmartContract implements Serializable {
 //                Ed25519.generateSignOfTransaction(innerId, source, target, decAmount, balance, currency, privateKey);
 
             service.transactionFlow("", source, target, decAmount, balance, currency, signatureBASE58);
-        } catch (Exception e) {
+        } catch (LevelDbClientException | CreditsNodeException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
