@@ -25,8 +25,6 @@ public abstract class SmartContract implements Serializable {
     protected SmartContract() {
     }
 
-    abstract protected void initialize();
-
     final protected BigDecimal getBalance(String address, String currency) {
         try {
             return service.getBalance(address, currency);
