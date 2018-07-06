@@ -1,7 +1,6 @@
 package com.credits.service.contract;
 
 import com.credits.classload.ByteArrayContractClassLoader;
-import com.credits.common.exception.CreditsException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.SmartContractData;
@@ -10,6 +9,7 @@ import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.secure.Sandbox;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
+import com.credits.service.contract.validator.ByteCodeValidator;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +24,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ReflectPermission;
 import java.net.NetPermission;
 import java.net.SocketPermission;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.Permissions;
 import java.security.SecurityPermission;
 import java.util.Arrays;
@@ -74,17 +72,17 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
 
-        Class<?> clazz;
-        try {
-//            validateBytecode(address, bytecode);
-            clazz = classLoader.buildClass(bytecode);
-        } catch (Exception e) {
-            throw new ContractExecutorException(
-                "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
-        }
+        Class<?> clazz = classLoader.buildClass(bytecode);
 
         Object instance;
         if (contractState != null && contractState.length != 0) {
+            try {
+                SmartContractData smartContractData = ldbClient.getSmartContract(address);
+//                ByteCodeValidator.validateBytecode(bytecode, smartContractData); TODO: uncomment this section if everything goes right
+            } catch (LevelDbClientException | CreditsNodeException e) {
+                throw new ContractExecutorException(
+                    "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
+            }
             instance = deserialize(contractState, classLoader);
         } else {
             return deploy(clazz, address);
@@ -130,7 +128,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             Sandbox.confine(clazz, createPermissions());
             targetMethod.invoke(instance, argValues);
-        } catch ( IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
@@ -162,41 +160,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
         permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
         return permissions;
-    }
-
-    private void validateBytecode(String address, byte[] bytecode) throws ContractExecutorException, CreditsException {
-        SmartContractData smartContractData;
-        try {
-            smartContractData = ldbClient.getSmartContract(address);
-        } catch (LevelDbClientException | CreditsNodeException e) {
-            throw new ContractExecutorException(e.getMessage());
-        }
-        if (smartContractData.getHashState() != null && !smartContractData.getHashState().equals(encrypt(bytecode))) {
-            throw new ContractExecutorException("unknown contract");
-        }
-    }
-
-    private static String encrypt(byte[] bytes) throws CreditsException {
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new CreditsException(e);
-        }
-        digest.update(bytes);
-        return bytesToHex(digest.digest());
-
-    }
-
-    private static String bytesToHex(byte[] bytes) {
-        char[] hexArray = "0123456789ABCDEF".toCharArray();
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
     }
 
     private Object[] castValues(Class<?>[] types, String[] params) throws ContractExecutorException {
@@ -237,8 +200,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             return serialize(address, instance);
         } catch (InstantiationException | IllegalAccessException e) {
             throw new ContractExecutorException(
-                "Cannot create new instance of the contract: " + address + ". Reason: " + getRootCauseMessage(e),
-                e);
+                "Cannot create new instance of the contract: " + address + ". Reason: " + getRootCauseMessage(e), e);
         }
     }
 }
