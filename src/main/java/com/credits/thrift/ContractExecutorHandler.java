@@ -23,6 +23,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         try {
             ReturnValue returnValue = service.execute(address, byteCode.array(), contractState.array(), method, paramsArray);
             response.contractState = ByteBuffer.wrap(returnValue.getContractState());
+            response.ret_val = returnValue.getVariant();
         } catch (ContractExecutorException e) {
             response.setCode((byte) 1);
             response.setMessage(e.getMessage());
