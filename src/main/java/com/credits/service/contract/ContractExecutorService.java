@@ -1,6 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
+import com.credits.thrift.ReturnValue;
 
 public interface ContractExecutorService {
     /**
@@ -23,5 +24,5 @@ public interface ContractExecutorService {
 //    void execute(String address, String methodName, String[] params) throws ContractExecutorException;
 
 
-    byte[] execute(String address, byte[] bytecode, byte[] contractState, String methodName, String[] params) throws ContractExecutorException;
+    ReturnValue execute(String address, byte[] bytecode, byte[] contractState, String methodName, String[] params) throws ContractExecutorException;
 }

@@ -11,6 +11,9 @@ import com.credits.secure.Sandbox;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
+import com.credits.thrift.ReturnValue;
+import com.credits.thrift.Variant;
+import com.credits.thrift.VariantMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,7 +72,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public byte[] execute(String address, byte[] bytecode, byte[] contractState, String methodName, String[] params)
+    public ReturnValue execute(String address, byte[] bytecode, byte[] contractState, String methodName, String[] params)
         throws ContractExecutorException {
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
@@ -87,7 +90,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         if (contractState != null && contractState.length != 0) {
             instance = deserialize(contractState, classLoader);
         } else {
-            return deploy(clazz, address);
+            return new ReturnValue(deploy(clazz, address), null);
         }
 
         List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
@@ -127,14 +130,16 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         //Invoking target method
+        Object returnObject = null;
         try {
             Sandbox.confine(clazz, createPermissions());
-            targetMethod.invoke(instance, argValues);
+            returnObject = targetMethod.invoke(instance, argValues);
         } catch ( IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
-        return serialize(address, instance);
+        Variant returnValue = VariantMapper.map(returnObject);
+        return new ReturnValue(serialize(address, instance), returnValue);
     }
 
     private Permissions createPermissions() {

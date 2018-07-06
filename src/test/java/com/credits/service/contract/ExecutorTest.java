@@ -58,20 +58,20 @@ public class ExecutorTest extends ServiceTest {
         fail("incorrect hash validation");
     }
 
-    @Test
-    public void save_state_smart_contract() throws Exception {
-        String sourceCode = readSourceCode("/serviceTest/Contract.java");
-        byte[] bytecode = compile(sourceCode, "Contract", "TKN");
-        when(mockClient.getSmartContract(address)).thenReturn(
-            new SmartContractData(address, sourceCode, bytecode, null, encrypt(bytecode), null, null));
-
-        byte[] contractState = ceService.execute(address, bytecode, null, "initialize", new String[] {});
-        contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
-
-        contractState = ceService.execute(address, bytecode, contractState, "addTokens", new String[] {"10"});
-        contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
-
-        contractState = ceService.execute(address, bytecode, contractState, "addTokens", new String[] {"-11"});
-        ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
-    }
+//    @Test
+//    public void save_state_smart_contract() throws Exception {
+//        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+//        byte[] bytecode = compile(sourceCode, "Contract", "TKN");
+//        when(mockClient.getSmartContract(address)).thenReturn(
+//            new SmartContractData(address, sourceCode, bytecode, null, encrypt(bytecode), null, null));
+//
+//        byte[] contractState = ceService.execute(address, bytecode, null, "initialize", new String[] {});
+//        contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
+//
+//        contractState = ceService.execute(address, bytecode, contractState, "addTokens", new String[] {"10"});
+//        contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
+//
+//        contractState = ceService.execute(address, bytecode, contractState, "addTokens", new String[] {"-11"});
+//        ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
+//    }
 }
