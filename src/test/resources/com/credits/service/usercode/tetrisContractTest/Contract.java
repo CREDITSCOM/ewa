@@ -1,5 +1,3 @@
-package com.credits.service.usercode.tetrisContractTest;
-
 import java.util.HashMap;
 import java.util.Map;
 
