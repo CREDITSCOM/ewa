@@ -2,7 +2,6 @@ package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.ServiceTest;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -11,9 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-import org.springframework.util.FileSystemUtils;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -60,11 +57,6 @@ public class SecurityTest extends ServiceTest {
         bytecode = compileSourceCode("/securityTest/Contract.java");
     }
 
-    @After
-    public void tearDown() {
-        String dir = System.getProperty("user.dir") + separator + "credits";
-        FileSystemUtils.deleteRecursively(new File(dir));
-    }
     @Test
     public void test() throws Exception {
         try {

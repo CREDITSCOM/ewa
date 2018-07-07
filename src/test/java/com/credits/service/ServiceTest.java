@@ -4,6 +4,7 @@ import com.credits.App;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.contract.ContractExecutorServiceImpl;
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -12,8 +13,10 @@ import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.FileSystemUtils;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.FilePermission;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
+import static java.io.File.separator;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -49,11 +53,9 @@ public abstract class ServiceTest {
 
     protected ApiClient mockClient;
 
-
     protected void setUp() throws Exception {
         ceService = spy(ceService);
         mockClient = mock(ApiClient.class);
-        System.out.println();
         Whitebox.setInternalState(ceService, "ldbClient", mockClient);
 
         doReturn(testingPermissions()).when(ceService, "createPermissions");
@@ -79,5 +81,11 @@ public abstract class ServiceTest {
         when(mockClient.getSmartContract(address)).thenReturn(
             new SmartContractData(address,sourceCode, bytecode, null, encrypt(bytecode),"", new ArrayList<>()));
         return bytecode;
+    }
+
+    @After
+    public void tearDown() {
+        String dir = System.getProperty("user.dir") + separator + "credits";
+        FileSystemUtils.deleteRecursively(new File(dir));
     }
 }

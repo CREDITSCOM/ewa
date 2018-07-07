@@ -26,15 +26,18 @@ public class VariantMapperTest {
             {"Byte", (byte) 1},
             {"Short", (short) 2},
             {"Integer", 3},
-            {"Long", (long) 4},
-            {"Double", 1.1},
-            {"String", "test string"}
+            {"Long", 4L},
+            {"Double", 1.1D},
+            {"String", "test string"},
         });
     }
 
     @Test
-    public void mapTest() {
-        Variant variant = VariantMapper.map(input);
+    public void mapSuccessfulTest() {
+        Variant variant = new VariantMapper()
+            .apply(input)
+            .orElse(new Variant());
+
         Assert.assertEquals(input, variant.getFieldValue());
     }
 }

@@ -27,12 +27,6 @@ public class UserCodeStorageServiceTest extends ServiceTest {
     public void setUp() {
     }
 
-    @After
-    public void tearDown() {
-        String dir = System.getProperty("user.dir") + separator + "credits";
-        FileSystemUtils.deleteRecursively(new File(dir));
-    }
-
     @Ignore
     @Test
     public void storeTest() throws ContractExecutorException {

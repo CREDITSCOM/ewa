@@ -17,14 +17,8 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
   private static final org.apache.thrift.protocol.TField V_DOUBLE_FIELD_DESC = new org.apache.thrift.protocol.TField("v_double", org.apache.thrift.protocol.TType.DOUBLE, (short)6);
   private static final org.apache.thrift.protocol.TField V_STRING_FIELD_DESC = new org.apache.thrift.protocol.TField("v_string", org.apache.thrift.protocol.TType.STRING, (short)7);
   private static final org.apache.thrift.protocol.TField V_LIST_FIELD_DESC = new org.apache.thrift.protocol.TField("v_list", org.apache.thrift.protocol.TType.LIST, (short)8);
-  private static final org.apache.thrift.protocol.TField I16_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("i16_set", org.apache.thrift.protocol.TType.SET, (short)9);
-  private static final org.apache.thrift.protocol.TField I32_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("i32_set", org.apache.thrift.protocol.TType.SET, (short)10);
-  private static final org.apache.thrift.protocol.TField I64_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("i64_set", org.apache.thrift.protocol.TType.SET, (short)11);
-  private static final org.apache.thrift.protocol.TField STRING_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("string_set", org.apache.thrift.protocol.TType.SET, (short)12);
-  private static final org.apache.thrift.protocol.TField I16_MAP_FIELD_DESC = new org.apache.thrift.protocol.TField("i16_map", org.apache.thrift.protocol.TType.MAP, (short)13);
-  private static final org.apache.thrift.protocol.TField I32_MAP_FIELD_DESC = new org.apache.thrift.protocol.TField("i32_map", org.apache.thrift.protocol.TType.MAP, (short)14);
-  private static final org.apache.thrift.protocol.TField I64_MAP_FIELD_DESC = new org.apache.thrift.protocol.TField("i64_map", org.apache.thrift.protocol.TType.MAP, (short)15);
-  private static final org.apache.thrift.protocol.TField STRING_MAP_FIELD_DESC = new org.apache.thrift.protocol.TField("string_map", org.apache.thrift.protocol.TType.MAP, (short)16);
+  private static final org.apache.thrift.protocol.TField V_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("v_set", org.apache.thrift.protocol.TType.SET, (short)9);
+  private static final org.apache.thrift.protocol.TField V_MAP_FIELD_DESC = new org.apache.thrift.protocol.TField("v_map", org.apache.thrift.protocol.TType.MAP, (short)10);
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -36,14 +30,8 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     V_DOUBLE((short)6, "v_double"),
     V_STRING((short)7, "v_string"),
     V_LIST((short)8, "v_list"),
-    I16_SET((short)9, "i16_set"),
-    I32_SET((short)10, "i32_set"),
-    I64_SET((short)11, "i64_set"),
-    STRING_SET((short)12, "string_set"),
-    I16_MAP((short)13, "i16_map"),
-    I32_MAP((short)14, "i32_map"),
-    I64_MAP((short)15, "i64_map"),
-    STRING_MAP((short)16, "string_map");
+    V_SET((short)9, "v_set"),
+    V_MAP((short)10, "v_map");
 
     private static final java.util.Map<String, _Fields> byName = new java.util.HashMap<String, _Fields>();
 
@@ -74,22 +62,10 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           return V_STRING;
         case 8: // V_LIST
           return V_LIST;
-        case 9: // I16_SET
-          return I16_SET;
-        case 10: // I32_SET
-          return I32_SET;
-        case 11: // I64_SET
-          return I64_SET;
-        case 12: // STRING_SET
-          return STRING_SET;
-        case 13: // I16_MAP
-          return I16_MAP;
-        case 14: // I32_MAP
-          return I32_MAP;
-        case 15: // I64_MAP
-          return I64_MAP;
-        case 16: // STRING_MAP
-          return STRING_MAP;
+        case 9: // V_SET
+          return V_SET;
+        case 10: // V_MAP
+          return V_MAP;
         default:
           return null;
       }
@@ -132,50 +108,29 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
   public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.V_BOOL, new org.apache.thrift.meta_data.FieldMetaData("v_bool", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.V_BOOL, new org.apache.thrift.meta_data.FieldMetaData("v_bool", org.apache.thrift.TFieldRequirementType.OPTIONAL,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-    tmpMap.put(_Fields.V_I8, new org.apache.thrift.meta_data.FieldMetaData("v_i8", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.V_I8, new org.apache.thrift.meta_data.FieldMetaData("v_i8", org.apache.thrift.TFieldRequirementType.OPTIONAL,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BYTE)));
-    tmpMap.put(_Fields.V_I16, new org.apache.thrift.meta_data.FieldMetaData("v_i16", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.V_I16, new org.apache.thrift.meta_data.FieldMetaData("v_i16", org.apache.thrift.TFieldRequirementType.OPTIONAL,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I16)));
-    tmpMap.put(_Fields.V_I32, new org.apache.thrift.meta_data.FieldMetaData("v_i32", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.V_I32, new org.apache.thrift.meta_data.FieldMetaData("v_i32", org.apache.thrift.TFieldRequirementType.OPTIONAL,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.V_I64, new org.apache.thrift.meta_data.FieldMetaData("v_i64", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.V_I64, new org.apache.thrift.meta_data.FieldMetaData("v_i64", org.apache.thrift.TFieldRequirementType.OPTIONAL,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.V_DOUBLE, new org.apache.thrift.meta_data.FieldMetaData("v_double", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.V_DOUBLE, new org.apache.thrift.meta_data.FieldMetaData("v_double", org.apache.thrift.TFieldRequirementType.OPTIONAL,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
-    tmpMap.put(_Fields.V_STRING, new org.apache.thrift.meta_data.FieldMetaData("v_string", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+    tmpMap.put(_Fields.V_STRING, new org.apache.thrift.meta_data.FieldMetaData("v_string", org.apache.thrift.TFieldRequirementType.OPTIONAL,
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-    tmpMap.put(_Fields.V_LIST, new org.apache.thrift.meta_data.FieldMetaData("v_list", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
+    tmpMap.put(_Fields.V_LIST, new org.apache.thrift.meta_data.FieldMetaData("v_list", org.apache.thrift.TFieldRequirementType.OPTIONAL,
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST,
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"))));
-    tmpMap.put(_Fields.I16_SET, new org.apache.thrift.meta_data.FieldMetaData("i16_set", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I16))));
-    tmpMap.put(_Fields.I32_SET, new org.apache.thrift.meta_data.FieldMetaData("i32_set", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32))));
-    tmpMap.put(_Fields.I64_SET, new org.apache.thrift.meta_data.FieldMetaData("i64_set", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64))));
-    tmpMap.put(_Fields.STRING_SET, new org.apache.thrift.meta_data.FieldMetaData("string_set", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
-    tmpMap.put(_Fields.I16_MAP, new org.apache.thrift.meta_data.FieldMetaData("i16_map", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I16), 
+    tmpMap.put(_Fields.V_SET, new org.apache.thrift.meta_data.FieldMetaData("v_set", org.apache.thrift.TFieldRequirementType.OPTIONAL,
+        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET,
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"))));
-    tmpMap.put(_Fields.I32_MAP, new org.apache.thrift.meta_data.FieldMetaData("i32_map", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32), 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"))));
-    tmpMap.put(_Fields.I64_MAP, new org.apache.thrift.meta_data.FieldMetaData("i64_map", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64), 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"))));
-    tmpMap.put(_Fields.STRING_MAP, new org.apache.thrift.meta_data.FieldMetaData("string_map", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING), 
+    tmpMap.put(_Fields.V_MAP, new org.apache.thrift.meta_data.FieldMetaData("v_map", org.apache.thrift.TFieldRequirementType.OPTIONAL,
+        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP,
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"),
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"))));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Variant.class, metaDataMap);
@@ -244,51 +199,15 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     return x;
   }
 
-  public static Variant i16_set(java.util.Set<Short> value) {
+  public static Variant v_set(java.util.Set<Variant> value) {
     Variant x = new Variant();
-    x.setI16_set(value);
+    x.setV_set(value);
     return x;
   }
 
-  public static Variant i32_set(java.util.Set<Integer> value) {
+  public static Variant v_map(java.util.Map<Variant,Variant> value) {
     Variant x = new Variant();
-    x.setI32_set(value);
-    return x;
-  }
-
-  public static Variant i64_set(java.util.Set<Long> value) {
-    Variant x = new Variant();
-    x.setI64_set(value);
-    return x;
-  }
-
-  public static Variant string_set(java.util.Set<String> value) {
-    Variant x = new Variant();
-    x.setString_set(value);
-    return x;
-  }
-
-  public static Variant i16_map(java.util.Map<Short,Variant> value) {
-    Variant x = new Variant();
-    x.setI16_map(value);
-    return x;
-  }
-
-  public static Variant i32_map(java.util.Map<Integer,Variant> value) {
-    Variant x = new Variant();
-    x.setI32_map(value);
-    return x;
-  }
-
-  public static Variant i64_map(java.util.Map<Long,Variant> value) {
-    Variant x = new Variant();
-    x.setI64_map(value);
-    return x;
-  }
-
-  public static Variant string_map(java.util.Map<String,Variant> value) {
-    Variant x = new Variant();
-    x.setString_map(value);
+    x.setV_map(value);
     return x;
   }
 
@@ -336,46 +255,16 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           break;
         }
         throw new ClassCastException("Was expecting value of type java.util.List<Variant> for field 'v_list', but got " + value.getClass().getSimpleName());
-      case I16_SET:
+      case V_SET:
         if (value instanceof java.util.Set) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.util.Set<java.lang.Short> for field 'i16_set', but got " + value.getClass().getSimpleName());
-      case I32_SET:
-        if (value instanceof java.util.Set) {
-          break;
-        }
-        throw new ClassCastException("Was expecting value of type java.util.Set<java.lang.Integer> for field 'i32_set', but got " + value.getClass().getSimpleName());
-      case I64_SET:
-        if (value instanceof java.util.Set) {
-          break;
-        }
-        throw new ClassCastException("Was expecting value of type java.util.Set<java.lang.Long> for field 'i64_set', but got " + value.getClass().getSimpleName());
-      case STRING_SET:
-        if (value instanceof java.util.Set) {
-          break;
-        }
-        throw new ClassCastException("Was expecting value of type java.util.Set<java.lang.String> for field 'string_set', but got " + value.getClass().getSimpleName());
-      case I16_MAP:
+        throw new ClassCastException("Was expecting value of type java.util.Set<Variant> for field 'v_set', but got " + value.getClass().getSimpleName());
+      case V_MAP:
         if (value instanceof java.util.Map) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.util.Map<java.lang.Short,Variant> for field 'i16_map', but got " + value.getClass().getSimpleName());
-      case I32_MAP:
-        if (value instanceof java.util.Map) {
-          break;
-        }
-        throw new ClassCastException("Was expecting value of type java.util.Map<java.lang.Integer,Variant> for field 'i32_map', but got " + value.getClass().getSimpleName());
-      case I64_MAP:
-        if (value instanceof java.util.Map) {
-          break;
-        }
-        throw new ClassCastException("Was expecting value of type java.util.Map<java.lang.Long,Variant> for field 'i64_map', but got " + value.getClass().getSimpleName());
-      case STRING_MAP:
-        if (value instanceof java.util.Map) {
-          break;
-        }
-        throw new ClassCastException("Was expecting value of type java.util.Map<java.lang.String,Variant> for field 'string_map', but got " + value.getClass().getSimpleName());
+        throw new ClassCastException("Was expecting value of type java.util.Map<Variant,Variant> for field 'v_map', but got " + value.getClass().getSimpleName());
       default:
         throw new IllegalArgumentException("Unknown field id " + setField);
     }
@@ -469,166 +358,45 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
             return null;
           }
-        case I16_SET:
-          if (field.type == I16_SET_FIELD_DESC.type) {
-            java.util.Set<Short> i16_set;
+        case V_SET:
+          if (field.type == V_SET_FIELD_DESC.type) {
+            java.util.Set<Variant> v_set;
             {
               org.apache.thrift.protocol.TSet _set3 = iprot.readSetBegin();
-              i16_set = new java.util.HashSet<Short>(2*_set3.size);
-              short _elem4;
+              v_set = new java.util.HashSet<Variant>(2*_set3.size);
+              Variant _elem4;
               for (int _i5 = 0; _i5 < _set3.size; ++_i5)
               {
-                _elem4 = iprot.readI16();
-                i16_set.add(_elem4);
+                _elem4 = new Variant();
+                _elem4.read(iprot);
+                v_set.add(_elem4);
               }
               iprot.readSetEnd();
             }
-            return i16_set;
+            return v_set;
           } else {
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
             return null;
           }
-        case I32_SET:
-          if (field.type == I32_SET_FIELD_DESC.type) {
-            java.util.Set<Integer> i32_set;
+        case V_MAP:
+          if (field.type == V_MAP_FIELD_DESC.type) {
+            java.util.Map<Variant,Variant> v_map;
             {
-              org.apache.thrift.protocol.TSet _set6 = iprot.readSetBegin();
-              i32_set = new java.util.HashSet<Integer>(2*_set6.size);
-              int _elem7;
-              for (int _i8 = 0; _i8 < _set6.size; ++_i8)
+              org.apache.thrift.protocol.TMap _map6 = iprot.readMapBegin();
+              v_map = new java.util.HashMap<Variant,Variant>(2*_map6.size);
+              Variant _key7;
+              Variant _val8;
+              for (int _i9 = 0; _i9 < _map6.size; ++_i9)
               {
-                _elem7 = iprot.readI32();
-                i32_set.add(_elem7);
-              }
-              iprot.readSetEnd();
-            }
-            return i32_set;
-          } else {
-            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
-            return null;
-          }
-        case I64_SET:
-          if (field.type == I64_SET_FIELD_DESC.type) {
-            java.util.Set<Long> i64_set;
-            {
-              org.apache.thrift.protocol.TSet _set9 = iprot.readSetBegin();
-              i64_set = new java.util.HashSet<Long>(2*_set9.size);
-              long _elem10;
-              for (int _i11 = 0; _i11 < _set9.size; ++_i11)
-              {
-                _elem10 = iprot.readI64();
-                i64_set.add(_elem10);
-              }
-              iprot.readSetEnd();
-            }
-            return i64_set;
-          } else {
-            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
-            return null;
-          }
-        case STRING_SET:
-          if (field.type == STRING_SET_FIELD_DESC.type) {
-            java.util.Set<String> string_set;
-            {
-              org.apache.thrift.protocol.TSet _set12 = iprot.readSetBegin();
-              string_set = new java.util.HashSet<String>(2*_set12.size);
-              String _elem13;
-              for (int _i14 = 0; _i14 < _set12.size; ++_i14)
-              {
-                _elem13 = iprot.readString();
-                string_set.add(_elem13);
-              }
-              iprot.readSetEnd();
-            }
-            return string_set;
-          } else {
-            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
-            return null;
-          }
-        case I16_MAP:
-          if (field.type == I16_MAP_FIELD_DESC.type) {
-            java.util.Map<Short,Variant> i16_map;
-            {
-              org.apache.thrift.protocol.TMap _map15 = iprot.readMapBegin();
-              i16_map = new java.util.HashMap<Short,Variant>(2*_map15.size);
-              short _key16;
-              Variant _val17;
-              for (int _i18 = 0; _i18 < _map15.size; ++_i18)
-              {
-                _key16 = iprot.readI16();
-                _val17 = new Variant();
-                _val17.read(iprot);
-                i16_map.put(_key16, _val17);
+                _key7 = new Variant();
+                _key7.read(iprot);
+                _val8 = new Variant();
+                _val8.read(iprot);
+                v_map.put(_key7, _val8);
               }
               iprot.readMapEnd();
             }
-            return i16_map;
-          } else {
-            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
-            return null;
-          }
-        case I32_MAP:
-          if (field.type == I32_MAP_FIELD_DESC.type) {
-            java.util.Map<Integer,Variant> i32_map;
-            {
-              org.apache.thrift.protocol.TMap _map19 = iprot.readMapBegin();
-              i32_map = new java.util.HashMap<Integer,Variant>(2*_map19.size);
-              int _key20;
-              Variant _val21;
-              for (int _i22 = 0; _i22 < _map19.size; ++_i22)
-              {
-                _key20 = iprot.readI32();
-                _val21 = new Variant();
-                _val21.read(iprot);
-                i32_map.put(_key20, _val21);
-              }
-              iprot.readMapEnd();
-            }
-            return i32_map;
-          } else {
-            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
-            return null;
-          }
-        case I64_MAP:
-          if (field.type == I64_MAP_FIELD_DESC.type) {
-            java.util.Map<Long,Variant> i64_map;
-            {
-              org.apache.thrift.protocol.TMap _map23 = iprot.readMapBegin();
-              i64_map = new java.util.HashMap<Long,Variant>(2*_map23.size);
-              long _key24;
-              Variant _val25;
-              for (int _i26 = 0; _i26 < _map23.size; ++_i26)
-              {
-                _key24 = iprot.readI64();
-                _val25 = new Variant();
-                _val25.read(iprot);
-                i64_map.put(_key24, _val25);
-              }
-              iprot.readMapEnd();
-            }
-            return i64_map;
-          } else {
-            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
-            return null;
-          }
-        case STRING_MAP:
-          if (field.type == STRING_MAP_FIELD_DESC.type) {
-            java.util.Map<String,Variant> string_map;
-            {
-              org.apache.thrift.protocol.TMap _map27 = iprot.readMapBegin();
-              string_map = new java.util.HashMap<String,Variant>(2*_map27.size);
-              String _key28;
-              Variant _val29;
-              for (int _i30 = 0; _i30 < _map27.size; ++_i30)
-              {
-                _key28 = iprot.readString();
-                _val29 = new Variant();
-                _val29.read(iprot);
-                string_map.put(_key28, _val29);
-              }
-              iprot.readMapEnd();
-            }
-            return string_map;
+            return v_map;
           } else {
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
             return null;
@@ -677,101 +445,32 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
         java.util.List<Variant> v_list = (java.util.List<Variant>)value_;
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, v_list.size()));
-          for (Variant _iter31 : v_list)
+          for (Variant _iter10 : v_list)
           {
-            _iter31.write(oprot);
+            _iter10.write(oprot);
           }
           oprot.writeListEnd();
         }
         return;
-      case I16_SET:
-        java.util.Set<Short> i16_set = (java.util.Set<Short>)value_;
+      case V_SET:
+        java.util.Set<Variant> v_set = (java.util.Set<Variant>)value_;
         {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I16, i16_set.size()));
-          for (short _iter32 : i16_set)
+          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, v_set.size()));
+          for (Variant _iter11 : v_set)
           {
-            oprot.writeI16(_iter32);
+            _iter11.write(oprot);
           }
           oprot.writeSetEnd();
         }
         return;
-      case I32_SET:
-        java.util.Set<Integer> i32_set = (java.util.Set<Integer>)value_;
+      case V_MAP:
+        java.util.Map<Variant,Variant> v_map = (java.util.Map<Variant,Variant>)value_;
         {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I32, i32_set.size()));
-          for (int _iter33 : i32_set)
+          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRUCT, org.apache.thrift.protocol.TType.STRUCT, v_map.size()));
+          for (java.util.Map.Entry<Variant, Variant> _iter12 : v_map.entrySet())
           {
-            oprot.writeI32(_iter33);
-          }
-          oprot.writeSetEnd();
-        }
-        return;
-      case I64_SET:
-        java.util.Set<Long> i64_set = (java.util.Set<Long>)value_;
-        {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, i64_set.size()));
-          for (long _iter34 : i64_set)
-          {
-            oprot.writeI64(_iter34);
-          }
-          oprot.writeSetEnd();
-        }
-        return;
-      case STRING_SET:
-        java.util.Set<String> string_set = (java.util.Set<String>)value_;
-        {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, string_set.size()));
-          for (String _iter35 : string_set)
-          {
-            oprot.writeString(_iter35);
-          }
-          oprot.writeSetEnd();
-        }
-        return;
-      case I16_MAP:
-        java.util.Map<Short,Variant> i16_map = (java.util.Map<Short,Variant>)value_;
-        {
-          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I16, org.apache.thrift.protocol.TType.STRUCT, i16_map.size()));
-          for (java.util.Map.Entry<Short, Variant> _iter36 : i16_map.entrySet())
-          {
-            oprot.writeI16(_iter36.getKey());
-            _iter36.getValue().write(oprot);
-          }
-          oprot.writeMapEnd();
-        }
-        return;
-      case I32_MAP:
-        java.util.Map<Integer,Variant> i32_map = (java.util.Map<Integer,Variant>)value_;
-        {
-          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.STRUCT, i32_map.size()));
-          for (java.util.Map.Entry<Integer, Variant> _iter37 : i32_map.entrySet())
-          {
-            oprot.writeI32(_iter37.getKey());
-            _iter37.getValue().write(oprot);
-          }
-          oprot.writeMapEnd();
-        }
-        return;
-      case I64_MAP:
-        java.util.Map<Long,Variant> i64_map = (java.util.Map<Long,Variant>)value_;
-        {
-          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I64, org.apache.thrift.protocol.TType.STRUCT, i64_map.size()));
-          for (java.util.Map.Entry<Long, Variant> _iter38 : i64_map.entrySet())
-          {
-            oprot.writeI64(_iter38.getKey());
-            _iter38.getValue().write(oprot);
-          }
-          oprot.writeMapEnd();
-        }
-        return;
-      case STRING_MAP:
-        java.util.Map<String,Variant> string_map = (java.util.Map<String,Variant>)value_;
-        {
-          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.STRUCT, string_map.size()));
-          for (java.util.Map.Entry<String, Variant> _iter39 : string_map.entrySet())
-          {
-            oprot.writeString(_iter39.getKey());
-            _iter39.getValue().write(oprot);
+            _iter12.getKey().write(oprot);
+            _iter12.getValue().write(oprot);
           }
           oprot.writeMapEnd();
         }
@@ -817,142 +516,51 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
         case V_LIST:
           java.util.List<Variant> v_list;
           {
-            org.apache.thrift.protocol.TList _list40 = iprot.readListBegin();
-            v_list = new java.util.ArrayList<Variant>(_list40.size);
-            Variant _elem41;
-            for (int _i42 = 0; _i42 < _list40.size; ++_i42)
+            org.apache.thrift.protocol.TList _list13 = iprot.readListBegin();
+            v_list = new java.util.ArrayList<Variant>(_list13.size);
+            Variant _elem14;
+            for (int _i15 = 0; _i15 < _list13.size; ++_i15)
             {
-              _elem41 = new Variant();
-              _elem41.read(iprot);
-              v_list.add(_elem41);
+              _elem14 = new Variant();
+              _elem14.read(iprot);
+              v_list.add(_elem14);
             }
             iprot.readListEnd();
           }
           return v_list;
-        case I16_SET:
-          java.util.Set<Short> i16_set;
+        case V_SET:
+          java.util.Set<Variant> v_set;
           {
-            org.apache.thrift.protocol.TSet _set43 = iprot.readSetBegin();
-            i16_set = new java.util.HashSet<Short>(2*_set43.size);
-            short _elem44;
-            for (int _i45 = 0; _i45 < _set43.size; ++_i45)
+            org.apache.thrift.protocol.TSet _set16 = iprot.readSetBegin();
+            v_set = new java.util.HashSet<Variant>(2*_set16.size);
+            Variant _elem17;
+            for (int _i18 = 0; _i18 < _set16.size; ++_i18)
             {
-              _elem44 = iprot.readI16();
-              i16_set.add(_elem44);
+              _elem17 = new Variant();
+              _elem17.read(iprot);
+              v_set.add(_elem17);
             }
             iprot.readSetEnd();
           }
-          return i16_set;
-        case I32_SET:
-          java.util.Set<Integer> i32_set;
+          return v_set;
+        case V_MAP:
+          java.util.Map<Variant,Variant> v_map;
           {
-            org.apache.thrift.protocol.TSet _set46 = iprot.readSetBegin();
-            i32_set = new java.util.HashSet<Integer>(2*_set46.size);
-            int _elem47;
-            for (int _i48 = 0; _i48 < _set46.size; ++_i48)
+            org.apache.thrift.protocol.TMap _map19 = iprot.readMapBegin();
+            v_map = new java.util.HashMap<Variant,Variant>(2*_map19.size);
+            Variant _key20;
+            Variant _val21;
+            for (int _i22 = 0; _i22 < _map19.size; ++_i22)
             {
-              _elem47 = iprot.readI32();
-              i32_set.add(_elem47);
-            }
-            iprot.readSetEnd();
-          }
-          return i32_set;
-        case I64_SET:
-          java.util.Set<Long> i64_set;
-          {
-            org.apache.thrift.protocol.TSet _set49 = iprot.readSetBegin();
-            i64_set = new java.util.HashSet<Long>(2*_set49.size);
-            long _elem50;
-            for (int _i51 = 0; _i51 < _set49.size; ++_i51)
-            {
-              _elem50 = iprot.readI64();
-              i64_set.add(_elem50);
-            }
-            iprot.readSetEnd();
-          }
-          return i64_set;
-        case STRING_SET:
-          java.util.Set<String> string_set;
-          {
-            org.apache.thrift.protocol.TSet _set52 = iprot.readSetBegin();
-            string_set = new java.util.HashSet<String>(2*_set52.size);
-            String _elem53;
-            for (int _i54 = 0; _i54 < _set52.size; ++_i54)
-            {
-              _elem53 = iprot.readString();
-              string_set.add(_elem53);
-            }
-            iprot.readSetEnd();
-          }
-          return string_set;
-        case I16_MAP:
-          java.util.Map<Short,Variant> i16_map;
-          {
-            org.apache.thrift.protocol.TMap _map55 = iprot.readMapBegin();
-            i16_map = new java.util.HashMap<Short,Variant>(2*_map55.size);
-            short _key56;
-            Variant _val57;
-            for (int _i58 = 0; _i58 < _map55.size; ++_i58)
-            {
-              _key56 = iprot.readI16();
-              _val57 = new Variant();
-              _val57.read(iprot);
-              i16_map.put(_key56, _val57);
+              _key20 = new Variant();
+              _key20.read(iprot);
+              _val21 = new Variant();
+              _val21.read(iprot);
+              v_map.put(_key20, _val21);
             }
             iprot.readMapEnd();
           }
-          return i16_map;
-        case I32_MAP:
-          java.util.Map<Integer,Variant> i32_map;
-          {
-            org.apache.thrift.protocol.TMap _map59 = iprot.readMapBegin();
-            i32_map = new java.util.HashMap<Integer,Variant>(2*_map59.size);
-            int _key60;
-            Variant _val61;
-            for (int _i62 = 0; _i62 < _map59.size; ++_i62)
-            {
-              _key60 = iprot.readI32();
-              _val61 = new Variant();
-              _val61.read(iprot);
-              i32_map.put(_key60, _val61);
-            }
-            iprot.readMapEnd();
-          }
-          return i32_map;
-        case I64_MAP:
-          java.util.Map<Long,Variant> i64_map;
-          {
-            org.apache.thrift.protocol.TMap _map63 = iprot.readMapBegin();
-            i64_map = new java.util.HashMap<Long,Variant>(2*_map63.size);
-            long _key64;
-            Variant _val65;
-            for (int _i66 = 0; _i66 < _map63.size; ++_i66)
-            {
-              _key64 = iprot.readI64();
-              _val65 = new Variant();
-              _val65.read(iprot);
-              i64_map.put(_key64, _val65);
-            }
-            iprot.readMapEnd();
-          }
-          return i64_map;
-        case STRING_MAP:
-          java.util.Map<String,Variant> string_map;
-          {
-            org.apache.thrift.protocol.TMap _map67 = iprot.readMapBegin();
-            string_map = new java.util.HashMap<String,Variant>(2*_map67.size);
-            String _key68;
-            Variant _val69;
-            for (int _i70 = 0; _i70 < _map67.size; ++_i70)
-            {
-              _key68 = iprot.readString();
-              _val69 = new Variant();
-              _val69.read(iprot);
-              string_map.put(_key68, _val69);
-            }
-            iprot.readMapEnd();
-          }
-          return string_map;
+          return v_map;
         default:
           throw new IllegalStateException("setField wasn't null, but didn't match any of the case statements!");
       }
@@ -996,101 +604,32 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
         java.util.List<Variant> v_list = (java.util.List<Variant>)value_;
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, v_list.size()));
-          for (Variant _iter71 : v_list)
+          for (Variant _iter23 : v_list)
           {
-            _iter71.write(oprot);
+            _iter23.write(oprot);
           }
           oprot.writeListEnd();
         }
         return;
-      case I16_SET:
-        java.util.Set<Short> i16_set = (java.util.Set<Short>)value_;
+      case V_SET:
+        java.util.Set<Variant> v_set = (java.util.Set<Variant>)value_;
         {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I16, i16_set.size()));
-          for (short _iter72 : i16_set)
+          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRUCT, v_set.size()));
+          for (Variant _iter24 : v_set)
           {
-            oprot.writeI16(_iter72);
+            _iter24.write(oprot);
           }
           oprot.writeSetEnd();
         }
         return;
-      case I32_SET:
-        java.util.Set<Integer> i32_set = (java.util.Set<Integer>)value_;
+      case V_MAP:
+        java.util.Map<Variant,Variant> v_map = (java.util.Map<Variant,Variant>)value_;
         {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I32, i32_set.size()));
-          for (int _iter73 : i32_set)
+          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRUCT, org.apache.thrift.protocol.TType.STRUCT, v_map.size()));
+          for (java.util.Map.Entry<Variant, Variant> _iter25 : v_map.entrySet())
           {
-            oprot.writeI32(_iter73);
-          }
-          oprot.writeSetEnd();
-        }
-        return;
-      case I64_SET:
-        java.util.Set<Long> i64_set = (java.util.Set<Long>)value_;
-        {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.I64, i64_set.size()));
-          for (long _iter74 : i64_set)
-          {
-            oprot.writeI64(_iter74);
-          }
-          oprot.writeSetEnd();
-        }
-        return;
-      case STRING_SET:
-        java.util.Set<String> string_set = (java.util.Set<String>)value_;
-        {
-          oprot.writeSetBegin(new org.apache.thrift.protocol.TSet(org.apache.thrift.protocol.TType.STRING, string_set.size()));
-          for (String _iter75 : string_set)
-          {
-            oprot.writeString(_iter75);
-          }
-          oprot.writeSetEnd();
-        }
-        return;
-      case I16_MAP:
-        java.util.Map<Short,Variant> i16_map = (java.util.Map<Short,Variant>)value_;
-        {
-          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I16, org.apache.thrift.protocol.TType.STRUCT, i16_map.size()));
-          for (java.util.Map.Entry<Short, Variant> _iter76 : i16_map.entrySet())
-          {
-            oprot.writeI16(_iter76.getKey());
-            _iter76.getValue().write(oprot);
-          }
-          oprot.writeMapEnd();
-        }
-        return;
-      case I32_MAP:
-        java.util.Map<Integer,Variant> i32_map = (java.util.Map<Integer,Variant>)value_;
-        {
-          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I32, org.apache.thrift.protocol.TType.STRUCT, i32_map.size()));
-          for (java.util.Map.Entry<Integer, Variant> _iter77 : i32_map.entrySet())
-          {
-            oprot.writeI32(_iter77.getKey());
-            _iter77.getValue().write(oprot);
-          }
-          oprot.writeMapEnd();
-        }
-        return;
-      case I64_MAP:
-        java.util.Map<Long,Variant> i64_map = (java.util.Map<Long,Variant>)value_;
-        {
-          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.I64, org.apache.thrift.protocol.TType.STRUCT, i64_map.size()));
-          for (java.util.Map.Entry<Long, Variant> _iter78 : i64_map.entrySet())
-          {
-            oprot.writeI64(_iter78.getKey());
-            _iter78.getValue().write(oprot);
-          }
-          oprot.writeMapEnd();
-        }
-        return;
-      case STRING_MAP:
-        java.util.Map<String,Variant> string_map = (java.util.Map<String,Variant>)value_;
-        {
-          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.STRUCT, string_map.size()));
-          for (java.util.Map.Entry<String, Variant> _iter79 : string_map.entrySet())
-          {
-            oprot.writeString(_iter79.getKey());
-            _iter79.getValue().write(oprot);
+            _iter25.getKey().write(oprot);
+            _iter25.getValue().write(oprot);
           }
           oprot.writeMapEnd();
         }
@@ -1119,22 +658,10 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
         return V_STRING_FIELD_DESC;
       case V_LIST:
         return V_LIST_FIELD_DESC;
-      case I16_SET:
-        return I16_SET_FIELD_DESC;
-      case I32_SET:
-        return I32_SET_FIELD_DESC;
-      case I64_SET:
-        return I64_SET_FIELD_DESC;
-      case STRING_SET:
-        return STRING_SET_FIELD_DESC;
-      case I16_MAP:
-        return I16_MAP_FIELD_DESC;
-      case I32_MAP:
-        return I32_MAP_FIELD_DESC;
-      case I64_MAP:
-        return I64_MAP_FIELD_DESC;
-      case STRING_MAP:
-        return STRING_MAP_FIELD_DESC;
+      case V_SET:
+        return V_SET_FIELD_DESC;
+      case V_MAP:
+        return V_MAP_FIELD_DESC;
       default:
         throw new IllegalArgumentException("Unknown field id " + setField);
     }
@@ -1261,115 +788,31 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     value_ = value;
   }
 
-  public java.util.Set<Short> getI16_set() {
-    if (getSetField() == _Fields.I16_SET) {
-      return (java.util.Set<Short>)getFieldValue();
+  public java.util.Set<Variant> getV_set() {
+    if (getSetField() == _Fields.V_SET) {
+      return (java.util.Set<Variant>)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'i16_set' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new RuntimeException("Cannot get field 'v_set' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
-  public void setI16_set(java.util.Set<Short> value) {
+  public void setV_set(java.util.Set<Variant> value) {
     if (value == null) throw new NullPointerException();
-    setField_ = _Fields.I16_SET;
+    setField_ = _Fields.V_SET;
     value_ = value;
   }
 
-  public java.util.Set<Integer> getI32_set() {
-    if (getSetField() == _Fields.I32_SET) {
-      return (java.util.Set<Integer>)getFieldValue();
+  public java.util.Map<Variant,Variant> getV_map() {
+    if (getSetField() == _Fields.V_MAP) {
+      return (java.util.Map<Variant,Variant>)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'i32_set' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new RuntimeException("Cannot get field 'v_map' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
-  public void setI32_set(java.util.Set<Integer> value) {
+  public void setV_map(java.util.Map<Variant,Variant> value) {
     if (value == null) throw new NullPointerException();
-    setField_ = _Fields.I32_SET;
-    value_ = value;
-  }
-
-  public java.util.Set<Long> getI64_set() {
-    if (getSetField() == _Fields.I64_SET) {
-      return (java.util.Set<Long>)getFieldValue();
-    } else {
-      throw new RuntimeException("Cannot get field 'i64_set' because union is currently set to " + getFieldDesc(getSetField()).name);
-    }
-  }
-
-  public void setI64_set(java.util.Set<Long> value) {
-    if (value == null) throw new NullPointerException();
-    setField_ = _Fields.I64_SET;
-    value_ = value;
-  }
-
-  public java.util.Set<String> getString_set() {
-    if (getSetField() == _Fields.STRING_SET) {
-      return (java.util.Set<String>)getFieldValue();
-    } else {
-      throw new RuntimeException("Cannot get field 'string_set' because union is currently set to " + getFieldDesc(getSetField()).name);
-    }
-  }
-
-  public void setString_set(java.util.Set<String> value) {
-    if (value == null) throw new NullPointerException();
-    setField_ = _Fields.STRING_SET;
-    value_ = value;
-  }
-
-  public java.util.Map<Short,Variant> getI16_map() {
-    if (getSetField() == _Fields.I16_MAP) {
-      return (java.util.Map<Short,Variant>)getFieldValue();
-    } else {
-      throw new RuntimeException("Cannot get field 'i16_map' because union is currently set to " + getFieldDesc(getSetField()).name);
-    }
-  }
-
-  public void setI16_map(java.util.Map<Short,Variant> value) {
-    if (value == null) throw new NullPointerException();
-    setField_ = _Fields.I16_MAP;
-    value_ = value;
-  }
-
-  public java.util.Map<Integer,Variant> getI32_map() {
-    if (getSetField() == _Fields.I32_MAP) {
-      return (java.util.Map<Integer,Variant>)getFieldValue();
-    } else {
-      throw new RuntimeException("Cannot get field 'i32_map' because union is currently set to " + getFieldDesc(getSetField()).name);
-    }
-  }
-
-  public void setI32_map(java.util.Map<Integer,Variant> value) {
-    if (value == null) throw new NullPointerException();
-    setField_ = _Fields.I32_MAP;
-    value_ = value;
-  }
-
-  public java.util.Map<Long,Variant> getI64_map() {
-    if (getSetField() == _Fields.I64_MAP) {
-      return (java.util.Map<Long,Variant>)getFieldValue();
-    } else {
-      throw new RuntimeException("Cannot get field 'i64_map' because union is currently set to " + getFieldDesc(getSetField()).name);
-    }
-  }
-
-  public void setI64_map(java.util.Map<Long,Variant> value) {
-    if (value == null) throw new NullPointerException();
-    setField_ = _Fields.I64_MAP;
-    value_ = value;
-  }
-
-  public java.util.Map<String,Variant> getString_map() {
-    if (getSetField() == _Fields.STRING_MAP) {
-      return (java.util.Map<String,Variant>)getFieldValue();
-    } else {
-      throw new RuntimeException("Cannot get field 'string_map' because union is currently set to " + getFieldDesc(getSetField()).name);
-    }
-  }
-
-  public void setString_map(java.util.Map<String,Variant> value) {
-    if (value == null) throw new NullPointerException();
-    setField_ = _Fields.STRING_MAP;
+    setField_ = _Fields.V_MAP;
     value_ = value;
   }
 
@@ -1413,43 +856,13 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
   }
 
 
-  public boolean isSetI16_set() {
-    return setField_ == _Fields.I16_SET;
+  public boolean isSetV_set() {
+    return setField_ == _Fields.V_SET;
   }
 
 
-  public boolean isSetI32_set() {
-    return setField_ == _Fields.I32_SET;
-  }
-
-
-  public boolean isSetI64_set() {
-    return setField_ == _Fields.I64_SET;
-  }
-
-
-  public boolean isSetString_set() {
-    return setField_ == _Fields.STRING_SET;
-  }
-
-
-  public boolean isSetI16_map() {
-    return setField_ == _Fields.I16_MAP;
-  }
-
-
-  public boolean isSetI32_map() {
-    return setField_ == _Fields.I32_MAP;
-  }
-
-
-  public boolean isSetI64_map() {
-    return setField_ == _Fields.I64_MAP;
-  }
-
-
-  public boolean isSetString_map() {
-    return setField_ == _Fields.STRING_MAP;
+  public boolean isSetV_map() {
+    return setField_ == _Fields.V_MAP;
   }
 
 

@@ -3,6 +3,7 @@ package com.credits.service.contract;
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.common.exception.CreditsException;
 import com.credits.exception.ContractExecutorException;
+import com.credits.exception.UnsupportedTypeException;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
@@ -130,7 +131,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         //Invoking target method
-        Object returnObject = null;
+        Object returnObject;
         try {
             Sandbox.confine(clazz, createPermissions());
             returnObject = targetMethod.invoke(instance, argValues);
@@ -138,7 +139,15 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
-        Variant returnValue = VariantMapper.map(returnObject);
+
+        Variant returnValue = new VariantMapper().apply(returnObject)
+            .orElseThrow(() -> {
+                UnsupportedTypeException e = new UnsupportedTypeException(
+                    "Unsupported type of the value {" + returnObject.toString() + "}: " + returnObject.getClass());
+                return new ContractExecutorException(
+                    "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e), e);
+            });
+
         return new ReturnValue(serialize(address, instance), returnValue);
     }
 

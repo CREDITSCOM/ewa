@@ -26,12 +26,6 @@ public class ExecutorTest extends ServiceTest {
         super.setUp();
     }
 
-    @After
-    public void tearDown() {
-        String dir = System.getProperty("user.dir") + separator + "credits";
-        FileSystemUtils.deleteRecursively(new File(dir));
-    }
-
     @Ignore //Test ignore because hash validation disabled
     @Test
     public void execute_bytecode() throws Exception {
