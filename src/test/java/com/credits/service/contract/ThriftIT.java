@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
 import static java.io.File.separator;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
 public class ThriftIT extends ServiceTest {
 

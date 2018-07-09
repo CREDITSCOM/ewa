@@ -20,12 +20,6 @@ public class Contract extends SmartContract {
         System.out.println("The constructor has been invoked. Thread: " + name);
     }
 
-    @Override
-    public void initialize(){
-        System.out.println("The init method has been invoked");
-        total = 1;
-    }
-
     public void openSocket(int port) throws Exception {
         System.out.println("Trying to open socket...");
         new ServerSocket(port);

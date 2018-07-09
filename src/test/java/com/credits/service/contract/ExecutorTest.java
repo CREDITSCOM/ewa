@@ -17,7 +17,8 @@ import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
 import static java.io.File.separator;
 import static junit.framework.TestCase.fail;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
+//import static org.powermock.api.mockito.PowerMockito.when;
 
 public class ExecutorTest extends ServiceTest {
 

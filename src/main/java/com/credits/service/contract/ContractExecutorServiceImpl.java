@@ -132,21 +132,26 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         //Invoking target method
         Object returnObject;
+        Class<?> returnType = targetMethod.getReturnType();
         try {
             Sandbox.confine(clazz, createPermissions());
             returnObject = targetMethod.invoke(instance, argValues);
-        } catch ( IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
 
-        Variant returnValue = new VariantMapper().apply(returnObject)
-            .orElseThrow(() -> {
-                UnsupportedTypeException e = new UnsupportedTypeException(
-                    "Unsupported type of the value {" + returnObject.toString() + "}: " + returnObject.getClass());
-                return new ContractExecutorException(
-                    "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e), e);
-            });
+        Variant returnValue = null;
+        if (returnType != void.class) {
+            returnValue =
+                new VariantMapper().apply(returnObject)
+                    .orElseThrow(() -> {
+                        UnsupportedTypeException e = new UnsupportedTypeException(
+                            "Unsupported type of the value {" + returnObject.toString() + "}: " + returnObject.getClass());
+                        return new ContractExecutorException(
+                            "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e), e);
+                    });
+        }
 
         return new ReturnValue(serialize(address, instance), returnValue);
     }

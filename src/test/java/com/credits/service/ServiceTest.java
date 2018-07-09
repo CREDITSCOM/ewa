@@ -5,11 +5,7 @@ import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import org.junit.After;
-import org.junit.Rule;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -17,30 +13,21 @@ import org.springframework.util.FileSystemUtils;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.FilePermission;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.Permissions;
 import java.util.ArrayList;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
 import static java.io.File.separator;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {App.class})
-@PrepareForTest(ContractExecutorServiceImpl.class)
 public abstract class ServiceTest {
 
     protected final String address = "1a2b3c";
-
-    @Rule
-    public PowerMockRule powerMockRunner = new PowerMockRule();
 
     @Value("${api.server.host}")
     protected String apiServerHost;
@@ -54,18 +41,7 @@ public abstract class ServiceTest {
     protected ApiClient mockClient;
 
     protected void setUp() throws Exception {
-        ceService = spy(ceService);
         mockClient = mock(ApiClient.class);
-        Whitebox.setInternalState(ceService, "ldbClient", mockClient);
-
-        doReturn(testingPermissions()).when(ceService, "createPermissions");
-    }
-
-    private Permissions testingPermissions() throws Exception {
-        Permissions permissions = Whitebox.invokeMethod(ceService, "createPermissions");
-        permissions.add(new FilePermission("\\-", "read"));
-        permissions.add(new FilePermission("\\" + System.getProperty("user.home") + "\\.m2\\-", "read")); //permission for using maven repository
-        return permissions;
     }
 
     protected String readSourceCode(String resourcePath) throws IOException {

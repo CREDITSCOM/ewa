@@ -47,7 +47,7 @@ public class VariantMapper implements Function<Object, Optional<Variant>> {
         } else if (object instanceof Map) {
             Map<Variant, Variant> variantMap = ((Map<Object, Object>) object).entrySet()
                 .stream()
-                .collect(Collectors.toMap(this::mapSimpleType, this::mapSimpleType));
+                .collect(Collectors.toMap(entry -> mapSimpleType(entry.getKey()), entry -> mapSimpleType(entry.getValue())));
 
             boolean match = variantMap.entrySet()
                 .stream()
