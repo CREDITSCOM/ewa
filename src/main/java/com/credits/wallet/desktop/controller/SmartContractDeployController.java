@@ -2,6 +2,7 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
+import com.credits.common.utils.sourcecode.SourceCodeUtils;
 import com.credits.crypto.Ed25519;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.ApiResponseData;
@@ -81,7 +82,7 @@ public class SmartContractDeployController extends Controller implements Initial
 
         this.prevCode = DEFAULT_SOURCE_CODE;
 
-        this.codeArea = SourceCodeUtils.initCodeArea(this.paneCode);
+        this.codeArea = SmartContractUtils.initCodeArea(this.paneCode);
 
         this.codeArea.setOnKeyPressed(ke -> {
             if (ke.isControlDown() && ke.getCode().equals(KeyCode.SPACE)) {

@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.common.exception.CreditsException;
+import com.credits.common.utils.sourcecode.SourceCodeUtils;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
@@ -11,7 +12,7 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.SourceCodeUtils;
+import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.Utils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -126,7 +127,7 @@ public class SmartContractController extends Controller implements Initializable
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        this.codeArea = SourceCodeUtils.initCodeArea(this.pCodePanel);
+        this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel);
         TreeItem<Label> rootItem = new TreeItem<>(new Label("Smart contracts"));
 
         try {
