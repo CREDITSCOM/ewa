@@ -221,7 +221,34 @@ public class SmartContractController extends Controller implements Initializable
                     smartContractData
             );
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
-                Utils.showInfo("Smart-contract executed successfully");
+                if (apiResponseData.getScExecRetVal()!=null) {
+                    StringBuilder retVal=new StringBuilder();
+                    retVal.append("v_bool=");
+                    retVal.append(apiResponseData.getScExecRetVal().getV_bool());
+                    retVal.append("\n");
+                    retVal.append("v_i8=");
+                    retVal.append(apiResponseData.getScExecRetVal().getV_i8());
+                    retVal.append("\n");
+                    retVal.append("v_i16=");
+                    retVal.append(apiResponseData.getScExecRetVal().getV_i16());
+                    retVal.append("\n");
+                    retVal.append("v_i32=");
+                    retVal.append(apiResponseData.getScExecRetVal().getV_i32());
+                    retVal.append("\n");
+                    retVal.append("v_i64=");
+                    retVal.append(apiResponseData.getScExecRetVal().getV_i64());
+                    retVal.append("\n");
+                    retVal.append("v_double=");
+                    retVal.append(apiResponseData.getScExecRetVal().getV_double());
+                    retVal.append("\n");
+                    if (apiResponseData.getScExecRetVal().getV_string()!=null) {
+                        retVal.append("v_string=");
+                        retVal.append(apiResponseData.getScExecRetVal().getV_string());
+                        retVal.append("\n");
+                    }
+                    Utils.showInfo("Smart-contract executed successfully; Returned value:\n" + retVal.toString());
+                } else
+                    Utils.showInfo("Smart-contract executed successfully");
             } else {
                 Utils.showError(apiResponseData.getMessage());
             }

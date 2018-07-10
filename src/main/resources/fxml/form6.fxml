@@ -12,87 +12,163 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form6Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
+            prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.credits.wallet.desktop.controller.Form6Controller">
     <children>
-        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                    AnchorPane.topAnchor="0.0">
             <center>
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
-                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1030.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
+                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1130.0" prefWidth="1060.0"
+                                    style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
                             <top>
-                                <fx:include source="header.fxml" />
+                                <fx:include source="header.fxml"/>
                             </top>
                             <bottom>
-                                <fx:include source="footer.fxml" />
+                                <fx:include source="footer.fxml"/>
                             </bottom>
                             <center>
-                                <BorderPane minHeight="-Infinity" prefHeight="750.0" BorderPane.alignment="CENTER">
+                                <BorderPane minHeight="-Infinity" prefHeight="850.0" BorderPane.alignment="CENTER">
                                     <BorderPane.margin>
-                                        <Insets top="30.0" />
+                                        <Insets top="30.0"/>
                                     </BorderPane.margin>
                                     <center>
-                                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1000.0" BorderPane.alignment="TOP_CENTER">
+                                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                              minWidth="-Infinity" prefHeight="820.0" prefWidth="1000.0"
+                                              BorderPane.alignment="TOP_CENTER">
                                             <children>
-                                                <fx:include source="account.fxml" />
-                                                <Pane layoutX="279.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="708.0" style="-fx-background-color: #fff;">
+                                                <fx:include source="account.fxml"/>
+                                                <Pane layoutX="279.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                                                      minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
+                                                      prefWidth="708.0" style="-fx-background-color: #fff;">
                                                     <children>
-                                                        <ComboBox fx:id="cbCoin" layoutX="18.0" layoutY="179.0" prefHeight="56.0" prefWidth="200.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" />
-                                                        <Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 32px;" styleClass="text" stylesheets="@../styles.css" text="6. Make a payment">
+                                                        <ComboBox fx:id="cbCoin" layoutX="18.0" layoutY="179.0"
+                                                                  prefHeight="56.0" prefWidth="200.0"
+                                                                  style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;"/>
+                                                        <Label layoutX="21.0" layoutY="23.0"
+                                                               style="-fx-font-size: 32px;" styleClass="text"
+                                                               stylesheets="@../styles.css" text="6. Make a payment">
                                                             <font>
-                                                                <Font size="14.0" />
+                                                                <Font size="14.0"/>
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
-                                                        <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-                                                        <Label layoutX="23.0" layoutY="149.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Select coin">
+                                                        <Label layoutX="24.0" layoutY="88.0"
+                                                               style="-fx-font-size: 16px;" styleClass="text"
+                                                               stylesheets="@../styles.css"
+                                                               text="On this form you can open the wallet and make payments in the Credits platform"
+                                                               textFill="#818181"/>
+                                                        <Line endX="-50.0" layoutX="126.0" layoutY="75.0"
+                                                              startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
+                                                        <Label layoutX="23.0" layoutY="149.0"
+                                                               style="-fx-font-size: 16px;" styleClass="text"
+                                                               stylesheets="@../styles.css" text="Select coin">
                                                             <font>
-                                                                <Font name="System Bold" size="11.0" />
+                                                                <Font name="System Bold" size="11.0"/>
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="224.0" layoutY="197.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Credit balance:">
+                                                        <Label layoutX="224.0" layoutY="197.0"
+                                                               style="-fx-font-size: 16px;" styleClass="text"
+                                                               stylesheets="@../styles.css" text="Credit balance:">
                                                             <font>
-                                                                <Font name="System Bold" size="11.0" />
+                                                                <Font name="System Bold" size="11.0"/>
                                                             </font>
                                                         </Label>
-                                                        <Label fx:id="labCredit" layoutX="354.0" layoutY="197.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
+                                                        <Label fx:id="labCredit" layoutX="354.0" layoutY="197.0"
+                                                               style="-fx-font-size: 16px;" styleClass="text"
+                                                               stylesheets="@../styles.css" text="0">
                                                             <font>
-                                                                <Font name="System Bold" size="11.0" />
+                                                                <Font name="System Bold" size="11.0"/>
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="23.0" layoutY="267.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="To address which opened on Credits (only)">
+                                                        <Label layoutX="23.0" layoutY="267.0"
+                                                               style="-fx-font-size: 16px;" styleClass="text"
+                                                               stylesheets="@../styles.css"
+                                                               text="To address which opened on Credits (only)">
                                                             <font>
-                                                                <Font name="System Bold" size="11.0" />
+                                                                <Font name="System Bold" size="11.0"/>
                                                             </font>
                                                         </Label>
-                                                        <TextField fx:id="txKey" layoutX="18.0" layoutY="297.0" prefHeight="56.0" prefWidth="605.0" promptText="key..." style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-                                                        <Label layoutX="23.0" layoutY="387.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Amount">
+                                                        <TextField fx:id="txKey" layoutX="18.0" layoutY="297.0"
+                                                                   prefHeight="56.0" prefWidth="605.0"
+                                                                   promptText="key..."
+                                                                   style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;"
+                                                                   styleClass="text" stylesheets="@../styles.css"/>
+                                                        <Label layoutX="23.0" layoutY="387.0"
+                                                               style="-fx-font-size: 16px;" styleClass="text"
+                                                               stylesheets="@../styles.css" text="Amount">
                                                             <font>
-                                                                <Font name="System Bold" size="11.0" />
+                                                                <Font name="System Bold" size="11.0"/>
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="18.0" layoutY="506.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Transaction Fee">
+                                                        <Label layoutX="230.0" layoutY="555.0"
+                                                               style="-fx-font-size: 16px;" styleClass="text"
+                                                               stylesheets="@../styles.css" text="CS">
                                                             <font>
-                                                                <Font name="System Bold" size="11.0" />
+                                                                <Font name="System Bold" size="11.0"/>
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="230.0" layoutY="555.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="CS">
+                                                        <Button fx:id="btnBack" layoutX="374.0" layoutY="720.0"
+                                                                mnemonicParsing="false" onAction="#handleGenerate"
+                                                                prefHeight="61.0" prefWidth="243.0"
+                                                                style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
+                                                                styleClass="text" stylesheets="@../styles.css"
+                                                                text="GENERATE TRANSACTION" textAlignment="CENTER"
+                                                                wrapText="true"/>
+                                                        <Button layoutX="56.0" layoutY="720.0" mnemonicParsing="false"
+                                                                onAction="#handleNewCoin" prefHeight="61.0"
+                                                                prefWidth="243.0"
+                                                                style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
+                                                                styleClass="text" stylesheets="@../styles.css"
+                                                                text="NEW COIN" textAlignment="CENTER" wrapText="true"/>
+                                                        <Label fx:id="labErrorCoin" layoutX="18.0" layoutY="235.0"
+                                                               style="-fx-font-size: 16px; -fx-text-fill: red;"
+                                                               styleClass="text" stylesheets="@../styles.css"
+                                                               text="Label"/>
+                                                        <Label fx:id="labErrorKey" layoutX="18.0" layoutY="353.0"
+                                                               style="-fx-font-size: 16px; -fx-text-fill: red;"
+                                                               styleClass="text" stylesheets="@../styles.css"
+                                                               text="Label"/>
+                                                        <TextField fx:id="numAmount" layoutX="18.0" layoutY="420.0"
+                                                                   prefHeight="56.0" prefWidth="196.0"
+                                                                   style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;"
+                                                                   styleClass="text" stylesheets="@../styles.css"/>
+                                                        <Label fx:id="labErrorAmount" layoutX="18.0" layoutY="476.0"
+                                                               style="-fx-font-size: 16px; -fx-text-fill: red;"
+                                                               styleClass="text" stylesheets="@../styles.css"
+                                                               text="Label"/>
+                                                        <Label layoutX="18.0" layoutY="506.0"
+                                                               style="-fx-font-size: 16px;" styleClass="text"
+                                                               stylesheets="@../styles.css" text="Transaction Fee">
                                                             <font>
-                                                                <Font name="System Bold" size="11.0" />
+                                                                <Font name="System Bold" size="11.0"/>
                                                             </font>
                                                         </Label>
-                                                        <Button fx:id="btnBack" layoutX="374.0" layoutY="620.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
-                                                        <Button layoutX="56.0" layoutY="620.0" mnemonicParsing="false" onAction="#handleNewCoin" prefHeight="61.0" prefWidth="243.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="NEW COIN" textAlignment="CENTER" wrapText="true" />
-                                                        <Label fx:id="labErrorCoin" layoutX="18.0" layoutY="235.0" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css" text="Label" />
-                                                        <Label fx:id="labErrorKey" layoutX="18.0" layoutY="353.0" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css" text="Label" />
-                                                        <Label fx:id="labErrorAmount" layoutX="18.0" layoutY="476.0" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css" text="Label" />
-                                                        <Label fx:id="labErrorFee" layoutX="18.0" layoutY="594.0" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css" text="Label" />
-                                          <TextField fx:id="numAmount" layoutX="18.0" layoutY="420.0" prefHeight="56.0" prefWidth="196.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-                                          <TextField fx:id="numFee" editable="false" layoutX="18.0" layoutY="538.0" prefHeight="56.0" prefWidth="196.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
+                                                        <TextField fx:id="numFee" editable="false" layoutX="18.0"
+                                                                   layoutY="538.0" prefHeight="56.0" prefWidth="196.0"
+                                                                   style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;"
+                                                                   styleClass="text" stylesheets="@../styles.css"/>
+                                                        <Label fx:id="labErrorFee" layoutX="18.0" layoutY="594.0"
+                                                               style="-fx-font-size: 16px; -fx-text-fill: red;"
+                                                               styleClass="text" stylesheets="@../styles.css"
+                                                               text="Label"/>
+                                                        <Label layoutX="18.0" layoutY="620.0"
+                                                               style="-fx-font-size: 16px;" styleClass="text"
+                                                               stylesheets="@../styles.css" text="User field">
+                                                            <font>
+                                                                <Font name="System Bold" size="11.0"/>
+                                                            </font>
+                                                        </Label>
+                                                        <TextField layoutX="18.0"
+                                                                   layoutY="652.0" prefHeight="56.0" prefWidth="605.0"
+                                                                   style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;"
+                                                                   styleClass="text" stylesheets="@../styles.css"/>
                                                     </children>
                                                 </Pane>
                                             </children>
                                             <BorderPane.margin>
-                                                <Insets />
+                                                <Insets/>
                                             </BorderPane.margin>
                                         </Pane>
                                     </center>
