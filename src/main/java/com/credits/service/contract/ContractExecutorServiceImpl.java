@@ -80,13 +80,13 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         Object instance;
         if (contractState != null && contractState.length != 0) {
-            try {
-                SmartContractData smartContractData = ldbClient.getSmartContract(address);
+//            try {
+//                SmartContractData smartContractData = ldbClient.getSmartContract(address);
 //                ByteCodeValidator.validateBytecode(bytecode, smartContractData); TODO: uncomment this section if everything goes right
-            } catch (LevelDbClientException | CreditsNodeException e) {
-                throw new ContractExecutorException(
-                    "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
-            }
+//            } catch (LevelDbClientException | CreditsNodeException e) {
+//                throw new ContractExecutorException(
+//                    "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
+//            }
             instance = deserialize(contractState, classLoader);
         } else {
             return new ReturnValue(deploy(clazz, address), null);
