@@ -2,6 +2,7 @@ package com.credits.service.contract;
 
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.exception.ContractExecutorException;
+import com.credits.exception.UnsupportedTypeException;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
@@ -11,6 +12,9 @@ import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
 import com.credits.service.contract.validator.ByteCodeValidator;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
+import com.credits.thrift.ReturnValue;
+import com.credits.thrift.Variant;
+import com.credits.thrift.VariantMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,7 +71,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public byte[] execute(String address, byte[] bytecode, byte[] contractState, String methodName, String[] params)
+    public ReturnValue execute(String address, byte[] bytecode, byte[] contractState, String methodName, String[] params)
         throws ContractExecutorException {
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
@@ -85,7 +89,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             }
             instance = deserialize(contractState, classLoader);
         } else {
-            return deploy(clazz, address);
+            return new ReturnValue(deploy(clazz, address), null);
         }
 
         List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
@@ -125,14 +129,29 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         //Invoking target method
+        Object returnObject;
+        Class<?> returnType = targetMethod.getReturnType();
         try {
             Sandbox.confine(clazz, createPermissions());
-            targetMethod.invoke(instance, argValues);
+            returnObject = targetMethod.invoke(instance, argValues);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new ContractExecutorException(
                 "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
         }
-        return serialize(address, instance);
+
+        Variant returnValue = null;
+        if (returnType != void.class) {
+            returnValue =
+                new VariantMapper().apply(returnObject)
+                    .orElseThrow(() -> {
+                        UnsupportedTypeException e = new UnsupportedTypeException(
+                            "Unsupported type of the value {" + returnObject.toString() + "}: " + returnObject.getClass());
+                        return new ContractExecutorException(
+                            "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e), e);
+                    });
+        }
+
+        return new ReturnValue(serialize(address, instance), returnValue);
     }
 
     private Permissions createPermissions() {

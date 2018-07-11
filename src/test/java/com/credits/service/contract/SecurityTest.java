@@ -2,7 +2,6 @@ package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.ServiceTest;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -11,9 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-import org.springframework.util.FileSystemUtils;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -52,23 +49,20 @@ public class SecurityTest extends ServiceTest {
     }
 
     byte[] bytecode;
+    byte[] contractState;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         bytecode = compileSourceCode("/securityTest/Contract.java");
+        contractState = ceService.execute(address, bytecode, null, null, null).getContractState();
     }
 
-    @After
-    public void tearDown() {
-        String dir = System.getProperty("user.dir") + separator + "credits";
-        FileSystemUtils.deleteRecursively(new File(dir));
-    }
     @Test
     public void test() throws Exception {
         try {
-            ceService.execute(address, bytecode, null, methodName, arg != null ? new String[] {arg} : null);
+            ceService.execute(address, bytecode, contractState, methodName, arg != null ? new String[] {arg} : null);
         } catch (ContractExecutorException e) {
             System.out.println(e.getMessage());
             if (!errorExpected || !e.getMessage().contains("AccessControlException")) {
