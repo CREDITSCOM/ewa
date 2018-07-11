@@ -3,22 +3,16 @@ package com.credits.service.contract;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.ServiceTest;
-import org.junit.After;
+import com.credits.thrift.ReturnValue;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.util.FileSystemUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static com.credits.TestUtils.encrypt;
-import static java.io.File.separator;
 import static junit.framework.TestCase.fail;
 import static org.mockito.Mockito.when;
-//import static org.powermock.api.mockito.PowerMockito.when;
 
 public class ExecutorTest extends ServiceTest {
 
@@ -53,20 +47,24 @@ public class ExecutorTest extends ServiceTest {
         fail("incorrect hash validation");
     }
 
-//    @Test
-//    public void save_state_smart_contract() throws Exception {
-//        String sourceCode = readSourceCode("/serviceTest/Contract.java");
-//        byte[] bytecode = compile(sourceCode, "Contract", "TKN");
-//        when(mockClient.getSmartContract(address)).thenReturn(
-//            new SmartContractData(address, sourceCode, bytecode, null, encrypt(bytecode), null, null));
-//
-//        byte[] contractState = ceService.execute(address, bytecode, null, "initialize", new String[] {});
-//        contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
-//
-//        contractState = ceService.execute(address, bytecode, contractState, "addTokens", new String[] {"10"});
-//        contractState = ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
-//
-//        contractState = ceService.execute(address, bytecode, contractState, "addTokens", new String[] {"-11"});
-//        ceService.execute(address, bytecode, contractState, "printTotal", new String[] {});
-//    }
+    @Test
+    public void save_state_smart_contract() throws Exception {
+        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+        byte[] bytecode = compile(sourceCode, "Contract", "TKN");
+        when(mockClient.getSmartContract(address)).thenReturn(
+            new SmartContractData(address, sourceCode, bytecode, null, encrypt(bytecode), null, null));
+
+        byte[] contractState = ceService.execute(address, bytecode, null, null, null).getContractState();
+        contractState = ceService.execute(address, bytecode, contractState, "initialize", new String[] {}).getContractState();
+        ReturnValue rvTotalInitialized = ceService.execute(address, bytecode, contractState, "getTotal", new String[] {});
+        Assert.assertEquals(1, rvTotalInitialized.getVariant().getFieldValue());
+
+        contractState = ceService.execute(address, bytecode, contractState, "addTokens", new String[] {"10"}).getContractState();
+        ReturnValue rvTotalAfterSumming = ceService.execute(address, bytecode, contractState, "getTotal", new String[] {});
+        Assert.assertEquals(11, rvTotalAfterSumming.getVariant().getFieldValue());
+
+        contractState = ceService.execute(address, bytecode, contractState, "addTokens", new String[] {"-11"}).getContractState();
+        ReturnValue rvTotalAfterSubtraction = ceService.execute(address, bytecode, contractState, "getTotal", new String[] {});
+        Assert.assertEquals(0, rvTotalAfterSubtraction.getVariant().getFieldValue());
+    }
 }
