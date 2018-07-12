@@ -2,14 +2,20 @@ package com.credits.thrift;
 
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.contract.ContractExecutorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ContractExecutorHandler implements ContractExecutor.Iface {
+
+    private final static Logger logger = LoggerFactory.getLogger(ContractExecutorHandler.class);
 
     @Resource
     private ContractExecutorService service;
@@ -18,6 +24,10 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     public APIResponse executeByteCode(String address, ByteBuffer byteCode, ByteBuffer contractState, String method,
         List<String> params) {
         String[] paramsArray = params == null ? null : params.toArray(new String[0]);
+
+        logger.info(String.format("Executing contract:\nAddress = %s, \nByteCode = %s, \nContractState = %s, \nMethod = %s, \nParams = %s.",
+            address, Arrays.toString(byteCode.array()), Arrays.toString(contractState.array()),
+            method, params.stream().collect(Collectors.joining())));
 
         APIResponse response = new APIResponse((byte) 0, "", contractState, null);
         try {
