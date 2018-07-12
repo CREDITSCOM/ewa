@@ -4,17 +4,15 @@ import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.exception.UnsupportedTypeException;
 import com.credits.leveldb.client.ApiClient;
-import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.leveldb.client.exception.CreditsNodeException;
-import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.secure.Sandbox;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
-import com.credits.service.contract.validator.ByteCodeValidator;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
+import com.credits.thrift.DeployReturnValue;
 import com.credits.thrift.ReturnValue;
-import com.credits.thrift.Variant;
-import com.credits.thrift.VariantMapper;
+import com.credits.thrift.generated.Variant;
+import com.credits.thrift.utils.ContractUtils;
+import com.credits.thrift.utils.VariantMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +30,7 @@ import java.security.Permissions;
 import java.security.SecurityPermission;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.PropertyPermission;
 import java.util.stream.Collectors;
 
@@ -89,7 +88,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 //            }
             instance = deserialize(contractState, classLoader);
         } else {
-            return new ReturnValue(deploy(clazz, address), null);
+            DeployReturnValue deployReturnValue = ContractUtils.deploy(clazz, address);
+            return new ReturnValue(deployReturnValue.getContractState(), null, deployReturnValue.getContractVariables());
         }
 
         List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
@@ -151,7 +151,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     });
         }
 
-        return new ReturnValue(serialize(address, instance), returnValue);
+        Map<String, Variant> contractVariables = ContractUtils.getContractVariables(instance);
+
+        return new ReturnValue(serialize(address, instance), returnValue, contractVariables);
     }
 
     private Permissions createPermissions() {
@@ -209,17 +211,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             }
             i++;
         }
-
         return retVal;
-    }
-
-    private byte[] deploy(Class<?> clazz, String address) throws ContractExecutorException {
-        try {
-            Object instance = clazz.newInstance();
-            return serialize(address, instance);
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new ContractExecutorException(
-                "Cannot create new instance of the contract: " + address + ". Reason: " + getRootCauseMessage(e), e);
-        }
     }
 }
