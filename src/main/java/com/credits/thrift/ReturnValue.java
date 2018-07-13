@@ -1,5 +1,7 @@
 package com.credits.thrift;
 
+import com.credits.thrift.generated.Variant;
+
 public class ReturnValue {
     private byte[] contractState;
     private Variant variant;

@@ -1,5 +1,6 @@
 package com.credits.thrift;
 
+import com.credits.thrift.generated.ContractExecutor;
 import org.apache.commons.io.FileUtils;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static java.io.File.separator;
 
