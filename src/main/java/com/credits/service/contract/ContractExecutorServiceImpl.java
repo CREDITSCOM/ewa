@@ -63,7 +63,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Field interactionService = contract.getDeclaredField("service");
             interactionService.setAccessible(true);
             interactionService.set(null, dbInteractionService);
-            ldbClient = ApiClient.getInstance(apiServerHost, apiServerPort);
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             logger.error("Cannot load smart contract's super class", e);
         }
@@ -88,7 +87,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 //            }
             instance = deserialize(contractState, classLoader);
         } else {
-            DeployReturnValue deployReturnValue = ContractUtils.deploy(clazz, address);
+            DeployReturnValue deployReturnValue = ContractUtils.deployAndGetContractVariables(clazz, address);
             return new ReturnValue(deployReturnValue.getContractState(), null, deployReturnValue.getContractVariables());
         }
 
