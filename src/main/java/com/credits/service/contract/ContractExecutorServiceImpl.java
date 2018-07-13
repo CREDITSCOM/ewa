@@ -140,14 +140,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         Variant returnValue = null;
         if (returnType != void.class) {
-            returnValue =
-                new VariantMapper().apply(returnObject)
-                    .orElseThrow(() -> {
-                        UnsupportedTypeException e = new UnsupportedTypeException(
-                            "Unsupported type of the value {" + returnObject.toString() + "}: " + returnObject.getClass());
-                        return new ContractExecutorException(
-                            "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e), e);
-                    });
+            returnValue = ContractUtils.mapObjectToVariant(returnObject);
         }
 
         Map<String, Variant> contractVariables = ContractUtils.getContractVariables(instance);

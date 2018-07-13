@@ -21,7 +21,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                                        List<String> params) {
         String[] paramsArray = params == null ? null : params.toArray(new String[0]);
 
-        APIResponse response = new APIResponse((byte) 0, "", contractState, null, null);
+        APIResponse response = new APIResponse((byte) 0, "", contractState);
         try {
             ReturnValue returnValue = service.execute(address, byteCode.array(), contractState.array(), method, paramsArray);
             response.contractState = ByteBuffer.wrap(returnValue.getContractState());

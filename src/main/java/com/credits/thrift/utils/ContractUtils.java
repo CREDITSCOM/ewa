@@ -14,6 +14,13 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
 
 public class ContractUtils {
 
+    /**
+     * Returns null if class instance has no public variables.
+     *
+     * @param object an instance which field's values will be taken from
+     * @return key-value mapping of the name of the field and a field value in Thrift custom type Variant
+     * @throws ContractExecutorException
+     */
     public static Map<String, Variant> getContractVariables(Object object) throws ContractExecutorException {
         Map<String, Variant> contractVariables = null;
         Field[] fields = object.getClass().getFields();
@@ -32,13 +39,7 @@ public class ContractUtils {
                 }
 
                 if (fieldValue != null) {
-                    variant = new VariantMapper().apply(fieldValue)
-                        .orElseThrow(() -> {
-                            UnsupportedTypeException e = new UnsupportedTypeException(
-                                "Unsupported type of the value {" + fieldValue.toString() + "}: " + fieldValue.getClass());
-                            return new ContractExecutorException(
-                                "Cannot execute the contract: " + ". Reason: " + getRootCauseMessage(e), e);
-                        });
+                    variant = mapObjectToVariant(fieldValue);
                 }
                 contractVariables.put(name, variant);
             }
@@ -54,5 +55,15 @@ public class ContractUtils {
             throw new ContractExecutorException(
                 "Cannot create new instance of the contract: " + address + ". Reason: " + getRootCauseMessage(e), e);
         }
+    }
+
+    public static Variant mapObjectToVariant(Object object) throws ContractExecutorException {
+        return new VariantMapper().apply(object)
+            .orElseThrow(() -> {
+                UnsupportedTypeException e = new UnsupportedTypeException(
+                    "Unsupported type of the value {" + object.toString() + "}: " + object.getClass());
+                return new ContractExecutorException(
+                    "Cannot execute the contract: " + ". Reason: " + getRootCauseMessage(e), e);
+            });
     }
 }

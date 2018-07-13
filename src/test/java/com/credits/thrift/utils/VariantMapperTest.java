@@ -1,4 +1,4 @@
-package com.credits.thrift;
+package com.credits.thrift.utils;
 
 import com.credits.thrift.generated.Variant;
 import com.credits.thrift.utils.VariantMapper;
