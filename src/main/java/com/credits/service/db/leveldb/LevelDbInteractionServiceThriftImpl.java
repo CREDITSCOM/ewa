@@ -62,9 +62,10 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
                                 BigDecimal amount,
                                 BigDecimal balance,
                                 String currency,
-                                String signature) throws LevelDbClientException, CreditsNodeException {
+                                String signature,
+                                BigDecimal fee) throws LevelDbClientException, CreditsNodeException {
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(innerId, source, target, amount, balance, currency, signature);
+            new TransactionFlowData(innerId, source, target, amount, balance, currency, signature, fee);
         client.transactionFlow(transactionFlowData, true);
     }
 }

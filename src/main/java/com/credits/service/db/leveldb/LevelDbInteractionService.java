@@ -26,5 +26,6 @@ public interface LevelDbInteractionService {
                          BigDecimal amount,
                          BigDecimal balance,
                          String currency,
-                         String signature) throws LevelDbClientException, CreditsNodeException;
+                         String signature,
+                         BigDecimal fee) throws LevelDbClientException, CreditsNodeException;
 }

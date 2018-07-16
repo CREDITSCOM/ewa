@@ -67,7 +67,7 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    final protected void sendTransaction(String source, String target, double amount, String currency) {
+    final protected void sendTransaction(String source, String target, double amount, String currency, double fee) {
         try {
             BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
 //            byte[] innerIdhashBytes = Blake2S.generateHash(4);
@@ -78,10 +78,12 @@ public abstract class SmartContract implements Serializable {
 
             BigDecimal balance = service.getBalance(source, currency);
 
+            BigDecimal decFee = new BigDecimal(String.valueOf(fee));
+
             String signatureBASE58 = "";
 //                Ed25519.generateSignOfTransaction(innerId, source, target, decAmount, balance, currency, privateKey);
 
-            service.transactionFlow("", source, target, decAmount, balance, currency, signatureBASE58);
+            service.transactionFlow("", source, target, decAmount, balance, currency, signatureBASE58, decFee);
         } catch (LevelDbClientException | CreditsNodeException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
