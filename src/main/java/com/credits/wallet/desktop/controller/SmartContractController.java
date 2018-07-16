@@ -7,6 +7,7 @@ import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
@@ -221,43 +222,22 @@ public class SmartContractController extends Controller implements Initializable
                     smartContractData
             );
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
-                if (apiResponseData.getScExecRetVal()!=null) {
-                    StringBuilder retVal=new StringBuilder();
-                    retVal.append("v_bool=");
-                    retVal.append(apiResponseData.getScExecRetVal().getV_bool());
-                    retVal.append("\n");
-                    retVal.append("v_i8=");
-                    retVal.append(apiResponseData.getScExecRetVal().getV_i8());
-                    retVal.append("\n");
-                    retVal.append("v_i16=");
-                    retVal.append(apiResponseData.getScExecRetVal().getV_i16());
-                    retVal.append("\n");
-                    retVal.append("v_i32=");
-                    retVal.append(apiResponseData.getScExecRetVal().getV_i32());
-                    retVal.append("\n");
-                    retVal.append("v_i64=");
-                    retVal.append(apiResponseData.getScExecRetVal().getV_i64());
-                    retVal.append("\n");
-                    retVal.append("v_double=");
-                    retVal.append(apiResponseData.getScExecRetVal().getV_double());
-                    retVal.append("\n");
-                    if (apiResponseData.getScExecRetVal().getV_string()!=null) {
-                        retVal.append("v_string=");
-                        retVal.append(apiResponseData.getScExecRetVal().getV_string());
-                        retVal.append("\n");
-                    }
-                    Utils.showInfo("Smart-contract executed successfully; Returned value:\n" + retVal.toString());
+                com.credits.thrift.generated.Variant res = apiResponseData.getScExecRetVal();
+                if (res != null) {
+//                    retVal.append(res.isSet(Variant._Fields.V_BOOL) ? "v_bool=" + res.getV_bool() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_I8) ? "v_i8=" + res.getV_i8() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_I16) ? "v_i16=" + res.getV_i16() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_I32) ? "v_i32=" + res.getV_i32() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_I64) ? "v_i64=" + res.getV_i64() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_DOUBLE) ? "v_double=" + res.getV_double() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_STRING) ? "v_string=" + res.getV_string() : "");
+                    String retVal = res.toString() + '\n';
+                    Utils.showInfo("Smart-contract executed successfully; Returned value:\n" + retVal);
                 } else
                     Utils.showInfo("Smart-contract executed successfully");
             } else {
                 Utils.showError(apiResponseData.getMessage());
             }
-        } catch (LevelDbClientException e) {
-            LOGGER.error(e.toString(), e);
-            Utils.showError(e.toString());
-        } catch (CreditsNodeException e) {
-            LOGGER.error(e.toString(), e);
-            Utils.showError(e.toString());
         } catch (CreditsException e) {
             LOGGER.error(e.toString(), e);
             Utils.showError(e.toString());
