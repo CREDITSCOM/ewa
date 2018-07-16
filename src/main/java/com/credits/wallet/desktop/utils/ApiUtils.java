@@ -23,14 +23,14 @@ public class ApiUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
     public static void callTransactionFlow(String innerId, String source, String target, BigDecimal amount,
-        BigDecimal balance, String currency) throws LevelDbClientException, CreditsNodeException {
+        BigDecimal balance, String currency, BigDecimal fee) throws LevelDbClientException, CreditsNodeException {
 
         // Формировование параметров основной транзакции
         String signature =
             Ed25519.generateSignOfTransaction(innerId, source, target, amount, balance, currency, AppState.privateKey);
 
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(innerId, source, target, amount, balance, currency, signature);
+            new TransactionFlowData(innerId, source, target, amount, balance, currency, signature, fee);
 
         AppState.apiClient.transactionFlow(
                 transactionFlowData,
