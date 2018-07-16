@@ -4,14 +4,13 @@ import com.credits.thrift.generated.Variant;
 
 import java.util.Map;
 
-public class ReturnValue {
+public class DeployReturnValue {
+
     private byte[] contractState;
-    private Variant variant;
     private Map<String, Variant> contractVariables;
 
-    public ReturnValue(byte[] contractState, Variant variant, Map<String, Variant> contractVariables) {
+    public DeployReturnValue(byte[] contractState, Map<String, Variant> contractVariables) {
         this.contractState = contractState;
-        this.variant = variant;
         this.contractVariables = contractVariables;
     }
 
@@ -21,14 +20,6 @@ public class ReturnValue {
 
     public void setContractState(byte[] contractState) {
         this.contractState = contractState;
-    }
-
-    public Variant getVariant() {
-        return variant;
-    }
-
-    public void setVariant(Variant variant) {
-        this.variant = variant;
     }
 
     public Map<String, Variant> getContractVariables() {

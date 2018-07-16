@@ -108,29 +108,29 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
   public static final java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.V_BOOL, new org.apache.thrift.meta_data.FieldMetaData("v_bool", org.apache.thrift.TFieldRequirementType.OPTIONAL,
+    tmpMap.put(_Fields.V_BOOL, new org.apache.thrift.meta_data.FieldMetaData("v_bool", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-    tmpMap.put(_Fields.V_I8, new org.apache.thrift.meta_data.FieldMetaData("v_i8", org.apache.thrift.TFieldRequirementType.OPTIONAL,
+    tmpMap.put(_Fields.V_I8, new org.apache.thrift.meta_data.FieldMetaData("v_i8", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BYTE)));
-    tmpMap.put(_Fields.V_I16, new org.apache.thrift.meta_data.FieldMetaData("v_i16", org.apache.thrift.TFieldRequirementType.OPTIONAL,
+    tmpMap.put(_Fields.V_I16, new org.apache.thrift.meta_data.FieldMetaData("v_i16", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I16)));
-    tmpMap.put(_Fields.V_I32, new org.apache.thrift.meta_data.FieldMetaData("v_i32", org.apache.thrift.TFieldRequirementType.OPTIONAL,
+    tmpMap.put(_Fields.V_I32, new org.apache.thrift.meta_data.FieldMetaData("v_i32", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-    tmpMap.put(_Fields.V_I64, new org.apache.thrift.meta_data.FieldMetaData("v_i64", org.apache.thrift.TFieldRequirementType.OPTIONAL,
+    tmpMap.put(_Fields.V_I64, new org.apache.thrift.meta_data.FieldMetaData("v_i64", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-    tmpMap.put(_Fields.V_DOUBLE, new org.apache.thrift.meta_data.FieldMetaData("v_double", org.apache.thrift.TFieldRequirementType.OPTIONAL,
+    tmpMap.put(_Fields.V_DOUBLE, new org.apache.thrift.meta_data.FieldMetaData("v_double", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
-    tmpMap.put(_Fields.V_STRING, new org.apache.thrift.meta_data.FieldMetaData("v_string", org.apache.thrift.TFieldRequirementType.OPTIONAL,
+    tmpMap.put(_Fields.V_STRING, new org.apache.thrift.meta_data.FieldMetaData("v_string", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-    tmpMap.put(_Fields.V_LIST, new org.apache.thrift.meta_data.FieldMetaData("v_list", org.apache.thrift.TFieldRequirementType.OPTIONAL,
-        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST,
+    tmpMap.put(_Fields.V_LIST, new org.apache.thrift.meta_data.FieldMetaData("v_list", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"))));
-    tmpMap.put(_Fields.V_SET, new org.apache.thrift.meta_data.FieldMetaData("v_set", org.apache.thrift.TFieldRequirementType.OPTIONAL,
-        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET,
+    tmpMap.put(_Fields.V_SET, new org.apache.thrift.meta_data.FieldMetaData("v_set", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.SetMetaData(org.apache.thrift.protocol.TType.SET, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"))));
-    tmpMap.put(_Fields.V_MAP, new org.apache.thrift.meta_data.FieldMetaData("v_map", org.apache.thrift.TFieldRequirementType.OPTIONAL,
-        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP,
-            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"),
+    tmpMap.put(_Fields.V_MAP, new org.apache.thrift.meta_data.FieldMetaData("v_map", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
+            new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"), 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"))));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Variant.class, metaDataMap);

@@ -1,4 +1,4 @@
-package com.credits.thrift;
+package com.credits.thrift.utils;
 
 import com.credits.exception.UnsupportedTypeException;
 import com.credits.thrift.generated.Variant;
@@ -69,7 +69,7 @@ public class VariantMapper implements Function<Object, Optional<Variant>> {
      * Returns null for unsupported
      *
      * @param object an object to map
-     * @return Thrift custor type defined as Variant
+     * @return Thrift custom type defined as Variant
      */
     private Variant mapSimpleType(Object object) {
         Variant variant;
