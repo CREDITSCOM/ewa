@@ -14,7 +14,7 @@ import static com.credits.TestUtils.encrypt;
 import static junit.framework.TestCase.fail;
 import static org.mockito.Mockito.when;
 
-public class ExecutorTest extends ServiceTest {
+public class ContractExecutorTest extends ServiceTest {
 
     @Before
     public void setUp() throws Exception {
@@ -51,10 +51,9 @@ public class ExecutorTest extends ServiceTest {
     public void save_state_smart_contract() throws Exception {
         String sourceCode = readSourceCode("/serviceTest/Contract.java");
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
-        when(mockClient.getSmartContract(address)).thenReturn(
-            new SmartContractData(address, sourceCode, bytecode, null, encrypt(bytecode), null, null));
 
         byte[] contractState = ceService.execute(address, bytecode, null, null, null).getContractState();
+
         contractState = ceService.execute(address, bytecode, contractState, "initialize", new String[] {}).getContractState();
         ReturnValue rvTotalInitialized = ceService.execute(address, bytecode, contractState, "getTotal", new String[] {});
         Assert.assertEquals(1, rvTotalInitialized.getVariant().getFieldValue());
