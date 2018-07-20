@@ -162,10 +162,13 @@ public class SmartContractDeployController extends Controller implements Initial
             byte[] byteCode = SimpleInMemoryCompiler.compile(javaCode, className, token);
             String hashState = ApiUtils.generateSmartContractHashState(byteCode);
             SmartContractData smartContractData = new SmartContractData(token, javaCode, byteCode, null, hashState, null, null);
-            String transactionInnerId = ApiUtils.generateTransactionInnerId();
+            long transactionInnerId = ApiUtils.generateTransactionInnerId();
             String transactionTarget = generatePublicKeyBase58();
             LOGGER.info("transactionTarget = {}", transactionTarget);
-            ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, transactionTarget, smartContractData);
+
+            String signature=new String(Ed25519.sign(smartContractData.getByteCode(), AppState.privateKey));
+
+            ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, transactionTarget, smartContractData, signature);
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
                 StringSelection selection = new StringSelection(token);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

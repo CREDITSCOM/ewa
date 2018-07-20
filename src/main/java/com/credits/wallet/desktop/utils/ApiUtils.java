@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Created by Rustem Saidaliyev on 20-Mar-18.
@@ -25,8 +26,8 @@ public class ApiUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
-    public static void callTransactionFlow(String innerId, String source, String target, BigDecimal amount,
-        BigDecimal balance, String currency, BigDecimal fee) throws LevelDbClientException, CreditsNodeException {
+    public static void callTransactionFlow(long innerId, String source, String target, BigDecimal amount,
+        BigDecimal balance, byte currency, BigDecimal fee) throws LevelDbClientException, CreditsNodeException {
 
         // Формировование параметров основной транзакции
         String signature = "";
@@ -49,9 +50,13 @@ public class ApiUtils {
         );
     }
 
-    public static String generateTransactionInnerId() throws CreditsException {
-        byte[] hashBytes = Blake2S.generateHash(4); // 4 байта
-        return Converter.bytesToHex(hashBytes);
+    //public static String generateTransactionInnerId() throws CreditsException {
+    //    byte[] hashBytes = Blake2S.generateHash(4); // 4 байта
+    //    return Converter.bytesToHex(hashBytes);
+    //}
+
+    public static long generateTransactionInnerId() {
+        return new Date().getTime();
     }
 
     public static String generateSmartContractHashState(byte[] byteCode) throws CreditsException {

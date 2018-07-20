@@ -34,9 +34,10 @@ public class TransactionController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        labInnerId.setText(AppState.selectedTransactionRow.getInnerId());
+        labInnerId.setText(Long.toString(AppState.selectedTransactionRow.getInnerId()));
         labTarget.setText(AppState.selectedTransactionRow.getTarget());
-        labCurrency.setText(AppState.selectedTransactionRow.getCurrency());
+        //labCurrency.setText(AppState.selectedTransactionRow.getCurrency());
+        labCurrency.setText("CS");
         labAmount.setText(AppState.selectedTransactionRow.getAmount());
     }
 }

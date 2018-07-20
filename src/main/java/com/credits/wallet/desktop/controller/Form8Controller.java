@@ -63,7 +63,8 @@ public class Form8Controller extends Controller implements Initializable {
         TransactionTabRow transactionTabRow = new TransactionTabRow();
 
         transactionTabRow.setTarget(AppState.toAddress);
-        transactionTabRow.setCurrency(AppState.coin);
+        //transactionTabRow.setCurrency(AppState.coin);
+        transactionTabRow.setCurrency((byte)1);
         transactionTabRow.setAmount(Converter.toString(AppState.amount));
         transactionTabRow.setInnerId(AppState.innerId);
         AppState.selectedTransactionRow = transactionTabRow;

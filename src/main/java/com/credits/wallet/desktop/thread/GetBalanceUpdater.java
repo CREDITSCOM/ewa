@@ -30,7 +30,8 @@ public class GetBalanceUpdater implements Runnable {
     @Override
     public void run() {
         try {
-            BigDecimal balance = AppState.apiClient.getBalance(AppState.account, coin);
+            //BigDecimal balance = AppState.apiClient.getBalance(AppState.account, coin);
+            BigDecimal balance = AppState.apiClient.getBalance(AppState.account, (byte)1);
             AppState.balance = balance;
             label.setText(Converter.toString(balance));
         } catch (LevelDbClientException e) {

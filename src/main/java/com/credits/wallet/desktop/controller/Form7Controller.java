@@ -41,8 +41,10 @@ public class Form7Controller extends Controller implements Initializable {
     @FXML
     private void handleGenerate() {
         try {
+            //ApiUtils.callTransactionFlow(AppState.innerId, AppState.account, AppState.toAddress, AppState.amount,
+            //    AppState.balance, AppState.coin, AppState.transactionFeeValue);
             ApiUtils.callTransactionFlow(AppState.innerId, AppState.account, AppState.toAddress, AppState.amount,
-                AppState.balance, AppState.coin, AppState.transactionFeeValue);
+                AppState.balance, (byte)1, AppState.transactionFeeValue);
         } catch (LevelDbClientException e) {
             LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);
             FormUtils.showError(AppState.NODE_ERROR);

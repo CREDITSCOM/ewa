@@ -4,16 +4,16 @@ package com.credits.wallet.desktop.struct;
  * Created by Rustem Saidaliyev on 25.06.2018.
  */
 public class TransactionTabRow {
-    private String innerId;
+    private long innerId;
     private String target;
-    private String currency;
+    private byte currency;
     private String amount;
 
-    public String getInnerId() {
+    public long getInnerId() {
         return innerId;
     }
 
-    public void setInnerId(String innerId) {
+    public void setInnerId(long innerId) {
         this.innerId = innerId;
     }
 
@@ -25,11 +25,11 @@ public class TransactionTabRow {
         this.target = target;
     }
 
-    public String getCurrency() {
+    public byte getCurrency() {
         return currency;
     }
 
-    public void setCurrency(String currency) {
+    public void setCurrency(byte currency) {
         this.currency = currency;
     }
 

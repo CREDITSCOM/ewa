@@ -209,7 +209,7 @@ public class SmartContractController extends Controller implements Initializable
                 }
             });
 
-            String transactionInnerId = ApiUtils.generateTransactionInnerId();
+            long transactionInnerId = ApiUtils.generateTransactionInnerId();
             SmartContractData smartContractData = this.currentSmartContract;
             smartContractData.setMethod(method);
             smartContractData.setParams(params);
