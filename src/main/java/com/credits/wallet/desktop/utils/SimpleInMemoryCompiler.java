@@ -81,7 +81,7 @@ public class SimpleInMemoryCompiler {
             }
             Files.write(sourceFile.toPath(), sourceBytes);
         } catch (IOException e) {
-            throw new CompilationException("Cannot save source to file "+sourceFile.getPath(), e);
+            throw new CompilationException("Cannot save source to file " + sourceFile.getPath(), e);
         }
 
         return sourceFile;
