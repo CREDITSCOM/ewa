@@ -85,7 +85,7 @@ public class NewCoinController extends Controller implements Initializable {
         // Save to csv
         try {
             Path coinsPath = Paths.get("coins.csv");
-            List<String> strings = Collections.singletonList(strToWrite + "\n");
+            List<String> strings = Collections.singletonList(strToWrite);
             Files.write(coinsPath, strings, StandardCharsets.UTF_8, StandardOpenOption.APPEND,
                 StandardOpenOption.CREATE);
         } catch (IOException e) {

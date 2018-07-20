@@ -10,9 +10,12 @@ import com.credits.leveldb.client.data.TransactionFlowData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.utils.struct.TransactionStruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 
 /**
@@ -26,8 +29,16 @@ public class ApiUtils {
         BigDecimal balance, String currency, BigDecimal fee) throws LevelDbClientException, CreditsNodeException {
 
         // Формировование параметров основной транзакции
-        String signature =
-            Ed25519.generateSignOfTransaction(innerId, source, target, amount, balance, currency, AppState.privateKey);
+        String signature = "";
+        try {
+            TransactionStruct tStruct = new TransactionStruct(innerId, source, target, amount, balance, currency);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(tStruct);
+            signature=new String(Ed25519.sign(baos.toByteArray(), AppState.privateKey));
+        } catch (Exception e) {
+            // do nothing - no signature
+        }
 
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(innerId, source, target, amount, balance, currency, signature, fee);

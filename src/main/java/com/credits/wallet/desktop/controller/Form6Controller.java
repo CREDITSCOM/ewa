@@ -130,9 +130,16 @@ public class Form6Controller extends Controller implements Initializable {
         try {
             Files.readAllLines(Paths.get("coins.csv"))
                 .forEach(line -> {
-                    String[] s = line.split(";");
-                    cbCoin.getItems().add(s[0] + " (" + s[1] + ")");
-                    AppState.coins.add(s[1]);
+                    if (line!=null && !line.trim().isEmpty()) {
+                        String[] s = line.split(";");
+                        if (s.length >= 2) {
+                            cbCoin.getItems().add(s[0] + " (" + s[1] + ")");
+                            AppState.coins.add(s[0]);
+                        } else if (s.length == 1) {
+                            cbCoin.getItems().add(s[0]);
+                            AppState.coins.add(s[0]);
+                        }
+                    }
                 });
         } catch (IOException e) {
             //TODO: Handle this somehow
