@@ -9,6 +9,7 @@ import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.util.ApiClientUtils;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.CompilationException;
@@ -166,7 +167,8 @@ public class SmartContractDeployController extends Controller implements Initial
             String transactionTarget = generatePublicKeyBase58();
             LOGGER.info("transactionTarget = {}", transactionTarget);
 
-            String signature=new String(Ed25519.sign(smartContractData.getByteCode(), AppState.privateKey));
+            String signature=new String(Ed25519.sign(ApiClientUtils.serializeByThrift(smartContractData),
+                    AppState.privateKey));
 
             ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, transactionTarget, smartContractData, signature);
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
