@@ -5,7 +5,6 @@ import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.thrift.Amount;
 import com.credits.leveldb.client.util.LevelDbClientConverter;
-import com.sun.deploy.util.ArrayUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
