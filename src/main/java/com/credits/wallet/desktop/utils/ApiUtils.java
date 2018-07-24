@@ -32,11 +32,17 @@ public class ApiUtils {
         // Формировование параметров основной транзакции
         String signature = "";
         try {
-            TransactionStruct tStruct = new TransactionStruct(innerId, source, target, amount, balance, currency);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(tStruct);
-            signature=new String(Ed25519.sign(baos.toByteArray(), AppState.privateKey));
+            // 4 DEBUG
+            //innerId=1532359;
+            //source="AoRKdBEbozwTKt5sirqx6ERv2DPsrvTk81hyztnndgWC";
+            //target="B3EBaHgRU7sd353axMRrZfoL9aL2XjA3oXejDdPrMnHR";
+            //amount=new BigDecimal(10.0);
+            //fee=new BigDecimal(0.1);
+            //currency=1;
+            // -------
+
+            TransactionStruct tStruct = new TransactionStruct(innerId, source, target, amount, fee, currency);
+            signature=new String(Ed25519.sign(tStruct.getBytes(), AppState.privateKey));
         } catch (Exception e) {
             // do nothing - no signature
         }
