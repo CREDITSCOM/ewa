@@ -7,6 +7,7 @@ import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
@@ -209,10 +210,18 @@ public class SmartContractController extends Controller implements Initializable
                 }
             });
 
+            // 2DO Select param type
+            List<Variant> varParams = new ArrayList<>();
+            for (String p : params) {
+                Variant var = new Variant();
+                var.setV_string(p);
+                varParams.add(var);
+            }
+
             long transactionInnerId = ApiUtils.generateTransactionInnerId();
             SmartContractData smartContractData = this.currentSmartContract;
             smartContractData.setMethod(method);
-            smartContractData.setParams(params);
+            smartContractData.setParams(varParams);
 
             ApiResponseData apiResponseData = AppState.apiClient.executeSmartContract(
                     transactionInnerId,

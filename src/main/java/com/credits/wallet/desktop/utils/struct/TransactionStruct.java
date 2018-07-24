@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * Created by goncharov-eg on 20.07.2018.
@@ -56,6 +57,8 @@ public class TransactionStruct implements Serializable {
         } catch (IOException e) {
             // do nothing - never happen
         }
-        return os.toByteArray();
+        ByteBuffer bb = ByteBuffer.wrap(os.toByteArray());
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        return bb.array();
     }
 }

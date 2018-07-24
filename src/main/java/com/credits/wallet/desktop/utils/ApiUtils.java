@@ -33,11 +33,11 @@ public class ApiUtils {
         String signature = "";
         try {
             // 4 DEBUG
-            //innerId=1532359;
+            innerId=1532359;
             //source="AoRKdBEbozwTKt5sirqx6ERv2DPsrvTk81hyztnndgWC";
             //target="B3EBaHgRU7sd353axMRrZfoL9aL2XjA3oXejDdPrMnHR";
             //amount=new BigDecimal(10.0);
-            //fee=new BigDecimal(0.1);
+            fee=new BigDecimal(0.1);
             //currency=1;
             // -------
 
