@@ -35,6 +35,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -167,7 +168,7 @@ public class SmartContractDeployController extends Controller implements Initial
             String transactionTarget = generatePublicKeyBase58();
             LOGGER.info("transactionTarget = {}", transactionTarget);
 
-            String signature=new String(Ed25519.sign(ApiClientUtils.serializeByThrift(smartContractData),
+            ByteBuffer signature=ByteBuffer.wrap(Ed25519.sign(ApiClientUtils.serializeByThrift(smartContractData),
                     AppState.privateKey));
 
             ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, transactionTarget, smartContractData, signature);

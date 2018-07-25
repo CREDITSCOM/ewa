@@ -46,19 +46,19 @@ public class TransactionStruct implements Serializable {
     public byte[] getBytes() {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            os.write(ByteBuffer.allocate(8).putLong(innerId).array());
+
+
+            os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(innerId).array());
             os.write(source);
             os.write(target);
-            os.write(ByteBuffer.allocate(4).putInt(amountInt).array());
-            os.write(ByteBuffer.allocate(8).putLong(amountFrac).array());
-            os.write(ByteBuffer.allocate(4).putInt(feeInt).array());
-            os.write(ByteBuffer.allocate(8).putLong(feeFrac).array());
-            os.write(ByteBuffer.allocate(1).put(currency).array());
+            os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(amountInt).array());
+            os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(amountFrac).array());
+            os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(feeInt).array());
+            os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(feeFrac).array());
+            os.write(ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put(currency).array());
         } catch (IOException e) {
             // do nothing - never happen
         }
-        ByteBuffer bb = ByteBuffer.wrap(os.toByteArray());
-        bb.order(ByteOrder.LITTLE_ENDIAN);
-        return bb.array();
+        return os.toByteArray();
     }
 }
