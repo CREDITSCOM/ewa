@@ -15,6 +15,7 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.CompilationException;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.*;
+import com.credits.wallet.desktop.utils.struct.TransactionStruct;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.KeyPair;
@@ -168,8 +170,33 @@ public class SmartContractDeployController extends Controller implements Initial
             String transactionTarget = generatePublicKeyBase58();
             LOGGER.info("transactionTarget = {}", transactionTarget);
 
-            ByteBuffer signature=ByteBuffer.wrap(Ed25519.sign(ApiClientUtils.serializeByThrift(smartContractData),
-                    AppState.privateKey));
+            ByteBuffer signature;
+            try {
+                TransactionStruct tStruct = new TransactionStruct(transactionInnerId, AppState.account, transactionTarget,
+                        new BigDecimal(0), new BigDecimal(0), (byte)1, smartContractData.getByteCode());
+                byte[] tArr=tStruct.getBytes();
+
+                LOGGER.debug("Transaction structure ^^^^^ ");
+                String arrStr="";
+                for (int i=0; i<tArr.length; i++)
+                    arrStr=arrStr+((i==0 ? "" : ", ")+tArr[i]);
+                LOGGER.debug(arrStr);
+                LOGGER.debug("--------------------- vvvvv ");
+
+                byte[] signatureArr=Ed25519.sign(tArr, AppState.privateKey);
+
+                LOGGER.debug("Signature ^^^^^ ");
+                arrStr="";
+                for (int i=0; i<signatureArr.length; i++)
+                    arrStr=arrStr+((i==0 ? "" : ", ")+signatureArr[i]);
+                LOGGER.debug(arrStr);
+                LOGGER.debug("--------- vvvvv ");
+
+                signature = ByteBuffer.wrap(signatureArr);
+
+            } catch (Exception e) {
+                signature = ByteBuffer.wrap(new byte[]{});
+            }
 
             ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, transactionTarget, smartContractData, signature);
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {

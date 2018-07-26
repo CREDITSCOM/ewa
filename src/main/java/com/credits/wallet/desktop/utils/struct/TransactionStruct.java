@@ -25,8 +25,12 @@ public class TransactionStruct implements Serializable {
     private int feeInt;
     private long feeFrac;
     private byte currency;
+    private int ufNum;
+    private int scLen;
+    private byte[] sc;
 
-    public TransactionStruct(long innerId, String source, String target, BigDecimal amount, BigDecimal fee, byte currency)
+    public TransactionStruct(long innerId, String source, String target, BigDecimal amount, BigDecimal fee, byte currency,
+                             byte[] sc)
             throws CreditsCommonException, LevelDbClientException {
         this.innerId = innerId;
         this.source = Converter.decodeFromBASE58(source);
@@ -41,6 +45,14 @@ public class TransactionStruct implements Serializable {
         this.feeFrac = aFee.fraction;
 
         this.currency = currency;
+
+        if (sc==null)
+            ufNum=0;
+        else {
+            this.ufNum = 1;
+            this.scLen = sc.length;
+            this.sc=sc;
+        }
     }
 
     public byte[] getBytes() {
@@ -56,6 +68,11 @@ public class TransactionStruct implements Serializable {
             os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(feeInt).array());
             os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(feeFrac).array());
             os.write(ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put(currency).array());
+            os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(ufNum).array());
+            if (sc!=null) {
+                os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(scLen).array());
+                os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).put(sc).array());
+            }
         } catch (IOException e) {
             // do nothing - never happen
         }

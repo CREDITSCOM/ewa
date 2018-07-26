@@ -34,7 +34,7 @@ public class ApiUtils {
         ByteBuffer signature;
         try {
             // 4 DEBUG
-            //innerId=1532359;
+            //innerId=1532529576028l;
             //source="AoRKdBEbozwTKt5sirqx6ERv2DPsrvTk81hyztnndgWC";
             //target="B3EBaHgRU7sd353axMRrZfoL9aL2XjA3oXejDdPrMnHR";
             //amount=new BigDecimal(10.0);
@@ -42,8 +42,27 @@ public class ApiUtils {
             //currency=1;
             // -------
 
-            TransactionStruct tStruct = new TransactionStruct(innerId, source, target, amount, fee, currency);
-            signature = ByteBuffer.wrap(Ed25519.sign(tStruct.getBytes(), AppState.privateKey));
+            TransactionStruct tStruct = new TransactionStruct(innerId, source, target, amount, fee, currency, null);
+            byte[] tArr=tStruct.getBytes();
+
+            LOGGER.debug("Transaction structure ^^^^^ ");
+            String arrStr="";
+            for (int i=0; i<tArr.length; i++)
+                arrStr=arrStr+((i==0 ? "" : ", ")+tArr[i]);
+            LOGGER.debug(arrStr);
+            LOGGER.debug("--------------------- vvvvv ");
+
+            byte[] signatureArr=Ed25519.sign(tArr, AppState.privateKey);
+
+            LOGGER.debug("Signature ^^^^^ ");
+            arrStr="";
+            for (int i=0; i<signatureArr.length; i++)
+                arrStr=arrStr+((i==0 ? "" : ", ")+signatureArr[i]);
+            LOGGER.debug(arrStr);
+            LOGGER.debug("--------- vvvvv ");
+
+            signature = ByteBuffer.wrap(signatureArr);
+
         } catch (Exception e) {
             signature = ByteBuffer.wrap(new byte[]{});
         }

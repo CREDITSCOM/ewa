@@ -11,7 +11,7 @@
 		<appender-ref ref="STDOUT" />
 	</logger>
 
-	<root level="DEBUG">
+	<logger name="com.credits" level="DEBUG" additivity="false">
 		<appender-ref ref="STDOUT" />
-	</root>
+	</logger>
 </configuration>

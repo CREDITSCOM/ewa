@@ -221,7 +221,7 @@ public class SmartContractController extends Controller implements Initializable
             long transactionInnerId = ApiUtils.generateTransactionInnerId();
             SmartContractData smartContractData = this.currentSmartContract;
             smartContractData.setMethod(method);
-            smartContractData.setParams(varParams);
+            smartContractData.setParams(params);
 
             ApiResponseData apiResponseData = AppState.apiClient.executeSmartContract(
                     transactionInnerId,
