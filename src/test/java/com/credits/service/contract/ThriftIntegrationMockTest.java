@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static java.io.File.separator;
+import static org.mockito.ArgumentMatchers.anyByte;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
 
@@ -29,7 +30,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        when(mockClient.getBalance(anyString(), anyString())).thenReturn(new BigDecimal(555));
+        when(mockClient.getBalance(anyString(), anyByte())).thenReturn(new BigDecimal(555));
 
         Field client = dbservice.getClass().getDeclaredField("client");
         client.setAccessible(true);

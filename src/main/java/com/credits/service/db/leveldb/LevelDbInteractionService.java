@@ -6,11 +6,12 @@ import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 public interface LevelDbInteractionService {
 
-    BigDecimal getBalance(String address, String currency) throws LevelDbClientException, CreditsNodeException;
+    BigDecimal getBalance(String address, byte currency) throws LevelDbClientException, CreditsNodeException;
 
     TransactionData getTransaction(String transactionId) throws LevelDbClientException, CreditsNodeException;
 
@@ -20,12 +21,12 @@ public interface LevelDbInteractionService {
 
     PoolData getPoolInfo(byte[] hash, long index) throws LevelDbClientException, CreditsNodeException;
 
-    void transactionFlow(String innerId,
+    void transactionFlow(Long innerId,
                          String source,
                          String target,
                          BigDecimal amount,
                          BigDecimal balance,
-                         String currency,
-                         String signature,
+                         byte currency,
+                         ByteBuffer signature,
                          BigDecimal fee) throws LevelDbClientException, CreditsNodeException;
 }

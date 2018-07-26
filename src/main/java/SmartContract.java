@@ -13,7 +13,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.security.PrivateKey;
+import java.time.Instant;
 import java.util.List;
 
 public abstract class SmartContract implements Serializable {
@@ -28,8 +30,9 @@ public abstract class SmartContract implements Serializable {
     }
 
     final protected BigDecimal getBalance(String address, String currency) {
+        byte currencyByte = (byte) 1;
         try {
-            return service.getBalance(address, currency);
+            return service.getBalance(address, currencyByte);
         } catch (LevelDbClientException | CreditsNodeException e) {
             throw new RuntimeException(e);
         }
@@ -69,6 +72,7 @@ public abstract class SmartContract implements Serializable {
 
     final protected void sendTransaction(String source, String target, double amount, String currency, double fee) {
         try {
+            byte currencyByte = (byte) 1;
             BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
 //            byte[] innerIdhashBytes = Blake2S.generateHash(4);
 //            String innerId = Converter.bytesToHex(innerIdhashBytes);
@@ -76,14 +80,16 @@ public abstract class SmartContract implements Serializable {
 //            byte[] privateKeyByteArr = Converter.decodeFromBASE58(this.specialProperty);
 //            PrivateKey privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
 
-            BigDecimal balance = service.getBalance(source, currency);
+            BigDecimal balance = service.getBalance(source, currencyByte);
 
             BigDecimal decFee = new BigDecimal(String.valueOf(fee));
 
+            ByteBuffer byteBuffer = ByteBuffer.allocate(0);
             String signatureBASE58 = "";
 //                Ed25519.generateSignOfTransaction(innerId, source, target, decAmount, balance, currency, privateKey);
 
-            service.transactionFlow("", source, target, decAmount, balance, currency, signatureBASE58, decFee);
+            Instant instant = Instant.now();
+            service.transactionFlow(instant.toEpochMilli(), source, target, decAmount, balance, currencyByte, byteBuffer, decFee);
         } catch (LevelDbClientException | CreditsNodeException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

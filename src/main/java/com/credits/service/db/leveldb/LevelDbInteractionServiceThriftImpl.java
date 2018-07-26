@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 @Component
@@ -31,7 +32,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
 
 
     @Override
-    public BigDecimal getBalance(String address, String currency) throws LevelDbClientException, CreditsNodeException {
+    public BigDecimal getBalance(String address, byte currency) throws LevelDbClientException, CreditsNodeException {
         return client.getBalance(address, currency);
     }
 
@@ -56,13 +57,13 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     }
 
     @Override
-    public void transactionFlow(String innerId,
+    public void transactionFlow(Long innerId,
                                 String source,
                                 String target,
                                 BigDecimal amount,
                                 BigDecimal balance,
-                                String currency,
-                                String signature,
+                                byte currency,
+                                ByteBuffer signature,
                                 BigDecimal fee) throws LevelDbClientException, CreditsNodeException {
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(innerId, source, target, amount, balance, currency, signature, fee);
