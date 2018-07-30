@@ -165,38 +165,40 @@ public class SmartContractDeployController extends Controller implements Initial
             String javaCode = SourceCodeUtils.normalizeSourceCode(this.codeArea.getText());
             byte[] byteCode = SimpleInMemoryCompiler.compile(javaCode, className, token);
             String hashState = ApiUtils.generateSmartContractHashState(byteCode);
-            SmartContractData smartContractData = new SmartContractData(token, javaCode, byteCode, null, hashState, null, null);
+
+            SmartContractData smartContractData = new SmartContractData(token, javaCode, byteCode,
+                    new byte[]{}, hashState, "", new ArrayList<String>());
+
             long transactionInnerId = ApiUtils.generateTransactionInnerId();
             String transactionTarget = generatePublicKeyBase58();
             LOGGER.info("transactionTarget = {}", transactionTarget);
 
-            ByteBuffer signature;
-            try {
-                TransactionStruct tStruct = new TransactionStruct(transactionInnerId, AppState.account, transactionTarget,
-                        new BigDecimal(0), new BigDecimal(0), (byte)1, smartContractData.getByteCode());
-                byte[] tArr=tStruct.getBytes();
+            LOGGER.debug("SmartContractData structure ^^^^^");
+            LOGGER.debug("address = "+smartContractData.getAddress());
+            LOGGER.debug("sourceCode = "+smartContractData.getSourceCode());
+            if (smartContractData.getByteCode()!=null)
+                LOGGER.debug("byteCode.length = "+smartContractData.getByteCode().length);
+            else
+                LOGGER.debug("byteCode.length = 0");
+            if (smartContractData.getContractState()!=null)
+                LOGGER.debug("contractState.length = "+smartContractData.getContractState().length);
+            else
+                LOGGER.debug("contractState.length = 0");
+            LOGGER.debug("hashState = "+smartContractData.getHashState());
+            LOGGER.debug("method = "+smartContractData.getMethod());
+            if (smartContractData.getParams()!=null) {
+                LOGGER.debug("params.length = " + smartContractData.getParams().size());
+                for (int i = 0; i < smartContractData.getParams().size(); i++) {
+                    LOGGER.debug("params." + i + " = " + smartContractData.getParams().get(i));
+                }
+            } else
+                LOGGER.debug("params.length = 0");
+            LOGGER.debug("SmartContractData structure vvvvv");
 
-                LOGGER.debug("Transaction structure ^^^^^ ");
-                String arrStr="";
-                for (int i=0; i<tArr.length; i++)
-                    arrStr=arrStr+((i==0 ? "" : ", ")+tArr[i]);
-                LOGGER.debug(arrStr);
-                LOGGER.debug("--------------------- vvvvv ");
-
-                byte[] signatureArr=Ed25519.sign(tArr, AppState.privateKey);
-
-                LOGGER.debug("Signature ^^^^^ ");
-                arrStr="";
-                for (int i=0; i<signatureArr.length; i++)
-                    arrStr=arrStr+((i==0 ? "" : ", ")+signatureArr[i]);
-                LOGGER.debug(arrStr);
-                LOGGER.debug("--------- vvvvv ");
-
-                signature = ByteBuffer.wrap(signatureArr);
-
-            } catch (Exception e) {
-                signature = ByteBuffer.wrap(new byte[]{});
-            }
+            byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractData);
+            TransactionStruct tStruct = new TransactionStruct(transactionInnerId, AppState.account, transactionTarget,
+                    new BigDecimal(0), new BigDecimal(0), (byte)1, scBytes);
+            ByteBuffer signature=Utils.signTransactionStruct(tStruct);
 
             ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(transactionInnerId, AppState.account, transactionTarget, smartContractData, signature);
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {

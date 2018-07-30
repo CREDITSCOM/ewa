@@ -7,6 +7,7 @@ import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.util.ApiClientUtils;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
@@ -15,6 +16,7 @@ import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.Utils;
+import com.credits.wallet.desktop.utils.struct.TransactionStruct;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,7 +30,9 @@ import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -223,11 +227,18 @@ public class SmartContractController extends Controller implements Initializable
             smartContractData.setMethod(method);
             smartContractData.setParams(params);
 
+            byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractData);
+            TransactionStruct tStruct = new TransactionStruct(transactionInnerId, AppState.account,
+                    this.currentSmartContract.getAddress(),
+                    new BigDecimal(0), new BigDecimal(0), (byte)1, scBytes);
+            ByteBuffer signature=Utils.signTransactionStruct(tStruct);
+
             ApiResponseData apiResponseData = AppState.apiClient.executeSmartContract(
                     transactionInnerId,
                     AppState.account,
                     this.currentSmartContract.getAddress(),
-                    smartContractData
+                    smartContractData,
+                    signature
             );
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
                 if (apiResponseData.getScExecRetVal()!=null) {

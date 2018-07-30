@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.data.TransactionData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
@@ -118,10 +119,14 @@ public class HistoryController extends Controller implements Initializable {
             TransactionTabRow tableRow = new TransactionTabRow();
             tableRow.setAmount(Converter.toString(transactionData.getAmount()));
             tableRow.setCurrency(transactionData.getCurrency());
-            tableRow.setTarget(transactionData.getTarget());
+            //tableRow.setTarget(transactionData.getTarget());
+            try {
+                tableRow.setTarget(new String(Converter.decodeFromBASE58(transactionData.getTarget())));
+            } catch (CreditsCommonException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
             tableRow.setInnerId(transactionData.getInnerId());
             tabTransaction.getItems().add(tableRow);
-
         });
 
         /*

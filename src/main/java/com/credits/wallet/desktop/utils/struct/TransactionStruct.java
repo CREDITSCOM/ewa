@@ -71,11 +71,15 @@ public class TransactionStruct implements Serializable {
             os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(ufNum).array());
             if (sc!=null) {
                 os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(scLen).array());
-                os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).put(sc).array());
+                os.write(ByteBuffer.allocate(scLen).order(ByteOrder.LITTLE_ENDIAN).put(sc).array());
             }
         } catch (IOException e) {
             // do nothing - never happen
         }
         return os.toByteArray();
+    }
+
+    public int getScLen() {
+        return scLen;
     }
 }

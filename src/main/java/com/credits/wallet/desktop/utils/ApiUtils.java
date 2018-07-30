@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.common.utils.TcpClient;
@@ -28,44 +29,23 @@ public class ApiUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
     public static void callTransactionFlow(long innerId, String source, String target, BigDecimal amount,
-        BigDecimal balance, byte currency, BigDecimal fee) throws LevelDbClientException, CreditsNodeException {
+        BigDecimal balance, byte currency, BigDecimal fee) throws LevelDbClientException,
+            CreditsNodeException, CreditsCommonException {
 
         // Формировование параметров основной транзакции
-        ByteBuffer signature;
-        try {
-            // 4 DEBUG
-            //innerId=1532529576028l;
-            //source="AoRKdBEbozwTKt5sirqx6ERv2DPsrvTk81hyztnndgWC";
-            //target="B3EBaHgRU7sd353axMRrZfoL9aL2XjA3oXejDdPrMnHR";
-            //amount=new BigDecimal(10.0);
-            //fee=new BigDecimal(0.1);
-            //currency=1;
-            // -------
 
-            TransactionStruct tStruct = new TransactionStruct(innerId, source, target, amount, fee, currency, null);
-            byte[] tArr=tStruct.getBytes();
+        // 4 DEBUG
+        //innerId=1532529576028l;
+        //source="AoRKdBEbozwTKt5sirqx6ERv2DPsrvTk81hyztnndgWC";
+        //target="B3EBaHgRU7sd353axMRrZfoL9aL2XjA3oXejDdPrMnHR";
+        //amount=new BigDecimal(10.0);
+        //fee=new BigDecimal(0.1);
+        //currency=1;
+        // -------
 
-            LOGGER.debug("Transaction structure ^^^^^ ");
-            String arrStr="";
-            for (int i=0; i<tArr.length; i++)
-                arrStr=arrStr+((i==0 ? "" : ", ")+tArr[i]);
-            LOGGER.debug(arrStr);
-            LOGGER.debug("--------------------- vvvvv ");
+        TransactionStruct tStruct = new TransactionStruct(innerId, source, target, amount, fee, currency, null);
 
-            byte[] signatureArr=Ed25519.sign(tArr, AppState.privateKey);
-
-            LOGGER.debug("Signature ^^^^^ ");
-            arrStr="";
-            for (int i=0; i<signatureArr.length; i++)
-                arrStr=arrStr+((i==0 ? "" : ", ")+signatureArr[i]);
-            LOGGER.debug(arrStr);
-            LOGGER.debug("--------- vvvvv ");
-
-            signature = ByteBuffer.wrap(signatureArr);
-
-        } catch (Exception e) {
-            signature = ByteBuffer.wrap(new byte[]{});
-        }
+        ByteBuffer signature=Utils.signTransactionStruct(tStruct);
 
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(innerId, source, target, amount, balance, currency, signature, fee);
