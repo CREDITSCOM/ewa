@@ -29,6 +29,10 @@ public class SimpleInMemoryCompiler {
 
         LOGGER.debug("Compiling class {}", source.getName());
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        if (compiler == null) {
+            throw new CompilationException("Cannot compile the file: " + source.getName() +
+                ". The java compiler has not been found, Java Development Kit should be installed.");
+        }
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
         StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(null, null, null);
