@@ -120,11 +120,7 @@ public class HistoryController extends Controller implements Initializable {
             tableRow.setAmount(Converter.toString(transactionData.getAmount()));
             tableRow.setCurrency(transactionData.getCurrency());
             //tableRow.setTarget(transactionData.getTarget());
-            try {
-                tableRow.setTarget(new String(Converter.decodeFromBASE58(transactionData.getTarget())));
-            } catch (CreditsCommonException e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+            tableRow.setTarget(new String(Converter.encodeToBASE58(transactionData.getTarget().getBytes())));
             tableRow.setInnerId(transactionData.getInnerId());
             tabTransaction.getItems().add(tableRow);
         });
