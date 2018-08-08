@@ -111,7 +111,7 @@ public class TransactionStructTest {
 
             SmartContractData smartContractData = null;
             try {
-                smartContractData = TestState.apiClient.getSmartContract("6RNiVco3yb6jsQPaJ7GzjjRFc9aH1Rnyp21HTAh64FRn");
+                smartContractData = TestState.apiClient.getSmartContract("6RNiVco3yb6jsQPaJ7GzjjRFc9aH1Rnyp21HTAh64FRn".getBytes());
             } catch (CreditsNodeException e) {
                 e.printStackTrace();
             }

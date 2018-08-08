@@ -48,7 +48,8 @@ public class ApiUtils {
         ByteBuffer signature=Utils.signTransactionStruct(tStruct);
 
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(innerId, source, target, amount, balance, currency, signature, fee);
+            new TransactionFlowData(innerId, source.getBytes(), target.getBytes(), amount, balance, currency,
+                    new byte[signature.remaining()], fee);
 
         AppState.apiClient.transactionFlow(
                 transactionFlowData,
