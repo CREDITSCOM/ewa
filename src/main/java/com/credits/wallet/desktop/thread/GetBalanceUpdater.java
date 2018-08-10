@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.thread;
 
+import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
@@ -31,7 +32,7 @@ public class GetBalanceUpdater implements Runnable {
     public void run() {
         try {
             //BigDecimal balance = AppState.apiClient.getBalance(AppState.account, coin);
-            BigDecimal balance = AppState.apiClient.getBalance(AppState.account.getBytes(), (byte)1);
+            BigDecimal balance = AppState.apiClient.getBalance(Converter.decodeFromBASE58(AppState.account), (byte)1);
             AppState.balance = balance;
             label.setText(Converter.toString(balance));
         } catch (LevelDbClientException e) {
@@ -43,6 +44,10 @@ public class GetBalanceUpdater implements Runnable {
             //label.setText(AppState.NODE_ERROR + ": "+e.getMessage());
             label.setText("");
             LOGGER.error(AppState.NODE_ERROR + ": CreditsNodeException " + e.toString(), e);
+            FormUtils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
+        } catch (CreditsCommonException e) {
+            label.setText("");
+            LOGGER.error(AppState.NODE_ERROR + ": CreditsCommonException" + e.toString(), e);
             FormUtils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
         }
     }

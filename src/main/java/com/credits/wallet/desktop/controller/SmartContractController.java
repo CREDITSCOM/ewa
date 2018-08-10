@@ -1,13 +1,12 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.common.exception.CreditsException;
+import com.credits.common.utils.Converter;
 import com.credits.common.utils.sourcecode.SourceCodeUtils;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.data.SmartContractInvocationData;
-import com.credits.leveldb.client.exception.CreditsNodeException;
-import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.util.ApiClientUtils;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
@@ -91,15 +90,9 @@ public class SmartContractController extends Controller implements Initializable
     private void handleSearch() {
         String address = txSearchAddress.getText();
         try {
-            SmartContractData smartContractData = AppState.apiClient.getSmartContract(address.getBytes());
+            SmartContractData smartContractData = AppState.apiClient.getSmartContract(Converter.decodeFromBASE58(address));
             this.refreshFormState(smartContractData);
-        } catch (LevelDbClientException e) {
-            LOGGER.error(e.getMessage(), e);
-            FormUtils.showError(e.getMessage());
-        } catch (CreditsNodeException e) {
-            LOGGER.error(e.getMessage(), e);
-            FormUtils.showError(e.getMessage());
-        } catch (WalletDesktopException e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());
         }
@@ -138,7 +131,7 @@ public class SmartContractController extends Controller implements Initializable
 
         try {
             this.refreshFormState(null);
-            List<SmartContractData> smartContracts = AppState.apiClient.getSmartContracts(AppState.account.getBytes());
+            List<SmartContractData> smartContracts = AppState.apiClient.getSmartContracts(Converter.decodeFromBASE58(AppState.account));
             smartContracts.forEach(smartContractData -> {
 
                 Label label = new Label(smartContractData.getHashState());
@@ -158,13 +151,7 @@ public class SmartContractController extends Controller implements Initializable
 
                 rootItem.getChildren().add(new TreeItem<>(label));
             });
-        } catch (LevelDbClientException e) {
-            LOGGER.error(e.getMessage(), e);
-            FormUtils.showError(e.getMessage());
-        } catch (CreditsNodeException e) {
-            LOGGER.error(e.getMessage(), e);
-            FormUtils.showError(e.getMessage());
-        } catch (WalletDesktopException e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());
         }
@@ -238,7 +225,7 @@ public class SmartContractController extends Controller implements Initializable
 
             ApiResponseData apiResponseData = AppState.apiClient.executeSmartContract(
                     transactionInnerId,
-                    AppState.account.getBytes(),
+                    Converter.decodeFromBASE58(AppState.account),
                     this.currentSmartContract.getAddress(),
                     smartContractInvocationData,
                     new byte[signature.remaining()]

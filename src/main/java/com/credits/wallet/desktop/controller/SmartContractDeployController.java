@@ -197,7 +197,7 @@ public class SmartContractDeployController extends Controller implements Initial
 
             ApiResponseData apiResponseData =
                     AppState.apiClient.deploySmartContract(transactionInnerId,
-                            AppState.account.getBytes(), transactionTarget.getBytes(), smartContractInvocationData,
+                            Converter.decodeFromBASE58(AppState.account), Converter.decodeFromBASE58(transactionTarget), smartContractInvocationData,
                             new byte[signature.remaining()]);
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
                 StringSelection selection = new StringSelection(token);
