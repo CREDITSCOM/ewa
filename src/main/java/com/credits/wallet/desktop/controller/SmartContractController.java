@@ -228,7 +228,7 @@ public class SmartContractController extends Controller implements Initializable
                     Converter.decodeFromBASE58(AppState.account),
                     this.currentSmartContract.getAddress(),
                     smartContractInvocationData,
-                    new byte[signature.remaining()]
+                    signature.array()
             );
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
                 com.credits.thrift.generated.Variant res = apiResponseData.getScExecRetVal();

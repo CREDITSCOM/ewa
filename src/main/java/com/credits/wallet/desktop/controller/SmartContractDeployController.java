@@ -198,7 +198,7 @@ public class SmartContractDeployController extends Controller implements Initial
             ApiResponseData apiResponseData =
                     AppState.apiClient.deploySmartContract(transactionInnerId,
                             Converter.decodeFromBASE58(AppState.account), Converter.decodeFromBASE58(transactionTarget), smartContractInvocationData,
-                            new byte[signature.remaining()]);
+                            signature.array());
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
                 StringSelection selection = new StringSelection(token);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

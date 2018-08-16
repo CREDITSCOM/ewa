@@ -44,7 +44,7 @@ public class ApiUtils {
 
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(innerId, Converter.decodeFromBASE58(source), Converter.decodeFromBASE58(target), amount, balance, currency,
-                    new byte[signature.remaining()], fee);
+                    signature.array(), fee);
 
         AppState.apiClient.transactionFlow(
                 transactionFlowData,
