@@ -18,11 +18,7 @@ public class TransactionController extends Controller implements Initializable {
     @FXML
     private Label labTarget;
     @FXML
-    private Label labCurrency;
-    @FXML
     private Label labAmount;
-    @FXML
-    private Label labHash;
 
     @FXML
     private void handleBack() {
@@ -35,8 +31,6 @@ public class TransactionController extends Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         labTarget.setText(AppState.selectedTransactionRow.getTarget());
-        labCurrency.setText(AppState.selectedTransactionRow.getCurrency());
         labAmount.setText(AppState.selectedTransactionRow.getAmount());
-        labHash.setText(AppState.selectedTransactionRow.getHash());
     }
 }

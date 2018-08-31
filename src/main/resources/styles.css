@@ -35,13 +35,18 @@
 }
 
 #refresh-balance-button {
-    -fx-min-height: 50px;
-    -fx-min-width: 50px;
+    -fx-min-height: 16px;
+    -fx-min-width: 16px;
     -fx-background-image: url("img/refresh.jpg");
-    -fx-background-size: 70px;
+    -fx-background-size: 14px;
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
     -fx-background-color: #fff;
-    -fx-border-width: 2;
+    -fx-border-width: 0;
     -fx-border-color: #000
+}
+
+/** Size the combo-box drop down list. */
+.combo-box-popup > .list-view {
+    -fx-pref-width: 1000;
 }

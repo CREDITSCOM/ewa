@@ -4,7 +4,7 @@ import com.credits.common.utils.Converter;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
-import com.credits.wallet.desktop.utils.Utils;
+import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -33,13 +36,19 @@ public class Form8Controller extends Controller implements Initializable {
     @FXML
     private void handleSeeOnMonitor() {
         if (AppState.creditMonitorURL==null) {
-            Utils.showError("URL for credit monitor not defined");
+            FormUtils.showError("URL for credit monitor not defined");
         } else {
             try {
                 Desktop.getDesktop().browse(new URL(AppState.creditMonitorURL+AppState.account).toURI());
-            } catch (Exception e) {
+            } catch (URISyntaxException e) {
                 LOGGER.error(e.getMessage(), e);
-                Utils.showError(e.getMessage());
+                FormUtils.showError(e.getMessage());
+            } catch (MalformedURLException e) {
+                LOGGER.error(e.getMessage(), e);
+                FormUtils.showError(e.getMessage());
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+                FormUtils.showError(e.getMessage());
             }
         }
     }
@@ -51,11 +60,10 @@ public class Form8Controller extends Controller implements Initializable {
 
     @FXML
     private void handleView() {
-        AppState.selectedTransactionRow = new TransactionTabRow();
-        AppState.selectedTransactionRow.setHash(AppState.hash);
-        AppState.selectedTransactionRow.setTarget(AppState.toAddress);
-        AppState.selectedTransactionRow.setCurrency(AppState.coin);
-        AppState.selectedTransactionRow.setAmount(Converter.toString(AppState.amount));
+        TransactionTabRow transactionTabRow = new TransactionTabRow();
+        transactionTabRow.setTarget(AppState.toAddress);
+        transactionTabRow.setAmount(Converter.toString(AppState.amount));
+        AppState.selectedTransactionRow = transactionTabRow;
         AppState.detailFromHistory=false;
         App.showForm("/fxml/transaction.fxml", "Wallet");
     }
@@ -64,6 +72,5 @@ public class Form8Controller extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.toAddress.setText(AppState.toAddress);
         this.amountInCs.setText(Converter.toString(AppState.amount) + " "+AppState.coin);
-        this.transactionFeeValue.setText(Converter.toString(AppState.transactionFeeValue) + " CS");
     }
 }

@@ -24,7 +24,7 @@
 							<center>
 								<BorderPane minHeight="-Infinity" prefHeight="500.0" BorderPane.alignment="TOP_CENTER">
 									<center>
-										<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="422.0" prefWidth="975.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_CENTER">
+										<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="445.0" prefWidth="975.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_CENTER">
 											<children>
 												<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="New coin" />
 												<Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can add new coin for smart contract" textFill="#818181" />
@@ -34,15 +34,25 @@
 														<Font name="System Bold" size="11.0" />
 													</font>
 												</Label>
-												<Button layoutX="21.0" layoutY="333.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
-												<Button layoutX="212.0" layoutY="333.0" mnemonicParsing="false" onAction="#handleSave" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SAVE" textAlignment="CENTER" wrapText="true" />
+												<Button layoutX="21.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
+												<Button layoutX="212.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleSave" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SAVE" textAlignment="CENTER" wrapText="true" />
 												<TextField fx:id="txToken" layoutX="21.0" layoutY="148.0" prefHeight="56.0" prefWidth="605.0" promptText="put token here" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-												<Label layoutX="24.0" layoutY="222.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put coin mnemonic">
+												<Label layoutX="24.0" layoutY="246.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put coin mnemonic">
 													<font>
 														<Font name="System Bold" size="11.0" />
 													</font>
 												</Label>
-												<TextField fx:id="txCoin" layoutX="21.0" layoutY="249.0" prefHeight="56.0" prefWidth="605.0" promptText="put coin mnemonic here" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
+												<TextField fx:id="txCoin" layoutX="21.0" layoutY="273.0" prefHeight="56.0" prefWidth="605.0" promptText="put coin mnemonic here" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
+                                    <Label fx:id="labelErrorToken" layoutX="24.0" layoutY="204.0" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css" text="Label">
+                                       <font>
+                                          <Font name="System Bold" size="11.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="labelErrorCoin" layoutX="24.0" layoutY="329.0" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css" text="Label">
+                                       <font>
+                                          <Font name="System Bold" size="11.0" />
+                                       </font>
+                                    </Label>
 											</children>
 											<BorderPane.margin>
 												<Insets />

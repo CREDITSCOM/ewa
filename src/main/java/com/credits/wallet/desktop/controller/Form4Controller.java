@@ -24,7 +24,9 @@ public class Form4Controller extends Controller implements Initializable {
     }
 
     @FXML
-    private void handleContinue() { App.showForm("/fxml/form5.fxml", "Wallet"); }
+    private void handleContinue() {
+        App.showForm("/fxml/form5.fxml", "Wallet");
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
