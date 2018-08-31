@@ -169,7 +169,6 @@ public class SmartContractDeployController extends Controller implements Initial
             SmartContractInvocationData smartContractInvocationData =
                     new SmartContractInvocationData(javaCode, byteCode, hashState, "", new ArrayList<String>(), true);
 
-            long transactionInnerId = ApiUtils.generateTransactionInnerId();
             String transactionTarget = generatePublicKeyBase58();
             LOGGER.info("transactionTarget = {}", transactionTarget);
 
@@ -191,12 +190,11 @@ public class SmartContractDeployController extends Controller implements Initial
             LOGGER.debug("SmartContractData structure vvvvv");
 
             byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractInvocationData);
-            TransactionStruct tStruct = new TransactionStruct(transactionInnerId, AppState.account, transactionTarget,
-                    new BigDecimal(0), new BigDecimal(0), (byte)1, scBytes);
+            TransactionStruct tStruct = new TransactionStruct(AppState.account, transactionTarget, new BigDecimal(0), scBytes);
             ByteBuffer signature=Utils.signTransactionStruct(tStruct);
 
             ApiResponseData apiResponseData =
-                    AppState.apiClient.deploySmartContract(transactionInnerId,
+                    AppState.apiClient.deploySmartContract(
                             Converter.decodeFromBASE58(AppState.account), Converter.decodeFromBASE58(transactionTarget), smartContractInvocationData,
                             signature.array());
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {

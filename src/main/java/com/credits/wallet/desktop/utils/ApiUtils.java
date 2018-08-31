@@ -23,8 +23,7 @@ public class ApiUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
-    public static void callTransactionFlow(long innerId, String source, String target, BigDecimal amount,
-        BigDecimal balance, byte currency, BigDecimal fee) throws LevelDbClientException,
+    public static void callTransactionFlow(String source, String target, BigDecimal amount, BigDecimal balance) throws LevelDbClientException,
             CreditsNodeException, CreditsCommonException {
 
         // Формировование параметров основной транзакции
@@ -38,24 +37,18 @@ public class ApiUtils {
         //currency=1;
         // -------
 
-        TransactionStruct tStruct = new TransactionStruct(innerId, source, target, amount, fee, currency, null);
+        TransactionStruct tStruct = new TransactionStruct(source, target, amount, null);
 
         ByteBuffer signature=Utils.signTransactionStruct(tStruct);
 
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(innerId, Converter.decodeFromBASE58(source), Converter.decodeFromBASE58(target), amount, balance, currency,
-                    signature.array(), fee);
+            new TransactionFlowData(Converter.decodeFromBASE58(source), Converter.decodeFromBASE58(target), amount, balance, signature.array());
 
         AppState.apiClient.transactionFlow(
                 transactionFlowData,
                 false
         );
     }
-
-    //public static String generateTransactionInnerId() throws CreditsException {
-    //    byte[] hashBytes = Blake2S.generateHash(4); // 4 байта
-    //    return Converter.bytesToHex(hashBytes);
-    //}
 
     public static long generateTransactionInnerId() {
         return new Date().getTime();

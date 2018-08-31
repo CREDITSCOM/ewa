@@ -32,12 +32,9 @@ public class TransactionStructTest {
             // -125,-89,123,-73,116,78,22,103,79,80,47,-61,-37,-115,106,68,93,-45,-102,93,21,-82,112,-116,-2,54,-87,53,-67,65,101,-97,79,-34,-54,-45,-65,77,11,-43,38,25,97,-93,-79,-38,39,60,89,-69,-1,52,-68,-28,-84,-92,-85,69,-113,33,-100,-109,-39,13,
 //             -125,-89,123,-73,116,78,22,103,79,80,47,-61,-37,-115,106,68,93,-45,-102,93,21,-82,112,-116,-2,54,-87,53,-67,65,101,-97,79,-34,-54,-45,-65,77,11,-43,38,25,97,-93,-79,-38,39,60,89,-69,-1,52,-68,-28,-84,-92,-85,69,-113,33,-100,-109,-39,13,
             TransactionStruct transactionStruct = new TransactionStruct(
-                    1532529576028L,
                     "5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe",
                     "B3EBaHgRU7sd353axMRrZfoL9aL2XjA3oXejDdPrMnHR",
                     new BigDecimal("10.0"),
-                    new BigDecimal("0.1"),
-                    currencyByte,
                     null
             );
 
@@ -84,12 +81,9 @@ public class TransactionStructTest {
             byte currencyByte = 1;
 
             TransactionStruct transactionStruct = new TransactionStruct(
-                    1532529576028L,
                     "5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe",
                     "B3EBaHgRU7sd353axMRrZfoL9aL2XjA3oXejDdPrMnHR",
                     new BigDecimal("10.0"),
-                    new BigDecimal("0.1"),
-                    currencyByte,
                     null
             );
 
@@ -119,12 +113,9 @@ public class TransactionStructTest {
             byte[] smartContractBytes = ApiClientUtils.serializeByThrift(smartContractData);
 
             TransactionStruct transactionStruct = new TransactionStruct(
-                    1533280630882L,
                     "8J7oZawJadpRFoMpQb42ffV3HN5zxtLjUJfNN8jpxUgp",
                     "6RNiVco3yb6jsQPaJ7GzjjRFc9aH1Rnyp21HTAh64FRn",
                     new BigDecimal(0),
-                    new BigDecimal(0),
-                    currencyByte,
                     smartContractBytes
             );
 

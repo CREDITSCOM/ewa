@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop;
 
 import com.credits.leveldb.client.ApiClient;
-import com.credits.wallet.desktop.controller.Const;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 
 import java.math.BigDecimal;
@@ -27,11 +26,8 @@ public class AppState {
     public static String account;
 
     public static BigDecimal amount = BigDecimal.ZERO;
-    public static BigDecimal transactionFeeValue = Const.FEE_TRAN_AMOUNT;
-    public static BigDecimal transactionFeePercent = BigDecimal.ZERO;
     public static String toAddress;
     public static String coin;
-    public static long innerId;
 
     public static TransactionTabRow selectedTransactionRow;
 

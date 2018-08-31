@@ -12,7 +12,6 @@ import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
-import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.Utils;
@@ -210,7 +209,6 @@ public class SmartContractController extends Controller implements Initializable
                 varParams.add(var);
             }
 
-            long transactionInnerId = ApiUtils.generateTransactionInnerId();
             SmartContractData smartContractData = this.currentSmartContract;
 
             SmartContractInvocationData smartContractInvocationData =
@@ -218,13 +216,11 @@ public class SmartContractController extends Controller implements Initializable
                             smartContractData.getHashState(), method, params, true);
 
             byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractData);
-            TransactionStruct tStruct = new TransactionStruct(transactionInnerId, AppState.account,
-                    new String(this.currentSmartContract.getAddress()),
-                    new BigDecimal(0), new BigDecimal(0), (byte)1, scBytes);
+            TransactionStruct tStruct = new TransactionStruct(AppState.account, new String(this.currentSmartContract.getAddress()),
+                    new BigDecimal(0), scBytes);
             ByteBuffer signature=Utils.signTransactionStruct(tStruct);
 
             ApiResponseData apiResponseData = AppState.apiClient.executeSmartContract(
-                    transactionInnerId,
                     Converter.decodeFromBASE58(AppState.account),
                     this.currentSmartContract.getAddress(),
                     smartContractInvocationData,
