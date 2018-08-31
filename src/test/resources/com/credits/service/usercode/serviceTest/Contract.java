@@ -24,4 +24,8 @@ public class Contract extends SmartContract {
         System.out.println("total = " + total);
         return this.total;
     }
+
+    public String getInitiatorAddress(){
+        return initiator;
+    }
 }

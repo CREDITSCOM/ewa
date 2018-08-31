@@ -1,22 +1,18 @@
 package com.credits.service.contract;
 
 import com.credits.classload.ByteArrayContractClassLoader;
+import com.credits.common.utils.Base58;
 import com.credits.exception.ContractExecutorException;
-import com.credits.exception.UnsupportedTypeException;
 import com.credits.leveldb.client.ApiClient;
-import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.leveldb.client.exception.CreditsNodeException;
-import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.thrift.SmartContract;
 import com.credits.secure.Sandbox;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
-import com.credits.service.contract.validator.ByteCodeValidator;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.thrift.DeployReturnValue;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.generated.Variant;
 import com.credits.thrift.utils.ContractUtils;
-import com.credits.thrift.utils.VariantMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -73,9 +69,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue execute(String address, byte[] bytecode, byte[] contractState, String methodName, String[] params)
-        throws ContractExecutorException {
+    public ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] contractState, String methodName, String[] params)
+            throws ContractExecutorException {
 
+        String initiator = Base58.encode(initiatorAddress);
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
 
         Class<?> clazz = classLoader.buildClass(bytecode);
@@ -91,10 +88,17 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 //            }
             instance = deserialize(contractState, classLoader);
         } else {
-            DeployReturnValue deployReturnValue = ContractUtils.deployAndGetContractVariables(clazz, address);
+            DeployReturnValue deployReturnValue = ContractUtils.deployAndGetContractVariables(clazz, initiator);
             return new ReturnValue(deployReturnValue.getContractState(), null, deployReturnValue.getContractVariables());
         }
 
+        try {
+            Field initiatorField = clazz.getField("initiator");
+            initiatorField.setAccessible(true);
+            initiatorField.set(instance, initiator);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            logger.error("Cannot initialize \"initiator\" field. Reason:" + e.getMessage());
+        }
         List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
             if (params == null || params.length == 0) {
                 return method.getName().equals(methodName) && method.getParameterCount() == 0;
@@ -106,8 +110,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Method targetMethod = null;
         Object[] argValues = null;
         if (methods.isEmpty()) {
-            throw new ContractExecutorException("Cannot execute the contract: " + address +
-                ". Reason: Cannot find a method by name and parameters specified");
+            throw new ContractExecutorException("Cannot execute the contract: " + initiator +
+                    ". Reason: Cannot find a method by name and parameters specified");
         } else {
             for (Method method : methods) {
                 try {
@@ -119,7 +123,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     continue;
                 } catch (ContractExecutorException e) {
                     throw new ContractExecutorException(
-                        "Cannot execute the contract: " + address + "Reason: " + getRootCauseMessage(e), e);
+                            "Cannot execute the contract: " + initiator + "Reason: " + getRootCauseMessage(e), e);
                 }
                 targetMethod = method;
                 break;
@@ -127,8 +131,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         if (targetMethod == null) {
-            throw new ContractExecutorException("Cannot execute the contract: " + address +
-                ". Reason: Cannot cast parameters to the method found by name: " + methodName);
+            throw new ContractExecutorException("Cannot execute the contract: " + initiator +
+                    ". Reason: Cannot cast parameters to the method found by name: " + methodName);
         }
 
         //Invoking target method
@@ -139,7 +143,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             returnObject = targetMethod.invoke(instance, argValues);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new ContractExecutorException(
-                "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
+                    "Cannot execute the contract: " + initiator + ". Reason: " + getRootCauseMessage(e));
         }
 
         Variant returnValue = null;
@@ -149,7 +153,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         Map<String, Variant> contractVariables = ContractUtils.getContractVariables(instance);
 
-        return new ReturnValue(serialize(address, instance), returnValue, contractVariables);
+        return new ReturnValue(serialize(initiator, instance), returnValue, contractVariables);
     }
 
     private Permissions createPermissions() {
@@ -203,7 +207,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 retVal[i] = recognizer.castValue(componentType);
             } catch (ContractExecutorException e) {
                 throw new ContractExecutorException(
-                    "Failed when casting the parameter given with the number: " + (i + 1), e);
+                        "Failed when casting the parameter given with the number: " + (i + 1), e);
             }
             i++;
         }

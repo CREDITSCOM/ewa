@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = {App.class})
 public abstract class ServiceTest {
 
-    protected final String address = "1a2b3c";
+    protected final byte[] address = "1a2b3c".getBytes();
 
     @Value("${api.server.host}")
     protected String apiServerHost;
@@ -55,7 +55,7 @@ public abstract class ServiceTest {
         String sourceCode = readSourceCode(sourceCodePath);
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
         when(mockClient.getSmartContract(address)).thenReturn(
-            new SmartContractData(address,sourceCode, bytecode, null, encrypt(bytecode),"", new ArrayList<>()));
+            new SmartContractData(address, address,sourceCode, bytecode, null));
         return bytecode;
     }
 

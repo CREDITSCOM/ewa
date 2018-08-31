@@ -16,7 +16,7 @@ public interface ContractExecutorService {
      * Executes a method by specified address, method name and parameters.
      * It performs a default constructor to instantiate a class if necessary.
      *
-     * @param address    A contract address
+     * @param initiatorAddress    address of node that execute this method
      * @param methodName A name of a method
      * @param params     Parameters of a method
      * @throws ContractExecutorException
@@ -24,5 +24,5 @@ public interface ContractExecutorService {
 //    void execute(String address, String methodName, String[] params) throws ContractExecutorException;
 
 
-    ReturnValue execute(String address, byte[] bytecode, byte[] contractState, String methodName, String[] params) throws ContractExecutorException;
+    ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] contractState, String methodName, String[] params) throws ContractExecutorException;
 }

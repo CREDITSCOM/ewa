@@ -1,20 +1,13 @@
-import com.credits.common.utils.Converter;
-import com.credits.crypto.Blake2S;
-import com.credits.crypto.Ed25519;
-import com.credits.exception.ContractExecutorException;
+import com.credits.common.exception.CreditsCommonException;
 import com.credits.leveldb.client.data.PoolData;
 import com.credits.leveldb.client.data.TransactionData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
-import com.credits.serialise.Serializer;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 
-import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.nio.ByteBuffer;
-import java.security.PrivateKey;
 import java.time.Instant;
 import java.util.List;
 
@@ -23,6 +16,8 @@ public abstract class SmartContract implements Serializable {
     protected static LevelDbInteractionService service;
 
     protected double total = 0;
+
+    public transient String initiator;
 
     private String specialProperty;
 
@@ -33,7 +28,7 @@ public abstract class SmartContract implements Serializable {
         byte currencyByte = (byte) 1;
         try {
             return service.getBalance(address, currencyByte);
-        } catch (LevelDbClientException | CreditsNodeException e) {
+        } catch (LevelDbClientException | CreditsNodeException | CreditsCommonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -49,7 +44,7 @@ public abstract class SmartContract implements Serializable {
     final protected List<TransactionData> getTransactions(String address, long offset, long limit) {
         try {
             return service.getTransactions(address, offset, limit);
-        } catch (LevelDbClientException | CreditsNodeException e) {
+        } catch (LevelDbClientException | CreditsNodeException | CreditsCommonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -84,13 +79,13 @@ public abstract class SmartContract implements Serializable {
 
             BigDecimal decFee = new BigDecimal(String.valueOf(fee));
 
-            ByteBuffer byteBuffer = ByteBuffer.allocate(0);
+            byte[] signature = new byte[0];
             String signatureBASE58 = "";
 //                Ed25519.generateSignOfTransaction(innerId, source, target, decAmount, balance, currency, privateKey);
 
             Instant instant = Instant.now();
-            service.transactionFlow(instant.toEpochMilli(), source, target, decAmount, balance, currencyByte, byteBuffer, decFee);
-        } catch (LevelDbClientException | CreditsNodeException e) {
+            service.transactionFlow(instant.toEpochMilli(), source, target, decAmount, balance, currencyByte, signature, decFee);
+        } catch (LevelDbClientException | CreditsNodeException | CreditsCommonException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }

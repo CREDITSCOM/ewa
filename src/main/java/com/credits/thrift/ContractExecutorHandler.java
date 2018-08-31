@@ -1,5 +1,6 @@
 package com.credits.thrift;
 
+import com.credits.common.utils.Base58;
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.thrift.generated.APIResponse;
@@ -25,7 +26,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     private ContractExecutorService service;
 
     @Override
-    public APIResponse executeByteCode(String address, ByteBuffer byteCode, ByteBuffer contractState, String method,
+    public APIResponse executeByteCode(ByteBuffer address, ByteBuffer byteCode, ByteBuffer contractState, String method,
                                        List<String> params) {
         String[] paramsArray = params == null ? null : params.toArray(new String[0]);
 
@@ -35,7 +36,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
         APIResponse response = new APIResponse((byte) 0, "", contractState);
         try {
-            ReturnValue returnValue = service.execute(address, byteCode.array(), contractState.array(), method, paramsArray);
+            ReturnValue returnValue = service.execute(address.array(), byteCode.array(), contractState.array(), method, paramsArray);
             response.contractState = ByteBuffer.wrap(returnValue.getContractState());
             response.ret_val = returnValue.getVariant();
             response.contractVariables = returnValue.getContractVariables();
