@@ -5,7 +5,9 @@ import java.security.AccessControlException;
 import java.security.Permission;
 import java.security.Permissions;
 import java.security.ProtectionDomain;
+import java.util.Collections;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -49,7 +51,7 @@ public final class Sandbox {
     private Sandbox() {
     }
 
-    private static final Map<Class<?>, AccessControlContext> CHECKED_CLASSES = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, AccessControlContext> CHECKED_CLASSES = Collections.synchronizedMap(new WeakHashMap<>());
 
     static {
 
