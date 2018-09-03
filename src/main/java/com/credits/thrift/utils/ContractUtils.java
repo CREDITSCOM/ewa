@@ -5,7 +5,9 @@ import com.credits.exception.UnsupportedTypeException;
 import com.credits.thrift.DeployReturnValue;
 import com.credits.thrift.generated.Variant;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +50,16 @@ public class ContractUtils {
     }
 
     public static DeployReturnValue deployAndGetContractVariables(Class<?> clazz, String address) throws ContractExecutorException {
+        try {
+            Constructor constructor = clazz.getConstructor(String.class);
+            Object instance = constructor.newInstance(address);
+            return new DeployReturnValue(serialize(address, instance),ContractUtils.getContractVariables(instance));
+        } catch (IllegalAccessException | NoSuchMethodException ignored) {
+        } catch (InstantiationException | InvocationTargetException e) {
+            throw new ContractExecutorException(
+                    "Cannot create new instance of the contract. Reason: " + getRootCauseMessage(e), e);
+        }
+
         try {
             Object instance = clazz.newInstance();
             return new DeployReturnValue(serialize(address, instance), ContractUtils.getContractVariables(instance));
