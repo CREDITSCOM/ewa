@@ -59,7 +59,7 @@
 																<Font name="System Bold" size="11.0" />
 															</font>
 														</Label>
-														<Label fx:id="transactionFeeValue" layoutX="29.0" layoutY="503.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0.1">
+														<Label fx:id="transactionFeeValue" layoutX="29.0" layoutY="503.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
 															<font>
 																<Font name="System Bold" size="11.0" />
 															</font>

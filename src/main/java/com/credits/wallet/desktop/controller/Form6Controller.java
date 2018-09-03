@@ -7,6 +7,7 @@ import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.CommonCurrency;
+import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
 import javafx.fxml.FXML;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -59,11 +61,20 @@ public class Form6Controller extends Controller implements Initializable {
     @FXML
     private TextField numFee;
 
+    private void refreshTransactionFeePercent(BigDecimal transactionFeeValue, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            AppState.transactionFeePercent = BigDecimal.ZERO;
+        } else {
+            AppState.transactionFeePercent = (transactionFeeValue.multiply(new BigDecimal("100"))).divide(amount, 18, RoundingMode.HALF_UP);
+        }
+    }
+
     @FXML
     private void handleGenerate() throws CreditsException {
 
         AppState.amount = Converter.toBigDecimal(numAmount.getText());
         AppState.toAddress = txKey.getText();
+        AppState.innerId = ApiUtils.generateTransactionInnerId();
 
         // VALIDATE
         boolean isValidationSuccessful = true;
@@ -139,6 +150,22 @@ public class Form6Controller extends Controller implements Initializable {
             FormUtils.displayBalance(AppState.coin, labCredit);
         });
 
+        this.numAmount.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                refreshTransactionFeePercent(Converter.toBigDecimal(this.numFee.getText()), Converter.toBigDecimal(newValue));
+            } catch (CreditsException e) {
+                LOGGER.error(e.getMessage());
+            }
+        });
+
+        this.numFee.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                refreshTransactionFeePercent(Converter.toBigDecimal(newValue), Converter.toBigDecimal(this.numAmount.getText()));
+            } catch (CreditsException e) {
+                LOGGER.error(e.getMessage());
+            }
+        });
+
         this.numAmount.setOnKeyReleased(event -> {
             NumberUtils.correctNum(event.getText(), this.numAmount);
         });
@@ -151,7 +178,7 @@ public class Form6Controller extends Controller implements Initializable {
             cbCoin.getSelectionModel().select(AppState.coin);
             txKey.setText(AppState.toAddress);
             numAmount.setText(Converter.toString(AppState.amount));
-            numFee.setText(Converter.toString(Const.FEE_TRAN_AMOUNT));
+            numFee.setText(Converter.toString(AppState.transactionFeeValue));
 
             AppState.noClearForm6 = false;
         } else {
