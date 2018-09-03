@@ -4,7 +4,6 @@ import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.common.utils.Base58;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.ApiClient;
-import com.credits.leveldb.client.thrift.SmartContract;
 import com.credits.secure.Sandbox;
 import com.credits.service.contract.method.MethodParamValueRecognizer;
 import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
@@ -92,13 +91,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             return new ReturnValue(deployReturnValue.getContractState(), null, deployReturnValue.getContractVariables());
         }
 
-        try {
-            Field initiatorField = clazz.getField("initiator");
-            initiatorField.setAccessible(true);
-            initiatorField.set(instance, initiator);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Cannot initialize \"initiator\" field. Reason:" + e.getMessage());
-        }
+        initializeInitiator(initiator, clazz, instance);
+
         List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
             if (params == null || params.length == 0) {
                 return method.getName().equals(methodName) && method.getParameterCount() == 0;
@@ -154,6 +148,16 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Map<String, Variant> contractVariables = ContractUtils.getContractVariables(instance);
 
         return new ReturnValue(serialize(initiator, instance), returnValue, contractVariables);
+    }
+
+    private void initializeInitiator(String initiator, Class<?> clazz, Object instance) {
+        try {
+            Field initiatorField = clazz.getField("initiator");
+            initiatorField.setAccessible(true);
+            initiatorField.set(instance, initiator);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            logger.error("Cannot initialize \"initiator\" field. Reason:" + e.getMessage());
+        }
     }
 
     private Permissions createPermissions() {

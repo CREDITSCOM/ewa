@@ -17,7 +17,7 @@ public abstract class SmartContract implements Serializable {
 
     protected double total = 0;
 
-    public transient String initiator;
+    public transient String initiator = "";
 
     private String specialProperty;
 
