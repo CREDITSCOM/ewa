@@ -16,7 +16,11 @@ public class TransactionController extends Controller implements Initializable {
     private static final String ERR_GETTING_TRANSACTION = "Error getting transaction details";
 
     @FXML
+    private Label labInnerId;
+    @FXML
     private Label labTarget;
+    @FXML
+    private Label labCurrency;
     @FXML
     private Label labAmount;
 
@@ -30,7 +34,10 @@ public class TransactionController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        labInnerId.setText(Long.toString(AppState.selectedTransactionRow.getInnerId()));
         labTarget.setText(AppState.selectedTransactionRow.getTarget());
+        //labCurrency.setText(AppState.selectedTransactionRow.getCurrency());
+        labCurrency.setText("CS");
         labAmount.setText(AppState.selectedTransactionRow.getAmount());
     }
 }

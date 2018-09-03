@@ -17,22 +17,34 @@ import java.nio.ByteOrder;
  * Created by goncharov-eg on 20.07.2018.
  */
 public class TransactionStruct implements Serializable {
+    private long id;
     private byte[] source;
     private byte[] target;
     private int amountInt;
     private long amountFrac;
+    private int feeInt;
+    private long feeFrac;
+    private byte currency;
     private int ufNum;
     private int scLen;
     private byte[] sc;
 
-    public TransactionStruct(String source, String target, BigDecimal amount, byte[] sc)
+    public TransactionStruct(long id, String source, String target, BigDecimal amount, BigDecimal fee, byte currency,
+                             byte[] sc)
             throws CreditsCommonException, LevelDbClientException {
+        this.id = id;
         this.source = Converter.decodeFromBASE58(source);
         this.target = Converter.decodeFromBASE58(target);
 
         Amount aAmount = LevelDbClientConverter.bigDecimalToAmount(amount);
         this.amountInt=aAmount.integral;
         this.amountFrac=aAmount.fraction;
+
+        Amount aFee = LevelDbClientConverter.bigDecimalToAmount(fee);
+        this.feeInt = aFee.integral;
+        this.feeFrac = aFee.fraction;
+
+        this.currency = currency;
 
         if (sc==null)
             ufNum=0;
@@ -48,10 +60,14 @@ public class TransactionStruct implements Serializable {
         try {
 
 
+            os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(id).array());
             os.write(source);
             os.write(target);
             os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(amountInt).array());
             os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(amountFrac).array());
+            os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(feeInt).array());
+            os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(feeFrac).array());
+            os.write(ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put(currency).array());
             os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(ufNum).array());
             if (sc!=null) {
                 os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(scLen).array());

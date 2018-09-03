@@ -44,7 +44,8 @@ public class Form7Controller extends Controller implements Initializable {
         try {
             //ApiUtils.callTransactionFlow(AppState.innerId, AppState.account, AppState.toAddress, AppState.amount,
             //    AppState.balance, AppState.coin, AppState.transactionFeeValue);
-            ApiUtils.callTransactionFlow(AppState.account, AppState.toAddress, AppState.amount, AppState.balance);
+            ApiUtils.callTransactionFlow(AppState.innerId, AppState.account, AppState.toAddress, AppState.amount,
+                AppState.balance, (byte)1, AppState.transactionFeeValue);
         } catch (LevelDbClientException e) {
             LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);
             FormUtils.showError(AppState.NODE_ERROR);
@@ -66,7 +67,6 @@ public class Form7Controller extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.toAddress.setText(AppState.toAddress);
         this.amountInCs.setText(Converter.toString(AppState.amount) + " " + AppState.coin);
-        transactionFeeValue.setText(Converter.toString(Const.FEE_TRAN_AMOUNT));
     }
 
 }

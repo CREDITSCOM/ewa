@@ -125,7 +125,10 @@ public class HistoryController extends Controller implements Initializable {
         transactionList.forEach(transactionData -> {
             TransactionTabRow tableRow = new TransactionTabRow();
             tableRow.setAmount(Converter.toString(transactionData.getAmount()));
+            tableRow.setCurrency(transactionData.getCurrency());
+            //tableRow.setTarget(transactionData.getTarget());
             tableRow.setTarget(new String(Converter.encodeToBASE58(transactionData.getTarget())));
+            tableRow.setInnerId(transactionData.getId());
             tabTransaction.getItems().add(tableRow);
         });
 
