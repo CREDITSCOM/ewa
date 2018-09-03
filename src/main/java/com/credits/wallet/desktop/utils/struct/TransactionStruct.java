@@ -17,7 +17,7 @@ import java.nio.ByteOrder;
  * Created by goncharov-eg on 20.07.2018.
  */
 public class TransactionStruct implements Serializable {
-    private long innerId;
+    private long id;
     private byte[] source;
     private byte[] target;
     private int amountInt;
@@ -29,10 +29,10 @@ public class TransactionStruct implements Serializable {
     private int scLen;
     private byte[] sc;
 
-    public TransactionStruct(long innerId, String source, String target, BigDecimal amount, BigDecimal fee, byte currency,
+    public TransactionStruct(long id, String source, String target, BigDecimal amount, BigDecimal fee, byte currency,
                              byte[] sc)
             throws CreditsCommonException, LevelDbClientException {
-        this.innerId = innerId;
+        this.id = id;
         this.source = Converter.decodeFromBASE58(source);
         this.target = Converter.decodeFromBASE58(target);
 
@@ -60,7 +60,7 @@ public class TransactionStruct implements Serializable {
         try {
 
 
-            os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(innerId).array());
+            os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(id).array());
             os.write(source);
             os.write(target);
             os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(amountInt).array());

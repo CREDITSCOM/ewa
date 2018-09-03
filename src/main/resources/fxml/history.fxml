@@ -34,7 +34,7 @@
 												<Label layoutX="94.0" layoutY="140.0" text="transactions on the page" />
 												<TableView fx:id="tabTransaction" layoutX="21.0" layoutY="175.0" prefHeight="236.0" prefWidth="925.0">
 													<columns>
-														<TableColumn prefWidth="153.0" text="InnerId" />
+														<TableColumn prefWidth="153.0" text="Id" />
 														<TableColumn prefWidth="153.0" text="Target" />
 														<TableColumn prefWidth="68.0" text="Currency" />
 														<TableColumn prefWidth="93.0" text="Amount" />

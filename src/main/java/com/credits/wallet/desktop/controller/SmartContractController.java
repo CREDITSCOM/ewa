@@ -210,7 +210,7 @@ public class SmartContractController extends Controller implements Initializable
                 varParams.add(var);
             }
 
-            long transactionInnerId = ApiUtils.generateTransactionInnerId();
+            long transactionId = ApiUtils.generateTransactionInnerId();
             SmartContractData smartContractData = this.currentSmartContract;
 
             SmartContractInvocationData smartContractInvocationData =
@@ -218,13 +218,13 @@ public class SmartContractController extends Controller implements Initializable
                             smartContractData.getHashState(), method, params, true);
 
             byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractData);
-            TransactionStruct tStruct = new TransactionStruct(transactionInnerId, AppState.account,
+            TransactionStruct tStruct = new TransactionStruct(transactionId, AppState.account,
                     Converter.encodeToBASE58(this.currentSmartContract.getAddress()),
                     new BigDecimal(0), new BigDecimal(0), (byte)1, scBytes);
             ByteBuffer signature=Utils.signTransactionStruct(tStruct);
 
             ApiResponseData apiResponseData = AppState.apiClient.executeSmartContract(
-                    transactionInnerId,
+                    transactionId,
                     Converter.decodeFromBASE58(AppState.account),
                     this.currentSmartContract.getAddress(),
                     smartContractInvocationData,
