@@ -76,7 +76,7 @@ public class ContractUtilsTest extends ServiceTest {
             ((Map)map.get("mapStringIntegerField").getFieldValue()).get(new Variant(Variant._Fields.V_STRING, "string key")));
 
         //Checks returning null if no public variables exist in the contract
-        Assert.assertNull(ContractUtils.getContractVariables(instanceWithoutVariables).get("initiator"));
+        Assert.assertEquals(new Variant(Variant._Fields.V_STRING,""),ContractUtils.getContractVariables(instanceWithoutVariables).get("initiator"));
     }
 
     private Object getInstance(String source) throws CompilationException, IllegalAccessException, InstantiationException {

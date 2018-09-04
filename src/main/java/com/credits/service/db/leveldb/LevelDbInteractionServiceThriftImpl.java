@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Random;
 
 @Component
 public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionService {
@@ -36,7 +37,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
 
     @Override
     public BigDecimal getBalance(String address, byte currency) throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
-        return client.getBalance(Base58.decode(address));
+        return client.getBalance(Base58.decode(address), currency);
     }
 
     @Override
@@ -70,7 +71,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
                                 byte[] signature,
                                 BigDecimal fee) throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(Base58.decode(source), Base58.decode(target), amount, balance, signature);
+            new TransactionFlowData(new Random().nextLong(), Base58.decode(source), Base58.decode(target), amount, balance, currency, signature, fee);
         client.transactionFlow(transactionFlowData, true);
     }
 }
