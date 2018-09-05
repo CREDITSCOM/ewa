@@ -158,6 +158,7 @@ public class SmartContractController extends Controller implements Initializable
 
         this.tvContracts.setRoot(rootItem);
         this.codeArea.setEditable(false);
+        this.codeArea.copy();
     }
 
     @FXML
