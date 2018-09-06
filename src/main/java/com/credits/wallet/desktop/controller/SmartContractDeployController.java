@@ -200,7 +200,7 @@ public class SmartContractDeployController extends Controller implements Initial
                             Converter.decodeFromBASE58(AppState.account), Converter.decodeFromBASE58(transactionTarget), smartContractInvocationData,
                             signature.array());
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
-                StringSelection selection = new StringSelection(token);
+                StringSelection selection = new StringSelection(transactionTarget);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);
                 Utils.showInfo(String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", transactionTarget));
