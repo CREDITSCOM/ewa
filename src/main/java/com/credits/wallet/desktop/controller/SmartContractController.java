@@ -157,7 +157,8 @@ public class SmartContractController extends Controller implements Initializable
         }
 
         this.tvContracts.setRoot(rootItem);
-        this.codeArea.setDisable(true);
+        this.codeArea.setEditable(false);
+        this.codeArea.copy();
     }
 
     @FXML
@@ -215,7 +216,7 @@ public class SmartContractController extends Controller implements Initializable
 
             SmartContractInvocationData smartContractInvocationData =
                     new SmartContractInvocationData(smartContractData.getSourceCode(), smartContractData.getByteCode(),
-                            smartContractData.getHashState(), method, params, true);
+                            smartContractData.getHashState(), method, params, false);
 
             byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractData);
             TransactionStruct tStruct = new TransactionStruct(transactionId, AppState.account,
