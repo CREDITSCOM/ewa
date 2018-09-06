@@ -215,10 +215,10 @@ public class SmartContractController extends Controller implements Initializable
             SmartContractData smartContractData = this.currentSmartContract;
 
             SmartContractInvocationData smartContractInvocationData =
-                    new SmartContractInvocationData(smartContractData.getSourceCode(), smartContractData.getByteCode(),
+                    new SmartContractInvocationData("", new byte[0],
                             smartContractData.getHashState(), method, params, false);
 
-            byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractData);
+            byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractInvocationData);
             TransactionStruct tStruct = new TransactionStruct(transactionId, AppState.account,
                     Converter.encodeToBASE58(this.currentSmartContract.getAddress()),
                     new BigDecimal(0), new BigDecimal(0), (byte)1, scBytes);
