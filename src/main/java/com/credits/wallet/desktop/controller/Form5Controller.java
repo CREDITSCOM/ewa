@@ -64,8 +64,7 @@ public class Form5Controller extends Controller implements Initializable {
     @FXML
     private void handleSaveKeys() throws WalletDesktopException {
         FileChooser fileChooser = new FileChooser();
-        //File defaultDirectory = new File(System.getProperty("user.dir"));
-        File defaultDirectory = new File(System.getProperty("user.home")+"/Downloads/");
+        File defaultDirectory = new File(System.getProperty("user.dir"));
         fileChooser.setInitialDirectory(defaultDirectory);
         File file = fileChooser.showSaveDialog(null);
 
@@ -89,7 +88,10 @@ public class Form5Controller extends Controller implements Initializable {
     private void handleUpload() {
         FileChooser fileChooser = new FileChooser();
         File defaultDirectory = new File(System.getProperty("user.dir"));
-        fileChooser.setInitialDirectory(defaultDirectory);
+        System.out.println("default directory - " + defaultDirectory);
+        if(defaultDirectory.exists()) {
+            fileChooser.setInitialDirectory(defaultDirectory);
+        }
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             String keyFileContent;
