@@ -49,13 +49,13 @@ public class SmartContractController extends Controller implements Initializable
     private Pane pControls;
 
     @FXML
-    private Label lAddress;
+    private TextField tfAddress;
 
     @FXML
     private ComboBox<MethodDeclaration> cbMethods;
 
     @FXML
-    private TextField txSearchAddress;
+    private TextField tfSearchAddress;
 
     @FXML
     private AnchorPane pCodePanel;
@@ -88,7 +88,7 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private void handleSearch() {
-        String address = txSearchAddress.getText();
+        String address = tfSearchAddress.getText();
         try {
             SmartContractData smartContractData = AppState.apiClient.getSmartContract(Converter.decodeFromBASE58(address));
             this.refreshFormState(smartContractData);
@@ -111,7 +111,7 @@ public class SmartContractController extends Controller implements Initializable
             this.spCodePanel.setVisible(true);
             this.currentSmartContract = smartContractData;
             String sourceCode = smartContractData.getSourceCode();
-            this.lAddress.setText(Converter.encodeToBASE58(smartContractData.getAddress()));
+            this.tfAddress.setText(Converter.encodeToBASE58(smartContractData.getAddress()));
             List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
             cbMethods.getItems().clear();
             methods.forEach(method -> {

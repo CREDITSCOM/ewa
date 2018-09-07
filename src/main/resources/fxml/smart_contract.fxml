@@ -43,17 +43,12 @@
                                                       <Font name="System Bold" size="11.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="lAddress" layoutX="75.0" layoutY="25.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="CSTwe85vXPQMe2j387bMfXIlnnbSxaTM">
+                                                <Label layoutX="75.0" layoutY="89.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Choose method">
                                                    <font>
                                                       <Font name="System Bold" size="11.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="75.0" layoutY="67.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Choose method">
-                                                   <font>
-                                                      <Font name="System Bold" size="11.0" />
-                                                   </font>
-                                                </Label>
-                                                <ComboBox fx:id="cbMethods" layoutX="75.0" layoutY="94.0" onAction="#cbMethodsOnAction" prefHeight="56.0" prefWidth="473.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" />
+                                                <ComboBox fx:id="cbMethods" layoutX="75.0" layoutY="116.0" onAction="#cbMethodsOnAction" prefHeight="56.0" prefWidth="473.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" />
                                                 <Button layoutX="75.0" layoutY="394.0" mnemonicParsing="false" onAction="#handleExecute" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="EXECUTE" textAlignment="CENTER" wrapText="true" />
                                                 <AnchorPane fx:id="pParams" layoutX="75.0" layoutY="167.0" prefHeight="212.0" prefWidth="485.0" visible="false">
                                                    <children>
@@ -69,13 +64,14 @@
                                                       </ScrollPane>
                                                    </children>
                                                 </AnchorPane>
+                                                <TextField fx:id="tfAddress" editable="false" layoutX="75.0" layoutY="23.0" prefHeight="56.0" prefWidth="473.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
                                              </children></Pane>
                                           <ScrollPane layoutX="24.0" layoutY="148.0" prefHeight="455.0" prefWidth="309.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000;">
                                              <content>
                                                 <TreeView fx:id="tvContracts" prefHeight="700.0" prefWidth="324.0" />
                                              </content>
                                           </ScrollPane>
-                                          <TextField fx:id="txSearchAddress" layoutX="21.0" layoutY="84.0" prefHeight="56.0" prefWidth="311.0" promptText="search contract" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
+                                          <TextField fx:id="tfSearchAddress" layoutX="21.0" layoutY="84.0" prefHeight="56.0" prefWidth="311.0" promptText="search contract" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
                                           <Button layoutX="347.0" layoutY="81.0" mnemonicParsing="false" onAction="#handleSearch" prefHeight="61.0" prefWidth="93.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SEARCH" textAlignment="CENTER" wrapText="true" />
                                           <Button layoutX="486.0" layoutY="81.0" mnemonicParsing="false" onAction="#handleCreate" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CREATE" textAlignment="CENTER" wrapText="true" />
                                           <ScrollPane fx:id="spCodePanel" layoutX="854.0" layoutY="74.0" prefHeight="595.0" prefWidth="512.0">
