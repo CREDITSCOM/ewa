@@ -11,6 +11,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.layout.StackPane?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController">
 	<children>
 		<BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -43,11 +44,11 @@
                                           <Button fx:id="checkButton" layoutX="210.0" layoutY="618.0" mnemonicParsing="false" onAction="#checkButtonAction" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CHECK" textAlignment="CENTER" wrapText="true" />
                                           <Button layoutX="401.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleDeploy" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DEPLOY" wrapText="true" />
                                           <Pane fx:id="paneCode" layoutX="278.0" layoutY="148.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="455.0" prefWidth="680.0" />
-                                          <ScrollPane layoutX="24.0" layoutY="148.0" prefHeight="455.0" prefWidth="234.0">
-                                             <content>
+                                          <StackPane layoutX="24.0" layoutY="148.0" prefHeight="455.0" prefWidth="234.0">
+                                             <children>
                                                 <TreeView fx:id="classTreeView" prefHeight="5000.0" prefWidth="5000.0" />
-                                             </content>
-                                          </ScrollPane>
+                                             </children>
+                                          </StackPane>
                                        </children>
                                     </Pane>
                                  </children>
