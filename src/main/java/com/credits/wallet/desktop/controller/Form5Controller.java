@@ -119,8 +119,8 @@ public class Form5Controller extends Controller implements Initializable {
 
         btnBack.setVisible(!AppState.newAccount);
         btnUpload.setVisible(!AppState.newAccount);
-        txPublic.setDisable(AppState.newAccount);
-        txKey.setDisable(AppState.newAccount);
+        txPublic.setEditable(!AppState.newAccount);
+        txKey.setEditable(!AppState.newAccount);
 
         if (AppState.newAccount) {
             txKey.setText(Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
