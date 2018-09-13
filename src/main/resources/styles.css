@@ -3,6 +3,32 @@
     src: url('fonts/Montserrat-SemiBold.otf');
 }
 
+.button {
+    -fx-font-veight: bold;
+    -fx-background-color: #f2f9fc;
+    -fx-background-radius: 22;
+    -fx-font-size: 16;
+    -fx-text-fill:black;
+    -fx-border-radius: 20;
+}
+.button:hover{
+    -fx-font-veight: bold;
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-font-size: 16;
+    -fx-text-fill:#2196f3;
+    -fx-border-radius: 20;
+}
+
+.button:pressed {
+    -fx-font-veight:bold;
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-text-fill:2196f3;
+    -fx-border-radius: 20;
+    -fx-rotate:1;
+}
+
 .keyword {
     -fx-fill: purple;
     -fx-font-weight: bold;
@@ -30,6 +56,11 @@
 	-fx-fill: cadetblue;
 }
 
+/** Size the combo-box drop down list. */
+.combo-box-popup > .list-view {
+    -fx-pref-width: 1000;
+}
+
 .paragraph-box:has-caret {
     -fx-background-color: #f2f9fc;
 }
@@ -46,7 +77,6 @@
     -fx-border-color: #000
 }
 
-/** Size the combo-box drop down list. */
-.combo-box-popup > .list-view {
-    -fx-pref-width: 1000;
+#cbMethods .combo-box-popup>.list-view {
+    -fx-pref-width: 473;
 }
