@@ -2,9 +2,7 @@ package com.credits.wallet.desktop.utils;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.*;
 
 import java.util.Map;
 
@@ -28,5 +26,4 @@ public class EclipseJdt {
         parser.setCompilerOptions(compilerOptions);
         return (CompilationUnit) parser.createAST(null);
     }
-
 }

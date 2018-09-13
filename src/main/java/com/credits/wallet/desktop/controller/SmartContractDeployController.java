@@ -167,7 +167,7 @@ public class SmartContractDeployController extends Controller implements Initial
             String hashState = ApiUtils.generateSmartContractHashState(byteCode);
 
             SmartContractInvocationData smartContractInvocationData =
-                    new SmartContractInvocationData(javaCode, byteCode, hashState, "", new ArrayList<String>(), false);
+                    new SmartContractInvocationData(javaCode, byteCode, hashState, "", new ArrayList<Object>(), false);
 
             long transactionInnerId = ApiUtils.generateTransactionInnerId();
             String transactionTarget = generatePublicKeyBase58();
