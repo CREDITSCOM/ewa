@@ -28,7 +28,7 @@
                             <center>
                                 <BorderPane minHeight="-Infinity" prefHeight="850.0" BorderPane.alignment="CENTER">
                                     <BorderPane.margin>
-                                        <Insets top="30.0" />
+                                        <Insets top="50.0" />
                                     </BorderPane.margin>
                                     <center>
                                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="820.0" prefWidth="1000.0" BorderPane.alignment="TOP_CENTER">
