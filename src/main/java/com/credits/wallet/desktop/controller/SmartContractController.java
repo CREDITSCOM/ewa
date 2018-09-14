@@ -62,7 +62,7 @@ public class SmartContractController extends Controller implements Initializable
     private StackPane pCodePanel;
 
     @FXML
-    private StackPane spCodePanel;
+    private ScrollPane spCodePanel;
 
     @FXML
     private TreeView<Label> tvContracts;
@@ -158,7 +158,6 @@ public class SmartContractController extends Controller implements Initializable
         }
 
         this.tvContracts.setRoot(rootItem);
-        this.codeArea.estimatedScrollXProperty();
         this.codeArea.setEditable(false);
         this.codeArea.copy();
     }
