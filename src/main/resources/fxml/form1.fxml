@@ -11,7 +11,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form1Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form1Controller">
     <children>
         <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <center>
@@ -42,7 +42,7 @@
                                                 <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
                                                 <Button layoutX="24.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
                                                 <Button layoutX="453.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE" textAlignment="CENTER" wrapText="true" />
-                                    <Button fx:id="btnShowPassword" layoutX="626.0" layoutY="181.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="199.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SHOW PASSWORD" textAlignment="CENTER" wrapText="true" />
+                                    <Button fx:id="btnShowPassword" layoutX="649.0" layoutY="182.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="199.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SHOW PASSWORD" textAlignment="CENTER" wrapText="true" />
                                             </children>
                                             <BorderPane.margin>
                                                 <Insets />
