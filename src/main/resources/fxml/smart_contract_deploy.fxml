@@ -43,9 +43,9 @@
                                           <Button layoutX="21.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
                                           <Button fx:id="checkButton" layoutX="210.0" layoutY="618.0" mnemonicParsing="false" onAction="#checkButtonAction" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CHECK" textAlignment="CENTER" wrapText="true" />
                                           <Button layoutX="401.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleDeploy" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DEPLOY" wrapText="true" />
-                                           <ScrollPane fx:id="spCodePanel" layoutX="752.0" layoutY="84.0" prefHeight="518.0" prefWidth="512.0">
+                                           <ScrollPane fx:id="scCodePanel" layoutX="375.0" layoutY="174.0" prefHeight="430.0" prefWidth="900.0">
                                                 <content>
-                                                    <Pane fx:id="paneCode" layoutX="399.0" layoutY="176.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="500.0" prefWidth="1500.0" />
+                                                    <Pane fx:id="paneCode" layoutX="375.0" layoutY="174.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="410.0" prefWidth="1500.0" />
                                                 </content>
                                            </ScrollPane>
                                           <StackPane layoutX="25.0" layoutY="150.0" prefHeight="455.0" prefWidth="300.0">

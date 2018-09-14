@@ -21,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -74,6 +75,9 @@ public class SmartContractDeployController extends Controller implements Initial
     private Pane paneCode;
 
     @FXML
+    private ScrollPane scCodePanel;
+
+    @FXML
     private TreeView<Label> classTreeView;
 
     @Override
@@ -118,15 +122,15 @@ public class SmartContractDeployController extends Controller implements Initial
         this.codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
 
         this.tabErrors = new TableView();
-        this.tabErrors.setPrefHeight(this.paneCode.getPrefHeight() * 0.3);
-        this.tabErrors.setPrefWidth(this.paneCode.getPrefWidth());
+        this.tabErrors.setPrefHeight(this.scCodePanel.getPrefHeight() * 0.3);
+        this.tabErrors.setPrefWidth(this.scCodePanel.getPrefWidth());
 
         TableColumn tabErrorsColLine = new TableColumn();
         tabErrorsColLine.setText("Line");
-        tabErrorsColLine.setPrefWidth(this.paneCode.getPrefWidth() * 0.1);
+        tabErrorsColLine.setPrefWidth(this.scCodePanel.getPrefWidth() * 0.1);
         TableColumn tabErrorsColText = new TableColumn();
         tabErrorsColText.setText("Error");
-        tabErrorsColText.setPrefWidth(this.paneCode.getPrefWidth() * 0.9);
+        tabErrorsColText.setPrefWidth(this.scCodePanel.getPrefWidth() * 0.9);
         this.tabErrors.getColumns().add(tabErrorsColLine);
         this.tabErrors.getColumns().add(tabErrorsColText);
 
