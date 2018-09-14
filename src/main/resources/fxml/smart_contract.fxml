@@ -10,11 +10,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.layout.StackPane?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
 	<children>
 		<BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<center>
@@ -32,54 +32,54 @@
                            <center>
                               <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1000.0" BorderPane.alignment="TOP_CENTER">
                                  <children>
-                                    <Pane layoutX="-185.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1400.0" style="-fx-background-color: #fff;">
+                                    <Pane layoutX="-185.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" style="-fx-background-color: #fff;">
                                        <children>
                                           <Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="Smart contract" />
                                           <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
                                           <Button layoutX="21.0" layoutY="618.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
-                                          <Pane fx:id="pControls" layoutX="278.0" layoutY="148.0" prefHeight="455.0" prefWidth="680.0">
+                                          <Pane fx:id="pControls" layoutX="331.0" layoutY="148.0" prefHeight="455.0" prefWidth="406.0">
                                              <children>
-                                                <Label layoutX="75.0" layoutY="-3.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Contract address">
+                                                <Label layoutX="16.0" layoutY="-3.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Contract address">
                                                    <font>
                                                       <Font name="System Bold" size="11.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="75.0" layoutY="89.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Choose method">
+                                                <Label layoutX="15.0" layoutY="86.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Choose method">
                                                    <font>
                                                       <Font name="System Bold" size="11.0" />
                                                    </font>
                                                 </Label>
-                                                <ComboBox fx:id="cbMethods" layoutX="75.0" layoutY="116.0" onAction="#cbMethodsOnAction" prefHeight="56.0" prefWidth="473.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" />
+                                                <ComboBox fx:id="cbMethods" layoutX="14.0" layoutY="116.0" onAction="#cbMethodsOnAction" prefHeight="56.0" prefWidth="391.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" />
                                                 <Button layoutX="75.0" layoutY="394.0" mnemonicParsing="false" onAction="#handleExecute" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="EXECUTE" textAlignment="CENTER" wrapText="true" />
-                                                <AnchorPane fx:id="pParams" layoutX="75.0" layoutY="167.0" prefHeight="212.0" prefWidth="485.0" visible="false">
+                                                <AnchorPane fx:id="pParams" layoutX="15.0" layoutY="167.0" prefHeight="212.0" prefWidth="391.0" visible="false">
                                                    <children>
                                                       <Label layoutX="2.0" layoutY="7.0" prefHeight="27.0" prefWidth="174.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Method parameters:">
                                                          <font>
                                                             <Font name="System Bold" size="11.0" />
                                                          </font>
                                                       </Label>
-                                                      <ScrollPane layoutY="34.0" prefHeight="178.0" prefWidth="480.0">
+                                                      <ScrollPane layoutY="34.0" prefHeight="178.0" prefWidth="391.0">
                                                         <content>
-                                                          <AnchorPane fx:id="pParamsContainer" minHeight="0.0" minWidth="0.0" prefHeight="1500.0" prefWidth="452.0" />
+                                                          <AnchorPane fx:id="pParamsContainer" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="300.0" />
                                                         </content>
                                                       </ScrollPane>
                                                    </children>
                                                 </AnchorPane>
-                                                <TextField fx:id="tfAddress" editable="false" layoutX="75.0" layoutY="23.0" prefHeight="56.0" prefWidth="473.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
+                                                <TextField fx:id="tfAddress" editable="false" layoutX="15.0" layoutY="24.0" prefHeight="56.0" prefWidth="390.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
                                              </children></Pane>
-                                          <StackPane layoutX="24.0" layoutY="148.0" prefHeight="455.0" prefWidth="309.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000;">
+                                          <StackPane layoutX="25.0" layoutY="148.0" prefHeight="455.0" prefWidth="300.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000;">
                                              <children>
                                                 <TreeView fx:id="tvContracts" prefHeight="700.0" prefWidth="324.0" />
                                              </children>
                                           </StackPane>
-                                          <TextField fx:id="tfSearchAddress" layoutX="21.0" layoutY="84.0" prefHeight="56.0" prefWidth="311.0" promptText="search contract" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
+                                          <TextField fx:id="tfSearchAddress" layoutX="25.0" layoutY="84.0" prefHeight="56.0" prefWidth="300.0" promptText="search contract" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
                                           <Button layoutX="347.0" layoutY="81.0" mnemonicParsing="false" onAction="#handleSearch" prefHeight="61.0" prefWidth="93.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SEARCH" textAlignment="CENTER" wrapText="true" />
                                           <Button layoutX="486.0" layoutY="81.0" mnemonicParsing="false" onAction="#handleCreate" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="CREATE" textAlignment="CENTER" wrapText="true" />
-                                          <ScrollPane fx:id="spCodePanel" layoutX="854.0" layoutY="74.0" prefHeight="595.0" prefWidth="512.0">
-                                            <content>
-                                              <AnchorPane fx:id="pCodePanel" minHeight="0.0" minWidth="0.0" prefHeight="5000.0" prefWidth="1700.0" />
-                                            </content>
-                                          </ScrollPane>
+                                          <StackPane fx:id="spCodePanel" layoutX="752.0" layoutY="84.0" prefHeight="518.0" prefWidth="512.0">
+                                           <children>
+                                               <StackPane fx:id="pCodePanel" minHeight="0.0" minWidth="0.0" prefHeight="518.0" prefWidth="937.0" />
+                                           </children>
+                                          </StackPane>
                                        </children>
                                     </Pane>
                                  </children>

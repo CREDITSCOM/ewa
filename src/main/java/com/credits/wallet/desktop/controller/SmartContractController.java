@@ -24,6 +24,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.fxmisc.richtext.CodeArea;
@@ -58,10 +59,10 @@ public class SmartContractController extends Controller implements Initializable
     private TextField tfSearchAddress;
 
     @FXML
-    private AnchorPane pCodePanel;
+    private StackPane pCodePanel;
 
     @FXML
-    private ScrollPane spCodePanel;
+    private StackPane spCodePanel;
 
     @FXML
     private TreeView<Label> tvContracts;
@@ -157,6 +158,7 @@ public class SmartContractController extends Controller implements Initializable
         }
 
         this.tvContracts.setRoot(rootItem);
+        this.codeArea.estimatedScrollXProperty();
         this.codeArea.setEditable(false);
         this.codeArea.copy();
     }
@@ -175,10 +177,10 @@ public class SmartContractController extends Controller implements Initializable
             double layoutY = 10;
             for (SingleVariableDeclaration param : params) {
                 TextField paramValueTextField = new TextField();
-                paramValueTextField.setLayoutX(250);
+                paramValueTextField.setLayoutX(150);
                 paramValueTextField.setLayoutY(layoutY);
                 paramValueTextField.setStyle("-fx-background-color:  #fff; -fx-border-width: 1; -fx-border-color:  #000; -fx-font-size: 16px");
-                paramValueTextField.setPrefSize(150, 56);
+                paramValueTextField.setPrefSize(225, 56);
                 Label paramNameLabel = new Label(param.toString());
                 paramNameLabel.setLayoutX(10);
                 paramNameLabel.setLayoutY(layoutY + 15);
@@ -187,6 +189,7 @@ public class SmartContractController extends Controller implements Initializable
                 this.pParamsContainer.getChildren().addAll(paramNameLabel, paramValueTextField);
                 layoutY += 70;
             }
+            this.pParamsContainer.setPrefHeight(layoutY);
         }
     }
 
