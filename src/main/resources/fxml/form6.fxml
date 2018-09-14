@@ -18,7 +18,7 @@
             <center>
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
-                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
+                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
                             <top>
                                 <fx:include source="header.fxml" />
                             </top>
