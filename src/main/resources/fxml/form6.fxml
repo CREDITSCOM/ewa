@@ -18,7 +18,7 @@
             <center>
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
-                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1130.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
+                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
                             <top>
                                 <fx:include source="header.fxml" />
                             </top>
@@ -26,15 +26,15 @@
                                 <fx:include source="footer.fxml" />
                             </bottom>
                             <center>
-                                <BorderPane minHeight="-Infinity" prefHeight="850.0" BorderPane.alignment="CENTER">
+                                <BorderPane minHeight="-Infinity" prefHeight="750.0" BorderPane.alignment="CENTER">
                                     <BorderPane.margin>
-                                        <Insets top="50.0" />
+                                        <Insets top="73.0" />
                                     </BorderPane.margin>
                                     <center>
-                                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="820.0" prefWidth="1000.0" BorderPane.alignment="TOP_CENTER">
+                                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1000.0" BorderPane.alignment="TOP_CENTER">
                                             <children>
                                                 <fx:include source="account.fxml" />
-                                                <Pane layoutX="279.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="665.0" style="-fx-background-color: #fff;">
+                                                <Pane layoutX="279.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="665.0" style="-fx-background-color: #fff;">
                                                     <children>
                                                         <ComboBox fx:id="cbCoin" layoutX="18.0" layoutY="179.0" prefHeight="56.0" prefWidth="300.0" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 16px;" />
                                                         <Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 32px;" styleClass="text" stylesheets="@../styles.css" text="6. Make a payment">
