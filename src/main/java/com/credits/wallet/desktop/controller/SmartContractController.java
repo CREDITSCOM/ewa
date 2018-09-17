@@ -8,7 +8,6 @@ import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.data.SmartContractInvocationData;
 import com.credits.leveldb.client.util.ApiClientUtils;
-import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
@@ -76,6 +75,8 @@ public class SmartContractController extends Controller implements Initializable
     private CodeArea codeArea;
 
     private SmartContractData currentSmartContract;
+
+    private MethodDeclaration currentMethod;
 
     @FXML
     private void handleBack() {
@@ -165,11 +166,11 @@ public class SmartContractController extends Controller implements Initializable
     @FXML
     private void cbMethodsOnAction() {
         this.pParams.setVisible(false);
-        MethodDeclaration selectedMethod = this.cbMethods.getSelectionModel().getSelectedItem();
-        if (selectedMethod == null) {
+        this.currentMethod = this.cbMethods.getSelectionModel().getSelectedItem();
+        if (this.currentMethod == null) {
             return;
         }
-        List<SingleVariableDeclaration> params = SourceCodeUtils.getMethodParameters(selectedMethod);
+        List<SingleVariableDeclaration> params = SourceCodeUtils.getMethodParameters(this.currentMethod);
         this.pParamsContainer.getChildren().clear();
         if (params.size() > 0) {
             this.pParams.setVisible(true);
@@ -197,21 +198,32 @@ public class SmartContractController extends Controller implements Initializable
         try {
             String method = cbMethods.getSelectionModel().getSelectedItem().getName().getIdentifier();
             List<String> params = new ArrayList<>();
+            List<SingleVariableDeclaration> currentMethodParams = SourceCodeUtils.getMethodParameters(this.currentMethod);
             ObservableList<Node> paramsContainerChildren = this.pParamsContainer.getChildren();
-            paramsContainerChildren.forEach(node -> {
+
+            int i = 0;
+            for(Node node: paramsContainerChildren) {
                 if (node instanceof TextField) {
+                    SingleVariableDeclaration variableDeclaration = currentMethodParams.get(i);
+                    String className = SourceCodeUtils.parseClassName(variableDeclaration);
                     String paramValue = ((TextField)node).getText();
-                    params.add(paramValue);
+                    String paramValueProcessed = SourceCodeUtils.processSmartContractMethodParameterValue(className, paramValue);
+
+                    params.add(paramValueProcessed);
+
+                    ++i;
                 }
-            });
+            }
 
             // 2DO Select param type
+            /*
             List<Variant> varParams = new ArrayList<>();
             for (String p : params) {
                 Variant var = new Variant();
                 var.setV_string(p);
                 varParams.add(var);
             }
+            */
 
             long transactionId = ApiUtils.generateTransactionInnerId();
             SmartContractData smartContractData = this.currentSmartContract;
