@@ -74,7 +74,6 @@ public class Form6Controller extends Controller implements Initializable {
 
         AppState.amount = Converter.toBigDecimal(numAmount.getText());
         AppState.toAddress = txKey.getText();
-        AppState.innerId = ApiUtils.generateTransactionInnerId();
 
         // VALIDATE
         boolean isValidationSuccessful = true;

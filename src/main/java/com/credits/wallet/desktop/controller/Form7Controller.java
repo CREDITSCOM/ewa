@@ -44,7 +44,7 @@ public class Form7Controller extends Controller implements Initializable {
         try {
             //ApiUtils.callTransactionFlow(AppState.innerId, AppState.account, AppState.toAddress, AppState.amount,
             //    AppState.balance, AppState.coin, AppState.transactionFeeValue);
-            ApiUtils.callTransactionFlow(AppState.innerId, AppState.account, AppState.toAddress, AppState.amount,
+            ApiUtils.callTransactionFlow(ApiUtils.generateTransactionInnerId(), AppState.account, AppState.toAddress, AppState.amount,
                 AppState.balance, (byte)1, AppState.transactionFeeValue);
         } catch (LevelDbClientException e) {
             LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);

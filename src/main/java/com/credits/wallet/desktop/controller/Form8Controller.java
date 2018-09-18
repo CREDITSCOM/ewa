@@ -66,7 +66,6 @@ public class Form8Controller extends Controller implements Initializable {
         //transactionTabRow.setCurrency(AppState.coin);
         transactionTabRow.setCurrency((byte)1);
         transactionTabRow.setAmount(Converter.toString(AppState.amount));
-        transactionTabRow.setInnerId(AppState.innerId);
         AppState.selectedTransactionRow = transactionTabRow;
         AppState.detailFromHistory=false;
         App.showForm("/fxml/transaction.fxml", "Wallet");
