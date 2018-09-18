@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Line?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.TransactionController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.TransactionController">
 	<children>
 		<BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<center>
@@ -31,10 +31,10 @@
 												<Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can see transaction details" textFill="#818181" />
 												<Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
 												<Button layoutX="24.0" layoutY="345.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
-												<GridPane layoutX="24.0" layoutY="126.0" prefHeight="168.0" prefWidth="599.0">
+												<GridPane layoutX="24.0" layoutY="140.0" prefHeight="154.0" prefWidth="693.0">
 													<columnConstraints>
-														<ColumnConstraints hgrow="SOMETIMES" maxWidth="278.0" minWidth="10.0" prefWidth="153.0" />
-														<ColumnConstraints hgrow="SOMETIMES" maxWidth="415.0" minWidth="10.0" prefWidth="415.0" />
+														<ColumnConstraints hgrow="SOMETIMES" maxWidth="278.0" minWidth="10.0" prefWidth="121.0" />
+														<ColumnConstraints hgrow="SOMETIMES" maxWidth="572.0" minWidth="10.0" prefWidth="572.0" />
 													</columnConstraints>
 													<rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -46,11 +46,11 @@
 														<Label text="Target" GridPane.rowIndex="1" />
 														<Label text="Currency" GridPane.rowIndex="2" />
 														<Label text="Amount" GridPane.rowIndex="3" />
-														<Label fx:id="labTarget" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-														<Label fx:id="labCurrency" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-														<Label fx:id="labAmount" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+														<Label fx:id="labTarget" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+														<Label fx:id="labCurrency" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+														<Label fx:id="labAmount" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                           <Label text="InnerId" />
-                                          <Label fx:id="labInnerId" text="Label" GridPane.columnIndex="1" />
+                                          <Label fx:id="labInnerId" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" />
 													</children>
 												</GridPane>
 											</children>

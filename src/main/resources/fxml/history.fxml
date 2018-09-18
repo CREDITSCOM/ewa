@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.HistoryController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.HistoryController">
 	<children>
 		<BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<center>
@@ -34,10 +34,10 @@
 												<Label layoutX="94.0" layoutY="140.0" text="transactions on the page" />
 												<TableView fx:id="tabTransaction" layoutX="21.0" layoutY="175.0" prefHeight="236.0" prefWidth="925.0">
 													<columns>
-														<TableColumn prefWidth="500.0" text="Id" />
-														<TableColumn prefWidth="153.0" text="Target" />
-														<TableColumn prefWidth="68.0" text="Currency" />
-														<TableColumn prefWidth="93.0" text="Amount" />
+														<TableColumn prefWidth="162.0" text="Id" />
+														<TableColumn prefWidth="406.0" text="Target" />
+														<TableColumn prefWidth="88.0" text="Currency" />
+														<TableColumn prefWidth="158.0" text="Amount" />
 													</columns>
 												</TableView>
 												<Label layoutX="263.0" layoutY="140.0" text="Page:" />

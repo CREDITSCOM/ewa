@@ -43,34 +43,34 @@
                                                                 <Font name="System Bold" size="11.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="30.0" layoutY="300.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Amount">
+                                                        <Label layoutX="30.0" layoutY="325.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Amount">
                                                             <font>
                                                                 <Font name="System Bold" size="11.0" />
                                                             </font>
                                                         </Label>
                                                         <Button fx:id="btnGenerate" layoutX="375.0" layoutY="600.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="60.0" prefWidth="250.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE TRANSACTION" textAlignment="CENTER" wrapText="true" />
-                                                        <Label fx:id="amountInCs" layoutX="30.0" layoutY="325.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
+                                                        <Label fx:id="amountInCs" layoutX="30.0" layoutY="350.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
                                                             <font>
                                                                 <Font name="System Bold" size="11.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="30.0" layoutY="400.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Transaction fee">
+                                                        <Label layoutX="30.0" layoutY="425.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Transaction fee">
                                                             <font>
                                                                 <Font name="System Bold" size="11.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label fx:id="transactionFeeValue" layoutX="30.0" layoutY="425.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
+                                                        <Label fx:id="transactionFeeValue" layoutX="30.0" layoutY="450.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="0">
                                                             <font>
                                                                 <Font name="System Bold" size="11.0" />
                                                             </font>
                                                         </Label>
                                                         <Button fx:id="btnBack" layoutX="50.0" layoutY="600.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="60.0" prefWidth="250.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
-                                                        <Label fx:id="toAddress" layoutX="150.0" layoutY="225.0" maxHeight="55.0" maxWidth="540.0" minWidth="0.0" prefHeight="20.0" prefWidth="540.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" wrapText="true">
+                                                        <Label fx:id="toAddress" layoutX="30.0" layoutY="250.0" maxHeight="55.0" maxWidth="540.0" minWidth="0.0" prefHeight="20.0" prefWidth="540.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" wrapText="true">
                                                             <font>
                                                                 <Font name="System Bold" size="11.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="30.0" layoutY="165.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Transaction details">
+                                                        <Label layoutX="30.0" layoutY="165.0" style="-fx-font-size: 20px;-fx-font-weight: bold;" styleClass="text" stylesheets="@../styles.css" text="Transaction details:">
                                                             <font>
                                                                 <Font name="System Bold" size="11.0" />
                                                             </font>

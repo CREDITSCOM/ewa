@@ -8,41 +8,42 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="589.0" maxWidth="260.0" minHeight="365.5" minWidth="232.0" prefHeight="484.0" prefWidth="342.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.AccountController">
-    <BorderPane.margin>
-        <Insets left="20.0" top="30.0" />
-    </BorderPane.margin>
-    <children>
-        <Label layoutX="25.0" layoutY="23.0" style="-fx-font-size: 32px;" styleClass="text" stylesheets="@../styles.css" text="Account">
-            <font>
-                <Font size="14.0" />
-            </font>
-        </Label>
-        <Line endX="-50.0" layoutX="125.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-        <Label layoutX="25.0" layoutY="88.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Wallet:" textFill="#818181">
-            <font>
-                <Font name="System Bold" size="12.0" />
-            </font>
-        </Label>
-        <Label fx:id="wallet" alignment="TOP_LEFT" layoutX="25.0" layoutY="119.0" maxHeight="55.0" maxWidth="240.0" minWidth="0.0" prefHeight="55.0" prefWidth="215.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="text" stylesheets="@../styles.css" wrapText="true">
-            <font>
-                <Font name="System Bold" size="11.0" />
-            </font>
-        </Label>
-        <Button id="refresh-balance-button" layoutX="25.0" layoutY="220.0" minHeight="16.0" minWidth="16.0" mnemonicParsing="false" onAction="#handleRefreshBalance" prefHeight="16.0" prefWidth="16.0" />
-        <Label layoutX="45.0" layoutY="220.0" style="-fx-font-size: 16;" styleClass="text" stylesheets="@../styles.css" text="Balance:">
-            <font>
-                <Font name="System Bold" size="11.0" />
-            </font>
-        </Label>
-        <Label fx:id="balance" layoutX="110.0" layoutY="220.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css">
-            <font>
-                <Font name="System Bold" size="11.0" />
-            </font>
-        </Label>
-        <Button layoutX="25.0" layoutY="257.0" mnemonicParsing="false" onAction="#handleDetails" prefHeight="63.0" prefWidth="210.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="TRANSACTION HISTORY" />
-        <Button layoutX="25.0" layoutY="332.0" mnemonicParsing="false" onAction="#handleSmartContract" prefHeight="63.0" prefWidth="210.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SMART CONTRACT" />
-        <Button layoutX="25.0" layoutY="407.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="63.0" prefWidth="210.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="LOGOUT" />
-        <Button layoutX="25.0" layoutY="167.0" mnemonicParsing="false" onAction="#handleCopy" prefHeight="41.0" prefWidth="80.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="COPY" />
-    </children>
+<Pane maxHeight="589.0" maxWidth="260.0" minHeight="365.5" minWidth="232.0" prefHeight="589.0" prefWidth="260.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.AccountController">
+	<BorderPane.margin>
+		<Insets left="20.0" top="30.0" />
+	</BorderPane.margin>
+	<children>
+		<Label layoutX="14.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="Account">
+			<font>
+				<Font size="14.0" />
+			</font>
+		</Label>
+		<Line endX="-50.0" layoutX="116.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
+		<Label layoutX="14.0" layoutY="88.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Wallet:" textFill="#818181">
+			<font>
+				<Font name="System Bold" size="11.0" />
+			</font>
+		</Label>
+		<Label fx:id="wallet" alignment="TOP_LEFT" layoutX="14.0" layoutY="119.0" maxHeight="55.0" maxWidth="240.0" minWidth="0.0" prefHeight="55.0" prefWidth="240.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="text" stylesheets="@../styles.css" wrapText="true">
+			<font>
+				<Font name="System Bold" size="11.0" />
+			</font>
+		</Label>
+	        <Button id="refresh-balance-button" layoutX="17.0" layoutY="254.0" minHeight="16.0" minWidth="16.0" mnemonicParsing="false" onAction="#handleRefreshBalance" prefHeight="16.0" prefWidth="16.0" />
+		<Label layoutX="35.0" layoutY="248.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Balance:">
+			<font>
+				<Font name="System Bold" size="11.0" />
+			</font>
+		</Label>
+		<Label fx:id="balance" layoutX="17.0" layoutY="274.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css">
+			<font>
+				<Font name="System Bold" size="11.0" />
+			</font>
+		</Label>
+		<Label layoutX="14.0" layoutY="316.0" style="-fx-font-size: 18px;" styleClass="text" stylesheets="@../styles.css" text="Transaction history:" />
+		<Button layoutX="17.0" layoutY="347.0" mnemonicParsing="false" onAction="#handleDetails" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="DETAILS" />
+		<Button layoutX="17.0" layoutY="424.0" mnemonicParsing="false" onAction="#handleSmartContract" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SMART CONTRACT" />
+      <Button layoutX="17.0" layoutY="502.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="61.0" prefWidth="190.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="LOGOUT" />
+      <Button layoutX="14.0" layoutY="174.0" mnemonicParsing="false" onAction="#handleCopy" prefHeight="36.0" prefWidth="79.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="COPY" />
+	</children>
 </Pane>
