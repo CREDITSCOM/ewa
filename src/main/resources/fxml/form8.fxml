@@ -10,37 +10,36 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="748.0"
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0"
             prefWidth="1060.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.credits.wallet.desktop.controller.Form8Controller">
     <children>
-        <BorderPane prefHeight="764.0" prefWidth="1060.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                    AnchorPane.topAnchor="0.0">
             <center>
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
-                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1030.0" prefWidth="1060.0"
+                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1060.0"
                                     style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
                             <top>
                                 <fx:include source="header.fxml"/>
                             </top>
                             <center>
-                                <BorderPane minHeight="-Infinity" prefHeight="671.0" prefWidth="1060.0"
-                                            BorderPane.alignment="TOP_CENTER">
+                                <BorderPane minHeight="-Infinity" prefHeight="750.0" BorderPane.alignment="CENTER">
                                     <BorderPane.margin>
-                                        <Insets top="30.0"/>
+                                        <Insets top="77.0"/>
                                     </BorderPane.margin>
                                     <center>
                                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                                              minWidth="-Infinity" prefHeight="676.0" prefWidth="1000.0"
+                                              minWidth="-Infinity" prefHeight="720.0" prefWidth="1000.0"
                                               BorderPane.alignment="TOP_CENTER">
                                             <children>
                                                 <fx:include source="account.fxml"/>
                                                 <Pane layoutX="279.0" maxHeight="-Infinity" maxWidth="-Infinity"
-                                                      minHeight="-Infinity" minWidth="-Infinity" prefHeight="635.0"
-                                                      prefWidth="708.0" style="-fx-background-color: #fff;">
+                                                      minHeight="-Infinity" minWidth="-Infinity" prefHeight="673.0"
+                                                      prefWidth="665.0" style="-fx-background-color: #fff;">
                                                     <children>
-                                                        <Label layoutX="21.0" layoutY="23.0"
+                                                        <Label layoutX="30.0" layoutY="23.0"
                                                                style="-fx-font-size: 28px;" styleClass="text"
                                                                stylesheets="@../styles.css"
                                                                text="8. Your transaction send successfully">
@@ -48,21 +47,21 @@
                                                                 <Font size="14.0"/>
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="24.0" layoutY="88.0"
+                                                        <Label layoutX="30.0" layoutY="88.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
                                                                stylesheets="@../styles.css"
                                                                text="On this form you can open the wallet and make payments in the Credits platform"
                                                                textFill="#818181"/>
-                                                        <Line endX="-50.0" layoutX="126.0" layoutY="75.0"
+                                                        <Line endX="-50.0" layoutX="130.0" layoutY="75.0"
                                                               startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
-                                                        <Button fx:id="btnBack" layoutX="341.0" layoutY="519.0"
+                                                        <Button fx:id="btnBack" layoutX="375.0" layoutY="600.0"
                                                                 mnemonicParsing="false" onAction="#handleSeeOnMonitor"
-                                                                prefHeight="61.0" prefWidth="283.0"
+                                                                prefHeight="60.0" prefWidth="250.0"
                                                                 style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
                                                                 styleClass="text" stylesheets="@../styles.css"
                                                                 text="SEE ON CREDITS MONITOR" textAlignment="CENTER"
                                                                 wrapText="true"/>
-                                                        <Label fx:id="toAddress" layoutX="158.0" layoutY="226.0"
+                                                        <Label fx:id="toAddress" layoutX="150.0" layoutY="225.0"
                                                                prefHeight="25.0" prefWidth="495.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
                                                                stylesheets="@../styles.css">
@@ -70,13 +69,13 @@
                                                                 <Font name="System Bold" size="11.0"/>
                                                             </font>
                                                         </Label>
-                                                        <Button fx:id="btnOk" layoutX="42.0" layoutY="519.0"
+                                                        <Button fx:id="btnOk" layoutX="50.0" layoutY="600.0"
                                                                 mnemonicParsing="false" onAction="#handleOk"
-                                                                prefHeight="61.0" prefWidth="283.0"
+                                                                prefHeight="60.0" prefWidth="250.0"
                                                                 style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
                                                                 styleClass="text" stylesheets="@../styles.css" text="OK"
                                                                 textAlignment="CENTER" wrapText="true"/>
-                                                        <Label layoutX="51.0" layoutY="226.0"
+                                                        <Label layoutX="30.0" layoutY="225.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
                                                                stylesheets="@../styles.css" text="To address">
                                                             <font>
@@ -86,7 +85,7 @@
                                                                 <Insets/>
                                                             </opaqueInsets>
                                                         </Label>
-                                                        <Label layoutX="51.0" layoutY="268.0"
+                                                        <Label layoutX="30.0" layoutY="300.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
                                                                stylesheets="@../styles.css" text="Amount">
                                                             <font>
@@ -96,7 +95,7 @@
                                                                 <Insets/>
                                                             </opaqueInsets>
                                                         </Label>
-                                                        <Label fx:id="amountInCs" layoutX="51.0" layoutY="296.0"
+                                                        <Label fx:id="amountInCs" layoutX="30.0" layoutY="325.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
                                                                stylesheets="@../styles.css" text="0">
                                                             <font>
@@ -106,7 +105,7 @@
                                                                 <Insets/>
                                                             </opaqueInsets>
                                                         </Label>
-                                                        <Label layoutX="51.0" layoutY="351.0"
+                                                        <Label layoutX="30.0" layoutY="400.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
                                                                stylesheets="@../styles.css" text="Transaction fee">
                                                             <font>
@@ -116,8 +115,8 @@
                                                                 <Insets/>
                                                             </opaqueInsets>
                                                         </Label>
-                                                        <Label fx:id="transactionFeeValue" layoutX="51.0"
-                                                               layoutY="376.0" style="-fx-font-size: 16px;"
+                                                        <Label fx:id="transactionFeeValue" layoutX="30.0"
+                                                               layoutY="425.0" style="-fx-font-size: 16px;"
                                                                styleClass="text" stylesheets="@../styles.css" text="0">
                                                             <font>
                                                                 <Font name="System Bold" size="11.0"/>
@@ -126,7 +125,7 @@
                                                                 <Insets/>
                                                             </opaqueInsets>
                                                         </Label>
-                                                        <Label layoutX="51.0" layoutY="167.0"
+                                                        <Label layoutX="30.0" layoutY="165.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
                                                                stylesheets="@../styles.css" text="Transaction details">
                                                             <font>
@@ -137,14 +136,8 @@
                                                             </opaqueInsets>
                                                         </Label>
                                                     </children>
-                                                    <BorderPane.margin>
-                                                        <Insets left="20.0" top="30.0"/>
-                                                    </BorderPane.margin>
                                                 </Pane>
                                             </children>
-                                            <BorderPane.margin>
-                                                <Insets/>
-                                            </BorderPane.margin>
                                         </Pane>
                                     </center>
                                 </BorderPane>
