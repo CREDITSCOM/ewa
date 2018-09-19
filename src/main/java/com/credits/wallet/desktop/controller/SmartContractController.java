@@ -106,8 +106,10 @@ public class SmartContractController extends Controller implements Initializable
             this.tvContracts.getRoot().getChildren().forEach((p) -> rootItemMap.put(p.getValue().getText(), p));
 
             TreeItem<Label> foundContractsList = rootItemMap.get(FOUND_CONTRACTS);
+            boolean newRoot = false;
             if (foundContractsList == null) {
                 foundContractsList = new TreeItem<>(new Label(FOUND_CONTRACTS));
+                newRoot = true;
             }
             TreeItem<Label> personalCoontractsList = rootItemMap.get(PERSONAL_CONTRACTS);
 
@@ -116,7 +118,9 @@ public class SmartContractController extends Controller implements Initializable
                     Label label = new Label(contractAddress);
                     setSmartContractLabelEventOnClick(smartContractData, label);
                     foundContractsList.getChildren().add(new TreeItem<>(label));
-                    this.tvContracts.getRoot().getChildren().add(foundContractsList);
+                    if(newRoot) {
+                        this.tvContracts.getRoot().getChildren().add(foundContractsList);
+                    }
                 }
                 Map<String, SmartContractData> map = new HashMap<>();
                 foundContractsList.getChildren().forEach((k) -> map.put(k.getValue().getText(), smartContractData));
