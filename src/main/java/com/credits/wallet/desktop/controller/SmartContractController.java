@@ -100,36 +100,40 @@ public class SmartContractController extends Controller implements Initializable
         try {
             SmartContractData smartContractData =
                 AppState.apiClient.getSmartContract(Converter.decodeFromBASE58(address));
-            String contractAddress = Converter.encodeToBASE58(smartContractData.getAddress());
-
-            Map<String, TreeItem<Label>> rootItemMap = new HashMap<>();
-            this.tvContracts.getRoot().getChildren().forEach((p) -> rootItemMap.put(p.getValue().getText(), p));
-
-            TreeItem<Label> foundContractsList = rootItemMap.get(FOUND_CONTRACTS);
-            boolean newRoot = false;
-            if (foundContractsList == null) {
-                foundContractsList = new TreeItem<>(new Label(FOUND_CONTRACTS));
-                newRoot = true;
-            }
-            TreeItem<Label> personalCoontractsList = rootItemMap.get(PERSONAL_CONTRACTS);
-
-            if (notElementInList(contractAddress, personalCoontractsList)) {
-                if (notElementInList(contractAddress, foundContractsList)) {
-                    Label label = new Label(contractAddress);
-                    setSmartContractLabelEventOnClick(smartContractData, label);
-                    foundContractsList.getChildren().add(new TreeItem<>(label));
-                    if(newRoot) {
-                        this.tvContracts.getRoot().getChildren().add(foundContractsList);
-                    }
-                }
-                Map<String, SmartContractData> map = new HashMap<>();
-                foundContractsList.getChildren().forEach((k) -> map.put(k.getValue().getText(), smartContractData));
-                ContactSaver.serialize(map);
-            }
+            saveInSmartContractTree(smartContractData);
             this.refreshFormState(smartContractData);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());
+        }
+    }
+
+    private void saveInSmartContractTree(SmartContractData smartContractData) {
+        String contractAddress = Converter.encodeToBASE58(smartContractData.getAddress());
+
+        Map<String, TreeItem<Label>> rootItemMap = new HashMap<>();
+        this.tvContracts.getRoot().getChildren().forEach((p) -> rootItemMap.put(p.getValue().getText(), p));
+
+        TreeItem<Label> foundContractsList = rootItemMap.get(FOUND_CONTRACTS);
+        boolean newRoot = false;
+        if (foundContractsList == null) {
+            foundContractsList = new TreeItem<>(new Label(FOUND_CONTRACTS));
+            newRoot = true;
+        }
+        TreeItem<Label> personalCoontractsList = rootItemMap.get(PERSONAL_CONTRACTS);
+
+        if (notElementInList(contractAddress, personalCoontractsList)) {
+            if (notElementInList(contractAddress, foundContractsList)) {
+                Label label = new Label(contractAddress);
+                setSmartContractLabelEventOnClick(smartContractData, label);
+                foundContractsList.getChildren().add(new TreeItem<>(label));
+                if(newRoot) {
+                    this.tvContracts.getRoot().getChildren().add(foundContractsList);
+                }
+            }
+            Map<String, SmartContractData> map = new HashMap<>();
+            foundContractsList.getChildren().forEach((k) -> map.put(k.getValue().getText(), smartContractData));
+            ContactSaver.serialize(map);
         }
     }
 
@@ -141,6 +145,12 @@ public class SmartContractController extends Controller implements Initializable
     public void initialize(URL location, ResourceBundle resources) {
 
         this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel);
+        initSmartContractTree();
+        this.codeArea.setEditable(false);
+        this.codeArea.copy();
+    }
+
+    private void initSmartContractTree() {
         TreeItem<Label> rootItem = new TreeItem<>(new Label(SMART_CONTRACTS));
         TreeItem<Label> smartContractRootItem = new TreeItem<>(new Label(PERSONAL_CONTRACTS));
         TreeItem<Label> foundContractRootItem = new TreeItem<>(new Label(FOUND_CONTRACTS));
@@ -170,8 +180,6 @@ public class SmartContractController extends Controller implements Initializable
         }
         this.tvContracts.setShowRoot(false);
         this.tvContracts.setRoot(rootItem);
-        this.codeArea.setEditable(false);
-        this.codeArea.copy();
     }
 
     private void refreshFormState(SmartContractData smartContractData) throws WalletDesktopException {
