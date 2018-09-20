@@ -10,6 +10,7 @@ import com.credits.leveldb.client.data.SmartContractInvocationData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.util.ApiClientUtils;
+import com.credits.leveldb.client.util.TransactionTypeEnum;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.CompilationException;
@@ -202,7 +203,7 @@ public class SmartContractDeployController extends Controller implements Initial
             ApiResponseData apiResponseData =
                     AppState.apiClient.deploySmartContract(transactionInnerId,
                             Converter.decodeFromBASE58(AppState.account), Converter.decodeFromBASE58(transactionTarget), smartContractInvocationData,
-                            signature.array());
+                            signature.array(), TransactionTypeEnum.DEPLOY_SMARTCONTRACT);
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
                 StringSelection selection = new StringSelection(transactionTarget);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

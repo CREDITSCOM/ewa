@@ -7,6 +7,7 @@ import com.credits.crypto.Md5;
 import com.credits.leveldb.client.data.TransactionFlowData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.util.TransactionTypeEnum;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.struct.TransactionStruct;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class ApiUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
     public static void callTransactionFlow(long innerId, String source, String target, BigDecimal amount,
-        BigDecimal balance, byte currency, BigDecimal fee) throws LevelDbClientException,
+        BigDecimal balance, byte currency, BigDecimal fee, TransactionTypeEnum transactionTypeEnum) throws LevelDbClientException,
             CreditsNodeException, CreditsCommonException {
 
         // Формировование параметров основной транзакции
@@ -46,9 +47,10 @@ public class ApiUtils {
             new TransactionFlowData(innerId, Converter.decodeFromBASE58(source), Converter.decodeFromBASE58(target), amount, balance, currency,
                     signature.array(), fee);
 
-        AppState.apiClient.transactionFlow(
+        AppState.apiClient.asyncTransactionFlow(
                 transactionFlowData,
-                false
+                false,
+                transactionTypeEnum
         );
     }
 

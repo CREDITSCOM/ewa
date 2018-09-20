@@ -8,6 +8,7 @@ import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.data.SmartContractInvocationData;
 import com.credits.leveldb.client.util.ApiClientUtils;
+import com.credits.leveldb.client.util.TransactionTypeEnum;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
@@ -284,8 +285,9 @@ public class SmartContractController extends Controller implements Initializable
 
             ApiResponseData apiResponseData =
                 AppState.apiClient.executeSmartContract(transactionId, Converter.decodeFromBASE58(AppState.account),
-                    this.currentSmartContract.getAddress(), smartContractInvocationData, signature.array());
-            if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
+                    this.currentSmartContract.getAddress(), smartContractInvocationData, signature.array(),
+                    TransactionTypeEnum.EXECUTE_SMARTCONTRACT);
+            /*if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
                 com.credits.thrift.generated.Variant res = apiResponseData.getScExecRetVal();
                 if (res != null) {
                     //                    retVal.append(res.isSet(Variant._Fields.V_BOOL) ? "v_bool=" + res.getV_bool() : "");
@@ -302,7 +304,7 @@ public class SmartContractController extends Controller implements Initializable
                 }
             } else {
                 Utils.showError(apiResponseData.getMessage());
-            }
+            }*/
         } catch (CreditsException e) {
             LOGGER.error(e.toString(), e);
             Utils.showError(e.toString());
