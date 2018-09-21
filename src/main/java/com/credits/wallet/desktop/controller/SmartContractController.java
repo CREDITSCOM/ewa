@@ -46,9 +46,9 @@ import java.util.ResourceBundle;
  */
 public class SmartContractController extends Controller implements Initializable {
 
-    public static final String PERSONAL_CONTRACTS = "Personal contracts";
-    public static final String FOUND_CONTRACTS = "Found contracts";
-    public static final String SMART_CONTRACTS = "Smart contracts";
+    private static final String PERSONAL_CONTRACTS = "Personal contracts";
+    private static final String FOUND_CONTRACTS = "Found contracts";
+    private static final String SMART_CONTRACTS = "Smart contracts";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
 
 
@@ -287,24 +287,6 @@ public class SmartContractController extends Controller implements Initializable
                 AppState.apiClient.executeSmartContract(transactionId, Converter.decodeFromBASE58(AppState.account),
                     this.currentSmartContract.getAddress(), smartContractInvocationData, signature.array(),
                     TransactionTypeEnum.EXECUTE_SMARTCONTRACT);
-            /*if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
-                com.credits.thrift.generated.Variant res = apiResponseData.getScExecRetVal();
-                if (res != null) {
-                    //                    retVal.append(res.isSet(Variant._Fields.V_BOOL) ? "v_bool=" + res.getV_bool() : "");
-                    //                    retVal.append(res.isSet(Variant._Fields.V_I8) ? "v_i8=" + res.getV_i8() : "");
-                    //                    retVal.append(res.isSet(Variant._Fields.V_I16) ? "v_i16=" + res.getV_i16() : "");
-                    //                    retVal.append(res.isSet(Variant._Fields.V_I32) ? "v_i32=" + res.getV_i32() : "");
-                    //                    retVal.append(res.isSet(Variant._Fields.V_I64) ? "v_i64=" + res.getV_i64() : "");
-                    //                    retVal.append(res.isSet(Variant._Fields.V_DOUBLE) ? "v_double=" + res.getV_double() : "");
-                    //                    retVal.append(res.isSet(Variant._Fields.V_STRING) ? "v_string=" + res.getV_string() : "");
-                    String retVal = res.toString() + '\n';
-                    Utils.showInfo("Smart-contract executed successfully; Returned value:\n" + retVal);
-                } else {
-                    Utils.showInfo("Smart-contract executed successfully");
-                }
-            } else {
-                Utils.showError(apiResponseData.getMessage());
-            }*/
         } catch (CreditsException e) {
             LOGGER.error(e.toString(), e);
             Utils.showError(e.toString());
