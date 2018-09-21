@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -41,7 +42,7 @@ public class HistoryController extends Controller implements Initializable {
     private ComboBox<Integer> cbPageSize;
 
     @FXML
-    private TableView tabTransaction;
+    private TableView<TransactionTabRow> tabTransaction;
 
     @FXML
     private Label labPage;
@@ -96,8 +97,8 @@ public class HistoryController extends Controller implements Initializable {
         tabTransaction.getItems().clear();
         List<TransactionData> transactionList;
         try {
-            transactionList =
-                AppState.apiClient.getTransactions(Converter.decodeFromBASE58(AppState.account), (pageNumber - 1) * pageSize, pageSize);
+            transactionList = AppState.apiClient.getTransactions(Converter.decodeFromBASE58(AppState.account),
+                (pageNumber - 1) * pageSize, pageSize);
         } catch (LevelDbClientException | CreditsCommonException e) {
             LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
             FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
@@ -117,10 +118,9 @@ public class HistoryController extends Controller implements Initializable {
         }
 
         btnNext.setDisable(transactionList.size() < pageSize);
-        Map<String, Transaction> openTransactionMap = ApiTransactionExecutor.sourceMap.get(AppState.account);
-        synchronized (openTransactionMap) {
-            if (openTransactionMap != null) {
-                openTransactionMap.forEach((key, value) -> {
+        if (ApiTransactionExecutor.sourceMap.get(AppState.account) != null) {
+            synchronized (ApiTransactionExecutor.sourceMap.get(AppState.account)) {
+                ApiTransactionExecutor.sourceMap.get(AppState.account).forEach((key, value) -> {
                     TransactionTabRow tableRow = new TransactionTabRow();
                     tableRow.setAmount(Converter.toString(value.getAmount()));
                     tableRow.setCurrency(value.getCurrency());
@@ -129,7 +129,6 @@ public class HistoryController extends Controller implements Initializable {
                     tabTransaction.getItems().add(tableRow);
                 });
             }
-            ;
         }
         transactionList.forEach(transactionData -> {
             TransactionTabRow tableRow = new TransactionTabRow();
