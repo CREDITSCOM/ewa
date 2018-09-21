@@ -2,9 +2,11 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Converter;
+import com.credits.leveldb.client.ApiTransactionExecutor;
 import com.credits.leveldb.client.data.TransactionData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.thrift.Transaction;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -95,7 +98,7 @@ public class HistoryController extends Controller implements Initializable {
         try {
             transactionList =
                 AppState.apiClient.getTransactions(Converter.decodeFromBASE58(AppState.account), (pageNumber - 1) * pageSize, pageSize);
-        } catch (LevelDbClientException e) {
+        } catch (LevelDbClientException | CreditsCommonException e) {
             LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
             FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
 
@@ -111,23 +114,28 @@ public class HistoryController extends Controller implements Initializable {
             FormUtils.showError(AppState.NODE_ERROR);
 
             return;
-        } catch (CreditsCommonException e) {
-            LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
-            FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
-
-            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
-            FormUtils.showError(AppState.NODE_ERROR);
-            return;
         }
 
         btnNext.setDisable(transactionList.size() < pageSize);
-
+        Map<String, Transaction> openTransactionMap = ApiTransactionExecutor.sourceMap.get(AppState.account);
+        synchronized (openTransactionMap) {
+            if (openTransactionMap != null) {
+                openTransactionMap.forEach((key, value) -> {
+                    TransactionTabRow tableRow = new TransactionTabRow();
+                    tableRow.setAmount(Converter.toString(value.getAmount()));
+                    tableRow.setCurrency(value.getCurrency());
+                    tableRow.setTarget(Converter.encodeToBASE58(value.getTarget()));
+                    tableRow.setInnerId(key);
+                    tabTransaction.getItems().add(tableRow);
+                });
+            }
+            ;
+        }
         transactionList.forEach(transactionData -> {
             TransactionTabRow tableRow = new TransactionTabRow();
             tableRow.setAmount(Converter.toString(transactionData.getAmount()));
             tableRow.setCurrency(transactionData.getCurrency());
-            //tableRow.setTarget(transactionData.getTarget());
-            tableRow.setTarget(new String(Converter.encodeToBASE58(transactionData.getTarget())));
+            tableRow.setTarget(Converter.encodeToBASE58(transactionData.getTarget()));
             tableRow.setInnerId(transactionData.getId());
             tabTransaction.getItems().add(tableRow);
         });
