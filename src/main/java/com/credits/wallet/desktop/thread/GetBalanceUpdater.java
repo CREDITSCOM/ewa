@@ -6,6 +6,7 @@ import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.FormUtils;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,23 +33,23 @@ public class GetBalanceUpdater implements Runnable {
     public void run() {
         try {
             //BigDecimal balance = AppState.apiClient.getBalance(AppState.account, coin);
-            BigDecimal balance = AppState.apiClient.getBalance(Converter.decodeFromBASE58(AppState.account), (byte)1);
+            BigDecimal balance = AppState.apiClient.getBalance(Converter.decodeFromBASE58(AppState.account), (byte) 1);
             AppState.balance = balance;
-            label.setText(Converter.toString(balance));
+            Platform.runLater(() -> label.setText(Converter.toString(balance)));
         } catch (LevelDbClientException e) {
             //label.setText(AppState.NODE_ERROR + ": "+e.getMessage());
             label.setText("");
             LOGGER.error(AppState.NODE_ERROR + ": LevelDbClientException" + e.toString(), e);
-            FormUtils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
+            FormUtils.showError(AppState.NODE_ERROR + ": " + e.getMessage());
         } catch (CreditsNodeException e) {
             //label.setText(AppState.NODE_ERROR + ": "+e.getMessage());
             label.setText("");
             LOGGER.error(AppState.NODE_ERROR + ": CreditsNodeException " + e.toString(), e);
-            FormUtils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
+            FormUtils.showError(AppState.NODE_ERROR + ": " + e.getMessage());
         } catch (CreditsCommonException e) {
             label.setText("");
             LOGGER.error(AppState.NODE_ERROR + ": CreditsCommonException" + e.toString(), e);
-            FormUtils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
+            FormUtils.showError(AppState.NODE_ERROR + ": " + e.getMessage());
         }
     }
 }

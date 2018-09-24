@@ -34,7 +34,7 @@ public class FormUtils {
         label.setText(MSG_RETRIEVE_BALANCE);
         //Thread getBalanceThread = new Thread(new GetBalanceUpdater(coin, label));
         //getBalanceThread.start();
-        Platform.runLater(new GetBalanceUpdater(coin, label));
+        new Thread(new GetBalanceUpdater(coin, label)).start();
     }
 }
 

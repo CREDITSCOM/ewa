@@ -55,11 +55,11 @@ public class AccountController extends Controller implements Initializable {
 
     @FXML
     private void handleRefreshBalance() {
-        Platform.runLater(new GetBalanceUpdater("cs", this.balance));
+        new Thread(new GetBalanceUpdater("cs", this.balance)).start();
     }
 
     public void initialize(URL location, ResourceBundle resources) {
         this.wallet.setText(AppState.account);
-        Platform.runLater(new GetBalanceUpdater("cs", this.balance));
+        new Thread(new GetBalanceUpdater("cs", this.balance)).start();
     }
 }
