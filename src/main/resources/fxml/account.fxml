@@ -7,8 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
-
-<Pane maxHeight="589.0" maxWidth="260.0" minHeight="365.5" minWidth="232.0" prefHeight="484.0" prefWidth="342.0"
+<Pane maxHeight="589.0" maxWidth="260.0" minHeight="365.5" minWidth="232.0" prefHeight="513.0" prefWidth="260.0"
       style="-fx-background-color: #fff;" BorderPane.alignment="TOP_RIGHT" xmlns="http://javafx.com/javafx/10.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.AccountController">
     <BorderPane.margin>
@@ -43,21 +42,21 @@
                 <Font name="System Bold" size="11.0"/>
             </font>
         </Label>
-        <Label fx:id="balance" layoutX="110.0" layoutY="220.0" style="-fx-font-size: 18px;" styleClass="text"
+        <Label fx:id="balance" layoutX="25.0" layoutY="250.0" style="-fx-font-size: 14;" styleClass="text"
                stylesheets="@../styles.css">
             <font>
                 <Font name="System Bold" size="11.0"/>
             </font>
         </Label>
-        <Button layoutX="25.0" layoutY="257.0" mnemonicParsing="false" onAction="#handleDetails" prefHeight="63.0"
+        <Button layoutX="25.0" layoutY="286.0" mnemonicParsing="false" onAction="#handleDetails" prefHeight="63.0"
                 prefWidth="210.0"
                 style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
                 styleClass="text" stylesheets="@../styles.css" text="TRANSACTION HISTORY"/>
-        <Button layoutX="25.0" layoutY="332.0" mnemonicParsing="false" onAction="#handleSmartContract" prefHeight="63.0"
+        <Button layoutX="25.0" layoutY="361.0" mnemonicParsing="false" onAction="#handleSmartContract" prefHeight="63.0"
                 prefWidth="210.0"
                 style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
                 styleClass="text" stylesheets="@../styles.css" text="SMART CONTRACT"/>
-        <Button layoutX="25.0" layoutY="407.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="63.0"
+        <Button layoutX="25.0" layoutY="436.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="63.0"
                 prefWidth="210.0"
                 style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
                 styleClass="text" stylesheets="@../styles.css" text="LOGOUT"/>

@@ -223,14 +223,14 @@ public class SmartContractController extends Controller implements Initializable
                 paramValueTextField.setLayoutY(layoutY);
                 paramValueTextField.setStyle(
                     "-fx-background-color:  #fff; -fx-border-width: 1; -fx-border-color:  #000; -fx-font-size: 16px");
-                paramValueTextField.setPrefSize(225, 56);
+                paramValueTextField.setPrefSize(200, 30);
                 Label paramNameLabel = new Label(param.toString());
                 paramNameLabel.setLayoutX(10);
                 paramNameLabel.setLayoutY(layoutY + 15);
                 paramNameLabel.setStyle("-fx-font-size: 18px");
                 paramNameLabel.setLabelFor(paramValueTextField);
                 this.pParamsContainer.getChildren().addAll(paramNameLabel, paramValueTextField);
-                layoutY += 70;
+                layoutY += 40;
             }
             this.pParamsContainer.setPrefHeight(layoutY);
         }

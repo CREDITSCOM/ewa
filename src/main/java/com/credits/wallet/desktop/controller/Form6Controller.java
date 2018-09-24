@@ -117,8 +117,6 @@ public class Form6Controller extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         clearLabErr();
 
-        labCredit.setText("0");
-
         // Fill coin list
         cbCoin.getItems().clear();
         AppState.coins.clear();
@@ -174,16 +172,11 @@ public class Form6Controller extends Controller implements Initializable {
         });
 
         if (AppState.noClearForm6) {
-            cbCoin.getSelectionModel().select(AppState.coin);
             txKey.setText(AppState.toAddress);
             numAmount.setText(Converter.toString(AppState.amount));
             numFee.setText(Converter.toString(AppState.transactionFeeValue));
 
             AppState.noClearForm6 = false;
-        } else {
-            if (cbCoin.getItems().size() > 0) {
-                cbCoin.getSelectionModel().select(0);
-            }
         }
     }
 
