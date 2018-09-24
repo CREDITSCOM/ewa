@@ -280,6 +280,7 @@ public class SmartContractDeployController extends Controller implements Initial
             this.codeArea.setPrefHeight(this.paneCode.getPrefHeight());
             this.paneCode.getChildren().clear();
             this.paneCode.getChildren().add(this.codeArea);
+            Utils.showInfo("Everything is OK");
         }
     }
 
