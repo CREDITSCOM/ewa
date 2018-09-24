@@ -21,6 +21,7 @@ import com.credits.wallet.desktop.utils.struct.TransactionStruct;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -162,6 +163,7 @@ public class SmartContractController extends Controller implements Initializable
             smartContracts.forEach(smartContractData -> {
 
                 Label label = new Label(Converter.encodeToBASE58(smartContractData.getAddress()));
+                label.setPadding(new Insets(0,0,0,-20));
                 setSmartContractLabelEventOnClick(smartContractData, label);
                 smartContractRootItem.getChildren().add(new TreeItem<>(label));
             });
