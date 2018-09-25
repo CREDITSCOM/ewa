@@ -3,15 +3,76 @@
     src: url('fonts/Montserrat-SemiBold.otf');
 }
 
-.button {
+.credits-combobox {
+    -fx-background-color: #fff;
+    -fx-border-width: 1;
+    -fx-border-color: #000;
+    -fx-font-size: 16px;
+}
+
+.credits-topLabelText {
+    -fx-font-size: 28px
+}
+
+.credits-topLabelGrayText {
+    -fx-font-size: 16px;
+    -fx-text-fill: #818181
+}
+
+.credits-label {
+    -fx-font-size: 16px;
+}
+
+.credits-labelError {
+    -fx-font-size: 16px;
+    -fx-text-fill: red
+}
+
+.credits-footerLabel {
+    -fx-font-size: 12px;
+    -fx-wrap-text: true;
+}
+
+.credits-headerLabel {
+    -fx-font-size: 24px;}
+
+.credits-textField {
+    -fx-background-color: #fff;
+    -fx-border-width: 1;
+    -fx-border-color: #000;
+    -fx-font-size: 16px;
+}
+
+.credits-borderWhitePane {
+    -fx-background-color: #fff;
+}
+
+.credits-borderGrayPane {
+    -fx-background-color: #ececec;
+}
+
+
+.credits-textFieldGray {
+    -fx-background-color: #fff;
+    -fx-border-width: 1;
+    -fx-border-color: #ececec;
+    -fx-font-size: 16px;
+}
+
+.credits-button {
     -fx-font-veight: bold;
-    -fx-background-color: #f2f9fc;
+    -fx-background-color: #fff;
     -fx-background-radius: 22;
+    -fx-border-color: #000;
+    -fx-border-width: 2;
     -fx-font-size: 16;
     -fx-text-fill:black;
     -fx-border-radius: 20;
+    -fx-wrap-text: true;
+    -fx-alignment: center;
 }
-.button:hover{
+
+.credits-button:hover{
     -fx-font-veight: bold;
     -fx-background-color: white;
     -fx-background-radius: 22;
@@ -20,7 +81,7 @@
     -fx-border-radius: 20;
 }
 
-.button:pressed {
+.credits-button:pressed {
     -fx-font-veight:bold;
     -fx-background-color: white;
     -fx-background-radius: 22;
@@ -80,6 +141,10 @@
     -fx-background-color: #fff;
     -fx-border-width: 0;
     -fx-border-color: #000
+}
+
+#cbBalance .combo-box-popup>.list-view {
+    -fx-pref-width: 210;
 }
 
 #cbMethods .combo-box-popup>.list-view {

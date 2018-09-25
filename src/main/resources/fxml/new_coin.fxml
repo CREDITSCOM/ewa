@@ -17,41 +17,30 @@
 			<center>
 				<ScrollPane fitToHeight="true" fitToWidth="true">
 					<content>
-						<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
+						<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
 							<top>
 								<fx:include source="header.fxml" />
 							</top>
 							<center>
 								<BorderPane minHeight="-Infinity" prefHeight="500.0" BorderPane.alignment="TOP_CENTER">
 									<center>
-										<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="445.0" prefWidth="975.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_CENTER">
+										<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="445.0" prefWidth="975.0" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
 											<children>
-												<Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="New coin" />
-												<Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" text="On this form you can add new coin for smart contract" textFill="#818181" />
+												<Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText" stylesheets="@../styles.css" text="New coin" />
+												<Label layoutX="24.0" layoutY="88.0"  text="On this form you can add new coin for smart contract" styleClass="credits-topLabelGrayText" />
 												<Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-												<Label layoutX="24.0" layoutY="127.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put SmartContract token">
-													<font>
-														<Font name="System Bold" size="11.0" />
-													</font>
+												<Label layoutX="24.0" layoutY="127.0" styleClass="credits-label" stylesheets="@../styles.css" text="Put SmartContract token">
 												</Label>
-												<Button layoutX="21.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
-												<Button layoutX="212.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleSave" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SAVE" textAlignment="CENTER" wrapText="true" />
-												<TextField fx:id="txToken" layoutX="21.0" layoutY="148.0" prefHeight="56.0" prefWidth="605.0" promptText="put token here" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-												<Label layoutX="24.0" layoutY="246.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put coin mnemonic">
-													<font>
-														<Font name="System Bold" size="11.0" />
-													</font>
+												<Button layoutX="21.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" styleClass="credits-button" stylesheets="@../styles.css" text="BACK"/>
+												<Button layoutX="212.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleSave" prefHeight="61.0" prefWidth="173.0" styleClass="credits-button" stylesheets="@../styles.css" text="SAVE"/>
+												<TextField fx:id="txToken" layoutX="21.0" layoutY="148.0" prefHeight="56.0" prefWidth="605.0" promptText="put token here"  styleClass="credits-textFieldGray" stylesheets="@../styles.css" />
+												<Label layoutX="24.0" layoutY="246.0" styleClass="credits-label"
+													   stylesheets="@../styles.css" text="Put coin mnemonic">
 												</Label>
-												<TextField fx:id="txCoin" layoutX="21.0" layoutY="273.0" prefHeight="56.0" prefWidth="605.0" promptText="put coin mnemonic here" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-                                    <Label fx:id="labelErrorToken" layoutX="24.0" layoutY="204.0" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css" text="Label">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
+												<TextField fx:id="txCoin" layoutX="21.0" layoutY="273.0" prefHeight="56.0" prefWidth="605.0" promptText="put coin mnemonic here"  styleClass="credits-textFieldGray" stylesheets="@../styles.css" />
+                                    <Label fx:id="labelErrorToken" layoutX="24.0" layoutY="204.0" styleClass="credits-labelError" stylesheets="@../styles.css" text="Label">
                                     </Label>
-                                    <Label fx:id="labelErrorCoin" layoutX="24.0" layoutY="329.0" style="-fx-font-size: 16px; -fx-text-fill: red;" styleClass="text" stylesheets="@../styles.css" text="Label">
-                                       <font>
-                                          <Font name="System Bold" size="11.0" />
-                                       </font>
+                                    <Label fx:id="labelErrorCoin" layoutX="24.0" layoutY="329.0" styleClass="credits-labelError" stylesheets="@../styles.css" text="Label">
                                     </Label>
 											</children>
 											<BorderPane.margin>

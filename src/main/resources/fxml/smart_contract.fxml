@@ -23,7 +23,7 @@
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
                         <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1030.0" prefWidth="1400.0"
-                                    style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
+                                    styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
                             <top>
                                 <fx:include source="header.fxml"/>
                             </top>
@@ -39,19 +39,18 @@
                                             <children>
                                                 <Pane layoutX="-185.0" maxHeight="-Infinity" maxWidth="-Infinity"
                                                       minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
-                                                      prefWidth="1400.0" style="-fx-background-color: #fff;">
+                                                      prefWidth="1400.0" styleClass="credits-borderWhitePane">
                                                     <children>
                                                         <Label layoutX="21.0" layoutY="23.0"
-                                                               style="-fx-font-size: 28px;" styleClass="text"
+                                                               styleClass="credits-topLabelText"
                                                                stylesheets="@../styles.css" text="Smart contract"/>
                                                         <Line endX="-50.0" layoutX="126.0" layoutY="75.0"
                                                               startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
                                                         <Button layoutX="21.0" layoutY="618.0" mnemonicParsing="false"
                                                                 onAction="#handleBack" prefHeight="61.0"
                                                                 prefWidth="173.0"
-                                                                style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
-                                                                styleClass="text" stylesheets="@../styles.css"
-                                                                text="BACK" textAlignment="CENTER" wrapText="true"/>
+                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                text="BACK"/>
                                                         <Pane fx:id="pControls" layoutX="430.0" layoutY="148.0"
                                                               prefHeight="455.0" prefWidth="406.0">
                                                             <children>
@@ -59,30 +58,23 @@
                                                                        style="-fx-font-size: 18px;" styleClass="text"
                                                                        stylesheets="@../styles.css"
                                                                        text="Contract address">
-                                                                    <font>
-                                                                        <Font name="System Bold" size="11.0"/>
-                                                                    </font>
                                                                 </Label>
                                                                 <Label layoutX="15.0" layoutY="86.0"
                                                                        style="-fx-font-size: 18px;" styleClass="text"
                                                                        stylesheets="@../styles.css"
                                                                        text="Choose method">
-                                                                    <font>
-                                                                        <Font name="System Bold" size="11.0"/>
-                                                                    </font>
                                                                 </Label>
                                                                 <ComboBox fx:id="cbMethods" layoutX="14.0"
                                                                           layoutY="116.0" onAction="#cbMethodsOnAction"
                                                                           prefHeight="56.0" prefWidth="391.0"
-                                                                          style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 14px;"/>
+                                                                          styleClass="credits-combobox"
+                                                                          style="-fx-font-size: 14px;"/>
                                                                 <Button layoutX="16.0" layoutY="394.0"
                                                                         mnemonicParsing="false"
                                                                         onAction="#handleExecute" prefHeight="61.0"
                                                                         prefWidth="173.0"
-                                                                        style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
-                                                                        styleClass="text" stylesheets="@../styles.css"
-                                                                        text="EXECUTE" textAlignment="CENTER"
-                                                                        wrapText="true"/>
+                                                                        styleClass="credits-button" stylesheets="@../styles.css"
+                                                                        text="EXECUTE"/>
                                                                 <AnchorPane fx:id="pParams" layoutX="15.0"
                                                                             layoutY="167.0" prefHeight="212.0"
                                                                             prefWidth="391.0" visible="false">
@@ -93,9 +85,6 @@
                                                                                styleClass="text"
                                                                                stylesheets="@../styles.css"
                                                                                text="Method parameters:">
-                                                                            <font>
-                                                                                <Font name="System Bold" size="11.0"/>
-                                                                            </font>
                                                                         </Label>
                                                                         <ScrollPane layoutY="34.0" prefHeight="178.0"
                                                                                     prefWidth="391.0">
@@ -112,14 +101,13 @@
                                                                 <TextField fx:id="tfAddress" editable="false"
                                                                            layoutX="15.0" layoutY="24.0"
                                                                            prefHeight="56.0" prefWidth="390.0"
-                                                                           style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 14px;"
-                                                                           styleClass="text"
+                                                                           styleClass="credits-textField"
                                                                            stylesheets="@../styles.css"/>
                                                             </children>
                                                         </Pane>
                                                         <StackPane layoutX="25.0" layoutY="148.0" prefHeight="455.0"
                                                                    prefWidth="410.0"
-                                                                   style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000;">
+                                                                   styleClass="credits-borderWhitePane" style="-fx-border-width: 1; -fx-border-color: #000;">
                                                             <children>
                                                                 <TreeView fx:id="tvContracts" prefHeight="700.0"
                                                                           prefWidth="424.0"/>
@@ -128,20 +116,17 @@
                                                         <TextField fx:id="tfSearchAddress" layoutX="25.0" layoutY="84.0"
                                                                    prefHeight="56.0" prefWidth="410.0"
                                                                    promptText="search contract"
-                                                                   style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #000; -fx-font-size: 14px;"
-                                                                   styleClass="text" stylesheets="@../styles.css"/>
+                                                                   styleClass="credits-textField" stylesheets="@../styles.css"/>
                                                         <Button layoutX="450.0" layoutY="81.0" mnemonicParsing="false"
                                                                 onAction="#handleSearch" prefHeight="61.0"
                                                                 prefWidth="93.0"
-                                                                style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
-                                                                styleClass="text" stylesheets="@../styles.css"
-                                                                text="SEARCH" textAlignment="CENTER" wrapText="true"/>
+                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                text="SEARCH"/>
                                                         <Button layoutX="550.0" layoutY="81.0" mnemonicParsing="false"
                                                                 onAction="#handleCreate" prefHeight="61.0"
                                                                 prefWidth="93.0"
-                                                                style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
-                                                                styleClass="text" stylesheets="@../styles.css"
-                                                                text="CREATE" textAlignment="CENTER" wrapText="true"/>
+                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                text="CREATE"/>
                                                         <ScrollPane fx:id="spCodePanel" layoutX="850.0" layoutY="84.0"
                                                                     prefHeight="518.0" prefWidth="512.0">
                                                             <content>

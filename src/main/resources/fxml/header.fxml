@@ -16,13 +16,13 @@
 						<Image url="@../img/logo.png" />
 					</image>
 				</ImageView>
-				<Label layoutX="141.0" layoutY="22.0" style="-fx-font-size: 20px;" styleClass="text" stylesheets="@../styles.css" text="Wallet" textFill="#ecb32e" />
-				<Label layoutX="24.0" layoutY="21.0" style="-fx-font-size: 24px;" styleClass="text" stylesheets="@../styles.css" text="CREDITS" textFill="WHITE">
+				<Label layoutX="141.0" layoutY="18.0" styleClass="credits-headerLabel" stylesheets="@../styles.css" text="Wallet" textFill="#ecb32e" />
+				<Label layoutX="24.0" layoutY="21.0" styleClass="credits-headerLabel" stylesheets="@../styles.css" text="CREDITS" textFill="WHITE">
 					<font>
 						<Font size="24.0" />
 					</font>
 				</Label>
-				<Label layoutX="260.0" layoutY="21.0" style="-fx-font-size: 24px;" styleClass="text" stylesheets="@../styles.css" text="TestNet" textFill="RED" />
+				<Label layoutX="260.0" layoutY="21.0" styleClass="credits-headerLabel" stylesheets="@../styles.css" text="TestNet" textFill="RED" />
 			</children>
 		</Pane>
 	</center>

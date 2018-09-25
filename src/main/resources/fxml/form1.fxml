@@ -10,52 +10,73 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form1Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
+            prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.credits.wallet.desktop.controller.Form1Controller">
     <children>
-        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                    AnchorPane.topAnchor="0.0">
             <center>
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
-                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
+                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0"
+                                    styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
                             <top>
-                                <fx:include source="header.fxml" />
+                                <fx:include source="header.fxml"/>
                             </top>
                             <center>
                                 <BorderPane minHeight="-Infinity" prefHeight="500.0" BorderPane.alignment="TOP_CENTER">
                                     <center>
-                                        <Pane maxHeight="441.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0" prefHeight="441.0" prefWidth="874.0" style="-fx-background-color: #fff;" BorderPane.alignment="TOP_CENTER">
+                                        <Pane maxHeight="441.0" maxWidth="874.0" minHeight="300.0" minWidth="0.0"
+                                              prefHeight="441.0" prefWidth="874.0" styleClass="credits-borderWhitePane"
+                                              BorderPane.alignment="TOP_CENTER">
                                             <children>
-                                                <Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;" styleClass="text" stylesheets="@../styles.css" text="1. Password to file key">
+                                                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
+                                                       stylesheets="@../styles.css" text="1. Password to file key">
                                                     <font>
-                                                        <Font size="14.0" />
+                                                        <Font size="14.0"/>
                                                     </font>
                                                 </Label>
-                                                <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-                                                <Label layoutX="23.0" layoutY="149.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="Put and safe password of your file key">
-                                                    <font>
-                                                        <Font name="System Bold" size="11.0" />
-                                                    </font>
+                                                <Label layoutX="24.0" layoutY="88.0"
+                                                       styleClass="credits-topLabelGrayText"
+                                                       stylesheets="@../styles.css"
+                                                       text="On this form you can open the wallet and make payments in the Credits platform"/>
+                                                <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0"
+                                                      stroke="#ecb32e" strokeWidth="4.0"/>
+                                                <Label layoutX="23.0" layoutY="149.0" styleClass="credits-label"
+                                                       stylesheets="@../styles.css"
+                                                       text="Put and safe password of your file key">
                                                 </Label>
-                                                <PasswordField fx:id="txPassword" layoutX="24.0" layoutY="183.0" prefHeight="56.0" prefWidth="605.0" promptText="Password to file key" style="-fx-background-color: #fff; -fx-border-width: 1; -fx-border-color: #ececec; -fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-						<Label fx:id="labPassword" layoutX="35.0" layoutY="200.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" />
-                                                <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;" styleClass="text" stylesheets="@../styles.css" text="On this form you can open the wallet and make payments in the Credits platform" textFill="#818181" />
-                                                <Button layoutX="24.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="BACK" textAlignment="CENTER" wrapText="true" />
-                                                <Button layoutX="453.0" layoutY="322.0" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="61.0" prefWidth="173.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="GENERATE" textAlignment="CENTER" wrapText="true" />
-                                    <Button fx:id="btnShowPassword" layoutX="649.0" layoutY="182.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="199.0" style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;" styleClass="text" stylesheets="@../styles.css" text="SHOW PASSWORD" textAlignment="CENTER" wrapText="true" />
+                                                <PasswordField fx:id="txPassword" layoutX="24.0" layoutY="183.0"
+                                                               prefHeight="56.0" prefWidth="605.0"
+                                                               promptText="Password to file key"
+                                                               styleClass="credits-textFieldGray" stylesheets="@../styles.css"/>
+                                                <Label fx:id="labPassword" layoutX="35.0" layoutY="200.0"
+                                                       styleClass="credits-label"
+                                                       stylesheets="@../styles.css"/>
+                                                <Button layoutX="24.0" layoutY="322.0" mnemonicParsing="false"
+                                                        onAction="#handleBack" prefHeight="61.0" prefWidth="173.0"
+                                                        styleClass="credits-button" stylesheets="@../styles.css" text="BACK"/>
+                                                <Button layoutX="453.0" layoutY="322.0" mnemonicParsing="false"
+                                                        onAction="#handleGenerate" prefHeight="61.0" prefWidth="173.0"
+                                                        styleClass="credits-button" stylesheets="@../styles.css" text="GENERATE"/>
+                                                <Button fx:id="btnShowPassword" layoutX="649.0" layoutY="182.0"
+                                                        mnemonicParsing="false" prefHeight="61.0" prefWidth="199.0"
+                                                        styleClass="credits-button" stylesheets="@../styles.css"
+                                                        text="SHOW PASSWORD"/>
                                             </children>
                                             <BorderPane.margin>
-                                                <Insets />
+                                                <Insets/>
                                             </BorderPane.margin>
                                         </Pane>
                                     </center>
                                     <BorderPane.margin>
-                                        <Insets top="30.0" />
+                                        <Insets top="30.0"/>
                                     </BorderPane.margin>
                                 </BorderPane>
                             </center>
                             <bottom>
-                                <fx:include source="footer.fxml" />
+                                <fx:include source="footer.fxml"/>
                             </bottom>
                         </BorderPane>
                     </content>

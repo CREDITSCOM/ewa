@@ -22,7 +22,7 @@
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
                         <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0"
-                                    style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
+                                    styleClass="credits-borderGrayPan1" stylesheets="@../styles.css">
                             <top>
                                 <fx:include source="header.fxml"/>
                             </top>
@@ -31,21 +31,19 @@
                                     <center>
                                         <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                                               minWidth="-Infinity" prefHeight="420.0" prefWidth="950.0"
-                                              style="-fx-background-color: #fff;" BorderPane.alignment="TOP_CENTER">
+                                              styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
                                             <children>
-                                                <Label layoutX="21.0" layoutY="23.0" style="-fx-font-size: 28px;"
-                                                       styleClass="text" stylesheets="@../styles.css"
+                                                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText" stylesheets="@../styles.css"
                                                        text="Transaction details"/>
-                                                <Label layoutX="24.0" layoutY="88.0" style="-fx-font-size: 16px;"
+                                                <Label layoutX="24.0" layoutY="88.0" styleClass="credits-topLabelGrayText"
                                                        text="On this form you can see transaction details"
-                                                       textFill="#818181"/>
+                                                       />
                                                 <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0"
                                                       stroke="#ecb32e" strokeWidth="4.0"/>
                                                 <Button layoutX="24.0" layoutY="345.0" mnemonicParsing="false"
                                                         onAction="#handleBack" prefHeight="61.0" prefWidth="173.0"
-                                                        style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
-                                                        styleClass="text" stylesheets="@../styles.css" text="BACK"
-                                                        textAlignment="CENTER" wrapText="true"/>
+                                                        styleClass="credits-button" stylesheets="@../styles.css" text="BACK"
+                                                        />
                                                 <GridPane layoutX="24.0" layoutY="140.0" prefHeight="154.0"
                                                           prefWidth="693.0">
                                                     <columnConstraints>

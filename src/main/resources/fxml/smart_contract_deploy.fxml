@@ -21,7 +21,7 @@
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
                         <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1030.0" prefWidth="1060.0"
-                                    style="-fx-background-color: #ececec;" stylesheets="@../styles.css">
+                                    styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
                             <top>
                                 <fx:include source="header.fxml"/>
                             </top>
@@ -37,43 +37,35 @@
                                             <children>
                                                 <Pane layoutX="-185.0" maxHeight="-Infinity" maxWidth="-Infinity"
                                                       minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
-                                                      prefWidth="1400.0" style="-fx-background-color: #fff;">
+                                                      prefWidth="1400.0" styleClass="credits-borderWhitePane">
                                                     <children>
-                                                        <Label layoutX="21.0" layoutY="23.0"
-                                                               style="-fx-font-size: 28px;" styleClass="text"
+                                                        <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
                                                                stylesheets="@../styles.css" text="Smart contract"/>
                                                         <Label layoutX="24.0" layoutY="88.0"
-                                                               style="-fx-font-size: 16px;"
                                                                text="On this form you can check and deploy smart contract"
-                                                               textFill="#818181"/>
+                                                               styleClass="credits-topLabelGrayText"/>
                                                         <Line endX="-50.0" layoutX="126.0" layoutY="75.0"
                                                               startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
                                                         <Label layoutX="375.0" layoutY="144.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
                                                                stylesheets="@../styles.css"
                                                                text="Put SmartContract code">
-                                                            <font>
-                                                                <Font name="System Bold" size="11.0"/>
-                                                            </font>
                                                         </Label>
                                                         <Button layoutX="21.0" layoutY="618.0" mnemonicParsing="false"
                                                                 onAction="#handleBack" prefHeight="61.0"
                                                                 prefWidth="173.0"
-                                                                style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
-                                                                styleClass="text" stylesheets="@../styles.css"
-                                                                text="BACK" textAlignment="CENTER" wrapText="true"/>
+                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                text="BACK"/>
                                                         <Button fx:id="checkButton" layoutX="210.0" layoutY="618.0"
                                                                 mnemonicParsing="false" onAction="#checkButtonAction"
                                                                 prefHeight="61.0" prefWidth="173.0"
-                                                                style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
-                                                                styleClass="text" stylesheets="@../styles.css"
-                                                                text="CHECK" textAlignment="CENTER" wrapText="true"/>
+                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                text="CHECK"/>
                                                         <Button layoutX="401.0" layoutY="618.0" mnemonicParsing="false"
                                                                 onAction="#handleDeploy" prefHeight="61.0"
                                                                 prefWidth="173.0"
-                                                                style="-fx-font-size: 16px; -fx-background-color: #fff; -fx-border-width: 2; -fx-border-color: #000;"
-                                                                styleClass="text" stylesheets="@../styles.css"
-                                                                text="DEPLOY" wrapText="true"/>
+                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                text="DEPLOY"/>
                                                         <ScrollPane fx:id="scCodePanel" layoutX="375.0" layoutY="174.0"
                                                                     prefHeight="430.0" prefWidth="1000.0">
                                                             <content>
