@@ -108,7 +108,7 @@ public class ApiUtils {
         // get transactions count from Node and increment it
         Long transactionId = AppState.apiClient.getWalletTransactionsCount(source) + 1;
         // get last transaction id from cache
-        Long walletLastTransactionIdInCache = AppState.walletLastTransactionIdCache.get(sourceBase58);
+        long walletLastTransactionIdInCache = AppState.walletLastTransactionIdCache.get(sourceBase58);
 
         if (transactionId < walletLastTransactionIdInCache) {
             transactionId = walletLastTransactionIdInCache;
