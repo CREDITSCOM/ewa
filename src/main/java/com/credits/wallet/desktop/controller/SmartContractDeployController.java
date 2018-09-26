@@ -10,12 +10,13 @@ import com.credits.leveldb.client.data.SmartContractInvocationData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.util.ApiClientUtils;
-import com.credits.leveldb.client.util.TransactionTypeEnum;
+import com.credits.leveldb.client.util.TransactionType;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.CompilationException;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.*;
+import com.credits.wallet.desktop.utils.struct.CalcTransactionIdSourceTargetResult;
 import com.credits.wallet.desktop.utils.struct.TransactionStruct;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -174,7 +175,6 @@ public class SmartContractDeployController extends Controller implements Initial
             SmartContractInvocationData smartContractInvocationData =
                 new SmartContractInvocationData(javaCode, byteCode, hashState, "", new ArrayList<String>(), false);
 
-            long transactionInnerId = ApiUtils.generateTransactionInnerId();
             String transactionTarget = generatePublicKeyBase58();
             LOGGER.info("transactionTarget = {}", transactionTarget);
 
@@ -198,15 +198,48 @@ public class SmartContractDeployController extends Controller implements Initial
             LOGGER.debug("SmartContractData structure vvvvv");
 
             byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractInvocationData);
-            TransactionStruct tStruct =
-                new TransactionStruct(transactionInnerId, AppState.account, transactionTarget, new BigDecimal(0),
-                    new BigDecimal(0), (byte) 1, scBytes);
+            CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult = ApiUtils.calcTransactionIdSourceTarget(
+                    AppState.account,
+                    transactionTarget
+            );
+
+            TransactionStruct tStruct = new TransactionStruct(
+                    calcTransactionIdSourceTargetResult.getTransactionId(),
+                    calcTransactionIdSourceTargetResult.getSource(),
+                    calcTransactionIdSourceTargetResult.getTarget(),
+                    new BigDecimal(0),
+                    new BigDecimal(0),
+                    (byte)1,
+                    scBytes
+            );
             ByteBuffer signature = Utils.signTransactionStruct(tStruct);
 
-            AppState.apiClient.deploySmartContract(transactionInnerId, Converter.decodeFromBASE58(AppState.account),
-                Converter.decodeFromBASE58(transactionTarget), smartContractInvocationData, signature.array(),
-                TransactionTypeEnum.DEPLOY_SMARTCONTRACT);
-        } catch (CompilationException | CreditsException e) {
+            ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(
+                    calcTransactionIdSourceTargetResult.getTransactionId(),
+                    calcTransactionIdSourceTargetResult.getSource(),
+                    calcTransactionIdSourceTargetResult.getTarget(),
+                    smartContractInvocationData,
+                    signature.array(),
+                    TransactionType.DEPLOY_SMART_CONTRACT
+            );
+            if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
+                StringSelection selection = new StringSelection(transactionTarget);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(selection, selection);
+                Utils.showInfo(String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", transactionTarget));
+            } else {
+                Utils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
+            }
+        } catch (LevelDbClientException e) {
+            LOGGER.error(e.toString(), e);
+            Utils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
+        } catch (CreditsNodeException e) {
+            LOGGER.error(e.toString(), e);
+            Utils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
+        } catch (CreditsException e) {
+            LOGGER.error(e.toString(), e);
+            Utils.showError(AppState.NODE_ERROR + ": "+e.getMessage());
+        } catch (CompilationException e) {
             LOGGER.error(e.toString(), e);
             Utils.showError(AppState.NODE_ERROR + ": " + e.getMessage());
         }

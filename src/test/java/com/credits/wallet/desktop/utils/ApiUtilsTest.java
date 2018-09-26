@@ -18,4 +18,9 @@ public class ApiUtilsTest {
         String actual = ApiUtils.generateSmartContractHashState(source.getBytes());
         Assert.assertEquals("A2CDBFDF50500999AEE29823F7D284D7", actual);
     }
+
+    @Test
+    public void createTransactionId01() {
+        LOGGER.info(ApiUtils.createTransactionId(false, false, 1000000L) + "");
+    }
 }

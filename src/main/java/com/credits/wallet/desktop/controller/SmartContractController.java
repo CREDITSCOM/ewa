@@ -8,15 +8,12 @@ import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.data.SmartContractInvocationData;
 import com.credits.leveldb.client.util.ApiClientUtils;
-import com.credits.leveldb.client.util.TransactionTypeEnum;
+import com.credits.leveldb.client.util.TransactionType;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
-import com.credits.wallet.desktop.utils.ApiUtils;
-import com.credits.wallet.desktop.utils.ContactSaver;
-import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.SmartContractUtils;
-import com.credits.wallet.desktop.utils.Utils;
+import com.credits.wallet.desktop.utils.*;
+import com.credits.wallet.desktop.utils.struct.CalcTransactionIdSourceTargetResult;
 import com.credits.wallet.desktop.utils.struct.TransactionStruct;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -36,11 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -272,7 +265,6 @@ public class SmartContractController extends Controller implements Initializable
             }
             */
 
-            long transactionId = ApiUtils.generateTransactionInnerId();
             SmartContractData smartContractData = this.currentSmartContract;
 
             SmartContractInvocationData smartContractInvocationData =
@@ -280,15 +272,48 @@ public class SmartContractController extends Controller implements Initializable
                     false);
 
             byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractInvocationData);
-            TransactionStruct tStruct = new TransactionStruct(transactionId, AppState.account,
-                Converter.encodeToBASE58(this.currentSmartContract.getAddress()), new BigDecimal(0), new BigDecimal(0),
-                (byte) 1, scBytes);
+            CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult = ApiUtils.calcTransactionIdSourceTarget(
+                    AppState.account,
+                    Converter.encodeToBASE58(this.currentSmartContract.getAddress())
+            );
+
+            TransactionStruct tStruct = new TransactionStruct(
+                    calcTransactionIdSourceTargetResult.getTransactionId(),
+                    calcTransactionIdSourceTargetResult.getSource(),
+                    calcTransactionIdSourceTargetResult.getTarget(),
+                    new BigDecimal(0),
+                    new BigDecimal(0),
+                    (byte)1,
+                    scBytes
+            );
+
             ByteBuffer signature = Utils.signTransactionStruct(tStruct);
 
-            ApiResponseData apiResponseData =
-                AppState.apiClient.executeSmartContract(transactionId, Converter.decodeFromBASE58(AppState.account),
-                    this.currentSmartContract.getAddress(), smartContractInvocationData, signature.array(),
-                    TransactionTypeEnum.EXECUTE_SMARTCONTRACT);
+            ApiResponseData apiResponseData = AppState.apiClient.executeSmartContract(
+                    calcTransactionIdSourceTargetResult.getTransactionId(),
+                    calcTransactionIdSourceTargetResult.getSource(),
+                    calcTransactionIdSourceTargetResult.getTarget(),
+                    smartContractInvocationData,
+                    signature.array(),
+                    TransactionType.EXECUTE_TRANSACTION
+            );
+            if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
+                com.credits.thrift.generated.Variant res = apiResponseData.getScExecRetVal();
+                if (res != null) {
+//                    retVal.append(res.isSet(Variant._Fields.V_BOOL) ? "v_bool=" + res.getV_bool() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_I8) ? "v_i8=" + res.getV_i8() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_I16) ? "v_i16=" + res.getV_i16() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_I32) ? "v_i32=" + res.getV_i32() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_I64) ? "v_i64=" + res.getV_i64() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_DOUBLE) ? "v_double=" + res.getV_double() : "");
+//                    retVal.append(res.isSet(Variant._Fields.V_STRING) ? "v_string=" + res.getV_string() : "");
+                    String retVal = res.toString() + '\n';
+                    Utils.showInfo("Smart-contract executed successfully; Returned value:\n" + retVal);
+                } else
+                    Utils.showInfo("Smart-contract executed successfully");
+            } else {
+                Utils.showError(apiResponseData.getMessage());
+            }
         } catch (CreditsException e) {
             LOGGER.error(e.toString(), e);
             Utils.showError(e.toString());

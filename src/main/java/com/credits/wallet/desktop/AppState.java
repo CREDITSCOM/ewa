@@ -8,7 +8,9 @@ import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -32,6 +34,8 @@ public class AppState {
     public static String toAddress;
     public static String coin;
 
+    public static long transactionId;
+
     public static TransactionTabRow selectedTransactionRow;
 
     public static List<String> coins = new ArrayList<>();
@@ -42,4 +46,6 @@ public class AppState {
     public static PublicKey publicKey;
 
     public static BigDecimal balance = BigDecimal.ZERO;
+
+    public static Map<String, Long> walletLastTransactionIdCache = new HashMap<String, Long>();
 }

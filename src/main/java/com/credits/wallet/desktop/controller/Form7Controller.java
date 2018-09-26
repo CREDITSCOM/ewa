@@ -5,7 +5,7 @@ import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
-import com.credits.leveldb.client.util.TransactionTypeEnum;
+import com.credits.leveldb.client.util.TransactionType;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.ApiUtils;
@@ -43,10 +43,7 @@ public class Form7Controller extends Controller implements Initializable {
     @FXML
     private void handleGenerate() {
         try {
-            //ApiUtils.callTransactionFlow(AppState.innerId, AppState.account, AppState.toAddress, AppState.amount,
-            //    AppState.balance, AppState.coin, AppState.transactionFeeValue);
-            ApiUtils.callTransactionFlow(ApiUtils.generateTransactionInnerId(), AppState.account, AppState.toAddress, AppState.amount,
-                AppState.balance, (byte)1, AppState.transactionFeeValue, TransactionTypeEnum.EXECUTE_TRANSACTION);
+            ApiUtils.callCreateTransaction(TransactionType.EXECUTE_TRANSACTION);
         } catch (LevelDbClientException e) {
             LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);
             FormUtils.showError(AppState.NODE_ERROR);

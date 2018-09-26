@@ -7,7 +7,6 @@ import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.CommonCurrency;
-import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
 import javafx.fxml.FXML;

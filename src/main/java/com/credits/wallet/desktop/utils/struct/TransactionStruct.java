@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop.utils.struct;
 
-import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.thrift.Amount;
@@ -10,8 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  * Created by goncharov-eg on 20.07.2018.
@@ -29,12 +26,12 @@ public class TransactionStruct implements Serializable {
     private int scLen;
     private byte[] sc;
 
-    public TransactionStruct(long id, String source, String target, BigDecimal amount, BigDecimal fee, byte currency,
+    public TransactionStruct(long id, byte[] source, byte[] target, BigDecimal amount, BigDecimal fee, byte currency,
                              byte[] sc)
-            throws CreditsCommonException, LevelDbClientException {
+            throws LevelDbClientException {
         this.id = id;
-        this.source = Converter.decodeFromBASE58(source);
-        this.target = Converter.decodeFromBASE58(target);
+        this.source = source;
+        this.target = target;
 
         Amount aAmount = LevelDbClientConverter.bigDecimalToAmount(amount);
         this.amountInt=aAmount.integral;
@@ -58,20 +55,18 @@ public class TransactionStruct implements Serializable {
     public byte[] getBytes() {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-
-
-            os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(id).array());
+            os.write(Converter.toByteArrayLittleEndian(id, 8));
             os.write(source);
             os.write(target);
-            os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(amountInt).array());
-            os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(amountFrac).array());
-            os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(feeInt).array());
-            os.write(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(feeFrac).array());
-            os.write(ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put(currency).array());
-            os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(ufNum).array());
+            os.write(Converter.toByteArrayLittleEndian(amountInt, 4));
+            os.write(Converter.toByteArrayLittleEndian(amountFrac, 8));
+            os.write(Converter.toByteArrayLittleEndian(feeInt, 4));
+            os.write(Converter.toByteArrayLittleEndian(feeFrac, 8));
+            os.write(Converter.toByteArrayLittleEndian(currency, 1));
+            os.write(Converter.toByteArrayLittleEndian(ufNum, 4));
             if (sc!=null) {
-                os.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(scLen).array());
-                os.write(ByteBuffer.allocate(scLen).order(ByteOrder.LITTLE_ENDIAN).put(sc).array());
+                os.write(Converter.toByteArrayLittleEndian(scLen, 4));
+                os.write(Converter.toByteArrayLittleEndian(sc, scLen));
             }
         } catch (IOException e) {
             // do nothing - never happen
