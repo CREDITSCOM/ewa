@@ -235,35 +235,26 @@ public class SmartContractController extends Controller implements Initializable
     private void handleExecute() {
         try {
             String method = cbMethods.getSelectionModel().getSelectedItem().getName().getIdentifier();
-            List<String> params = new ArrayList<>();
-            List<SingleVariableDeclaration> currentMethodParams =
-                SourceCodeUtils.getMethodParameters(this.currentMethod);
+            List<Object> params = new ArrayList<>();
+            List<SingleVariableDeclaration> currentMethodParams = SourceCodeUtils.getMethodParameters(this.currentMethod);
+
             ObservableList<Node> paramsContainerChildren = this.pParamsContainer.getChildren();
 
             int i = 0;
-            for (Node node : paramsContainerChildren) {
+            for(Node node: paramsContainerChildren) {
                 if (node instanceof TextField) {
-                    SingleVariableDeclaration variableDeclaration = currentMethodParams.get(i);
-                    String className = SourceCodeUtils.parseClassName(variableDeclaration);
-                    String paramValue = ((TextField) node).getText();
-                    String paramValueProcessed =
-                        SourceCodeUtils.processSmartContractMethodParameterValue(className, paramValue);
+                    String paramValue = ((TextField)node).getText();
 
-                    params.add(paramValueProcessed);
+                    SingleVariableDeclaration variableDeclaration = currentMethodParams.get(i);
+
+                    String className = SourceCodeUtils.parseClassName(variableDeclaration);
+
+                    params.add(SourceCodeUtils.createVariantObject(className, paramValue));
 
                     ++i;
                 }
-            }
 
-            // 2DO Select param type
-            /*
-            List<Variant> varParams = new ArrayList<>();
-            for (String p : params) {
-                Variant var = new Variant();
-                var.setV_string(p);
-                varParams.add(var);
             }
-            */
 
             SmartContractData smartContractData = this.currentSmartContract;
 
