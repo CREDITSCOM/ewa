@@ -31,7 +31,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        when(mockClient.getBalance(any(),anyByte())).thenReturn(new BigDecimal(555));
+        when(mockClient.getBalance(any())).thenReturn(new BigDecimal(555));
 
         Field client = dbservice.getClass().getDeclaredField("client");
         client.setAccessible(true);

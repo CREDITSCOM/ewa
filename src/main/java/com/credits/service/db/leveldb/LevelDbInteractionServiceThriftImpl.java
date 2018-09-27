@@ -3,9 +3,9 @@ package com.credits.service.db.leveldb;
 import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Base58;
 import com.credits.leveldb.client.ApiClient;
+import com.credits.leveldb.client.data.CreateTransactionData;
 import com.credits.leveldb.client.data.PoolData;
 import com.credits.leveldb.client.data.TransactionData;
-import com.credits.leveldb.client.data.TransactionFlowData;
 import com.credits.leveldb.client.data.TransactionIdData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Random;
 
@@ -36,8 +35,9 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
 
 
     @Override
-    public BigDecimal getBalance(String address, byte currency) throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
-        return client.getBalance(Base58.decode(address), currency);
+    public BigDecimal getBalance(String address, byte currency)
+        throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
+        return client.getBalance(Base58.decode(address));
     }
 
     @Override
@@ -47,7 +47,8 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     }
 
     @Override
-    public List<TransactionData> getTransactions(String address, long offset, long limit) throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
+    public List<TransactionData> getTransactions(String address, long offset, long limit)
+        throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
         return client.getTransactions(Base58.decode(address), offset, limit);
     }
 
@@ -62,16 +63,11 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     }
 
     @Override
-    public void transactionFlow(Long innerId,
-                                String source,
-                                String target,
-                                BigDecimal amount,
-                                BigDecimal balance,
-                                byte currency,
-                                byte[] signature,
-                                BigDecimal fee) throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
-        TransactionFlowData transactionFlowData =
-            new TransactionFlowData(new Random().nextLong(), Base58.decode(source), Base58.decode(target), amount, balance, currency, signature, fee);
-        client.transactionFlow(transactionFlowData, true);
+    public void transactionFlow(Long innerId, String source, String target, BigDecimal amount, BigDecimal balance,
+        byte currency, byte[] signature, BigDecimal fee)
+        throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
+        CreateTransactionData CreateTransactionData =
+            new CreateTransactionData(new Random().nextLong(), Base58.decode(source), Base58.decode(target), amount,
+                balance, currency, fee, signature); client.createTransaction(CreateTransactionData, true);
     }
 }
