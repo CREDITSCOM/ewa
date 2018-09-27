@@ -92,11 +92,6 @@
                                                                 prefHeight="60.0" prefWidth="250.0"
                                                                 styleClass="credits-button" stylesheets="@../styles.css"
                                                                 text="GENERATE TRANSACTION"/>
-                                                        <Button layoutX="50.0" layoutY="600.0" mnemonicParsing="false"
-                                                                onAction="#handleNewCoin" prefHeight="60.0"
-                                                                prefWidth="250.0"
-                                                                styleClass="credits-button" stylesheets="@../styles.css"
-                                                                text="NEW COIN"/>
                                                         <Label fx:id="labErrorCoin" layoutX="30.0" layoutY="197.0"
                                                                styleClass="credits-labelError"
                                                                stylesheets="@../styles.css" text="Label"/>

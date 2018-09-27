@@ -1,22 +1,33 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.common.utils.Converter;
+import com.credits.leveldb.client.data.ApiResponseData;
+import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.controller.SmartContractController;
 import javafx.concurrent.Task;
 import javafx.scene.layout.Pane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SmartContractUtils {
+    private final static Logger LOGGER = LoggerFactory.getLogger(SmartContractUtils.class);
+
     private static final String[] KEYWORDS =
         new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
             "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for",
@@ -87,5 +98,27 @@ public class SmartContractUtils {
         }).subscribe(highlighting -> codeArea.setStyleSpans(0, highlighting));
 
         return codeArea;
+    }
+
+    public static BigDecimal getSmartContractBalance(String smart, String owner) {
+        try {
+            owner = "\"" + owner + "\"";
+            String method = "balanceOf";
+            List<Object> params = new ArrayList<>();
+            params.add(owner);
+            SmartContractData smartContractData =
+                AppState.apiClient.getSmartContract(Converter.decodeFromBASE58(smart));
+            if(smartContractData == null) {
+                FormUtils.showInfo("SmartContract not found");
+                return null;
+            }
+            ApiResponseData apiResponseData =
+                SmartContractController.executeSmartContractProcess(method, params, smartContractData);
+            return new BigDecimal((Double)apiResponseData.getScExecRetVal().getFieldValue()).setScale(13, BigDecimal.ROUND_DOWN);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            FormUtils.showError(e.getMessage());
+        }
+        return null;
     }
 }

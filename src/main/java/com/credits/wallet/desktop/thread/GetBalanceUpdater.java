@@ -32,8 +32,8 @@ public class GetBalanceUpdater implements Runnable {
     @Override
     public void run() {
         try {
-            //BigDecimal balance = AppState.apiClient.getBalance(AppState.account, coin);
-            BigDecimal balance = AppState.apiClient.getBalance(Converter.decodeFromBASE58(AppState.account));
+            BigDecimal balance = AppState.apiClient.getBalance(Converter.decodeFromBASE58(AppState.account))
+                .setScale(13, BigDecimal.ROUND_DOWN);
             AppState.balance = balance;
             Platform.runLater(() -> label.setText(Converter.toString(balance)));
         } catch (LevelDbClientException e) {

@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.common.utils.sourcecode.SourceCodeUtils;
@@ -7,6 +8,8 @@ import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.data.SmartContractInvocationData;
+import com.credits.leveldb.client.exception.CreditsNodeException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.util.ApiClientUtils;
 import com.credits.leveldb.client.util.TransactionType;
 import com.credits.wallet.desktop.App;
@@ -258,36 +261,7 @@ public class SmartContractController extends Controller implements Initializable
 
             SmartContractData smartContractData = this.currentSmartContract;
 
-            SmartContractInvocationData smartContractInvocationData =
-                new SmartContractInvocationData("", new byte[0], smartContractData.getHashState(), method, params,
-                    false);
-
-            byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractInvocationData);
-            CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult = ApiUtils.calcTransactionIdSourceTarget(
-                    AppState.account,
-                    Converter.encodeToBASE58(this.currentSmartContract.getAddress())
-            );
-
-            TransactionStruct tStruct = new TransactionStruct(
-                    calcTransactionIdSourceTargetResult.getTransactionId(),
-                    calcTransactionIdSourceTargetResult.getSource(),
-                    calcTransactionIdSourceTargetResult.getTarget(),
-                    new BigDecimal(0),
-                    new BigDecimal(0),
-                    (byte)1,
-                    scBytes
-            );
-
-            ByteBuffer signature = Utils.signTransactionStruct(tStruct);
-
-            ApiResponseData apiResponseData = AppState.apiClient.executeSmartContract(
-                    calcTransactionIdSourceTargetResult.getTransactionId(),
-                    calcTransactionIdSourceTargetResult.getSource(),
-                    calcTransactionIdSourceTargetResult.getTarget(),
-                    smartContractInvocationData,
-                    signature.array(),
-                    TransactionType.EXECUTE_TRANSACTION
-            );
+            ApiResponseData apiResponseData = executeSmartContractProcess(method, params, smartContractData);
             if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
                 com.credits.thrift.generated.Variant res = apiResponseData.getScExecRetVal();
                 if (res != null) {
@@ -309,6 +283,41 @@ public class SmartContractController extends Controller implements Initializable
             LOGGER.error(e.toString(), e);
             Utils.showError(e.toString());
         }
+    }
+
+    public static ApiResponseData executeSmartContractProcess(String method, List<Object> params,
+        SmartContractData smartContractData)
+        throws LevelDbClientException, CreditsCommonException, CreditsNodeException {
+        SmartContractInvocationData smartContractInvocationData =
+            new SmartContractInvocationData("", new byte[0], smartContractData.getHashState(), method, params,
+                false);
+
+        byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractInvocationData);
+        CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult = ApiUtils.calcTransactionIdSourceTarget(
+                AppState.account,
+                Converter.encodeToBASE58(smartContractData.getAddress())
+        );
+
+        TransactionStruct tStruct = new TransactionStruct(
+                calcTransactionIdSourceTargetResult.getTransactionId(),
+                calcTransactionIdSourceTargetResult.getSource(),
+                calcTransactionIdSourceTargetResult.getTarget(),
+                new BigDecimal(0),
+                new BigDecimal(0),
+                (byte)1,
+                scBytes
+        );
+
+        ByteBuffer signature = Utils.signTransactionStruct(tStruct);
+
+        return AppState.apiClient.executeSmartContract(
+                calcTransactionIdSourceTargetResult.getTransactionId(),
+                calcTransactionIdSourceTargetResult.getSource(),
+                calcTransactionIdSourceTargetResult.getTarget(),
+                smartContractInvocationData,
+                signature.array(),
+                TransactionType.EXECUTE_TRANSACTION
+        );
     }
 
     @FXML

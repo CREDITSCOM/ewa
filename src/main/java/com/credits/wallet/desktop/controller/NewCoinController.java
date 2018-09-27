@@ -2,6 +2,8 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.utils.CoinsUtils;
+import com.credits.wallet.desktop.utils.SmartContractUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -9,19 +11,13 @@ import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -70,7 +66,7 @@ public class NewCoinController extends Controller implements Initializable {
             isValidationSuccessful = false;
         }
 
-        if (AppState.coins.contains(coin)) {
+        if (CoinsUtils.getCoins().containsKey(coin)) {
             labelErrorCoin.setText(ERR_COIN_DUPLICATE);
             txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             isValidationSuccessful = false;
@@ -79,17 +75,11 @@ public class NewCoinController extends Controller implements Initializable {
         if (!isValidationSuccessful) {
             return;
         }
-
-        String strToWrite = coin + ";" + token;
-
-        // Save to csv
-        try {
-            Path coinsPath = Paths.get("coins.csv");
-            List<String> strings = Collections.singletonList(strToWrite);
-            Files.write(coinsPath, strings, StandardCharsets.UTF_8, StandardOpenOption.APPEND,
-                StandardOpenOption.CREATE);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+        BigDecimal balance = SmartContractUtils.getSmartContractBalance(token, AppState.account);
+        if (balance != null && balance.compareTo(BigDecimal.ZERO) > 0) {
+            CoinsUtils.saveCoinsToFile(coin + ";" + token);
+        } else {
+            return;
         }
 
         App.showForm("/fxml/form6.fxml", "Wallet");

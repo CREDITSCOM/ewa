@@ -16,7 +16,7 @@ public class AppMock extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         AppStateInitializer appStateInitializer = spy(AppStateInitializer.class);
-        when(appStateInitializer.getApiClient("127.0.0.1","9090")).thenReturn(new ApiClient());
+        when(appStateInitializer.getApiClient("127.0.0.1","9090")).thenReturn(new FakeApiClient());
         appStateInitializer.init();
         try {
             String pubKey = "GWe8WZYLBxAqsfPZgejnysXQm5Q697VSsyr3x59RvYBf";

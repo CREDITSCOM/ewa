@@ -143,8 +143,15 @@
     -fx-border-color: #000
 }
 
-#cbBalance .combo-box-popup>.list-view {
+.credits-textFieldGray:error {
+    -fx-text-box-border: red ;
+    -fx-focus-color: red ;
+}
+
+
+#cbCoinBalance .combo-box-popup>.list-view {
     -fx-pref-width: 210;
+    -fx-pref-height: 200;
 }
 
 #cbMethods .combo-box-popup>.list-view {
@@ -154,4 +161,5 @@
 
 #cbCoin .combo-box-popup>.list-view {
     -fx-pref-width: 300.0;
+    -fx-pref-height: 200;
 }

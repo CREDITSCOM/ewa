@@ -3,9 +3,11 @@ package com.credits.wallet.desktop.controller;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.thread.GetBalanceUpdater;
-import javafx.application.Platform;
+import com.credits.wallet.desktop.utils.CoinsUtils;
+import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +28,10 @@ public class AccountController extends Controller implements Initializable {
     private Label wallet;
 
     @FXML
-    private Label balance;
+    private ComboBox<String> cbCoinBalance;
+
+    @FXML
+    private Label lCoinBalance;
 
     @FXML
     private void handleLogout() {
@@ -37,6 +42,11 @@ public class AccountController extends Controller implements Initializable {
     private void handleDetails() {
         AppState.newAccount = false;
         App.showForm("/fxml/history.fxml", "Wallet");
+    }
+
+    @FXML
+    private void handleAddCoin() {
+        App.showForm("/fxml/new_coin.fxml", "Wallet");
     }
 
     @FXML
@@ -55,11 +65,14 @@ public class AccountController extends Controller implements Initializable {
 
     @FXML
     private void handleRefreshBalance() {
-        new Thread(new GetBalanceUpdater("cs", this.balance)).start();
+        CoinsUtils.displayBalance(cbCoinBalance,lCoinBalance);
     }
 
     public void initialize(URL location, ResourceBundle resources) {
+        CoinsUtils.fillBalanceCombobox(cbCoinBalance,lCoinBalance);
+        cbCoinBalance.getSelectionModel().select(0);
         this.wallet.setText(AppState.account);
-        new Thread(new GetBalanceUpdater("cs", this.balance)).start();
+
     }
+
 }

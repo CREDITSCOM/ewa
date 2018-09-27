@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.app;
 
 import com.credits.common.utils.Converter;
+import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.ApiClientInterface;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.CreateTransactionData;
@@ -13,19 +14,21 @@ import com.credits.leveldb.client.data.WalletData;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.thrift.Transaction;
 import com.credits.leveldb.client.util.TransactionType;
+import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.utils.FormUtils;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ApiClient implements ApiClientInterface {
+public class FakeApiClient implements ApiClientInterface {
 
 
     public BigDecimal getBalance(byte[] address) {
         String source = Converter.encodeToBASE58(address);
         if (source.equals("GWe8WZYLBxAqsfPZgejnysXQm5Q697VSsyr3x59RvYBf")) {
-            return BigDecimal.valueOf(100000.99);
+            return BigDecimal.valueOf(100000.99001);
         }
         return null;
     }
@@ -64,10 +67,16 @@ public class ApiClient implements ApiClientInterface {
         if(smartContractInvocationData.getMethod().equals("getName")) {
             return null;
         }
-        if(smartContractInvocationData.getMethod().equals("getBalance")) {
-            return null;
+        if(smartContractInvocationData.getMethod().equals("balanceOf")) {
+            Variant variant = new Variant();
+            variant.setV_double(33.0001);
+            return new ApiResponseData(ApiClient.API_RESPONSE_SUCCESS_CODE,"lol",variant);
         }
-
+        if(smartContractInvocationData.getMethod().equals("transferTo")) {
+            Variant variant = new Variant();
+            variant.setV_i64(33L);
+            return new ApiResponseData(ApiClient.API_RESPONSE_SUCCESS_CODE,"lol",new Variant());
+        }
         return null;
     }
 
@@ -89,7 +98,7 @@ public class ApiClient implements ApiClientInterface {
     }
 
     public SmartContractData getSmartContract(byte[] address) {
-        return null;
+        return FakeData.getSmartContractData().get(1);
     }
 
     public List<SmartContractData> getSmartContracts(byte[] address) {
