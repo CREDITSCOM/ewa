@@ -119,7 +119,7 @@ public class HistoryController extends Controller implements Initializable {
         }
 
         btnNext.setDisable(transactionList.size() < pageSize);
-        if (ApiTransactionExecutor.sourceMap.get(AppState.account) != null) {
+        if (ApiTransactionExecutor.sourceMap!=null && ApiTransactionExecutor.sourceMap.get(AppState.account) != null) {
             synchronized (ApiTransactionExecutor.sourceMap.get(AppState.account)) {
                 ApiTransactionExecutor.sourceMap.get(AppState.account).forEach((key, value) -> {
                     TransactionTabRow tableRow = new TransactionTabRow();

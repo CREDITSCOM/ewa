@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop;
 
 import com.credits.leveldb.client.ApiClient;
+import com.credits.leveldb.client.ApiClientInterface;
 import com.credits.wallet.desktop.utils.FormUtils;
 
 import java.io.FileInputStream;
@@ -10,7 +11,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Properties;
 
-class AppStateInitializer {
+public class AppStateInitializer {
     private static final String ERR_NO_PROPERTIES = "File settings.properties not found";
 
     private static final String ERR_NO_API_ADDR = "The server address could not be determined. Check api.addr parameter in the settings.properties file";
@@ -18,7 +19,7 @@ class AppStateInitializer {
     private static final String ERR_NO_CONTRACT_EXECUTOR =
             "Parameters for java contract executor could not be determined. Check contract.executor.host, contract.executor.port, contract.executor.dir  parameters in the settings.properties file";
 
-    void init() {
+    public void init() {
         Properties properties = new Properties();
         try {
             FileInputStream fis = new FileInputStream("settings.properties");
@@ -41,7 +42,11 @@ class AppStateInitializer {
         if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
             FormUtils.showError(ERR_NO_API_ADDR);
         } else {
-            AppState.apiClient = ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
+            AppState.apiClient = getApiClient(apiAddr, apiPort);
         }
+    }
+
+    public ApiClientInterface getApiClient(String apiAddr, String apiPort) {
+        return ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
     }
 }

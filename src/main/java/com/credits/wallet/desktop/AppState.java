@@ -1,6 +1,6 @@
 package com.credits.wallet.desktop;
 
-import com.credits.leveldb.client.ApiClient;
+import com.credits.leveldb.client.ApiClientInterface;
 import com.credits.wallet.desktop.controller.Const;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 
@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 public class AppState {
     public static final String NODE_ERROR="A problem connecting to the Node";
 
-    public static ApiClient apiClient;
+    public static ApiClientInterface apiClient;
     public static String decimalSeparator;
     public static String creditMonitorURL;
 
