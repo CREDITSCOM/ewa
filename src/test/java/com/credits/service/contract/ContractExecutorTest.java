@@ -31,12 +31,12 @@ public class ContractExecutorTest extends ServiceTest {
                         "    }\npublic void foo(){\nSystem.out.println(\"Method foo executed\");\n}\n}";
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
 
-        when(mockClient.getSmartContract(address)).thenReturn(
+        when(levelDbService.getSmartContract(address)).thenReturn(
                 new SmartContractData(address, address, sourceCode, bytecode, null));
 
         ceService.execute(address, bytecode, null, "foo", new String[0]);
 
-        when(mockClient.getSmartContract(address)).thenReturn(
+        when(levelDbService.getSmartContract(address)).thenReturn(
                 new SmartContractData(address, address, sourceCode, bytecode, "bad hash"));
 
         try {

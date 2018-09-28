@@ -2,7 +2,10 @@ package com.credits.service;
 
 import com.credits.App;
 import com.credits.leveldb.client.ApiClient;
+import com.credits.leveldb.client.ApiClientInterface;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.service.LevelDbServiceImpl;
+import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import org.junit.After;
 import org.junit.runner.RunWith;
@@ -16,10 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
-import static com.credits.TestUtils.encrypt;
 import static java.io.File.separator;
 import static org.mockito.Mockito.*;
 
@@ -38,10 +39,12 @@ public abstract class ServiceTest {
     @Resource
     protected ContractExecutorServiceImpl ceService;
 
-    protected ApiClient mockClient;
+    protected LevelDbService levelDbService;
+    protected ApiClientInterface mockClient;
 
     protected void setUp() throws Exception {
         mockClient = mock(ApiClient.class);
+        levelDbService = mock(LevelDbServiceImpl.class);
     }
 
     protected String readSourceCode(String resourcePath) throws IOException {
@@ -54,7 +57,7 @@ public abstract class ServiceTest {
     protected byte[] compileSourceCode(String sourceCodePath) throws Exception {
         String sourceCode = readSourceCode(sourceCodePath);
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
-        when(mockClient.getSmartContract(address)).thenReturn(
+        when(levelDbService.getSmartContract(address)).thenReturn(
             new SmartContractData(address, address,sourceCode, bytecode, null));
         return bytecode;
     }
