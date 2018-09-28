@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop;
 
 import com.credits.leveldb.client.ApiClientInterface;
+import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.wallet.desktop.controller.Const;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 
@@ -20,6 +21,7 @@ public class AppState {
     public static final String NODE_ERROR="A problem connecting to the Node";
 
     public static ApiClientInterface apiClient;
+    public static LevelDbService levelDbService;
     public static String decimalSeparator;
     public static String creditMonitorURL;
 

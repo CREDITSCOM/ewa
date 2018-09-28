@@ -107,7 +107,7 @@ public class SmartContractUtils {
             List<Object> params = new ArrayList<>();
             params.add(owner);
             SmartContractData smartContractData =
-                AppState.apiClient.getSmartContract(Converter.decodeFromBASE58(smart));
+                AppState.levelDbService.getSmartContract(Converter.decodeFromBASE58(smart));
             if(smartContractData == null) {
                 FormUtils.showInfo("SmartContract not found");
                 return null;

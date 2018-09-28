@@ -2,10 +2,10 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.ApiTransactionExecutor;
 import com.credits.leveldb.client.data.TransactionData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
@@ -98,7 +98,7 @@ public class HistoryController extends Controller implements Initializable {
         tabTransaction.getItems().clear();
         List<TransactionData> transactionList;
         try {
-            transactionList = AppState.apiClient.getTransactions(Converter.decodeFromBASE58(AppState.account),
+            transactionList = AppState.levelDbService.getTransactions(Converter.decodeFromBASE58(AppState.account),
                 (pageNumber - 1) * pageSize, pageSize);
         } catch (LevelDbClientException | CreditsCommonException e) {
             LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
@@ -119,9 +119,9 @@ public class HistoryController extends Controller implements Initializable {
         }
 
         btnNext.setDisable(transactionList.size() < pageSize);
-        if (ApiTransactionExecutor.sourceMap!=null && ApiTransactionExecutor.sourceMap.get(AppState.account) != null) {
-            synchronized (ApiTransactionExecutor.sourceMap.get(AppState.account)) {
-                ApiTransactionExecutor.sourceMap.get(AppState.account).forEach((key, value) -> {
+        if (LevelDbServiceImpl.sourceMap!=null && LevelDbServiceImpl.sourceMap.get(AppState.account) != null) {
+            synchronized (LevelDbServiceImpl.sourceMap.get(AppState.account)) {
+                LevelDbServiceImpl.sourceMap.get(AppState.account).forEach((key, value) -> {
                     TransactionTabRow tableRow = new TransactionTabRow();
                     tableRow.setAmount(Converter.toString(value.getAmount()));
                     tableRow.setCurrency(value.getCurrency());

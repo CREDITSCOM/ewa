@@ -1,7 +1,7 @@
 package com.credits.wallet.desktop;
 
 import com.credits.leveldb.client.ApiClient;
-import com.credits.leveldb.client.ApiClientInterface;
+import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.wallet.desktop.utils.FormUtils;
 
 import java.io.FileInputStream;
@@ -42,11 +42,12 @@ public class AppStateInitializer {
         if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
             FormUtils.showError(ERR_NO_API_ADDR);
         } else {
-            AppState.apiClient = getApiClient(apiAddr, apiPort);
+            AppState.apiClient = ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
         }
+        AppState.levelDbService = getLevelDbService();
     }
 
-    public ApiClientInterface getApiClient(String apiAddr, String apiPort) {
-        return ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
+    public LevelDbService getLevelDbService() {
+        return LevelDbService.getInstance();
     }
 }

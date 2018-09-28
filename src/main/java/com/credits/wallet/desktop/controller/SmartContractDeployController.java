@@ -214,7 +214,7 @@ public class SmartContractDeployController extends Controller implements Initial
             );
             ByteBuffer signature = Utils.signTransactionStruct(tStruct);
 
-            ApiResponseData apiResponseData = AppState.apiClient.deploySmartContract(
+            ApiResponseData apiResponseData = AppState.levelDbService.deploySmartContract(
                     calcTransactionIdSourceTargetResult.getTransactionId(),
                     calcTransactionIdSourceTargetResult.getSource(),
                     calcTransactionIdSourceTargetResult.getTarget(),

@@ -2,7 +2,6 @@ package com.credits.wallet.desktop.app;
 
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.ApiClient;
-import com.credits.leveldb.client.ApiClientInterface;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.CreateTransactionData;
 import com.credits.leveldb.client.data.PoolData;
@@ -12,6 +11,7 @@ import com.credits.leveldb.client.data.TransactionData;
 import com.credits.leveldb.client.data.TransactionIdData;
 import com.credits.leveldb.client.data.WalletData;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.leveldb.client.thrift.Transaction;
 import com.credits.leveldb.client.util.TransactionType;
 import com.credits.thrift.generated.Variant;
@@ -19,10 +19,9 @@ import com.credits.wallet.desktop.utils.FormUtils;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
-public class FakeApiClient implements ApiClientInterface {
+public class FakeLevelDbService implements LevelDbService {
 
 
     public BigDecimal getBalance(byte[] address) {
