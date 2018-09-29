@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 public class AppState {
     public static final String NODE_ERROR="A problem connecting to the Node";
 
-    public static ApiClientInterface apiClient;
+//    public static ApiClientInterface apiClient;
     public static LevelDbService levelDbService;
     public static String decimalSeparator;
     public static String creditMonitorURL;

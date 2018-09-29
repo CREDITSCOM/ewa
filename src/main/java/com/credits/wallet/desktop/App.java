@@ -18,8 +18,8 @@ import java.io.*;
 public class App extends Application {
 
     private static Stage currentStage;
-
     private final static Logger LOGGER = LoggerFactory.getLogger(App.class);
+    AppStateInitializer appStateInitializer;
 
     public static void main(String[] args) {
         launch(args);
@@ -28,7 +28,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         LOGGER.info("Starting Wallet app");
-        AppStateInitializer appStateInitializer = new AppStateInitializer();
+        appStateInitializer = appStateInitializer != null ? appStateInitializer : new AppStateInitializer();
         LOGGER.info("Initializing application state");
         appStateInitializer.init();
         LOGGER.info("Displaying the main window");

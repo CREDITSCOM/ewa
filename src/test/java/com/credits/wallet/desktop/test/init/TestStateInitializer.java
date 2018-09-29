@@ -2,6 +2,7 @@ package com.credits.wallet.desktop.test.init;
 
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.service.LevelDbService;
+import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.wallet.desktop.utils.FormUtils;
 
 import java.io.FileInputStream;
@@ -43,6 +44,6 @@ class TestStateInitializer {
         } else {
             TestState.apiClient = ApiClient.getInstance(apiAddr, Integer.valueOf(apiPort));
         }
-        TestState.levelDbServiceImpl = LevelDbService.getInstance();
+        TestState.levelDbServiceImpl = LevelDbServiceImpl.getInstance(apiAddr, Integer.valueOf(apiPort));
     }
 }
