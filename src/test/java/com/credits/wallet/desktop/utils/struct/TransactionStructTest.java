@@ -7,9 +7,10 @@ import com.credits.crypto.exception.CreditsCryptoException;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.service.LevelDbService;
+import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.leveldb.client.util.ApiClientUtils;
-import com.credits.wallet.desktop.test.init.TestState;
-import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +19,8 @@ import java.math.BigDecimal;
 
 public class TransactionStructTest {
 
-    @Before
-    public void init() {
-        TestState.init();
-    }
-
     private static Logger LOGGER = LoggerFactory.getLogger(TransactionStructTest.class);
+
     @Test
     public void test01() {
         try {
@@ -105,13 +102,15 @@ public class TransactionStructTest {
     }
 
     @Test
+    @Ignore                     // integration test
     public void test03() {
         try {
             byte currencyByte = 1;
 
             SmartContractData smartContractData = null;
             try {
-                smartContractData = TestState.levelDbServiceImpl.getSmartContract("6RNiVco3yb6jsQPaJ7GzjjRFc9aH1Rnyp21HTAh64FRn".getBytes());
+                LevelDbService levelDbService = LevelDbServiceImpl.getInstance("127.0.0.1", 9090);
+                smartContractData = levelDbService.getSmartContract("6RNiVco3yb6jsQPaJ7GzjjRFc9aH1Rnyp21HTAh64FRn".getBytes());
             } catch (CreditsNodeException e) {
                 e.printStackTrace();
             }

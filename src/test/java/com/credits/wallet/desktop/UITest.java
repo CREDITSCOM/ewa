@@ -7,8 +7,10 @@ import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.thrift.generated.Variant;
-import com.credits.wallet.desktop.app.FakeData;
+import com.credits.wallet.desktop.testUtils.FakeData;
+import com.credits.wallet.desktop.testUtils.JavaFXThreadingRule;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -18,6 +20,7 @@ import java.util.Random;
 
 import static com.credits.leveldb.client.ApiClient.API_RESPONSE_SUCCESS_CODE;
 import static com.credits.thrift.generated.Variant._Fields.V_STRING;
+import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -45,13 +48,14 @@ public class UITest {
     @Before
     public void setUp() throws CreditsCommonException {
         app = new App();
-        walletAddress = Converter.decodeFromBASE58("G2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZZ");
+        walletAddress = Converter.decodeFromBASE58(addressBase58);
         addressOne = Converter.decodeFromBASE58("11111111111111111111111111111111111111111111");
         addressTwo = Converter.decodeFromBASE58("22222222222222222222222222222222222222222222");
         addressThree = Converter.decodeFromBASE58("33333333333333333333333333333333333333333333");
     }
 
     @Test
+    @Ignore
     public void correctBehavior() throws LevelDbClientException, CreditsNodeException {
         AppStateInitializer spyInitializer = spy(AppStateInitializer.class);
         when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
@@ -64,7 +68,7 @@ public class UITest {
         when(mockLevelDbService.getBalance(addressThree)).thenReturn(new BigDecimal(new Random(System.currentTimeMillis()).nextDouble()));
 
         //transactions
-        when(mockLevelDbService.getTransactions(any(), anyLong(), anyLong())).thenReturn(FakeData.getTransactionDataList());
+        when(mockLevelDbService.getTransactions(any(), anyLong(), anyLong())).thenReturn(FakeData.transactionsDataList);
         when(mockLevelDbService.createTransaction(any(),anyBoolean())).thenReturn(successResponse);
         when(mockLevelDbService.asyncCreateTransaction(any(),anyBoolean(),any())).thenReturn(successResponse);
         when(mockLevelDbService.getWalletTransactionsCount(any())).thenReturn(new Long(1));
@@ -73,8 +77,8 @@ public class UITest {
         when(mockLevelDbService.getWalletId(addressThree)).thenReturn(0);
 
         //smart-contracts
-        when(mockLevelDbService.getSmartContract(any())).thenReturn(FakeData.getSmartContractData().get(1));
-        when(mockLevelDbService.getSmartContracts(any())).thenReturn(FakeData.getSmartContractData());
+        when(mockLevelDbService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
+        when(mockLevelDbService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
         when(mockLevelDbService.deploySmartContract(anyLong(), any(), any(), any(), any(), any())).thenReturn(successResponse);
         when(mockLevelDbService.executeSmartContract(anyLong(), any(), any(), any(), any(), any())).thenReturn(successResponse);
 

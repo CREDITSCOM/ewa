@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.wallet.desktop.AppState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,31 +13,31 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+
+import static com.credits.wallet.desktop.AppState.account;
+import static java.io.File.separator;
 
 public class ContactSaver {
 
-    public static final String fileDir = "contracts";
-    public static final String fileName = "contact.ser";
+    public static final String fileName = "obj.ser";
+    public static final Path cacheDirectory = Paths.get(System.getProperty("user.dir") + separator + "cache" );
+    public static final Path accountDirectory = Paths.get(cacheDirectory + separator + account );
     private static final Logger LOGGER = LoggerFactory.getLogger(ContactSaver.class);
 
     public static boolean serialize(Map collection) {
         try {
-            String fullFileName = getFullFileName();
-            Path filePath = Paths.get(System.getProperty("user.dir") + File.separator + fileDir);
-            if (!Files.exists(filePath)) {
-                LOGGER.info("Create fileDir");
-                Files.createDirectories(filePath);
-                LOGGER.info("FileDir was created");
+            Files.createDirectories(accountDirectory);
+            Path serObjectFile = getSerializedObjectPath();
+            File serFile = serObjectFile.toFile();
+            if(!serFile.exists()){
+                serFile.createNewFile();
             }
-            String fullFilePath = filePath + File.separator + fullFileName;
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fullFilePath))) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(serObjectFile.toString()))) {
                 oos.writeObject(collection);
+                oos.flush();
             }
-            LOGGER.info("Set was serialized");
+            LOGGER.info("Object was serialized");
             return true;
         } catch (IOException e) {
             LOGGER.info(e.getMessage());
@@ -48,15 +47,11 @@ public class ContactSaver {
 
     public static Map<String, SmartContractData> deserialize() {
         try {
-            String fullFileName = getFullFileName();
-            Path filePath = Paths.get(System.getProperty("user.dir") + File.separator + fileDir);
-            String fullFilePath = filePath + File.separator + fullFileName;
-
             Map map;
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fullFilePath))) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getSerializedObjectPath().toString()))) {
                 map = (Map) ois.readObject();
             }
-            LOGGER.info("Set was deserialized");
+            LOGGER.info("Object was deserialized");
             return map;
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.info(e.getMessage());
@@ -64,13 +59,11 @@ public class ContactSaver {
         }
     }
 
-    private static String getFullFileName() {
-        String fullFileName;
-        if(AppState.account !=null) {
-            fullFileName = AppState.account + "contact.ser";
-        } else {
-            fullFileName = fileName;
-        }
-        return fullFileName;
+    static Path getSerializedObjectPath() {
+        return Paths.get(getAccountDirectory() + separator + fileName);
+    }
+
+    static Path getAccountDirectory(){
+        return Paths.get(cacheDirectory + separator + account);
     }
 }

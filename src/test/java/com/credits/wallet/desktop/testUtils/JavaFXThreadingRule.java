@@ -1,4 +1,4 @@
-package com.credits.wallet.desktop;
+package com.credits.wallet.desktop.testUtils;
 
 import java.util.concurrent.CountDownLatch;
 
