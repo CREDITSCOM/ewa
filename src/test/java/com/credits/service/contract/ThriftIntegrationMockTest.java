@@ -2,6 +2,7 @@ package com.credits.service.contract;
 
 import com.credits.service.ServiceTest;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
+import com.credits.thrift.generated.Variant;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -57,7 +58,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     @Test
     public void execute_contract_using_bytecode_getBalance() throws Exception {
         String balance = (String) ceService.execute(address, contractBytecode,
-            contractState, "balanceGet", new String[0]).getVariant().getFieldValue();
+            contractState, "balanceGet", new Variant[0]).getVariant().getFieldValue();
         Assert.assertEquals("555", balance);
     }
 }

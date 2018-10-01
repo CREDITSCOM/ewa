@@ -5,6 +5,8 @@ import com.credits.exception.ContractExecutorException;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.thrift.generated.APIResponse;
 import com.credits.thrift.generated.ContractExecutor;
+import com.credits.thrift.generated.Variant;
+import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -27,12 +29,12 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     @Override
     public APIResponse executeByteCode(ByteBuffer address, ByteBuffer byteCode, ByteBuffer contractState, String method,
-                                       List<String> params) {
-        String[] paramsArray = params == null ? null : params.toArray(new String[0]);
+                                       List<Variant> params) {
+        Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
 
         logger.info(String.format("Executing contract:\nAddress = %s, \nByteCode = %s, \nContractState = %s, \nMethod = %s, \nParams = %s.",
             address, Arrays.toString(byteCode.array()), Arrays.toString(contractState.array()),
-            method, Optional.ofNullable(params).orElse(Collections.singletonList("no params")).stream().collect(Collectors.joining())));
+            method, (params == null ? "no params" : params.stream().map(e -> e.toString()).reduce("", String::concat))));
 
         APIResponse response = new APIResponse((byte) 0, "", contractState);
         try {

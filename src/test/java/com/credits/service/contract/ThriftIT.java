@@ -2,6 +2,7 @@ package com.credits.service.contract;
 
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.ServiceTest;
+import com.credits.thrift.generated.Variant;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -44,14 +45,14 @@ public class ThriftIT extends ServiceTest {
     @Ignore //No enough permissions
     @Test
     public void execute_contract_using_bytecode_getBalance() throws Exception {
-        ceService.execute(address, contractBytecode, contractState, "balanceGet", new String[0]);
+        ceService.execute(address, contractBytecode, contractState, "balanceGet", new Variant[0]);
     }
 
 
     @Ignore
     @Test
     public void execute_contract_using_bytecode_sendTransaction() throws Exception {
-        ceService.execute(address, contractBytecode, contractState, "sendZeroCS", new String[0]);
+        ceService.execute(address, contractBytecode, contractState, "sendZeroCS", new Variant[0]);
     }
 
 }

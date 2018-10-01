@@ -3,6 +3,7 @@ package com.credits.service.contract;
 import com.credits.service.ServiceTest;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.generated.Variant;
+import com.credits.thrift.utils.ContractUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class TetrisContractTest extends ServiceTest {
         Assert.assertNotNull(executeValueGetAction.getContractState());
         Assert.assertEquals(1, executeValueGetAction.getVariant().getFieldValue());
 
-        ReturnValue executeValueGetBalances = ceService.execute(address, bytecode, deployValue.getContractState(), "getBalance", new String[]{"0"});
+        ReturnValue executeValueGetBalances = ceService.execute(address, bytecode, deployValue.getContractState(), "getBalance", new Variant[]{ContractUtils.mapObjectToVariant("0")});
         Assert.assertTrue(executeValueGetBalances.getVariant().getFieldValue() instanceof Map);
         Assert.assertEquals(20, ((Map<Variant, Variant>) executeValueGetBalances.getVariant().getFieldValue()).get(new Variant(Variant._Fields.V_STRING, "testKey2")).getFieldValue());
 

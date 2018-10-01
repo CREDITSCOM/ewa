@@ -2,6 +2,8 @@ package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.ServiceTest;
+import com.credits.thrift.generated.Variant;
+import com.credits.thrift.utils.ContractUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -62,7 +64,7 @@ public class SecurityTest extends ServiceTest {
     @Test
     public void test() throws Exception {
         try {
-            ceService.execute(address, bytecode, contractState, methodName, arg != null ? new String[] {arg} : null);
+            ceService.execute(address, bytecode, contractState, methodName, arg != null ? new Variant[] {ContractUtils.mapObjectToVariant(arg)} : null);
         } catch (ContractExecutorException e) {
             System.out.println(e.getMessage());
             if (!errorExpected || !e.getMessage().contains("AccessControlException")) {

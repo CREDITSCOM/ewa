@@ -8,8 +8,7 @@ import com.credits.thrift.generated.Variant;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.credits.serialise.Serializer.serialize;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;

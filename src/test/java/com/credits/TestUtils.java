@@ -2,9 +2,6 @@ package com.credits;
 
 import com.credits.common.exception.CreditsException;
 import com.credits.exception.CompilationException;
-import com.credits.exception.ContractExecutorException;
-import com.credits.service.contract.method.MethodParamValueRecognizer;
-import com.credits.service.contract.method.MethodParamValueRecognizerFactory;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,38 +39,6 @@ public class TestUtils {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
-    }
-
-    private Object[] castValues(Class<?>[] types, String[] params) throws ContractExecutorException {
-        if (params == null || params.length != types.length) {
-            throw new ContractExecutorException("Not enough arguments passed");
-        }
-
-        Object[] retVal = new Object[types.length];
-        int i = 0;
-        String param;
-        Class<?> componentType;
-        for (Class<?> type : types) {
-            param = params[i];
-            componentType = type;
-            if (type.isArray()) {
-                if (types.length > 1) {
-                    throw new ContractExecutorException("Having array with other parameter types is not supported");
-                }
-                componentType = type.getComponentType();
-            }
-
-            MethodParamValueRecognizer recognizer = MethodParamValueRecognizerFactory.get(param);
-            try {
-                retVal[i] = recognizer.castValue(componentType);
-            } catch (ContractExecutorException e) {
-                throw new ContractExecutorException(
-                    "Failed when casting the parameter given with the number: " + (i + 1), e);
-            }
-            i++;
-        }
-
-        return retVal;
     }
 
     public static class SimpleInMemoryCompiler {
