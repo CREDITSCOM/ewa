@@ -3,6 +3,7 @@ package com.credits.service;
 import com.credits.App;
 import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import org.junit.After;
 import org.junit.runner.RunWith;
@@ -38,10 +39,10 @@ public abstract class ServiceTest {
     @Resource
     protected ContractExecutorServiceImpl ceService;
 
-    protected ApiClient mockClient;
+    protected LevelDbService mockClient;
 
     protected void setUp() throws Exception {
-        mockClient = mock(ApiClient.class);
+        mockClient = mock(LevelDbService.class);
     }
 
     protected String readSourceCode(String resourcePath) throws IOException {

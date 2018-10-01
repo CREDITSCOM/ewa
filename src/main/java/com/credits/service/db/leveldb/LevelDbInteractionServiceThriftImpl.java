@@ -9,6 +9,8 @@ import com.credits.leveldb.client.data.TransactionData;
 import com.credits.leveldb.client.data.TransactionIdData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.service.LevelDbService;
+import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +22,7 @@ import java.util.Random;
 @Component
 public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionService {
 
-    private ApiClient client;
+    private LevelDbService client;
 
     @Value("${api.server.host}")
     private String apiServerHost;
@@ -30,7 +32,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
 
     @PostConstruct
     public void setUp() {
-        client = ApiClient.getInstance(apiServerHost, apiServerPort);
+        client = LevelDbServiceImpl.getInstance(apiServerHost, apiServerPort);
     }
 
 
