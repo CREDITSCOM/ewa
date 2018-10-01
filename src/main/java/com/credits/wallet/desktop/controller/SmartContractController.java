@@ -5,6 +5,8 @@ import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.common.utils.sourcecode.SourceCodeUtils;
 import com.credits.leveldb.client.ApiClient;
+import com.credits.leveldb.client.callback.Callback;
+import com.credits.leveldb.client.callback.CallbackImpl;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.data.SmartContractInvocationData;
@@ -15,7 +17,11 @@ import com.credits.leveldb.client.util.TransactionType;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
-import com.credits.wallet.desktop.utils.*;
+import com.credits.wallet.desktop.utils.ApiUtils;
+import com.credits.wallet.desktop.utils.ContactSaver;
+import com.credits.wallet.desktop.utils.FormUtils;
+import com.credits.wallet.desktop.utils.SmartContractUtils;
+import com.credits.wallet.desktop.utils.Utils;
 import com.credits.wallet.desktop.utils.struct.CalcTransactionIdSourceTargetResult;
 import com.credits.wallet.desktop.utils.struct.TransactionStruct;
 import javafx.collections.ObservableList;
@@ -23,7 +29,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -36,7 +47,11 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -125,7 +140,7 @@ public class SmartContractController extends Controller implements Initializable
                 Label label = new Label(contractAddress);
                 setSmartContractLabelEventOnClick(smartContractData, label);
                 foundContractsList.getChildren().add(new TreeItem<>(label));
-                if(newRoot) {
+                if (newRoot) {
                     this.tvContracts.getRoot().getChildren().add(foundContractsList);
                 }
             }
@@ -159,7 +174,7 @@ public class SmartContractController extends Controller implements Initializable
             smartContracts.forEach(smartContractData -> {
 
                 Label label = new Label(Converter.encodeToBASE58(smartContractData.getAddress()));
-                label.setPadding(new Insets(0,0,0,-20));
+                label.setPadding(new Insets(0, 0, 0, -20));
                 setSmartContractLabelEventOnClick(smartContractData, label);
                 smartContractRootItem.getChildren().add(new TreeItem<>(label));
             });
@@ -239,14 +254,15 @@ public class SmartContractController extends Controller implements Initializable
         try {
             String method = cbMethods.getSelectionModel().getSelectedItem().getName().getIdentifier();
             List<Object> params = new ArrayList<>();
-            List<SingleVariableDeclaration> currentMethodParams = SourceCodeUtils.getMethodParameters(this.currentMethod);
+            List<SingleVariableDeclaration> currentMethodParams =
+                SourceCodeUtils.getMethodParameters(this.currentMethod);
 
             ObservableList<Node> paramsContainerChildren = this.pParamsContainer.getChildren();
 
             int i = 0;
-            for(Node node: paramsContainerChildren) {
+            for (Node node : paramsContainerChildren) {
                 if (node instanceof TextField) {
-                    String paramValue = ((TextField)node).getText();
+                    String paramValue = ((TextField) node).getText();
 
                     SingleVariableDeclaration variableDeclaration = currentMethodParams.get(i);
 
@@ -261,63 +277,33 @@ public class SmartContractController extends Controller implements Initializable
 
             SmartContractData smartContractData = this.currentSmartContract;
 
-            ApiResponseData apiResponseData = executeSmartContractProcess(method, params, smartContractData);
-            if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
-                com.credits.thrift.generated.Variant res = apiResponseData.getScExecRetVal();
-                if (res != null) {
-//                    retVal.append(res.isSet(Variant._Fields.V_BOOL) ? "v_bool=" + res.getV_bool() : "");
-//                    retVal.append(res.isSet(Variant._Fields.V_I8) ? "v_i8=" + res.getV_i8() : "");
-//                    retVal.append(res.isSet(Variant._Fields.V_I16) ? "v_i16=" + res.getV_i16() : "");
-//                    retVal.append(res.isSet(Variant._Fields.V_I32) ? "v_i32=" + res.getV_i32() : "");
-//                    retVal.append(res.isSet(Variant._Fields.V_I64) ? "v_i64=" + res.getV_i64() : "");
-//                    retVal.append(res.isSet(Variant._Fields.V_DOUBLE) ? "v_double=" + res.getV_double() : "");
-//                    retVal.append(res.isSet(Variant._Fields.V_STRING) ? "v_string=" + res.getV_string() : "");
-                    String retVal = res.toString() + '\n';
-                    Utils.showInfo("Smart-contract executed successfully; Returned value:\n" + retVal);
-                } else
-                    Utils.showInfo("Smart-contract executed successfully");
-            } else {
-                Utils.showError(apiResponseData.getMessage());
-            }
+            executeSmartContractProcess(method, params, smartContractData,new CallbackImpl(TransactionType.EXECUTE_SMART_CONTRACT));
         } catch (CreditsException e) {
             LOGGER.error(e.toString(), e);
-            Utils.showError(e.toString());
+            FormUtils.showError(e.toString());
         }
     }
 
-    public static ApiResponseData executeSmartContractProcess(String method, List<Object> params,
-        SmartContractData smartContractData)
+    public static void executeSmartContractProcess(String method, List<Object> params,
+        SmartContractData smartContractData, Callback callback)
         throws LevelDbClientException, CreditsCommonException, CreditsNodeException {
         SmartContractInvocationData smartContractInvocationData =
-            new SmartContractInvocationData("", new byte[0], smartContractData.getHashState(), method, params,
-                false);
+            new SmartContractInvocationData("", new byte[0], smartContractData.getHashState(), method, params, false);
 
         byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractInvocationData);
-        CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult = ApiUtils.calcTransactionIdSourceTarget(
-                AppState.account,
-                Converter.encodeToBASE58(smartContractData.getAddress())
-        );
+        CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
+            ApiUtils.calcTransactionIdSourceTarget(AppState.account,
+                Converter.encodeToBASE58(smartContractData.getAddress()));
 
-        TransactionStruct tStruct = new TransactionStruct(
-                calcTransactionIdSourceTargetResult.getTransactionId(),
-                calcTransactionIdSourceTargetResult.getSource(),
-                calcTransactionIdSourceTargetResult.getTarget(),
-                new BigDecimal(0),
-                new BigDecimal(0),
-                (byte)1,
-                scBytes
-        );
+        TransactionStruct tStruct = new TransactionStruct(calcTransactionIdSourceTargetResult.getTransactionId(),
+            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
+            new BigDecimal(0), new BigDecimal(0), (byte) 1, scBytes);
 
         ByteBuffer signature = Utils.signTransactionStruct(tStruct);
 
-        return AppState.levelDbService.executeSmartContract(
-                calcTransactionIdSourceTargetResult.getTransactionId(),
-                calcTransactionIdSourceTargetResult.getSource(),
-                calcTransactionIdSourceTargetResult.getTarget(),
-                smartContractInvocationData,
-                signature.array(),
-                TransactionType.EXECUTE_TRANSACTION
-        );
+        AppState.levelDbService.executeSmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
+            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
+            smartContractInvocationData, signature.array(), callback);
     }
 
     @FXML

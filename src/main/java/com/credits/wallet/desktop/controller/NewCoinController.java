@@ -75,18 +75,22 @@ public class NewCoinController extends Controller implements Initializable {
         if (!isValidationSuccessful) {
             return;
         }
-        BigDecimal balance = SmartContractUtils.getSmartContractBalance(token, AppState.account);
+/*
         if (balance != null && balance.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal balance = SmartContractUtils.getSmartContractBalance(token, null);
+*/
             CoinsUtils.saveCoinsToFile(coin + ";" + token);
+/*
         } else {
             return;
         }
+*/
 
-        App.showForm("/fxml/form6.fxml", "Wallet");
-    }
+            App.showForm("/fxml/form6.fxml", "Wallet");
+        }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+        @Override
+        public void initialize(URL location, ResourceBundle resources) {
         clearLabErr();
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

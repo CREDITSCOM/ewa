@@ -4,6 +4,7 @@ import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.crypto.Md5;
+import com.credits.leveldb.client.callback.CallbackImpl;
 import com.credits.leveldb.client.data.CreateTransactionData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
@@ -26,7 +27,7 @@ public class ApiUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
-    public static void callCreateTransaction(TransactionType transactionType) throws LevelDbClientException,
+    public static void callCreateTransaction() throws LevelDbClientException,
             CreditsNodeException, CreditsCommonException {
 
         String sourceBase58 = AppState.account;
@@ -68,7 +69,7 @@ public class ApiUtils {
         AppState.levelDbService.asyncCreateTransaction(
                 createTransactionData,
                 false,
-                transactionType
+                new CallbackImpl(TransactionType.EXECUTE_TRANSACTION)
         );
 
         // add or update transactionId in cache

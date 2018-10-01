@@ -44,7 +44,7 @@ public class CoinsUtils {
                 });
             }
         } catch (IOException e) {
-            Utils.showInfo("Сoins type are not loaded");
+            FormUtils.showInfo("Сoins type are not loaded");
         }
         return coins;
     }
@@ -77,10 +77,7 @@ public class CoinsUtils {
             new Thread(new GetBalanceUpdater(coin, label)).start();
         } else {
             if (CoinsUtils.getCoins().get(coin)!= null) {
-                BigDecimal balance = SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin), AppState.account);
-                if (balance != null) {
-                    label.setText(balance.toString());
-                }
+                SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin), label);
             }
         }
     }

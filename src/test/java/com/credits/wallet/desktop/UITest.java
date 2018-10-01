@@ -80,7 +80,6 @@ public class UITest {
         when(mockLevelDbService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
         when(mockLevelDbService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
         when(mockLevelDbService.deploySmartContract(anyLong(), any(), any(), any(), any(), any())).thenReturn(successResponse);
-        when(mockLevelDbService.executeSmartContract(anyLong(), any(), any(), any(), any(), any())).thenReturn(successResponse);
 
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
         app.appStateInitializer = spyInitializer;

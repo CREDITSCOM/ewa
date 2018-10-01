@@ -1,11 +1,13 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.data.ApiResponseData;
+import com.credits.leveldb.client.callback.CallbackImpl;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.util.TransactionType;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.controller.SmartContractController;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -14,7 +16,6 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -100,25 +101,23 @@ public class SmartContractUtils {
         return codeArea;
     }
 
-    public static BigDecimal getSmartContractBalance(String smart, String owner) {
+    public static void getSmartContractBalance(String smart, Label label) {
         try {
-            owner = "\"" + owner + "\"";
+            String owner = "\"" + AppState.account + "\"";
             String method = "balanceOf";
             List<Object> params = new ArrayList<>();
             params.add(owner);
             SmartContractData smartContractData =
                 AppState.levelDbService.getSmartContract(Converter.decodeFromBASE58(smart));
-            if(smartContractData == null) {
+            if (smartContractData == null) {
                 FormUtils.showInfo("SmartContract not found");
-                return null;
+                return;
             }
-            ApiResponseData apiResponseData =
-                SmartContractController.executeSmartContractProcess(method, params, smartContractData);
-            return new BigDecimal((Double)apiResponseData.getScExecRetVal().getFieldValue()).setScale(13, BigDecimal.ROUND_DOWN);
+            SmartContractController.executeSmartContractProcess(method, params, smartContractData, new CallbackImpl(
+                TransactionType.EXECUTE_SMART_CONTRACT_GET_BALLANCE,label));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());
         }
-        return null;
     }
 }
