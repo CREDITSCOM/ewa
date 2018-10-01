@@ -9,10 +9,8 @@ import org.junit.Test;
 import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
-import static com.credits.TestUtils.encrypt;
 import static java.io.File.separator;
 import static org.mockito.Mockito.when;
 
@@ -29,7 +27,7 @@ public class ThriftIT extends ServiceTest {
 
         contractBytecode = compile(sourceCode, "Contract", "TKN");
 
-        when(mockClient.getSmartContract(address)).thenReturn(
+        when(mockLevelDbService.getSmartContract(address)).thenReturn(
             new SmartContractData(address, address, sourceCode, contractBytecode,null));
 
         contractState = ceService.execute(address, contractBytecode, null, null, null).getContractState();
