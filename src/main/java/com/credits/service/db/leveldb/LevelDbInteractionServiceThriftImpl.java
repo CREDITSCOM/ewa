@@ -9,6 +9,8 @@ import com.credits.leveldb.client.data.TransactionData;
 import com.credits.leveldb.client.data.TransactionIdData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.service.LevelDbService;
+import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +22,7 @@ import java.util.Random;
 @Component
 public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionService {
 
-    private ApiClient client;
+    private LevelDbService service;
 
     @Value("${api.server.host}")
     private String apiServerHost;
@@ -30,36 +32,36 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
 
     @PostConstruct
     public void setUp() {
-        client = ApiClient.getInstance(apiServerHost, apiServerPort);
+        service = LevelDbServiceImpl.getInstance(apiServerHost, apiServerPort);
     }
 
 
     @Override
     public BigDecimal getBalance(String address, byte currency)
         throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
-        return client.getBalance(Base58.decode(address));
+        return service.getBalance(Base58.decode(address));
     }
 
     @Override
     public TransactionData getTransaction(String transactionId) throws LevelDbClientException, CreditsNodeException {
         //TODO need add adapter from String to TransactionIdData
-        return client.getTransaction(new TransactionIdData());
+        return service.getTransaction(new TransactionIdData());
     }
 
     @Override
     public List<TransactionData> getTransactions(String address, long offset, long limit)
         throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
-        return client.getTransactions(Base58.decode(address), offset, limit);
+        return service.getTransactions(Base58.decode(address), offset, limit);
     }
 
     @Override
     public List<PoolData> getPoolList(long offset, long limit) throws LevelDbClientException, CreditsNodeException {
-        return client.getPoolList(offset, limit);
+        return service.getPoolList(offset, limit);
     }
 
     @Override
     public PoolData getPoolInfo(byte[] hash, long index) throws LevelDbClientException, CreditsNodeException {
-        return client.getPoolInfo(hash, index);
+        return service.getPoolInfo(hash, index);
     }
 
     @Override
@@ -68,6 +70,6 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
         throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
         CreateTransactionData CreateTransactionData =
             new CreateTransactionData(new Random().nextLong(), Base58.decode(source), Base58.decode(target), amount,
-                balance, currency, fee, signature); client.createTransaction(CreateTransactionData, true);
+                balance, currency, fee, signature); service.createTransaction(CreateTransactionData, true);
     }
 }
