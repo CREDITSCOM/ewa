@@ -4,16 +4,15 @@ import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.common.utils.sourcecode.SourceCodeUtils;
-import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.callback.Callback;
-import com.credits.leveldb.client.callback.CallbackImpl;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.data.SmartContractInvocationData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.util.ApiAlertUtils;
 import com.credits.leveldb.client.util.ApiClientUtils;
-import com.credits.leveldb.client.util.TransactionType;
+import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
@@ -277,7 +276,26 @@ public class SmartContractController extends Controller implements Initializable
 
             SmartContractData smartContractData = this.currentSmartContract;
 
-            executeSmartContractProcess(method, params, smartContractData,new CallbackImpl(TransactionType.EXECUTE_SMART_CONTRACT));
+            executeSmartContractProcess(method, params, smartContractData, new Callback() {
+                @Override
+                public void onSuccess(ApiResponseData resultData) {
+                    Variant res = resultData.getScExecRetVal();
+                    if (res != null) {
+                        String retVal = res.toString() + '\n';
+                        LOGGER.info("Return value is {}", retVal);
+                        ApiAlertUtils.showAlertInfo(
+                            "Execute smart contract was success: return value is: " + retVal);
+                    } else {
+                        ApiAlertUtils.showAlertInfo("Execute smart contract was success");
+                    }
+
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    FormUtils.showError(e.getMessage());
+                }
+            });
         } catch (CreditsException e) {
             LOGGER.error(e.toString(), e);
             FormUtils.showError(e.toString());

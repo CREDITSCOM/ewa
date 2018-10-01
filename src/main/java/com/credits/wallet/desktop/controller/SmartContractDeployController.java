@@ -5,13 +5,10 @@ import com.credits.common.utils.Converter;
 import com.credits.common.utils.sourcecode.SourceCodeUtils;
 import com.credits.crypto.Ed25519;
 import com.credits.leveldb.client.ApiClient;
-import com.credits.leveldb.client.callback.CallbackImpl;
+import com.credits.leveldb.client.callback.Callback;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractInvocationData;
-import com.credits.leveldb.client.exception.CreditsNodeException;
-import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.util.ApiClientUtils;
-import com.credits.leveldb.client.util.TransactionType;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.CompilationException;
@@ -216,19 +213,23 @@ public class SmartContractDeployController extends Controller implements Initial
                 new BigDecimal(0), new BigDecimal(0), (byte) 1, scBytes);
             ByteBuffer signature = Utils.signTransactionStruct(tStruct);
 
-            ApiResponseData apiResponseData =
                 AppState.levelDbService.deploySmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
                     calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
-                    smartContractInvocationData, signature.array(), new CallbackImpl(TransactionType.DEPLOY_SMART_CONTRACT));
-            if (apiResponseData.getCode() == ApiClient.API_RESPONSE_SUCCESS_CODE) {
-                StringSelection selection = new StringSelection(transactionTarget);
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(selection, selection);
-                FormUtils.showInfo(String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard",
-                    transactionTarget));
-            } else {
-                FormUtils.showError(String.format("Error deploying smart contract: %s", apiResponseData.getMessage()));
-            }
+                    smartContractInvocationData, signature.array(), new Callback() {
+                        @Override
+                        public void onSuccess(ApiResponseData resultData) {
+                            String target = resultData.getTarget();
+                            StringSelection selection = new StringSelection(target);
+                            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                            clipboard.setContents(selection, selection);
+                            FormUtils.showInfo(
+                                String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", target));
+                        }
+                        @Override
+                        public void onError(Exception e) {
+                            FormUtils.showError(e.getMessage());
+                        }
+                    });
         } catch (CompilationException | CreditsException e) {
             LOGGER.error(e.toString(), e);
             FormUtils.showError(AppState.NODE_ERROR + ": " + e.getMessage());

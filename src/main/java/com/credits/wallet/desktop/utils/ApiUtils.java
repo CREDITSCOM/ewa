@@ -4,11 +4,11 @@ import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.crypto.Md5;
-import com.credits.leveldb.client.callback.CallbackImpl;
+import com.credits.leveldb.client.callback.Callback;
+import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.CreateTransactionData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
-import com.credits.leveldb.client.util.TransactionType;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.struct.CalcTransactionIdSourceTargetResult;
 import com.credits.wallet.desktop.utils.struct.TransactionStruct;
@@ -66,11 +66,17 @@ public class ApiUtils {
                 signature.array()
         );
 
-        AppState.levelDbService.asyncCreateTransaction(
-                createTransactionData,
-                false,
-                new CallbackImpl(TransactionType.EXECUTE_TRANSACTION)
-        );
+        AppState.levelDbService.asyncCreateTransaction(createTransactionData, false, new Callback() {
+            @Override
+            public void onSuccess(ApiResponseData resultData) {
+                FormUtils.showInfo("Execute transaction was success");
+            }
+
+            @Override
+            public void onError(Exception e) {
+                FormUtils.showError(e.getMessage());
+            }
+        });
 
         // add or update transactionId in cache
         AppState.walletLastTransactionIdCache.put(sourceBase58, calcTransactionIdSourceTargetResult.getTransactionId());

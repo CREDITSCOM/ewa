@@ -1,9 +1,9 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.callback.CallbackImpl;
+import com.credits.leveldb.client.callback.Callback;
+import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.leveldb.client.util.TransactionType;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.controller.SmartContractController;
 import javafx.concurrent.Task;
@@ -16,6 +16,7 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -113,8 +114,53 @@ public class SmartContractUtils {
                 FormUtils.showInfo("SmartContract not found");
                 return;
             }
-            SmartContractController.executeSmartContractProcess(method, params, smartContractData, new CallbackImpl(
-                TransactionType.EXECUTE_SMART_CONTRACT_GET_BALLANCE,label));
+            SmartContractController.executeSmartContractProcess(method, params, smartContractData, new Callback() {
+                @Override
+                public void onSuccess(ApiResponseData resultData) {
+                    BigDecimal balance =
+                        new BigDecimal((Double) resultData.getScExecRetVal().getFieldValue()).setScale(13,
+                            BigDecimal.ROUND_DOWN);
+                    if (balance != null) {
+                        label.setText(balance.toString());
+                    } else {
+                        FormUtils.showInfo("Ballance = 0");
+                    }
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    FormUtils.showError(e.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            FormUtils.showError(e.getMessage());
+        }
+    }
+
+    public static void transferTo(String smart, String target, Long amount) {
+        try {
+            String method = "transfer";
+            List<Object> params = new ArrayList<>();
+            params.add("\"" + target + "\"");
+            params.add(amount);
+            SmartContractData smartContractData =
+                AppState.levelDbService.getSmartContract(Converter.decodeFromBASE58(smart));
+            if (smartContractData == null) {
+                FormUtils.showInfo("SmartContract not found");
+                return;
+            }
+            SmartContractController.executeSmartContractProcess(method, params, smartContractData, new Callback() {
+                @Override
+                public void onSuccess(ApiResponseData resultData) {
+                    FormUtils.showInfo("Transfer is ok");
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    FormUtils.showError(e.getMessage());
+                }
+            });
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());
