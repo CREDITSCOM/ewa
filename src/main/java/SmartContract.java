@@ -7,11 +7,12 @@ import com.credits.service.db.leveldb.LevelDbInteractionService;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.List;
 
 public abstract class SmartContract implements Serializable {
+
+    private static final long serialVersionUID = -7544650022718657167L;
 
     protected static LevelDbInteractionService service;
 
