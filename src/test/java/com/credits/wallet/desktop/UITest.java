@@ -70,7 +70,6 @@ public class UITest {
         //transactions
         when(mockLevelDbService.getTransactions(any(), anyLong(), anyLong())).thenReturn(FakeData.transactionsDataList);
         when(mockLevelDbService.createTransaction(any(),anyBoolean())).thenReturn(successResponse);
-        when(mockLevelDbService.asyncCreateTransaction(any(),anyBoolean(),any())).thenReturn(successResponse);
         when(mockLevelDbService.getWalletTransactionsCount(any())).thenReturn(new Long(1));
         when(mockLevelDbService.getWalletId(walletAddress)).thenReturn(1);
         when(mockLevelDbService.getWalletId(addressTwo)).thenReturn(2);
