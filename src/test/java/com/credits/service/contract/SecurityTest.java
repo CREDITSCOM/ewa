@@ -3,7 +3,6 @@ package com.credits.service.contract;
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.ServiceTest;
 import com.credits.thrift.generated.Variant;
-import com.credits.thrift.utils.ContractUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -16,6 +15,8 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static com.credits.thrift.generated.Variant._Fields.V_I32;
+import static com.credits.thrift.generated.Variant._Fields.V_STRING;
 import static java.io.File.separator;
 import static org.junit.Assert.fail;
 import static org.junit.runners.Parameterized.Parameter;
@@ -33,18 +34,18 @@ public class SecurityTest extends ServiceTest {
     @Parameter
     public String methodName;
     @Parameter(1)
-    public String arg;
+    public Variant arg;
     @Parameter(2)
     public boolean errorExpected;
 
     @Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-            {"openSocket", "5555", true},
-            {"setTotal", "1000", false},
+            {"openSocket",  new Variant(V_I32, 5555), true},
+            {"setTotal", new Variant(V_I32, 1000), false},
             {"getTotal", null, false},
             {"createFile", null, true},
-            {"createFileInProjectDir", prjDir, true},
+            {"createFileInProjectDir", new Variant(V_STRING, prjDir), true},
             {"killProcess", null, true},
             {"newThread", null, false},
         });
@@ -64,7 +65,7 @@ public class SecurityTest extends ServiceTest {
     @Test
     public void test() throws Exception {
         try {
-            ceService.execute(address, bytecode, contractState, methodName, arg != null ? new Variant[] {ContractUtils.mapObjectToVariant(arg)} : null);
+            ceService.execute(address, bytecode, contractState, methodName, arg != null ? new Variant[] {arg} : new Variant[]{});
         } catch (ContractExecutorException e) {
             System.out.println(e.getMessage());
             if (!errorExpected || !e.getMessage().contains("AccessControlException")) {

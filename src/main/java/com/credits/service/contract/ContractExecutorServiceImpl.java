@@ -25,7 +25,14 @@ import java.net.NetPermission;
 import java.net.SocketPermission;
 import java.security.Permissions;
 import java.security.SecurityPermission;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.PropertyPermission;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.credits.serialise.Serializer.deserialize;
@@ -188,9 +195,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     private Object parseObjectFromVariant(Variant variant) throws ContractExecutorException {
-        Object value = null;
+//        Object value = null;
         if (variant.isSetV_string()) {
-            value = variant.getV_string();
+            return variant.getV_string();
         } else if (variant.isSetV_bool()) {
             return variant.getV_bool();
         } else if (variant.isSetV_double()) {

@@ -7,7 +7,6 @@ import com.credits.service.ServiceTest;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.generated.Variant;
 import com.credits.thrift.utils.ContractUtils;
-import com.credits.thrift.utils.VariantMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -63,13 +62,13 @@ public class ContractExecutorTest extends ServiceTest {
         Assert.assertEquals(1, rvTotalInitialized.getVariant().getFieldValue());
 
         contractState = ceService.execute(address, bytecode, contractState, "addTokens", new Variant[]{
-                ContractUtils.mapObjectToVariant("10")
+                ContractUtils.mapObjectToVariant(10)
         }).getContractState();
         ReturnValue rvTotalAfterSumming = ceService.execute(address, bytecode, contractState, "getTotal", new Variant[]{});
         Assert.assertEquals(11, rvTotalAfterSumming.getVariant().getFieldValue());
 
         contractState = ceService.execute(address, bytecode, contractState, "addTokens", new Variant[]{
-                ContractUtils.mapObjectToVariant("10")
+                ContractUtils.mapObjectToVariant(-11)
         }).getContractState();
         ReturnValue rvTotalAfterSubtraction = ceService.execute(address, bytecode, contractState, "getTotal", new Variant[]{});
         Assert.assertEquals(0, rvTotalAfterSubtraction.getVariant().getFieldValue());
