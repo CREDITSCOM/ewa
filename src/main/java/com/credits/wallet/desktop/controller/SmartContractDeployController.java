@@ -213,7 +213,7 @@ public class SmartContractDeployController extends Controller implements Initial
                 new BigDecimal(0), new BigDecimal(0), (byte) 1, scBytes);
             ByteBuffer signature = Utils.signTransactionStruct(tStruct);
 
-                AppState.levelDbService.deploySmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
+                AppState.levelDbService.executeSmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
                     calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
                     smartContractInvocationData, signature.array(), new Callback() {
                         @Override
