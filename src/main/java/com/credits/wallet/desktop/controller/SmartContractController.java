@@ -276,7 +276,7 @@ public class SmartContractController extends Controller implements Initializable
 
             SmartContractData smartContractData = this.currentSmartContract;
 
-            executeSmartContractProcess(method, params, smartContractData, new Callback() {
+            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new Callback() {
                 @Override
                 public void onSuccess(ApiResponseData resultData) {
                     Variant res = resultData.getScExecRetVal();
@@ -300,28 +300,6 @@ public class SmartContractController extends Controller implements Initializable
             LOGGER.error(e.toString(), e);
             FormUtils.showError(e.toString());
         }
-    }
-
-    public static void executeSmartContractProcess(String method, List<Object> params,
-        SmartContractData smartContractData, Callback callback)
-        throws LevelDbClientException, CreditsCommonException, CreditsNodeException {
-        SmartContractInvocationData smartContractInvocationData =
-            new SmartContractInvocationData("", new byte[0], smartContractData.getHashState(), method, params, false);
-
-        byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractInvocationData);
-        CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
-            ApiUtils.calcTransactionIdSourceTarget(AppState.account,
-                Converter.encodeToBASE58(smartContractData.getAddress()));
-
-        TransactionStruct tStruct = new TransactionStruct(calcTransactionIdSourceTargetResult.getTransactionId(),
-            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
-            new BigDecimal(0), new BigDecimal(0), (byte) 1, scBytes);
-
-        ByteBuffer signature = Utils.signTransactionStruct(tStruct);
-
-        AppState.levelDbService.executeSmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
-            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
-            smartContractInvocationData, signature.array(), callback);
     }
 
     @FXML

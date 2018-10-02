@@ -114,7 +114,7 @@ public class SmartContractUtils {
                 FormUtils.showInfo("SmartContract not found");
                 return;
             }
-            SmartContractController.executeSmartContractProcess(method, params, smartContractData, new Callback() {
+            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new Callback() {
                 @Override
                 public void onSuccess(ApiResponseData resultData) {
                     BigDecimal balance =
@@ -150,7 +150,7 @@ public class SmartContractUtils {
                 FormUtils.showInfo("SmartContract not found");
                 return;
             }
-            SmartContractController.executeSmartContractProcess(method, params, smartContractData, new Callback() {
+            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new Callback() {
                 @Override
                 public void onSuccess(ApiResponseData resultData) {
                     FormUtils.showInfo("Transfer is ok");

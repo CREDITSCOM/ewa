@@ -3,22 +3,33 @@ package com.credits.wallet.desktop.utils;
 import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
+import com.credits.crypto.Ed25519;
 import com.credits.crypto.Md5;
 import com.credits.leveldb.client.callback.Callback;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.CreateTransactionData;
+import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.data.SmartContractInvocationData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.util.ApiClientUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.struct.CalcTransactionIdSourceTargetResult;
 import com.credits.wallet.desktop.utils.struct.TransactionStruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Rustem Saidaliyev on 20-Mar-18.
@@ -141,4 +152,87 @@ public class ApiUtils {
                 target
         );
     }
+
+    public static void deploySmartContractProcess(String javaCode, byte[] byteCode, String hashState)
+        throws LevelDbClientException, CreditsCommonException, CreditsNodeException {
+        SmartContractInvocationData smartContractInvocationData =
+            new SmartContractInvocationData(javaCode, byteCode, hashState, "", new ArrayList<Object>(), false);
+
+        String transactionTarget = generatePublicKeyBase58();
+        LOGGER.info("transactionTarget = {}", transactionTarget);
+
+        LOGGER.debug("SmartContractData structure ^^^^^");
+        LOGGER.debug("sourceCode = " + smartContractInvocationData.getSourceCode());
+        if (smartContractInvocationData.getByteCode() != null) {
+            LOGGER.debug("byteCode.length = " + smartContractInvocationData.getByteCode().length);
+        } else {
+            LOGGER.debug("byteCode.length = 0");
+        }
+        LOGGER.debug("hashState = " + smartContractInvocationData.getHashState());
+        LOGGER.debug("method = " + smartContractInvocationData.getMethod());
+        if (smartContractInvocationData.getParams() != null) {
+            LOGGER.debug("params.length = " + smartContractInvocationData.getParams().size());
+            for (int i = 0; i < smartContractInvocationData.getParams().size(); i++) {
+                LOGGER.debug("params." + i + " = " + smartContractInvocationData.getParams().get(i));
+            }
+        } else {
+            LOGGER.debug("params.length = 0");
+        }
+        LOGGER.debug("SmartContractData structure vvvvv");
+
+        byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractInvocationData);
+        CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
+            ApiUtils.calcTransactionIdSourceTarget(AppState.account, transactionTarget);
+
+        TransactionStruct tStruct = new TransactionStruct(calcTransactionIdSourceTargetResult.getTransactionId(),
+            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
+            new BigDecimal(0), new BigDecimal(0), (byte) 1, scBytes);
+        ByteBuffer signature = Utils.signTransactionStruct(tStruct);
+
+        AppState.levelDbService.executeSmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
+            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
+            smartContractInvocationData, signature.array(), new Callback() {
+                @Override
+                public void onSuccess(ApiResponseData resultData) {
+                    String target = resultData.getTarget();
+                    StringSelection selection = new StringSelection(target);
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(selection, selection);
+                    FormUtils.showInfo(
+                        String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", target));
+                }
+                @Override
+                public void onError(Exception e) {
+                    FormUtils.showError(e.getMessage());
+                }
+            });
+    }
+
+    public static void executeSmartContractProcess(String method, List<Object> params,
+        SmartContractData smartContractData, Callback callback)
+        throws LevelDbClientException, CreditsCommonException, CreditsNodeException {
+        SmartContractInvocationData smartContractInvocationData =
+            new SmartContractInvocationData("", new byte[0], smartContractData.getHashState(), method, params, false);
+
+        byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractInvocationData);
+        CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
+            ApiUtils.calcTransactionIdSourceTarget(AppState.account,
+                Converter.encodeToBASE58(smartContractData.getAddress()));
+
+        TransactionStruct tStruct = new TransactionStruct(calcTransactionIdSourceTargetResult.getTransactionId(),
+            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
+            new BigDecimal(0), new BigDecimal(0), (byte) 1, scBytes);
+
+        ByteBuffer signature = Utils.signTransactionStruct(tStruct);
+
+        AppState.levelDbService.executeSmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
+            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
+            smartContractInvocationData, signature.array(), callback);
+    }
+    private static String generatePublicKeyBase58() {
+        KeyPair keyPair = Ed25519.generateKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
+        return Converter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey));
+    }
+
 }
