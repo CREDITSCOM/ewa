@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop;
 
-import com.credits.leveldb.client.ApiClientInterface;
 import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.wallet.desktop.controller.Const;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
@@ -50,4 +49,6 @@ public class AppState {
     public static BigDecimal balance = BigDecimal.ZERO;
 
     public static Map<String, Long> walletLastTransactionIdCache = new HashMap<String, Long>();
+
+    public static Short transactionOfferedMaxFeeValue = Const.OFFERED_MAX_FEE;
 }

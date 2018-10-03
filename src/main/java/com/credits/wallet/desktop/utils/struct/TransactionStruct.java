@@ -4,6 +4,7 @@ import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.thrift.Amount;
 import com.credits.leveldb.client.util.LevelDbClientConverter;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,14 +20,13 @@ public class TransactionStruct implements Serializable {
     private byte[] target;
     private int amountInt;
     private long amountFrac;
-    private int feeInt;
-    private long feeFrac;
+    private short offeredMaxFee;
     private byte currency;
-    private int ufNum;
+    private byte ufNum;
     private int scLen;
     private byte[] sc;
 
-    public TransactionStruct(long id, byte[] source, byte[] target, BigDecimal amount, BigDecimal fee, byte currency,
+    public TransactionStruct(long id, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee, byte currency,
                              byte[] sc)
             throws LevelDbClientException {
         this.id = id;
@@ -37,9 +37,7 @@ public class TransactionStruct implements Serializable {
         this.amountInt=aAmount.integral;
         this.amountFrac=aAmount.fraction;
 
-        Amount aFee = LevelDbClientConverter.bigDecimalToAmount(fee);
-        this.feeInt = aFee.integral;
-        this.feeFrac = aFee.fraction;
+        this.offeredMaxFee = offeredMaxFee;
 
         this.currency = currency;
 
@@ -55,15 +53,17 @@ public class TransactionStruct implements Serializable {
     public byte[] getBytes() {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            os.write(Converter.toByteArrayLittleEndian(id, 8));
+            byte[] idBytes = Converter.toByteArrayLittleEndian(id, 8);
+            idBytes = ArrayUtils.remove(idBytes, 7); // delete two last bytes
+            idBytes = ArrayUtils.remove(idBytes, 6);
+            os.write(idBytes);
             os.write(source);
             os.write(target);
             os.write(Converter.toByteArrayLittleEndian(amountInt, 4));
             os.write(Converter.toByteArrayLittleEndian(amountFrac, 8));
-            os.write(Converter.toByteArrayLittleEndian(feeInt, 4));
-            os.write(Converter.toByteArrayLittleEndian(feeFrac, 8));
+            os.write(Converter.toByteArrayLittleEndian(offeredMaxFee, 2));
             os.write(Converter.toByteArrayLittleEndian(currency, 1));
-            os.write(Converter.toByteArrayLittleEndian(ufNum, 4));
+            os.write(Converter.toByteArrayLittleEndian(ufNum, 1));
             if (sc!=null) {
                 os.write(Converter.toByteArrayLittleEndian(scLen, 4));
                 os.write(Converter.toByteArrayLittleEndian(sc, scLen));

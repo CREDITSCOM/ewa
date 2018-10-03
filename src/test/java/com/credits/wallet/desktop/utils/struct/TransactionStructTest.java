@@ -33,7 +33,7 @@ public class TransactionStructTest {
                     Converter.decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe"),
                     Converter.decodeFromBASE58("B3EBaHgRU7sd353axMRrZfoL9aL2XjA3oXejDdPrMnHR"),
                     new BigDecimal("10.0"),
-                    new BigDecimal("0.1"),
+                    (short)1,
                     currencyByte,
                     null
             );
@@ -85,7 +85,7 @@ public class TransactionStructTest {
                     Converter.decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe"),
                     Converter.decodeFromBASE58("B3EBaHgRU7sd353axMRrZfoL9aL2XjA3oXejDdPrMnHR"),
                     new BigDecimal("10.0"),
-                    new BigDecimal("0.1"),
+                    (short)1,
                     currencyByte,
                     null
             );
@@ -122,7 +122,7 @@ public class TransactionStructTest {
                     Converter.decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe"),
                     Converter.decodeFromBASE58("B3EBaHgRU7sd353axMRrZfoL9aL2XjA3oXejDdPrMnHR"),
                     new BigDecimal(0),
-                    new BigDecimal(0),
+                    (short) 1,
                     currencyByte,
                     smartContractBytes
             );
