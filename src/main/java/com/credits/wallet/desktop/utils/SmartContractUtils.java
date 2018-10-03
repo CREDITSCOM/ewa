@@ -106,7 +106,7 @@ public class SmartContractUtils {
         try {
             String owner = "\"" + AppState.account + "\"";
             String method = "balanceOf";
-            List<Object> params = new ArrayList<>();
+            List<String> params = new ArrayList<>();
             params.add(owner);
             SmartContractData smartContractData =
                 AppState.levelDbService.getSmartContract(Converter.decodeFromBASE58(smart));
@@ -114,24 +114,9 @@ public class SmartContractUtils {
                 FormUtils.showInfo("SmartContract not found");
                 return;
             }
-            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new Callback() {
-                @Override
-                public void onSuccess(ApiResponseData resultData) {
-                    BigDecimal balance =
-                        new BigDecimal((Double) resultData.getScExecRetVal().getFieldValue()).setScale(13,
-                            BigDecimal.ROUND_DOWN);
-                    if (balance != null) {
-                        label.setText(balance.toString());
-                    } else {
-                        FormUtils.showInfo("Ballance = 0");
-                    }
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    FormUtils.showError(e.getMessage());
-                }
-            });
+            smartContractData.setMethod(method);
+            smartContractData.setParams(params);
+            AppState.levelDbService.directExecuteSmartContract(smartContractData);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());
