@@ -34,12 +34,12 @@ public class ContractExecutorTest extends ServiceTest {
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
 
         when(mockLevelDbService.getSmartContract(address)).thenReturn(
-                new SmartContractData(address, address, sourceCode, bytecode, null));
+                new SmartContractData(address, address, sourceCode, bytecode, null,null));
 
         ceService.execute(address, bytecode, null, "foo", new Variant[0]);
 
         when(mockLevelDbService.getSmartContract(address)).thenReturn(
-                new SmartContractData(address, address, sourceCode, bytecode, "bad hash"));
+                new SmartContractData(address, address, sourceCode, bytecode, "bad hash",null));
 
         try {
             ceService.execute(address, bytecode, null, "foo", new Variant[0]);

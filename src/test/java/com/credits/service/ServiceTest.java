@@ -54,7 +54,7 @@ public abstract class ServiceTest {
         String sourceCode = readSourceCode(sourceCodePath);
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
         when(mockLevelDbService.getSmartContract(address)).thenReturn(
-            new SmartContractData(address, address,sourceCode, bytecode, null));
+            new SmartContractData(address, address,sourceCode, bytecode, null,null));
         return bytecode;
     }
 

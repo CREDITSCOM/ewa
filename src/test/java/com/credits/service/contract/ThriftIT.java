@@ -29,7 +29,7 @@ public class ThriftIT extends ServiceTest {
         contractBytecode = compile(sourceCode, "Contract", "TKN");
 
         when(mockLevelDbService.getSmartContract(address)).thenReturn(
-            new SmartContractData(address, address, sourceCode, contractBytecode,null));
+            new SmartContractData(address, address, sourceCode, contractBytecode,null, null));
 
         contractState = ceService.execute(address, contractBytecode, null, null, null).getContractState();
     }
