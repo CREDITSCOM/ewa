@@ -26,7 +26,7 @@ public class ContractSaverTest {
     public void setUp() throws IOException {
         AppState.account = addressBase58;
         deleteDirectoryStream(ContactSaver.cacheDirectory);
-        someData.put("1",new SmartContractData(null, null, "aaa", null, "bad hash"));
+        someData.put("1",new SmartContractData(null, null, "aaa", null, "bad hash", null));
     }
 
 
@@ -48,7 +48,7 @@ public class ContractSaverTest {
     public void usingSerializedObject(){
         ContactSaver.serialize(someData);
         Map<String, SmartContractData> restoredObject = ContactSaver.deserialize();
-        restoredObject.put("2", new SmartContractData(null, null, "BBB", null, "bad hash"));
+        restoredObject.put("2", new SmartContractData(null, null, "BBB", null, "bad hash",null));
         ContactSaver.serialize(restoredObject);
         restoredObject = ContactSaver.deserialize();
         assertEquals(2, restoredObject.size());
