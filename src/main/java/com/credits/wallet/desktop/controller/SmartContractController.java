@@ -275,9 +275,7 @@ public class SmartContractController extends Controller implements Initializable
             }
 
             SmartContractData smartContractData = this.currentSmartContract;
-            smartContractData.setMethod(method);
-            smartContractData.setParams(params);
-            ApiUtils.executeSmartContractProcess(smartContractData, new Callback() {
+            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new Callback() {
                 @Override
                 public void onSuccess(ApiResponseData resultData) {
                     Variant res = resultData.getScExecRetVal();
