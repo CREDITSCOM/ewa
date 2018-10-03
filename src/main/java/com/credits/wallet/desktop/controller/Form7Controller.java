@@ -53,15 +53,7 @@ public class Form7Controller extends Controller implements Initializable {
                     SmartContractUtils.transferTo(CoinsUtils.getCoins().get(coin),AppState.toAddress,AppState.amount);
                 }
             }
-        } catch (LevelDbClientException e) {
-            LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);
-            FormUtils.showError(AppState.NODE_ERROR);
-            return;
-        } catch (CreditsNodeException e) {
-            LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);
-            FormUtils.showError(AppState.NODE_ERROR);
-            return;
-        } catch (CreditsCommonException e) {
+        } catch (LevelDbClientException | CreditsNodeException | CreditsCommonException e) {
             LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);
             FormUtils.showError(AppState.NODE_ERROR);
             return;
