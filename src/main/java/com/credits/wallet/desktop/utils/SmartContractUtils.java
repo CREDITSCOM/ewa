@@ -5,7 +5,6 @@ import com.credits.leveldb.client.callback.Callback;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.controller.SmartContractController;
 import javafx.concurrent.Task;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -102,7 +101,7 @@ public class SmartContractUtils {
         return codeArea;
     }
 
-    public static void getSmartContractBalance(String smart, Label label) {
+    public static BigDecimal getSmartContractBalance(String smart) {
         try {
             String owner = "\"" + AppState.account + "\"";
             String method = "balanceOf";
@@ -112,15 +111,18 @@ public class SmartContractUtils {
                 AppState.levelDbService.getSmartContract(Converter.decodeFromBASE58(smart));
             if (smartContractData == null) {
                 FormUtils.showInfo("SmartContract not found");
-                return;
+                return null;
             }
             smartContractData.setMethod(method);
             smartContractData.setParams(params);
-            AppState.levelDbService.directExecuteSmartContract(smartContractData);
+            return new BigDecimal(AppState.levelDbService.directExecuteSmartContract(smartContractData)
+                .getRet_val()
+                .getV_double()).setScale(13, BigDecimal.ROUND_DOWN);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());
         }
+        return null;
     }
 
     public static void transferTo(String smart, String target, BigDecimal amount) {

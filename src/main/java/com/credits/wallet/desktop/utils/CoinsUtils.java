@@ -35,7 +35,7 @@ public class CoinsUtils {
 
     private static Map<String,String> readCoinsFromFile(Map<String,String> coins) {
         try {
-            if(Files.exists(Paths.get("coins.csv"))) {
+            if(Files.exists(Paths.get(AppState.account+"coins.csv"))) {
                 Files.readAllLines(Paths.get("coins.csv")).forEach(line -> {
                     if (line != null && !line.trim().isEmpty()) {
                         String[] s = line.split(";");
@@ -51,7 +51,7 @@ public class CoinsUtils {
 
     public static void saveCoinsToFile(String strToWrite) {
         try {
-            Path coinsPath = Paths.get("coins.csv");
+            Path coinsPath = Paths.get(AppState.account+"coins.csv");
             List<String> strings = Collections.singletonList(strToWrite);
             Files.write(coinsPath, strings, StandardCharsets.UTF_8, StandardOpenOption.APPEND,
                 StandardOpenOption.CREATE);
@@ -77,7 +77,10 @@ public class CoinsUtils {
             new Thread(new GetBalanceUpdater(coin, label)).start();
         } else {
             if (CoinsUtils.getCoins().get(coin)!= null) {
-                SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin), label);
+                BigDecimal balance = SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin));
+                if(balance != null) {
+                    label.setText(balance.toString());
+                }
             }
         }
     }

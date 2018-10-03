@@ -3,9 +3,11 @@ package com.credits.wallet.desktop.controller;
 import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.data.TransactionData;
+import com.credits.leveldb.client.data.TransactionIdData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
+import com.credits.leveldb.client.thrift.Transaction;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
@@ -121,13 +123,42 @@ public class HistoryController extends Controller implements Initializable {
         btnNext.setDisable(transactionList.size() < pageSize);
         if (LevelDbServiceImpl.sourceMap!=null && LevelDbServiceImpl.sourceMap.get(AppState.account) != null) {
             synchronized (LevelDbServiceImpl.sourceMap.get(AppState.account)) {
+                LevelDbServiceImpl.sourceMap.get(AppState.account)
+                    .entrySet()
+                    .removeIf(e -> e.getValue().getRoundNumber() == null
+                    /*|| e.getValue().getTransaction().getState==APPLY*/
+                    );
                 LevelDbServiceImpl.sourceMap.get(AppState.account).forEach((key, value) -> {
-                    TransactionTabRow tableRow = new TransactionTabRow();
-                    tableRow.setAmount(Converter.toString(value.getAmount()));
-                    tableRow.setCurrency(value.getCurrency());
-                    tableRow.setTarget(Converter.encodeToBASE58(value.getTarget()));
-                    tableRow.setInnerId(key);
-                    tabTransaction.getItems().add(tableRow);
+                    if(value.getRoundNumber()!=null) {
+
+                        /*Response resp = AppState.levelDbService.getTransactionState(value.getTransaction().getId());
+                        State sate = resp.getState();
+                        round = resp.getRound();
+                        if(state==PASSED) {
+                            value.setState(PASSED);
+                        } else if (state = APPLY) {
+                            value.setState(APPLY)
+                            return;
+                        } else {
+                            if(round<value.getRoundNumber()+10) {
+                                value.setState(INPROGRESS);
+                            }
+                        }*/
+
+
+                        TransactionTabRow tableRow = new TransactionTabRow();
+                        Transaction transaction = value.getTransaction();
+                        /*tableRow.setState(state);*/
+                        tableRow.setAmount(Converter.toString(transaction.getAmount()));
+                        tableRow.setCurrency(transaction.getCurrency());
+                        tableRow.setTarget(Converter.encodeToBASE58(transaction.getTarget()));
+                        tableRow.setInnerId(key);
+
+
+
+
+                        tabTransaction.getItems().add(tableRow);
+                    }
                 });
             }
         }

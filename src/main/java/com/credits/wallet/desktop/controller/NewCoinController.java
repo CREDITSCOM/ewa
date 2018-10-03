@@ -75,16 +75,13 @@ public class NewCoinController extends Controller implements Initializable {
         if (!isValidationSuccessful) {
             return;
         }
-/*
+
+        BigDecimal balance = SmartContractUtils.getSmartContractBalance(token);
         if (balance != null && balance.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal balance = SmartContractUtils.getSmartContractBalance(token, null);
-*/
             CoinsUtils.saveCoinsToFile(coin + ";" + token);
-/*
         } else {
             return;
         }
-*/
 
             App.showForm("/fxml/form6.fxml", "Wallet");
         }

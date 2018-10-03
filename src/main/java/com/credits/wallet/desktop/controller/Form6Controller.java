@@ -3,6 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
@@ -116,8 +117,8 @@ public class Form6Controller extends Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         clearLabErr();
-
         // Fill coin list
+        LevelDbServiceImpl.source = AppState.account;
         cbCoin.getItems().clear();
         CoinsUtils.fillBalanceCombobox(cbCoin,labCredit);
 
