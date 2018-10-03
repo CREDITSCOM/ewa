@@ -34,6 +34,7 @@ public class AppState {
     public static BigDecimal transactionFeeValue = Const.FEE_TRAN_AMOUNT;
     public static BigDecimal transactionFeePercent = BigDecimal.ZERO;
     public static String toAddress;
+    public static String toSmartAddress;
     public static String coin;
 
     public static long transactionId;

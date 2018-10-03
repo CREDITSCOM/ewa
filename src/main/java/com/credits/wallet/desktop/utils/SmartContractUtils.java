@@ -123,7 +123,7 @@ public class SmartContractUtils {
         }
     }
 
-    public static void transferTo(String smart, String target, Long amount) {
+    public static void transferTo(String smart, String target, BigDecimal amount) {
         try {
             String method = "transfer";
             List<Object> params = new ArrayList<>();
