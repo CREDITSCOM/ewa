@@ -1,28 +1,20 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.common.utils.sourcecode.SourceCodeUtils;
 import com.credits.leveldb.client.callback.Callback;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.leveldb.client.data.SmartContractInvocationData;
-import com.credits.leveldb.client.exception.CreditsNodeException;
-import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.util.ApiAlertUtils;
-import com.credits.leveldb.client.util.ApiClientUtils;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.ApiUtils;
-import com.credits.wallet.desktop.utils.ContactSaver;
+import com.credits.wallet.desktop.utils.ObjectKeeper;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
-import com.credits.wallet.desktop.utils.Utils;
-import com.credits.wallet.desktop.utils.struct.CalcTransactionIdSourceTargetResult;
-import com.credits.wallet.desktop.utils.struct.TransactionStruct;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -43,9 +35,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -145,7 +135,7 @@ public class SmartContractController extends Controller implements Initializable
             }
             Map<String, SmartContractData> map = new HashMap<>();
             foundContractsList.getChildren().forEach((k) -> map.put(k.getValue().getText(), smartContractData));
-            ContactSaver.serialize(map);
+            AppState.objectKeeper.serialize(map);
         }
     }
 
@@ -181,7 +171,7 @@ public class SmartContractController extends Controller implements Initializable
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());
         }
-        Map<String, SmartContractData> map = ContactSaver.deserialize();
+        Map<String, SmartContractData> map = AppState.objectKeeper.deserialize();
         rootItem.getChildren().add(smartContractRootItem);
         if (map != null && map.size() > 0) {
             map.forEach((k, v) -> {

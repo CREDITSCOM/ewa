@@ -18,39 +18,41 @@ import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ContractSaverTest {
+public class ObjectKeeperTest {
 
     Map<String,SmartContractData> someData = new HashMap<>();
+    ObjectKeeper<Map<String,SmartContractData>> objectKeeper;
 
     @Before
     public void setUp() throws IOException {
+        objectKeeper = new ObjectKeeper<>("obj.ser");
         AppState.account = addressBase58;
-        deleteDirectoryStream(ContactSaver.cacheDirectory);
+        deleteDirectoryStream(ObjectKeeper.cacheDirectory);
         someData.put("1",new SmartContractData(null, null, "aaa", null, "bad hash"));
     }
 
 
     @After
     public void after() throws IOException {
-        deleteDirectoryStream(ContactSaver.cacheDirectory);
+        deleteDirectoryStream(ObjectKeeper.cacheDirectory);
     }
 
     @Test
     public void serializeThenDeserialize(){
-        ContactSaver.serialize(someData);
-        assertTrue(ContactSaver.getSerializedObjectPath().toFile().exists());
+        objectKeeper.serialize(someData);
+        assertTrue(objectKeeper.getSerializedObjectPath().toFile().exists());
 
-        Map restoredObject = ContactSaver.deserialize();
+        Map restoredObject = objectKeeper.deserialize();
         assertEquals(someData, restoredObject);
     }
 
     @Test
     public void usingSerializedObject(){
-        ContactSaver.serialize(someData);
-        Map<String, SmartContractData> restoredObject = ContactSaver.deserialize();
+        objectKeeper.serialize(someData);
+        Map<String, SmartContractData> restoredObject = objectKeeper.deserialize();
         restoredObject.put("2", new SmartContractData(null, null, "BBB", null, "bad hash"));
-        ContactSaver.serialize(restoredObject);
-        restoredObject = ContactSaver.deserialize();
+        objectKeeper.serialize(restoredObject);
+        restoredObject = objectKeeper.deserialize();
         assertEquals(2, restoredObject.size());
     }
 
