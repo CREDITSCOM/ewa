@@ -70,6 +70,6 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
         throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
         CreateTransactionData CreateTransactionData =
             new CreateTransactionData(new Random().nextLong(), Base58.decode(source), Base58.decode(target), amount,
-                balance, currency, fee, signature); service.createTransaction(CreateTransactionData, true);
+                balance, currency, (short) 10, signature); service.createTransaction(CreateTransactionData, true);
     }
 }
