@@ -3,9 +3,13 @@ package com.credits.wallet.desktop;
 import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.data.ApiResponseData;
+import com.credits.leveldb.client.data.TransactionRoundData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbService;
+import com.credits.leveldb.client.service.LevelDbServiceImpl;
+import com.credits.leveldb.client.thrift.Transaction;
+import com.credits.leveldb.client.thrift.TransactionsStateGetResult;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.testUtils.FakeData;
 import com.credits.wallet.desktop.testUtils.JavaFXThreadingRule;
@@ -15,8 +19,13 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.leveldb.client.ApiClient.API_RESPONSE_SUCCESS_CODE;
 import static com.credits.thrift.generated.Variant._Fields.V_STRING;
@@ -61,12 +70,13 @@ public class UITest {
         when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
         LevelDbService mockLevelDbService = mock(LevelDbService.class);
 
+        LevelDbServiceImpl.sourceMap = FakeData.sourceMap;
         //balances
         when(mockLevelDbService.getBalance(walletAddress)).thenReturn(new BigDecimal("1000.123456789012345678"));
         when(mockLevelDbService.getBalance(addressOne)).thenReturn(new BigDecimal("0"));
         when(mockLevelDbService.getBalance(addressTwo)).thenReturn(new BigDecimal("100"));
         when(mockLevelDbService.getBalance(addressThree)).thenReturn(new BigDecimal(new Random(System.currentTimeMillis()).nextDouble()));
-
+        when(mockLevelDbService.getTransactionsState(any(),any())).thenReturn(FakeData.transactionsStateGetResult);
         //transactions
         when(mockLevelDbService.getTransactions(any(), anyLong(), anyLong())).thenReturn(FakeData.transactionsDataList);
         when(mockLevelDbService.createTransaction(any(),anyBoolean())).thenReturn(successResponse);

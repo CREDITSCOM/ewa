@@ -23,6 +23,8 @@ public class TransactionController extends Controller implements Initializable {
     private Label labCurrency;
     @FXML
     private Label labAmount;
+    @FXML
+    private Label labState;
 
     @FXML
     private void handleBack() {
@@ -39,5 +41,6 @@ public class TransactionController extends Controller implements Initializable {
         //labCurrency.setText(AppState.selectedTransactionRow.getCurrency());
         labCurrency.setText("CS");
         labAmount.setText(AppState.selectedTransactionRow.getAmount());
+        labState.setText(AppState.selectedTransactionRow.getState());
     }
 }

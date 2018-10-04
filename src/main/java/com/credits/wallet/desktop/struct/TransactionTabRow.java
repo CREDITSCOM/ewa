@@ -8,6 +8,15 @@ public class TransactionTabRow {
     private String target;
     private byte currency;
     private String amount;
+    private String state;
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 
     public String getInnerId() {
         return innerId;

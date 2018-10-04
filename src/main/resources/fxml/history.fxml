@@ -11,71 +11,53 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
-            prefWidth="1060.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.credits.wallet.desktop.controller.HistoryController">
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.HistoryController">
     <children>
-        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                    AnchorPane.topAnchor="0.0">
+        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <center>
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
-                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0"
-                                    styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
+                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
                             <top>
-                                <fx:include source="header.fxml"/>
+                                <fx:include source="header.fxml" />
                             </top>
                             <center>
                                 <BorderPane minHeight="-Infinity" prefHeight="500.0" BorderPane.alignment="TOP_CENTER">
                                     <center>
-                                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                                              minWidth="-Infinity" prefHeight="500.0" prefWidth="944.0"
-                                              styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
+                                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="944.0" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
                                             <children>
-                                                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
-                                                       stylesheets="@../styles.css"
-                                                       text="Transaction history"/>
-                                                <Label layoutX="24.0" layoutY="88.0"
-                                                       styleClass="credits-topLabelGrayText"
-                                                       text="On this form you can see transaction history"
-                                                />
-                                                <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0"
-                                                      stroke="#ecb32e" strokeWidth="4.0"/>
-                                                <ComboBox fx:id="cbPageSize" layoutX="21.0" layoutY="136.0"
-                                                          prefHeight="22.0" prefWidth="68.0"/>
-                                                <Label layoutX="94.0" layoutY="140.0" text="transactions on the page"/>
-                                                <TableView fx:id="tabTransaction" layoutX="21.0" layoutY="175.0"
-                                                           prefHeight="236.0" prefWidth="857.0">
+                                                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText" stylesheets="@../styles.css" text="Transaction history" />
+                                                <Label layoutX="24.0" layoutY="88.0" styleClass="credits-topLabelGrayText" text="On this form you can see transaction history" />
+                                                <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
+                                                <ComboBox fx:id="cbPageSize" layoutX="21.0" layoutY="136.0" prefHeight="22.0" prefWidth="68.0" />
+                                                <Label layoutX="94.0" layoutY="140.0" text="transactions on the page" />
+                                                <TableView fx:id="tabTransaction" layoutX="21.0" layoutY="175.0" prefHeight="236.0" prefWidth="857.0">
                                                     <columns>
-                                                        <TableColumn prefWidth="162.0" text="Id"/>
-                                                        <TableColumn prefWidth="406.0" text="Target"/>
-                                                        <TableColumn prefWidth="88.0" text="Currency"/>
-                                                        <TableColumn prefWidth="158.0" text="Amount"/>
+                                                        <TableColumn prefWidth="162.0" text="Id" />
+                                                        <TableColumn prefWidth="406.0" text="Target" />
+                                                        <TableColumn prefWidth="88.0" text="Currency" />
+                                                        <TableColumn prefWidth="58.0" text="Amount" />
+                                                        <TableColumn prefWidth="100.0" text="State" />
                                                     </columns>
                                                 </TableView>
-                                                <Label layoutX="263.0" layoutY="140.0" text="Page:"/>
-                                                <Button fx:id="btnFirst" layoutX="325.0" layoutY="136.0"
-                                                        mnemonicParsing="false" onAction="#handlePageFirst"
-                                                        text="&lt;&lt;"/>
-                                                <Button fx:id="btnPrev" layoutX="369.0" layoutY="136.0"
-                                                        mnemonicParsing="false" onAction="#handlePagePrev" text="&lt;"/>
-                                                <Label fx:id="labPage" layoutX="404.0" layoutY="140.0" text="0"/>
-                                                <Button fx:id="btnNext" layoutX="466.0" layoutY="136.0"
-                                                        mnemonicParsing="false" onAction="#handlePageNext" text="&gt;"/>
-                                                <Button layoutX="21.0" layoutY="425.0" mnemonicParsing="false"
-                                                        onAction="#handleBack" prefHeight="61.0" prefWidth="173.0"
-                                                        styleClass="credits-button" stylesheets="@../styles.css" text="BACK"
-                                                        />
+                                                <Label layoutX="263.0" layoutY="140.0" text="Page:" />
+                                                <Button fx:id="btnFirst" layoutX="325.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePageFirst" text="&lt;&lt;" />
+                                                <Button fx:id="btnPrev" layoutX="369.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePagePrev" text="&lt;" />
+                                                <Label fx:id="labPage" layoutX="404.0" layoutY="140.0" text="0" />
+                                                <Button fx:id="btnNext" layoutX="466.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePageNext" text="&gt;" />
+                                                <Button layoutX="21.0" layoutY="425.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" styleClass="credits-button" stylesheets="@../styles.css" text="BACK" />
+                                                <Button layoutX="776.0" layoutY="128.0" mnemonicParsing="false" onAction="#handleRefresh" prefHeight="22.0" prefWidth="102.0" styleClass="credits-button" stylesheets="@../styles.css" text="REFRESH" />
                                             </children>
                                         </Pane>
                                     </center>
                                     <BorderPane.margin>
-                                        <Insets top="33.0" right="70"/>
+                                        <Insets right="70" top="33.0" />
                                     </BorderPane.margin>
                                 </BorderPane>
                             </center>
                             <bottom>
-                                <fx:include source="footer.fxml"/>
+                                <fx:include source="footer.fxml" />
                             </bottom>
                         </BorderPane>
                     </content>

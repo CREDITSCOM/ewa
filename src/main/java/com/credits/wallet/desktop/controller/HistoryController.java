@@ -3,11 +3,14 @@ package com.credits.wallet.desktop.controller;
 import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.data.TransactionData;
-import com.credits.leveldb.client.data.TransactionIdData;
+import com.credits.leveldb.client.data.TransactionRoundData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.leveldb.client.thrift.Transaction;
+import com.credits.leveldb.client.thrift.TransactionState;
+import com.credits.leveldb.client.thrift.TransactionsStateGetResult;
+import com.credits.leveldb.client.util.LevelDbClientConverter;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
@@ -24,7 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -37,6 +42,7 @@ public class HistoryController extends Controller implements Initializable {
     private static final int FIRST_PAGE_NUMBER = 1;
 
     private final static Logger LOGGER = LoggerFactory.getLogger(HistoryController.class);
+    public static final int COUNT_ROUNDS_LIFE = 10;
 
     private int pageNumber = FIRST_PAGE_NUMBER;
     private int pageSize = INIT_PAGE_SIZE;
@@ -71,6 +77,8 @@ public class HistoryController extends Controller implements Initializable {
         tableColumns[1].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("target"));
         tableColumns[2].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("currency"));
         tableColumns[3].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("amount"));
+        tableColumns[4].setCellValueFactory(new PropertyValueFactory<TransactionTabRow, String>("state"));
+
 
         cbPageSize.getSelectionModel().select(0);
         setPage();
@@ -121,76 +129,75 @@ public class HistoryController extends Controller implements Initializable {
         }
 
         btnNext.setDisable(transactionList.size() < pageSize);
-        if (LevelDbServiceImpl.sourceMap!=null && LevelDbServiceImpl.sourceMap.get(AppState.account) != null) {
-            synchronized (LevelDbServiceImpl.sourceMap.get(AppState.account)) {
-                LevelDbServiceImpl.sourceMap.get(AppState.account)
-                    .entrySet()
-                    .removeIf(e -> e.getValue().getRoundNumber() == null
-                    /*|| e.getValue().getTransaction().getState==APPLY*/
-                    );
-                LevelDbServiceImpl.sourceMap.get(AppState.account).forEach((key, value) -> {
-                    if(value.getRoundNumber()!=null) {
-
-                        /*Response resp = AppState.levelDbService.getTransactionState(value.getTransaction().getId());
-                        State sate = resp.getState();
-                        round = resp.getRound();
-                        if(state==PASSED) {
-                            value.setState(PASSED);
-                        } else if (state = APPLY) {
-                            value.setState(APPLY)
-                            return;
-                        } else {
-                            if(round<value.getRoundNumber()+10) {
-                                value.setState(INPROGRESS);
-                            }
-                        }*/
 
 
+        try {
+            if (LevelDbServiceImpl.sourceMap != null && LevelDbServiceImpl.sourceMap.get(AppState.account) != null) {
+                Map<Long, TransactionRoundData> sourceTransactionMap =
+                    LevelDbServiceImpl.sourceMap.get(AppState.account);
+                synchronized (sourceTransactionMap) {
+                    List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
+                    TransactionsStateGetResult transactionsStateResult =
+                        AppState.levelDbService.getTransactionsState(Converter.decodeFromBASE58(AppState.account), ids);
+
+                    Map<Long, TransactionState> states = transactionsStateResult.getStates();
+                    states.forEach((k, v) -> {
+                        if (v.getValue() == TransactionState.VALID.getValue()) {
+                            sourceTransactionMap.remove(k);
+                        }
+                    });
+
+                    int curRound = transactionsStateResult.getRoundNum();
+                    sourceTransactionMap.entrySet()
+                        .removeIf(e -> e.getValue().getRoundNumber() == null ||
+                            curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
+
+                    sourceTransactionMap.forEach((key, value) -> {
                         TransactionTabRow tableRow = new TransactionTabRow();
-                        Transaction transaction = value.getTransaction();
-                        /*tableRow.setState(state);*/
+                        TransactionData transaction = value.getTransaction();
+                        tableRow.setInnerId(key.toString());
                         tableRow.setAmount(Converter.toString(transaction.getAmount()));
                         tableRow.setCurrency(transaction.getCurrency());
                         tableRow.setTarget(Converter.encodeToBASE58(transaction.getTarget()));
-                        tableRow.setInnerId(key);
-
-
-
-
+                        if(states.get(key)!=null) {
+                            if(states.get(key).getValue()==TransactionState.INVALID.getValue()) {
+                                tableRow.setState("INVALID");
+                            }
+                        }
+                        if(states.get(key).getValue()==TransactionState.INPROGRES.getValue()) {
+                            tableRow.setState("INPROGRESS");
+                        }
                         tabTransaction.getItems().add(tableRow);
-                    }
-                });
+                    });
+                }
             }
+
+        } catch (CreditsNodeException | LevelDbClientException | CreditsCommonException e) {
+            tabTransaction.getItems().clear();
         }
+
+
         transactionList.forEach(transactionData -> {
             TransactionTabRow tableRow = new TransactionTabRow();
             tableRow.setAmount(Converter.toString(transactionData.getAmount()));
             tableRow.setCurrency(transactionData.getCurrency());
             tableRow.setTarget(Converter.encodeToBASE58(transactionData.getTarget()));
-            tableRow.setInnerId(transactionData.getId());
+            tableRow.setInnerId(transactionData.getId().toString());
+            tableRow.setState("VALID");
             tabTransaction.getItems().add(tableRow);
         });
-
-        /*
-        tabTransaction.setItems(
-            FXCollections.observableList(transactionList.stream()
-                .map(transaction -> {
-                    TransactionHistoryTableRow tr = new TransactionHistoryTableRow();
-                    tr.setTarget(transaction.getTarget());
-                    tr.setCurrency(transaction.getCurrency());
-                    tr.setAmount(Converter.toString(transaction.getAmount()));
-                    tr.setId(transaction.getInnerId());
-                    return tr;
-                })
-                .collect(Collectors.toList()))
-        );
-        */
     }
 
     @FXML
     private void handleBack() {
         App.showForm("/fxml/form6.fxml", "Wallet");
     }
+
+    @FXML
+    private void handleRefresh() {
+        fillTable();
+    }
+
 
     @FXML
     private void handlePageFirst() {
