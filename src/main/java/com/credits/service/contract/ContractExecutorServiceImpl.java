@@ -72,7 +72,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] contractState, String methodName, Variant[] params) throws ContractExecutorException {
+    public ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] objectState, String methodName, Variant[] params) throws ContractExecutorException {
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
         Class<?> contractClass = classLoader.buildClass(bytecode);
@@ -80,8 +80,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         String initiator = Base58.encode(initiatorAddress);
 
         Object contractInstance;
-        if (contractState != null && contractState.length != 0) {
-            contractInstance = deserialize(contractState, classLoader);
+        if (objectState != null && objectState.length != 0) {
+            contractInstance = deserialize(objectState, classLoader);
         } else {
             DeployReturnValue deployReturnValue = deployAndGetContractVariables(contractClass, initiator);
             return new ReturnValue(deployReturnValue.getContractState(), null, deployReturnValue.getContractVariables());

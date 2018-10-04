@@ -2,7 +2,6 @@ package com.credits.service.db.leveldb;
 
 import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Base58;
-import com.credits.leveldb.client.ApiClient;
 import com.credits.leveldb.client.data.CreateTransactionData;
 import com.credits.leveldb.client.data.PoolData;
 import com.credits.leveldb.client.data.TransactionData;
@@ -49,8 +48,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     }
 
     @Override
-    public List<TransactionData> getTransactions(String address, long offset, long limit)
-        throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
+    public List<TransactionData> getTransactions(String address, long offset, long limit) throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
         return service.getTransactions(Base58.decode(address), offset, limit);
     }
 
@@ -65,11 +63,11 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     }
 
     @Override
-    public void transactionFlow(Long innerId, String source, String target, BigDecimal amount, BigDecimal balance,
-        byte currency, byte[] signature, BigDecimal fee)
+    public void transactionFlow(Long innerId, String source, String target, BigDecimal amount, BigDecimal balance, byte currency, byte[] signature, BigDecimal fee)
         throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
+        short maxFee = 0x6648; //TODO need add fee converter from BigDecimal to short
         CreateTransactionData CreateTransactionData =
-            new CreateTransactionData(new Random().nextLong(), Base58.decode(source), Base58.decode(target), amount,
-                balance, currency, fee, signature); service.createTransaction(CreateTransactionData, true);
+            new CreateTransactionData(System.currentTimeMillis(), Base58.decode(source), Base58.decode(target), amount, balance, currency, maxFee, signature);
+        service.createTransaction(CreateTransactionData, true);
     }
 }
