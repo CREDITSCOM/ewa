@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.junit.Assert.assertEquals;
@@ -20,8 +20,8 @@ import static org.junit.Assert.assertTrue;
 
 public class ObjectKeeperTest {
 
-    Map<String,SmartContractData> someData = new HashMap<>();
-    ObjectKeeper<Map<String,SmartContractData>> objectKeeper;
+    ConcurrentHashMap<String,SmartContractData> someData = new ConcurrentHashMap<>();
+    ObjectKeeper<ConcurrentHashMap<String,SmartContractData>> objectKeeper;
 
     @Before
     public void setUp() throws IOException {
@@ -47,9 +47,23 @@ public class ObjectKeeperTest {
     }
 
     @Test
+    public void deserializeThenSerialize() {
+        objectKeeper.serialize(someData);
+        objectKeeper.deserializeThenSerialize(
+            objectKeeper.new Modifier(){
+            @Override
+            ConcurrentHashMap<String, SmartContractData> modify(ConcurrentHashMap<String, SmartContractData> restoredObject) {
+                restoredObject.put("2", new SmartContractData(null, null, "BBB", null, "bad hash"));
+                return restoredObject;
+            }
+        });
+        assertEquals(2, someData.size());
+    }
+
+    @Test
     public void usingSerializedObject(){
         objectKeeper.serialize(someData);
-        Map<String, SmartContractData> restoredObject = objectKeeper.deserialize();
+        ConcurrentHashMap<String, SmartContractData> restoredObject = objectKeeper.deserialize();
         restoredObject.put("2", new SmartContractData(null, null, "BBB", null, "bad hash"));
         objectKeeper.serialize(restoredObject);
         restoredObject = objectKeeper.deserialize();

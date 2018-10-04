@@ -12,21 +12,20 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.credits.wallet.desktop.AppState.account;
 import static java.io.File.separator;
-import static java.util.concurrent.TimeUnit.*;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
-public class ObjectKeeper<T> {
+public class ObjectKeeper<T extends ConcurrentHashMap> {
 
     static final Path cacheDirectory = Paths.get(System.getProperty("user.dir") + separator + "cache");
+    static final Integer TRY_LOCK_TIMEOUT = 3;
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectKeeper.class);
     private final String fileName;
-    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final ReentrantLock lock = new ReentrantLock();
     private volatile T storedObject;
 
     public ObjectKeeper(String fileName) {
@@ -34,9 +33,8 @@ public class ObjectKeeper<T> {
     }
 
     public void serialize(T object) {
-        Lock lock = readWriteLock.writeLock();
         try {
-            lock.tryLock(1, SECONDS);
+            lock.tryLock(TRY_LOCK_TIMEOUT, SECONDS);
             Files.createDirectories(getAccountDirectory());
             Path serObjectFile = getSerializedObjectPath();
             File serFile = serObjectFile.toFile();
@@ -48,8 +46,18 @@ public class ObjectKeeper<T> {
                 oos.writeObject(object);
                 storedObject = object;
             }
-            LOGGER.debug("Object was serialized");
         } catch (IOException | InterruptedException e) {
+            LOGGER.error(e.getMessage());
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void deserializeThenSerialize(Modifier changeObject) {
+        try {
+            lock.tryLock(TRY_LOCK_TIMEOUT, SECONDS);
+            serialize(changeObject.modify(deserialize()));
+        } catch (InterruptedException e) {
             LOGGER.error(e.getMessage());
         } finally {
             lock.unlock();
@@ -66,13 +74,11 @@ public class ObjectKeeper<T> {
 
     public T deserialize() {
         if (storedObject == null) {
-            Lock lock = readWriteLock.readLock();
             try {
-                lock.tryLock(1, SECONDS);
+                lock.tryLock(TRY_LOCK_TIMEOUT, SECONDS);
                 try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getSerializedObjectPath().toString()))) {
                     storedObject = (T) ois.readObject();
                 }
-                LOGGER.debug("Object was deserialized");
             } catch (IOException | ClassNotFoundException | InterruptedException e) {
                 LOGGER.error(e.getMessage());
                 return null;
@@ -81,5 +87,9 @@ public class ObjectKeeper<T> {
             }
         }
         return storedObject;
+    }
+
+    abstract class Modifier {
+        abstract T modify(T restoredObject);
     }
 }

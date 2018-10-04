@@ -10,9 +10,7 @@ import com.credits.leveldb.client.util.ApiAlertUtils;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.ApiUtils;
-import com.credits.wallet.desktop.utils.ObjectKeeper;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import javafx.collections.ObservableList;
@@ -41,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -133,14 +132,14 @@ public class SmartContractController extends Controller implements Initializable
                     this.tvContracts.getRoot().getChildren().add(foundContractsList);
                 }
             }
-            Map<String, SmartContractData> map = new HashMap<>();
+            ConcurrentHashMap<String, SmartContractData> map = new ConcurrentHashMap<>();
             foundContractsList.getChildren().forEach((k) -> map.put(k.getValue().getText(), smartContractData));
             AppState.objectKeeper.serialize(map);
         }
     }
 
-    private boolean notElementInList(String element, TreeItem<Label> coontractsRootItem) {
-        return coontractsRootItem.getChildren().stream().noneMatch((el) -> el.getValue().getText().equals(element));
+    private boolean notElementInList(String element, TreeItem<Label> contractsRootItem) {
+        return contractsRootItem.getChildren().stream().noneMatch((el) -> el.getValue().getText().equals(element));
     }
 
     @Override
@@ -185,7 +184,7 @@ public class SmartContractController extends Controller implements Initializable
         this.tvContracts.setRoot(rootItem);
     }
 
-    private void refreshFormState(SmartContractData smartContractData) throws WalletDesktopException {
+    private void refreshFormState(SmartContractData smartContractData) {
         if (smartContractData == null || smartContractData.getHashState().isEmpty() ||
             smartContractData.getAddress().length == 0) {
             this.pControls.setVisible(false);
@@ -301,12 +300,7 @@ public class SmartContractController extends Controller implements Initializable
         label.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown()) {
                 if (event.getClickCount() == 2) {
-                    try {
-                        this.refreshFormState(smartContractData);
-                    } catch (WalletDesktopException e) {
-                        LOGGER.error(e.getMessage(), e);
-                        FormUtils.showError(e.getMessage());
-                    }
+                    this.refreshFormState(smartContractData);
                 }
             }
         });
