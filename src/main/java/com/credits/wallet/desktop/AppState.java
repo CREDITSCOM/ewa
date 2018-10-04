@@ -1,9 +1,10 @@
 package com.credits.wallet.desktop;
 
-import com.credits.leveldb.client.ApiClientInterface;
+import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.wallet.desktop.controller.Const;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
+import com.credits.wallet.desktop.utils.ObjectKeeper;
 
 import java.math.BigDecimal;
 import java.security.PrivateKey;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -49,5 +51,9 @@ public class AppState {
 
     public static BigDecimal balance = BigDecimal.ZERO;
 
-    public static Map<String, Long> walletLastTransactionIdCache = new HashMap<String, Long>();
+    public static Map<String, Long> walletLastTransactionIdCache = new HashMap<>();
+
+    public static Short transactionOfferedMaxFeeValue = Const.OFFERED_MAX_FEE;
+
+    public static ObjectKeeper<ConcurrentHashMap<String, SmartContractData>> objectKeeper = new ObjectKeeper<>("obj.ser");
 }

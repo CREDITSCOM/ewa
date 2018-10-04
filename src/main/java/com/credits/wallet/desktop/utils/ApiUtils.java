@@ -52,14 +52,14 @@ public class ApiUtils {
         BigDecimal amount = AppState.amount;
         BigDecimal balance = AppState.balance;
         byte currency = 1;
-        BigDecimal fee = AppState.transactionFeeValue;
+        Short offeredMaxFee = AppState.transactionOfferedMaxFeeValue;
 
         TransactionStruct tStruct = new TransactionStruct(
                 calcTransactionIdSourceTargetResult.getTransactionId(),
                 calcTransactionIdSourceTargetResult.getSource(),
                 calcTransactionIdSourceTargetResult.getTarget(),
                 amount,
-                fee,
+                offeredMaxFee,
                 currency,
                 null
         );
@@ -73,7 +73,7 @@ public class ApiUtils {
                 amount,
                 balance,
                 currency,
-                fee,
+                offeredMaxFee,
                 signature.array()
         );
 
@@ -105,14 +105,14 @@ public class ApiUtils {
 
     public static long createTransactionId(boolean senderIndexExists, boolean receiverIndexExists, long transactionId) {
 
-        BitSet transactionIdBitSet = Converter.longToBitSet(transactionId);
+        byte[] transactionIdBytes = Converter.longToBytes(transactionId);
+        BitSet transactionIdBitSet = Converter.toBitSet(transactionIdBytes);
         for (int i = 63; i > 45; i--) {
             transactionIdBitSet.set(i, false);
         }
         transactionIdBitSet.set(47, senderIndexExists);
         transactionIdBitSet.set(46, receiverIndexExists);
-
-        return Converter.bitSetToLong(transactionIdBitSet);
+        return Converter.toLong(transactionIdBitSet);
     }
 
     public static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(
@@ -186,7 +186,7 @@ public class ApiUtils {
 
         TransactionStruct tStruct = new TransactionStruct(calcTransactionIdSourceTargetResult.getTransactionId(),
             calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
-            new BigDecimal(0), new BigDecimal(0), (byte) 1, scBytes);
+            new BigDecimal(0), (short)0, (byte) 1, scBytes);
         ByteBuffer signature = Utils.signTransactionStruct(tStruct);
 
         AppState.levelDbService.executeSmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
@@ -221,7 +221,7 @@ public class ApiUtils {
 
         TransactionStruct tStruct = new TransactionStruct(calcTransactionIdSourceTargetResult.getTransactionId(),
             calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
-            new BigDecimal(0), new BigDecimal(0), (byte) 1, scBytes);
+            new BigDecimal(0), (short)0, (byte) 1, scBytes);
 
         ByteBuffer signature = Utils.signTransactionStruct(tStruct);
 

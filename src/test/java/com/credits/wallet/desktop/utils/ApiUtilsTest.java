@@ -21,6 +21,6 @@ public class ApiUtilsTest {
 
     @Test
     public void createTransactionId01() {
-        LOGGER.info(ApiUtils.createTransactionId(false, false, 1000000L) + "");
+        LOGGER.info(ApiUtils.createTransactionId(true, false, 1L) + "");
     }
 }
