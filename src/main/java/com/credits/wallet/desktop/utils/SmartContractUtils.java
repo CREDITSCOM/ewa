@@ -1,12 +1,11 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.callback.Callback;
+import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.wallet.desktop.AppState;
 import javafx.concurrent.Task;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -137,7 +136,7 @@ public class SmartContractUtils {
                 FormUtils.showInfo("SmartContract not found");
                 return;
             }
-            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new Callback() {
+            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new ApiTransactionThreadRunnable.Callback() {
                 @Override
                 public void onSuccess(ApiResponseData resultData) {
                     FormUtils.showInfo("Transfer is ok");

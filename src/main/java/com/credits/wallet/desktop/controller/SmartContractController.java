@@ -3,7 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.common.utils.sourcecode.SourceCodeUtils;
-import com.credits.leveldb.client.callback.Callback;
+import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.util.ApiAlertUtils;
@@ -264,7 +264,7 @@ public class SmartContractController extends Controller implements Initializable
             }
 
             SmartContractData smartContractData = this.currentSmartContract;
-            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new Callback() {
+            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new ApiTransactionThreadRunnable.Callback() {
                 @Override
                 public void onSuccess(ApiResponseData resultData) {
                     Variant res = resultData.getScExecRetVal();

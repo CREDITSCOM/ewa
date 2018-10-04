@@ -64,7 +64,7 @@ public class SimpleInMemoryCompiler {
             File classFile = new File(sourceFolder + File.separator + classname + ".class");
             sourceBytes = Files.readAllBytes(classFile.toPath());
         } catch (IOException e) {
-            throw new CompilationException("Cannot read bytes from source file.", e);
+            throw new CompilationException("Cannot read bytes from account file.", e);
         }
 
         for (File file : sourceFolder.listFiles()) {
@@ -85,7 +85,7 @@ public class SimpleInMemoryCompiler {
             }
             Files.write(sourceFile.toPath(), sourceBytes);
         } catch (IOException e) {
-            throw new CompilationException("Cannot save source to file " + sourceFile.getPath(), e);
+            throw new CompilationException("Cannot save account to file " + sourceFile.getPath(), e);
         }
 
         return sourceFile;

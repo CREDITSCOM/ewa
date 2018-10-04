@@ -4,7 +4,7 @@ import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.wallet.desktop.controller.Const;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
-import com.credits.wallet.desktop.utils.ObjectKeeper;
+import com.credits.common.utils.ObjectKeeper;
 
 import java.math.BigDecimal;
 import java.security.PrivateKey;

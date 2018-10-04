@@ -5,7 +5,7 @@ import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.crypto.Ed25519;
 import com.credits.crypto.Md5;
-import com.credits.leveldb.client.callback.Callback;
+import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.CreateTransactionData;
 import com.credits.leveldb.client.data.SmartContractData;
@@ -77,7 +77,7 @@ public class ApiUtils {
                 signature.array()
         );
 
-        AppState.levelDbService.asyncCreateTransaction(createTransactionData, false, new Callback() {
+        AppState.levelDbService.asyncCreateTransaction(createTransactionData, false, new ApiTransactionThreadRunnable.Callback() {
             @Override
             public void onSuccess(ApiResponseData resultData) {
                 FormUtils.showInfo("Execute transaction was success");
@@ -191,7 +191,7 @@ public class ApiUtils {
 
         AppState.levelDbService.executeSmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
             calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
-            smartContractInvocationData, signature.array(), new Callback() {
+            smartContractInvocationData, signature.array(), new ApiTransactionThreadRunnable.Callback() {
                 @Override
                 public void onSuccess(ApiResponseData resultData) {
                     String target = resultData.getTarget();
@@ -209,7 +209,7 @@ public class ApiUtils {
     }
 
     public static void executeSmartContractProcess(String method, List<Object> params,
-        SmartContractData smartContractData, Callback callback)
+        SmartContractData smartContractData, ApiTransactionThreadRunnable.Callback callback)
         throws LevelDbClientException, CreditsCommonException, CreditsNodeException {
         SmartContractInvocationData smartContractInvocationData =
             new SmartContractInvocationData("", new byte[0], smartContractData.getHashState(), method, params, false);

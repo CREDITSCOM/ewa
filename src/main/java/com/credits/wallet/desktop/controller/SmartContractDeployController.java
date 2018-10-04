@@ -56,7 +56,7 @@ public class SmartContractDeployController extends Controller implements Initial
             "TransactionData getTransaction(String transactionId)",
             "List<TransactionData> getTransactions(String address, long offset, long limit)",
             "List<PoolData> getPoolList(long offset, long limit)", "PoolData getPool(String poolNumber)",
-            "void sendTransaction(String source, String target, Double amount, String currency)"};
+            "void sendTransaction(String account, String target, Double amount, String currency)"};
 
     private CodeArea codeArea;
     private TableView tabErrors;

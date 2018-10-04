@@ -25,7 +25,7 @@ public class FakeData {
     public static ArrayList<SmartContractData> smartContractDataList;
     public static ArrayList<TransactionData> transactionsDataList;
     public static final String addressBase58 = "G2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZZ";
-    public static ConcurrentHashMap<String, Map<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, ConcurrentHashMap<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();
     public static TransactionsStateGetResult transactionsStateGetResult;
 
     static {

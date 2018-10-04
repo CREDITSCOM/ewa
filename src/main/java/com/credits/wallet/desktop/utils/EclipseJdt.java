@@ -19,7 +19,7 @@ public class EclipseJdt {
     public static CompilationUnit createCompilationUnit(String sourceCode) {
         ASTParser parser = ASTParser.newParser(AST.JLS9);
         Map<String, String> compilerOptions = JavaCore.getOptions();
-        compilerOptions.put("org.eclipse.jdt.core.compiler.source", "9");
+        compilerOptions.put("org.eclipse.jdt.core.compiler.account", "9");
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setSource(sourceCode.toCharArray());
         parser.setResolveBindings(true);

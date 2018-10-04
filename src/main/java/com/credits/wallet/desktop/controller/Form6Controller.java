@@ -7,9 +7,7 @@ import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.CommonCurrency;
 import com.credits.wallet.desktop.utils.CoinsUtils;
-import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -19,12 +17,9 @@ import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 /**
@@ -118,7 +113,7 @@ public class Form6Controller extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         clearLabErr();
         // Fill coin list
-        LevelDbServiceImpl.source = AppState.account;
+        LevelDbServiceImpl.account = AppState.account;
         cbCoin.getItems().clear();
         CoinsUtils.fillBalanceCombobox(cbCoin,labCredit);
 
