@@ -16,7 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormatSymbols;
 import java.util.Collections;
+import java.util.Locale;
 
 public class TestUtils {
     public static String encrypt(byte[] bytes) throws CreditsException {
