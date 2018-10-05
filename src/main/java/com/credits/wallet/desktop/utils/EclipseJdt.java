@@ -2,7 +2,9 @@ package com.credits.wallet.desktop.utils;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import java.util.Map;
 
@@ -19,7 +21,7 @@ public class EclipseJdt {
     public static CompilationUnit createCompilationUnit(String sourceCode) {
         ASTParser parser = ASTParser.newParser(AST.JLS9);
         Map<String, String> compilerOptions = JavaCore.getOptions();
-        compilerOptions.put("org.eclipse.jdt.core.compiler.account", "9");
+        compilerOptions.put("org.eclipse.jdt.core.compiler.source", "9");
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setSource(sourceCode.toCharArray());
         parser.setResolveBindings(true);
