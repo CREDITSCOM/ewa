@@ -1,6 +1,7 @@
 package com.credits.service;
 
 import com.credits.App;
+import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
@@ -53,7 +54,7 @@ public abstract class ServiceTest {
     protected byte[] compileSourceCode(String sourceCodePath) throws Exception {
         String sourceCode = readSourceCode(sourceCodePath);
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
-        when(mockLevelDbService.getSmartContract(address)).thenReturn(
+        when(mockLevelDbService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
             new SmartContractData(address, address,sourceCode, bytecode, null,null));
         return bytecode;
     }

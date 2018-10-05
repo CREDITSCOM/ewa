@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Random;
 
 @Component
 public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionService {
@@ -38,7 +37,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     @Override
     public BigDecimal getBalance(String address, byte currency)
         throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
-        return service.getBalance(Base58.decode(address));
+        return service.getBalance(address);
     }
 
     @Override
@@ -49,7 +48,7 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
 
     @Override
     public List<TransactionData> getTransactions(String address, long offset, long limit) throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
-        return service.getTransactions(Base58.decode(address), offset, limit);
+        return service.getTransactions(address, offset, limit);
     }
 
     @Override

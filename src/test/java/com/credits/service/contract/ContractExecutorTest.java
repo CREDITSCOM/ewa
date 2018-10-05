@@ -1,6 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.common.utils.Base58;
+import com.credits.common.utils.Converter;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.ServiceTest;
@@ -33,12 +34,12 @@ public class ContractExecutorTest extends ServiceTest {
                         "    }\npublic void foo(){\nSystem.out.println(\"Method foo executed\");\n}\n}";
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
 
-        when(mockLevelDbService.getSmartContract(address)).thenReturn(
+        when(mockLevelDbService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
                 new SmartContractData(address, address, sourceCode, bytecode, null,null));
 
         ceService.execute(address, bytecode, null, "foo", new Variant[0]);
 
-        when(mockLevelDbService.getSmartContract(address)).thenReturn(
+        when(mockLevelDbService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
                 new SmartContractData(address, address, sourceCode, bytecode, "bad hash",null));
 
         try {
