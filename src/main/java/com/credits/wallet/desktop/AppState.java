@@ -1,10 +1,10 @@
 package com.credits.wallet.desktop;
 
+import com.credits.common.utils.ObjectKeeper;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.wallet.desktop.controller.Const;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
-import com.credits.common.utils.ObjectKeeper;
 
 import java.math.BigDecimal;
 import java.security.PrivateKey;
@@ -37,8 +37,6 @@ public class AppState {
     public static BigDecimal transactionFeePercent = BigDecimal.ZERO;
     public static String toAddress;
     public static String coin;
-
-    public static long transactionId;
 
     public static TransactionTabRow selectedTransactionRow;
 

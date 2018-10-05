@@ -91,8 +91,6 @@ public class ApiUtils {
         });
 
         // add or update transactionId in cache
-        AppState.walletLastTransactionIdCache.put(sourceBase58, calcTransactionIdSourceTargetResult.getTransactionId());
-        AppState.transactionId = calcTransactionIdSourceTargetResult.getTransactionId();
     }
 
     public static long generateTransactionInnerId() {
@@ -130,8 +128,9 @@ public class ApiUtils {
         Long walletLastTransactionIdInCache = AppState.walletLastTransactionIdCache.get(sourceBase58);
 
         if (walletLastTransactionIdInCache!=null && transactionId < walletLastTransactionIdInCache) {
-            transactionId = walletLastTransactionIdInCache;
+            transactionId = walletLastTransactionIdInCache+1;
         }
+        AppState.walletLastTransactionIdCache.put(sourceBase58, transactionId);
 
         boolean sourceIndexExists = false;
         boolean targetIndexExists = false;
