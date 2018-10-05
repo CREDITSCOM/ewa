@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop.utils;
 
-import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
@@ -107,7 +106,7 @@ public class SmartContractUtils {
             List<String> params = new ArrayList<>();
             params.add(owner);
             SmartContractData smartContractData =
-                AppState.levelDbService.getSmartContract(Converter.decodeFromBASE58(smart));
+                AppState.levelDbService.getSmartContract(smart);
             if (smartContractData == null) {
                 FormUtils.showInfo("SmartContract not found");
                 return null;
@@ -131,7 +130,7 @@ public class SmartContractUtils {
             params.add("\"" + target + "\"");
             params.add(amount);
             SmartContractData smartContractData =
-                AppState.levelDbService.getSmartContract(Converter.decodeFromBASE58(smart));
+                AppState.levelDbService.getSmartContract(smart);
             if (smartContractData == null) {
                 FormUtils.showInfo("SmartContract not found");
                 return;

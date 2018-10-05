@@ -122,7 +122,7 @@ public class ApiUtils {
         byte[] target = Converter.decodeFromBASE58(targetBase58);
 
         // get transactions count from Node and increment it
-        Long transactionId = AppState.levelDbService.getWalletTransactionsCount(source) + 1;
+        Long transactionId = AppState.levelDbService.getWalletTransactionsCount(sourceBase58) + 1;
         // get last transaction id from cache
         Long walletLastTransactionIdInCache = AppState.walletLastTransactionIdCache.get(sourceBase58);
 
@@ -134,12 +134,12 @@ public class ApiUtils {
         boolean sourceIndexExists = false;
         boolean targetIndexExists = false;
 
-        Integer sourceWalletId = AppState.levelDbService.getWalletId(source);
+        Integer sourceWalletId = AppState.levelDbService.getWalletId(sourceBase58);
         if (sourceWalletId != 0) {
             sourceIndexExists = true;
             source = Converter.toByteArrayLittleEndian(sourceWalletId, 4);
         }
-        Integer targetWalletId = AppState.levelDbService.getWalletId(target);
+        Integer targetWalletId = AppState.levelDbService.getWalletId(targetBase58);
         if (targetWalletId != 0) {
             targetIndexExists = true;
             target = Converter.toByteArrayLittleEndian(targetWalletId, 4);

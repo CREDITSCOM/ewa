@@ -110,7 +110,7 @@ public class TransactionStructTest {
             SmartContractData smartContractData = null;
             try {
                 LevelDbService levelDbService = LevelDbServiceImpl.getInstance("127.0.0.1", 9090);
-                smartContractData = levelDbService.getSmartContract("6RNiVco3yb6jsQPaJ7GzjjRFc9aH1Rnyp21HTAh64FRn".getBytes());
+                smartContractData = levelDbService.getSmartContract("6RNiVco3yb6jsQPaJ7GzjjRFc9aH1Rnyp21HTAh64FRn");
             } catch (CreditsNodeException e) {
                 e.printStackTrace();
             }
@@ -131,7 +131,7 @@ public class TransactionStructTest {
 
             StringBuilder builder = new StringBuilder();
             for(byte b : transactionStructBytes) {
-                builder.append(b + " ");
+                builder.append(b).append(" ");
             }
             LOGGER.info(builder.toString());
 
@@ -146,7 +146,7 @@ public class TransactionStructTest {
                 builder = new StringBuilder();
 
                 for(byte b : sign) {
-                    builder.append(b + " ");
+                    builder.append(b).append(" ");
                 }
                 LOGGER.info(builder.toString());
 
@@ -154,9 +154,7 @@ public class TransactionStructTest {
                 e.printStackTrace();
             }
 
-        } catch (CreditsCommonException e) {
-            e.printStackTrace();
-        } catch (LevelDbClientException e) {
+        } catch (CreditsCommonException | LevelDbClientException e) {
             e.printStackTrace();
         }
     }

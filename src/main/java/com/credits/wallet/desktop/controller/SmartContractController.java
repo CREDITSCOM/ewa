@@ -99,7 +99,7 @@ public class SmartContractController extends Controller implements Initializable
         String address = tfSearchAddress.getText();
         try {
             SmartContractData smartContractData =
-                AppState.levelDbService.getSmartContract(Converter.decodeFromBASE58(address));
+                AppState.levelDbService.getSmartContract(address);
             saveInSmartContractTree(smartContractData);
             this.refreshFormState(smartContractData);
         } catch (Exception e) {
@@ -157,7 +157,7 @@ public class SmartContractController extends Controller implements Initializable
         try {
             this.refreshFormState(null);
             List<SmartContractData> smartContracts =
-                AppState.levelDbService.getSmartContracts(Converter.decodeFromBASE58(AppState.account));
+                AppState.levelDbService.getSmartContracts(AppState.account);
             smartContracts.forEach(smartContractData -> {
 
                 Label label = new Label(Converter.encodeToBASE58(smartContractData.getAddress()));

@@ -103,7 +103,7 @@ public class HistoryController extends Controller implements Initializable {
         tabTransaction.getItems().clear();
         List<TransactionData> transactionList;
         try {
-            transactionList = AppState.levelDbService.getTransactions(Converter.decodeFromBASE58(AppState.account),
+            transactionList = AppState.levelDbService.getTransactions(AppState.account,
                 (pageNumber - 1) * pageSize, pageSize);
         } catch (LevelDbClientException | CreditsCommonException e) {
             LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
@@ -133,7 +133,7 @@ public class HistoryController extends Controller implements Initializable {
                 synchronized (sourceTransactionMap) {
                     List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
                     TransactionsStateGetResult transactionsStateResult =
-                        AppState.levelDbService.getTransactionsState(Converter.decodeFromBASE58(AppState.account), ids);
+                        AppState.levelDbService.getTransactionsState(AppState.account, ids);
 
                     Map<Long, TransactionState> states = transactionsStateResult.getStates();
                     states.forEach((k, v) -> {

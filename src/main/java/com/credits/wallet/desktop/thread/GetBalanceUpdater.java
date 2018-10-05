@@ -32,7 +32,7 @@ public class GetBalanceUpdater implements Runnable {
     @Override
     public void run() {
         try {
-            BigDecimal balance = AppState.levelDbService.getBalance(Converter.decodeFromBASE58(AppState.account))
+            BigDecimal balance = AppState.levelDbService.getBalance(AppState.account)
                 .setScale(13, BigDecimal.ROUND_DOWN);
             AppState.balance = balance;
             Platform.runLater(() -> label.setText(Converter.toString(balance)));
