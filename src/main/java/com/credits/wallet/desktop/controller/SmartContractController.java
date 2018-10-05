@@ -272,17 +272,17 @@ public class SmartContractController extends Controller implements Initializable
                     if (res != null) {
                         String retVal = res.toString() + '\n';
                         LOGGER.info("Return value is {}", retVal);
-                        ApiAlertUtils.showAlertInfo(
+                        ApiAlertUtils.showInfo(
                             "Execute smart contract was success: return value is: " + retVal);
                     } else {
-                        ApiAlertUtils.showAlertInfo("Execute smart contract was success");
+                        ApiAlertUtils.showInfo("Execute smart contract was success");
                     }
 
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    FormUtils.showError(e.getMessage());
+                    ApiAlertUtils.showError(e.getMessage());
                 }
             });
         } catch (CreditsException e) {

@@ -12,6 +12,7 @@ import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.data.SmartContractInvocationData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.util.ApiAlertUtils;
 import com.credits.leveldb.client.util.ApiClientUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.struct.CalcTransactionIdSourceTargetResult;
@@ -80,12 +81,12 @@ public class ApiUtils {
         AppState.levelDbService.asyncCreateTransaction(createTransactionData, false, new Callback() {
             @Override
             public void onSuccess(ApiResponseData resultData) {
-                FormUtils.showInfo("Execute transaction was success");
+                ApiAlertUtils.showInfo("Execute transaction was success");
             }
 
             @Override
             public void onError(Exception e) {
-                FormUtils.showError(e.getMessage());
+                ApiAlertUtils.showError(e.getMessage());
             }
         });
 
@@ -198,12 +199,12 @@ public class ApiUtils {
                     StringSelection selection = new StringSelection(target);
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(selection, selection);
-                    FormUtils.showInfo(
+                    ApiAlertUtils.showInfo(
                         String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", target));
                 }
                 @Override
                 public void onError(Exception e) {
-                    FormUtils.showError(e.getMessage());
+                    ApiAlertUtils.showError(e.getMessage());
                 }
             });
     }
