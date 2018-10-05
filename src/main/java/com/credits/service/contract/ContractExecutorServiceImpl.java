@@ -9,7 +9,6 @@ import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.thrift.DeployReturnValue;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.generated.Variant;
-import com.credits.thrift.utils.ContractUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +36,9 @@ import java.util.stream.Collectors;
 
 import static com.credits.serialise.Serializer.deserialize;
 import static com.credits.serialise.Serializer.serialize;
+import static com.credits.thrift.utils.ContractUtils.deployAndGetContractVariables;
+import static com.credits.thrift.utils.ContractUtils.getContractVariables;
+import static com.credits.thrift.utils.ContractUtils.mapObjectToVariant;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 @Component
@@ -70,49 +72,29 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue execute(
-            byte[] initiatorAddress,
-            byte[] bytecode,
-            byte[] contractState,
-            String methodName,
-            Variant[] params
-    ) throws ContractExecutorException {
+    public ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] objectState, String methodName, Variant[] params) throws ContractExecutorException {
+
+        ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
+        Class<?> contractClass = classLoader.buildClass(bytecode);
 
         String initiator = Base58.encode(initiatorAddress);
-        ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
 
-        Class<?> clazz = classLoader.buildClass(bytecode);
-
-        Object instance;
-        if (contractState != null && contractState.length != 0) {
-//            try {
-//                SmartContractData smartContractData = ldbClient.getSmartContract(address);
-//                ByteCodeValidator.validateBytecode(bytecode, smartContractData); TODO: uncomment this section if everything goes right
-//            } catch (LevelDbClientException | CreditsNodeException e) {
-//                throw new ContractExecutorException(
-//                    "Cannot execute the contract: " + address + ". Reason: " + getRootCauseMessage(e));
-//            }
-            instance = deserialize(contractState, classLoader);
+        Object contractInstance;
+        if (objectState != null && objectState.length != 0) {
+            contractInstance = deserialize(objectState, classLoader);
         } else {
-            DeployReturnValue deployReturnValue = ContractUtils.deployAndGetContractVariables(clazz, initiator);
+            DeployReturnValue deployReturnValue = deployAndGetContractVariables(contractClass, initiator);
             return new ReturnValue(deployReturnValue.getContractState(), null, deployReturnValue.getContractVariables());
         }
 
-        initializeInitiator(initiator, clazz, instance);
+        initializeInitiator(initiator, contractClass, contractInstance);
 
-        List<Method> methods = Arrays.stream(clazz.getMethods()).filter(method -> {
-            if (params == null || params.length == 0) {
-                return method.getName().equals(methodName) && method.getParameterCount() == 0;
-            } else {
-                return method.getName().equals(methodName) && method.getParameterCount() == params.length;
-            }
-        }).collect(Collectors.toList());
+        List<Method> methods = getMethods(contractClass, methodName, params);
 
         Method targetMethod = null;
         Object[] argValues = null;
         if (methods.isEmpty()) {
-            throw new ContractExecutorException("Cannot execute the contract: " + initiator +
-                    ". Reason: Cannot find a method by name and parameters specified");
+            throw new ContractExecutorException("Cannot execute the contract: " + initiator + ". Reason: Cannot find a method by name and parameters specified");
         } else {
             for (Method method : methods) {
                 try {
@@ -123,8 +105,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 } catch (ClassCastException e) {
                     continue;
                 } catch (ContractExecutorException e) {
-                    throw new ContractExecutorException(
-                            "Cannot execute the contract: " + initiator + "Reason: " + getRootCauseMessage(e), e);
+                    throw new ContractExecutorException("Cannot execute the contract: " + initiator + "Reason: " + getRootCauseMessage(e), e);
                 }
                 targetMethod = method;
                 break;
@@ -132,29 +113,37 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         if (targetMethod == null) {
-            throw new ContractExecutorException("Cannot execute the contract: " + initiator +
-                    ". Reason: Cannot cast parameters to the method found by name: " + methodName);
+            throw new ContractExecutorException("Cannot execute the contract: " + initiator + ". Reason: Cannot cast parameters to the method found by name: " + methodName);
         }
 
         //Invoking target method
         Object returnObject;
         Class<?> returnType = targetMethod.getReturnType();
         try {
-            Sandbox.confine(clazz, createPermissions());
-            returnObject = targetMethod.invoke(instance, argValues);
+            Sandbox.confine(contractClass, createPermissions());
+            returnObject = targetMethod.invoke(contractInstance, argValues);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new ContractExecutorException(
-                    "Cannot execute the contract: " + initiator + ". Reason: " + getRootCauseMessage(e));
+            throw new ContractExecutorException("Cannot execute the contract: " + initiator + ". Reason: " + getRootCauseMessage(e));
         }
 
         Variant returnValue = null;
         if (returnType != void.class) {
-            returnValue = ContractUtils.mapObjectToVariant(returnObject);
+            returnValue = mapObjectToVariant(returnObject);
         }
 
-        Map<String, Variant> contractVariables = ContractUtils.getContractVariables(instance);
+        Map<String, Variant> contractVariables = getContractVariables(contractInstance);
 
-        return new ReturnValue(serialize(initiator, instance), returnValue, contractVariables);
+        return new ReturnValue(serialize(initiator, contractInstance), returnValue, contractVariables);
+    }
+
+    private List<Method> getMethods(Class<?> contractClass, String methodName, Variant[] params) {
+        return Arrays.stream(contractClass.getMethods()).filter(method -> {
+                if (params == null || params.length == 0) {
+                    return method.getName().equals(methodName) && method.getParameterCount() == 0;
+                } else {
+                    return method.getName().equals(methodName) && method.getParameterCount() == params.length;
+                }
+            }).collect(Collectors.toList());
     }
 
     private void initializeInitiator(String initiator, Class<?> clazz, Object instance) {
@@ -195,7 +184,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     private Object parseObjectFromVariant(Variant variant) throws ContractExecutorException {
-//        Object value = null;
+        //        Object value = null;
         if (variant.isSetV_string()) {
             return variant.getV_string();
         } else if (variant.isSetV_bool()) {
@@ -214,7 +203,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         } else if (variant.isSetV_list()) {
             List<Variant> variantList = variant.getV_list();
             List objectList = new ArrayList();
-            for(Variant element : variantList) {
+            for (Variant element : variantList) {
                 objectList.add(parseObjectFromVariant(element));
             }
             return objectList;
@@ -222,16 +211,13 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Map<Variant, Variant> variantMap = variant.getV_map();
             Map objectMap = new HashMap();
             for (Map.Entry<Variant, Variant> entry : variantMap.entrySet()) {
-                objectMap.put(
-                        parseObjectFromVariant(entry.getKey()),
-                        parseObjectFromVariant(entry.getValue())
-                );
+                objectMap.put(parseObjectFromVariant(entry.getKey()), parseObjectFromVariant(entry.getValue()));
             }
             return objectMap;
         } else if (variant.isSetV_set()) {
             Set<Variant> variantSet = variant.getV_set();
             Set objectSet = new HashSet();
-            for(Variant element : variantSet) {
+            for (Variant element : variantSet) {
                 objectSet.add(parseObjectFromVariant(element));
             }
             return objectSet;
