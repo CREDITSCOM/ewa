@@ -6,7 +6,6 @@ import com.credits.common.utils.sourcecode.SourceCodeUtils;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.leveldb.client.util.ApiAlertUtils;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
@@ -271,17 +270,17 @@ public class SmartContractController extends Controller implements Initializable
                     if (res != null) {
                         String retVal = res.toString() + '\n';
                         LOGGER.info("Return value is {}", retVal);
-                        ApiAlertUtils.showInfo(
+                        FormUtils.showPlatformInfo(
                             "Execute smart contract was success: return value is: " + retVal);
                     } else {
-                        ApiAlertUtils.showInfo("Execute smart contract was success");
+                        FormUtils.showPlatformInfo("Execute smart contract was success");
                     }
 
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    ApiAlertUtils.showError(e.getMessage());
+                    FormUtils.showPlatformError(e.getMessage());
                 }
             });
         } catch (CreditsException e) {

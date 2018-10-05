@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.utils;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.StageStyle;
 
@@ -24,6 +25,38 @@ public class FormUtils {
         alert.setHeaderText("Information");
         alert.setContentText(text);
         alert.showAndWait();
+    }
+    public static void showPlatformWarning(String content) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initStyle(StageStyle.UTILITY);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Warning");
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
+    }
+
+    public static void showPlatformError(String content) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initStyle(StageStyle.UTILITY);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error");
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
+    }
+
+    public static void showPlatformInfo(String content) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.initStyle(StageStyle.UTILITY);
+            alert.setTitle("Info");
+            alert.setHeaderText("Info");
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
     }
 
 }
