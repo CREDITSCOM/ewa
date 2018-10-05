@@ -4,6 +4,7 @@ import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.util.ApiAlertUtils;
 import com.credits.wallet.desktop.AppState;
 import javafx.concurrent.Task;
 import javafx.scene.layout.Pane;
@@ -139,12 +140,12 @@ public class SmartContractUtils {
             ApiUtils.executeSmartContractProcess(method, params, smartContractData, new ApiTransactionThreadRunnable.Callback() {
                 @Override
                 public void onSuccess(ApiResponseData resultData) {
-                    FormUtils.showInfo("Transfer is ok");
+                    ApiAlertUtils.showInfo("Transfer is ok");
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    FormUtils.showError(e.getMessage());
+                    ApiAlertUtils.showError(e.getMessage());
                 }
             });
         } catch (Exception e) {
