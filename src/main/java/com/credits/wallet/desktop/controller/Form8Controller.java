@@ -28,6 +28,9 @@ public class Form8Controller extends Controller implements Initializable {
     private Label toAddress;
 
     @FXML
+    private Label amountInCs;
+
+    @FXML
     private Label transactionFeeValue;
 
     @FXML
@@ -70,6 +73,9 @@ public class Form8Controller extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         this.toAddress.setText(AppState.toAddress);
+        this.amountInCs.setText(Converter.toString(AppState.amount) + " " + AppState.coin);
+
     }
 }
