@@ -59,7 +59,7 @@ public class SmartContractDeployController extends Controller implements Initial
             "void sendTransaction(String account, String target, Double amount, String currency)"};
 
     private CodeArea codeArea;
-    private TableView tabErrors;
+    private TableView<ErrorCodeTabRow> tabErrors;
 
     private String prevCode;
 
@@ -73,7 +73,6 @@ public class SmartContractDeployController extends Controller implements Initial
     private TreeView<Label> classTreeView;
 
     @Override
-    @SuppressWarnings("unchecked")
     public void initialize(URL location, ResourceBundle resources) {
         if (AppState.executor != null) {
             AppState.executor.shutdown();
@@ -113,25 +112,22 @@ public class SmartContractDeployController extends Controller implements Initial
 
         this.codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
 
-        this.tabErrors = new TableView();
+        this.tabErrors = new TableView<>();
         this.tabErrors.setPrefHeight(this.scCodePanel.getPrefHeight() * 0.3);
         this.tabErrors.setPrefWidth(this.scCodePanel.getPrefWidth());
 
-        TableColumn tabErrorsColLine = new TableColumn();
+        TableColumn<ErrorCodeTabRow, String> tabErrorsColLine = new TableColumn<>();
         tabErrorsColLine.setText("Line");
+        tabErrorsColLine.setCellValueFactory(new PropertyValueFactory<>("line"));
         tabErrorsColLine.setPrefWidth(this.scCodePanel.getPrefWidth() * 0.1);
-        TableColumn tabErrorsColText = new TableColumn();
+
+        TableColumn<ErrorCodeTabRow, String> tabErrorsColText = new TableColumn<>();
         tabErrorsColText.setText("Error");
+        tabErrorsColText.setCellValueFactory(new PropertyValueFactory<>("text"));
         tabErrorsColText.setPrefWidth(this.scCodePanel.getPrefWidth() * 0.9);
+
         this.tabErrors.getColumns().add(tabErrorsColLine);
         this.tabErrors.getColumns().add(tabErrorsColText);
-
-        TableColumn[] tableColumns = new TableColumn[this.tabErrors.getColumns().size()];
-        for (int i = 0; i < this.tabErrors.getColumns().size(); i++) {
-            tableColumns[i] = (TableColumn) this.tabErrors.getColumns().get(i);
-        }
-        tableColumns[0].setCellValueFactory(new PropertyValueFactory<ErrorCodeTabRow, String>("line"));
-        tableColumns[1].setCellValueFactory(new PropertyValueFactory<ErrorCodeTabRow, String>("text"));
 
         this.tabErrors.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown()) {

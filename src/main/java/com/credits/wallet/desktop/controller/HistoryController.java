@@ -13,11 +13,13 @@ import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.slf4j.Logger;
@@ -67,12 +69,40 @@ public class HistoryController extends Controller implements Initializable {
         for (int i = 1; i <= INIT_PAGE_SIZE; i++) {
             cbPageSize.getItems().add(INIT_PAGE_SIZE * i);
         }
+        ObservableList<TableColumn<TransactionTabRow, ?>> tableColumns = tabTransaction.getColumns();
+        TableColumn<TransactionTabRow, String> innerId = new TableColumn<>();
+        innerId.setCellValueFactory(new PropertyValueFactory<>("innerId"));
+        TableColumn<TransactionTabRow, String> target = new TableColumn<>();
+        target.setCellValueFactory(new PropertyValueFactory<>("target"));
+        TableColumn<TransactionTabRow, String> currency = new TableColumn<>();
+        currency.setCellValueFactory(new PropertyValueFactory<>("currency"));
+        TableColumn<TransactionTabRow, String> amount = new TableColumn<>();
+        amount.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        TableColumn<TransactionTabRow, String> state = new TableColumn<>();
+        state.setCellValueFactory(new PropertyValueFactory<>("state"));
+        tableColumns.add(innerId);
+        tableColumns.add(target);
+        tableColumns.add(currency);
+        tableColumns.add(amount);
+        tableColumns.add(state);
 
-        tabTransaction.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("innerId"));
-        tabTransaction.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("target"));
-        tabTransaction.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("currency"));
-        tabTransaction.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("amount"));
-        tabTransaction.getColumns().get(4).setCellValueFactory(new PropertyValueFactory<>("state"));
+        tableColumns.get(0).setCellValueFactory(new PropertyValueFactory<>("innerId"));
+
+        TableColumn<TransactionTabRow, ?> transactionTabRowTableColumn = tableColumns.get(0);
+        transactionTabRowTableColumn.setCellValueFactory(new PropertyValueFactory<>("innerId"));
+
+/*
+
+        TableColumn[] tableColumns = new TableColumn[tabTransaction.getColumns().size()];
+        for (int i = 0; i < tabTransaction.getColumns().size(); i++) {
+            tableColumns[i] = (TableColumn) tabTransaction.getColumns().get(i);
+        }
+*/
+        tableColumns.get(0).setCellValueFactory(new PropertyValueFactory<>("innerId"));
+        tableColumns.get(1).setCellValueFactory(new PropertyValueFactory<>("target"));
+        tableColumns.get(2).setCellValueFactory(new PropertyValueFactory<>("currency"));
+        tableColumns.get(3).setCellValueFactory(new PropertyValueFactory<>("amount"));
+        tableColumns.get(4).setCellValueFactory(new PropertyValueFactory<>("state"));
 
 
         cbPageSize.getSelectionModel().select(0);
@@ -89,7 +119,7 @@ public class HistoryController extends Controller implements Initializable {
 
         tabTransaction.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
-                TransactionTabRow tabRow = tabTransaction.getSelectionModel().getSelectedItem();
+                TransactionTabRow tabRow = (TransactionTabRow) tabTransaction.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
                     AppState.selectedTransactionRow = tabRow;
                     AppState.detailFromHistory = true;
