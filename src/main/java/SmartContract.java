@@ -82,7 +82,7 @@ public abstract class SmartContract implements Serializable {
 
             byte[] signature = new byte[0];
             String signatureBASE58 = "";
-//                Ed25519.generateSignOfTransaction(innerId, source, target, decAmount, balance, currency, privateKey);
+//                Ed25519.generateSignOfTransaction(innerId, account, target, decAmount, balance, currency, privateKey);
 
             Instant instant = Instant.now();
             service.transactionFlow(instant.toEpochMilli(), source, target, decAmount, balance, currencyByte, signature, decFee);
