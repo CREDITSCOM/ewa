@@ -56,8 +56,8 @@ public class ApiUtils {
 
         TransactionStruct tStruct = new TransactionStruct(
                 calcTransactionIdSourceTargetResult.getTransactionId(),
-                calcTransactionIdSourceTargetResult.getSource(),
-                calcTransactionIdSourceTargetResult.getTarget(),
+                calcTransactionIdSourceTargetResult.getByteSource(),
+                calcTransactionIdSourceTargetResult.getByteTarget(),
                 amount,
                 offeredMaxFee,
                 currency,
@@ -68,8 +68,8 @@ public class ApiUtils {
 
         CreateTransactionData createTransactionData = new CreateTransactionData(
                 calcTransactionIdSourceTargetResult.getTransactionId(),
-                calcTransactionIdSourceTargetResult.getSource(),
-                calcTransactionIdSourceTargetResult.getTarget(),
+                calcTransactionIdSourceTargetResult.getByteSource(),
+                calcTransactionIdSourceTargetResult.getByteTarget(),
                 amount,
                 balance,
                 currency,
@@ -147,8 +147,8 @@ public class ApiUtils {
 
         return new CalcTransactionIdSourceTargetResult(
                 ApiUtils.createTransactionId(sourceIndexExists, targetIndexExists, transactionId),
-                source,
-                target
+                sourceBase58,
+                targetBase58
         );
     }
 
@@ -184,7 +184,7 @@ public class ApiUtils {
             ApiUtils.calcTransactionIdSourceTarget(AppState.account, transactionTarget);
 
         TransactionStruct tStruct = new TransactionStruct(calcTransactionIdSourceTargetResult.getTransactionId(),
-            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
+            calcTransactionIdSourceTargetResult.getByteSource(), calcTransactionIdSourceTargetResult.getByteTarget(),
             new BigDecimal(0), (short)0, (byte) 1, scBytes);
         ByteBuffer signature = Utils.signTransactionStruct(tStruct);
 
@@ -219,7 +219,7 @@ public class ApiUtils {
                 Converter.encodeToBASE58(smartContractData.getAddress()));
 
         TransactionStruct tStruct = new TransactionStruct(calcTransactionIdSourceTargetResult.getTransactionId(),
-            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
+            calcTransactionIdSourceTargetResult.getByteSource(), calcTransactionIdSourceTargetResult.getByteTarget(),
             new BigDecimal(0), (short)0, (byte) 1, scBytes);
 
         ByteBuffer signature = Utils.signTransactionStruct(tStruct);

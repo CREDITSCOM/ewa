@@ -1,11 +1,14 @@
 package com.credits.wallet.desktop.utils.struct;
 
+import com.credits.common.exception.CreditsCommonException;
+import com.credits.common.utils.Converter;
+
 public class CalcTransactionIdSourceTargetResult {
     private long transactionId;
-    private byte[] source;
-    private byte[] target;
+    private String source;
+    private String target;
 
-    public CalcTransactionIdSourceTargetResult(long transactionId, byte[] source, byte[] target) {
+    public CalcTransactionIdSourceTargetResult(long transactionId, String source, String target) {
         this.transactionId = transactionId;
         this.source = source;
         this.target = target;
@@ -19,19 +22,26 @@ public class CalcTransactionIdSourceTargetResult {
         this.transactionId = transactionId;
     }
 
-    public byte[] getSource() {
+    public String getSource() {
         return source;
     }
 
-    public void setSource(byte[] source) {
+    public void setSource(String source) {
         this.source = source;
     }
 
-    public byte[] getTarget() {
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    public String getTarget() {
         return target;
     }
 
-    public void setTarget(byte[] target) {
-        this.target = target;
+    public byte[] getByteSource() throws CreditsCommonException {
+        return Converter.decodeFromBASE58(source);
+    }
+    public byte[] getByteTarget() throws CreditsCommonException {
+        return Converter.decodeFromBASE58(target);
     }
 }
