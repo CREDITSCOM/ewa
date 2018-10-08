@@ -98,12 +98,12 @@ public class ApiUtils {
 
     public static String generateSmartContractHashState(byte[] byteCode) throws CreditsException {
         byte[] hashBytes = Md5.encrypt(byteCode);
-        return Converter.bytesToHex(hashBytes);
+        return Converter.byteArrayToHex(hashBytes);
     }
 
     public static long createTransactionId(boolean senderIndexExists, boolean receiverIndexExists, long transactionId) {
 
-        byte[] transactionIdBytes = Converter.longToBytes(transactionId);
+        byte[] transactionIdBytes = Converter.toByteArray(transactionId);
         BitSet transactionIdBitSet = Converter.toBitSet(transactionIdBytes);
         for (int i = 63; i > 45; i--) {
             transactionIdBitSet.set(i, false);
