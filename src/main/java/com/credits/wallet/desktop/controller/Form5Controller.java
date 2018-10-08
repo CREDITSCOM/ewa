@@ -4,8 +4,8 @@ import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.crypto.Ed25519;
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.google.gson.JsonObject;
@@ -53,7 +53,7 @@ public class Form5Controller extends Controller implements Initializable {
 
     @FXML
     private void handleBack() {
-        App.showForm("/fxml/form0.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_0);
     }
 
     @FXML
@@ -165,7 +165,7 @@ public class Form5Controller extends Controller implements Initializable {
         }
 
         if (validateKeys(pubKey, privKey)) {
-            App.showForm("/fxml/form6.fxml", "Wallet");
+            VistaNavigator.loadVista(VistaNavigator.FORM_6);
         } else {
             if (labelError.getText().isEmpty())
                 labelError.setText(ERR_KEYS);

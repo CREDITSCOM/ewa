@@ -9,15 +9,13 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
-<?import javafx.scene.text.Font?>
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.NewCoinController">
 	<children>
 		<BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<center>
 				<ScrollPane fitToHeight="true" fitToWidth="true">
 					<content>
-						<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
+						<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0" styleClass="credits-borderGrayPane" >
 							<top>
 								<fx:include source="header.fxml" />
 							</top>
@@ -26,21 +24,21 @@
 									<center>
 										<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="445.0" prefWidth="975.0" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
 											<children>
-												<Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText" stylesheets="@../styles.css" text="New coin" />
+												<Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"  text="New coin" />
 												<Label layoutX="24.0" layoutY="88.0"  text="On this form you can add new coin for smart contract" styleClass="credits-topLabelGrayText" />
 												<Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-												<Label layoutX="24.0" layoutY="127.0" styleClass="credits-label" stylesheets="@../styles.css" text="Put SmartContract token">
+												<Label layoutX="24.0" layoutY="127.0" styleClass="credits-label"  text="Put SmartContract token">
 												</Label>
-												<Button layoutX="21.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" styleClass="credits-button" stylesheets="@../styles.css" text="BACK"/>
-												<Button layoutX="212.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleSave" prefHeight="61.0" prefWidth="173.0" styleClass="credits-button" stylesheets="@../styles.css" text="SAVE"/>
-												<TextField fx:id="txToken" layoutX="21.0" layoutY="148.0" prefHeight="56.0" prefWidth="605.0" promptText="put token here"  styleClass="credits-textFieldGray" stylesheets="@../styles.css" />
+												<Button layoutX="21.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0" prefWidth="173.0" styleClass="credits-button"  text="BACK"/>
+												<Button layoutX="212.0" layoutY="366.0" mnemonicParsing="false" onAction="#handleSave" prefHeight="61.0" prefWidth="173.0" styleClass="credits-button"  text="SAVE"/>
+												<TextField fx:id="txToken" layoutX="21.0" layoutY="148.0" prefHeight="56.0" prefWidth="605.0" promptText="put token here"  styleClass="credits-textFieldGray"  />
 												<Label layoutX="24.0" layoutY="246.0" styleClass="credits-label"
-													   stylesheets="@../styles.css" text="Put coin mnemonic">
+													    text="Put coin mnemonic">
 												</Label>
-												<TextField fx:id="txCoin" layoutX="21.0" layoutY="273.0" prefHeight="56.0" prefWidth="605.0" promptText="put coin mnemonic here"  styleClass="credits-textFieldGray" stylesheets="@../styles.css" />
-                                    <Label fx:id="labelErrorToken" layoutX="24.0" layoutY="204.0" styleClass="credits-labelError" stylesheets="@../styles.css" text="Label">
+												<TextField fx:id="txCoin" layoutX="21.0" layoutY="273.0" prefHeight="56.0" prefWidth="605.0" promptText="put coin mnemonic here"  styleClass="credits-textFieldGray"  />
+                                    <Label fx:id="labelErrorToken" layoutX="24.0" layoutY="204.0" styleClass="credits-labelError"  text="Label">
                                     </Label>
-                                    <Label fx:id="labelErrorCoin" layoutX="24.0" layoutY="329.0" styleClass="credits-labelError" stylesheets="@../styles.css" text="Label">
+                                    <Label fx:id="labelErrorCoin" layoutX="24.0" layoutY="329.0" styleClass="credits-labelError"  text="Label">
                                     </Label>
 											</children>
 											<BorderPane.margin>

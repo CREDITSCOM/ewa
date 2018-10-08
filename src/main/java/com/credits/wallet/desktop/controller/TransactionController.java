@@ -1,7 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.VistaNavigator;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -29,9 +29,9 @@ public class TransactionController extends Controller implements Initializable {
     @FXML
     private void handleBack() {
         if (AppState.detailFromHistory)
-            App.showForm("/fxml/history.fxml", "Wallet");
+            VistaNavigator.loadVista(VistaNavigator.HISTORY);
         else
-            App.showForm("/fxml/form8.fxml", "Wallet");
+            VistaNavigator.loadVista(VistaNavigator.FORM_8);
     }
 
     @Override

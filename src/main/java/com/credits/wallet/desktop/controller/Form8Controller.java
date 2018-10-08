@@ -1,8 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.common.utils.Converter;
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
@@ -48,7 +48,7 @@ public class Form8Controller extends Controller implements Initializable {
 
     @FXML
     private void handleOk() {
-        App.showForm("/fxml/form6.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_6);
     }
 
     @FXML
@@ -61,7 +61,7 @@ public class Form8Controller extends Controller implements Initializable {
         transactionTabRow.setInnerId(Converter.toString(AppState.walletLastTransactionIdCache.get(AppState.account)));
         AppState.selectedTransactionRow = transactionTabRow;
         AppState.detailFromHistory=false;
-        App.showForm("/fxml/transaction.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.TRANSACTION);
     }
 
     @Override

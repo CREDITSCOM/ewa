@@ -1,10 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.thread.GetBalanceUpdater;
+import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.CoinsUtils;
-import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
@@ -35,24 +33,24 @@ public class AccountController extends Controller implements Initializable {
 
     @FXML
     private void handleLogout() {
-        App.showForm("/fxml/form0.fxml", "Wallet");
+        VistaNavigator.loadVista("/fxml/form0.fxml");
     }
 
     @FXML
     private void handleDetails() {
         AppState.newAccount = false;
-        App.showForm("/fxml/history.fxml", "Wallet");
+        VistaNavigator.loadVista("/fxml/history.fxml");
     }
 
     @FXML
     private void handleAddCoin() {
-        App.showForm("/fxml/new_coin.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.NEW_COIN);
     }
 
     @FXML
     private void handleSmartContract() {
         AppState.newAccount = false;
-        App.showForm("/fxml/smart_contract.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT);
     }
 
 

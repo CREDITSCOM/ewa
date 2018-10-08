@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.Line?>
-<?import javafx.scene.text.Font?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
             prefWidth="1400.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
@@ -23,7 +22,7 @@
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
                         <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1030.0" prefWidth="1400.0"
-                                    styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
+                                    styleClass="credits-borderGrayPane" >
                             <top>
                                 <fx:include source="header.fxml"/>
                             </top>
@@ -43,25 +42,25 @@
                                                     <children>
                                                         <Label layoutX="21.0" layoutY="23.0"
                                                                styleClass="credits-topLabelText"
-                                                               stylesheets="@../styles.css" text="Smart contract"/>
+                                                                text="Smart contract"/>
                                                         <Line endX="-50.0" layoutX="126.0" layoutY="75.0"
                                                               startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
                                                         <Button layoutX="21.0" layoutY="618.0" mnemonicParsing="false"
                                                                 onAction="#handleBack" prefHeight="61.0"
                                                                 prefWidth="173.0"
-                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                styleClass="credits-button"
                                                                 text="BACK"/>
                                                         <Pane fx:id="pControls" layoutX="430.0" layoutY="148.0"
                                                               prefHeight="455.0" prefWidth="406.0">
                                                             <children>
                                                                 <Label layoutX="16.0" layoutY="-3.0"
                                                                        style="-fx-font-size: 18px;" styleClass="text"
-                                                                       stylesheets="@../styles.css"
+
                                                                        text="Contract address">
                                                                 </Label>
                                                                 <Label layoutX="15.0" layoutY="86.0"
                                                                        style="-fx-font-size: 18px;" styleClass="text"
-                                                                       stylesheets="@../styles.css"
+
                                                                        text="Choose method">
                                                                 </Label>
                                                                 <ComboBox fx:id="cbMethods" layoutX="14.0"
@@ -73,7 +72,7 @@
                                                                         mnemonicParsing="false"
                                                                         onAction="#handleExecute" prefHeight="61.0"
                                                                         prefWidth="173.0"
-                                                                        styleClass="credits-button" stylesheets="@../styles.css"
+                                                                        styleClass="credits-button"
                                                                         text="EXECUTE"/>
                                                                 <AnchorPane fx:id="pParams" layoutX="15.0"
                                                                             layoutY="167.0" prefHeight="212.0"
@@ -83,7 +82,7 @@
                                                                                prefHeight="27.0" prefWidth="174.0"
                                                                                style="-fx-font-size: 18px;"
                                                                                styleClass="text"
-                                                                               stylesheets="@../styles.css"
+
                                                                                text="Method parameters:">
                                                                         </Label>
                                                                         <ScrollPane layoutY="34.0" prefHeight="178.0"
@@ -102,7 +101,7 @@
                                                                            layoutX="15.0" layoutY="24.0"
                                                                            prefHeight="56.0" prefWidth="390.0"
                                                                            styleClass="credits-textField"
-                                                                           stylesheets="@../styles.css"/>
+                                                                           />
                                                             </children>
                                                         </Pane>
                                                         <StackPane layoutX="25.0" layoutY="148.0" prefHeight="455.0"
@@ -116,16 +115,16 @@
                                                         <TextField fx:id="tfSearchAddress" layoutX="25.0" layoutY="84.0"
                                                                    prefHeight="56.0" prefWidth="410.0"
                                                                    promptText="search contract"
-                                                                   styleClass="credits-textField" stylesheets="@../styles.css"/>
+                                                                   styleClass="credits-textField" />
                                                         <Button layoutX="450.0" layoutY="81.0" mnemonicParsing="false"
                                                                 onAction="#handleSearch" prefHeight="61.0"
                                                                 prefWidth="93.0"
-                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                styleClass="credits-button"
                                                                 text="SEARCH"/>
                                                         <Button layoutX="550.0" layoutY="81.0" mnemonicParsing="false"
                                                                 onAction="#handleCreate" prefHeight="61.0"
                                                                 prefWidth="93.0"
-                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                styleClass="credits-button"
                                                                 text="CREATE"/>
                                                         <ScrollPane fx:id="spCodePanel" layoutX="850.0" layoutY="84.0"
                                                                     prefHeight="518.0" prefWidth="512.0">

@@ -20,7 +20,7 @@
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
                         <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0"
-                                    styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
+                                    styleClass="credits-borderGrayPane" >
                             <top>
                                 <fx:include source="header.fxml"/>
                             </top>
@@ -32,7 +32,7 @@
                                               styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
                                             <children>
                                                 <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
-                                                       stylesheets="@../styles.css"
+
                                                        text="4. Save your private key to Credits account">
                                                     <font>
                                                         <Font size="14.0"/>
@@ -40,22 +40,22 @@
                                                 </Label>
                                                 <Label layoutX="24.0" layoutY="88.0"
                                                        styleClass="credits-topLabelGrayText"
-                                                       stylesheets="@../styles.css"
+
                                                        text="On this form you can open the wallet and make payments in the Credits platform"/>
                                                 <TextField fx:id="txKey" layoutX="24.0" layoutY="183.0"
                                                            prefHeight="56.0" prefWidth="605.0" promptText="key ..."
-                                                           styleClass="credits-textFieldGray" stylesheets="@../styles.css"/>
+                                                           styleClass="credits-textFieldGray" />
                                                 <Label layoutX="23.0" layoutY="149.0" styleClass="credits-label"
-                                                       stylesheets="@../styles.css" text="Save this private key">
+                                                        text="Save this private key">
                                                 </Label>
                                                 <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0"
                                                       stroke="#ecb32e" strokeWidth="4.0"/>
                                                 <Button layoutX="216.0" layoutY="316.0" mnemonicParsing="false"
                                                         onAction="#handleContinue" prefHeight="61.0" prefWidth="173.0"
-                                                        styleClass="credits-button" stylesheets="@../styles.css" text="CONTINUE"/>
+                                                        styleClass="credits-button"  text="CONTINUE"/>
                                                 <Button layoutX="24.0" layoutY="316.0" mnemonicParsing="false"
                                                         onAction="#handleBack" prefHeight="61.0" prefWidth="173.0"
-                                                        styleClass="credits-button" stylesheets="@../styles.css" text="BACK"/>
+                                                        styleClass="credits-button"  text="BACK"/>
                                             </children>
                                             <BorderPane.margin>
                                                 <Insets/>

@@ -19,7 +19,7 @@
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
                         <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1060.0"
-                                    styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
+                                    styleClass="credits-borderGrayPane" >
                             <top>
                                 <fx:include source="header.fxml"/>
                             </top>
@@ -38,7 +38,7 @@
                                                       minHeight="-Infinity" minWidth="-Infinity" prefHeight="673.0"
                                                       prefWidth="665.0" styleClass="credits-borderWhitePane">
                                                     <children>
-                                                        <Label layoutX="30.0" layoutY="23.0" styleClass="credits-topLabelText" stylesheets="@../styles.css"
+                                                        <Label layoutX="30.0" layoutY="23.0" styleClass="credits-topLabelText"
                                                                text="7. Check &amp; verify your transaction">
                                                             <font>
                                                                 <Font size="14.0"/>
@@ -46,49 +46,49 @@
                                                         </Label>
                                                         <Label layoutX="30.0" layoutY="88.0"
                                                                styleClass="credits-topLabelGrayText"
-                                                               stylesheets="@../styles.css"
+
                                                                text="On this form you can open the wallet and make payments in the Credits platform"/>
                                                         <Line endX="-50.0" layoutX="130.0" layoutY="75.0"
                                                               startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
                                                         <Label layoutX="30.0" layoutY="225.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
-                                                               stylesheets="@../styles.css" text="To address">
+                                                                text="To address">
                                                         </Label>
                                                         <Label layoutX="30.0" layoutY="325.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
-                                                               stylesheets="@../styles.css" text="Amount">
+                                                                text="Amount">
                                                         </Label>
                                                         <Button fx:id="btnGenerate" layoutX="375.0" layoutY="600.0"
                                                                 mnemonicParsing="false" onAction="#handleGenerate"
                                                                 prefHeight="60.0" prefWidth="250.0"
-                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                styleClass="credits-button"
                                                                 text="GENERATE TRANSACTION" />
                                                         <Label fx:id="amountInCs" layoutX="30.0" layoutY="350.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
-                                                               stylesheets="@../styles.css" text="0">
+                                                                text="0">
                                                         </Label>
                                                         <Label layoutX="30.0" layoutY="425.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
-                                                               stylesheets="@../styles.css" text="Transaction fee">
+                                                                text="Transaction fee">
                                                         </Label>
                                                         <Label fx:id="transactionFeeValue" layoutX="30.0"
                                                                layoutY="450.0" style="-fx-font-size: 16px;"
-                                                               styleClass="text" stylesheets="@../styles.css" text="0">
+                                                               styleClass="text"  text="0">
                                                         </Label>
                                                         <Button fx:id="btnBack" layoutX="50.0" layoutY="600.0"
                                                                 mnemonicParsing="false" onAction="#handleBack"
                                                                 prefHeight="60.0" prefWidth="250.0"
-                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                styleClass="credits-button"
                                                                 text="BACK"/>
                                                         <Label fx:id="toAddress" layoutX="30.0" layoutY="250.0"
                                                                maxHeight="55.0" maxWidth="540.0" minWidth="0.0"
                                                                prefHeight="20.0" prefWidth="540.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
-                                                               stylesheets="@../styles.css" wrapText="true">
+                                                                wrapText="true">
                                                         </Label>
                                                         <Label layoutX="30.0" layoutY="165.0"
                                                                style="-fx-font-size: 20px;-fx-font-weight: bold;"
-                                                               styleClass="text" stylesheets="@../styles.css"
+                                                               styleClass="text"
                                                                text="Transaction details:">
                                                             <opaqueInsets>
                                                                 <Insets/>

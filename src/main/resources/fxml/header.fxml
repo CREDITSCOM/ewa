@@ -6,7 +6,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
-
 <BorderPane maxHeight="70.0" minHeight="70.0" prefHeight="70.0" style="-fx-background-color: #262626;" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
 	<center>
 		<Pane maxHeight="70.0" maxWidth="874.0" minHeight="70.0" minWidth="0.0" prefHeight="70.0" prefWidth="874.0" BorderPane.alignment="CENTER">
@@ -16,13 +15,13 @@
 						<Image url="@../img/logo.png" />
 					</image>
 				</ImageView>
-				<Label layoutX="141.0" layoutY="18.0" styleClass="credits-headerLabel" stylesheets="@../styles.css" text="Wallet" textFill="#ecb32e" />
-				<Label layoutX="24.0" layoutY="21.0" styleClass="credits-headerLabel" stylesheets="@../styles.css" text="CREDITS" textFill="WHITE">
+				<Label layoutX="141.0" layoutY="18.0" styleClass="credits-headerLabel"  text="Wallet" textFill="#ecb32e" />
+				<Label layoutX="24.0" layoutY="21.0" styleClass="credits-headerLabel"  text="CREDITS" textFill="WHITE">
 					<font>
 						<Font size="24.0" />
 					</font>
 				</Label>
-				<Label layoutX="260.0" layoutY="21.0" styleClass="credits-headerLabel" stylesheets="@../styles.css" text="TestNet" textFill="RED" />
+				<Label layoutX="260.0" layoutY="21.0" styleClass="credits-headerLabel"  text="TestNet" textFill="RED" />
 			</children>
 		</Pane>
 	</center>

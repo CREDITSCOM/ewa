@@ -8,32 +8,31 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
-
 <Pane maxHeight="621.0" maxWidth="260.0" minHeight="365.5" minWidth="232.0" prefHeight="621.0" prefWidth="260.0" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_RIGHT" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.AccountController">
     <BorderPane.margin>
         <Insets left="20.0" top="30.0" />
     </BorderPane.margin>
     <children>
-        <Label layoutX="25.0" layoutY="23.0" styleClass="credits-topLabelText" stylesheets="@../styles.css" text="Account">
+        <Label layoutX="25.0" layoutY="23.0" styleClass="credits-topLabelText"  text="Account">
             <font>
                 <Font size="14.0" />
             </font>
         </Label>
         <Line endX="-50.0" layoutX="125.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-        <Label layoutX="25.0" layoutY="88.0" styleClass="credits-topLabelGrayText" stylesheets="@../styles.css" text="Wallet:">
+        <Label layoutX="25.0" layoutY="88.0" styleClass="credits-topLabelGrayText"  text="Wallet:">
         </Label>
-        <Label fx:id="wallet" alignment="TOP_LEFT" layoutX="25.0" layoutY="119.0" maxHeight="55.0" maxWidth="240.0" minWidth="0.0" prefHeight="55.0" prefWidth="215.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="text" stylesheets="@../styles.css" wrapText="true">
+        <Label fx:id="wallet" alignment="TOP_LEFT" layoutX="25.0" layoutY="119.0" maxHeight="55.0" maxWidth="240.0" minWidth="0.0" prefHeight="55.0" prefWidth="215.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="text"  wrapText="true">
         </Label>
         <ComboBox fx:id="cbCoinBalance" layoutX="25.0" layoutY="282.0" prefHeight="41.0" prefWidth="210.0" styleClass="credits-combobox" />
         <Button id="refresh-balance-button" layoutX="100.0" layoutY="226.0" minHeight="16.0" minWidth="16.0" mnemonicParsing="false" onAction="#handleRefreshBalance" prefHeight="16.0" prefWidth="16.0" styleClass="credits-button" />
         <Label layoutX="25.0" layoutY="220.0" style="-fx-font-size: 16;" styleClass="text" text="Balance:">
         </Label>
-        <Label fx:id="lCoinBalance" layoutX="25.0" layoutY="250.0" style="-fx-font-size: 14;" styleClass="text" stylesheets="@../styles.css">
+        <Label fx:id="lCoinBalance" layoutX="25.0" layoutY="250.0" style="-fx-font-size: 14;" styleClass="text" >
         </Label>
-        <Button layoutX="25.0" layoutY="410.0" mnemonicParsing="false" onAction="#handleDetails" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button" stylesheets="@../styles.css" text="TRANSACTION HISTORY" />
-        <Button layoutX="25.0" layoutY="480.0" mnemonicParsing="false" onAction="#handleSmartContract" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button" stylesheets="@../styles.css" text="SMART CONTRACT" />
-        <Button layoutX="25.0" layoutY="550.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button" stylesheets="@../styles.css" text="LOGOUT" />
-        <Button layoutX="25.0" layoutY="167.0" mnemonicParsing="false" onAction="#handleCopy" prefHeight="41.0" prefWidth="80.0" styleClass="credits-button" stylesheets="@../styles.css" text="COPY" />
-      <Button layoutX="25.0" layoutY="340.0" mnemonicParsing="false" onAction="#handleAddCoin" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button" stylesheets="@../styles.css" text="ADD COIN" />
+        <Button layoutX="25.0" layoutY="410.0" mnemonicParsing="false" onAction="#handleDetails" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button"  text="TRANSACTION HISTORY" />
+        <Button layoutX="25.0" layoutY="480.0" mnemonicParsing="false" onAction="#handleSmartContract" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button"  text="SMART CONTRACT" />
+        <Button layoutX="25.0" layoutY="550.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button"  text="LOGOUT" />
+        <Button layoutX="25.0" layoutY="167.0" mnemonicParsing="false" onAction="#handleCopy" prefHeight="41.0" prefWidth="80.0" styleClass="credits-button"  text="COPY" />
+      <Button layoutX="25.0" layoutY="340.0" mnemonicParsing="false" onAction="#handleAddCoin" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button"  text="ADD COIN" />
     </children>
 </Pane>

@@ -5,8 +5,8 @@ import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.leveldb.client.util.Validator;
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
 import javafx.fxml.FXML;
@@ -105,7 +105,7 @@ public class Form6Controller extends Controller implements Initializable {
         }
 
         if (isValidationSuccessful) {
-            App.showForm("/fxml/form7.fxml", "Wallet");
+            VistaNavigator.loadVista(VistaNavigator.FORM_7);
         }
     }
 

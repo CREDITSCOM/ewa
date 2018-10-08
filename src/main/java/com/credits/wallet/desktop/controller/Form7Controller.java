@@ -5,9 +5,8 @@ import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.thread.GetBalanceUpdater;
+import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -39,7 +38,7 @@ public class Form7Controller extends Controller implements Initializable {
     @FXML
     private void handleBack() {
         AppState.noClearForm6 = true;
-        App.showForm("/fxml/form6.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_6);
     }
 
     @FXML
@@ -59,7 +58,7 @@ public class Form7Controller extends Controller implements Initializable {
             return;
         }
 
-        App.showForm("/fxml/form8.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_8);
     }
 
     @Override

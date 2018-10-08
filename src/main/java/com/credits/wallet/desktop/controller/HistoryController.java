@@ -9,8 +9,8 @@ import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.leveldb.client.thrift.TransactionState;
 import com.credits.leveldb.client.thrift.TransactionsStateGetResult;
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
@@ -93,7 +93,7 @@ public class HistoryController extends Controller implements Initializable {
                 if (tabRow != null) {
                     AppState.selectedTransactionRow = tabRow;
                     AppState.detailFromHistory = true;
-                    App.showForm("/fxml/transaction.fxml", "Wallet");
+                    VistaNavigator.loadVista(VistaNavigator.TRANSACTION);
                 }
             }
         });
@@ -185,7 +185,7 @@ public class HistoryController extends Controller implements Initializable {
 
     @FXML
     private void handleBack() {
-        App.showForm("/fxml/form6.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_6);
     }
 
     @FXML

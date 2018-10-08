@@ -10,7 +10,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.Line?>
-<?import javafx.scene.text.Font?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
             prefWidth="1060.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController">
@@ -21,7 +20,7 @@
                 <ScrollPane fitToHeight="true" fitToWidth="true">
                     <content>
                         <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1030.0" prefWidth="1060.0"
-                                    styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
+                                    styleClass="credits-borderGrayPane" >
                             <top>
                                 <fx:include source="header.fxml"/>
                             </top>
@@ -40,7 +39,7 @@
                                                       prefWidth="1400.0" styleClass="credits-borderWhitePane">
                                                     <children>
                                                         <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
-                                                               stylesheets="@../styles.css" text="Smart contract"/>
+                                                                text="Smart contract"/>
                                                         <Label layoutX="24.0" layoutY="88.0"
                                                                text="On this form you can check and deploy smart contract"
                                                                styleClass="credits-topLabelGrayText"/>
@@ -48,23 +47,23 @@
                                                               startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
                                                         <Label layoutX="375.0" layoutY="144.0"
                                                                style="-fx-font-size: 16px;" styleClass="text"
-                                                               stylesheets="@../styles.css"
+
                                                                text="Put SmartContract code">
                                                         </Label>
                                                         <Button layoutX="21.0" layoutY="618.0" mnemonicParsing="false"
                                                                 onAction="#handleBack" prefHeight="61.0"
                                                                 prefWidth="173.0"
-                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                styleClass="credits-button"
                                                                 text="BACK"/>
                                                         <Button fx:id="checkButton" layoutX="210.0" layoutY="618.0"
                                                                 mnemonicParsing="false" onAction="#checkButtonAction"
                                                                 prefHeight="61.0" prefWidth="173.0"
-                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                styleClass="credits-button"
                                                                 text="CHECK"/>
                                                         <Button layoutX="401.0" layoutY="618.0" mnemonicParsing="false"
                                                                 onAction="#handleDeploy" prefHeight="61.0"
                                                                 prefWidth="173.0"
-                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                styleClass="credits-button"
                                                                 text="DEPLOY"/>
                                                         <ScrollPane fx:id="scCodePanel" layoutX="375.0" layoutY="174.0"
                                                                     prefHeight="430.0" prefWidth="1000.0">

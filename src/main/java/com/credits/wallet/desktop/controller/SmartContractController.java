@@ -7,8 +7,8 @@ import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.thrift.generated.Variant;
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
@@ -86,12 +86,12 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private void handleBack() {
-        App.showForm("/fxml/form6.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_6);
     }
 
     @FXML
     private void handleCreate() {
-        App.showForm("/fxml/smart_contract_deploy.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY);
     }
 
     @FXML

@@ -2,8 +2,8 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.sourcecode.SourceCodeUtils;
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.exception.CompilationException;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
@@ -146,7 +146,7 @@ public class SmartContractDeployController extends Controller implements Initial
             AppState.executor.shutdown();
             AppState.executor = null;
         }
-        App.showForm("/fxml/smart_contract.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT);
     }
 
     @FXML

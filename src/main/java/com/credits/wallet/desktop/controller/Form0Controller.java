@@ -1,7 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.VistaNavigator;
 import javafx.fxml.FXML;
 
 /**
@@ -11,12 +11,12 @@ public class Form0Controller extends Controller {
     @FXML
     private void handleExistingAccount() {
         AppState.newAccount = false;
-        App.showForm("/fxml/form5.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_5);
     }
 
     @FXML
     private void handleNewAccount() {
         AppState.newAccount = true;
-        App.showForm("/fxml/form1.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_1);
     }
 }

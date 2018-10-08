@@ -1,8 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.crypto.Ed25519;
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.VistaNavigator;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,7 +30,7 @@ public class Form1Controller extends Controller implements Initializable {
 
     @FXML
     private void handleBack() {
-        App.showForm("/fxml/form0.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_0);
     }
 
     @FXML
@@ -39,7 +39,7 @@ public class Form1Controller extends Controller implements Initializable {
         AppState.publicKey = keyPair.getPublic();
         AppState.privateKey = keyPair.getPrivate();
 
-        App.showForm("/fxml/form4.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_4);
     }
 
     @Override

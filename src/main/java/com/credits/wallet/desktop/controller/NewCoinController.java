@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.wallet.desktop.App;
-import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import javafx.fxml.FXML;
@@ -42,7 +41,7 @@ public class NewCoinController extends Controller implements Initializable {
 
     @FXML
     private void handleBack() {
-        App.showForm("/fxml/form6.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_6);
     }
 
     @FXML
@@ -83,7 +82,7 @@ public class NewCoinController extends Controller implements Initializable {
             return;
         }
 
-            App.showForm("/fxml/form6.fxml", "Wallet");
+            VistaNavigator.loadVista(VistaNavigator.FORM_6);
         }
 
         @Override

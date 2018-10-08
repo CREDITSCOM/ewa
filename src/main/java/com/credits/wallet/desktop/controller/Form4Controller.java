@@ -2,8 +2,8 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.common.utils.Converter;
 import com.credits.crypto.Ed25519;
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.VistaNavigator;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -20,12 +20,12 @@ public class Form4Controller extends Controller implements Initializable {
 
     @FXML
     private void handleBack() {
-        App.showForm("/fxml/form1.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_1);
     }
 
     @FXML
     private void handleContinue() {
-        App.showForm("/fxml/form5.fxml", "Wallet");
+        VistaNavigator.loadVista(VistaNavigator.FORM_5);
     }
 
     @Override
