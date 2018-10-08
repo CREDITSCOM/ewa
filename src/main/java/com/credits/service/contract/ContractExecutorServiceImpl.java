@@ -7,6 +7,7 @@ import com.credits.leveldb.client.ApiClient;
 import com.credits.secure.Sandbox;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.thrift.DeployReturnValue;
+import com.credits.thrift.MethodDescription;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.generated.Variant;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ReflectPermission;
+import java.lang.reflect.Type;
 import java.net.NetPermission;
 import java.net.SocketPermission;
 import java.security.Permissions;
@@ -134,6 +136,23 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Map<String, Variant> contractVariables = getContractVariables(contractInstance);
 
         return new ReturnValue(serialize(initiator, contractInstance), returnValue, contractVariables);
+    }
+
+    @Override
+    public List<MethodDescription> getContractsMethods(byte[] bytecode) {
+        ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
+        Class<?> contractClass = classLoader.buildClass(bytecode);
+
+        List<MethodDescription> result = new ArrayList<>();
+        for (Method method : contractClass.getMethods()){
+            ArrayList<String> argTypes = new ArrayList<>();
+            for (Type type : method.getGenericParameterTypes()){
+                argTypes.add(type.getTypeName());
+            }
+            result.add(new MethodDescription(method.getName(),argTypes,method.getGenericReturnType().getTypeName()));
+        }
+
+        return result;
     }
 
     private List<Method> getMethods(Class<?> contractClass, String methodName, Variant[] params) {

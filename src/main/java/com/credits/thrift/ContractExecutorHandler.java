@@ -1,23 +1,21 @@
 package com.credits.thrift;
 
-import com.credits.common.utils.Base58;
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.thrift.generated.APIResponse;
 import com.credits.thrift.generated.ContractExecutor;
+import com.credits.thrift.generated.GetContractMethodsResult;
 import com.credits.thrift.generated.Variant;
-import org.apache.thrift.TException;
+import org.apache.thrift.TUnion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class ContractExecutorHandler implements ContractExecutor.Iface {
@@ -32,9 +30,8 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                                        List<Variant> params) {
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
 
-        logger.info(String.format("Executing contract:\nAddress = %s, \nByteCode = %s, \nContractState = %s, \nMethod = %s, \nParams = %s.",
-            address, Arrays.toString(byteCode.array()), Arrays.toString(contractState.array()),
-            method, (params == null ? "no params" : params.stream().map(e -> e.toString()).reduce("", String::concat))));
+        logger.info(String.format("Executing contract:\nAddress = %s, \nByteCode length= %d, \nContractState length= %d, \nMethod = %s, \nParams = %s.",
+            address, byteCode.array().length, contractState.array().length, method, (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat))));
 
         APIResponse response = new APIResponse((byte) 0, "", contractState);
         try {
@@ -45,8 +42,20 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         } catch (ContractExecutorException e) {
             response.setCode((byte) 1);
             response.setMessage(e.getMessage());
-            return response;
         }
         return response;
+    }
+
+    @Override
+    public GetContractMethodsResult getContractMethods(ByteBuffer bytecode) {
+        GetContractMethodsResult result = new GetContractMethodsResult();
+        try {
+            List<MethodDescription> contractsMethods = service.getContractsMethods(bytecode.array());
+            result.methods = contractsMethods.stream().map( it -> new com.credits.thrift.generated.MethodDescription(it.name, it.argTypes, it.returnType)).collect(toList());
+        } catch (ContractExecutorException e) {
+          result.setCode((byte) 1);
+          result.setMessage(e.getMessage());
+        }
+        return result;
     }
 }

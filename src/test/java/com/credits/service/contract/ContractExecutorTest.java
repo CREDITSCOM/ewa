@@ -5,6 +5,7 @@ import com.credits.common.utils.Converter;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.ServiceTest;
+import com.credits.thrift.MethodDescription;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.generated.Variant;
 import com.credits.thrift.utils.ContractUtils;
@@ -13,8 +14,14 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
+import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.mockito.Mockito.when;
 
@@ -84,5 +91,20 @@ public class ContractExecutorTest extends ServiceTest {
 
         ReturnValue result = ceService.execute(address, bytecode, contractState, "getInitiatorAddress", null);
         assertEquals(Base58.encode(address), result.getVariant().getV_string());
+    }
+
+    @Test
+    public void get_methods_of_contract() throws Exception{
+        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+        byte[] bytecode = compile(sourceCode, "Contract", "TKN");
+
+        List<MethodDescription> expectedMethods = Arrays.asList(
+            new MethodDescription("initialize", new ArrayList<>(), "void"),
+            new MethodDescription("addTokens", singletonList("int"), "void"),
+            new MethodDescription("printTotal", new ArrayList<>(), "void"),
+            new MethodDescription("getTotal", new ArrayList<>(), "int"),
+            new MethodDescription("getInitiatorAddress",new ArrayList<>(), "java.lang.String"));
+
+        assertTrue(ceService.getContractsMethods(bytecode).containsAll(expectedMethods));
     }
 }

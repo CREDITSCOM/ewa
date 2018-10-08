@@ -1,8 +1,11 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
+import com.credits.thrift.MethodDescription;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.generated.Variant;
+
+import java.util.List;
 
 public interface ContractExecutorService {
     /**
@@ -25,11 +28,7 @@ public interface ContractExecutorService {
 //    void execute(String address, String methodName, String[] params) throws ContractExecutorException;
 
 
-    ReturnValue execute(
-            byte[] initiatorAddress,
-            byte[] bytecode,
-            byte[] contractState,
-            String methodName,
-            Variant[] params
-    ) throws ContractExecutorException;
+    ReturnValue execute( byte[] initiatorAddress, byte[] bytecode, byte[] contractState, String methodName, Variant[] params ) throws ContractExecutorException;
+
+    List<MethodDescription> getContractsMethods(byte[] contractBytecode) throws ContractExecutorException;
 }
