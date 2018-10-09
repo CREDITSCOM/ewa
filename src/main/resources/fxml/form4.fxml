@@ -10,70 +10,45 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
-            prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.credits.wallet.desktop.controller.Form4Controller">
-    <children>
-        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                    AnchorPane.topAnchor="0.0">
-            <center>
-                <ScrollPane fitToHeight="true" fitToWidth="true">
-                    <content>
-                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0"
-                                    styleClass="credits-borderGrayPane" >
-                            <top>
-                                <fx:include source="header.fxml"/>
-                            </top>
-                            <center>
-                                <BorderPane minHeight="-Infinity" prefHeight="500.0" BorderPane.alignment="TOP_CENTER">
-                                    <center>
-                                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                                              minWidth="-Infinity" prefHeight="441.0" prefWidth="874.0"
-                                              styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
-                                            <children>
-                                                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.credits.wallet.desktop.controller.Form4Controller" maxHeight="-Infinity"
+            fx:id="bp"
+            prefHeight="700.0" prefWidth="1300.0"
+            maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" BorderPane.alignment="TOP_CENTER">
+    <top>
+        <fx:include source="header_empty.fxml"/>
+    </top>
+    <center>
+        <Pane
+                styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
+            <children>
+                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
 
-                                                       text="4. Save your private key to Credits account">
-                                                    <font>
-                                                        <Font size="14.0"/>
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="24.0" layoutY="88.0"
-                                                       styleClass="credits-topLabelGrayText"
+                       text="4. Save your private key to Credits account">
+                    <font>
+                        <Font size="14.0"/>
+                    </font>
+                </Label>
+                <Label layoutX="24.0" layoutY="88.0"
+                       styleClass="credits-topLabelGrayText"
 
-                                                       text="On this form you can open the wallet and make payments in the Credits platform"/>
-                                                <TextField fx:id="txKey" layoutX="24.0" layoutY="183.0"
-                                                           prefHeight="56.0" prefWidth="605.0" promptText="key ..."
-                                                           styleClass="credits-textFieldGray" />
-                                                <Label layoutX="23.0" layoutY="149.0" styleClass="credits-label"
-                                                        text="Save this private key">
-                                                </Label>
-                                                <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0"
-                                                      stroke="#ecb32e" strokeWidth="4.0"/>
-                                                <Button layoutX="216.0" layoutY="316.0" mnemonicParsing="false"
-                                                        onAction="#handleContinue" prefHeight="61.0" prefWidth="173.0"
-                                                        styleClass="credits-button"  text="CONTINUE"/>
-                                                <Button layoutX="24.0" layoutY="316.0" mnemonicParsing="false"
-                                                        onAction="#handleBack" prefHeight="61.0" prefWidth="173.0"
-                                                        styleClass="credits-button"  text="BACK"/>
-                                            </children>
-                                            <BorderPane.margin>
-                                                <Insets/>
-                                            </BorderPane.margin>
-                                        </Pane>
-                                    </center>
-                                    <BorderPane.margin>
-                                        <Insets top="30.0"/>
-                                    </BorderPane.margin>
-                                </BorderPane>
-                            </center>
-                            <bottom>
-                                <fx:include source="footer.fxml"/>
-                            </bottom>
-                        </BorderPane>
-                    </content>
-                </ScrollPane>
-            </center>
-        </BorderPane>
-    </children>
-</AnchorPane>
+                       text="On this form you can open the wallet and make payments in the Credits platform"/>
+                <TextField fx:id="txKey" layoutX="24.0" layoutY="183.0"
+                           prefHeight="56.0" prefWidth="605.0" promptText="key ..."
+                           styleClass="credits-textFieldGray"/>
+                <Label layoutX="23.0" layoutY="149.0" styleClass="credits-label"
+                       text="Save this private key">
+                </Label>
+                <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0"
+                      stroke="#ecb32e" strokeWidth="4.0"/>
+                <Button layoutX="216.0" layoutY="316.0" mnemonicParsing="false"
+                        onAction="#handleContinue" prefHeight="61.0" prefWidth="173.0"
+                        styleClass="credits-button" text="CONTINUE"/>
+                <Button layoutX="24.0" layoutY="316.0" mnemonicParsing="false"
+                        onAction="#handleBack" prefHeight="61.0" prefWidth="173.0"
+                        styleClass="credits-button" text="BACK"/>
+            </children>
+        </Pane>
+    </center>
+</BorderPane>

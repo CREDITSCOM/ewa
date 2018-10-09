@@ -2,9 +2,11 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
+import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,6 +16,9 @@ import java.util.ResourceBundle;
  */
 public class TransactionController extends Controller implements Initializable {
     private static final String ERR_GETTING_TRANSACTION = "Error getting transaction details";
+
+    @FXML
+    BorderPane bp;
 
     @FXML
     private Label labInnerId;
@@ -36,6 +41,7 @@ public class TransactionController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        FormUtils.resizeForm(bp);
         labInnerId.setText(AppState.selectedTransactionRow.getInnerId());
         labTarget.setText(AppState.selectedTransactionRow.getTarget());
         //labCurrency.setText(AppState.selectedTransactionRow.getCurrency());

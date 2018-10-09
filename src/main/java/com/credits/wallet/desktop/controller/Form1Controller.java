@@ -3,13 +3,17 @@ package com.credits.wallet.desktop.controller;
 import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
+import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 
 import java.net.URL;
 import java.security.KeyPair;
@@ -21,6 +25,9 @@ import java.util.ResourceBundle;
 public class Form1Controller extends Controller implements Initializable {
     @FXML
     Button btnShowPassword;
+
+    @FXML
+    BorderPane bp;
 
     @FXML
     PasswordField txPassword;
@@ -44,6 +51,7 @@ public class Form1Controller extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        FormUtils.resizeForm(bp);
         txPassword.setVisible(true);
         labPassword.setVisible(false);
 

@@ -23,6 +23,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
@@ -64,6 +65,9 @@ public class SmartContractDeployController extends Controller implements Initial
     private String prevCode;
 
     @FXML
+    BorderPane bp;
+
+    @FXML
     private Pane paneCode;
 
     @FXML
@@ -74,6 +78,7 @@ public class SmartContractDeployController extends Controller implements Initial
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        FormUtils.resizeForm(bp);
         if (AppState.executor != null) {
             AppState.executor.shutdown();
         }

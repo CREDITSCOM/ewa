@@ -8,12 +8,14 @@ import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.CoinsUtils;
+import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,9 @@ public class Form6Controller extends Controller implements Initializable {
 
     @FXML
     private Label labCredit;
+
+    @FXML
+    BorderPane bp;
 
     @FXML
     private Label labErrorCoin;
@@ -111,6 +116,7 @@ public class Form6Controller extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        FormUtils.resizeForm(bp);
         clearLabErr();
         // Fill coin list
         LevelDbServiceImpl.account = AppState.account;

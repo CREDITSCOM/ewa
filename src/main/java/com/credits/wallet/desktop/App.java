@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -37,26 +38,33 @@ public class App extends Application {
         appStateInitializer.init();
         LOGGER.info("Displaying the main window");
 
+        stage.getIcons().add(new Image(App.class.getResourceAsStream("/img/logo_black.png")));
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+        AppState.screenHeight = bounds.getHeight();
+        AppState.screenWidth = bounds.getWidth();
 
+        stage.setX(bounds.getMinX());
+        stage.setY(bounds.getMinY());
+        stage.setWidth(bounds.getWidth());
+        stage.setHeight(bounds.getHeight());
+        stage.setMaximized(true);
 
-        stage.setTitle("Vista Viewer");
+        stage.setTitle("Credits");
 
         stage.setScene(
             createScene(
                 loadMainPane()
             )
         );
-
         stage.show();
     }
 
     private Pane loadMainPane() throws IOException {
         FXMLLoader loader = new FXMLLoader();
-
-        Pane mainPane = (Pane) loader.load(
+        Pane mainPane = loader.load(
             App.class.getResourceAsStream(VistaNavigator.MAIN)
         );
-
         MainController mainController = loader.getController();
 
         VistaNavigator.setMainController(mainController);

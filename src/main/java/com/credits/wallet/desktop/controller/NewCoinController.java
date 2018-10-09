@@ -1,12 +1,15 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.CoinsUtils;
+import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +31,9 @@ public class NewCoinController extends Controller implements Initializable {
     private static final String ERR_COIN = "You must enter coin mnemonic";
     private static final String ERR_TOKEN = "You must enter token";
     private static final String ERR_COIN_DUPLICATE = "Coin already exists";
+
+    @FXML
+    BorderPane bp;
 
     @FXML
     private TextField txToken;
@@ -87,7 +93,8 @@ public class NewCoinController extends Controller implements Initializable {
 
         @Override
         public void initialize(URL location, ResourceBundle resources) {
-        clearLabErr();
+            FormUtils.resizeForm(bp);
+            clearLabErr();
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         try {

@@ -60,14 +60,14 @@
 }
 
 .credits-button {
-    -fx-font-veight: bold;
+    -fx-font-weight: bold;
     -fx-background-color: #fff;
     -fx-background-radius: 22;
     -fx-border-color: #000;
     -fx-border-width: 2;
     -fx-font-size: 16;
     -fx-text-fill:black;
-    -fx-border-radius: 20;
+    -fx-border-radius: 30;
     -fx-wrap-text: true;
     -fx-alignment: center;
 }
@@ -78,15 +78,15 @@
     -fx-background-radius: 22;
     -fx-font-size: 16;
     -fx-text-fill:#2196f3;
-    -fx-border-radius: 20;
+    -fx-border-radius: 30;
 }
 
 .credits-button:pressed {
-    -fx-font-veight:bold;
+    -fx-font-weight: bold;
     -fx-background-color: white;
     -fx-background-radius: 22;
     -fx-text-fill:#2196f3;
-    -fx-border-radius: 20;
+    -fx-border-radius: 30;
     -fx-rotate:1;
 }
 

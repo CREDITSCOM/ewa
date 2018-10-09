@@ -20,6 +20,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +46,9 @@ public class HistoryController extends Controller implements Initializable {
     private int pageSize = INIT_PAGE_SIZE;
 
     @FXML
+    BorderPane bp;
+
+    @FXML
     private ComboBox<Integer> cbPageSize;
 
     @FXML
@@ -62,7 +66,7 @@ public class HistoryController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        FormUtils.resizeForm(bp);
 
         for (int i = 1; i <= INIT_PAGE_SIZE; i++) {
             cbPageSize.getItems().add(INIT_PAGE_SIZE * i);

@@ -24,6 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -50,6 +51,9 @@ public class SmartContractController extends Controller implements Initializable
     private static final String SMART_CONTRACTS = "Smart contracts";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
 
+
+    @FXML
+    BorderPane bp;
 
     @FXML
     private Pane pControls;
@@ -143,7 +147,7 @@ public class SmartContractController extends Controller implements Initializable
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        FormUtils.resizeForm(bp);
         this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel);
         initSmartContractTree();
         this.codeArea.setEditable(false);

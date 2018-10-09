@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,9 @@ public class Form5Controller extends Controller implements Initializable {
     private static Logger LOGGER = LoggerFactory.getLogger(Form5Controller.class);
 
     private static final String ERR_KEYS="Public and private keys pair is not valid";
+
+    @FXML
+    BorderPane bp;
 
     @FXML
     private Button btnBack;
@@ -115,6 +119,7 @@ public class Form5Controller extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        FormUtils.resizeForm(bp);
         clearLabErr();
 
         btnBack.setVisible(!AppState.newAccount);

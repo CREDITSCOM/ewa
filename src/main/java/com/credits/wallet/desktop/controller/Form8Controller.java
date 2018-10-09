@@ -8,6 +8,7 @@ import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,9 @@ import java.util.ResourceBundle;
  */
 public class Form8Controller extends Controller implements Initializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(Form8Controller.class);
+
+    @FXML
+    BorderPane bp;
 
     @FXML
     private Label toAddress;
@@ -66,7 +70,7 @@ public class Form8Controller extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        FormUtils.resizeForm(bp);
         this.toAddress.setText(AppState.toAddress);
         this.amountInCs.setText(Converter.toString(AppState.amount) + " " + AppState.coin);
 

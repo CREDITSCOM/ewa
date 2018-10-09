@@ -4,9 +4,11 @@ import com.credits.common.utils.Converter;
 import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
+import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -17,6 +19,9 @@ import java.util.ResourceBundle;
 public class Form4Controller extends Controller implements Initializable {
     @FXML
     private TextField txKey;
+
+    @FXML
+    BorderPane bp;
 
     @FXML
     private void handleBack() {
@@ -30,6 +35,6 @@ public class Form4Controller extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        txKey.setText(Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
+    FormUtils.resizeForm(bp);        txKey.setText(Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
     }
 }

@@ -5,99 +5,79 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
-            prefWidth="1060.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.credits.wallet.desktop.controller.Form5Controller">
-    <children>
-        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                    AnchorPane.topAnchor="0.0">
-            <center>
-                <ScrollPane fitToHeight="true" fitToWidth="true">
-                    <content>
-                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0" prefWidth="1060.0"
-                                    styleClass="credits-borderGrayPane" >
-                            <top>
-                                <fx:include source="header.fxml"/>
-                            </top>
-                            <center>
-                                <BorderPane minHeight="-Infinity" prefHeight="500.0" BorderPane.alignment="TOP_CENTER">
-                                    <center>
-                                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                                              minWidth="-Infinity" prefHeight="441.0" prefWidth="874.0"
-                                              styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
-                                            <children>
-                                                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
-                                                        text="5. Put your private key">
-                                                    <font>
-                                                        <Font size="14.0"/>
-                                                    </font>
-                                                </Label>
-                                                <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0"
-                                                      stroke="#ecb32e" strokeWidth="4.0"/>
-                                                <Label layoutX="24.0" layoutY="88.0"
-                                                       styleClass="credits-topLabelGrayText"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.credits.wallet.desktop.controller.Form5Controller" maxHeight="-Infinity"
+            fx:id="bp"
+            prefHeight="700.0" prefWidth="1300.0"
+            maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" BorderPane.alignment="TOP_CENTER">
+    <top>
+        <fx:include source="header_empty.fxml"/>
+    </top>
+    <center>
+        <Pane
+                styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
+            <children>
+                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
+                       text="5. Put your private key">
+                    <font>
+                        <Font size="14.0"/>
+                    </font>
+                </Label>
+                <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0"
+                      stroke="#ecb32e" strokeWidth="4.0"/>
+                <Label layoutX="24.0" layoutY="88.0"
+                       styleClass="credits-topLabelGrayText"
 
-                                                       text="On this form you can open the wallet and make payments in the Credits platform"/>
+                       text="On this form you can open the wallet and make payments in the Credits platform"/>
 
-                                                <Label layoutX="23.0" layoutY="149.0" styleClass="credits-label"
+                <Label layoutX="23.0" layoutY="149.0" styleClass="credits-label"
 
-                                                       text="Put below saved private key in previous step">
-                                                </Label>
-                                                <TextField fx:id="txKey" layoutX="24.0" layoutY="183.0"
-                                                           prefHeight="56.0" prefWidth="605.0"
-                                                           promptText="put private key here"
-                                                           styleClass="credits-textFieldGray" />
+                       text="Put below saved private key in previous step">
+                </Label>
+                <TextField fx:id="txKey" layoutX="24.0" layoutY="183.0"
+                           prefHeight="56.0" prefWidth="605.0"
+                           promptText="put private key here"
+                           styleClass="credits-textFieldGray"/>
 
-                                                <Label layoutX="27.0" layoutY="252.0" styleClass="credits-label"
-                                                        text="Put below public key">
-                                                </Label>
-                                                <TextField fx:id="txPublic" layoutX="24.0" layoutY="273.0"
-                                                           prefHeight="56.0" prefWidth="605.0"
-                                                           promptText="put public key here"
-                                                           styleClass="credits-textFieldGray" />
+                <Label layoutX="27.0" layoutY="252.0" styleClass="credits-label"
+                       text="Put below public key">
+                </Label>
+                <TextField fx:id="txPublic" layoutX="24.0" layoutY="273.0"
+                           prefHeight="56.0" prefWidth="605.0"
+                           promptText="put public key here"
+                           styleClass="credits-textFieldGray"/>
 
-                                                <Button fx:id="btnBack" layoutX="21.0" layoutY="366.0"
-                                                        mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0"
-                                                        prefWidth="173.0"
-                                                        styleClass="credits-button"  text="BACK"/>
-                                                <Button layoutX="238.0" layoutY="366.0" mnemonicParsing="false"
-                                                        onAction="#handleOpen" prefHeight="61.0" prefWidth="202.0"
-                                                        styleClass="credits-button"
-                                                        text="OPEN YOUR WALLET"/>
-                                                <Button fx:id="btnUpload" layoutX="485.0" layoutY="366.0"
-                                                        mnemonicParsing="false" onAction="#handleUpload"
-                                                        prefHeight="61.0" prefWidth="202.0"
-                                                        styleClass="credits-button"
-                                                        text="UPLOAD FILE"/>
-                                                <Label fx:id="labelError" layoutX="27.0" layoutY="329.0"
-                                                       styleClass="credits-labelError"
-                                                       text="Label">
-                                                </Label>
+                <Button fx:id="btnBack" layoutX="21.0" layoutY="366.0"
+                        mnemonicParsing="false" onAction="#handleBack" prefHeight="61.0"
+                        prefWidth="173.0"
+                        styleClass="credits-button" text="BACK"/>
+                <Button layoutX="238.0" layoutY="366.0" mnemonicParsing="false"
+                        onAction="#handleOpen" prefHeight="61.0" prefWidth="202.0"
+                        styleClass="credits-button"
+                        text="OPEN YOUR WALLET"/>
+                <Button fx:id="btnUpload" layoutX="485.0" layoutY="366.0"
+                        mnemonicParsing="false" onAction="#handleUpload"
+                        prefHeight="61.0" prefWidth="202.0"
+                        styleClass="credits-button"
+                        text="UPLOAD FILE"/>
+                <Label fx:id="labelError" layoutX="27.0" layoutY="329.0"
+                       styleClass="credits-labelError"
+                       text="Label">
+                </Label>
 
-                                            </children>
-                                            <BorderPane.margin>
-                                                <Insets/>
-                                            </BorderPane.margin>
+            </children>
+            <BorderPane.margin>
+                <Insets/>
+            </BorderPane.margin>
 
-                                        </Pane>
-                                    </center>
-                                    <BorderPane.margin>
-                                        <Insets top="30.0"/>
-                                    </BorderPane.margin>
-                                </BorderPane>
-                            </center>
-                            <bottom>
-                                <fx:include source="footer.fxml"/>
-                            </bottom>
-                        </BorderPane>
-                    </content>
-                </ScrollPane>
-            </center>
-        </BorderPane>
-    </children>
-</AnchorPane>
+        </Pane>
+    </center>
+    <BorderPane.margin>
+        <Insets top="30.0"/>
+    </BorderPane.margin>
+</BorderPane>
