@@ -4,14 +4,14 @@
 
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
-<BorderPane style="-fx-background-color: green;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="com.credits.wallet.desktop.controller.MainController">
-  <top>
-    <StackPane prefHeight="50" prefWidth="22" style="-fx-background-color: white;" fx:id="vistaHolde1r"  />
-  </top>
-  <center>
-    <ScrollPane prefHeight="450" prefWidth="555" style="-fx-background-color: orange;">
-    <StackPane prefHeight="650" prefWidth="211" style="-fx-background-color: black;" fx:id="vistaHolder"  />
-    </ScrollPane>
-  </center>
+<?import javafx.scene.layout.VBox?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/10.0.1"
+            fx:controller="com.credits.wallet.desktop.controller.MainController">
+    <center>
+        <ScrollPane fitToHeight="true" fitToWidth="true">
+            <VBox alignment="TOP_CENTER" prefHeight="650" prefWidth="500" style="-fx-background-color: /*#f2f2f2*/ #13c0be  ;"
+                  fx:id="vistaHolder"/>
+        </ScrollPane>
+    </center>
 </BorderPane>

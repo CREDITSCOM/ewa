@@ -18,7 +18,7 @@ public class VistaNavigator {
      */
     public static final String ACCOUNT = "/fxml/account.fxml";
     public static final String FOOTER = "/fxml/footer.fxml";
-    public static final String FORM_0 = "/fxml/form0.fxml";
+    public static final String FORM_0 = "/fxml/Welcome.fxml";
     public static final String FORM_1 = "/fxml/form1.fxml";
     public static final String FORM_4 = "/fxml/form4.fxml";
     public static final String FORM_5 = "/fxml/form5.fxml";
@@ -32,8 +32,6 @@ public class VistaNavigator {
     public static final String SMART_CONTRACT = "/fxml/smart_contract.fxml";
     public static final String SMART_CONTRACT_DEPLOY = "/fxml/smart_contract_deploy.fxml";
     public static final String TRANSACTION = "/fxml/transaction.fxml";
-    public static final String VISTA_1 = "/fxml/vista1.fxml";
-    public static final String VISTA_2 = "/fxml/vista2.fxml";
     /** The main application layout controller. */
     private static MainController mainController;
 

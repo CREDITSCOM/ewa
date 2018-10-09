@@ -38,7 +38,7 @@ public class App extends Application {
         appStateInitializer.init();
         LOGGER.info("Displaying the main window");
 
-        stage.getIcons().add(new Image(App.class.getResourceAsStream("/img/logo_black.png")));
+        stage.getIcons().add(new Image(App.class.getResourceAsStream("/img/icon.jpg")));
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
         AppState.screenHeight = bounds.getHeight();

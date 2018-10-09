@@ -26,6 +26,8 @@ public class AppState {
     public static LevelDbService levelDbService;
     public static String decimalSeparator;
     public static String creditMonitorURL;
+    public static Double screenWidth;
+    public static Double screenHeight;
 
     public static boolean newAccount;
     public static boolean detailFromHistory;

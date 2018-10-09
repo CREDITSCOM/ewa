@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<BorderPane maxHeight="70.0" minHeight="70.0" prefHeight="70.0" style="-fx-background-color: #262626;"
+            BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <Pane maxHeight="70.0" maxWidth="874.0" minHeight="70.0" minWidth="0.0" prefHeight="70.0" prefWidth="874.0"
+              BorderPane.alignment="CENTER">
+        </Pane>
+    </center>
+</BorderPane>
