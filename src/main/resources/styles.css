@@ -39,8 +39,14 @@
 .credits-textField {
     -fx-background-color: #fff;
     -fx-border-width: 1;
-    -fx-border-color: #000;
+    -fx-border-color: black;
     -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-text-fill:black;
+    -fx-border-radius: 15;
+    -fx-wrap-text: true;
+    -fx-alignment: left;
+
 }
 
 .credits-borderWhitePane {
@@ -55,8 +61,13 @@
 .credits-textFieldGray {
     -fx-background-color: #fff;
     -fx-border-width: 1;
-    -fx-border-color: #ececec;
+    -fx-border-color: black;
     -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-text-fill:black;
+    -fx-border-radius: 15;
+    -fx-wrap-text: true;
+    -fx-alignment: left;
 }
 
 .credits-button {

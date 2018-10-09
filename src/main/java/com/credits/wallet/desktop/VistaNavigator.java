@@ -18,7 +18,7 @@ public class VistaNavigator {
      */
     public static final String ACCOUNT = "/fxml/account.fxml";
     public static final String FOOTER = "/fxml/footer.fxml";
-    public static final String FORM_0 = "/fxml/Welcome.fxml";
+    public static final String FORM_0 = "/fxml/welcome.fxml";
     public static final String FORM_1 = "/fxml/form1.fxml";
     public static final String FORM_4 = "/fxml/form4.fxml";
     public static final String FORM_5 = "/fxml/form5.fxml";

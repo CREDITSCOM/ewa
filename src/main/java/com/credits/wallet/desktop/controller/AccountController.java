@@ -33,7 +33,7 @@ public class AccountController extends Controller implements Initializable {
 
     @FXML
     private void handleLogout() {
-        VistaNavigator.loadVista("/fxml/Welcome.fxml");
+        VistaNavigator.loadVista("/fxml/welcome.fxml");
     }
 
     @FXML
