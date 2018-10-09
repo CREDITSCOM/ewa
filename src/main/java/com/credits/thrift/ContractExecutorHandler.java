@@ -30,7 +30,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                                        List<Variant> params) {
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
 
-        logger.info(String.format("Executing contract:\nAddress = %s, \nByteCode length= %d, \nContractState length= %d, \nMethod = %s, \nParams = %s.",
+        logger.debug(String.format("<-- execute(\naddress = %s, \nbyteCode length= %d, \ncontractState length= %d, \nmethod = %s, \nparams = %s.",
             address, byteCode.array().length, contractState.array().length, method, (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat))));
 
         APIResponse response = new APIResponse((byte) 0, "", contractState);
@@ -43,11 +43,13 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             response.setCode((byte) 1);
             response.setMessage(e.getMessage());
         }
+        logger.debug("--> " + response);
         return response;
     }
 
     @Override
     public GetContractMethodsResult getContractMethods(ByteBuffer bytecode) {
+        logger.debug("<-- getContractMethods(bytecode = " + bytecode.array().length + " bytes)");
         GetContractMethodsResult result = new GetContractMethodsResult();
         try {
             List<MethodDescription> contractsMethods = service.getContractsMethods(bytecode.array());
@@ -56,6 +58,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
           result.setCode((byte) 1);
           result.setMessage(e.getMessage());
         }
+        logger.debug("--> " + result);
         return result;
     }
 }
