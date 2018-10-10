@@ -90,7 +90,7 @@ public class SmartContractController extends Controller implements Initializable
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.FORM_6);
+        VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
     @FXML

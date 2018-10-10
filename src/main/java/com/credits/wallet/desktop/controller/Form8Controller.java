@@ -52,7 +52,7 @@ public class Form8Controller extends Controller implements Initializable {
 
     @FXML
     private void handleOk() {
-        VistaNavigator.loadVista(VistaNavigator.FORM_6);
+        VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
     @FXML

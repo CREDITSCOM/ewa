@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -18,7 +15,7 @@
             maxWidth="-Infinity" minHeight="-Infinity"
             minWidth="-Infinity" BorderPane.alignment="TOP_CENTER">
     <top>
-        <fx:include source="header_empty.fxml"/>
+        <fx:include source="header.fxml"/>
     </top>
     <center>
         <Pane
@@ -31,7 +28,7 @@
                 />
                 <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0"
                       stroke="#ecb32e" strokeWidth="4.0"/>
-                <Button layoutX="24.0" layoutY="345.0" mnemonicParsing="false"
+                <Button layoutX="24.0" layoutY="345.0"
                         onAction="#handleBack" prefHeight="61.0" prefWidth="173.0"
                         styleClass="credits-button" text="BACK"
                 />

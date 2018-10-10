@@ -18,11 +18,11 @@ public class VistaNavigator {
      */
     public static final String ACCOUNT = "/fxml/account.fxml";
     public static final String FOOTER = "/fxml/footer.fxml";
-    public static final String FORM_0 = "/fxml/welcome.fxml";
+    public static final String WELCOME = "/fxml/welcome.fxml";
     public static final String FORM_1 = "/fxml/form1.fxml";
     public static final String FORM_4 = "/fxml/form4.fxml";
     public static final String FORM_5 = "/fxml/form5.fxml";
-    public static final String FORM_6 = "/fxml/form6.fxml";
+    public static final String WALLET = "/fxml/wallet.fxml";
     public static final String FORM_7 = "/fxml/form7.fxml";
     public static final String FORM_8 = "/fxml/form8.fxml";
     public static final String HEADER = "/fxml/header.fxml";

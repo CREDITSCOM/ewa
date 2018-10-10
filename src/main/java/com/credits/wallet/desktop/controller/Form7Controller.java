@@ -42,7 +42,7 @@ public class Form7Controller extends Controller implements Initializable {
     @FXML
     private void handleBack() {
         AppState.noClearForm6 = true;
-        VistaNavigator.loadVista(VistaNavigator.FORM_6);
+        VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
     @FXML

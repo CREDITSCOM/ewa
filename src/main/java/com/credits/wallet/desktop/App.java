@@ -7,9 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -22,7 +20,6 @@ import java.io.IOException;
  */
 public class App extends Application {
 
-    private static Stage currentStage;
     private final static Logger LOGGER = LoggerFactory.getLogger(App.class);
     AppStateInitializer appStateInitializer;
 
@@ -38,7 +35,7 @@ public class App extends Application {
         appStateInitializer.init();
         LOGGER.info("Displaying the main window");
 
-        stage.getIcons().add(new Image(App.class.getResourceAsStream("/img/icon.jpg")));
+        stage.getIcons().add(new Image(App.class.getResourceAsStream("/img/icon.png")));
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
         AppState.screenHeight = bounds.getHeight();
@@ -68,7 +65,7 @@ public class App extends Application {
         MainController mainController = loader.getController();
 
         VistaNavigator.setMainController(mainController);
-        VistaNavigator.loadVista(VistaNavigator.FORM_0);
+        VistaNavigator.loadVista(VistaNavigator.WALLET);
 
         return mainPane;
     }
@@ -84,46 +81,6 @@ public class App extends Application {
         );
 
         return scene;
-    }
-
-    public static void showForm(String fxmlFile, String title) {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(App.class.getResource(fxmlFile));
-
-        AnchorPane pane;
-        try {
-            pane = loader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-
-        final Stage dialogStage = new Stage();
-        dialogStage.setTitle(title);
-        dialogStage.initModality(Modality.WINDOW_MODAL);
-
-        Scene scene;
-        if (currentStage == null) {
-            Screen screen = Screen.getPrimary();
-            Rectangle2D bounds = screen.getVisualBounds();
-            scene = new Scene(pane, bounds.getWidth(), bounds.getHeight() * 0.97);
-        } else {
-            scene = new Scene(pane, currentStage.getScene().getWidth(), currentStage.getScene().getHeight());
-        }
-
-        dialogStage.setScene(scene);
-        dialogStage.setResizable(true);
-
-        boolean firstShow = false;
-        if (currentStage == null) {
-            currentStage = new Stage();
-            firstShow = true;
-        }
-        currentStage.setTitle(title);
-        currentStage.setScene(scene);
-
-        if (firstShow) {
-            currentStage.showAndWait();
-        }
     }
 
     @Override

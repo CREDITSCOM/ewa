@@ -8,37 +8,28 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns:fx="http://javafx.com/fxml/1"
-            xmlns="http://javafx.com/javafx/10.0.1"
-            fx:controller="com.credits.wallet.desktop.controller.Form4Controller">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.Form4Controller">
     <top>
-        <fx:include source="header_empty.fxml"/>
+        <fx:include source="header_empty.fxml" />
     </top>
     <center>
         <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
-                <Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText"
-                       text="Save your private key to Credits account">
+                <Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText" text="Save your private key to Credits account">
                     <font>
-                        <Font size="14.0"/>
+                        <Font size="14.0" />
                     </font>
                 </Label>
-                <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText"
-                       text="On this form you can open the wallet and make payments in the Credits platform"/>
-                <Button layoutX="550.0" layoutY="350.0" mnemonicParsing="false" onAction="#handleContinue"
-                        prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Continue"/>
-                <Button layoutX="20.0" layoutY="350.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="60.0"
-                        prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰"/>
+                <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText" text="On this form you can open the wallet and make payments in the Credits platform" />
+                <Button layoutX="550.0" layoutY="350.0" onAction="#handleContinue" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Continue" />
+                <Button layoutX="20.0" layoutY="350.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
                 <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="75.0" prefWidth="885.0">
                     <children>
                         <VBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="83.0" prefWidth="500.0">
                             <children>
-                                <Label prefHeight="25.0" prefWidth="586.0" styleClass="credits-label"
-                                       text="Save this private key">
+                                <Label prefHeight="25.0" prefWidth="586.0" styleClass="credits-label" text="Save this private key">
                                 </Label>
-                                <TextField fx:id="txKey" prefHeight="56.0" prefWidth="605.0" promptText="key ..."
-                                           styleClass="credits-textFieldGray"/>
+                                <TextField fx:id="txKey" promptText="key ..." styleClass="credits-textFieldGray" />
                             </children>
                         </VBox>
                     </children>

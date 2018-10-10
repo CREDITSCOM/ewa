@@ -22,12 +22,12 @@
                        text="Welcome to Credits wallet"/>
                 <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText"
                        text="On this form you can open the wallet and make payments in the Credits platform"/>
-                <Button layoutX="390.0" layoutY="154.0" mnemonicParsing="false" onAction="#handleExistingAccount"
+                <Button layoutX="390.0" layoutY="154.0"  onAction="#handleExistingAccount"
                         prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Sign in">
                 </Button>
                 <Label layoutX="614.0" layoutY="175.0" style="-fx-font-weight: bold;" styleClass="credits-label"
                        text="or"/>
-                <Button layoutX="666.0" layoutY="155.0" mnemonicParsing="false" onAction="#handleNewAccount"
+                <Button layoutX="666.0" layoutY="155.0"  onAction="#handleNewAccount"
                         prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Create new account"/>
                 <GridPane layoutX="20.0" layoutY="270.0" prefHeight="130.0" prefWidth="1250.0">
                     <columnConstraints>

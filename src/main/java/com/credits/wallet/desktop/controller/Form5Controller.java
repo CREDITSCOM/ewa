@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.crypto.Ed25519;
@@ -35,7 +34,10 @@ import java.util.ResourceBundle;
 public class Form5Controller extends Controller implements Initializable {
     private static Logger LOGGER = LoggerFactory.getLogger(Form5Controller.class);
 
-    private static final String ERR_KEYS="Public and private keys pair is not valid";
+    private static final String ERR_KEYS = "Public and private keys pair is not valid";
+    private static final String ERROR_EMPTY_PUBLIC  = "Public key is empty";
+    private static final String ERROR_EMPTY_PRIVATE = "Private key is empty";
+
 
     @FXML
     BorderPane bp;
@@ -56,11 +58,14 @@ public class Form5Controller extends Controller implements Initializable {
     private TextField txPublic;
 
     @FXML
-    private Label labelError;
+    private Label errorLabelPrivate;
+
+    @FXML
+    private Label errorLabelPublic;
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.FORM_0);
+        VistaNavigator.loadVista(VistaNavigator.WELCOME);
     }
 
     @FXML
@@ -96,7 +101,7 @@ public class Form5Controller extends Controller implements Initializable {
         FileChooser fileChooser = new FileChooser();
         File defaultDirectory = new File(System.getProperty("user.dir"));
         System.out.println("default directory - " + defaultDirectory);
-        if(defaultDirectory.exists()) {
+        if (defaultDirectory.exists()) {
             fileChooser.setInitialDirectory(defaultDirectory);
         }
         File file = fileChooser.showOpenDialog(null);
@@ -146,42 +151,52 @@ public class Form5Controller extends Controller implements Initializable {
     private void open(String pubKey, String privKey) {
         clearLabErr();
 
+        boolean empty = false;
+        if (privKey.isEmpty()) {
+            errorLabelPrivate.setText(ERROR_EMPTY_PRIVATE);
+            empty = true;
+        }
+        else
+            errorLabelPrivate.setText("");
+
+        if (pubKey.isEmpty()) {
+            errorLabelPublic.setText(ERROR_EMPTY_PUBLIC);
+            empty = true;
+        }
+        else
+            errorLabelPublic.setText("");
+        if(empty) {
+            return;
+        }
+
         AppState.account = pubKey;
-        if (AppState.newAccount) {
-            //TODO: if there is no need to make a system transaction separately we should remove this code and refactor the method
-            //            try {
-            //                ApiUtils.execSystemTransaction(pubKey);
-            //            } catch (Exception e) {
-            //                LOGGER.error(e.getMessage(), e);
-            //                FormUtils.showError("Error creating transaction " + e.toString());
-            //                //return;
-            //            }
-        } else {
-            try {
-                byte[] publicKeyByteArr = Converter.decodeFromBASE58(pubKey);
-                byte[] privateKeyByteArr = Converter.decodeFromBASE58(privKey);
-                AppState.publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
-                AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
-            } catch (CreditsCommonException e) {
-                if (e.getMessage() != null) {
-                    labelError.setText(e.getMessage());
-                    txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-                    txPublic.setStyle(txPublic.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-                }
-                LOGGER.error(e.getMessage(), e);
-                //return;
+        try {
+            byte[] privateKeyByteArr = Converter.decodeFromBASE58(privKey);
+            AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
+        } catch ( Exception e) {
+            if (e.getMessage() != null) {
+                errorLabelPrivate.setText(e.getMessage());
+            } else {
+                errorLabelPrivate.setText("Private key error");
             }
+            LOGGER.error(e.getMessage(), e);
+            //return;
+        }
+        try {
+            byte[] publicKeyByteArr = Converter.decodeFromBASE58(pubKey);
+            AppState.publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
+        } catch ( Exception e) {
+            if (e.getMessage() != null) {
+                errorLabelPublic.setText(e.getMessage());
+            } else {
+                errorLabelPrivate.setText("Public key error");
+            }
+            LOGGER.error(e.getMessage(), e);
+            //return;
         }
 
         if (validateKeys(pubKey, privKey)) {
-            VistaNavigator.loadVista(VistaNavigator.FORM_6);
-        } else {
-            if (labelError.getText().isEmpty())
-                labelError.setText(ERR_KEYS);
-            else
-                labelError.setText(ERR_KEYS + "; " + labelError.getText());
-            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            txPublic.setStyle(txPublic.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            VistaNavigator.loadVista(VistaNavigator.WALLET);
         }
     }
 
@@ -210,7 +225,8 @@ public class Form5Controller extends Controller implements Initializable {
     }
 
     private void clearLabErr() {
-        labelError.setText("");
+        errorLabelPublic.setText("");
+        errorLabelPrivate.setText("");
 
         txKey.setStyle(txKey.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
         txPublic.setStyle(txPublic.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));

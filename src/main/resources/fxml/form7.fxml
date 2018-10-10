@@ -13,7 +13,7 @@
             maxWidth="-Infinity" minHeight="-Infinity"
             minWidth="-Infinity" BorderPane.alignment="TOP_CENTER">
     <top>
-        <fx:include source="header_empty.fxml"/>
+        <fx:include source="header.fxml"/>
     </top>
     <center>
         <Pane
@@ -40,7 +40,7 @@
                        text="Amount">
                 </Label>
                 <Button fx:id="btnGenerate" layoutX="375.0" layoutY="600.0"
-                        mnemonicParsing="false" onAction="#handleGenerate"
+                         onAction="#handleGenerate"
                         prefHeight="60.0" prefWidth="250.0"
                         styleClass="credits-button"
                         text="GENERATE TRANSACTION"/>
@@ -57,7 +57,7 @@
                        styleClass="text" text="0">
                 </Label>
                 <Button fx:id="btnBack" layoutX="50.0" layoutY="600.0"
-                        mnemonicParsing="false" onAction="#handleBack"
+                         onAction="#handleBack"
                         prefHeight="60.0" prefWidth="250.0"
                         styleClass="credits-button"
                         text="BACK"/>

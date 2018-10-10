@@ -7,13 +7,11 @@ import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Screen;
 
 import java.net.URL;
 import java.security.KeyPair;
@@ -37,7 +35,7 @@ public class Form1Controller extends Controller implements Initializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.FORM_0);
+        VistaNavigator.loadVista(VistaNavigator.WELCOME);
     }
 
     @FXML

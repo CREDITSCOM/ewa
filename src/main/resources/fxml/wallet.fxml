@@ -10,9 +10,9 @@
 <?import javafx.scene.text.Font?>
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns:fx="http://javafx.com/fxml/1"
-            xmlns="http://javafx.com/javafx/8" fx:controller="com.credits.wallet.desktop.controller.Form6Controller">
+            xmlns="http://javafx.com/javafx/8" fx:controller="com.credits.wallet.desktop.controller.WalletController">
     <top>
-        <fx:include source="header_empty.fxml"/>
+        <fx:include source="header.fxml"/>
     </top>
     <center>
         <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
@@ -47,7 +47,7 @@
                 </Label>
                 <Label layoutX="549.0" layoutY="455.0" styleClass="credits-label" text="CS">
                 </Label>
-                <Button fx:id="btnBack" layoutX="694.0" layoutY="603.0" mnemonicParsing="false"
+                <Button fx:id="btnBack" layoutX="694.0" layoutY="603.0"
                         onAction="#handleGenerate" prefHeight="60.0" prefWidth="250.0" styleClass="credits-button"
                         text="GENERATE TRANSACTION"/>
                 <Label fx:id="labErrorCoin" layoutX="349.0" layoutY="200.0" styleClass="credits-labelError"

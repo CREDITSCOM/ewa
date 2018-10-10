@@ -1,28 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
-<BorderPane maxHeight="70.0" minHeight="70.0" prefHeight="70.0" style="-fx-background-color: #262626;" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
-	<center>
-		<Pane maxHeight="70.0" maxWidth="874.0" minHeight="70.0" minWidth="0.0" prefHeight="70.0" prefWidth="874.0" BorderPane.alignment="CENTER">
-			<children>
-				<ImageView fitHeight="48.0" fitWidth="25.0" layoutX="-2.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-					<image>
-						<Image url="@../img/logo.png" />
-					</image>
-				</ImageView>
-				<Label layoutX="141.0" layoutY="18.0" styleClass="credits-headerLabel"  text="Wallet" textFill="#ecb32e" />
-				<Label layoutX="24.0" layoutY="21.0" styleClass="credits-headerLabel"  text="CREDITS" textFill="WHITE">
-					<font>
-						<Font size="24.0" />
-					</font>
-				</Label>
-				<Label layoutX="260.0" layoutY="21.0" styleClass="credits-headerLabel"  text="TestNet" textFill="RED" />
-			</children>
-		</Pane>
-	</center>
+<BorderPane maxHeight="40.0" minHeight="40.0" prefWidth="1300.0" style="-fx-background-color: #FFFF33;"
+            BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.credits.wallet.desktop.controller.HeaderController">
+    <center>
+        <Pane maxHeight="40.0" maxWidth="1300.0" minHeight="70.0" minWidth="0.0" prefHeight="40.0" prefWidth="1300.0"
+              BorderPane.alignment="CENTER">
+            <children>
+                <HBox layoutX="-15.0" layoutY="-15.0"/>
+                <Button fx:id="btnWallet" onAction="#handleWallet" layoutX="20.0" layoutY="20.0" prefWidth="100.0"
+                        styleClass="credits-headerButton" text="Wallet">
+                </Button>
+                <Button fx:id="btnTransaction" onAction="#handleTransaction" alignment="CENTER" contentDisplay="CENTER"
+                        layoutX="170.0" layoutY="20.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0"
+                        prefWidth="100.0" style="-fx-line-spacing: -5;" styleClass="credits-headerButton"
+                        text="Transactions history" textAlignment="CENTER" wrapText="true">
+                    <padding>
+                        <Insets bottom="-4.0" top="-10.0"/>
+                    </padding>
+                </Button>
+                <MenuButton layoutX="320.0" layoutY="20.0" styleClass="credits-headerButton" text="Smart contracts">
+                    <items>
+                        <MenuItem>
+                            <graphic>
+                                <Button fx:id="btnSmartExecute" onAction="#handleSmartExecute" styleClass="credits-headerButton" text="Execute smart"/>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem>
+                            <graphic>
+                                <Button fx:id="btnSmartDeploy" onAction="#handleSmartDeploy" styleClass="credits-headerButton" text="Deploy new smart"/>
+                            </graphic>
+                        </MenuItem>
+                    </items>
+                </MenuButton>
+                <Button fx:id="btnLogout" onAction="#handleLogout" layoutX="1200.0" layoutY="20.0"
+                        styleClass="credits-headerButton" text="Logout">
+                    <graphic>
+                        <ImageView fitHeight="15.0" fitWidth="15.0">
+                            <Image url="@../img/logout.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+            </children>
+        </Pane>
+    </center>
 </BorderPane>

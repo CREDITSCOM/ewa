@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TreeView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
@@ -17,7 +15,7 @@
             maxWidth="-Infinity" minHeight="-Infinity"
             minWidth="-Infinity" BorderPane.alignment="TOP_CENTER">
     <top>
-        <fx:include source="header_empty.fxml"/>
+        <fx:include source="header.fxml"/>
     </top>
     <center>
         <Pane
@@ -35,17 +33,17 @@
 
                        text="Put SmartContract code">
                 </Label>
-                <Button layoutX="21.0" layoutY="618.0" mnemonicParsing="false"
+                <Button layoutX="21.0" layoutY="618.0"
                         onAction="#handleBack" prefHeight="61.0"
                         prefWidth="173.0"
                         styleClass="credits-button"
                         text="BACK"/>
                 <Button fx:id="checkButton" layoutX="210.0" layoutY="618.0"
-                        mnemonicParsing="false" onAction="#checkButtonAction"
+                         onAction="#checkButtonAction"
                         prefHeight="61.0" prefWidth="173.0"
                         styleClass="credits-button"
                         text="CHECK"/>
-                <Button layoutX="401.0" layoutY="618.0" mnemonicParsing="false"
+                <Button layoutX="401.0" layoutY="618.0"
                         onAction="#handleDeploy" prefHeight="61.0"
                         prefWidth="173.0"
                         styleClass="credits-button"

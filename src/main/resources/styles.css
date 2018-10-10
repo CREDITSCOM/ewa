@@ -45,7 +45,7 @@
     -fx-text-fill:black;
     -fx-border-radius: 15;
     -fx-wrap-text: true;
-    -fx-alignment: left;
+    -fx-alignment: top-left;
 
 }
 
@@ -67,7 +67,7 @@
     -fx-text-fill:black;
     -fx-border-radius: 15;
     -fx-wrap-text: true;
-    -fx-alignment: left;
+    -fx-alignment: top-left;
 }
 
 .credits-button {
@@ -81,6 +81,41 @@
     -fx-border-radius: 30;
     -fx-wrap-text: true;
     -fx-alignment: center;
+}
+
+.credits-headerButton {
+    -fx-font-weight: bold;
+    -fx-background-color:  transparent;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+}
+
+.credits-headerButton:hover {
+    -fx-text-fill:#2196f3;
+}
+.credits-headerButton .context-menu {
+    -fx-background-color: yellow;
+    -fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;
+}
+
+.credits-headerButton .menu-item {
+    -fx-background-color: yellow;
+}
+/*
+.menu-button {
+    -fx-background-color:black;
+}
+.menu-item:focused {
+    -fx-background-color: darkgray;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: blue;
+}
+*/
+
+.menu-button:hover .label{
+    -fx-text-fill:#2196f3;
 }
 
 .credits-button:hover{

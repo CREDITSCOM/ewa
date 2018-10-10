@@ -27,9 +27,9 @@ import java.util.ResourceBundle;
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class Form6Controller extends Controller implements Initializable {
+public class WalletController extends Controller implements Initializable {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(Form6Controller.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(WalletController.class);
 
     private static final String ERR_COIN = "Coin must be selected";
     private static final String ERR_AMOUNT = "Amount must be greater than 0";
