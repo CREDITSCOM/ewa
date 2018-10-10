@@ -1,53 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.shape.Line?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.credits.wallet.desktop.controller.Form4Controller" maxHeight="-Infinity"
-            fx:id="bp"
-            prefHeight="700.0" prefWidth="1300.0"
-            maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity" BorderPane.alignment="TOP_CENTER">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/10.0.1"
+            fx:controller="com.credits.wallet.desktop.controller.Form4Controller">
     <top>
         <fx:include source="header_empty.fxml"/>
     </top>
     <center>
-        <Pane
-                styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
+        <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
-                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
-
-                       text="4. Save your private key to Credits account">
+                <Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText"
+                       text="Save your private key to Credits account">
                     <font>
                         <Font size="14.0"/>
                     </font>
                 </Label>
-                <Label layoutX="24.0" layoutY="88.0"
-                       styleClass="credits-topLabelGrayText"
-
+                <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText"
                        text="On this form you can open the wallet and make payments in the Credits platform"/>
-                <TextField fx:id="txKey" layoutX="24.0" layoutY="183.0"
-                           prefHeight="56.0" prefWidth="605.0" promptText="key ..."
-                           styleClass="credits-textFieldGray"/>
-                <Label layoutX="23.0" layoutY="149.0" styleClass="credits-label"
-                       text="Save this private key">
-                </Label>
-                <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0"
-                      stroke="#ecb32e" strokeWidth="4.0"/>
-                <Button layoutX="216.0" layoutY="316.0" mnemonicParsing="false"
-                        onAction="#handleContinue" prefHeight="61.0" prefWidth="173.0"
-                        styleClass="credits-button" text="CONTINUE"/>
-                <Button layoutX="24.0" layoutY="316.0" mnemonicParsing="false"
-                        onAction="#handleBack" prefHeight="61.0" prefWidth="173.0"
-                        styleClass="credits-button" text="BACK"/>
+                <Button layoutX="550.0" layoutY="350.0" mnemonicParsing="false" onAction="#handleContinue"
+                        prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Continue"/>
+                <Button layoutX="20.0" layoutY="350.0" mnemonicParsing="false" onAction="#handleBack" prefHeight="60.0"
+                        prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰"/>
+                <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="75.0" prefWidth="885.0">
+                    <children>
+                        <VBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="83.0" prefWidth="500.0">
+                            <children>
+                                <Label prefHeight="25.0" prefWidth="586.0" styleClass="credits-label"
+                                       text="Save this private key">
+                                </Label>
+                                <TextField fx:id="txKey" prefHeight="56.0" prefWidth="605.0" promptText="key ..."
+                                           styleClass="credits-textFieldGray"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
             </children>
         </Pane>
     </center>

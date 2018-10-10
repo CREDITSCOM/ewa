@@ -47,6 +47,9 @@ public class Form5Controller extends Controller implements Initializable {
     private Button btnUpload;
 
     @FXML
+    private Label lblUpload;
+
+    @FXML
     private TextField txKey;
 
     @FXML
@@ -124,6 +127,7 @@ public class Form5Controller extends Controller implements Initializable {
 
         btnBack.setVisible(!AppState.newAccount);
         btnUpload.setVisible(!AppState.newAccount);
+        lblUpload.setVisible(!AppState.newAccount);
         txPublic.setEditable(!AppState.newAccount);
         txKey.setEditable(!AppState.newAccount);
 
