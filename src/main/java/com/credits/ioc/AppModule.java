@@ -12,40 +12,34 @@ import dagger.Provides;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.credits.ioc.Injector.INJECTOR;
-
 @Module
 public class AppModule {
 
     @Inject
     ApplicationProperties properties;
 
-    public AppModule(){
-        INJECTOR.component.inject(this);
-    }
-
     @Singleton
     @Provides
-    LevelDbInteractionService provideLevelDbInteractionService() {
+    public LevelDbInteractionService provideLevelDbInteractionService() {
         return new LevelDbInteractionServiceThriftImpl();
     }
 
 
     @Singleton
     @Provides
-    LevelDbService provideLevelDbService(ApplicationProperties properties) {
+    public LevelDbService provideLevelDbService(ApplicationProperties properties) {
         return LevelDbServiceImpl.getInstance(properties.apiHost, properties.apiPort);
     }
 
     @Singleton
     @Provides
-    ApiClient provideApiClient(ApplicationProperties properties) {
+    public ApiClient provideApiClient(ApplicationProperties properties) {
         return ApiClient.getInstance(properties.apiHost, properties.apiPort);
     }
 
     @Singleton
     @Provides
-    ApplicationProperties provideProperties() {
+    public ApplicationProperties provideProperties() {
         return new ApplicationProperties();
     }
 }

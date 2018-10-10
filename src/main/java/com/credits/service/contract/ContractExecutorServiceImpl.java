@@ -47,13 +47,13 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
 
     @Inject
-    ApplicationProperties properties;
+    public ApplicationProperties properties;
 
     @Inject
-    LevelDbInteractionService dbInteractionService;
+    public LevelDbInteractionService dbInteractionService;
 
     @Inject
-    ApiClient apiClient;
+    public ApiClient apiClient;
 
     public ContractExecutorServiceImpl() {
         INJECTOR.component.inject(this);
@@ -202,6 +202,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         return permissions;
     }
 
+    @SuppressWarnings("unchecked")
     private Object parseObjectFromVariant(Variant variant) throws ContractExecutorException {
         //        Object value = null;
         if (variant.isSetV_string()) {

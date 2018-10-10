@@ -10,7 +10,6 @@ import org.apache.thrift.transport.TTransportException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,24 +23,22 @@ public class ThriftServerLoadTest {
 
     private File file;
 
-    private ByteBuffer bytes;
-
     @Before
-    public void setUp() throws TTransportException {
+    public void setUp() {
         String fileName = "Contract.java";
         file = new File(fileName);
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream("com/credits/service/usercode/thriftServerLoadTest/" + fileName)) {
             FileUtils.copyToFile(stream, file);
-            bytes = ByteBuffer.wrap(FileUtils.readFileToByteArray(file));
+            ByteBuffer.wrap(FileUtils.readFileToByteArray(file));
         } catch (IOException e) {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
         String dir = System.getProperty("user.dir") + separator + "credits";
-        FileSystemUtils.deleteRecursively(new File(dir));
+        FileUtils.deleteDirectory(new File(dir));
     }
 
     @Test

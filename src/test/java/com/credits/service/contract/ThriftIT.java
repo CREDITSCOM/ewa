@@ -4,13 +4,14 @@ import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.service.ServiceTest;
 import com.credits.thrift.generated.Variant;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.util.FileSystemUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static java.io.File.separator;
@@ -36,9 +37,9 @@ public class ThriftIT extends ServiceTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
         String dir = System.getProperty("user.dir") + separator + "credits";
-        FileSystemUtils.deleteRecursively(new File(dir));
+        FileUtils.deleteDirectory(new File(dir));
     }
 
     @Ignore //No enough permissions
