@@ -3,12 +3,10 @@ package com.credits.classload;
 import com.credits.exception.ClassLoadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.net.URLClassLoader;
 
-@Component
 public class ClassPathLoader {
 
     private final static Logger logger = LoggerFactory.getLogger(ClassPathLoader.class);

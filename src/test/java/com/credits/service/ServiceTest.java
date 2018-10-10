@@ -1,15 +1,10 @@
 package com.credits.service;
 
-import com.credits.App;
 import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import org.junit.After;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.FileSystemUtils;
 
 import javax.annotation.Resource;
@@ -23,17 +18,17 @@ import static java.io.File.separator;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {App.class})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(classes = {App.class})
 public abstract class ServiceTest {
 
     protected final byte[] address = "1a2b3c".getBytes();
 
-    @Value("${api.server.host}")
-    protected String apiServerHost;
-
-    @Value("${api.server.port}")
-    protected Integer apiServerPort;
+//    @Value("${api.server.host}")
+//    protected String apiServerHost;
+//
+//    @Value("${api.server.port}")
+//    protected Integer apiServerPort;
 
     @Resource
     protected ContractExecutorServiceImpl ceService;

@@ -1,5 +1,6 @@
 package com.credits.service.contract;
 
+import com.credits.ApplicationProperties;
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.common.utils.Base58;
 import com.credits.exception.ContractExecutorException;
@@ -12,11 +13,8 @@ import com.credits.thrift.ReturnValue;
 import com.credits.thrift.generated.Variant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,6 +34,7 @@ import java.util.PropertyPermission;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialise.Serializer.deserialize;
 import static com.credits.serialise.Serializer.serialize;
 import static com.credits.thrift.utils.ContractUtils.deployAndGetContractVariables;
@@ -43,26 +42,21 @@ import static com.credits.thrift.utils.ContractUtils.getContractVariables;
 import static com.credits.thrift.utils.ContractUtils.mapObjectToVariant;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
-@Component
 public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
 
-    @Value("${api.server.host}")
-    private String apiServerHost;
+    @Inject
+    ApplicationProperties properties;
 
-    @Value("${api.server.port}")
-    private Integer apiServerPort;
+    @Inject
+    LevelDbInteractionService dbInteractionService;
 
-    private ApiClient ldbClient;
+    @Inject
+    ApiClient apiClient;
 
-    @Resource
-    private LevelDbInteractionService dbInteractionService;
-
-
-    @PostConstruct
-    private void setUp() {
-        ldbClient = ApiClient.getInstance(apiServerHost, apiServerPort);
+    public ContractExecutorServiceImpl() {
+        INJECTOR.component.inject(this);
         try {
             Class<?> contract = Class.forName("SmartContract");
             Field interactionService = contract.getDeclaredField("service");
@@ -74,7 +68,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] objectState, String methodName, Variant[] params) throws ContractExecutorException {
+    public ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] objectState, String methodName,
+        Variant[] params) throws ContractExecutorException {
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
         Class<?> contractClass = classLoader.buildClass(bytecode);
@@ -86,7 +81,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             contractInstance = deserialize(objectState, classLoader);
         } else {
             DeployReturnValue deployReturnValue = deployAndGetContractVariables(contractClass, initiator);
-            return new ReturnValue(deployReturnValue.getContractState(), null, deployReturnValue.getContractVariables());
+            return new ReturnValue(deployReturnValue.getContractState(), null,
+                deployReturnValue.getContractVariables());
         }
 
         initializeInitiator(initiator, contractClass, contractInstance);
@@ -96,7 +92,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Method targetMethod = null;
         Object[] argValues = null;
         if (methods.isEmpty()) {
-            throw new ContractExecutorException("Cannot execute the contract: " + initiator + ". Reason: Cannot find a method by name and parameters specified");
+            throw new ContractExecutorException("Cannot execute the contract: " + initiator +
+                ". Reason: Cannot find a method by name and parameters specified");
         } else {
             for (Method method : methods) {
                 try {
@@ -107,7 +104,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 } catch (ClassCastException e) {
                     continue;
                 } catch (ContractExecutorException e) {
-                    throw new ContractExecutorException("Cannot execute the contract: " + initiator + "Reason: " + getRootCauseMessage(e), e);
+                    throw new ContractExecutorException(
+                        "Cannot execute the contract: " + initiator + "Reason: " + getRootCauseMessage(e), e);
                 }
                 targetMethod = method;
                 break;
@@ -115,7 +113,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         if (targetMethod == null) {
-            throw new ContractExecutorException("Cannot execute the contract: " + initiator + ". Reason: Cannot cast parameters to the method found by name: " + methodName);
+            throw new ContractExecutorException("Cannot execute the contract: " + initiator +
+                ". Reason: Cannot cast parameters to the method found by name: " + methodName);
         }
 
         //Invoking target method
@@ -125,7 +124,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Sandbox.confine(contractClass, createPermissions());
             returnObject = targetMethod.invoke(contractInstance, argValues);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new ContractExecutorException("Cannot execute the contract: " + initiator + ". Reason: " + getRootCauseMessage(e));
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + initiator + ". Reason: " + getRootCauseMessage(e));
         }
 
         Variant returnValue = null;
@@ -144,12 +144,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Class<?> contractClass = classLoader.buildClass(bytecode);
 
         List<MethodDescription> result = new ArrayList<>();
-        for (Method method : contractClass.getMethods()){
+        for (Method method : contractClass.getMethods()) {
             ArrayList<String> argTypes = new ArrayList<>();
-            for (Type type : method.getGenericParameterTypes()){
+            for (Type type : method.getGenericParameterTypes()) {
                 argTypes.add(type.getTypeName());
             }
-            result.add(new MethodDescription(method.getName(),argTypes,method.getGenericReturnType().getTypeName()));
+            result.add(new MethodDescription(method.getName(), argTypes, method.getGenericReturnType().getTypeName()));
         }
 
         return result;
@@ -157,12 +157,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private List<Method> getMethods(Class<?> contractClass, String methodName, Variant[] params) {
         return Arrays.stream(contractClass.getMethods()).filter(method -> {
-                if (params == null || params.length == 0) {
-                    return method.getName().equals(methodName) && method.getParameterCount() == 0;
-                } else {
-                    return method.getName().equals(methodName) && method.getParameterCount() == params.length;
-                }
-            }).collect(Collectors.toList());
+            if (params == null || params.length == 0) {
+                return method.getName().equals(methodName) && method.getParameterCount() == 0;
+            } else {
+                return method.getName().equals(methodName) && method.getParameterCount() == params.length;
+            }
+        }).collect(Collectors.toList());
     }
 
     private void initializeInitiator(String initiator, Class<?> clazz, Object instance) {
@@ -178,7 +178,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     private Permissions createPermissions() {
         Permissions permissions = new Permissions();
         permissions.add(new ReflectPermission("suppressAccessChecks"));
-        permissions.add(new SocketPermission(apiServerHost + ":" + apiServerPort, "connect,listen,resolve"));
+        permissions.add(new SocketPermission(properties.apiHost + ":" + properties.apiPort, "connect,listen,resolve"));
         permissions.add(new NetPermission("getProxySelector"));
         permissions.add(new RuntimePermission("readFileDescriptor"));
         permissions.add(new RuntimePermission("writeFileDescriptor"));

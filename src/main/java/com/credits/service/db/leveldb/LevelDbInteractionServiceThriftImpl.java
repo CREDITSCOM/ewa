@@ -2,6 +2,7 @@ package com.credits.service.db.leveldb;
 
 import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.Base58;
+import com.credits.ioc.Injector;
 import com.credits.leveldb.client.data.CreateTransactionData;
 import com.credits.leveldb.client.data.PoolData;
 import com.credits.leveldb.client.data.TransactionData;
@@ -9,30 +10,19 @@ import com.credits.leveldb.client.data.TransactionIdData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbService;
-import com.credits.leveldb.client.service.LevelDbServiceImpl;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Component
 public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionService {
 
-    private LevelDbService service;
+    @Inject
+    LevelDbService service;
 
-    @Value("${api.server.host}")
-    private String apiServerHost;
-
-    @Value("${api.server.port}")
-    private Integer apiServerPort;
-
-    @PostConstruct
-    public void setUp() {
-        service = LevelDbServiceImpl.getInstance(apiServerHost, apiServerPort);
+    public LevelDbInteractionServiceThriftImpl(){
+        Injector.INJECTOR.component.inject(this);
     }
-
 
     @Override
     public BigDecimal getBalance(String address, byte currency)

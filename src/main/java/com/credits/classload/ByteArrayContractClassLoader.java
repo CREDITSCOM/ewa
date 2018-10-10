@@ -1,12 +1,5 @@
 package com.credits.classload;
 
-import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-@Component
 public class ByteArrayContractClassLoader extends ClassLoader {
     private static final String className = "Contract";
     private Class contractClass = null;

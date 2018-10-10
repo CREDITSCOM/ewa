@@ -2,6 +2,7 @@ package com.credits.thrift;
 
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.contract.ContractExecutorService;
+import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.thrift.generated.APIResponse;
 import com.credits.thrift.generated.ContractExecutor;
 import com.credits.thrift.generated.GetContractMethodsResult;
@@ -9,21 +10,21 @@ import com.credits.thrift.generated.Variant;
 import org.apache.thrift.TUnion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.nio.ByteBuffer;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-@Component
 public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorHandler.class);
 
-    @Resource
     private ContractExecutorService service;
+
+    public ContractExecutorHandler(){
+        service = new ContractExecutorServiceImpl();
+    }
 
     @Override
     public APIResponse executeByteCode(ByteBuffer address, ByteBuffer byteCode, ByteBuffer contractState, String method,
