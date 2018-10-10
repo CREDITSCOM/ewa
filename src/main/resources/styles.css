@@ -52,6 +52,45 @@
 
 }
 
+.credits-history {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 4 0;
+    -fx-border-color: red blue #424141 yellow;
+}
+
+.credits-history .column-header,
+.credits-history .column-header-background,
+.credits-history .filler,
+.credits-history .virtual-flow .scroll-bar .thumb {
+    -fx-background-color: #424141;
+}
+
+
+.credits-history .virtual-flow .scroll-bar .increment-button,
+.credits-history .virtual-flow .scroll-bar .decrement-button,
+.credits-history .virtual-flow .scroll-bar .track
+{
+    -fx-background-color: white;
+}
+
+.credits-history .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+/*
+.credits-history .table-row-cell{
+    -fx-background-color: -fx-table-cell-border-color, white;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.credits-history .table-row-cell:odd{
+    -fx-background-color: -fx-table-cell-border-color, #F7F7F7;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}*/
+
 .credits-borderWhitePane {
     -fx-background-color: #fff;
 }
@@ -184,7 +223,7 @@
 #refresh-balance-button {
     -fx-min-height: 16px;
     -fx-min-width: 16px;
-    -fx-background-image: url("img/refresh.jpg");
+    -fx-background-image: url("img/refresh.png");
     -fx-background-size: 14px;
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;

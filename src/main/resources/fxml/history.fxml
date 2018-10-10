@@ -5,49 +5,46 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Line?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.credits.wallet.desktop.controller.HistoryController" maxHeight="-Infinity"
-            fx:id="bp"
-            prefHeight="700.0" prefWidth="1300.0"
-            maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity" BorderPane.alignment="TOP_CENTER">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="com.credits.wallet.desktop.controller.HistoryController">
     <top>
-        <fx:include source="header.fxml"/>
+        <fx:include source="header.fxml" />
     </top>
     <center>
-        <Pane
-                styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
+        <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
-                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText" text="Transaction history"/>
-                <Label layoutX="24.0" layoutY="88.0" styleClass="credits-topLabelGrayText"
-                       text="On this form you can see transaction history"/>
-                <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
-                <ComboBox fx:id="cbPageSize" layoutX="21.0" layoutY="136.0" prefHeight="22.0" prefWidth="68.0"/>
-                <Label layoutX="94.0" layoutY="140.0" text="transactions on the page"/>
-                <TableView fx:id="tabTransaction" layoutX="21.0" layoutY="175.0" prefHeight="236.0" prefWidth="857.0">
+                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText" text="Transaction history" />
+                <Label layoutX="24.0" layoutY="88.0" styleClass="credits-topLabelGrayText" text="On this form you can see transaction history" />
+                <Line endX="-50.0" layoutX="126.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
+                <ComboBox fx:id="cbPageSize" layoutX="21.0" layoutY="136.0" prefHeight="22.0" prefWidth="68.0" />
+                <Label layoutX="94.0" layoutY="140.0" text="transactions on the page" />
+                <TableView fx:id="tabTransaction" layoutX="21.0" layoutY="175.0" prefHeight="236.0" prefWidth="857.0" styleClass="credits-history">
                     <columns>
-                        <TableColumn prefWidth="162.0" text="Id"/>
-                        <TableColumn prefWidth="406.0" text="Target"/>
-                        <TableColumn prefWidth="88.0" text="Currency"/>
-                        <TableColumn prefWidth="58.0" text="Amount"/>
-                        <TableColumn prefWidth="100.0" text="State"/>
+                        <TableColumn prefWidth="162.0" text="Id" />
+                        <TableColumn prefWidth="406.0" text="Target" />
+                        <TableColumn prefWidth="88.0" text="Currency" />
+                        <TableColumn prefWidth="58.0" text="Amount" />
+                        <TableColumn prefWidth="100.0" text="State" />
                     </columns>
                 </TableView>
-                <Label layoutX="263.0" layoutY="140.0" text="Page:"/>
-                <Button fx:id="btnFirst" layoutX="325.0" layoutY="136.0"
-                        onAction="#handlePageFirst" text="&lt;&lt;"/>
-                <Button fx:id="btnPrev" layoutX="369.0" layoutY="136.0"
-                        onAction="#handlePagePrev" text="&lt;"/>
-                <Label fx:id="labPage" layoutX="404.0" layoutY="140.0" text="0"/>
-                <Button fx:id="btnNext" layoutX="466.0" layoutY="136.0"
-                        onAction="#handlePageNext" text="&gt;"/>
-                <Button layoutX="21.0" layoutY="425.0"  onAction="#handleBack" prefHeight="61.0"
-                        prefWidth="173.0" styleClass="credits-button" text="BACK"/>
-                <Button layoutX="776.0" layoutY="128.0"  onAction="#handleRefresh"
-                        prefHeight="22.0" prefWidth="102.0" styleClass="credits-button" text="REFRESH"/>
+                <Label layoutX="263.0" layoutY="140.0" text="Page:" />
+                <Button fx:id="btnFirst" layoutX="325.0" layoutY="136.0" onAction="#handlePageFirst" text="&lt;&lt;" />
+                <Button fx:id="btnPrev" layoutX="369.0" layoutY="136.0" onAction="#handlePagePrev" text="&lt;" />
+                <Label fx:id="labPage" layoutX="404.0" layoutY="140.0" text="0" />
+                <Button fx:id="btnNext" layoutX="466.0" layoutY="136.0" onAction="#handlePageNext" text="&gt;" />
+                <Button layoutX="21.0" layoutY="425.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
+                <Button layoutX="776.0" layoutY="128.0" onAction="#handleRefresh" prefHeight="22.0" prefWidth="102.0" styleClass="credits-button">
+                <graphic>
+                    <ImageView fitHeight="17.0" fitWidth="22.0">
+                        <Image url="@../img/refresh.png" />
+                    </ImageView>
+                </graphic>
+                </Button>
+
             </children>
         </Pane>
     </center>
