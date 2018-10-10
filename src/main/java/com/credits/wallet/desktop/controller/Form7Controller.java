@@ -33,6 +33,8 @@ public class Form7Controller extends Controller implements Initializable {
     @FXML
     private Label toAddress;
 
+    @FXML Label transactionData;
+
     @FXML
     private Label amountInCs;
 
@@ -62,7 +64,7 @@ public class Form7Controller extends Controller implements Initializable {
             return;
         }
 
-        VistaNavigator.loadVista(VistaNavigator.FORM_8);
+        VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
     @Override

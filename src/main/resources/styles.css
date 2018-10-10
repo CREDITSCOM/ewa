@@ -20,10 +20,12 @@
 }
 
 .credits-label {
+    -fx-padding:  5 0 0 15;
     -fx-font-size: 16px;
 }
 
 .credits-labelError {
+    -fx-padding:  5 0 0 15;
     -fx-font-size: 16px;
     -fx-text-fill: red
 }
@@ -37,6 +39,7 @@
     -fx-font-size: 24px;}
 
 .credits-textField {
+    -fx-padding:  5 0 0 15;
     -fx-background-color: #fff;
     -fx-border-width: 1;
     -fx-border-color: black;
@@ -59,6 +62,7 @@
 
 
 .credits-textFieldGray {
+    -fx-padding:  5 0 0 15;
     -fx-background-color: #fff;
     -fx-border-width: 1;
     -fx-border-color: black;

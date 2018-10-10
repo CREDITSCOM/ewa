@@ -18,26 +18,26 @@
 				<Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText" text="On this form you can add new coin for smart contract" />
 				<Button layoutX="20.0" layoutY="350.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
 				<Button layoutX="555.0" layoutY="350.0" onAction="#handleSave" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="SAVE" />
-            <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="75.0" prefWidth="885.0">
+            <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="90.0" prefWidth="885.0">
                <children>
                   <VBox prefHeight="83.0" prefWidth="500.0">
                      <children>
             				<Label styleClass="credits-label" text="Put SmartContract token">
 				</Label>
-            				<TextField fx:id="txToken" promptText="put token here" styleClass="credits-textFieldGray" />
+            				<TextField fx:id="txToken" maxHeight="45.0" prefHeight="45.0" promptText="put token here" styleClass="credits-textFieldGray" />
             				<Label fx:id="labelErrorToken" prefWidth="833.0" styleClass="credits-labelError" text="Label">
 				</Label>
                      </children>
                   </VBox>
                </children>
             </HBox>
-            <HBox alignment="CENTER" layoutX="20.0" layoutY="220.0" prefHeight="96.0" prefWidth="1269.0">
+            <HBox alignment="CENTER" layoutX="20.0" layoutY="220.0" prefHeight="90.0" prefWidth="1269.0">
                <children>
                   <VBox prefHeight="96.0" prefWidth="500.0">
                      <children>
             				<Label styleClass="credits-label" text="Put coin mnemonic">
 				</Label>
-            				<TextField fx:id="txCoin" promptText="put coin mnemonic here" styleClass="credits-textFieldGray" />
+            				<TextField fx:id="txCoin" maxHeight="45.0" prefHeight="45.0" promptText="put coin mnemonic here" styleClass="credits-textFieldGray" />
             				<Label fx:id="labelErrorCoin" styleClass="credits-labelError" text="Label">
 				</Label>
                      </children>

@@ -3,75 +3,85 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.shape.Line?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.credits.wallet.desktop.controller.Form7Controller" maxHeight="-Infinity"
-            fx:id="bp"
-            prefHeight="700.0" prefWidth="1300.0"
-            maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity" BorderPane.alignment="TOP_CENTER">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER"
+            xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.credits.wallet.desktop.controller.Form7Controller">
     <top>
         <fx:include source="header.fxml"/>
     </top>
     <center>
-        <Pane
-                styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
+        <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
-                <Label layoutX="30.0" layoutY="23.0" styleClass="credits-topLabelText"
-                       text="7. Check &amp; verify your transaction">
+                <Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText" text="Transaction verification">
                     <font>
                         <Font size="14.0"/>
                     </font>
                 </Label>
-                <Label layoutX="30.0" layoutY="88.0"
-                       styleClass="credits-topLabelGrayText"
-
-                       text="On this form you can open the wallet and make payments in the Credits platform"/>
-                <Line endX="-50.0" layoutX="130.0" layoutY="75.0"
-                      startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
-                <Label layoutX="30.0" layoutY="225.0"
-                       style="-fx-font-size: 16px;" styleClass="text"
-                       text="To address">
-                </Label>
-                <Label layoutX="30.0" layoutY="325.0"
-                       style="-fx-font-size: 16px;" styleClass="text"
-                       text="Amount">
-                </Label>
-                <Button fx:id="btnGenerate" layoutX="375.0" layoutY="600.0"
-                         onAction="#handleGenerate"
-                        prefHeight="60.0" prefWidth="250.0"
-                        styleClass="credits-button"
-                        text="GENERATE TRANSACTION"/>
-                <Label fx:id="amountInCs" layoutX="30.0" layoutY="350.0"
-                       style="-fx-font-size: 16px;" styleClass="text"
-                       text="0">
-                </Label>
-                <Label layoutX="30.0" layoutY="425.0"
-                       style="-fx-font-size: 16px;" styleClass="text"
-                       text="Transaction fee">
-                </Label>
-                <Label fx:id="transactionFeeValue" layoutX="30.0"
-                       layoutY="450.0" style="-fx-font-size: 16px;"
-                       styleClass="text" text="0">
-                </Label>
-                <Button fx:id="btnBack" layoutX="50.0" layoutY="600.0"
-                         onAction="#handleBack"
-                        prefHeight="60.0" prefWidth="250.0"
-                        styleClass="credits-button"
-                        text="BACK"/>
-                <Label fx:id="toAddress" layoutX="30.0" layoutY="250.0"
-                       maxHeight="55.0" maxWidth="540.0" minWidth="0.0"
-                       prefHeight="20.0" prefWidth="540.0"
-                       style="-fx-font-size: 16px;" styleClass="text"
-                       wrapText="true">
-                </Label>
-                <Label layoutX="30.0" layoutY="165.0"
-                       style="-fx-font-size: 20px;-fx-font-weight: bold;"
-                       styleClass="text"
-                       text="Transaction details:">
-                </Label>
+                <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText"
+                       text="On this form you can check  and verify your transaction"/>
+                <Button fx:id="btnGenerate" layoutX="550.0" layoutY="540.0" onAction="#handleGenerate" prefHeight="60.0"
+                        prefWidth="200.0" style="-fx-font-size: 16px;" styleClass="credits-button"
+                        text="Generate transaction" wrapText="true">
+                </Button>
+                <Button fx:id="btnBack" layoutX="20.0" layoutY="540.0" onAction="#handleBack" prefHeight="60.0"
+                        prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" text="🡰"/>
+                <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="75.0" prefWidth="885.0">
+                    <children>
+                        <VBox prefHeight="83.0" prefWidth="500.0">
+                            <children>
+                                <Label style="-fx-font-size: 16px;" styleClass="credits-label"
+                                       text="Make a payment to address which opened on credits only">
+                                </Label>
+                                <Label fx:id="toAddress" maxHeight="45.0" maxWidth="500.0" minWidth="0.0"
+                                       prefHeight="45.0" prefWidth="500.0" styleClass="credits-textField"
+                                       style="-fx-font-size: 16px;" wrapText="true"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="220.0" prefHeight="75.0" prefWidth="885.0">
+                    <children>
+                        <VBox prefHeight="83.0" prefWidth="500.0">
+                            <children>
+                                <Label  styleClass="credits-label" text="Amount">
+                                </Label>
+                                <Label fx:id="amountInCs" maxHeight="45.0" maxWidth="300.0" prefHeight="45.0"
+                                       prefWidth="300.0" style="-fx-font-size: 16px;"
+                                       styleClass="credits-textFieldGray"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="320.0" prefHeight="75.0" prefWidth="885.0">
+                    <children>
+                        <VBox prefHeight="83.0" prefWidth="500.0">
+                            <children>
+                                <Label style="-fx-font-size: 16px;" styleClass="credits-label" text="Transaction fee">
+                                </Label>
+                                <Label fx:id="transactionFeeValue" maxHeight="45.0" maxWidth="300.0" prefHeight="45.0"
+                                       prefWidth="300.0" style="-fx-font-size: 16px;" styleClass="credits-textField">
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="420.0" prefHeight="75.0" prefWidth="885.0">
+                    <children>
+                        <VBox prefHeight="83.0" prefWidth="500.0">
+                            <children>
+                                <Label style="-fx-font-size: 16px;" styleClass="credits-label"
+                                       text="Send text (it's not free). It's not necessary to fill in"/>
+                                <Label fx:id="transactionData" maxHeight="45.0" maxWidth="516.0" prefHeight="45.0"
+                                       prefWidth="516.0" style="-fx-font-size: 16px;" styleClass="credits-textField"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
             </children>
         </Pane>
     </center>

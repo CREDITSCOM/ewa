@@ -23,38 +23,38 @@
                 </Label>
                 <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText" text="On this form you can open the wallet and make payments in the Credits platform" />
 
-                <Button fx:id="btnBack" layoutX="20.0" layoutY="350.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px" styleClass="credits-button" text="🡰">
+                <Button fx:id="btnBack" layoutX="20.0" layoutY="368.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px" styleClass="credits-button" text="🡰">
                 </Button>
 
-                <Button layoutX="555.0" layoutY="350.0" onAction="#handleOpen" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Open your wallet" />
-                <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="75.0" prefWidth="885.0">
+                <Button layoutX="555.0" layoutY="368.0" onAction="#handleOpen" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Open your wallet" />
+                <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="90.0" prefWidth="885.0">
                     <children>
                         <VBox prefHeight="83.0" prefWidth="500.0">
                             <children>
 
                                 <Label alignment="TOP_LEFT" styleClass="credits-label" text="Put below saved private key in previous step">
                                 </Label>
-                                <TextField fx:id="txKey" promptText="put private key here" styleClass="credits-textFieldGray" />
+                                <TextField fx:id="txKey" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" promptText="put private key here" styleClass="credits-textFieldGray" />
                         <Label fx:id="errorLabelPrivate" prefHeight="25.0" styleClass="credits-labelError" text="Label" />
                             </children>
                         </VBox>
                     </children>
                 </HBox>
-                <HBox alignment="CENTER" layoutX="20.0" layoutY="220.0" prefHeight="96.0" prefWidth="1269.0">
+                <HBox alignment="CENTER" layoutX="20.0" layoutY="238.0" prefHeight="90.0" prefWidth="1269.0">
                     <children>
                         <VBox prefHeight="96.0" prefWidth="500.0">
                             <children>
 
                                 <Label styleClass="credits-label" text="Put below public key">
                                 </Label>
-                                <TextField fx:id="txPublic" promptText="put public key here" styleClass="credits-textFieldGray" />
+                                <TextField fx:id="txPublic" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" promptText="put public key here" styleClass="credits-textFieldGray" />
                                 <Label fx:id="errorLabelPublic" prefHeight="25.0" styleClass="credits-labelError" text="Label" />
                             </children>
                         </VBox>
                     </children>
                 </HBox>
-                <Button fx:id="btnUpload" layoutX="940.0" layoutY="134.0" onAction="#handleUpload" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Upload file" />
-                <Label fx:id="lblUpload" layoutX="916.0" layoutY="152.0" style="-fx-font-weight: bold;" styleClass="credits-label" text="or" />
+                <Button fx:id="btnUpload" layoutX="947.0" layoutY="141.0" onAction="#handleUpload" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Upload file" />
+                <Label fx:id="lblUpload" layoutX="905.0" layoutY="154.0" style="-fx-font-weight: bold;" styleClass="credits-label" text="or" />
             </children>
             <BorderPane.margin>
                 <Insets />

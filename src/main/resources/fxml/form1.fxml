@@ -18,21 +18,21 @@
                 <Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText" text="Password to file key">
                 </Label>
                 <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText" text="On this form you can open the wallet and make payments in the Credits platform" />
-                <Label fx:id="labPassword" layoutX="405.0" layoutY="145.0" prefHeight="39.0" prefWidth="500.0" style="-fx-font-size: 16px;" styleClass="credits-textFieldGray" />
+                <Label fx:id="labPassword" layoutX="405.0" layoutY="150.0" maxHeight="45.0" prefHeight="45.0" prefWidth="500.0" style="-fx-font-size: 16px;" styleClass="credits-textFieldGray" />
                 <Button layoutX="20.0" layoutY="350.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" textAlignment="CENTER" wrapText="true" />
                 <Button layoutX="550.0" layoutY="350.0" onAction="#handleGenerate" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Generate" textAlignment="CENTER" wrapText="true" />
-                <Button fx:id="btnShowPassword" layoutX="936.0" layoutY="145.0" prefHeight="39.0" prefWidth="140.0" style="-fx-font-weight: normal; -fx-background-color: #808080; -fx-text-fill: white; -fx-line-spacing: -8; -fx-font-size: 12;" styleClass="credits-button" text="Show password" textAlignment="CENTER" wrapText="true">
+                <Button fx:id="btnShowPassword" layoutX="926.0" layoutY="150.0" prefHeight="45.0" prefWidth="140.0" style="-fx-font-weight: normal; -fx-background-color: #808080; -fx-text-fill: white; -fx-line-spacing: -8; -fx-font-size: 12;" styleClass="credits-button" text="Show password" textAlignment="CENTER" wrapText="true">
                     <font>
                         <Font size="11.0" />
                     </font>
                 </Button>
-                <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="75.0" prefWidth="885.0">
+                <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="90.0" prefWidth="885.0">
                     <children>
                         <VBox prefHeight="83.0" prefWidth="500.0">
                             <children>
                                 <Label styleClass="credits-label" text="Put and safe password of your file key">
                                 </Label>
-                                <PasswordField fx:id="txPassword" promptText="Password to file key" styleClass="credits-textFieldGray" />
+                                <PasswordField fx:id="txPassword" maxHeight="45.0" prefHeight="45.0" promptText="Password to file key" styleClass="credits-textFieldGray" />
                             </children>
                         </VBox>
                     </children>
