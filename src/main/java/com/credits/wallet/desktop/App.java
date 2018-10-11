@@ -69,7 +69,7 @@ public class App extends Application {
 
         VistaNavigator.setMainController(mainController);
         AppState.account="GWe8WZYLBxAqsfPZgejnysXQm5Q697VSsyr3x59RvYBf";
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY);
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT);
 
         return mainPane;
     }
