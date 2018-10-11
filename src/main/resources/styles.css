@@ -52,45 +52,6 @@
 
 }
 
-.credits-history {
-    -fx-background-color: transparent;
-    -fx-border-width: 0 0 4 0;
-    -fx-border-color: red blue #424141 yellow;
-}
-
-.credits-history .column-header,
-.credits-history .column-header-background,
-.credits-history .filler,
-.credits-history .virtual-flow .scroll-bar .thumb {
-    -fx-background-color: #424141;
-}
-
-
-.credits-history .virtual-flow .scroll-bar .increment-button,
-.credits-history .virtual-flow .scroll-bar .decrement-button,
-.credits-history .virtual-flow .scroll-bar .track
-{
-    -fx-background-color: white;
-}
-
-.credits-history .column-header-background .label{
-    -fx-background-color: transparent;
-    -fx-text-fill: white;
-}
-
-/*
-.credits-history .table-row-cell{
-    -fx-background-color: -fx-table-cell-border-color, white;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
-}
-
-.credits-history .table-row-cell:odd{
-    -fx-background-color: -fx-table-cell-border-color, #F7F7F7;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
-}*/
-
 .credits-borderWhitePane {
     -fx-background-color: #fff;
 }
@@ -98,6 +59,7 @@
 .credits-borderGrayPane {
     -fx-background-color: #ececec;
 }
+
 
 
 .credits-textFieldGray {
@@ -253,4 +215,85 @@
     -fx-pref-height: 200;
 }
 
+/*CREDITS HISTORY*/
 
+.credits-hist-combobox .arrow-button .arrow{
+    -fx-background-color: white;
+}
+
+.credits-history-pane .combo-box-base .cell {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.credits-history-pane .combo-box-popup .list-view {
+    -fx-pref-width: 80;
+    -fx-background-color: transparent;
+}
+
+.credits-history-pane .combo-box-popup .cell:filled{
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-text-fill: white;
+    -fx-background-color: #808080;
+    -fx-alignment: left;
+}
+
+.credits-history-pane .combo-box-popup .cell:hover{
+    -fx-text-fill: black;
+    -fx-background-color: #00FF90;
+}
+
+.credits-hist-combobox .arrow-button {
+    -fx-alignment: left;
+}
+
+
+.credits-history-pane .combo-box-base {
+    -fx-alignment: center;
+    -fx-background-color: #808080;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-text-fill: white;
+}
+
+.credits-history {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 4 0;
+    -fx-border-color: red blue #424141 yellow;
+}
+
+.credits-history .column-header,
+.credits-history .column-header-background,
+.credits-history .filler,
+.credits-history .virtual-flow .scroll-bar .thumb {
+    -fx-background-color: #424141;
+}
+
+
+.credits-history .virtual-flow .scroll-bar .increment-button,
+.credits-history .virtual-flow .scroll-bar .decrement-button,
+.credits-history .virtual-flow .scroll-bar .track
+{
+    -fx-background-color: white;
+}
+
+.credits-history .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.credits-history-control {
+    -fx-background-color: #808080;
+    -fx-border-color: black;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+}
+
+.credits-history-control:pressed {
+    -fx-rotate:3;
+}
+/*CREDITS HISTORY*/

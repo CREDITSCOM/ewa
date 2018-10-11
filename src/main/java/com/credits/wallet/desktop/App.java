@@ -55,6 +55,9 @@ public class App extends Application {
             )
         );
         stage.show();
+/*
+        ScenicView.show(stage.getScene());
+*/
     }
 
     private Pane loadMainPane() throws IOException {
@@ -66,7 +69,7 @@ public class App extends Application {
 
         VistaNavigator.setMainController(mainController);
         AppState.account="GWe8WZYLBxAqsfPZgejnysXQm5Q697VSsyr3x59RvYBf";
-        VistaNavigator.loadVista(VistaNavigator.HISTORY);
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY);
 
         return mainPane;
     }

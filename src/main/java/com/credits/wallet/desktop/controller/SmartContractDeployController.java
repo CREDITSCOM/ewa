@@ -16,7 +16,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
@@ -71,7 +70,7 @@ public class SmartContractDeployController extends Controller implements Initial
     private Pane paneCode;
 
     @FXML
-    private ScrollPane scCodePanel;
+    private Pane debugPane;
 
     @FXML
     private TreeView<Label> classTreeView;
@@ -118,18 +117,18 @@ public class SmartContractDeployController extends Controller implements Initial
         this.codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
 
         this.tabErrors = new TableView<>();
-        this.tabErrors.setPrefHeight(this.scCodePanel.getPrefHeight() * 0.3);
-        this.tabErrors.setPrefWidth(this.scCodePanel.getPrefWidth());
+        this.tabErrors.setPrefHeight(this.debugPane.getPrefHeight());
+        this.tabErrors.setPrefWidth(this.debugPane.getPrefWidth());
 
         TableColumn<ErrorCodeTabRow, String> tabErrorsColLine = new TableColumn<>();
         tabErrorsColLine.setText("Line");
         tabErrorsColLine.setCellValueFactory(new PropertyValueFactory<>("line"));
-        tabErrorsColLine.setPrefWidth(this.scCodePanel.getPrefWidth() * 0.1);
+        tabErrorsColLine.setPrefWidth(this.debugPane.getPrefWidth() * 0.1);
 
         TableColumn<ErrorCodeTabRow, String> tabErrorsColText = new TableColumn<>();
         tabErrorsColText.setText("Error");
         tabErrorsColText.setCellValueFactory(new PropertyValueFactory<>("text"));
-        tabErrorsColText.setPrefWidth(this.scCodePanel.getPrefWidth() * 0.9);
+        tabErrorsColText.setPrefWidth(this.debugPane.getPrefWidth() * 0.88);
 
         this.tabErrors.getColumns().add(tabErrorsColLine);
         this.tabErrors.getColumns().add(tabErrorsColText);
@@ -229,15 +228,11 @@ public class SmartContractDeployController extends Controller implements Initial
                 this.tabErrors.getItems().add(tr);
             }
 
-            this.codeArea.setPrefHeight(this.paneCode.getPrefHeight() * 0.7);
-            this.paneCode.getChildren().clear();
-            this.paneCode.getChildren().add(this.codeArea);
-            this.paneCode.getChildren().add(this.tabErrors);
-            this.paneCode.getChildren().get(1).setLayoutY(this.paneCode.getPrefHeight() * 0.7);
+            this.debugPane.getChildren().clear();
+            this.debugPane.getChildren().add(this.tabErrors);
+            this.debugPane.getChildren().get(1).setLayoutY(this.debugPane.getPrefHeight());
         } else {
-            this.codeArea.setPrefHeight(this.paneCode.getPrefHeight());
-            this.paneCode.getChildren().clear();
-            this.paneCode.getChildren().add(this.codeArea);
+            this.debugPane.getChildren().clear();
             FormUtils.showInfo("Everything is OK");
         }
     }
@@ -290,6 +285,6 @@ public class SmartContractDeployController extends Controller implements Initial
         }
 
         contextMenu.show(this.codeArea, this.codeArea.getCaretBounds().get().getMaxX(),
-            this.codeArea.getCaretBounds().get().getMaxY());
+            this.codeArea.getCaretBounds().get().getMaxY()-100);
     }
 }

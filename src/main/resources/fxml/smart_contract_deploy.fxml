@@ -2,67 +2,31 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.shape.Line?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController" maxHeight="-Infinity"
-            fx:id="bp"
-            prefHeight="700.0" prefWidth="1300.0"
-            maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity" BorderPane.alignment="TOP_CENTER">
+<?import javafx.scene.layout.VBox?>
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController">
     <top>
-        <fx:include source="header.fxml"/>
+        <fx:include source="header.fxml" />
     </top>
     <center>
-        <Pane
-                styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
+        <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
-                <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
-                       text="Smart contract"/>
-                <Label layoutX="24.0" layoutY="88.0"
-                       text="On this form you can check and deploy smart contract"
-                       styleClass="credits-topLabelGrayText"/>
-                <Line endX="-50.0" layoutX="126.0" layoutY="75.0"
-                      startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
-                <Label layoutX="375.0" layoutY="144.0"
-                       style="-fx-font-size: 16px;" styleClass="text"
-
-                       text="Put SmartContract code">
-                </Label>
-                <Button layoutX="21.0" layoutY="618.0"
-                        onAction="#handleBack" prefHeight="61.0"
-                        prefWidth="173.0"
-                        styleClass="credits-button"
-                        text="BACK"/>
-                <Button fx:id="checkButton" layoutX="210.0" layoutY="618.0"
-                         onAction="#checkButtonAction"
-                        prefHeight="61.0" prefWidth="173.0"
-                        styleClass="credits-button"
-                        text="CHECK"/>
-                <Button layoutX="401.0" layoutY="618.0"
-                        onAction="#handleDeploy" prefHeight="61.0"
-                        prefWidth="173.0"
-                        styleClass="credits-button"
-                        text="DEPLOY"/>
-                <ScrollPane fx:id="scCodePanel" layoutX="375.0" layoutY="174.0"
-                            prefHeight="430.0" prefWidth="1000.0">
-                    <content>
-                        <Pane fx:id="paneCode" layoutX="375.0" layoutY="174.0"
-                              onKeyReleased="#panelCodeKeyReleased"
-                              prefHeight="410.0" prefWidth="1500.0"/>
-                    </content>
-                </ScrollPane>
-                <StackPane layoutX="25.0" layoutY="150.0" prefHeight="455.0"
-                           prefWidth="300.0">
+                <Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText" text="Smart contract making" />
+                <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText" text="On this form you can check and deploy smart contract" />
+                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" text="🡰" />
+                <Button fx:id="checkButton" layoutX="660.0" layoutY="590.0" onAction="#checkButtonAction" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Check" />
+                <Button layoutX="1086.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="DEPLOY" />
+                <VBox layoutX="20.0" layoutY="128.0" prefHeight="455.0" prefWidth="813.0" style="    -fx-padding:  15 0 0 0; -fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 15; -fx-background-radius: 15;">
                     <children>
-                        <TreeView fx:id="classTreeView" prefHeight="5000.0"
-                                  prefWidth="5000.0"/>
+                        <Pane fx:id="paneCode" layoutX="375.0" layoutY="174.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="354.0" prefWidth="807.0" />
+                  <Label />
+                        <VBox fx:id="debugPane" layoutX="4.0" layoutY="359.0" prefHeight="93.0" prefWidth="810.0" style="-fx-padding:  0 0 15 0; -fx-border-width: 1 0 0 0;-fx-border-color: black;">
+                        </VBox>
                     </children>
-                </StackPane>
+                </VBox>
+                <TreeView fx:id="classTreeView" layoutX="923.0" layoutY="34.0" prefHeight="547.0" prefWidth="364.0" />
             </children>
         </Pane>
     </center>
