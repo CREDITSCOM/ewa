@@ -23,12 +23,15 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.wellbehaved.event.InputMap;
+import org.fxmisc.wellbehaved.event.Nodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +40,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
+
+import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -89,26 +94,32 @@ public class SmartContractDeployController extends Controller implements Initial
             }
         });
 
-        this.codeArea.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
-            .subscribe(change -> {
-                String curCode = this.codeArea.getText();
+        InputMap<KeyEvent> im = InputMap.consume(
+            keyPressed(KeyCode.TAB),
+            e -> codeArea.replaceSelection("    "));
+        Nodes.addInputMap(codeArea, im);
 
-                // Replace TAB to 4 spaces
-                if (curCode.contains("\t")) {
-                    this.codeArea.replaceText(0, curCode.length(), curCode.replace("\t", "    "));
-                    curCode = this.codeArea.getText();
-                }
+//        this.codeArea.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
+//            .subscribe(change -> {
+//                String curCode = this.codeArea.getText();
+//
+////                // Replace TAB to 4 spaces
+////                if (curCode.contains("\t")) {
+////                    this.codeArea.replaceText(0, curCode.length(), curCode.replace("\t", "    "));
+////                    curCode = this.codeArea.getText();
+////                }
+//
+////                if (!curCode.contains(NON_CHANGED_STR)) {
+////                    this.codeArea.replaceText(0, curCode.length(), this.prevCode);
+////                } else {
+////                    int i1 = curCode.indexOf(NON_CHANGED_STR);
+////                    if (curCode.indexOf(NON_CHANGED_STR, i1 + 1) > 0) {
+////                        this.codeArea.replaceText(0, curCode.length(), this.prevCode);
+////                    }
+////                }
+//                this.prevCode = this.codeArea.getText();
+//            });
 
-//                if (!curCode.contains(NON_CHANGED_STR)) {
-//                    this.codeArea.replaceText(0, curCode.length(), this.prevCode);
-//                } else {
-//                    int i1 = curCode.indexOf(NON_CHANGED_STR);
-//                    if (curCode.indexOf(NON_CHANGED_STR, i1 + 1) > 0) {
-//                        this.codeArea.replaceText(0, curCode.length(), this.prevCode);
-//                    }
-//                }
-                this.prevCode = this.codeArea.getText();
-            });
 
         this.codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
 
