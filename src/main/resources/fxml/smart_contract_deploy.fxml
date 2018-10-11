@@ -21,8 +21,8 @@
                 <VBox layoutX="20.0" layoutY="128.0" prefHeight="455.0" prefWidth="813.0" style="    -fx-padding:  15 0 0 0; -fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 15; -fx-background-radius: 15;">
                     <children>
                         <Pane fx:id="paneCode" layoutX="375.0" layoutY="174.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="354.0" prefWidth="807.0" />
-                  <Label />
-                        <VBox fx:id="debugPane" layoutX="4.0" layoutY="359.0" prefHeight="93.0" prefWidth="810.0" style="-fx-padding:  0 0 15 0; -fx-border-width: 1 0 0 0;-fx-border-color: black;">
+                        <Label />
+                        <VBox fx:id="debugPane" layoutX="4.0" layoutY="370.0" minHeight="95.0" prefHeight="95.0" prefWidth="811.0" style="-fx-padding:  0 0 15 0; -fx-border-width: 1 0 0 0;-fx-border-color: black;">
                         </VBox>
                     </children>
                 </VBox>

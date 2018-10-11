@@ -19,6 +19,9 @@ import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
@@ -37,6 +40,16 @@ public class WalletController extends Controller implements Initializable {
 
     @FXML
     private Label labCredit;
+
+
+    @FXML
+    private Label wallet;
+
+    @FXML
+    private ComboBox<String> cbCoinBalance;
+
+    @FXML
+    private Label lCoinBalance;
 
     @FXML
     BorderPane bp;
@@ -68,6 +81,42 @@ public class WalletController extends Controller implements Initializable {
         } else {
             AppState.transactionFeePercent = (transactionFeeValue.multiply(new BigDecimal("100"))).divide(amount, 18, RoundingMode.HALF_UP);
         }
+    }
+
+
+    @FXML
+    private void handleLogout() {
+        VistaNavigator.loadVista("/fxml/welcome.fxml");
+    }
+
+    @FXML
+    private void handleDetails() {
+        AppState.newAccount = false;
+        VistaNavigator.loadVista("/fxml/history.fxml");
+    }
+
+    @FXML
+    private void handleAddCoin() {
+        VistaNavigator.loadVista(VistaNavigator.NEW_COIN);
+    }
+
+    @FXML
+    private void handleSmartContract() {
+        AppState.newAccount = false;
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT);
+    }
+
+
+    @FXML
+    private void handleCopy() {
+        StringSelection selection = new StringSelection(wallet.getText());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(selection, selection);
+    }
+
+    @FXML
+    private void handleRefreshBalance() {
+        CoinsUtils.displayBalance(cbCoinBalance,lCoinBalance);
     }
 
     @FXML
@@ -116,6 +165,10 @@ public class WalletController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        CoinsUtils.fillBalanceCombobox(cbCoinBalance,lCoinBalance);
+        cbCoinBalance.getSelectionModel().select(0);
+        this.wallet.setText(AppState.account);
+
         FormUtils.resizeForm(bp);
         clearLabErr();
         // Fill coin list

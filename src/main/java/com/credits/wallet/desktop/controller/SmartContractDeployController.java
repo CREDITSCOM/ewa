@@ -117,6 +117,7 @@ public class SmartContractDeployController extends Controller implements Initial
         this.codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
 
         this.tabErrors = new TableView<>();
+        tabErrors.getStyleClass().add("credits-history");
         this.tabErrors.setPrefHeight(this.debugPane.getPrefHeight());
         this.tabErrors.setPrefWidth(this.debugPane.getPrefWidth());
 
