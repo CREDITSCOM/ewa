@@ -285,6 +285,6 @@ public class SmartContractDeployController extends Controller implements Initial
         }
 
         contextMenu.show(this.codeArea, this.codeArea.getCaretBounds().get().getMaxX(),
-            this.codeArea.getCaretBounds().get().getMaxY()-100);
+            this.codeArea.getCaretBounds().get().getMaxY());
     }
 }
