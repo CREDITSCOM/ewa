@@ -1,16 +1,18 @@
 package com.credits.wallet.desktop;
 
 
-import javafx.application.*;
-import javafx.fxml.*;
-import javafx.geometry.*;
-import javafx.scene.*;
-import javafx.scene.layout.*;
-import javafx.stage.*;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
 
 /**
  * Created by goncharov-eg on 23.11.2017.
@@ -32,7 +34,7 @@ public class App extends Application {
         LOGGER.info("Initializing application state");
         appStateInitializer.init();
         LOGGER.info("Displaying the main window");
-        showForm("/fxml/form0.fxml", "Wallet");
+        showForm(appStateInitializer.startForm, "Wallet");
     }
 
     public static void showForm(String fxmlFile, String title) {

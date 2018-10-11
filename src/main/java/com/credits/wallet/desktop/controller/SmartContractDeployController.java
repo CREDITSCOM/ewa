@@ -49,7 +49,7 @@ public class SmartContractDeployController extends Controller implements Initial
     private static final String DEFAULT_SOURCE_CODE =
         "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n" +
             "        total = 0;\n" + "    }" + "\n" + "}";
-    private static final String NON_CHANGED_STR = "public class Contract extends SmartContract {";
+//    private static final String NON_CHANGED_STR = "public class Contract extends SmartContract {";
 
     private static final String[] PARENT_METHODS =
         new String[] {"double total", "Double getBalance(String address, String currency)",
@@ -99,14 +99,14 @@ public class SmartContractDeployController extends Controller implements Initial
                     curCode = this.codeArea.getText();
                 }
 
-                if (!curCode.contains(NON_CHANGED_STR)) {
-                    this.codeArea.replaceText(0, curCode.length(), this.prevCode);
-                } else {
-                    int i1 = curCode.indexOf(NON_CHANGED_STR);
-                    if (curCode.indexOf(NON_CHANGED_STR, i1 + 1) > 0) {
-                        this.codeArea.replaceText(0, curCode.length(), this.prevCode);
-                    }
-                }
+//                if (!curCode.contains(NON_CHANGED_STR)) {
+//                    this.codeArea.replaceText(0, curCode.length(), this.prevCode);
+//                } else {
+//                    int i1 = curCode.indexOf(NON_CHANGED_STR);
+//                    if (curCode.indexOf(NON_CHANGED_STR, i1 + 1) > 0) {
+//                        this.codeArea.replaceText(0, curCode.length(), this.prevCode);
+//                    }
+//                }
                 this.prevCode = this.codeArea.getText();
             });
 
@@ -131,7 +131,7 @@ public class SmartContractDeployController extends Controller implements Initial
 
         this.tabErrors.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown()) {
-                ErrorCodeTabRow tabRow = (ErrorCodeTabRow) this.tabErrors.getSelectionModel().getSelectedItem();
+                ErrorCodeTabRow tabRow = this.tabErrors.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
                     positionCursorToLine(Integer.valueOf(tabRow.getLine()));
                 }

@@ -3,7 +3,6 @@ package com.credits.wallet.desktop;
 import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.wallet.desktop.utils.FormUtils;
-import org.omg.CORBA.INTERNAL;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,6 +18,8 @@ public class AppStateInitializer {
 
     private static final String ERR_NO_CONTRACT_EXECUTOR =
             "Parameters for java contract executor could not be determined. Check contract.executor.host, contract.executor.port, contract.executor.dir  parameters in the settings.properties file";
+
+    public String startForm = "/fxml/form0.fxml";
 
     Properties properties;
 
