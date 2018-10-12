@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop.utils;
 
-import com.credits.wallet.desktop.AppState;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
@@ -66,8 +65,8 @@ public class FormUtils {
         pane.setPrefHeight(AppState.screenHeight*0.7);
         pane.setPrefWidth(AppState.screenWidth*0.7);
  */
-        pane.setPrefHeight(740D);
-        pane.setPrefWidth(1370D);
+        pane.setPrefHeight(700D);
+        pane.setPrefWidth(1300D);
 
 
 

@@ -9,6 +9,7 @@ import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
+import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
@@ -19,10 +20,12 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -65,13 +68,16 @@ public class SmartContractController extends Controller implements Initializable
     private ComboBox<MethodDeclaration> cbMethods;
 
     @FXML
+    TableView<SmartContractTabRow> mySmart;
+
+    @FXML
+    TableView<SmartContractTabRow> favSmart;
+
+    @FXML
     private TextField tfSearchAddress;
 
     @FXML
     private StackPane pCodePanel;
-
-    @FXML
-    private ScrollPane spCodePanel;
 
     @FXML
     private TreeView<Label> tvContracts;
@@ -148,6 +154,45 @@ public class SmartContractController extends Controller implements Initializable
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FormUtils.resizeForm(bp);
+        mySmart.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
+        mySmart.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
+        favSmart.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
+        favSmart.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
+
+        SmartContractTabRow smartContractTabRow = new SmartContractTabRow();
+        smartContractTabRow.setId("111111111");
+        ToggleButton fav1 = new ToggleButton();
+        fav1.setSelected(false);
+        smartContractTabRow.setFav(fav1);
+
+        SmartContractTabRow smartContractTabRow1 = new SmartContractTabRow();
+        smartContractTabRow1.setId("111111111");
+        ToggleButton fav = new ToggleButton();
+        fav.setSelected(true);
+        smartContractTabRow1.setFav(fav);
+
+        SmartContractTabRow smartContractTabRow2 = new SmartContractTabRow();
+        smartContractTabRow2.setId("111111111");
+        ToggleButton fav2 = new ToggleButton();
+        fav2.setSelected(true);
+        smartContractTabRow2.setFav(fav2);
+
+        mySmart.getItems().add(smartContractTabRow);
+        mySmart.getItems().add(smartContractTabRow1);
+        mySmart.getItems().add(smartContractTabRow1);
+        mySmart.getItems().add(smartContractTabRow1);
+        mySmart.getItems().add(smartContractTabRow1);
+        mySmart.getItems().add(smartContractTabRow1);
+        mySmart.getItems().add(smartContractTabRow1);
+        mySmart.getItems().add(smartContractTabRow1);
+        mySmart.getItems().add(smartContractTabRow1);
+
+        favSmart.getItems().add(smartContractTabRow2);
+        favSmart.getItems().add(smartContractTabRow1);
+
+
+        this.pControls.setVisible(false);
+        this.pCodePanel.setVisible(false);
         this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel);
         initSmartContractTree();
         this.codeArea.setEditable(false);
@@ -159,7 +204,9 @@ public class SmartContractController extends Controller implements Initializable
         TreeItem<Label> smartContractRootItem = new TreeItem<>(new Label(PERSONAL_CONTRACTS));
         TreeItem<Label> foundContractRootItem = new TreeItem<>(new Label(FOUND_CONTRACTS));
         try {
+/*
             this.refreshFormState(null);
+*/
             List<SmartContractData> smartContracts =
                 AppState.levelDbService.getSmartContracts(AppState.account);
             smartContracts.forEach(smartContractData -> {
@@ -191,10 +238,10 @@ public class SmartContractController extends Controller implements Initializable
         if (smartContractData == null || smartContractData.getHashState().isEmpty() ||
             smartContractData.getAddress().length == 0) {
             this.pControls.setVisible(false);
-            this.spCodePanel.setVisible(false);
+            this.pCodePanel.setVisible(false);
         } else {
             this.pControls.setVisible(true);
-            this.spCodePanel.setVisible(true);
+            this.pCodePanel.setVisible(true);
             this.currentSmartContract = smartContractData;
             String sourceCode = smartContractData.getSourceCode();
             this.tfAddress.setText(Converter.encodeToBASE58(smartContractData.getAddress()));
@@ -226,11 +273,11 @@ public class SmartContractController extends Controller implements Initializable
                 paramValueTextField.setLayoutX(150);
                 paramValueTextField.setLayoutY(layoutY);
                 paramValueTextField.setStyle(
-                    "-fx-background-color:  #fff; -fx-border-width: 1; -fx-border-color:  #000; -fx-font-size: 16px");
-                paramValueTextField.setPrefSize(200, 30);
+                    "-fx-background-color:  #fff; -fx-border-radius:15; -fx-border-width: 1; -fx-border-color:  #000; -fx-font-size: 16px");
+                paramValueTextField.setPrefSize(300, 30);
                 Label paramNameLabel = new Label(param.toString());
                 paramNameLabel.setLayoutX(10);
-                paramNameLabel.setLayoutY(layoutY + 15);
+                paramNameLabel.setLayoutY(layoutY + 5);
                 paramNameLabel.setStyle("-fx-font-size: 18px");
                 paramNameLabel.setLabelFor(paramValueTextField);
                 this.pParamsContainer.getChildren().addAll(paramNameLabel, paramValueTextField);
