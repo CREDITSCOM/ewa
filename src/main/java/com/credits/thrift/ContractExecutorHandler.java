@@ -1,5 +1,6 @@
 package com.credits.thrift;
 
+import com.credits.common.utils.Converter;
 import com.credits.exception.ContractExecutorException;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import static com.credits.common.utils.Converter.*;
 import static java.util.stream.Collectors.toList;
 
 public class ContractExecutorHandler implements ContractExecutor.Iface {
@@ -29,10 +31,10 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     @Override
     public APIResponse executeByteCode(ByteBuffer address, ByteBuffer byteCode, ByteBuffer contractState, String method,
                                        List<Variant> params) {
-        Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
-
         logger.debug(String.format("<-- execute(\naddress = %s, \nbyteCode length= %d, \ncontractState length= %d, \nmethod = %s, \nparams = %s.",
-            address, byteCode.array().length, contractState.array().length, method, (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat))));
+            encodeToBASE58(address.array()), byteCode.array().length, contractState.array().length, method, (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat))));
+
+        Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
 
         APIResponse response = new APIResponse((byte) 0, "", contractState);
         try {

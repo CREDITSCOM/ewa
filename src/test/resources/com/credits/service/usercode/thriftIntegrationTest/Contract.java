@@ -3,6 +3,8 @@ public class Contract extends SmartContract {
         System.out.println("Constructor");
     }
 
+    Integer value = new Integer(0);
+
     public void initialize() {
     }
 
@@ -21,5 +23,9 @@ public class Contract extends SmartContract {
 
     public void useReflection() throws Exception {
         getClass().getConstructor().newInstance();
+    }
+
+    public Integer addValue(Integer value){
+        return this.value += value;
     }
 }

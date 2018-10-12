@@ -22,6 +22,7 @@ public class ContractExecutorServer implements Runnable {
     @Inject
     ApplicationProperties property;
 
+    @SuppressWarnings("unchecked")
     public ContractExecutorServer(){
         INJECTOR.component.inject(this);
         processor = new ContractExecutor.Processor(new ContractExecutorHandler());

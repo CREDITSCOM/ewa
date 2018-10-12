@@ -1,11 +1,11 @@
 package com.credits.service.contract;
 
+import com.credits.exception.ContractExecutorException;
 import com.credits.service.ServiceTest;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.thrift.generated.Variant;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static java.io.File.separator;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +33,6 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     public void setUp() throws Exception {
         super.setUp();
         testComponent.inject(this);
-        when(mockLevelDbService.getBalance(any())).thenReturn(new BigDecimal(555));
 
         Field client = dbservice.getClass().getDeclaredField("service");
         client.setAccessible(true);
@@ -57,8 +57,18 @@ public class ThriftIntegrationMockTest extends ServiceTest {
 
     @Test
     public void execute_contract_using_bytecode_getBalance() throws Exception {
+        when(mockLevelDbService.getBalance(any())).thenReturn(new BigDecimal(555));
         String balance = (String) ceService.execute(address, contractBytecode,
             contractState, "balanceGet", new Variant[0]).getVariant().getFieldValue();
-        Assert.assertEquals("555", balance);
+        assertEquals("555", balance);
+    }
+
+    @Test
+    public void execute_contract_method_with_variant_parameters() throws ContractExecutorException {
+        Integer newValue =
+        ceService.execute(address, contractBytecode,
+            contractState, "addValue", new Variant[]{new Variant(Variant._Fields.V_I32, 112233)}).getVariant().getV_i32();
+        assertEquals(112233, newValue.intValue());
+
     }
 }
