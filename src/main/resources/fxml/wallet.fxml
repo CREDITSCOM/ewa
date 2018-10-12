@@ -3,92 +3,81 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.shape.Line?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns:fx="http://javafx.com/fxml/1"
-            xmlns="http://javafx.com/javafx/8" fx:controller="com.credits.wallet.desktop.controller.WalletController">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.WalletController">
     <top>
-        <fx:include source="header.fxml"/>
+        <fx:include source="header.fxml" />
     </top>
     <center>
         <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
+            <VBox layoutX="25.0" layoutY="126.0" prefHeight="95.0" prefWidth="316.0">
+               <children>
+                  <HBox prefHeight="101.0" prefWidth="316.0">
+                     <children>
+                        <Label prefHeight="32.0" prefWidth="150.0" style="-fx-font-size: 22px;" text="My wallet:" />
+                            <Button onAction="#handleCopy" prefHeight="41.0" prefWidth="80.0" styleClass="credits-button" text="COPY" />
+                     </children>
+                  </HBox>
+                      <Label fx:id="wallet" alignment="TOP_LEFT" maxHeight="55.0" maxWidth="315.0" minWidth="0.0" prefHeight="32.0" prefWidth="315.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="text" text="Wal id" wrapText="true">
+                </Label>
+                  <Pane maxHeight="330.0" minHeight="249.0" minWidth="0.0" prefHeight="249.0" prefWidth="316.0" styleClass="credits-PaneInTab">
+                     <children>
+                        <TableView fx:id="mySmart" layoutX="1.0" layoutY="15.0" maxHeight="305.0" maxWidth="389.0" minHeight="290.0" minWidth="389.0" prefHeight="305.0" prefWidth="389.0" styleClass="credits-smart-table-view">
+                           <columns>
+                              <TableColumn maxWidth="324.0" minWidth="324.0" prefWidth="324.0" text="C1" />
+                              <TableColumn maxWidth="50.0" minWidth="50.0" prefWidth="50.0" text="C2" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </Pane>
+               </children>
+            </VBox>
+                <ComboBox fx:id="cbCoinBalance" layoutX="1053.0" layoutY="551.0" prefHeight="41.0" prefWidth="58.0" styleClass="credits-combobox" />
+                <Button id="refresh-balance-button" layoutX="100.0" layoutY="226.0" minHeight="16.0" minWidth="16.0" onAction="#handleRefreshBalance" prefHeight="16.0" prefWidth="16.0" styleClass="credits-button" />
+                <Label fx:id="lCoinBalance" layoutX="25.0" layoutY="250.0" style="-fx-font-size: 14;" styleClass="text">
+                </Label>
+                <Button layoutX="25.0" layoutY="550.0" onAction="#handleLogout" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
+                <Button layoutX="25.0" layoutY="483.0" onAction="#handleAddCoin" prefHeight="45.0" prefWidth="100.0" styleClass="credits-button" text="Make" />
 
-                <Label layoutX="25.0" layoutY="23.0" styleClass="credits-topLabelText"  text="Account">
+
+                <ComboBox fx:id="cbCoin" layoutX="1193.0" layoutY="543.0" prefHeight="56.0" prefWidth="60.0" styleClass="credits-combobox" />
+                <Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText" text="Wallet">
                     <font>
                         <Font size="14.0" />
                     </font>
                 </Label>
-                <Line endX="-50.0" layoutX="125.0" layoutY="75.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0" />
-                <Label layoutX="25.0" layoutY="88.0" styleClass="credits-topLabelGrayText"  text="Wallet:">
+                <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText" text="On this form you can make payments in the Credits platform" />
+                <Label fx:id="labCredit" layoutX="1143.0" layoutY="543.0" prefHeight="56.0" prefWidth="36.0" style="-fx-border-width: 1; -fx-border-color: #000;" styleClass="credits-label">
                 </Label>
-                <Label fx:id="wallet" alignment="TOP_LEFT" layoutX="25.0" layoutY="119.0" maxHeight="55.0" maxWidth="240.0" minWidth="0.0" prefHeight="55.0" prefWidth="215.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="text"  wrapText="true">
+                <Button fx:id="btnBack" layoutX="694.0" layoutY="603.0" onAction="#handleGenerate" prefHeight="60.0" prefWidth="250.0" styleClass="credits-button" text="GENERATE TRANSACTION" />
+                <Label fx:id="labErrorCoin" layoutX="987.0" layoutY="565.0" styleClass="credits-labelError" text="Label" />
+            <VBox layoutX="819.0" layoutY="26.0" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                      <Label styleClass="credits-label" text="To address which opened on Credits (only)">
                 </Label>
-                <ComboBox fx:id="cbCoinBalance" layoutX="25.0" layoutY="282.0" prefHeight="41.0" prefWidth="210.0" styleClass="credits-combobox" />
-                <Button id="refresh-balance-button" layoutX="100.0" layoutY="226.0" minHeight="16.0" minWidth="16.0"  onAction="#handleRefreshBalance" prefHeight="16.0" prefWidth="16.0" styleClass="credits-button" />
-                <Label layoutX="25.0" layoutY="220.0" style="-fx-font-size: 16;" styleClass="text" text="Balance:">
+                      <TextField fx:id="txKey" prefHeight="56.0" prefWidth="605.0" promptText="key..." styleClass="credits-textField" />
+                      <Label fx:id="labErrorKey" styleClass="credits-labelError" text="Label" />
+                      <Label styleClass="credits-label" text="Amount">
                 </Label>
-                <Label fx:id="lCoinBalance" layoutX="25.0" layoutY="250.0" style="-fx-font-size: 14;" styleClass="text" >
+                      <TextField fx:id="numAmount" prefHeight="56.0" prefWidth="196.0" styleClass="credits-textField" />
+                      <Label fx:id="labErrorAmount" styleClass="credits-labelError" text="Label" />
+                      <Label styleClass="credits-label" text="Transaction Fee, (CS)">
                 </Label>
-                <Button layoutX="25.0" layoutY="410.0"  onAction="#handleDetails" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button"  text="TRANSACTION HISTORY" />
-                <Button layoutX="25.0" layoutY="480.0"  onAction="#handleSmartContract" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button"  text="SMART CONTRACT" />
-                <Button layoutX="25.0" layoutY="550.0"  onAction="#handleLogout" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button"  text="LOGOUT" />
-                <Button layoutX="25.0" layoutY="167.0"  onAction="#handleCopy" prefHeight="41.0" prefWidth="80.0" styleClass="credits-button"  text="COPY" />
-                <Button layoutX="25.0" layoutY="340.0"  onAction="#handleAddCoin" prefHeight="63.0" prefWidth="210.0" styleClass="credits-button"  text="ADD COIN" />
-
-
-                <ComboBox fx:id="cbCoin" layoutX="349.0" layoutY="146.0" prefHeight="56.0" prefWidth="300.0"
-                          styleClass="credits-combobox"/>
-                <Label layoutX="349.0" layoutY="26.0" styleClass="credits-topLabelText" text="6. Make a payment">
-                    <font>
-                        <Font size="14.0"/>
-                    </font>
+                      <TextField fx:id="numFee" editable="false" prefHeight="56.0" prefWidth="196.0" styleClass="credits-textField" />
+                      <Label styleClass="credits-label" text="User field">
                 </Label>
-                <Label layoutX="349.0" layoutY="91.0" styleClass="credits-topLabelGrayText"
-                       text="On this form you can open the wallet and make payments in the Credits platform"/>
-                <Line endX="-50.0" layoutX="449.0" layoutY="78.0" startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
-                <Label layoutX="349.0" layoutY="123.0" styleClass="credits-label" text="Select coin">
-                </Label>
-                <Label layoutX="659.0" layoutY="162.0" prefHeight="25.0" prefWidth="125.0" styleClass="credits-label"
-                       text="Credit balance:">
-                </Label>
-                <Label fx:id="labCredit" layoutX="770.0" layoutY="146.0" prefHeight="56.0" prefWidth="180.0"
-                       style="-fx-border-width: 1; -fx-border-color: #000;" styleClass="credits-label">
-                </Label>
-                <Label layoutX="349.0" layoutY="218.0" styleClass="credits-label"
-                       text="To address which opened on Credits (only)">
-                </Label>
-                <TextField fx:id="txKey" layoutX="349.0" layoutY="241.0" prefHeight="56.0" prefWidth="605.0"
-                           promptText="key..." styleClass="credits-textField"/>
-                <Label layoutX="349.0" layoutY="317.0" styleClass="credits-label" text="Amount">
-                </Label>
-                <Label layoutX="549.0" layoutY="455.0" styleClass="credits-label" text="CS">
-                </Label>
-                <Button fx:id="btnBack" layoutX="694.0" layoutY="603.0"
-                        onAction="#handleGenerate" prefHeight="60.0" prefWidth="250.0" styleClass="credits-button"
-                        text="GENERATE TRANSACTION"/>
-                <Label fx:id="labErrorCoin" layoutX="349.0" layoutY="200.0" styleClass="credits-labelError"
-                       text="Label"/>
-                <Label fx:id="labErrorKey" layoutX="349.0" layoutY="298.0" styleClass="credits-labelError"
-                       text="Label"/>
-                <TextField fx:id="numAmount" layoutX="349.0" layoutY="339.0" prefHeight="56.0" prefWidth="196.0"
-                           styleClass="credits-textField"/>
-                <Label fx:id="labErrorAmount" layoutX="349.0" layoutY="393.0" styleClass="credits-labelError"
-                       text="Label"/>
-                <Label layoutX="349.0" layoutY="411.0" styleClass="credits-label" text="Transaction Fee">
-                </Label>
-                <TextField fx:id="numFee" editable="false" layoutX="349.0" layoutY="434.0" prefHeight="56.0"
-                           prefWidth="196.0" styleClass="credits-textField"/>
-                <Label fx:id="labErrorFee" layoutX="349.0" layoutY="487.0" styleClass="credits-labelError"
-                       text="Label"/>
-                <Label layoutX="349.0" layoutY="505.0" styleClass="credits-label" text="User field">
-                </Label>
-                <TextField layoutX="349.0" layoutY="528.0" prefHeight="56.0" prefWidth="605.0"
-                           styleClass="credits-textField"/>
+                      <Label fx:id="labErrorFee" styleClass="credits-labelError" text="Label" />
+                      <TextField prefHeight="56.0" prefWidth="605.0" styleClass="credits-textField" />
+               </children>
+            </VBox>
             </children>
         </Pane>
     </center>
