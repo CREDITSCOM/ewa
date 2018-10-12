@@ -11,6 +11,7 @@ import com.credits.wallet.desktop.utils.EclipseJdt;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SimpleInMemoryCompiler;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
@@ -68,6 +69,7 @@ public class SmartContractDeployController extends Controller implements Initial
 
     @FXML
     private TreeView<Label> classTreeView;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -213,44 +215,47 @@ public class SmartContractDeployController extends Controller implements Initial
 
     @FXML
     private void panelCodeKeyReleased() {
-        refreshClassMembersTree();
+        Thread t = new Thread(this::refreshClassMembersTree);
+        t.setDaemon(true);
+        t.start();
     }
 
-    private void refreshClassMembersTree() {
+    private synchronized void refreshClassMembersTree() {
+        Platform.runLater(() -> {
+            classTreeView.setRoot(null);
+            String sourceCode = codeArea.getText();
+            String className = SourceCodeUtils.parseClassName(sourceCode);
+            Label labelRoot = new Label(className);
+            TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
 
-        classTreeView.setRoot(null);
-        String sourceCode = codeArea.getText();
-        String className = SourceCodeUtils.parseClassName(sourceCode);
-        Label labelRoot = new Label(className);
-        TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
+            List<FieldDeclaration> fields = SourceCodeUtils.parseFields(sourceCode);
+            List<MethodDeclaration> constructors = SourceCodeUtils.parseConstructors(sourceCode);
+            List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
 
-        List<FieldDeclaration> fields = SourceCodeUtils.parseFields(sourceCode);
-        List<MethodDeclaration> constructors = SourceCodeUtils.parseConstructors(sourceCode);
-        List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
+            List<BodyDeclaration> classMembers = new ArrayList<>();
+            classMembers.addAll(fields);
+            classMembers.addAll(constructors);
+            classMembers.addAll(methods);
 
-        List<BodyDeclaration> classMembers = new ArrayList<>();
-        classMembers.addAll(fields);
-        classMembers.addAll(constructors);
-        classMembers.addAll(methods);
-
-        classMembers.forEach(classMember -> {
-            if (classMember instanceof MethodDeclaration) {
-                ((MethodDeclaration) classMember).setBody(null);
-            }
-
-            Label label = new Label(classMember.toString());
-            label.setOnMousePressed(event -> {
-                if (event.isPrimaryButtonDown()) {
-                    positionCursorToLine(SourceCodeUtils.getLineNumber(sourceCode, classMember));
+            classMembers.forEach(classMember -> {
+                if (classMember instanceof MethodDeclaration) {
+                    ((MethodDeclaration) classMember).setBody(null);
                 }
-            });
-            TreeItem<Label> treeItem = new TreeItem<>();
-            treeItem.setValue(label);
-            treeRoot.getChildren().add(treeItem);
-        });
 
-        treeRoot.setExpanded(true);
-        classTreeView.setRoot(treeRoot);
+                Label label = new Label(classMember.toString());
+                label.setOnMousePressed(event -> {
+                    if (event.isPrimaryButtonDown()) {
+                        positionCursorToLine(SourceCodeUtils.getLineNumber(sourceCode, classMember));
+                    }
+                });
+                TreeItem<Label> treeItem = new TreeItem<>();
+                treeItem.setValue(label);
+                treeRoot.getChildren().add(treeItem);
+            });
+
+            treeRoot.setExpanded(true);
+            classTreeView.setRoot(treeRoot);
+        });
     }
 
     @FXML
