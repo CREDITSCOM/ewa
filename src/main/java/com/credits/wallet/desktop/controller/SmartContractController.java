@@ -144,7 +144,7 @@ public class SmartContractController extends Controller implements Initializable
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel);
+        this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel, true);
         initSmartContractTree();
         this.codeArea.setEditable(false);
         this.codeArea.copy();

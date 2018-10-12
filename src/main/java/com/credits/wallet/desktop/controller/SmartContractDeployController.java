@@ -78,7 +78,7 @@ public class SmartContractDeployController extends Controller implements Initial
         }
         AppState.executor = Executors.newSingleThreadExecutor();
 
-        codeArea = SmartContractUtils.initCodeArea(paneCode);
+        codeArea = SmartContractUtils.initCodeArea(paneCode, false);
 
         codeArea.setOnKeyPressed(k -> {
             KeyCode code = k.getCode();
