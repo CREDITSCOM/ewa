@@ -84,6 +84,29 @@ public class UITest{
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
         app.appStateInitializer = spyInitializer;
 
+        initializeApp();
+    }
+
+
+    @Test
+    public void deployForm()
+        throws CreditsCommonException, LevelDbClientException, CreditsNodeException, IOException, InterruptedException {
+        AppStateInitializer spyInitializer = spy(AppStateInitializer.class);
+        when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
+        LevelDbService mockLevelDbService = mock(LevelDbService.class);
+
+        //smart-contracts
+        when(mockLevelDbService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
+        when(mockLevelDbService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
+
+        doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
+
+        spyInitializer.startForm = "/fxml/smart_contract_deploy.fxml";
+        app.appStateInitializer = spyInitializer;
+        initializeApp();
+    }
+
+    private void initializeApp() throws InterruptedException {
         Thread thread = new Thread(new Runnable() {
 
             @Override
@@ -110,25 +133,4 @@ public class UITest{
         // will be killed before you can tell.
     }
 
-    @Test
-    public void deployForm() throws CreditsCommonException, LevelDbClientException, CreditsNodeException, IOException {
-        AppStateInitializer spyInitializer = spy(AppStateInitializer.class);
-        when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
-        LevelDbService mockLevelDbService = mock(LevelDbService.class);
-
-        //smart-contracts
-        when(mockLevelDbService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
-        when(mockLevelDbService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
-
-        doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
-
-        spyInitializer.startForm = "/fxml/smart_contract_deploy.fxml";
-        app.appStateInitializer = spyInitializer;
-        app.start(new Stage());
-    }
-
-    private volatile boolean success = false;
-    private void initJavaFx(){
-
-    }
 }
