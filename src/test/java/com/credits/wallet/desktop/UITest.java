@@ -8,9 +8,10 @@ import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.testUtils.FakeData;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -33,8 +34,6 @@ import static org.mockito.Mockito.when;
  */
 public class UITest{
 
-//    @Rule
-//    public JavaFXThreadingRule javaFXThreadingRule = new JavaFXThreadingRule();
 
     App app;
     String walletAddress;
@@ -55,10 +54,8 @@ public class UITest{
 
 
     @Test
-    @Ignore
     public void correctBehavior()
-        throws LevelDbClientException, CreditsNodeException, CreditsCommonException, IOException {
-        ;
+        throws LevelDbClientException, CreditsNodeException, CreditsCommonException, IOException, InterruptedException {
         AppStateInitializer spyInitializer = spy(AppStateInitializer.class);
         when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
         LevelDbService mockLevelDbService = mock(LevelDbService.class);
@@ -86,11 +83,34 @@ public class UITest{
 
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
         app.appStateInitializer = spyInitializer;
-        app.start(null);
+
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                new JFXPanel(); // Initializes the JavaFx Platform
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            app.start(new Stage()); // Create and
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        // initialize
+                        // your app.
+
+                    }
+                });
+            }
+        });
+        thread.start();// Initialize the thread
+        Thread.sleep(10000); // Time to use the app, with out this, the thread
+        // will be killed before you can tell.
     }
 
     @Test
-    @Ignore
     public void deployForm() throws CreditsCommonException, LevelDbClientException, CreditsNodeException, IOException {
         AppStateInitializer spyInitializer = spy(AppStateInitializer.class);
         when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
