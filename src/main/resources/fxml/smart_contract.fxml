@@ -67,7 +67,7 @@
                         <Button maxHeight="40.0" minHeight="40.0" onAction="#handleSearch" prefHeight="40.0" prefWidth="50.0" style="-fx-border-color: transparent;" styleClass="credits-button">
                             <graphic>
                                 <ImageView fitHeight="30.0" fitWidth="30.0">
-                                    <Image url="@../img/loupe.png" />
+                                    <Image url="@../img/musica-searcher.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -80,15 +80,15 @@
                         <Button onAction="#handleCreate" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #E5E5E5;" styleClass="credits-button" text="Go" />
                     </children>
                 </HBox>
-                <ToggleButton layoutX="850.0" layoutY="140.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="71.0" styleClass="credits-checkbox">
+                <ToggleButton layoutX="870.0" layoutY="140.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="70.0" styleClass="credits-checkbox">
                 </ToggleButton>
-                <TabPane layoutX="20.0" layoutY="220.0" maxHeight="355.0" minHeight="355.0" prefHeight="355.0" prefWidth="390.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
+                <TabPane layoutX="20.0" layoutY="220.0" maxHeight="365.0" minHeight="355.0" prefHeight="362.0" prefWidth="390.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="Untitled Tab 1">
                             <content>
                                 <Pane maxHeight="330.0" minHeight="330.0" minWidth="0.0" prefHeight="330.0" prefWidth="390.0" styleClass="credits-PaneInTab">
                                     <children>
-                                        <TableView fx:id="mySmart" layoutX="1.0" layoutY="15.0" maxHeight="305.0" maxWidth="389.0" minHeight="290.0" minWidth="389.0" prefHeight="305.0" prefWidth="389.0" styleClass="credits-smart-table-view">
+                                        <TableView fx:id="mySmart" layoutX="6.0" layoutY="9.0" maxHeight="313.0" maxWidth="389.0" minHeight="290.0" minWidth="378.0" prefHeight="313.0" prefWidth="378.0" styleClass="credits-smart-table-view">
                                             <columns>
                                                 <TableColumn maxWidth="324.0" minWidth="324.0" prefWidth="324.0" text="C1" />
                                                 <TableColumn maxWidth="50.0" minWidth="50.0" prefWidth="50.0" text="C2" />
@@ -102,7 +102,7 @@
                             <content>
                                 <Pane maxHeight="330.0" minHeight="330.0" minWidth="0.0" prefHeight="330.0" prefWidth="390.0" styleClass="credits-PaneInTab">
                                     <children>
-                                        <TableView fx:id="favSmart" layoutX="1.0" layoutY="15.0" maxHeight="305.0" maxWidth="388.0" minHeight="290.0" minWidth="388.0" prefHeight="305.0" prefWidth="388.0" styleClass="credits-smart-table-view">
+                                        <TableView fx:id="favSmart" layoutX="6.0" layoutY="9.0" maxHeight="313.0" maxWidth="389.0" minHeight="290.0" minWidth="378.0" prefHeight="313.0" prefWidth="378.0" styleClass="credits-smart-table-view">
                                             <columns>
                                                 <TableColumn maxWidth="324.0" minWidth="324.0" prefWidth="324.0" text="C1" />
                                                 <TableColumn maxWidth="50.0" minWidth="50.0" prefWidth="50.0" text="C2" />
@@ -116,7 +116,7 @@
                 </TabPane>
                 <Label layoutX="490.0" layoutY="120.0" style="-fx-font-size: 14px;" styleClass="text" text="Contract address">
                 </Label>
-                <TextField fx:id="tfAddress" editable="false" layoutX="480.0" layoutY="153.0" prefHeight="32.0" prefWidth="371.0" style="-fx-background-color: transparent; -fx-background-insets: 0px; -fx-font-size: 14px;" styleClass="arrow" text="Please choose smart contract" />
+                <TextField fx:id="tfAddress" editable="false" layoutX="480.0" layoutY="155.0" prefHeight="32.0" prefWidth="371.0" style="-fx-background-color: transparent; -fx-background-insets: 0px; -fx-font-size: 14px;" styleClass="arrow" text="Please choose smart contract" />
                 <Button layoutX="1085.0" layoutY="590.0" onAction="#handleExecute" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="EXECUTE" />
                 <StackPane layoutX="646.0" layoutY="574.0" prefHeight="255.0" prefWidth="410.0" style="-fx-border-width: 1; -fx-border-color: #000;" styleClass="credits-borderWhitePane">
                     <children>
