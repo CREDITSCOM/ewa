@@ -30,12 +30,12 @@
                     <tabs>
                         <Tab text="Choose method">
                             <content>
-                                <Pane maxHeight="325.0" maxWidth="800.0" minHeight="325.0" minWidth="800.0" prefHeight="325.0" prefWidth="800.0" styleClass="credits-PaneInTab">
+                                <Pane maxHeight="330.0" maxWidth="800.0" minHeight="330.0" minWidth="800.0" prefHeight="330.0" prefWidth="800.0" styleClass="credits-PaneInTab">
                                 <Pane fx:id="pControls" maxHeight="325.0" maxWidth="800.0" minHeight="325.0" minWidth="800.0" prefHeight="325.0" prefWidth="800.0">
                                     <children>
                                         <Label layoutX="15.0" layoutY="16.0" style="-fx-font-size: 18px;" styleClass="text" text="Choose method">
                                         </Label>
-                                        <ComboBox fx:id="cbMethods" layoutX="15.0" layoutY="46.0" onAction="#cbMethodsOnAction" prefHeight="56.0" prefWidth="772.0" style="-fx-font-size: 14px; -fx-border-radius: 15;" styleClass="credits-combobox" />
+                                        <ComboBox fx:id="cbMethods" layoutX="15.0" layoutY="46.0" onAction="#cbMethodsOnAction" prefHeight="56.0" prefWidth="780.0" style="-fx-font-size: 14px;" styleClass="credits-combobox" />
                                         <AnchorPane fx:id="pParams" layoutX="15.0" layoutY="120.0" prefHeight="185.0" prefWidth="350.0" visible="false">
                                             <children>
                                                 <Label layoutX="2.0" layoutY="7.0" prefHeight="27.0" prefWidth="174.0" style="-fx-font-size: 18px;" styleClass="text" text="Method parameters:">
@@ -59,7 +59,7 @@
                         </Tab>
                     </tabs>
                 </TabPane>
-                <Label layoutX="20.0" layoutY="20.0" prefHeight="77.0" prefWidth="398.0" styleClass="credits-topLabelGrayText" text="On this form you can searching and running some smart contracts from blockhain" wrapText="true" />
+                <Label layoutX="20.0" layoutY="30.0" prefHeight="60.0" prefWidth="398.0" styleClass="credits-topLabelGrayText" text="On this form you can searching and running some smart contracts from blockhain" wrapText="true" />
                 <Label layoutX="6.0" layoutY="120.0" styleClass="credits-label" text="Search smart contracts" />
                 <HBox layoutX="20.0" layoutY="150.0" minHeight="45.0" prefHeight="45.0" prefWidth="375.0" style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: black;">
                     <children>
@@ -73,13 +73,13 @@
                         </Button>
                     </children>
                 </HBox>
-                <HBox layoutX="490.0" prefHeight="104.0" prefWidth="810.0" style="-fx-background-color: #E5E5E5;">
+                <Pane layoutX="490.0" prefHeight="80.0" prefWidth="810.0" style="-fx-background-color: #E5E5E5;">
                     <children>
                         <Label prefHeight="17.0" prefWidth="409.0" />
-                        <Label prefHeight="65.0" prefWidth="193.0" style="-fx-font-size: 22;" text="Create new Smart-contract" wrapText="true" />
-                        <Button onAction="#handleCreate" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #E5E5E5;" styleClass="credits-button" text="Go" />
+                        <Label layoutX="379.0" layoutY="8.0" prefHeight="65.0" prefWidth="193.0" style="-fx-font-size: 22;" text="Create new Smart-contract" textAlignment="RIGHT" wrapText="true" />
+                        <Button layoutX="596.0" layoutY="10.0" onAction="#handleCreate" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #E5E5E5;" styleClass="credits-button" text="Go" />
                     </children>
-                </HBox>
+                </Pane>
                 <ToggleButton layoutX="850.0" layoutY="140.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="71.0" styleClass="credits-checkbox">
                 </ToggleButton>
                 <TabPane layoutX="20.0" layoutY="220.0" maxHeight="355.0" minHeight="355.0" prefHeight="355.0" prefWidth="390.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
@@ -117,7 +117,7 @@
                 <Label layoutX="490.0" layoutY="120.0" style="-fx-font-size: 14px;" styleClass="text" text="Contract address">
                 </Label>
                 <TextField fx:id="tfAddress" editable="false" layoutX="480.0" layoutY="153.0" prefHeight="32.0" prefWidth="371.0" style="-fx-background-color: transparent; -fx-background-insets: 0px; -fx-font-size: 14px;" styleClass="arrow" text="Please choose smart contract" />
-                <Button layoutX="1085.0" layoutY="590.0" onAction="#handleExecute" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="EXECUTE" />
+                <Button layoutX="1085.0" layoutY="590.0" onAction="#handleExecute" prefHeight="60.0" prefWidth="200.0" style="-fx-font-family: Times New Roman;" styleClass="credits-button" text="EXECUTE" />
                 <StackPane layoutX="646.0" layoutY="574.0" prefHeight="255.0" prefWidth="410.0" style="-fx-border-width: 1; -fx-border-color: #000;" styleClass="credits-borderWhitePane">
                     <children>
                         <TreeView fx:id="tvContracts" prefHeight="700.0" prefWidth="408.0" />

@@ -1,14 +1,17 @@
-@font-face {
-    font-family: 'Montserrat-Bold';
-    src: url('fonts/Montserrat-Bold.otf');
-}
-
 .credits-combobox {
     -fx-background-color: #fff;
     -fx-border-width: 1;
     -fx-border-color: #000;
     -fx-font-size: 16px;
+    -fx-border-radius: 15;
 }
+
+.credits-combobox .combo-box-popup>.list-view
+{
+    -fx-padding: -35 0 0 0;
+    -fx-border-color: black;
+}
+
 
 .credits-topLabelText {
     -fx-font-size: 28px
@@ -17,6 +20,10 @@
 .credits-topLabelGrayText {
     -fx-font-size: 16px;
     -fx-text-fill: #818181
+}
+
+.root{
+    -fx-font-family: "Montserrat";
 }
 
 .credits-label {
@@ -194,8 +201,8 @@
 }
 
 #cbMethods .combo-box-popup>.list-view {
-    -fx-pref-width: 391;
-    -fx-pref-height: 200;
+    -fx-pref-width: 780;
+    -fx-pref-height: 250;
 }
 
 #cbCoin .combo-box-popup>.list-view {
@@ -388,3 +395,8 @@
     -fx-text-fill: transparent;
 }
 /*SMART-TABLEVIEW*/
+
+.styled-text-area .paragraph-box .label {
+    -fx-background-color: white;
+    -fx-font-weight: bold;
+}

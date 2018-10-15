@@ -8,6 +8,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -60,6 +61,7 @@ public class App extends Application {
 */
     }
 
+
     private Pane loadMainPane() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         Pane mainPane = loader.load(
@@ -78,7 +80,7 @@ public class App extends Application {
         Scene scene = new Scene(
             mainPane
         );
-
+        addFonts();
         scene.getStylesheets().setAll(
             App.class.getResource("/styles.css").toExternalForm()
         );
@@ -92,4 +94,26 @@ public class App extends Application {
             AppState.executor.shutdown();
         }
     }
+
+    private void addFonts() {
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-Black.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-BlackItalic.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-Bold.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-BoldItalic.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-ExtraBold.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-ExtraBoldItalic.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-ExtraLight.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-ExtraLightItalic.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-Italic.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-Light.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-LightItalic.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-Medium.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-MediumItalic.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-Regular.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-SemiBold.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-SemiBoldItalic.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-Thin.otf").toExternalForm(),14);
+        Font.loadFont(App.class.getResource("/fonts/Montserrat-ThinItalic.otf").toExternalForm(),14);
+    }
+
 }

@@ -100,9 +100,9 @@ public class UITest{
         when(mockLevelDbService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
 
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
-
         spyInitializer.startForm = VistaNavigator.SMART_CONTRACT;
         app.appStateInitializer = spyInitializer;
+        AppState.account=walletAddress;
         initializeApp();
     }
 
