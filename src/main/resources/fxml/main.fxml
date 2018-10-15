@@ -10,7 +10,7 @@
             fx:controller="com.credits.wallet.desktop.controller.MainController">
     <center>
         <ScrollPane fitToHeight="true" fitToWidth="true">
-            <VBox alignment="TOP_CENTER" prefHeight="650" prefWidth="500" style="-fx-background-color: /*#f2f2f2*/ #13c0be  ;"
+            <VBox alignment="TOP_CENTER" prefHeight="650" prefWidth="500" style="-fx-background-color: #f2f2f2 /*#13c0be*/  ;"
                   fx:id="vistaHolder"/>
         </ScrollPane>
     </center>
