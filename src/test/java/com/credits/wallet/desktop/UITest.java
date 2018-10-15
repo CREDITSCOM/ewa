@@ -107,30 +107,18 @@ public class UITest{
     }
 
     private void initializeApp() throws InterruptedException {
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                new JFXPanel(); // Initializes the JavaFx Platform
-                Platform.runLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        try {
-                            app.start(new Stage()); // Create and
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        // initialize
-                        // your app.
-
-                    }
-                });
-            }
+        Thread thread = new Thread(() -> {
+            new JFXPanel();
+            Platform.runLater(() -> {
+                try {
+                    app.start(new Stage());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         });
-        thread.start();// Initialize the thread
-        Thread.sleep(10000); // Time to use the app, with out this, the thread
-        // will be killed before you can tell.
+        thread.start();
+        Thread.sleep(1000000);
     }
 
 }
