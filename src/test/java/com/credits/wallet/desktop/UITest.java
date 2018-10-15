@@ -8,10 +8,10 @@ import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.testUtils.FakeData;
-import com.credits.wallet.desktop.testUtils.JavaFXThreadingRule;
-import javafx.application.Application;
 import javafx.stage.Stage;
-import org.junit.Rule;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -31,10 +31,10 @@ import static org.mockito.Mockito.when;
 /**
  * Created by Igor Goryunov on 29.09.2018
  */
-public class UITest extends Application{
+public class UITest{
 
-    @Rule
-    public JavaFXThreadingRule javaFXThreadingRule = new JavaFXThreadingRule();
+//    @Rule
+//    public JavaFXThreadingRule javaFXThreadingRule = new JavaFXThreadingRule();
 
     App app;
     String walletAddress;
@@ -44,14 +44,21 @@ public class UITest extends Application{
 
     ApiResponseData successResponse = new ApiResponseData(API_RESPONSE_SUCCESS_CODE, "Success", new Variant(V_STRING, "Success"));
 
-
-    public void correctBehavior(Stage stage)
-        throws LevelDbClientException, CreditsNodeException, CreditsCommonException, IOException {
+    @Before
+    public void setUp() {
         app = new App();
         walletAddress = addressBase58;
         addressOne = "11111111111111111111111111111111111111111111";
         addressTwo = "22222222222222222222222222222222222222222222";
         addressThree = "33333333333333333333333333333333333333333333";
+    }
+
+
+    @Test
+    @Ignore
+    public void correctBehavior()
+        throws LevelDbClientException, CreditsNodeException, CreditsCommonException, IOException {
+        ;
         AppStateInitializer spyInitializer = spy(AppStateInitializer.class);
         when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
         LevelDbService mockLevelDbService = mock(LevelDbService.class);
@@ -79,22 +86,12 @@ public class UITest extends Application{
 
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
         app.appStateInitializer = spyInitializer;
-        app.start(stage);
-    }
-
-    public static void main(String[] args) {
-        launch(null);
-    }
-
-
-    @Override
-    public void start(Stage stage) throws Exception {
-        correctBehavior(stage);
+        app.start(null);
     }
 
     @Test
     @Ignore
-    public void deployForm() throws CreditsCommonException, LevelDbClientException, CreditsNodeException {
+    public void deployForm() throws CreditsCommonException, LevelDbClientException, CreditsNodeException, IOException {
         AppStateInitializer spyInitializer = spy(AppStateInitializer.class);
         when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
         LevelDbService mockLevelDbService = mock(LevelDbService.class);
@@ -107,6 +104,11 @@ public class UITest extends Application{
 
         spyInitializer.startForm = "/fxml/smart_contract_deploy.fxml";
         app.appStateInitializer = spyInitializer;
-        app.start(null);
+        app.start(new Stage());
+    }
+
+    private volatile boolean success = false;
+    private void initJavaFx(){
+
     }
 }

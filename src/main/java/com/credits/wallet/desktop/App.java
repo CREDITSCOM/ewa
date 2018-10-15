@@ -68,8 +68,7 @@ public class App extends Application {
         MainController mainController = loader.getController();
 
         VistaNavigator.setMainController(mainController);
-        AppState.account="GWe8WZYLBxAqsfPZgejnysXQm5Q697VSsyr3x59RvYBf";
-        VistaNavigator.loadVista(VistaNavigator.WALLET);
+        VistaNavigator.loadVista(appStateInitializer.startForm);
 
         return mainPane;
     }
