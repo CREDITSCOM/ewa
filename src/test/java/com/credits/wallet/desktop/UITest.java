@@ -101,7 +101,7 @@ public class UITest{
 
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
 
-        spyInitializer.startForm = "/fxml/smart_contract_deploy.fxml";
+        spyInitializer.startForm = VistaNavigator.SMART_CONTRACT;
         app.appStateInitializer = spyInitializer;
         initializeApp();
     }
