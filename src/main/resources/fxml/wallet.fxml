@@ -26,7 +26,7 @@
                             <Button onAction="#handleCopy" prefHeight="41.0" prefWidth="80.0" styleClass="credits-button" text="COPY" />
                      </children>
                   </HBox>
-                      <Label fx:id="wallet" alignment="TOP_LEFT" maxHeight="55.0" maxWidth="315.0" minWidth="0.0" prefHeight="32.0" prefWidth="315.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="text" text="Wal id" wrapText="true">
+                      <Label fx:id="wallet" alignment="TOP_LEFT" maxHeight="55.0" maxWidth="315.0" minWidth="0.0" prefHeight="32.0" prefWidth="315.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" styleClass="text" text="My coins" wrapText="true">
                 </Label>
                   <Pane maxHeight="330.0" minHeight="249.0" minWidth="0.0" prefHeight="249.0" prefWidth="316.0" styleClass="credits-PaneInTab">
                      <children>
@@ -41,7 +41,7 @@
                </children>
             </VBox>
                 <ComboBox fx:id="cbCoinBalance" layoutX="1053.0" layoutY="551.0" prefHeight="41.0" prefWidth="58.0" styleClass="credits-combobox" />
-                <Button id="refresh-balance-button" layoutX="100.0" layoutY="226.0" minHeight="16.0" minWidth="16.0" onAction="#handleRefreshBalance" prefHeight="16.0" prefWidth="16.0" styleClass="credits-button" />
+                <Button id="refresh-balance-button" layoutX="911.0" layoutY="557.0" minHeight="16.0" minWidth="16.0" onAction="#handleRefreshBalance" prefHeight="16.0" prefWidth="16.0" styleClass="credits-button" />
                 <Label fx:id="lCoinBalance" layoutX="25.0" layoutY="250.0" style="-fx-font-size: 14;" styleClass="text">
                 </Label>
                 <Button layoutX="25.0" layoutY="550.0" onAction="#handleLogout" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
@@ -59,22 +59,22 @@
                 </Label>
                 <Button fx:id="btnBack" layoutX="694.0" layoutY="603.0" onAction="#handleGenerate" prefHeight="60.0" prefWidth="250.0" styleClass="credits-button" text="GENERATE TRANSACTION" />
                 <Label fx:id="labErrorCoin" layoutX="987.0" layoutY="565.0" styleClass="credits-labelError" text="Label" />
-            <VBox layoutX="819.0" layoutY="26.0" prefHeight="200.0" prefWidth="100.0">
+            <VBox layoutX="650.0" layoutY="100.0" prefHeight="360.0" prefWidth="615.0">
                <children>
                       <Label styleClass="credits-label" text="To address which opened on Credits (only)">
                 </Label>
-                      <TextField fx:id="txKey" prefHeight="56.0" prefWidth="605.0" promptText="key..." styleClass="credits-textField" />
-                      <Label fx:id="labErrorKey" styleClass="credits-labelError" text="Label" />
+                      <TextField fx:id="txKey" prefHeight="45.0" prefWidth="605.0" promptText="key..." styleClass="credits-textField" />
+                      <Label fx:id="labErrorKey" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" styleClass="credits-labelError" text="Label" />
                       <Label styleClass="credits-label" text="Amount">
                 </Label>
                       <TextField fx:id="numAmount" prefHeight="56.0" prefWidth="196.0" styleClass="credits-textField" />
-                      <Label fx:id="labErrorAmount" styleClass="credits-labelError" text="Label" />
+                      <Label fx:id="labErrorAmount" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" styleClass="credits-labelError" text="Label" />
                       <Label styleClass="credits-label" text="Transaction Fee, (CS)">
                 </Label>
                       <TextField fx:id="numFee" editable="false" prefHeight="56.0" prefWidth="196.0" styleClass="credits-textField" />
                       <Label styleClass="credits-label" text="User field">
                 </Label>
-                      <Label fx:id="labErrorFee" styleClass="credits-labelError" text="Label" />
+                      <Label fx:id="labErrorFee" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" styleClass="credits-labelError" text="Label" />
                       <TextField prefHeight="56.0" prefWidth="605.0" styleClass="credits-textField" />
                </children>
             </VBox>
