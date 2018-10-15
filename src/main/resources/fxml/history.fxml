@@ -18,8 +18,8 @@
             <children>
                 <Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText" text="Transaction history" />
                 <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText" text="On this form you can see transaction history" />
-                <ComboBox fx:id="cbPageSize" layoutX="20.0" layoutY="135.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="27.0" prefWidth="60.0" promptText="1" styleClass="credits-hist-combobox" />
-                <Label layoutX="89.0" layoutY="140.0" text="transactions on the page" />
+                <ComboBox fx:id="cbPageSize" layoutX="20.0" layoutY="135.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="27.0" prefWidth="70.0" promptText="1" styleClass="credits-hist-combobox" />
+                <Label layoutX="100.0" layoutY="140.0" text="transactions on the page" />
                 <TableView fx:id="tabTransaction" layoutX="20.0" layoutY="175.0" prefHeight="375.0" prefWidth="1250.0" styleClass="credits-history">
                     <columns>
                         <TableColumn prefWidth="162.0" text="Id" />

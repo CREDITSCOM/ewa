@@ -102,9 +102,9 @@ public class UITest {
 
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
 
-        spyInitializer.startForm = VistaNavigator.SMART_CONTRACT;
+        spyInitializer.startForm = VistaNavigator.HISTORY;
         app.appStateInitializer = spyInitializer;
-
+        AppState.account = walletAddress;
         runApp();
     }
 
