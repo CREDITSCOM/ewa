@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by Igor Goryunov on 29.09.2018
  */
-public class UITest{
+public class UITest {
 
 
     App app;
@@ -41,7 +41,8 @@ public class UITest{
     String addressTwo;
     String addressThree;
 
-    ApiResponseData successResponse = new ApiResponseData(API_RESPONSE_SUCCESS_CODE, "Success", new Variant(V_STRING, "Success"));
+    ApiResponseData successResponse =
+        new ApiResponseData(API_RESPONSE_SUCCESS_CODE, "Success", new Variant(V_STRING, "Success"));
 
     @Before
     public void setUp() {
@@ -55,7 +56,7 @@ public class UITest{
 
     @Test
     public void correctBehavior()
-        throws LevelDbClientException, CreditsNodeException, CreditsCommonException, IOException, InterruptedException {
+        throws LevelDbClientException, CreditsNodeException, CreditsCommonException, InterruptedException {
         AppStateInitializer spyInitializer = spy(AppStateInitializer.class);
         when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
         LevelDbService mockLevelDbService = mock(LevelDbService.class);
@@ -68,10 +69,10 @@ public class UITest{
         when(mockLevelDbService.getBalance(addressTwo)).thenReturn(new BigDecimal("100"));
         when(mockLevelDbService.getBalance(addressThree)).thenReturn(new BigDecimal(new Random(System.currentTimeMillis()).nextDouble()));
 */
-        when(mockLevelDbService.getTransactionsState(any(),any())).thenReturn(FakeData.transactionsStateGetResult);
+        when(mockLevelDbService.getTransactionsState(any(), any())).thenReturn(FakeData.transactionsStateGetResult);
         //transactions
         when(mockLevelDbService.getTransactions(any(), anyLong(), anyLong())).thenReturn(FakeData.transactionsDataList);
-        when(mockLevelDbService.createTransaction(any(),anyBoolean())).thenReturn(successResponse);
+        when(mockLevelDbService.createTransaction(any(), anyBoolean())).thenReturn(successResponse);
         when(mockLevelDbService.getWalletTransactionsCount(any())).thenReturn(new Long(1));
         when(mockLevelDbService.getWalletId(walletAddress)).thenReturn(1);
         when(mockLevelDbService.getWalletId(addressTwo)).thenReturn(2);
@@ -84,13 +85,13 @@ public class UITest{
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
         app.appStateInitializer = spyInitializer;
 
-        initializeApp();
+        runApp();
     }
 
 
     @Test
     public void deployForm()
-        throws CreditsCommonException, LevelDbClientException, CreditsNodeException, IOException, InterruptedException {
+        throws CreditsCommonException, LevelDbClientException, CreditsNodeException, InterruptedException {
         AppStateInitializer spyInitializer = spy(AppStateInitializer.class);
         when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
         LevelDbService mockLevelDbService = mock(LevelDbService.class);
@@ -100,25 +101,23 @@ public class UITest{
         when(mockLevelDbService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
 
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
+
         spyInitializer.startForm = VistaNavigator.SMART_CONTRACT;
         app.appStateInitializer = spyInitializer;
-        AppState.account=walletAddress;
-        initializeApp();
+
+        runApp();
     }
 
-    private void initializeApp() throws InterruptedException {
-        Thread thread = new Thread(() -> {
-            new JFXPanel();
-            Platform.runLater(() -> {
-                try {
-                    app.start(new Stage());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+    private void runApp() throws InterruptedException {
+        new JFXPanel();
+        Platform.runLater(() -> {
+            try {
+                app.start(new Stage());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
-        thread.start();
-        Thread.sleep(1000000);
+        Thread.currentThread().join();
     }
 
 }
