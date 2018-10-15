@@ -7,6 +7,7 @@ import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
+import com.credits.wallet.desktop.struct.CoinTabRow;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
@@ -14,7 +15,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +77,9 @@ public class WalletController extends Controller implements Initializable {
 
     @FXML
     private TextField numFee;
+
+    @FXML
+    private TableView<CoinTabRow> coins;
 
     private void refreshTransactionFeePercent(BigDecimal transactionFeeValue, BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) == 0) {
@@ -165,6 +171,14 @@ public class WalletController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        coins.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("name"));
+        coins.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("balance"));
+
+        CoinTabRow coinTabRow = new CoinTabRow();
+        coinTabRow.setName("CS");
+        coinTabRow.setBalance(new BigDecimal(222.22222D).setScale(13, BigDecimal.ROUND_DOWN));
+        coins.getItems().add(coinTabRow);
+
         CoinsUtils.fillBalanceCombobox(cbCoinBalance,lCoinBalance);
         cbCoinBalance.getSelectionModel().select(0);
         this.wallet.setText(AppState.account);
