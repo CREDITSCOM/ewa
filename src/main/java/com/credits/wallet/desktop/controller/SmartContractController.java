@@ -1,11 +1,14 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
 import com.credits.common.utils.sourcecode.SourceCodeUtils;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.exception.CreditsNodeException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -24,7 +27,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -38,11 +40,9 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -80,9 +80,6 @@ public class SmartContractController extends Controller implements Initializable
     private StackPane pCodePanel;
 
     @FXML
-    private TreeView<Label> tvContracts;
-
-    @FXML
     private AnchorPane pParams;
 
     @FXML
@@ -108,9 +105,7 @@ public class SmartContractController extends Controller implements Initializable
     private void handleSearch() {
         String address = tfSearchAddress.getText();
         try {
-            SmartContractData smartContractData =
-                AppState.levelDbService.getSmartContract(address);
-            saveInSmartContractTree(smartContractData);
+            SmartContractData smartContractData = AppState.levelDbService.getSmartContract(address);
             this.refreshFormState(smartContractData);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -118,6 +113,7 @@ public class SmartContractController extends Controller implements Initializable
         }
     }
 
+/*
     private void saveInSmartContractTree(SmartContractData smartContractData) {
         String contractAddress = Converter.encodeToBASE58(smartContractData.getAddress());
 
@@ -146,6 +142,7 @@ public class SmartContractController extends Controller implements Initializable
             AppState.objectKeeper.serialize(map);
         }
     }
+*/
 
     private boolean notElementInList(String element, TreeItem<Label> contractsRootItem) {
         return contractsRootItem.getChildren().stream().noneMatch((el) -> el.getValue().getText().equals(element));
@@ -154,84 +151,52 @@ public class SmartContractController extends Controller implements Initializable
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FormUtils.resizeForm(bp);
+        this.pControls.setVisible(false);
+        this.pCodePanel.setVisible(false);
+        this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel, true);
+        try {
+            initSmartContracts();
+        } catch (CreditsCommonException | LevelDbClientException | CreditsNodeException e) {
+            e.printStackTrace();
+        }
+        this.codeArea.setEditable(false);
+        this.codeArea.copy();
+    }
+
+    private void initSmartContracts() throws CreditsCommonException, LevelDbClientException, CreditsNodeException {
         mySmart.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
         mySmart.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
         favSmart.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
         favSmart.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
 
-        SmartContractTabRow smartContractTabRow = new SmartContractTabRow();
-        smartContractTabRow.setId("111111111");
-        ToggleButton fav1 = new ToggleButton();
-        fav1.setSelected(false);
-        smartContractTabRow.setFav(fav1);
-
-        SmartContractTabRow smartContractTabRow1 = new SmartContractTabRow();
-        smartContractTabRow1.setId("111111111");
-        ToggleButton fav = new ToggleButton();
-        fav.setSelected(true);
-        smartContractTabRow1.setFav(fav);
-
-        SmartContractTabRow smartContractTabRow2 = new SmartContractTabRow();
-        smartContractTabRow2.setId("111111111");
-        ToggleButton fav2 = new ToggleButton();
-        fav2.setSelected(true);
-        smartContractTabRow2.setFav(fav2);
-
-        mySmart.getItems().add(smartContractTabRow);
-        mySmart.getItems().add(smartContractTabRow1);
-        mySmart.getItems().add(smartContractTabRow1);
-        mySmart.getItems().add(smartContractTabRow1);
-        mySmart.getItems().add(smartContractTabRow1);
-        mySmart.getItems().add(smartContractTabRow1);
-        mySmart.getItems().add(smartContractTabRow1);
-        mySmart.getItems().add(smartContractTabRow1);
-        mySmart.getItems().add(smartContractTabRow1);
-
-        favSmart.getItems().add(smartContractTabRow2);
-        favSmart.getItems().add(smartContractTabRow1);
-
-
-        this.pControls.setVisible(false);
-        this.pCodePanel.setVisible(false);
-        this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel, true);
-        initSmartContractTree();
-        this.codeArea.setEditable(false);
-        this.codeArea.copy();
-    }
-
-    private void initSmartContractTree() {
-        TreeItem<Label> rootItem = new TreeItem<>(new Label(SMART_CONTRACTS));
-        TreeItem<Label> smartContractRootItem = new TreeItem<>(new Label(PERSONAL_CONTRACTS));
-        TreeItem<Label> foundContractRootItem = new TreeItem<>(new Label(FOUND_CONTRACTS));
         try {
-/*
-            this.refreshFormState(null);
-*/
-            List<SmartContractData> smartContracts =
-                AppState.levelDbService.getSmartContracts(AppState.account);
-            smartContracts.forEach(smartContractData -> {
+            Map<String, SmartContractData> map = AppState.objectKeeper.deserialize();
+            if (map != null && map.size() > 0) {
+                map.forEach((k, v) -> {
+                    Label label = new Label(k);
+                    setSmartContractLabelEventOnClick(v, label);
 
-                Label label = new Label(Converter.encodeToBASE58(smartContractData.getAddress()));
-                label.setPadding(new Insets(0, 0, 0, -20));
-                setSmartContractLabelEventOnClick(smartContractData, label);
-                smartContractRootItem.getChildren().add(new TreeItem<>(label));
-            });
+                    ToggleButton fav1 = new ToggleButton();
+                    fav1.setSelected(true);
+                    favSmart.getItems().add(new SmartContractTabRow(label, fav1));
+                });
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());
         }
-        Map<String, SmartContractData> map = AppState.objectKeeper.deserialize();
-        rootItem.getChildren().add(smartContractRootItem);
-        if (map != null && map.size() > 0) {
-            map.forEach((k, v) -> {
-                Label label = new Label(k);
-                setSmartContractLabelEventOnClick(v, label);
-                foundContractRootItem.getChildren().add(new TreeItem<>(label));
-            });
-            rootItem.getChildren().add(foundContractRootItem);
-        }
-        this.tvContracts.setShowRoot(false);
-        this.tvContracts.setRoot(rootItem);
+
+        List<SmartContractData> smartContracts = AppState.levelDbService.getSmartContracts(AppState.account);
+        smartContracts.forEach(smartContractData -> {
+
+            Label label = new Label(Converter.encodeToBASE58(smartContractData.getAddress()));
+            label.setPadding(new Insets(0, 0, 0, -20));
+            setSmartContractLabelEventOnClick(smartContractData, label);
+
+            ToggleButton fav1 = new ToggleButton();
+            fav1.setSelected(true);
+            mySmart.getItems().add(new SmartContractTabRow(label, fav1));
+        });
     }
 
     private void refreshFormState(SmartContractData smartContractData) {
@@ -314,26 +279,27 @@ public class SmartContractController extends Controller implements Initializable
             }
 
             SmartContractData smartContractData = this.currentSmartContract;
-            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new ApiTransactionThreadRunnable.Callback() {
-                @Override
-                public void onSuccess(ApiResponseData resultData) {
-                    Variant res = resultData.getScExecRetVal();
-                    if (res != null) {
-                        String retVal = res.toString() + '\n';
-                        LOGGER.info("Return value is {}", retVal);
-                        FormUtils.showPlatformInfo(
-                            "Execute smart contract was success: return value is: " + retVal);
-                    } else {
-                        FormUtils.showPlatformInfo("Execute smart contract was success");
+            ApiUtils.executeSmartContractProcess(method, params, smartContractData,
+                new ApiTransactionThreadRunnable.Callback() {
+                    @Override
+                    public void onSuccess(ApiResponseData resultData) {
+                        Variant res = resultData.getScExecRetVal();
+                        if (res != null) {
+                            String retVal = res.toString() + '\n';
+                            LOGGER.info("Return value is {}", retVal);
+                            FormUtils.showPlatformInfo(
+                                "Execute smart contract was success: return value is: " + retVal);
+                        } else {
+                            FormUtils.showPlatformInfo("Execute smart contract was success");
+                        }
+
                     }
 
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    FormUtils.showPlatformError(e.getMessage());
-                }
-            });
+                    @Override
+                    public void onError(Exception e) {
+                        FormUtils.showPlatformError(e.getMessage());
+                    }
+                });
         } catch (CreditsException e) {
             LOGGER.error(e.toString(), e);
             FormUtils.showError(e.toString());

@@ -9,7 +9,6 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -84,7 +83,7 @@
                 </ToggleButton>
                 <TabPane layoutX="20.0" layoutY="220.0" maxHeight="355.0" minHeight="355.0" prefHeight="355.0" prefWidth="390.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                        <Tab text="Untitled Tab 1">
+                        <Tab text="My smart contracts">
                             <content>
                                 <Pane maxHeight="330.0" minHeight="330.0" minWidth="0.0" prefHeight="330.0" prefWidth="390.0" styleClass="credits-PaneInTab">
                                     <children>
@@ -98,7 +97,7 @@
                                 </Pane>
                             </content>
                         </Tab>
-                        <Tab text="Untitled Tab 2">
+                        <Tab text="Favorites">
                             <content>
                                 <Pane maxHeight="330.0" minHeight="330.0" minWidth="0.0" prefHeight="330.0" prefWidth="390.0" styleClass="credits-PaneInTab">
                                     <children>
@@ -118,11 +117,6 @@
                 </Label>
                 <TextField fx:id="tfAddress" editable="false" layoutX="480.0" layoutY="153.0" prefHeight="32.0" prefWidth="371.0" style="-fx-background-color: transparent; -fx-background-insets: 0px; -fx-font-size: 14px;" styleClass="arrow" text="Please choose smart contract" />
                 <Button layoutX="1085.0" layoutY="590.0" onAction="#handleExecute" prefHeight="60.0" prefWidth="200.0" style="-fx-font-family: Times New Roman;" styleClass="credits-button" text="EXECUTE" />
-                <StackPane layoutX="646.0" layoutY="574.0" prefHeight="255.0" prefWidth="410.0" style="-fx-border-width: 1; -fx-border-color: #000;" styleClass="credits-borderWhitePane">
-                    <children>
-                        <TreeView fx:id="tvContracts" prefHeight="700.0" prefWidth="408.0" />
-                    </children>
-                </StackPane>
             </children>
         </Pane>
     </center>
