@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
-<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
     <top>
         <fx:include source="header.fxml" />
     </top>
@@ -30,7 +30,7 @@
                     <tabs>
                         <Tab text="Choose method">
                             <content>
-                                <Pane maxHeight="325.0" maxWidth="800.0" minHeight="325.0" minWidth="800.0" prefHeight="325.0" prefWidth="800.0" styleClass="credits-PaneInTab">
+                                <Pane maxHeight="325.0" maxWidth="800.0" minHeight="296.0" minWidth="800.0" prefHeight="296.0" prefWidth="800.0" styleClass="credits-PaneInTab">
                                 <Pane fx:id="pControls" maxHeight="325.0" maxWidth="800.0" minHeight="325.0" minWidth="800.0" prefHeight="325.0" prefWidth="800.0">
                                     <children>
                                         <Label layoutX="15.0" layoutY="16.0" style="-fx-font-size: 18px;" styleClass="text" text="Choose method">
