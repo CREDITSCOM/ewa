@@ -3,9 +3,15 @@ package com.credits.wallet.desktop.utils;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import javafx.concurrent.Task;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -15,11 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,7 +67,7 @@ public class SmartContractUtils {
         return spansBuilder.create();
     }
 
-    public static CodeArea initCodeArea(Pane paneCode) {
+    public static CodeArea initCodeArea(Pane paneCode, boolean readOnly) {
         if (AppState.executor != null) {
             AppState.executor.shutdown();
         }
@@ -95,6 +97,8 @@ public class SmartContractUtils {
                 return Optional.empty();
             }
         }).subscribe(highlighting -> codeArea.setStyleSpans(0, highlighting));
+
+        SmartContractUtils.initCodeAreaContextMenu(codeArea, readOnly);
 
         return codeArea;
     }
@@ -151,4 +155,54 @@ public class SmartContractUtils {
             FormUtils.showError(e.getMessage());
         }
     }
+
+    public static void initCodeAreaContextMenu(CodeArea codeArea, boolean readOnly) {
+
+        Popup popup = new Popup();
+        Button cut = new Button("Cut");
+        cut.setDisable(readOnly);
+        cut.setOnAction(e -> {
+            codeArea.cut();
+            popup.hide();
+        });
+        Button copy = new Button("Copy");
+        copy.setOnAction(e -> {
+            codeArea.copy();
+            popup.hide();
+        });
+        Button paste = new Button("Paste");
+        paste.setDisable(readOnly);
+        paste.setOnAction(e -> {
+            codeArea.paste();
+            popup.hide();
+        });
+        Button select = new Button("Select All");
+        select.setOnAction(e -> {
+            codeArea.selectAll();
+            popup.hide();
+        });
+        VBox box = new VBox();
+        box.setId("popup");
+        box.getStylesheets().add(App.class.getResource("/context-menu.css").toExternalForm());
+        box.setPrefSize(80, 50);
+        box.getChildren().addAll(cut, copy, paste, select);
+
+        popup.getContent().add(box);
+
+        EventHandler contextMenu = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == event.getButton().SECONDARY) {
+                    popup.setAutoFix(false);
+                    popup.show(codeArea, event.getScreenX(), event.getScreenY());
+                } else if (popup.isShowing() && event.getClickCount() == 1) {
+                    popup.hide();
+                }
+            }
+        };
+
+        codeArea.setOnMouseClicked(contextMenu);
+
+    }
+
 }

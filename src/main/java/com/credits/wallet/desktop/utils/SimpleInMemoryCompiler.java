@@ -15,7 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.regex.Pattern;
 
 public class SimpleInMemoryCompiler {
 
@@ -30,8 +32,8 @@ public class SimpleInMemoryCompiler {
         LOGGER.debug("Compiling class {}", source.getName());
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
-            throw new CompilationException("Cannot compile the file: " + source.getName() +
-                ". The java compiler has not been found, Java Development Kit should be installed.");
+            loadJdkPathFromEnvironmentVariables();
+            compiler = ToolProvider.getSystemJavaCompiler();
         }
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
@@ -67,12 +69,23 @@ public class SimpleInMemoryCompiler {
             throw new CompilationException("Cannot read bytes from account file.", e);
         }
 
-        for (File file : sourceFolder.listFiles()) {
-            file.delete();
+        File[] files = sourceFolder.listFiles();
+        if(files != null) {
+            for (File file : files) {
+                file.delete();
+            }
         }
         sourceFolder.delete();
 
         return sourceBytes;
+    }
+
+    static void loadJdkPathFromEnvironmentVariables() throws CompilationException {
+        Pattern regexpJdkPath = Pattern.compile("jdk[\\d]\\.[\\d]\\.[\\d]([\\d._\\\\])*bin");
+        Arrays.stream(System.getenv("Path").split(";"))
+            .filter(it -> regexpJdkPath.matcher(it).find())
+            .findFirst()
+            .orElseThrow(() -> new CompilationException("Cannot compile the file. The java compiler has not been found, Java Development Kit should be installed."));
     }
 
     private static File save(File sourceFolder, String classname, String sourceString) throws CompilationException {

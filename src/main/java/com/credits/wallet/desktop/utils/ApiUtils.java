@@ -2,7 +2,6 @@ package com.credits.wallet.desktop.utils;
 
 import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
-import com.credits.common.utils.Converter;
 import com.credits.crypto.Ed25519;
 import com.credits.crypto.Md5;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
@@ -30,6 +29,13 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Date;
 import java.util.List;
+
+import static com.credits.common.utils.Converter.byteArrayToHex;
+import static com.credits.common.utils.Converter.encodeToBASE58;
+import static com.credits.common.utils.Converter.toBitSet;
+import static com.credits.common.utils.Converter.toByteArray;
+import static com.credits.common.utils.Converter.toByteArrayLittleEndian;
+import static com.credits.common.utils.Converter.toLong;
 
 /**
  * Created by Rustem Saidaliyev on 20-Mar-18.
@@ -98,28 +104,25 @@ public class ApiUtils {
 
     public static String generateSmartContractHashState(byte[] byteCode) throws CreditsException {
         byte[] hashBytes = Md5.encrypt(byteCode);
-        return Converter.byteArrayToHex(hashBytes);
+        return byteArrayToHex(hashBytes);
     }
 
     public static long createTransactionId(boolean senderIndexExists, boolean receiverIndexExists, long transactionId) {
 
-        byte[] transactionIdBytes = Converter.toByteArray(transactionId);
-        BitSet transactionIdBitSet = Converter.toBitSet(transactionIdBytes);
+        byte[] transactionIdBytes = toByteArray(transactionId);
+        BitSet transactionIdBitSet = toBitSet(transactionIdBytes);
         for (int i = 63; i > 45; i--) {
             transactionIdBitSet.set(i, false);
         }
         transactionIdBitSet.set(47, senderIndexExists);
         transactionIdBitSet.set(46, receiverIndexExists);
-        return Converter.toLong(transactionIdBitSet);
+        return toLong(transactionIdBitSet);
     }
 
     public static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(
             String sourceBase58,
             String targetBase58
     ) throws CreditsCommonException, LevelDbClientException, CreditsNodeException {
-
-        byte[] source = Converter.decodeFromBASE58(sourceBase58);
-        byte[] target = Converter.decodeFromBASE58(targetBase58);
 
         // get transactions count from Node and increment it
         Long transactionId = AppState.levelDbService.getWalletTransactionsCount(sourceBase58) + 1;
@@ -137,12 +140,12 @@ public class ApiUtils {
         Integer sourceWalletId = AppState.levelDbService.getWalletId(sourceBase58);
         if (sourceWalletId != 0) {
             sourceIndexExists = true;
-            source = Converter.toByteArrayLittleEndian(sourceWalletId, 4);
+            sourceBase58 = encodeToBASE58(toByteArrayLittleEndian(sourceWalletId, 4));
         }
         Integer targetWalletId = AppState.levelDbService.getWalletId(targetBase58);
         if (targetWalletId != 0) {
             targetIndexExists = true;
-            target = Converter.toByteArrayLittleEndian(targetWalletId, 4);
+            targetBase58 = encodeToBASE58(toByteArrayLittleEndian(targetWalletId, 4));
         }
 
         return new CalcTransactionIdSourceTargetResult(
@@ -216,7 +219,7 @@ public class ApiUtils {
         byte[] scBytes = ApiClientUtils.serializeByThrift(smartContractInvocationData);
         CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
             ApiUtils.calcTransactionIdSourceTarget(AppState.account,
-                Converter.encodeToBASE58(smartContractData.getAddress()));
+                encodeToBASE58(smartContractData.getAddress()));
 
         TransactionStruct tStruct = new TransactionStruct(calcTransactionIdSourceTargetResult.getTransactionId(),
             calcTransactionIdSourceTargetResult.getByteSource(), calcTransactionIdSourceTargetResult.getByteTarget(),
@@ -231,7 +234,7 @@ public class ApiUtils {
     private static String generatePublicKeyBase58() {
         KeyPair keyPair = Ed25519.generateKeyPair();
         PublicKey publicKey = keyPair.getPublic();
-        return Converter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey));
+        return encodeToBASE58(Ed25519.publicKeyToBytes(publicKey));
     }
 
 }

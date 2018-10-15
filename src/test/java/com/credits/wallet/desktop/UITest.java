@@ -91,4 +91,22 @@ public class UITest extends Application{
     public void start(Stage stage) throws Exception {
         correctBehavior(stage);
     }
+
+    @Test
+    @Ignore
+    public void deployForm() throws CreditsCommonException, LevelDbClientException, CreditsNodeException {
+        AppStateInitializer spyInitializer = spy(AppStateInitializer.class);
+        when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
+        LevelDbService mockLevelDbService = mock(LevelDbService.class);
+
+        //smart-contracts
+        when(mockLevelDbService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
+        when(mockLevelDbService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
+
+        doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
+
+        spyInitializer.startForm = "/fxml/smart_contract_deploy.fxml";
+        app.appStateInitializer = spyInitializer;
+        app.start(null);
+    }
 }

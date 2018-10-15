@@ -193,7 +193,7 @@ public class SmartContractController extends Controller implements Initializable
 
         this.pControls.setVisible(false);
         this.pCodePanel.setVisible(false);
-        this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel);
+        this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel, true);
         initSmartContractTree();
         this.codeArea.setEditable(false);
         this.codeArea.copy();
