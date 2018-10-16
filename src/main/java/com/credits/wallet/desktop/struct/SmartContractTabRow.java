@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop.struct;
 
-import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 
 import java.io.Serializable;
@@ -9,19 +8,19 @@ public class SmartContractTabRow implements Serializable {
 
     private static final long serialVersionUID = 4111650022718657167L;
 
-    private Label id;
+    private String id;
     private ToggleButton fav;
 
-    public SmartContractTabRow(Label label, ToggleButton fav1) {
+    public SmartContractTabRow(String label, ToggleButton fav1) {
         this.id = label;
         this.fav = fav1;
     }
 
-    public Label getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Label id) {
+    public void setId(String id) {
         this.id = id;
     }
 

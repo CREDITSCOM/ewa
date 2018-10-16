@@ -111,7 +111,7 @@ public class UITest {
 
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
 
-        spyInitializer.startForm = VistaNavigator.WALLET;
+        spyInitializer.startForm = VistaNavigator.SMART_CONTRACT;
         app.appStateInitializer = spyInitializer;
         AppState.account = walletAddress;
         AppState.objectKeeper = new ObjectKeeper<>(walletAddress+".ser");

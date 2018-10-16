@@ -19,18 +19,21 @@ import com.credits.wallet.desktop.utils.SmartContractUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.util.Callback;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.fxmisc.richtext.CodeArea;
@@ -133,6 +136,7 @@ public class SmartContractController extends Controller implements Initializable
     }
 
     private void initSmartContracts() throws CreditsCommonException, LevelDbClientException, CreditsNodeException {
+        addTooltipToColumnCells(mySmart.getColumns().get(0));
         mySmart.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
         mySmart.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
         favSmart.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -140,6 +144,23 @@ public class SmartContractController extends Controller implements Initializable
         initMySmartTab();
     }
 
+    private <T> void addTooltipToColumnCells(TableColumn<SmartContractTabRow,T> column) {
+
+        Callback<TableColumn<SmartContractTabRow, T>, TableCell<SmartContractTabRow,T>> existingCellFactory
+            = column.getCellFactory();
+
+        column.setCellFactory(c -> {
+            TableCell<SmartContractTabRow, T> cell = existingCellFactory.call(c);
+
+            Tooltip tooltip = new Tooltip();
+            // can use arbitrary binding here to make text depend on cell
+            // in any way you need:
+            tooltip.textProperty().bind(cell.itemProperty().asString());
+
+            cell.setTooltip(tooltip);
+            return cell ;
+        });
+    }
 
     private void setFavorite(ToggleButton favoriteButton, ConcurrentHashMap<String, SmartContractData> map,
         SmartContractData smartContractData) {
@@ -298,14 +319,13 @@ public class SmartContractController extends Controller implements Initializable
         smartContracts.forEach(smartContractData -> {
 
             Label label = new Label(Converter.encodeToBASE58(smartContractData.getAddress()));
-            label.setPadding(new Insets(0, 0, 0, -20));
             setSmartContractLabelEventOnClick(smartContractData, label);
 
             ToggleButton favoriteButton = new ToggleButton();
             setFavorite(favoriteButton, map, smartContractData);
 
             setFavoriteButtonEvent(favoriteButton, smartContractData);
-            mySmart.getItems().add(new SmartContractTabRow(label, favoriteButton));
+            mySmart.getItems().add(new SmartContractTabRow(label.getText(), favoriteButton));
         });
         if(this.currentSmartContract != null) {
             setFavorite(tbFavourite, map, this.currentSmartContract);
@@ -327,7 +347,7 @@ public class SmartContractController extends Controller implements Initializable
                         ToggleButton favoriteButton = new ToggleButton();
                         favoriteButton.setSelected(true);
                         setFavoriteButtonEvent(favoriteButton, smartContractData);
-                        favSmart.getItems().add(new SmartContractTabRow(label, favoriteButton));
+                        favSmart.getItems().add(new SmartContractTabRow(label.getText(), favoriteButton));
                     }
                 });
             }

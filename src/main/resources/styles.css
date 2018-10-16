@@ -392,6 +392,7 @@
 
 .credits-smart-table-view .table-row-cell:selected {
     -fx-background-color: yellow;
+    -fx-font-weight: bold;
     -fx-background-insets: 0;
     -fx-background-radius: 1;
     -fx-text-background-color: black;
