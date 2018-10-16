@@ -1,14 +1,22 @@
 package com.credits.wallet.desktop.struct;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 public class CoinTabRow implements Serializable {
 
     private static final long serialVersionUID = 4222650022718657167L;
 
     private String name;
-    private BigDecimal balance;
+    private String balance;
+    private String smartName;
+
+    public String getSmartName() {
+        return smartName;
+    }
+
+    public void setSmartName(String smartName) {
+        this.smartName = smartName;
+    }
 
     public String getName() {
         return name;
@@ -18,11 +26,11 @@ public class CoinTabRow implements Serializable {
         this.name = name;
     }
 
-    public BigDecimal getBalance() {
+    public String getBalance() {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(String balance) {
         this.balance = balance;
     }
 }

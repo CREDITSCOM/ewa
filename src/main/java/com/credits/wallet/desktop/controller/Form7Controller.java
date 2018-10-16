@@ -13,7 +13,7 @@ import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +31,15 @@ public class Form7Controller extends Controller implements Initializable {
     BorderPane bp;
 
     @FXML
-    private Label toAddress;
+    private TextField toAddress;
 
-    @FXML Label transactionData;
-
-    @FXML
-    private Label amountInCs;
+    @FXML TextField transactionData;
 
     @FXML
-    private Label transactionFeeValue;
+    private TextField amountInCs;
+
+    @FXML
+    private TextField transactionFeeValue;
 
     @FXML
     private void handleBack() {

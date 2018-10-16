@@ -7,6 +7,7 @@ import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
+import com.credits.leveldb.client.thrift.executor.APIResponse;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.testUtils.FakeData;
 import javafx.application.Platform;
@@ -96,6 +97,13 @@ public class UITest {
         AppStateInitializer spyInitializer = spy(AppStateInitializer.class);
         when(spyInitializer.loadProperties()).thenReturn(mock(Properties.class));
         LevelDbService mockLevelDbService = mock(LevelDbService.class);
+        when(mockLevelDbService.getBalance(any())).thenReturn(new BigDecimal("1000.123456789012345678"));
+        APIResponse resp = new APIResponse();
+        Variant ret_val = new Variant();
+        ret_val.setV_double(1000.12345D);
+        resp.setRet_val(ret_val);
+        when(mockLevelDbService.directExecuteSmartContract(any())).thenReturn(
+            resp);
 
         //smart-contracts
         when(mockLevelDbService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
@@ -103,7 +111,7 @@ public class UITest {
 
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
 
-        spyInitializer.startForm = VistaNavigator.SMART_CONTRACT;
+        spyInitializer.startForm = VistaNavigator.WALLET;
         app.appStateInitializer = spyInitializer;
         AppState.account = walletAddress;
         AppState.objectKeeper = new ObjectKeeper<>(walletAddress+".ser");

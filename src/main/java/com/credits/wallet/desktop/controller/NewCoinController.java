@@ -1,5 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.exception.CreditsCommonException;
+import com.credits.leveldb.client.exception.CreditsNodeException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -50,7 +53,7 @@ public class NewCoinController extends Controller implements Initializable {
     }
 
     @FXML
-    private void handleSave() {
+    private void handleSave() throws CreditsCommonException, LevelDbClientException, CreditsNodeException {
         clearLabErr();
 
         String coin = txCoin.getText().replace(";", "");

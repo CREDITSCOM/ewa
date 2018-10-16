@@ -85,11 +85,11 @@
                     <tabs>
                         <Tab text="My smart contracts">
                             <content>
-                                <Pane maxHeight="330.0" minHeight="330.0" minWidth="0.0" prefHeight="330.0" prefWidth="390.0" styleClass="credits-PaneInTab">
+                                <Pane maxHeight="330.0" maxWidth="390.0" minHeight="330.0" minWidth="390.0" prefHeight="330.0" prefWidth="390.0" styleClass="credits-PaneInTab">
                                     <children>
-                                        <TableView fx:id="mySmart" layoutX="1.0" layoutY="15.0" maxHeight="305.0" maxWidth="389.0" minHeight="290.0" minWidth="389.0" prefHeight="305.0" prefWidth="389.0" styleClass="credits-smart-table-view">
+                                        <TableView fx:id="mySmart" layoutX="7.0" layoutY="15.0" maxHeight="305.0" maxWidth="377.0" minHeight="290.0" minWidth="377.0" prefHeight="305.0" prefWidth="377.0" styleClass="credits-smart-table-view">
                                             <columns>
-                                                <TableColumn maxWidth="324.0" minWidth="324.0" prefWidth="324.0" text="C1" />
+                                                <TableColumn maxWidth="310.0" minWidth="310.0" prefWidth="310.0" text="C1" />
                                                 <TableColumn maxWidth="50.0" minWidth="50.0" prefWidth="50.0" text="C2" />
                                             </columns>
                                         </TableView>
@@ -99,11 +99,11 @@
                         </Tab>
                         <Tab onSelectionChanged="#initFavoriteTab" text="Favorites">
                             <content>
-                                <Pane maxHeight="330.0" minHeight="330.0" minWidth="0.0" prefHeight="330.0" prefWidth="390.0" styleClass="credits-PaneInTab">
+                                <Pane maxHeight="330.0" maxWidth="390.0" minHeight="330.0" minWidth="390.0" prefHeight="330.0" prefWidth="390.0" styleClass="credits-PaneInTab">
                                     <children>
-                                        <TableView fx:id="favSmart" layoutX="1.0" layoutY="15.0" maxHeight="305.0" maxWidth="388.0" minHeight="290.0" minWidth="388.0" prefHeight="305.0" prefWidth="388.0" styleClass="credits-smart-table-view">
+                                        <TableView fx:id="favSmart" layoutX="7.0" layoutY="15.0" maxHeight="305.0" maxWidth="377.0" minHeight="290.0" minWidth="377.0" prefHeight="305.0" prefWidth="377.0" styleClass="credits-smart-table-view">
                                             <columns>
-                                                <TableColumn maxWidth="324.0" minWidth="324.0" prefWidth="324.0" text="C1" />
+                                                <TableColumn maxWidth="310.0" minWidth="310.0" prefWidth="310.0" text="C1" />
                                                 <TableColumn maxWidth="50.0" minWidth="50.0" prefWidth="50.0" text="C2" />
                                             </columns>
                                         </TableView>

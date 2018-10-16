@@ -1,7 +1,9 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
+import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.leveldb.client.util.Validator;
@@ -11,9 +13,9 @@ import com.credits.wallet.desktop.struct.CoinTabRow;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
+import com.credits.wallet.desktop.utils.SmartContractUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -42,17 +44,7 @@ public class WalletController extends Controller implements Initializable {
     private static final String ERR_TO_ADDRESS = "To address must not be empty";
 
     @FXML
-    private Label labCredit;
-
-
-    @FXML
     private Label wallet;
-
-    @FXML
-    private ComboBox<String> cbCoinBalance;
-
-    @FXML
-    private Label lCoinBalance;
 
     @FXML
     BorderPane bp;
@@ -73,9 +65,6 @@ public class WalletController extends Controller implements Initializable {
     private TextField numAmount;
 
     @FXML
-    private ComboBox<String> cbCoin;
-
-    @FXML
     private TextField numFee;
 
     @FXML
@@ -85,7 +74,8 @@ public class WalletController extends Controller implements Initializable {
         if (amount.compareTo(BigDecimal.ZERO) == 0) {
             AppState.transactionFeePercent = BigDecimal.ZERO;
         } else {
-            AppState.transactionFeePercent = (transactionFeeValue.multiply(new BigDecimal("100"))).divide(amount, 18, RoundingMode.HALF_UP);
+            AppState.transactionFeePercent =
+                (transactionFeeValue.multiply(new BigDecimal("100"))).divide(amount, 18, RoundingMode.HALF_UP);
         }
     }
 
@@ -122,22 +112,24 @@ public class WalletController extends Controller implements Initializable {
 
     @FXML
     private void handleRefreshBalance() {
-        CoinsUtils.displayBalance(cbCoinBalance,lCoinBalance);
+        initializeCoinsView();
     }
 
     @FXML
     private void handleGenerate() throws CreditsException {
         AppState.amount = Converter.toBigDecimal(numAmount.getText());
         AppState.toAddress = txKey.getText();
-        AppState.coin = cbCoin.getSelectionModel().getSelectedItem();
 
         // VALIDATE
         boolean isValidationSuccessful = true;
         clearLabErr();
-        if (cbCoin.getSelectionModel().getSelectedItem() == null || cbCoin.getSelectionModel().getSelectedItem().isEmpty()) {
+        if (coins.getSelectionModel().getSelectedItem()==null ||
+            coins.getSelectionModel().getSelectedItem().getName().isEmpty()) {
             labErrorCoin.setText(ERR_COIN);
-            cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+            /*cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));*/
             isValidationSuccessful = false;
+        } else {
+            AppState.coin = coins.getSelectionModel().getSelectedItem().getName();
         }
         if (AppState.toAddress == null || AppState.toAddress.isEmpty()) {
             labErrorKey.setText(ERR_TO_ADDRESS);
@@ -174,25 +166,19 @@ public class WalletController extends Controller implements Initializable {
         coins.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("name"));
         coins.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("balance"));
 
-        CoinTabRow coinTabRow = new CoinTabRow();
-        coinTabRow.setName("CS");
-        coinTabRow.setBalance(new BigDecimal(222.22222D).setScale(13, BigDecimal.ROUND_DOWN));
-        coins.getItems().add(coinTabRow);
+        initializeCoinsView();
 
-        CoinsUtils.fillBalanceCombobox(cbCoinBalance,lCoinBalance);
-        cbCoinBalance.getSelectionModel().select(0);
         this.wallet.setText(AppState.account);
 
         FormUtils.resizeForm(bp);
         clearLabErr();
         // Fill coin list
         LevelDbServiceImpl.account = AppState.account;
-        cbCoin.getItems().clear();
-        CoinsUtils.fillBalanceCombobox(cbCoin,labCredit);
 
         this.numAmount.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                refreshTransactionFeePercent(Converter.toBigDecimal(this.numFee.getText()), Converter.toBigDecimal(newValue));
+                refreshTransactionFeePercent(Converter.toBigDecimal(this.numFee.getText()),
+                    Converter.toBigDecimal(newValue));
             } catch (CreditsException e) {
                 LOGGER.error(e.getMessage());
             }
@@ -200,7 +186,8 @@ public class WalletController extends Controller implements Initializable {
 
         this.numFee.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                refreshTransactionFeePercent(Converter.toBigDecimal(newValue), Converter.toBigDecimal(this.numAmount.getText()));
+                refreshTransactionFeePercent(Converter.toBigDecimal(newValue),
+                    Converter.toBigDecimal(this.numAmount.getText()));
             } catch (CreditsException e) {
                 LOGGER.error(e.getMessage());
             }
@@ -223,13 +210,42 @@ public class WalletController extends Controller implements Initializable {
         }
     }
 
+    private void initializeCoinsView() {
+        coins.getItems().clear();
+        CoinTabRow coinTabRow = new CoinTabRow();
+        coinTabRow.setName("CS");
+
+        try {
+            coinTabRow.setBalance(String.valueOf(
+                AppState.levelDbService.getBalance(AppState.account).setScale(13, BigDecimal.ROUND_DOWN)));
+        } catch (LevelDbClientException | CreditsNodeException | CreditsCommonException e) {
+            coinTabRow.setBalance("Receive error");
+            e.printStackTrace();
+        }
+        coins.getItems().add(coinTabRow);
+
+        CoinsUtils.getCoins().forEach((coin, smart) -> {
+            CoinTabRow tempCoinTabRow = new CoinTabRow();
+            tempCoinTabRow.setName(coin);
+            tempCoinTabRow.setSmartName(smart);
+            try {
+                tempCoinTabRow.setBalance(
+                String.valueOf(SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin))));
+            } catch (CreditsNodeException | CreditsCommonException | LevelDbClientException e) {
+                tempCoinTabRow.setBalance("Receive error");
+                e.printStackTrace();
+            }
+            coins.getItems().add(tempCoinTabRow);
+        });
+    }
+
     private void clearLabErr() {
         labErrorCoin.setText("");
         labErrorAmount.setText("");
         labErrorFee.setText("");
         labErrorKey.setText("");
 
-        cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
+        /*cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));*/
         txKey.setStyle(txKey.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
         numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
         numFee.setStyle(numFee.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));

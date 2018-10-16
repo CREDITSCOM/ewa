@@ -1,8 +1,11 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.common.exception.CreditsCommonException;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.leveldb.client.exception.CreditsNodeException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import javafx.concurrent.Task;
@@ -108,28 +111,22 @@ public class SmartContractUtils {
         return codeArea;
     }
 
-    public static BigDecimal getSmartContractBalance(String smart) {
-        try {
-            String owner = "\"" + AppState.account + "\"";
-            String method = "balanceOf";
-            List<String> params = new ArrayList<>();
-            params.add(owner);
-            SmartContractData smartContractData =
-                AppState.levelDbService.getSmartContract(smart);
-            if (smartContractData == null) {
-                FormUtils.showInfo("SmartContract not found");
-                return null;
-            }
-            smartContractData.setMethod(method);
-            smartContractData.setParams(params);
-            return new BigDecimal(AppState.levelDbService.directExecuteSmartContract(smartContractData)
-                .getRet_val()
-                .getV_double()).setScale(13, BigDecimal.ROUND_DOWN);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            FormUtils.showError(e.getMessage());
+    public static BigDecimal getSmartContractBalance(String smart)
+        throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
+        String owner = "\"" + AppState.account + "\"";
+        String method = "balanceOf";
+        List<String> params = new ArrayList<>();
+        params.add(owner);
+        SmartContractData smartContractData = AppState.levelDbService.getSmartContract(smart);
+        if (smartContractData == null) {
+            FormUtils.showInfo("SmartContract not found");
+            return null;
         }
-        return null;
+        smartContractData.setMethod(method);
+        smartContractData.setParams(params);
+        return new BigDecimal(
+            AppState.levelDbService.directExecuteSmartContract(smartContractData).getRet_val().getV_double()).setScale(
+            13, BigDecimal.ROUND_DOWN);
     }
 
     public static void transferTo(String smart, String target, BigDecimal amount) {
@@ -138,23 +135,23 @@ public class SmartContractUtils {
             List<Object> params = new ArrayList<>();
             params.add("\"" + target + "\"");
             params.add(amount);
-            SmartContractData smartContractData =
-                AppState.levelDbService.getSmartContract(smart);
+            SmartContractData smartContractData = AppState.levelDbService.getSmartContract(smart);
             if (smartContractData == null) {
                 FormUtils.showInfo("SmartContract not found");
                 return;
             }
-            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new ApiTransactionThreadRunnable.Callback() {
-                @Override
-                public void onSuccess(ApiResponseData resultData) {
-                    FormUtils.showPlatformInfo("Transfer is ok");
-                }
+            ApiUtils.executeSmartContractProcess(method, params, smartContractData,
+                new ApiTransactionThreadRunnable.Callback() {
+                    @Override
+                    public void onSuccess(ApiResponseData resultData) {
+                        FormUtils.showPlatformInfo("Transfer is ok");
+                    }
 
-                @Override
-                public void onError(Exception e) {
-                    FormUtils.showPlatformError(e.getMessage());
-                }
-            });
+                    @Override
+                    public void onError(Exception e) {
+                        FormUtils.showPlatformError(e.getMessage());
+                    }
+                });
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             FormUtils.showError(e.getMessage());

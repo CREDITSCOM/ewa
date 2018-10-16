@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,8 +34,9 @@ public class CoinsUtils {
 
     private static Map<String,String> readCoinsFromFile(Map<String,String> coins) {
         try {
-            if(Files.exists(Paths.get(AppState.account+"coins.csv"))) {
-                Files.readAllLines(Paths.get("coins.csv")).forEach(line -> {
+            String fileName = AppState.account + "coins.csv";
+            if(Files.exists(Paths.get(fileName))) {
+                Files.readAllLines(Paths.get(fileName)).forEach(line -> {
                     if (line != null && !line.trim().isEmpty()) {
                         String[] s = line.split(";");
                         coins.put(s[0], s[1]);
@@ -51,7 +51,8 @@ public class CoinsUtils {
 
     public static void saveCoinsToFile(String strToWrite) {
         try {
-            Path coinsPath = Paths.get(AppState.account+"coins.csv");
+            String fileName = AppState.account + "coins.csv";
+            Path coinsPath = Paths.get(fileName);
             List<String> strings = Collections.singletonList(strToWrite);
             Files.write(coinsPath, strings, StandardCharsets.UTF_8, StandardOpenOption.APPEND,
                 StandardOpenOption.CREATE);
@@ -77,10 +78,10 @@ public class CoinsUtils {
             new Thread(new GetBalanceUpdater(coin, label)).start();
         } else {
             if (CoinsUtils.getCoins().get(coin)!= null) {
-                BigDecimal balance = SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin));
+                /*BigDecimal balance = SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin));
                 if(balance != null) {
                     label.setText(balance.toString());
-                }
+                }*/
             }
         }
     }

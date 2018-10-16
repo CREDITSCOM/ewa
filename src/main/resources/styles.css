@@ -47,7 +47,7 @@
     -fx-font-size: 24px;}
 
 .credits-textField {
-    -fx-padding:  5 0 0 15;
+    /*-fx-padding:  5 0 0 15;*/
     -fx-background-color: #fff;
     -fx-border-width: 1;
     -fx-border-color: black;
@@ -56,7 +56,7 @@
     -fx-text-fill:black;
     -fx-border-radius: 15;
     -fx-wrap-text: true;
-    -fx-alignment: top-left;
+    /*-fx-alignment: top-left;*/
 
 }
 
@@ -71,7 +71,7 @@
 
 
 .credits-textFieldGray {
-    -fx-padding:  5 0 0 15;
+    /*-fx-padding:  5 0 0 15;*/
     -fx-background-color: #fff;
     -fx-border-width: 1;
     -fx-border-color: black;
@@ -80,7 +80,7 @@
     -fx-text-fill:black;
     -fx-border-radius: 15;
     -fx-wrap-text: true;
-    -fx-alignment: top-left;
+    /*-fx-alignment: top-left;*/
 }
 
 .credits-button {
@@ -196,11 +196,6 @@
 }
 
 
-#cbCoinBalance .combo-box-popup>.list-view {
-    -fx-pref-width: 210;
-    -fx-pref-height: 200;
-}
-
 /*SMART COMBOBOX*/
 
 #cbMethods .combo-box-popup>.list-view {
@@ -216,11 +211,6 @@
 }
 /*SMART COMBOBOX*/
 
-
-#cbCoin .combo-box-popup>.list-view {
-    -fx-pref-width: 300.0;
-    -fx-pref-height: 200;
-}
 
 /*CREDITS HISTORY*/
 
