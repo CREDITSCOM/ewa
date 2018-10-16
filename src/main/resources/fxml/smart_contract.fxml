@@ -25,7 +25,7 @@
             <children>
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contracts from blockhain" />
                 <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" text="🡰" />
-                <TabPane layoutX="490.0" layoutY="220.0" maxHeight="355.0" minHeight="340.0" prefHeight="355.0" prefWidth="800.0" style="-fx-border-radius: 15; -fx-border-radius: 15;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
+                <TabPane layoutX="490.0" layoutY="220.0" maxHeight="355.0" minHeight="340.0" prefHeight="355.0" prefWidth="800.0" style="-fx-border-radius: 15;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="Choose method">
                             <content>
@@ -79,7 +79,7 @@
                         <Button layoutX="596.0" layoutY="10.0" onAction="#handleCreate" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #E5E5E5;" styleClass="credits-button" text="Go" />
                     </children>
                 </Pane>
-                <ToggleButton layoutX="850.0" layoutY="140.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="71.0" styleClass="credits-checkbox">
+                <ToggleButton fx:id="tbFavourite" layoutX="850.0" layoutY="140.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="71.0" styleClass="credits-checkbox">
                 </ToggleButton>
                 <TabPane layoutX="20.0" layoutY="220.0" maxHeight="355.0" minHeight="355.0" prefHeight="355.0" prefWidth="390.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
@@ -97,7 +97,7 @@
                                 </Pane>
                             </content>
                         </Tab>
-                        <Tab text="Favorites">
+                        <Tab onSelectionChanged="#initFavoriteTab" text="Favorites">
                             <content>
                                 <Pane maxHeight="330.0" minHeight="330.0" minWidth="0.0" prefHeight="330.0" prefWidth="390.0" styleClass="credits-PaneInTab">
                                     <children>

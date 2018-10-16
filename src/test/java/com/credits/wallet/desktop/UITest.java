@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop;
 
 import com.credits.common.exception.CreditsCommonException;
+import com.credits.common.utils.ObjectKeeper;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
@@ -102,9 +103,11 @@ public class UITest {
 
         doReturn(mockLevelDbService).when(spyInitializer).initializeLevelDbService();
 
-        spyInitializer.startForm = VistaNavigator.HISTORY;
+        spyInitializer.startForm = VistaNavigator.SMART_CONTRACT;
         app.appStateInitializer = spyInitializer;
         AppState.account = walletAddress;
+        AppState.objectKeeper = new ObjectKeeper<>(walletAddress+".ser");
+        LevelDbServiceImpl.account = AppState.account;
         runApp();
     }
 

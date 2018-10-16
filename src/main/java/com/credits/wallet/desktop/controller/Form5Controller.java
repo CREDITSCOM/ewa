@@ -2,6 +2,7 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
+import com.credits.common.utils.ObjectKeeper;
 import com.credits.crypto.Ed25519;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -196,6 +197,7 @@ public class Form5Controller extends Controller implements Initializable {
         }
 
         if (validateKeys(pubKey, privKey)) {
+             AppState.objectKeeper = new ObjectKeeper<>(AppState.account+"_fav.ser");
             VistaNavigator.loadVista(VistaNavigator.WALLET);
         }
     }

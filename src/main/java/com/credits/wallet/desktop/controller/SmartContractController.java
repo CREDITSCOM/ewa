@@ -26,7 +26,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -43,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -54,6 +54,8 @@ public class SmartContractController extends Controller implements Initializable
     private static final String SMART_CONTRACTS = "Smart contracts";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
 
+    @FXML
+    public ToggleButton tbFavourite;
 
     @FXML
     BorderPane bp;
@@ -105,7 +107,8 @@ public class SmartContractController extends Controller implements Initializable
     private void handleSearch() {
         String address = tfSearchAddress.getText();
         try {
-            SmartContractData smartContractData = AppState.levelDbService.getSmartContract(address);
+            SmartContractData smartContractData =
+                AppState.levelDbService.getSmartContract(address);
             this.refreshFormState(smartContractData);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -113,44 +116,10 @@ public class SmartContractController extends Controller implements Initializable
         }
     }
 
-/*
-    private void saveInSmartContractTree(SmartContractData smartContractData) {
-        String contractAddress = Converter.encodeToBASE58(smartContractData.getAddress());
-
-        Map<String, TreeItem<Label>> rootItemMap = new HashMap<>();
-        this.tvContracts.getRoot().getChildren().forEach((p) -> rootItemMap.put(p.getValue().getText(), p));
-
-        TreeItem<Label> foundContractsList = rootItemMap.get(FOUND_CONTRACTS);
-        boolean newRoot = false;
-        if (foundContractsList == null) {
-            foundContractsList = new TreeItem<>(new Label(FOUND_CONTRACTS));
-            newRoot = true;
-        }
-        TreeItem<Label> personalCoontractsList = rootItemMap.get(PERSONAL_CONTRACTS);
-
-        if (notElementInList(contractAddress, personalCoontractsList)) {
-            if (notElementInList(contractAddress, foundContractsList)) {
-                Label label = new Label(contractAddress);
-                setSmartContractLabelEventOnClick(smartContractData, label);
-                foundContractsList.getChildren().add(new TreeItem<>(label));
-                if (newRoot) {
-                    this.tvContracts.getRoot().getChildren().add(foundContractsList);
-                }
-            }
-            ConcurrentHashMap<String, SmartContractData> map = new ConcurrentHashMap<>();
-            foundContractsList.getChildren().forEach((k) -> map.put(k.getValue().getText(), smartContractData));
-            AppState.objectKeeper.serialize(map);
-        }
-    }
-*/
-
-    private boolean notElementInList(String element, TreeItem<Label> contractsRootItem) {
-        return contractsRootItem.getChildren().stream().noneMatch((el) -> el.getValue().getText().equals(element));
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FormUtils.resizeForm(bp);
+        this.tbFavourite.setVisible(false);
         this.pControls.setVisible(false);
         this.pCodePanel.setVisible(false);
         this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel, true);
@@ -168,46 +137,62 @@ public class SmartContractController extends Controller implements Initializable
         mySmart.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
         favSmart.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
         favSmart.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
+        initMySmartTab();
+    }
 
-        try {
-            Map<String, SmartContractData> map = AppState.objectKeeper.deserialize();
-            if (map != null && map.size() > 0) {
-                map.forEach((k, v) -> {
-                    Label label = new Label(k);
-                    setSmartContractLabelEventOnClick(v, label);
 
-                    ToggleButton fav1 = new ToggleButton();
-                    fav1.setSelected(true);
-                    favSmart.getItems().add(new SmartContractTabRow(label, fav1));
-                });
-            }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            FormUtils.showError(e.getMessage());
+    private void setFavorite(ToggleButton favoriteButton, ConcurrentHashMap<String, SmartContractData> map,
+        SmartContractData smartContractData) {
+        String smartContractAddress = Converter.encodeToBASE58(smartContractData.getAddress());
+        if (map != null && map.size() > 0 && map.get(smartContractAddress)!=null) {
+                favoriteButton.setSelected(map.get(smartContractAddress).isFav());
+        } else {
+            favoriteButton.setSelected(false);
         }
+    }
 
-        List<SmartContractData> smartContracts = AppState.levelDbService.getSmartContracts(AppState.account);
-        smartContracts.forEach(smartContractData -> {
+    private void setFavoriteButtonEvent(ToggleButton favoriteButton, SmartContractData smartContractData) {
+        favoriteButton.setOnAction(event -> {
+            smartContractData.setFav(favoriteButton.isSelected());
+            saveFavorite(smartContractData);
+            try {
+                initMySmartTab();
+            } catch (LevelDbClientException | CreditsNodeException | CreditsCommonException e) {
+                e.printStackTrace();
+            }
+            initFavoriteTab();
 
-            Label label = new Label(Converter.encodeToBASE58(smartContractData.getAddress()));
-            label.setPadding(new Insets(0, 0, 0, -20));
-            setSmartContractLabelEventOnClick(smartContractData, label);
-
-            ToggleButton fav1 = new ToggleButton();
-            fav1.setSelected(true);
-            mySmart.getItems().add(new SmartContractTabRow(label, fav1));
         });
+    }
+
+    private void saveFavorite(SmartContractData smartContractData) {
+        String contractName = Converter.encodeToBASE58(smartContractData.getAddress());
+        ConcurrentHashMap<String, SmartContractData> map = AppState.objectKeeper.deserialize();
+        if (map != null && map.size() > 0) {
+            map.put(contractName,smartContractData);
+        } else {
+            map = new ConcurrentHashMap<>();
+            map.put(contractName,smartContractData);
+        }
+        AppState.objectKeeper.serialize(map);
+
     }
 
     private void refreshFormState(SmartContractData smartContractData) {
         if (smartContractData == null || smartContractData.getHashState().isEmpty() ||
             smartContractData.getAddress().length == 0) {
+            this.tbFavourite.setVisible(false);
             this.pControls.setVisible(false);
             this.pCodePanel.setVisible(false);
         } else {
             this.pControls.setVisible(true);
             this.pCodePanel.setVisible(true);
             this.currentSmartContract = smartContractData;
+
+            ConcurrentHashMap<String, SmartContractData> map = AppState.objectKeeper.deserialize();
+            setFavorite(tbFavourite, map, smartContractData);
+            setFavoriteButtonEvent(tbFavourite,currentSmartContract);
+            this.tbFavourite.setVisible(true);
             String sourceCode = smartContractData.getSourceCode();
             this.tfAddress.setText(Converter.encodeToBASE58(smartContractData.getAddress()));
             List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
@@ -279,36 +264,77 @@ public class SmartContractController extends Controller implements Initializable
             }
 
             SmartContractData smartContractData = this.currentSmartContract;
-            ApiUtils.executeSmartContractProcess(method, params, smartContractData,
-                new ApiTransactionThreadRunnable.Callback() {
-                    @Override
-                    public void onSuccess(ApiResponseData resultData) {
-                        Variant res = resultData.getScExecRetVal();
-                        if (res != null) {
-                            String retVal = res.toString() + '\n';
-                            LOGGER.info("Return value is {}", retVal);
-                            FormUtils.showPlatformInfo(
-                                "Execute smart contract was success: return value is: " + retVal);
-                        } else {
-                            FormUtils.showPlatformInfo("Execute smart contract was success");
-                        }
-
+            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new ApiTransactionThreadRunnable.Callback() {
+                @Override
+                public void onSuccess(ApiResponseData resultData) {
+                    Variant res = resultData.getScExecRetVal();
+                    if (res != null) {
+                        String retVal = res.toString() + '\n';
+                        LOGGER.info("Return value is {}", retVal);
+                        FormUtils.showPlatformInfo(
+                            "Execute smart contract was success: return value is: " + retVal);
+                    } else {
+                        FormUtils.showPlatformInfo("Execute smart contract was success");
                     }
 
-                    @Override
-                    public void onError(Exception e) {
-                        FormUtils.showPlatformError(e.getMessage());
-                    }
-                });
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    FormUtils.showPlatformError(e.getMessage());
+                }
+            });
         } catch (CreditsException e) {
             LOGGER.error(e.toString(), e);
             FormUtils.showError(e.toString());
         }
     }
 
-    @FXML
-    private void handleFavorite() {
+    private void initMySmartTab() throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
+        mySmart.getItems().clear();
+        List<SmartContractData> smartContracts =
+            AppState.levelDbService.getSmartContracts(AppState.account);
+        ConcurrentHashMap<String, SmartContractData> map = AppState.objectKeeper.deserialize();
+        smartContracts.forEach(smartContractData -> {
 
+            Label label = new Label(Converter.encodeToBASE58(smartContractData.getAddress()));
+            label.setPadding(new Insets(0, 0, 0, -20));
+            setSmartContractLabelEventOnClick(smartContractData, label);
+
+            ToggleButton favoriteButton = new ToggleButton();
+            setFavorite(favoriteButton, map, smartContractData);
+
+            setFavoriteButtonEvent(favoriteButton, smartContractData);
+            mySmart.getItems().add(new SmartContractTabRow(label, favoriteButton));
+        });
+        if(this.currentSmartContract != null) {
+            setFavorite(tbFavourite, map, this.currentSmartContract);
+        }
+
+    }
+
+
+    @FXML
+    private void initFavoriteTab() {
+        favSmart.getItems().clear();
+        try {
+            Map<String, SmartContractData> map = AppState.objectKeeper.deserialize();
+            if (map != null && map.size() > 0) {
+                map.forEach((smartName, smartContractData) -> {
+                    if(smartContractData.isFav()) {
+                        Label label = new Label(smartName);
+                        setSmartContractLabelEventOnClick(smartContractData, label);
+                        ToggleButton favoriteButton = new ToggleButton();
+                        favoriteButton.setSelected(true);
+                        setFavoriteButtonEvent(favoriteButton, smartContractData);
+                        favSmart.getItems().add(new SmartContractTabRow(label, favoriteButton));
+                    }
+                });
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            FormUtils.showError(e.getMessage());
+        }
     }
 
     private void setSmartContractLabelEventOnClick(SmartContractData smartContractData, Label label) {
