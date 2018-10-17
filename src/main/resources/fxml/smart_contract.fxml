@@ -89,8 +89,8 @@
                                     <children>
                                         <TableView fx:id="mySmart" layoutX="7.0" layoutY="15.0" maxHeight="305.0" maxWidth="377.0" minHeight="290.0" minWidth="377.0" prefHeight="305.0" prefWidth="317.0" styleClass="credits-smart-table-view">
                                             <columns>
-                                                <TableColumn editable="false" maxWidth="310.0" minWidth="320.0" prefWidth="310.0" text="C1" />
-                                                <TableColumn editable="false" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" text="C2" />
+                                                <TableColumn editable="false" maxWidth="310.0" minWidth="325.0" prefWidth="310.0" text="C1" />
+                                                <TableColumn editable="false" maxWidth="45.0" minWidth="45.0" prefWidth="45.0" text="C2" />
                                             </columns>
                                         </TableView>
                                     </children>
@@ -103,8 +103,8 @@
                                     <children>
                                         <TableView fx:id="favSmart" layoutX="7.0" layoutY="15.0" maxHeight="305.0" maxWidth="377.0" minHeight="290.0" minWidth="377.0" prefHeight="305.0" prefWidth="377.0" styleClass="credits-smart-table-view">
                                             <columns>
-                                                <TableColumn editable="false" maxWidth="310.0" minWidth="320.0" prefWidth="310.0" text="C1" />
-                                                <TableColumn editable="false" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" text="C2" />
+                                                <TableColumn editable="false" maxWidth="310.0" minWidth="325.0" prefWidth="310.0" text="C1" />
+                                                <TableColumn editable="false" maxWidth="50.0" minWidth="45.0" prefWidth="45.0" text="C2" />
                                             </columns>
                                         </TableView>
                                     </children>

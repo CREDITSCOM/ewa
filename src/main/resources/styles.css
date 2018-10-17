@@ -367,7 +367,6 @@
     -fx-border-width: 0 0 0 0;
     -fx-background-insets: 0;
     -fx-padding: 0;
-
 }
 
 .credits-smart-table-view .column-header,
@@ -388,7 +387,15 @@
 .credits-smart-table-view .table-row-cell{
     -fx-border-color: transparent;
     -fx-background-color: white;
-    -fx-table-cell-border-color:transparent;}
+    -fx-table-cell-border-color:transparent;
+}
+
+.credits-smart-table-view .table-row-cell .cell {
+    -fx-alignment: CENTER-LEFT;
+}
+
+.credits-smart-table-view .table-row-cell .toggle-button {
+}
 
 .credits-smart-table-view .table-row-cell:selected {
     -fx-background-color: yellow;

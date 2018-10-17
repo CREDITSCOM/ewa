@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.struct;
 
+import com.credits.leveldb.client.data.SmartContractData;
 import javafx.scene.control.ToggleButton;
 
 import java.io.Serializable;
@@ -10,10 +11,25 @@ public class SmartContractTabRow implements Serializable {
 
     private String id;
     private ToggleButton fav;
+    private SmartContractData smartContractData;
+
+    public SmartContractTabRow(String id, ToggleButton fav, SmartContractData smartContractData) {
+        this.id = id;
+        this.fav = fav;
+        this.smartContractData = smartContractData;
+    }
 
     public SmartContractTabRow(String label, ToggleButton fav1) {
         this.id = label;
         this.fav = fav1;
+    }
+
+    public SmartContractData getSmartContractData() {
+        return smartContractData;
+    }
+
+    public void setSmartContractData(SmartContractData smartContractData) {
+        this.smartContractData = smartContractData;
     }
 
     public String getId() {

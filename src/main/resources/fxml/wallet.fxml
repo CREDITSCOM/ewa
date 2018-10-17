@@ -23,8 +23,8 @@
                <children>
                   <HBox>
                      <children>
-                        <Label prefHeight="32.0" prefWidth="474.0" style="-fx-font-size: 22px;" text="My wallet:" />
-                            <Button onAction="#handleCopy" prefHeight="41.0" prefWidth="80.0" style="-fx-border-color: transparent;" styleClass="credits-button">
+                        <Label prefHeight="38.0" prefWidth="543.0" style="-fx-font-size: 26px;" text="My wallet:" />
+                            <Button onAction="#handleCopy" prefHeight="41.0" prefWidth="32.0" style="-fx-border-color: transparent;" styleClass="credits-button">
                                 <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="26.0">
                                         <Image url="@../img/copy.png" />
@@ -39,7 +39,7 @@
                      <children>
                             <Button layoutX="520.0" minHeight="16.0" minWidth="16.0" onAction="#handleRefreshBalance" prefHeight="16.0" prefWidth="16.0" style="-fx-border-color: transparent" styleClass="credits-button" />
                         <Label layoutX="-13.0" prefHeight="25.0" prefWidth="100.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="   My coins" />
-                              <ImageView fitHeight="20.0" fitWidth="26.0" layoutX="523.0" layoutY="-2.0">
+                              <ImageView fitHeight="20.0" fitWidth="26.0" layoutX="511.0" layoutY="-2.0">
                                   <Image url="@../img/refresh_black.png" />
                               </ImageView>
                      </children>
@@ -67,19 +67,28 @@
                <children>
                       <Label styleClass="credits-label" text="To address which opened on Credits (only)">
                 </Label>
-                      <TextField fx:id="txKey" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" prefWidth="605.0" promptText="key..." styleClass="credits-textField" />
+                      <TextField fx:id="txKey" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" prefWidth="605.0" promptText="Put address here" styleClass="credits-textField" />
                       <Label fx:id="labErrorKey" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" styleClass="credits-labelError" text="Label" />
                       <Label styleClass="credits-label" text="Amount">
                 </Label>
-                      <TextField fx:id="numAmount" maxHeight="45.0" minHeight="45.0" prefHeight="56.0" prefWidth="196.0" styleClass="credits-textField" />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                            <TextField fx:id="numAmount" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" prefWidth="235.0" styleClass="credits-textField" />
+                     </children>
+                  </HBox>
                       <Label fx:id="labErrorAmount" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" styleClass="credits-labelError" text="Label" />
                       <Label styleClass="credits-label" text="Transaction Fee, (CS)">
                 </Label>
-                      <TextField fx:id="numFee" editable="false" maxHeight="45.0" minHeight="45.0" prefHeight="56.0" prefWidth="196.0" styleClass="credits-textField" />
-                      <Label styleClass="credits-label" text="User field">
-                </Label>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                            <TextField fx:id="numFee" editable="false" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" prefWidth="235.0" styleClass="credits-textField" />
+                        <Label prefHeight="45.0" prefWidth="198.0" styleClass="credits-label" text="0.01 - 0.03 - Recomended" />
+                     </children>
+                  </HBox>
                       <Label fx:id="labErrorFee" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" styleClass="credits-labelError" text="Label" />
-                      <TextField maxHeight="45.0" minHeight="45.0" prefHeight="56.0" prefWidth="605.0" styleClass="credits-textField" />
+                      <Label styleClass="credits-label" text="Send text (it's not free). It is not necessary to fill in">
+                </Label>
+                      <TextField maxHeight="45.0" minHeight="45.0" prefHeight="56.0" prefWidth="605.0" promptText="Put text here" styleClass="credits-textField" />
                </children>
             </VBox>
             <Separator layoutX="620.0" layoutY="100.0" orientation="VERTICAL" prefHeight="450.0" prefWidth="0.0" />
