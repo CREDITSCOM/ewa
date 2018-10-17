@@ -394,9 +394,6 @@
     -fx-alignment: CENTER-LEFT;
 }
 
-.credits-smart-table-view .table-row-cell .toggle-button {
-}
-
 .credits-smart-table-view .table-row-cell:selected {
     -fx-background-color: yellow;
     -fx-font-weight: bold;
