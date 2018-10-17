@@ -370,14 +370,4 @@ public class SmartContractController extends Controller implements Initializable
         }
     }
 
-    private void setSmartContractLabelEventOnClick(SmartContractData smartContractData, Label label) {
-        label.setOnMousePressed(event -> {
-            if (event.isPrimaryButtonDown()) {
-                if (event.getClickCount() == 2) {
-                    this.refreshFormState(smartContractData);
-                }
-            }
-        });
-    }
-
 }
