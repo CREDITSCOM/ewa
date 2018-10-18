@@ -26,7 +26,7 @@
                         <Label prefHeight="38.0" prefWidth="543.0" style="-fx-font-size: 26px;" text="My wallet:" />
                             <Button onAction="#handleCopy" prefHeight="41.0" prefWidth="32.0" style="-fx-border-color: transparent;" styleClass="credits-button">
                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="26.0">
+                                    <ImageView fitHeight="26.0" fitWidth="26.0">
                                         <Image url="@../img/copy.png" />
                                     </ImageView>
                                 </graphic>
@@ -38,9 +38,9 @@
                   <Pane minHeight="20.0" prefHeight="26.0" prefWidth="550.0">
                      <children>
                             <Button layoutX="520.0" minHeight="16.0" minWidth="16.0" onAction="#handleRefreshBalance" prefHeight="16.0" prefWidth="16.0" style="-fx-border-color: transparent" styleClass="credits-button" />
-                        <Label layoutX="-13.0" prefHeight="25.0" prefWidth="100.0" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="   My coins" />
-                              <ImageView fitHeight="20.0" fitWidth="26.0" layoutX="511.0" layoutY="-2.0">
-                                  <Image url="@../img/refresh_black.png" />
+                        <Label layoutX="-13.0" prefHeight="25.0" prefWidth="100.0" style="-fx-font-size: 16px;" text="   My coins" />
+                              <ImageView fitHeight="32.0" fitWidth="32.0" layoutX="508.0" layoutY="-2.0">
+                                  <Image url="@../img/reload.png" />
                               </ImageView>
                      </children>
                   </Pane>

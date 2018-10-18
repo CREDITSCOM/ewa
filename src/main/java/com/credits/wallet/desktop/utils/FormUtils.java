@@ -2,8 +2,12 @@ package com.credits.wallet.desktop.utils;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 
 /**
  * Created by goncharov-eg on 26.01.2018.
@@ -57,6 +61,20 @@ public class FormUtils {
             alert.setHeaderText("Info");
             alert.setContentText(content);
             alert.showAndWait();
+        });
+    }
+
+    public static <V, T> void addTooltipToColumnCells(TableColumn<V, T> column) {
+
+        Callback<TableColumn<V, T>, TableCell<V, T>> existingCellFactory =
+            column.getCellFactory();
+
+        column.setCellFactory(c -> {
+            TableCell<V, T> cell = existingCellFactory.call(c);
+            Tooltip tooltip = new Tooltip();
+            tooltip.textProperty().bind(cell.itemProperty().asString());
+            cell.setTooltip(tooltip);
+            return cell;
         });
     }
 

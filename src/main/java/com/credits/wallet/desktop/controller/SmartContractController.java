@@ -21,19 +21,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.util.Callback;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.fxmisc.richtext.CodeArea;
@@ -138,8 +134,8 @@ public class SmartContractController extends Controller implements Initializable
 
         setRowFactory(mySmart);
         setRowFactory(favSmart);
-        addTooltipToColumnCells(mySmart.getColumns().get(0));
-        addTooltipToColumnCells(favSmart.getColumns().get(0));
+        FormUtils.addTooltipToColumnCells(mySmart.getColumns().get(0));
+        FormUtils.addTooltipToColumnCells(favSmart.getColumns().get(0));
 
         mySmart.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
         mySmart.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
@@ -157,23 +153,6 @@ public class SmartContractController extends Controller implements Initializable
                 }
             });
             return row;
-        });
-    }
-
-    private <T> void addTooltipToColumnCells(TableColumn<SmartContractTabRow, T> column) {
-
-        Callback<TableColumn<SmartContractTabRow, T>, TableCell<SmartContractTabRow, T>> existingCellFactory =
-            column.getCellFactory();
-
-        column.setCellFactory(c -> {
-            TableCell<SmartContractTabRow, T> cell = existingCellFactory.call(c);
-
-            Tooltip tooltip = new Tooltip();
-            // can use arbitrary binding here to make text depend on cell
-            // in any way you need:
-            tooltip.textProperty().bind(cell.itemProperty().asString());
-            cell.setTooltip(tooltip);
-            return cell;
         });
     }
 
@@ -287,13 +266,9 @@ public class SmartContractController extends Controller implements Initializable
             for (Node node : paramsContainerChildren) {
                 if (node instanceof TextField) {
                     String paramValue = ((TextField) node).getText();
-
                     SingleVariableDeclaration variableDeclaration = currentMethodParams.get(i);
-
                     String className = SourceCodeUtils.parseClassName(variableDeclaration);
-
                     params.add(SourceCodeUtils.createVariantObject(className, paramValue));
-
                     ++i;
                 }
 

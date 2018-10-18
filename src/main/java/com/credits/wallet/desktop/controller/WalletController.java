@@ -163,6 +163,8 @@ public class WalletController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        FormUtils.addTooltipToColumnCells(coins.getColumns().get(0));
+        FormUtils.addTooltipToColumnCells(coins.getColumns().get(1));
         coins.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("name"));
         coins.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("balance"));
 

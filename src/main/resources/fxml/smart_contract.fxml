@@ -34,7 +34,7 @@
                                     <children>
                                         <Label layoutX="15.0" layoutY="16.0" style="-fx-font-size: 18px;" styleClass="text" text="Choose method">
                                         </Label>
-                                        <ComboBox fx:id="cbMethods" layoutX="15.0" layoutY="46.0" onAction="#cbMethodsOnAction" prefHeight="56.0" prefWidth="780.0" style="-fx-font-size: 14px;" styleClass="credits-combobox" />
+                                        <ComboBox fx:id="cbMethods" layoutX="15.0" layoutY="46.0" onAction="#cbMethodsOnAction" prefHeight="56.0" prefWidth="770.0" style="-fx-font-size: 14px;" styleClass="credits-combobox" />
                                         <AnchorPane fx:id="pParams" layoutX="15.0" layoutY="120.0" prefHeight="185.0" prefWidth="350.0" visible="false">
                                             <children>
                                                 <Label layoutX="2.0" layoutY="7.0" prefHeight="27.0" prefWidth="174.0" style="-fx-font-size: 18px;" styleClass="text" text="Method parameters:">
@@ -60,13 +60,13 @@
                 </TabPane>
                 <Label layoutX="20.0" layoutY="30.0" prefHeight="60.0" prefWidth="398.0" styleClass="credits-topLabelGrayText" text="On this form you can searching and running some smart contracts from blockhain" wrapText="true" />
                 <Label layoutX="6.0" layoutY="120.0" styleClass="credits-label" text="Search smart contracts" />
-                <HBox layoutX="20.0" layoutY="150.0" minHeight="45.0" prefHeight="45.0" prefWidth="375.0" style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: black;">
+                <HBox layoutX="20.0" layoutY="150.0" minHeight="45.0" prefHeight="45.0" prefWidth="430.0" style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: black;">
                     <children>
                         <TextField fx:id="tfSearchAddress" prefHeight="45.0" prefWidth="375.0" style="-fx-background-color: transparent;" styleClass="arrow" />
-                        <Button maxHeight="40.0" minHeight="40.0" onAction="#handleSearch" prefHeight="40.0" prefWidth="50.0" style="-fx-border-color: transparent;" styleClass="credits-button">
+                        <Button maxHeight="42.0" minHeight="28.0" onAction="#handleSearch" prefHeight="42.0" prefWidth="56.0" style="-fx-border-color: transparent;" styleClass="credits-button">
                             <graphic>
                                 <ImageView fitHeight="30.0" fitWidth="30.0">
-                                    <Image url="@../img/loupe.png" />
+                                    <Image url="@../img/search.png" />
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -81,15 +81,15 @@
                 </Pane>
                 <ToggleButton fx:id="tbFavourite" layoutX="850.0" layoutY="140.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="71.0" styleClass="credits-checkbox">
                 </ToggleButton>
-                <TabPane layoutX="20.0" layoutY="220.0" maxHeight="355.0" minHeight="355.0" prefHeight="355.0" prefWidth="390.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
+                <TabPane layoutX="20.0" layoutY="220.0" maxHeight="355.0" minHeight="355.0" prefHeight="355.0" prefWidth="430.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="My smart contracts">
                             <content>
-                                <Pane maxHeight="325.0" maxWidth="390.0" minHeight="325.0" minWidth="390.0" prefHeight="325.0" prefWidth="390.0" styleClass="credits-PaneInTab">
+                                <Pane maxHeight="325.0" maxWidth="430.0" minHeight="325.0" minWidth="390.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-PaneInTab">
                                     <children>
-                                        <TableView fx:id="mySmart" layoutX="7.0" layoutY="15.0" maxHeight="305.0" maxWidth="377.0" minHeight="290.0" minWidth="377.0" prefHeight="305.0" prefWidth="317.0" styleClass="credits-smart-table-view">
+                                        <TableView fx:id="mySmart" layoutX="7.0" layoutY="15.0" maxHeight="305.0" maxWidth="417.0" minHeight="290.0" minWidth="417.0" prefHeight="305.0" prefWidth="357.0" styleClass="credits-smart-table-view">
                                             <columns>
-                                                <TableColumn editable="false" maxWidth="310.0" minWidth="325.0" prefWidth="310.0" text="C1" />
+                                                <TableColumn editable="false" maxWidth="310.0" minWidth="365.0" prefWidth="310.0" text="C1" />
                                                 <TableColumn editable="false" maxWidth="45.0" minWidth="45.0" prefWidth="45.0" text="C2" />
                                             </columns>
                                         </TableView>
@@ -99,11 +99,11 @@
                         </Tab>
                         <Tab onSelectionChanged="#initFavoriteTab" text="Favorites">
                             <content>
-                                <Pane maxHeight="325.0" maxWidth="390.0" minHeight="325.0" minWidth="390.0" prefHeight="325.0" prefWidth="390.0" styleClass="credits-PaneInTab">
+                                <Pane maxHeight="325.0" maxWidth="430.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-PaneInTab">
                                     <children>
-                                        <TableView fx:id="favSmart" layoutX="7.0" layoutY="15.0" maxHeight="305.0" maxWidth="377.0" minHeight="290.0" minWidth="377.0" prefHeight="305.0" prefWidth="377.0" styleClass="credits-smart-table-view">
+                                        <TableView fx:id="favSmart" layoutX="7.0" layoutY="15.0" maxHeight="305.0" maxWidth="417.0" minHeight="290.0" minWidth="417.0" prefHeight="305.0" prefWidth="417.0" styleClass="credits-smart-table-view">
                                             <columns>
-                                                <TableColumn editable="false" maxWidth="310.0" minWidth="325.0" prefWidth="310.0" text="C1" />
+                                                <TableColumn editable="false" maxWidth="310.0" minWidth="365.0" prefWidth="310.0" text="C1" />
                                                 <TableColumn editable="false" maxWidth="50.0" minWidth="45.0" prefWidth="45.0" text="C2" />
                                             </columns>
                                         </TableView>
@@ -113,9 +113,9 @@
                         </Tab>
                     </tabs>
                 </TabPane>
-                <Label layoutX="490.0" layoutY="120.0" style="-fx-font-size: 14px;" styleClass="text" text="Contract address">
+                <Label layoutX="490.0" layoutY="128.0" style="-fx-font-size: 14px;" styleClass="text" text="Contract address">
                 </Label>
-                <TextField fx:id="tfAddress" editable="false" layoutX="480.0" layoutY="153.0" prefHeight="32.0" prefWidth="371.0" style="-fx-background-color: transparent; -fx-background-insets: 0px; -fx-font-size: 14px;" styleClass="arrow" text="Please choose smart contract" />
+                <TextField fx:id="tfAddress" editable="false" layoutX="480.0" layoutY="157.0" prefHeight="32.0" prefWidth="371.0" style="-fx-background-color: transparent; -fx-background-insets: 0px; -fx-font-size: 14px;" styleClass="arrow" text="Please choose smart contract" />
                 <Button layoutX="1085.0" layoutY="590.0" onAction="#handleExecute" prefHeight="60.0" prefWidth="200.0" style="-fx-font-family: Times New Roman;" styleClass="credits-button" text="EXECUTE" />
             </children>
         </Pane>
