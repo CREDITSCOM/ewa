@@ -108,12 +108,12 @@
     -fx-text-fill:#2196f3;
 }
 .credits-headerButton .context-menu {
-    -fx-background-color: yellow;
+    -fx-background-color: #FFF607;
     -fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;
 }
 
 .credits-headerButton .menu-item {
-    -fx-background-color: yellow;
+    -fx-background-color: #FFF607;
 }
 /*
 .menu-button {
@@ -396,7 +396,7 @@
 }
 
 .credits-smart-table-view .table-row-cell:selected {
-    -fx-background-color: yellow;
+    -fx-background-color: #FFF607;
     -fx-font-weight: bold;
     -fx-background-insets: 0;
     -fx-background-radius: 1;

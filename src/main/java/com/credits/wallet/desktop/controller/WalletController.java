@@ -30,6 +30,7 @@ import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ResourceBundle;
 
 /**
@@ -216,10 +217,12 @@ public class WalletController extends Controller implements Initializable {
         coins.getItems().clear();
         CoinTabRow coinTabRow = new CoinTabRow();
         coinTabRow.setName("CS");
+        DecimalFormat decimalFormat = new DecimalFormat("###.00000000000000000000");
 
         try {
+
             coinTabRow.setBalance(String.valueOf(
-                AppState.levelDbService.getBalance(AppState.account).setScale(13, BigDecimal.ROUND_DOWN)));
+                decimalFormat.format(AppState.levelDbService.getBalance(AppState.account).setScale(13, BigDecimal.ROUND_DOWN))));
         } catch (LevelDbClientException | CreditsNodeException | CreditsCommonException e) {
             coinTabRow.setBalance("Receive error");
             e.printStackTrace();
@@ -232,7 +235,7 @@ public class WalletController extends Controller implements Initializable {
             tempCoinTabRow.setSmartName(smart);
             try {
                 tempCoinTabRow.setBalance(
-                String.valueOf(SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin))));
+                String.valueOf(decimalFormat.format(SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin)))));
             } catch (CreditsNodeException | CreditsCommonException | LevelDbClientException e) {
                 tempCoinTabRow.setBalance("Receive error");
                 e.printStackTrace();
