@@ -1,6 +1,6 @@
 package com.credits.general.util;
 
-import com.credits.general.exception.CreditsCommonException;
+import com.credits.general.exception.CreditsGeneralException;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -86,9 +86,9 @@ public class Base58 {
      *
      * @param input the base58-encoded string to decode
      * @return the decoded data bytes
-     * @throws CreditsCommonException
+     * @throws CreditsGeneralException
      */
-    public static byte[] decode(String input) throws CreditsCommonException {
+    public static byte[] decode(String input) throws CreditsGeneralException {
         if (input.length() == 0) {
             return new byte[0];
         }
@@ -98,7 +98,7 @@ public class Base58 {
             char c = input.charAt(i);
             int digit = c < 128 ? INDEXES[c] : -1;
             if (digit < 0) {
-                throw new CreditsCommonException("Given string id not a valid base58 string");
+                throw new CreditsGeneralException("Given string id not a valid base58 string");
             }
             input58[i] = (byte) digit;
         }
@@ -124,7 +124,7 @@ public class Base58 {
         return Arrays.copyOfRange(decoded, outputStart - zeros, decoded.length);
     }
 
-    public static BigInteger decodeToBigInteger(String input) throws CreditsCommonException {
+    public static BigInteger decodeToBigInteger(String input) throws CreditsGeneralException {
         return new BigInteger(1, decode(input));
     }
 
@@ -134,17 +134,17 @@ public class Base58 {
      * removed from the returned data.
      *
      * @param input the base58-encoded string to decode (which should include the checksum)
-     * @throws CreditsCommonException if the input is not base 58 or the checksum does not validate.
+     * @throws CreditsGeneralException if the input is not base 58 or the checksum does not validate.
      */
-    public static byte[] decodeChecked(String input) throws CreditsCommonException {
+    public static byte[] decodeChecked(String input) throws CreditsGeneralException {
         byte[] decoded  = decode(input);
         if (decoded.length < 4)
-            throw new CreditsCommonException("Input too short: " + decoded.length);
+            throw new CreditsGeneralException("Input too short: " + decoded.length);
         byte[] data = Arrays.copyOfRange(decoded, 0, decoded.length - 4);
         byte[] checksum = Arrays.copyOfRange(decoded, decoded.length - 4, decoded.length);
         byte[] actualChecksum = Arrays.copyOfRange(Sha256Hash.hashTwice(data), 0, 4);
         if (!Arrays.equals(checksum, actualChecksum))
-            throw new CreditsCommonException("Invalid checksum");
+            throw new CreditsGeneralException("Invalid checksum");
         return data;
     }
 

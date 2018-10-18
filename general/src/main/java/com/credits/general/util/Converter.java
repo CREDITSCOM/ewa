@@ -1,6 +1,6 @@
 package com.credits.general.util;
 
-import com.credits.general.exception.CreditsCommonException;
+import com.credits.general.exception.CreditsGeneralException;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 
 import java.math.BigDecimal;
@@ -146,7 +146,7 @@ public class Converter {
         return null;
     }
 
-    public static Double toDouble(Object value, Locale locale, String doubleFormat) throws CreditsCommonException {
+    public static Double toDouble(Object value, Locale locale, String doubleFormat) throws CreditsGeneralException {
         if (value instanceof String) {
             NumberFormat nf = NumberFormat.getNumberInstance(locale);
             DecimalFormat df = (DecimalFormat) nf;
@@ -154,14 +154,14 @@ public class Converter {
             try {
                 return (Double) df.parse((String) value);
             } catch (ParseException e) {
-                throw new CreditsCommonException(e);
+                throw new CreditsGeneralException(e);
             }
         }
         // TODO Добавить Byte, Short, Integer, Long, Float, BigDecimal, Boolean, Date и т.д.
         return null;
     }
 
-    public static BigDecimal toBigDecimal(Object value) throws CreditsCommonException {
+    public static BigDecimal toBigDecimal(Object value) throws CreditsGeneralException {
 
         if (value == null) {
             return BigDecimal.ZERO;
@@ -183,7 +183,7 @@ public class Converter {
             try {
                 return (BigDecimal) decimalFormat.parse(valueAsString);
             } catch (ParseException e) {
-                throw new CreditsCommonException(e);
+                throw new CreditsGeneralException(e);
             }
         }
 
@@ -216,7 +216,7 @@ public class Converter {
         return Base58.encode(bytes);
     }
 
-    public static byte[] decodeFromBASE58(String string) throws CreditsCommonException {
+    public static byte[] decodeFromBASE58(String string) throws CreditsGeneralException {
         return Base58.decode(string);
     }
 

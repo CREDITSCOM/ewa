@@ -7,8 +7,8 @@ import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.generated.Variant;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.thrift.generate.Variant;
 import com.credits.general.util.Const;
 import com.credits.general.util.Converter;
 import com.credits.client.node.exception.NodeClientException;
@@ -31,7 +31,7 @@ import java.util.Locale;
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
  */
-public class ClientConverter {
+public class NodePojoConverter {
 
     public static Double amountToDouble(Amount amount) {
 
@@ -60,7 +60,7 @@ public class ClientConverter {
         String separator = Character.toString(sep);
 
         if (fractionPartAsString.contains(separator)) {
-            String[] valueDelimited = fractionPartAsString.split("\\" + separator);
+            String[] valueDelimited = fractionPartAsString.split("\\" + separator); //FIXME ???
             fractionPartAsString = valueDelimited[1];
         } else {
             fractionPartAsString = "0";
@@ -97,7 +97,7 @@ public class ClientConverter {
         String separator = Character.toString(sep);
 
         if (valueAsString.contains(separator)) {
-            String[] valueDelimited = valueAsString.split("\\" + separator);
+            String[] valueDelimited = valueAsString.split("\\" + separator); //FIXME ???
             integral = Integer.valueOf(valueDelimited[0]);
             String fractionAsString = String.format("%-18s", valueDelimited[1]).replace(' ', '0');
             fraction = Long.valueOf(fractionAsString);
@@ -114,12 +114,12 @@ public class ClientConverter {
         Transaction trxn = sealedTransaction.getTrxn();
         TransactionData data = new TransactionData();
         Long innerId = trxn.getId();
-        data.setAmount(ClientConverter.amountToBigDecimal(trxn.getAmount()));
+        data.setAmount(NodePojoConverter.amountToBigDecimal(trxn.getAmount()));
         data.setCurrency(trxn.getCurrency());
         data.setId(innerId);
         data.setSource(trxn.getSource());
         data.setTarget(trxn.getTarget());
-        data.setBalance(ClientConverter.amountToBigDecimal(trxn.getBalance()));
+        data.setBalance(NodePojoConverter.amountToBigDecimal(trxn.getBalance()));
         return data;
     }
 
@@ -129,7 +129,7 @@ public class ClientConverter {
         if(trxn.getAmount() == null) {
             data.setAmount(BigDecimal.ZERO);
         } else {
-            data.setAmount(ClientConverter.amountToBigDecimal(trxn.getAmount()));
+            data.setAmount(NodePojoConverter.amountToBigDecimal(trxn.getAmount()));
         }        data.setCurrency(trxn.getCurrency());
         data.setId(innerId);
         data.setSource(trxn.getSource());
@@ -137,7 +137,7 @@ public class ClientConverter {
         if(trxn.getBalance() == null) {
             data.setBalance(BigDecimal.ZERO);
         } else {
-            data.setBalance(ClientConverter.amountToBigDecimal(trxn.getBalance()));
+            data.setBalance(NodePojoConverter.amountToBigDecimal(trxn.getBalance()));
         }
         return data;
     }
@@ -147,7 +147,7 @@ public class ClientConverter {
 
         WalletData data = new WalletData(
                 walletData.getWalletId(),
-                ClientConverter.amountToBigDecimal(walletData.getBalance()),
+                NodePojoConverter.amountToBigDecimal(walletData.getBalance()),
                 walletData.getLastTransactionId()
         );
 
@@ -195,7 +195,7 @@ public class ClientConverter {
         List<Variant> params = new ArrayList<>();
 
         smartContractInvocationData.getParams().forEach(object -> {
-            params.add(ClientConverter.objectToVariant(object));
+            params.add(NodePojoConverter.objectToVariant(object));
         });
 
         SmartContractInvocation smartContractInvocation = new SmartContractInvocation(

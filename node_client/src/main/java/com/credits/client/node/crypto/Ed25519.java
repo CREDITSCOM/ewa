@@ -1,7 +1,10 @@
-package com.credits.general.crypto;
+package com.credits.client.node.crypto;
 
+import com.credits.client.node.exception.NodeClientException;
+import com.credits.client.node.thrift.Amount;
+import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.crypto.exception.CreditsCryptoException;
-import com.credits.general.exception.GeneralClientException;
+import com.credits.general.util.Converter;
 import com.credits.general.util.Utils;
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;
@@ -15,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -77,35 +81,33 @@ public class Ed25519 {
         return new EdDSAPrivateKey(key);
     }
 
-    //TODO implement that
     public static String generateSignOfTransaction(String innerId, String source, String target, BigDecimal amount,
-        BigDecimal balance, byte currency, PrivateKey privateKey) throws GeneralClientException {
+        BigDecimal balance, byte currency, PrivateKey privateKey) throws NodeClientException {
 
-//        Amount amountValue = LevelDbClientConverter.bigDecimalToAmount(amount);
-//
-//        Integer amountIntegral = amountValue.getIntegral();
-//        Long amountFraction = amountValue.getFraction();
-//
-//        Amount balanceValue = LevelDbClientConverter.bigDecimalToAmount(balance);
-//
-//        Integer balanceIntegral = balanceValue.getIntegral();
-//        Long balanceFraction = balanceValue.getFraction();
-//
-//        String transaction =
-//            String.format("%s|%s|%s|%s:%s|%s:%s|%s", innerId, source, target, Converter.toString(amountIntegral),
-//                Converter.toString(amountFraction), Converter.toString(balanceIntegral),
-//                Converter.toString(balanceFraction), currency);
-//
-//        LOGGER.debug("Signing the message [{}]", transaction);
-//        byte[] signature;
-//        try {
-//            signature = Ed25519.sign(transaction.getBytes(StandardCharsets.US_ASCII), privateKey);
-//        } catch (CreditsCryptoException e) {
-//            throw new LevelDbClientException(e);
-//        }
+        Amount amountValue = NodePojoConverter.bigDecimalToAmount(amount);
 
-//        return Converter.encodeToBASE58(signature);
-        return "";
+        Integer amountIntegral = amountValue.getIntegral();
+        Long amountFraction = amountValue.getFraction();
+
+        Amount balanceValue = NodePojoConverter.bigDecimalToAmount(balance);
+
+        Integer balanceIntegral = balanceValue.getIntegral();
+        Long balanceFraction = balanceValue.getFraction();
+
+        String transaction =
+            String.format("%s|%s|%s|%s:%s|%s:%s|%s", innerId, source, target, Converter.toString(amountIntegral),
+                Converter.toString(amountFraction), Converter.toString(balanceIntegral),
+                Converter.toString(balanceFraction), currency);
+
+        LOGGER.debug("Signing the message [{}]", transaction);
+        byte[] signature;
+        try {
+            signature = Ed25519.sign(transaction.getBytes(StandardCharsets.US_ASCII), privateKey);
+        } catch (CreditsCryptoException e) {
+            throw new NodeClientException(e);
+        }
+
+        return Converter.encodeToBASE58(signature);
     }
 
     public static byte[] publicKeyToBytes(PublicKey publicKey) {

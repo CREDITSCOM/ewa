@@ -1,7 +1,10 @@
-package com.credits.general.util;
+package com.credits.client.node.util;
 
-import com.credits.general.crypto.Ed25519;
+import com.credits.client.node.crypto.Ed25519;
+import com.credits.client.node.pojo.CreateTransactionData;
 import com.credits.general.exception.GeneralClientException;
+import com.credits.general.util.Converter;
+import com.credits.general.util.Utils;
 
 import java.math.BigDecimal;
 
@@ -36,21 +39,20 @@ public class Validator {
         }
     }
 
-    //TODO move to node general
-//    public static void validateCreateTransactionData(CreateTransactionData createTransactionData) throws GeneralClientException {
-//
-//        if (Utils.isEmpty(createTransactionData.getSource())) {
-//            throw new GeneralClientException("account is empty");
+    public static void validateCreateTransactionData(CreateTransactionData createTransactionData) throws GeneralClientException {
+
+        if (Utils.isEmpty(createTransactionData.getSource())) {
+            throw new GeneralClientException("account is empty");
+        }
+        if (Utils.isEmpty(createTransactionData.getTarget())) {
+            throw new GeneralClientException("target is empty");
+        }
+//        if (Utils.isEmpty(createTransactionData.getSignature())) {
+//            throw new NodeClientException("signature is empty");
 //        }
-//        if (Utils.isEmpty(createTransactionData.getTarget())) {
-//            throw new GeneralClientException("target is empty");
-//        }
-////        if (Utils.isEmpty(createTransactionData.getSignature())) {
-////            throw new NodeClientException("signature is empty");
-////        }
-//        validateTransactionAmount(createTransactionData.getAmount());
-//        validateTransactionBalance(createTransactionData.getBalance());
-//    }
+        validateTransactionAmount(createTransactionData.getAmount());
+        validateTransactionBalance(createTransactionData.getBalance());
+    }
 
     public static void validateTransactionAmount(BigDecimal amount) throws GeneralClientException {
 
