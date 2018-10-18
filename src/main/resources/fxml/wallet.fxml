@@ -48,8 +48,8 @@
                      <children>
                         <TableView fx:id="coins" layoutX="1.0" layoutY="14.0" maxHeight="305.0" maxWidth="548.0" minHeight="144.0" minWidth="389.0" prefHeight="219.0" prefWidth="548.0" styleClass="credits-smart-table-view">
                            <columns>
-                              <TableColumn maxWidth="324.0" minWidth="380.0" prefWidth="318.0" text="C1" />
-                              <TableColumn maxWidth="50.0" minWidth="150.0" prefWidth="50.0" text="C2" />
+                              <TableColumn maxWidth="324.0" minWidth="280.0" prefWidth="318.0" text="C1" />
+                              <TableColumn maxWidth="50.0" minWidth="220.0" prefWidth="50.0" text="C2" />
                            </columns>
                         </TableView>
                      </children>
@@ -59,8 +59,8 @@
                 <Button layoutX="20.0" layoutY="580.0" onAction="#handleLogout" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
                 <Button layoutX="20.0" layoutY="484.0" onAction="#handleAddCoin" prefHeight="45.0" prefWidth="177.0" style="-fx-background-color: #404040; -fx-text-fill: white;" styleClass="credits-button" text="Make new coin" />
 
-                <Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText" text="Wallet" />
-                <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText" text="On this form you can make payments in the Credits platform" />
+                <Label layoutX="20.0" styleClass="credits-topLabelText" text="Wallet" />
+                <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can make payments in the Credits platform" />
                 <Button fx:id="btnBack" layoutX="1036.0" layoutY="580.0" onAction="#handleGenerate" prefHeight="60.0" prefWidth="250.0" styleClass="credits-button" text="GENERATE TRANSACTION" />
                 <Label fx:id="labErrorCoin" alignment="CENTER" contentDisplay="CENTER" layoutX="362.0" layoutY="492.0" prefHeight="30.0" prefWidth="208.0" styleClass="credits-labelError" text="Coin must be selected" />
             <VBox layoutX="650.0" layoutY="100.0" maxHeight="450.0" minHeight="450.0" prefHeight="450.0" prefWidth="615.0">
@@ -82,7 +82,7 @@
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
                             <TextField fx:id="numFee" editable="false" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" prefWidth="235.0" styleClass="credits-textField" />
-                        <Label prefHeight="45.0" prefWidth="198.0" styleClass="credits-label" text="0.01 - 0.03 - Recomended" />
+                        <Label prefHeight="45.0" prefWidth="350.0" styleClass="credits-label" text="0.01 - 0.03 - Recomended" />
                      </children>
                   </HBox>
                       <Label fx:id="labErrorFee" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" styleClass="credits-labelError" text="Label" />

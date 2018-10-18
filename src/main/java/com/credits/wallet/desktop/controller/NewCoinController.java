@@ -15,11 +15,6 @@ import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -97,14 +92,6 @@ public class NewCoinController extends Controller implements Initializable {
         public void initialize(URL location, ResourceBundle resources) {
             FormUtils.resizeForm(bp);
             clearLabErr();
-
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        try {
-            String token = (String) clipboard.getData(DataFlavor.stringFlavor);
-            txToken.setText(token);
-        } catch (UnsupportedFlavorException | IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
     }
 
     private void clearLabErr() {

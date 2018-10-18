@@ -99,9 +99,10 @@
 .credits-headerButton {
     -fx-font-weight: bold;
     -fx-background-color:  transparent;
-    -fx-font-size: 14px;
+    -fx-font-size: 16px;
     -fx-alignment: center;
 }
+
 
 .credits-headerButton:hover {
     -fx-text-fill:#2196f3;
@@ -132,7 +133,7 @@
 }
 
 .credits-button:hover{
-    -fx-font-veight: bold;
+    -fx-font-weight: bold;
     -fx-background-color: white;
     -fx-background-radius: 22;
     -fx-font-size: 16;
@@ -412,4 +413,14 @@
 .styled-text-area .paragraph-box .label {
     -fx-background-color: white;
     -fx-font-weight: bold;
+}
+
+.credits-welcome-column-top-label {
+    -fx-font-size:16px;
+    -fx-font-weight: bold;
+}
+
+.credits-welcome-column-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #808080;
 }

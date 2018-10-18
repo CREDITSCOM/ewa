@@ -15,15 +15,15 @@
     <center>
         <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
-                <Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText" text="Save your private key to Credits account">
+                <Label layoutX="20.0" styleClass="credits-topLabelText" text="Save your private key to Credits account">
                     <font>
                         <Font size="14.0" />
                     </font>
                 </Label>
-                <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText" text="On this form you can open the wallet and make payments in the Credits platform" />
-                <Button layoutX="550.0" layoutY="350.0" onAction="#handleContinue" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Continue" />
-                <Button layoutX="20.0" layoutY="350.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
-                <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="90.0" prefWidth="885.0">
+                <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can open the wallet and make payments in the Credits platform" />
+                <Button layoutX="555.0" layoutY="360.0" onAction="#handleContinue" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Continue" />
+                <Button layoutX="20.0" layoutY="360.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
+                <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="108.0" prefHeight="105.0" prefWidth="885.0">
                     <children>
                         <VBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="83.0" prefWidth="500.0">
                             <children>

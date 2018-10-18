@@ -9,44 +9,36 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<BorderPane maxHeight="40.0" minHeight="40.0" prefWidth="1300.0" style="-fx-background-color: #FFFF33;"
-            BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.credits.wallet.desktop.controller.HeaderController">
+<BorderPane maxHeight="40.0" minHeight="40.0" prefWidth="1300.0" style="-fx-background-color: #FFFF33;" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.HeaderController">
     <center>
-        <Pane maxHeight="40.0" maxWidth="1300.0" minHeight="70.0" minWidth="0.0" prefHeight="40.0" prefWidth="1300.0"
-              BorderPane.alignment="CENTER">
+        <Pane maxHeight="40.0" maxWidth="1300.0" minHeight="70.0" minWidth="0.0" prefHeight="40.0" prefWidth="1300.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox layoutX="-15.0" layoutY="-15.0"/>
-                <Button fx:id="btnWallet" onAction="#handleWallet" layoutX="20.0" layoutY="20.0" prefWidth="100.0"
-                        styleClass="credits-headerButton" text="Wallet">
+                <HBox layoutX="-15.0" layoutY="-15.0" />
+                <Button fx:id="btnWallet" layoutX="10.0" layoutY="20.0" onAction="#handleWallet" prefWidth="100.0" styleClass="credits-headerButton" text="Wallet">
                 </Button>
-                <Button fx:id="btnTransaction" onAction="#handleTransaction" alignment="CENTER" contentDisplay="CENTER"
-                        layoutX="170.0" layoutY="20.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0"
-                        prefWidth="100.0" style="-fx-line-spacing: -5;" styleClass="credits-headerButton"
-                        text="Transactions history" textAlignment="CENTER" wrapText="true">
+                <Button fx:id="btnTransaction" alignment="CENTER" contentDisplay="CENTER" layoutX="110.0" layoutY="15.0" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleTransaction" prefHeight="40.0" prefWidth="120.0" style="-fx-line-spacing: -5;" styleClass="credits-headerButton" text="Transactions history" textAlignment="CENTER" wrapText="true">
                     <padding>
-                        <Insets bottom="-4.0" top="-10.0"/>
+                        <Insets bottom="-4.0" top="-10.0" />
                     </padding>
                 </Button>
-                <MenuButton layoutX="320.0" layoutY="20.0" styleClass="credits-headerButton" text="Smart contracts">
+                <MenuButton layoutX="225.0" layoutY="20.0" styleClass="credits-headerButton" text="Smart contracts">
                     <items>
                         <MenuItem>
                             <graphic>
-                                <Button fx:id="btnSmartExecute" onAction="#handleSmartExecute" styleClass="credits-headerButton" text="Execute smart"/>
+                                <Button fx:id="btnSmartExecute" onAction="#handleSmartExecute" styleClass="credits-headerButton" text="Execute smart" />
                             </graphic>
                         </MenuItem>
                         <MenuItem>
                             <graphic>
-                                <Button fx:id="btnSmartDeploy" onAction="#handleSmartDeploy" styleClass="credits-headerButton" text="Deploy new smart"/>
+                                <Button fx:id="btnSmartDeploy" onAction="#handleSmartDeploy" styleClass="credits-headerButton" text="Deploy new smart" />
                             </graphic>
                         </MenuItem>
                     </items>
                 </MenuButton>
-                <Button fx:id="btnLogout" onAction="#handleLogout" layoutX="1200.0" layoutY="20.0"
-                        styleClass="credits-headerButton" text="Logout">
+                <Button fx:id="btnLogout" layoutX="1200.0" layoutY="20.0" onAction="#handleLogout" styleClass="credits-headerButton" text="Logout">
                     <graphic>
                         <ImageView fitHeight="15.0" fitWidth="15.0">
-                            <Image url="@../img/logout.png"/>
+                            <Image url="@../img/logout.png" />
                         </ImageView>
                     </graphic>
                 </Button>

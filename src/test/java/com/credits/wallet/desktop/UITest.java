@@ -106,6 +106,7 @@ public class UITest {
             resp);
 
         //smart-contracts
+        when(mockLevelDbService.getTransactions(any(), anyLong(), anyLong())).thenReturn(FakeData.transactionsDataList);
         when(mockLevelDbService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
         when(mockLevelDbService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
 

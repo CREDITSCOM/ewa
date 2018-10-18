@@ -14,8 +14,8 @@
 	<center>
 		<Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
 			<children>
-				<Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText" text="New coin" />
-				<Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText" text="On this form you can add new coin for smart contract" />
+				<Label layoutX="20.0" styleClass="credits-topLabelText" text="New coin" />
+				<Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can add new coin for smart contract" />
 				<Button layoutX="20.0" layoutY="350.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
 				<Button layoutX="555.0" layoutY="350.0" onAction="#handleSave" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="SAVE" />
             <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="90.0" prefWidth="885.0">

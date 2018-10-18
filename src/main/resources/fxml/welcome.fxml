@@ -8,134 +8,92 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER"
-            xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.credits.wallet.desktop.controller.WelcomeController">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.WelcomeController">
     <top>
-        <fx:include source="header_empty.fxml"/>
+        <fx:include source="header_empty.fxml" />
     </top>
     <center>
         <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
-                <Label layoutX="20.0" layoutY="20.0" styleClass="credits-topLabelText"
-                       text="Welcome to Credits wallet"/>
-                <Label layoutX="20.0" layoutY="50.0" styleClass="credits-topLabelGrayText"
-                       text="On this form you can open the wallet and make payments in the Credits platform"/>
-                <Button layoutX="390.0" layoutY="154.0"  onAction="#handleExistingAccount"
-                        prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Sign in">
+                <Label layoutX="20.0" styleClass="credits-topLabelText" text="Welcome to Credits wallet" />
+                <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can open the wallet and make payments in the Credits platform" />
+                <Button layoutX="390.0" layoutY="130.0" onAction="#handleExistingAccount" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Sign in">
                 </Button>
-                <Label layoutX="614.0" layoutY="175.0" style="-fx-font-weight: bold;" styleClass="credits-label"
-                       text="or"/>
-                <Button layoutX="666.0" layoutY="155.0"  onAction="#handleNewAccount"
-                        prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Create new account"/>
-                <GridPane layoutX="20.0" layoutY="270.0" prefHeight="130.0" prefWidth="1250.0">
+                <Label layoutX="604.0" layoutY="145.0" style="-fx-font-weight: bold;" styleClass="credits-label" text="or" />
+                <Button layoutX="666.0" layoutY="130.0" onAction="#handleNewAccount" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Create new account" />
+                <GridPane layoutX="20.0" layoutY="254.0" prefHeight="130.0" prefWidth="1250.0">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="450.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="450.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="23.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="500.0" minHeight="10.0" prefHeight="107.0" vgrow="SOMETIMES"/>
+                        <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="23.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="500.0" minHeight="10.0" prefHeight="107.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="330.0"
-                               text="Speed of transactions" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="330.0" styleClass="credits-welcome-column-top-label" text="Speed of transactions" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                             <font>
-                                <Font name="System Bold" size="14.0"/>
+                                <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" text="Transaction fees"
-                               GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" styleClass="credits-welcome-column-top-label" text="Transaction fees" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                             <font>
-                                <Font name="System Bold" size="14.0"/>
+                                <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="330.0"
-                               text="The amount of processing" GridPane.columnIndex="2" GridPane.halignment="CENTER"
-                               GridPane.valignment="CENTER">
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="330.0" styleClass="credits-welcome-column-top-label" text="The amount of processing" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                             <font>
-                                <Font name="System Bold" size="14.0"/>
+                                <Font name="System Bold" size="14.0" />
                             </font>
                         </Label>
-                        <Label prefHeight="60.0" prefWidth="330.0"
-                               text="Lightning-fast processing times for payments and transactions. Around a little as 0.1 second per transaction. "
-                               textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="1"
-                               GridPane.valignment="TOP">
+                        <Label prefHeight="80.0" prefWidth="380.0" style="-fx-font-size: 16;" styleClass="credits-welcome-column-label" text="Lightning-fast processing times for payments and transactions. Around a little as 0.1 second per transaction. " textAlignment="CENTER" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
                             <font>
-                                <Font size="14.0"/>
+                                <Font size="14.0" />
                             </font>
                         </Label>
-                        <Label prefHeight="60.0" prefWidth="330.0"
-                               text="Inexpensive transaction fees. As low as about 0.001 USD per transaction. Suitable for micropayments and IOT"
-                               textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1"
-                               GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                        <Label prefHeight="80.0" prefWidth="380.0" style="-fx-font-size: 16;" styleClass="credits-welcome-column-label" text="Inexpensive transaction fees. As low as about 0.001 USD per transaction. Suitable for micropayments and IOT" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
                             <font>
-                                <Font size="14.0"/>
+                                <Font size="14.0" />
                             </font>
                         </Label>
-                        <Label prefHeight="60.0" prefWidth="330.0"
-                               text="Might be executed more than 1,000,000 transactions per second, with future scalability to 10,000,000 per second"
-                               textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2"
-                               GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                        <Label prefHeight="80.0" prefWidth="380.0" style="-fx-font-size: 16;" styleClass="credits-welcome-column-label" text="Might be executed more than 1,000,000 transactions per second, with future scalability to 10,000,000 per second" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
                             <font>
-                                <Font size="14.0"/>
+                                <Font size="14.0" />
                             </font>
                         </Label>
                     </children>
                 </GridPane>
-                <Label layoutX="20.0" layoutY="370.0" text="What is CREDITS">
+                <Label layoutX="20.0" layoutY="372.0" styleClass="credits-welcome-column-top-label" text="What is CREDITS">
                     <font>
-                        <Font name="System Bold" size="14.0"/>
+                        <Font name="System Bold" size="14.0" />
                     </font>
                 </Label>
-                <GridPane layoutX="20.0" layoutY="390.0" prefWidth="1250.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="100.0" prefWidth="100.0"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="60.0" minHeight="0.0" prefHeight="40.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES"/>
-                    </rowConstraints>
-                    <children>
-                        <Label text="CREDITS is a new digital cryptocurrency and also a payment system, built on the principles of blockchain. It works without a central bank or single administrator, acting as a peer-to-peer decentralized network. The highest level of security is based on the principles of cryptography."
-                               wrapText="true">
-                            <font>
-                                <Font size="14.0"/>
-                            </font>
-                        </Label>
-                        <Label text="The CREDITS cryptocurrency is a new unique technological development characterized by having a very high speed of payment execution (averages less than a second) and a low fee per transaction. This is a completely new independent platform development by the CREDITS project team."
-                               wrapText="true" GridPane.rowIndex="1">
-                            <font>
-                                <Font size="14.0"/>
-                            </font>
-                        </Label>
-                        <Label text="All details about transactions 0005 ring between addresses on the system are available to view. Using the service Monitor (http://monitorcredits.com) you can verify a transaction. Electronic payment between two parties takes place without intermediaries and is irreversible — there is no mechanism to cancel the confirmed transaction."
-                               wrapText="true" GridPane.rowIndex="2">
-                            <font>
-                                <Font size="14.0"/>
-                            </font>
-                        </Label>
-                        <Label text="The CREDITS Wallet is a browser-based application executable on the user's browser-side. All data is stored and processed in the user's browser &amp; transmitted directly to the network. By doing this, data is not stored on any server. In the case of a password-access key access being lost, the account will be lost."
-                               wrapText="true" GridPane.rowIndex="3">
-                            <font>
-                                <Font size="14.0"/>
-                            </font>
-                        </Label>
-                        <Label text="On the CREDITS platform it is possible through programming to implement options of smart contracts for the inssurance of tokens and the creation of various services built on the principles of blockchain. Legal information "
-                               wrapText="true" GridPane.rowIndex="4">
-                            <font>
-                                <Font size="14.0"/>
-                            </font>
-                        </Label>
-                    </children>
-                </GridPane>
-
-
+                  <Label layoutX="20.0" layoutY="394.0" prefHeight="50.0" prefWidth="1200.0" styleClass="credits-welcome-column-label" text="CREDITS is a new digital cryptocurrency and also a payment system, built on the principles of blockchain. It works without a central bank or single administrator, acting as a peer-to-peer decentralized network. The highest level of security is based on the principles of cryptography." wrapText="true">
+                      <font>
+                          <Font size="14.0" />
+                      </font>
+                  </Label>
+                  <Label layoutX="20.0" layoutY="434.0" prefHeight="50.0" prefWidth="1200.0" styleClass="credits-welcome-column-label" text="The CREDITS cryptocurrency is a new unique technological development characterized by having a very high speed of payment execution (averages less than a second) and a low fee per transaction. This is a completely new independent platform development by the CREDITS project team." wrapText="true">
+                      <font>
+                          <Font size="14.0" />
+                      </font>
+                  </Label>
+                  <Label layoutX="20.0" layoutY="474.0" prefHeight="50.0" prefWidth="1200.0" styleClass="credits-welcome-column-label" text="All details about transactions 0005 ring between addresses on the system are available to view. Using the service Monitor (http://monitorcredits.com) you can verify a transaction. Electronic payment between two parties takes place without intermediaries and is irreversible — there is no mechanism to cancel the confirmed transaction." wrapText="true">
+                      <font>
+                          <Font size="14.0" />
+                      </font>
+                  </Label>
+                  <Label layoutX="20.0" layoutY="514.0" prefHeight="50.0" prefWidth="1200.0" styleClass="credits-welcome-column-label" text="The CREDITS Wallet is a browser-based application executable on the user's browser-side. All data is stored and processed in the user's browser &amp; transmitted directly to the network. By doing this, data is not stored on any server. In the case of a password-access key access being lost, the account will be lost." wrapText="true">
+                      <font>
+                          <Font size="14.0" />
+                      </font>
+                  </Label>
+                  <Label layoutX="20.0" layoutY="554.0" prefHeight="50.0" prefWidth="1200.0" styleClass="credits-welcome-column-label" text="On the CREDITS platform it is possible through programming to implement options of smart contracts for the inssurance of tokens and the creation of various services built on the principles of blockchain." wrapText="true">
+                      <font>
+                          <Font size="14.0" />
+                      </font>
+                  </Label>
             </children>
         </Pane>
     </center>

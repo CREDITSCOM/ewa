@@ -181,7 +181,7 @@ public class SmartContractController extends Controller implements Initializable
         SmartContractData smartContractData) {
         String smartContractAddress = smartContractData.getStringAddress();
         if (map != null && map.size() > 0 && map.get(smartContractAddress) != null) {
-            favoriteButton.setSelected(map.get(smartContractAddress).isFav());
+            favoriteButton.setSelected(map.get(smartContractAddress).isFavorite());
         } else {
             favoriteButton.setSelected(false);
         }
@@ -189,7 +189,7 @@ public class SmartContractController extends Controller implements Initializable
 
     private void setFavoriteButtonEvent(ToggleButton favoriteButton, SmartContractData smartContractData) {
         favoriteButton.setOnAction(event -> {
-            smartContractData.setFav(favoriteButton.isSelected());
+            smartContractData.setFavorite(favoriteButton.isSelected());
             saveFavorite(smartContractData);
             try {
                 initMySmartTab();
@@ -354,7 +354,7 @@ public class SmartContractController extends Controller implements Initializable
             Map<String, SmartContractData> map = AppState.objectKeeper.deserialize();
             if (map != null && map.size() > 0) {
                 map.forEach((smartName, smartContractData) -> {
-                    if (smartContractData.isFav()) {
+                    if (smartContractData.isFavorite()) {
                         ToggleButton favoriteButton = new ToggleButton();
                         favoriteButton.setSelected(true);
                         setFavoriteButtonEvent(favoriteButton, smartContractData);

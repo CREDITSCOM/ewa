@@ -29,7 +29,7 @@
                     <tabs>
                         <Tab text="Choose method">
                             <content>
-                                <Pane maxHeight="330.0" maxWidth="800.0" minHeight="330.0" minWidth="800.0" prefHeight="330.0" prefWidth="800.0" styleClass="credits-PaneInTab">
+                                <Pane maxHeight="325.0" maxWidth="800.0" minHeight="325.0" minWidth="800.0" prefHeight="325.0" prefWidth="800.0" styleClass="credits-PaneInTab">
                                 <Pane fx:id="pControls" maxHeight="325.0" maxWidth="800.0" minHeight="325.0" minWidth="800.0" prefHeight="325.0" prefWidth="800.0">
                                     <children>
                                         <Label layoutX="15.0" layoutY="16.0" style="-fx-font-size: 18px;" styleClass="text" text="Choose method">
@@ -85,7 +85,7 @@
                     <tabs>
                         <Tab text="My smart contracts">
                             <content>
-                                <Pane maxHeight="330.0" maxWidth="390.0" minHeight="330.0" minWidth="390.0" prefHeight="330.0" prefWidth="390.0" styleClass="credits-PaneInTab">
+                                <Pane maxHeight="325.0" maxWidth="390.0" minHeight="325.0" minWidth="390.0" prefHeight="325.0" prefWidth="390.0" styleClass="credits-PaneInTab">
                                     <children>
                                         <TableView fx:id="mySmart" layoutX="7.0" layoutY="15.0" maxHeight="305.0" maxWidth="377.0" minHeight="290.0" minWidth="377.0" prefHeight="305.0" prefWidth="317.0" styleClass="credits-smart-table-view">
                                             <columns>
@@ -99,7 +99,7 @@
                         </Tab>
                         <Tab onSelectionChanged="#initFavoriteTab" text="Favorites">
                             <content>
-                                <Pane maxHeight="330.0" maxWidth="390.0" minHeight="330.0" minWidth="390.0" prefHeight="330.0" prefWidth="390.0" styleClass="credits-PaneInTab">
+                                <Pane maxHeight="325.0" maxWidth="390.0" minHeight="325.0" minWidth="390.0" prefHeight="325.0" prefWidth="390.0" styleClass="credits-PaneInTab">
                                     <children>
                                         <TableView fx:id="favSmart" layoutX="7.0" layoutY="15.0" maxHeight="305.0" maxWidth="377.0" minHeight="290.0" minWidth="377.0" prefHeight="305.0" prefWidth="377.0" styleClass="credits-smart-table-view">
                                             <columns>
