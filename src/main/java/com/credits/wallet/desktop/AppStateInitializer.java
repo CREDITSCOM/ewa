@@ -17,7 +17,7 @@ public class AppStateInitializer {
     private static final String ERR_NO_API_ADDR = "The server address could not be determined. Check api.addr parameter in the settings.properties file";
 
     private static final String ERR_NO_CONTRACT_EXECUTOR =
-            "Parameters for java contract executor could not be determined. Check contract.executor.host, contract.executor.port, contract.executor.dir  parameters in the settings.properties file";
+            "Parameters for java contract generated could not be determined. Check contract.generated.host, contract.generated.port, contract.generated.dir  parameters in the settings.properties file";
 
     public String startForm = VistaNavigator.WELCOME;
 
