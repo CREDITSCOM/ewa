@@ -1,11 +1,13 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.common.exception.CreditsCommonException;
+import com.credits.common.utils.sourcecode.SourceCodeUtils;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import javafx.concurrent.Task;
@@ -113,17 +115,15 @@ public class SmartContractUtils {
 
     public static BigDecimal getSmartContractBalance(String smart)
         throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
-        String owner = "\"" + AppState.account + "\"";
         String method = "balanceOf";
-        List<String> params = new ArrayList<>();
-        params.add(owner);
+        List<Variant> params = new ArrayList<>();
         SmartContractData smartContractData = AppState.levelDbService.getSmartContract(smart);
         if (smartContractData == null) {
             FormUtils.showInfo("SmartContract not found");
             return null;
         }
         smartContractData.setMethod(method);
-        smartContractData.setParams(params);
+        smartContractData.setParams(SourceCodeUtils.createVariantObject("String", AppState.account));
         return new BigDecimal(
             AppState.levelDbService.directExecuteSmartContract(smartContractData).getRet_val().getV_double()).setScale(
             13, BigDecimal.ROUND_DOWN);
@@ -132,9 +132,9 @@ public class SmartContractUtils {
     public static void transferTo(String smart, String target, BigDecimal amount) {
         try {
             String method = "transfer";
-            List<Object> params = new ArrayList<>();
-            params.add("\"" + target + "\"");
-            params.add(amount);
+            List<Variant> params = new ArrayList<>();
+            params.addAll(SourceCodeUtils.createVariantObject("String", target));
+            params.addAll(SourceCodeUtils.createVariantObject("double",amount.toString()));
             SmartContractData smartContractData = AppState.levelDbService.getSmartContract(smart);
             if (smartContractData == null) {
                 FormUtils.showInfo("SmartContract not found");
