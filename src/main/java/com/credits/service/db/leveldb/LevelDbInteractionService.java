@@ -7,7 +7,6 @@ import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 
 import java.math.BigDecimal;
-import java.nio.ByteBuffer;
 import java.util.List;
 
 public interface LevelDbInteractionService {
@@ -26,7 +25,6 @@ public interface LevelDbInteractionService {
                          String source,
                          String target,
                          BigDecimal amount,
-                         BigDecimal balance,
                          byte currency,
                          byte[] signature,
                          BigDecimal fee) throws LevelDbClientException, CreditsNodeException, CreditsCommonException;

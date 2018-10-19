@@ -52,11 +52,11 @@ public class LevelDbInteractionServiceThriftImpl implements LevelDbInteractionSe
     }
 
     @Override
-    public void transactionFlow(Long innerId, String source, String target, BigDecimal amount, BigDecimal balance, byte currency, byte[] signature, BigDecimal fee)
+    public void transactionFlow(Long innerId, String source, String target, BigDecimal amount, byte currency, byte[] signature, BigDecimal fee)
         throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
         short maxFee = 0x6648; //TODO need add fee converter from BigDecimal to short
         CreateTransactionData CreateTransactionData =
-            new CreateTransactionData(System.currentTimeMillis(), Base58.decode(source), Base58.decode(target), amount, balance, currency, maxFee, signature);
+            new CreateTransactionData(System.currentTimeMillis(), Base58.decode(source), Base58.decode(target), amount, currency, maxFee, signature);
         service.createTransaction(CreateTransactionData, true);
     }
 }

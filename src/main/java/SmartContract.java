@@ -85,7 +85,7 @@ public abstract class SmartContract implements Serializable {
 //                Ed25519.generateSignOfTransaction(innerId, account, target, decAmount, balance, currency, privateKey);
 
             Instant instant = Instant.now();
-            service.transactionFlow(instant.toEpochMilli(), source, target, decAmount, balance, currencyByte, signature, decFee);
+            service.transactionFlow(instant.toEpochMilli(), source, target, decAmount, currencyByte, signature, decFee);
         } catch (LevelDbClientException | CreditsNodeException | CreditsCommonException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
