@@ -12,7 +12,6 @@ import com.credits.leveldb.client.data.SmartContractInvocationData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.util.ApiClientUtils;
-import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.struct.CalcTransactionIdSourceTargetResult;
 import com.credits.wallet.desktop.utils.struct.TransactionStruct;
@@ -211,7 +210,7 @@ public class ApiUtils {
             });
     }
 
-    public static void executeSmartContractProcess(String method, List<Variant> params,
+    public static void executeSmartContractProcess(String method, List<Object> params,
         SmartContractData smartContractData, ApiTransactionThreadRunnable.Callback callback)
         throws LevelDbClientException, CreditsCommonException, CreditsNodeException {
         SmartContractInvocationData smartContractInvocationData =

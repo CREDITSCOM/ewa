@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -26,7 +27,10 @@ import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Igor Goryunov on 29.09.2018
@@ -52,7 +56,7 @@ public class UITest {
         addressThree = "33333333333333333333333333333333333333333333";
     }
 
-
+    @Ignore
     @Test
     public void correctBehavior()
         throws LevelDbClientException, CreditsNodeException, CreditsCommonException, InterruptedException {
@@ -88,6 +92,7 @@ public class UITest {
     }
 
 
+    @Ignore
     @Test
     public void deployForm()
         throws CreditsCommonException, LevelDbClientException, CreditsNodeException, InterruptedException {

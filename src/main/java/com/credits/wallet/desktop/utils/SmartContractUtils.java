@@ -123,7 +123,8 @@ public class SmartContractUtils {
             return null;
         }
         smartContractData.setMethod(method);
-        smartContractData.setParams(SourceCodeUtils.createVariantObject("String", AppState.account));
+        smartContractData.setParams(
+            Collections.singletonList(SourceCodeUtils.createVariantObject("String", AppState.account)));
         return new BigDecimal(
             AppState.levelDbService.directExecuteSmartContract(smartContractData).getRet_val().getV_double()).setScale(
             13, BigDecimal.ROUND_DOWN);
@@ -132,9 +133,10 @@ public class SmartContractUtils {
     public static void transferTo(String smart, String target, BigDecimal amount) {
         try {
             String method = "transfer";
-            List<Variant> params = new ArrayList<>();
-            params.addAll(SourceCodeUtils.createVariantObject("String", target));
-            params.addAll(SourceCodeUtils.createVariantObject("double",amount.toString()));
+            List<Object> params = new ArrayList<>();
+
+            params.add(SourceCodeUtils.createVariantObject("String", target));
+            params.add(SourceCodeUtils.createVariantObject("double",amount.toString()));
             SmartContractData smartContractData = AppState.levelDbService.getSmartContract(smart);
             if (smartContractData == null) {
                 FormUtils.showInfo("SmartContract not found");

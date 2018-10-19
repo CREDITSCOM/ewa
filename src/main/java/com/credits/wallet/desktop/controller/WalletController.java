@@ -217,7 +217,7 @@ public class WalletController extends Controller implements Initializable {
         coins.getItems().clear();
         CoinTabRow coinTabRow = new CoinTabRow();
         coinTabRow.setName("CS");
-        DecimalFormat decimalFormat = new DecimalFormat("###.00000000000000000000");
+        DecimalFormat decimalFormat = new DecimalFormat("##0.00000000000000000000");
 
         try {
 

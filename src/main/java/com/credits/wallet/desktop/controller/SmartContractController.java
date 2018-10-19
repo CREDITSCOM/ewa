@@ -256,7 +256,7 @@ public class SmartContractController extends Controller implements Initializable
     private void handleExecute() {
         try {
             String method = cbMethods.getSelectionModel().getSelectedItem().getName().getIdentifier();
-            List<Variant> params = new ArrayList<>();
+            List<Object> params = new ArrayList<>();
             List<SingleVariableDeclaration> currentMethodParams =
                 SourceCodeUtils.getMethodParameters(this.currentMethod);
 
@@ -268,7 +268,7 @@ public class SmartContractController extends Controller implements Initializable
                     String paramValue = ((TextField) node).getText();
                     SingleVariableDeclaration variableDeclaration = currentMethodParams.get(i);
                     String className = SourceCodeUtils.parseClassName(variableDeclaration);
-                    params.addAll(SourceCodeUtils.createVariantObject(className, paramValue));
+                    params.add(SourceCodeUtils.createVariantObject(className, paramValue));
                     ++i;
                 }
 
