@@ -128,24 +128,6 @@ class NodeThriftApiClient implements NodeThriftApi {
         threadPoolExecutor.submit(threadRunnable);
     }
 
-    //TODO need move contract executor client move to executor_client module
-//    public APIResponse directlyExecuteSmartContract(
-//        SmartContractData smartContractData) throws NodeClientException {
-//        ContractExecutor.Client client = executorPool.getResource();
-//        try {
-//            com.credits.leveldb.client.thrift.executor.APIResponse result =
-//                client.executeByteCode(ByteBuffer.wrap(smartContractData.getAddress()),
-//                    ByteBuffer.wrap(smartContractData.getByteCode()),
-//                    ByteBuffer.wrap(smartContractData.getObjectState()), smartContractData.getMethod(),
-//                    smartContractData.getParams());
-//            executorPool.returnResource(client);
-//            return result;
-//        } catch (TException e) {
-//            executorPool.returnBrokenResource(client);
-//            throw new NodeClientException(e);
-//        }
-//    }
-
     private <R> R callThrift(API.Client client, Function<R> method) throws NodeClientException {
         try {
             R res = method.apply();

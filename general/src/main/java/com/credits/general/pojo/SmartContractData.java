@@ -1,4 +1,6 @@
-package com.credits.client.node.pojo;
+package com.credits.general.pojo;
+
+import com.credits.general.thrift.generate.Variant;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -16,7 +18,7 @@ public class SmartContractData implements Serializable {
     private String hashState;
     private byte[] objectState;
     private String method;
-    private List<String> params;
+    private List<Variant> params;
 
     public SmartContractData(byte[] address, byte[] deployer, String sourceCode, byte[] byteCode, String hashState,
         byte[] objectState) {
@@ -36,11 +38,11 @@ public class SmartContractData implements Serializable {
         this.method = method;
     }
 
-    public List<String> getParams() {
+    public List<Variant> getParams() {
         return params;
     }
 
-    public void setParams(List<String> params) {
+    public void setParams(List<Variant> params) {
         this.params = params;
     }
 

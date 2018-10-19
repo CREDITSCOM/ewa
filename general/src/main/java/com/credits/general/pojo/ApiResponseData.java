@@ -1,5 +1,7 @@
-package com.credits.client.node.pojo;
+package com.credits.general.pojo;
 
+
+import com.credits.general.thrift.generate.Variant;
 
 /**
  * Created by Rustem Saidaliyev on 17.05.2018.
@@ -7,18 +9,18 @@ package com.credits.client.node.pojo;
 public class ApiResponseData {
     private byte code;
     private String message;
-//    private Variant scExecRetVal; //TODO add pojo variant class
+    private Variant scExecRetVal;
     private String source;
     private String target;
 
     public ApiResponseData(
             byte code,
-            String message
-//            Variant scExecRetVal
+            String message,
+            Variant scExecRetVal
     ) {
         this.code = code;
         this.message = message;
-//        this.scExecRetVal = scExecRetVal;
+        this.scExecRetVal = scExecRetVal;
     }
 
     public byte getCode() {
@@ -37,13 +39,13 @@ public class ApiResponseData {
         this.message = message;
     }
 
-//    public Variant getScExecRetVal() {
-//        return scExecRetVal;
-//    }
+    public Variant getScExecRetVal() {
+        return scExecRetVal;
+    }
 
-//    public void setScExecRetVal(Variant scExecRetVal) {
-//        this.scExecRetVal = scExecRetVal;
-//    }
+    public void setScExecRetVal(Variant scExecRetVal) {
+        this.scExecRetVal = scExecRetVal;
+    }
 
     public String getSource() {
         return source;

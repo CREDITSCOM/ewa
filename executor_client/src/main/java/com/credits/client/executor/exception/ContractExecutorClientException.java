@@ -5,13 +5,13 @@ import com.credits.general.exception.CreditsException;
 /**
  * Created by Igor Goryunov on 18.10.2018
  */
-public class ExecutorClientException extends CreditsException {
+public class ContractExecutorClientException extends CreditsException {
 
-    public ExecutorClientException(String errorMessage) {
+    public ContractExecutorClientException(String errorMessage) {
         super(errorMessage);
     }
 
-    public ExecutorClientException(Exception e) {
+    public ContractExecutorClientException(Exception e) {
         super(e);
     }
 }

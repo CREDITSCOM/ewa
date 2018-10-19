@@ -3,10 +3,10 @@ package com.credits.client.node.service;
 
 import com.credits.client.node.exception.CreditsNodeException;
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.ApiResponseData;
+import com.credits.general.pojo.ApiResponseData;
 import com.credits.client.node.pojo.CreateTransactionData;
 import com.credits.client.node.pojo.PoolData;
-import com.credits.client.node.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionIdData;
@@ -58,10 +58,6 @@ public interface NodeApiService {
 
     Long getWalletTransactionsCount(String address)
         throws NodeClientException, CreditsNodeException, CreditsGeneralException;
-
-
-    //TODO move to executor_client
-//    APIResponse directExecuteSmartContract(SmartContractData smartContractData) throws NodeClientException;
 
     TransactionsStateGetResult getTransactionsState(String address, List<Long> transactionIdList)
         throws CreditsNodeException, NodeClientException, CreditsGeneralException;

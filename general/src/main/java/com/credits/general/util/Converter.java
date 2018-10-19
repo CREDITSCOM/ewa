@@ -1,6 +1,9 @@
 package com.credits.general.util;
 
 import com.credits.general.exception.CreditsGeneralException;
+import com.credits.general.pojo.ApiResponseData;
+import com.credits.general.thrift.generate.APIResponse;
+import com.credits.general.thrift.generate.Variant;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 
 import java.math.BigDecimal;
@@ -300,5 +303,21 @@ public class Converter {
             return bits;
         }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
+    }
+
+    public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {
+        return new ApiResponseData(
+            apiResponse.getCode(),
+            apiResponse.getMessage(),
+            null
+        );
+    }
+
+    public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse, Variant smartContractResult) {
+        return new ApiResponseData(
+            apiResponse.getCode(),
+            apiResponse.getMessage(),
+            smartContractResult
+        );
     }
 }

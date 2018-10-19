@@ -1,8 +1,8 @@
 package com.credits.client.node.util;
 
-import com.credits.client.node.pojo.ApiResponseData;
+import com.credits.general.pojo.ApiResponseData;
 import com.credits.client.node.pojo.PoolData;
-import com.credits.client.node.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionIdData;
@@ -12,7 +12,7 @@ import com.credits.general.thrift.generate.Variant;
 import com.credits.general.util.Const;
 import com.credits.general.util.Converter;
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.thrift.APIResponse;
+import com.credits.general.thrift.generate.APIResponse;
 import com.credits.client.node.thrift.Amount;
 import com.credits.client.node.thrift.Pool;
 import com.credits.client.node.thrift.SealedTransaction;
@@ -242,14 +242,16 @@ public class NodePojoConverter {
     public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {
         return new ApiResponseData(
                 apiResponse.getCode(),
-                apiResponse.getMessage()
+                apiResponse.getMessage(),
+            null
         );
     }
 
     public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse, Variant smartContractResult) {
         return new ApiResponseData(
                 apiResponse.getCode(),
-                apiResponse.getMessage()
+                apiResponse.getMessage(),
+                smartContractResult
         );
     }
 

@@ -2,7 +2,7 @@ package com.credits.client.node.service;
 
 import com.credits.client.node.exception.CreditsNodeException;
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.ApiResponseData;
+import com.credits.general.pojo.ApiResponseData;
 import com.credits.client.node.pojo.TransactionRoundData;
 import com.credits.client.node.thrift.API;
 import com.credits.client.node.thrift.Transaction;

@@ -1,11 +1,11 @@
 package com.credits.client.node.util;
 
 import com.credits.client.node.exception.CreditsNodeException;
-import com.credits.client.node.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.service.ApiResponseCode;
-import com.credits.client.node.thrift.APIResponse;
+import com.credits.general.thrift.generate.APIResponse;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
