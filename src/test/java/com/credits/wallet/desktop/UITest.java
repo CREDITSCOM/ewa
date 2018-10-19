@@ -7,7 +7,7 @@ import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbService;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
-import com.credits.leveldb.client.thrift.executor.APIResponse;
+import com.credits.leveldb.client.thrift.generated.APIResponse;
 import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.testUtils.FakeData;
 import javafx.application.Platform;
@@ -26,10 +26,7 @@ import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Igor Goryunov on 29.09.2018

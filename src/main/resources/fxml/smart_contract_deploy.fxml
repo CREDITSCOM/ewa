@@ -5,6 +5,7 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
+<<<<<<< Updated upstream
 <?import javafx.scene.layout.VBox?>
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController">
     <top>
@@ -31,3 +32,95 @@
         </Pane>
     </center>
 </BorderPane>
+=======
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
+            prefWidth="1060.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController">
+    <children>
+        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                    AnchorPane.topAnchor="0.0">
+            <center>
+                <ScrollPane fitToHeight="true" fitToWidth="true">
+                    <content>
+                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="1030.0" prefWidth="1060.0"
+                                    styleClass="credits-borderGrayPane" stylesheets="@../styles.css">
+                            <top>
+                                <fx:include source="header.fxml"/>
+                            </top>
+                            <center>
+                                <BorderPane minHeight="-Infinity" prefHeight="750.0" BorderPane.alignment="TOP_CENTER">
+                                    <BorderPane.margin>
+                                        <Insets top="30.0"/>
+                                    </BorderPane.margin>
+                                    <center>
+                                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                              minWidth="-Infinity" prefHeight="720.0" prefWidth="1000.0"
+                                              BorderPane.alignment="TOP_CENTER">
+                                            <children>
+                                                <Pane layoutX="-185.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                                                      minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
+                                                      prefWidth="1400.0" styleClass="credits-borderWhitePane">
+                                                    <children>
+                                                        <Label layoutX="21.0" layoutY="23.0" styleClass="credits-topLabelText"
+                                                               stylesheets="@../styles.css" text="Smart contract"/>
+                                                        <Label layoutX="24.0" layoutY="88.0"
+                                                               text="On this form you can check and deploy smart contract"
+                                                               styleClass="credits-topLabelGrayText"/>
+                                                        <Line endX="-50.0" layoutX="126.0" layoutY="75.0"
+                                                              startX="-100.0" stroke="#ecb32e" strokeWidth="4.0"/>
+                                                        <Label layoutX="375.0" layoutY="144.0"
+                                                               style="-fx-font-size: 16px;" styleClass="text"
+                                                               stylesheets="@../styles.css"
+                                                               text="Put SmartContract code">
+                                                        </Label>
+                                                        <Button layoutX="21.0" layoutY="618.0" mnemonicParsing="false"
+                                                                onAction="#handleBack" prefHeight="61.0"
+                                                                prefWidth="173.0"
+                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                text="BACK"/>
+                                                        <Button fx:id="checkButton" layoutX="210.0" layoutY="618.0"
+                                                                mnemonicParsing="false" onAction="#handleCheck"
+                                                                prefHeight="61.0" prefWidth="173.0"
+                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                text="CHECK"/>
+                                                        <Button layoutX="401.0" layoutY="618.0" mnemonicParsing="false"
+                                                                onAction="#handleDeploy" prefHeight="61.0"
+                                                                prefWidth="173.0"
+                                                                styleClass="credits-button" stylesheets="@../styles.css"
+                                                                text="DEPLOY"/>
+                                                        <ScrollPane fx:id="scCodePanel" layoutX="375.0" layoutY="174.0"
+                                                                    prefHeight="430.0" prefWidth="1000.0">
+                                                            <content>
+                                                                <Pane fx:id="paneCode" layoutX="375.0" layoutY="174.0"
+                                                                      onKeyReleased="#panelCodeKeyReleased"
+                                                                      prefHeight="410.0" prefWidth="1500.0"/>
+                                                            </content>
+                                                        </ScrollPane>
+                                                        <StackPane layoutX="25.0" layoutY="150.0" prefHeight="455.0"
+                                                                   prefWidth="300.0">
+                                                            <children>
+                                                                <TreeView fx:id="classTreeView" prefHeight="5000.0"
+                                                                          prefWidth="5000.0"/>
+                                                            </children>
+                                                        </StackPane>
+                                                    </children>
+                                                </Pane>
+                                            </children>
+                                        </Pane>
+                                    </center>
+                                </BorderPane>
+                            </center>
+                            <bottom>
+                                <fx:include source="footer.fxml"/>
+                            </bottom>
+                        </BorderPane>
+                    </content>
+                </ScrollPane>
+            </center>
+        </BorderPane>
+    </children>
+</AnchorPane>
+>>>>>>> Stashed changes

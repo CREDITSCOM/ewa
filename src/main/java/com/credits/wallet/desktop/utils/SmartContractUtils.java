@@ -204,7 +204,5 @@ public class SmartContractUtils {
         };
 
         codeArea.setOnMouseClicked(contextMenu);
-
     }
-
 }
