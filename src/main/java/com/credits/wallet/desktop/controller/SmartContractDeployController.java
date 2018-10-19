@@ -17,7 +17,6 @@ import com.credits.wallet.desktop.utils.compiler.model.CompilationUnit;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -260,6 +259,7 @@ public class SmartContractDeployController extends Controller implements Initial
     @FXML
     @SuppressWarnings("unchecked")
     private void handleCheck() {
+        tabErrors.getItems().clear();
         debugPane.getChildren().clear();
 
         String sourceCode = codeArea.getText();
