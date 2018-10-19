@@ -56,7 +56,6 @@ public class ApiUtils {
         );
 
         BigDecimal amount = AppState.amount;
-        BigDecimal balance = AppState.balance;
         byte currency = 1;
         Short offeredMaxFee = AppState.transactionOfferedMaxFeeValue;
 
@@ -77,15 +76,14 @@ public class ApiUtils {
                 calcTransactionIdSourceTargetResult.getByteSource(),
                 calcTransactionIdSourceTargetResult.getByteTarget(),
                 amount,
-                balance,
                 currency,
                 offeredMaxFee,
                 signature.array()
         );
 
-        AppState.levelDbService.asyncCreateTransaction(createTransactionData, false, new ApiTransactionThreadRunnable.Callback() {
+        AppState.levelDbService.asyncCreateTransaction(createTransactionData, false, new ApiTransactionThreadRunnable.Callback<ApiResponseData>() {
             @Override
-            public void onSuccess(ApiResponseData resultData) {
+            public void onSuccess(ApiResponseData apiResponseData) {
                 FormUtils.showPlatformInfo("Execute transaction was success");
             }
 
@@ -193,7 +191,7 @@ public class ApiUtils {
 
         AppState.levelDbService.executeSmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
             calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
-            smartContractInvocationData, signature.array(), new ApiTransactionThreadRunnable.Callback() {
+            smartContractInvocationData, signature.array(), new ApiTransactionThreadRunnable.Callback<ApiResponseData>() {
                 @Override
                 public void onSuccess(ApiResponseData resultData) {
                     String target = resultData.getTarget();

@@ -49,8 +49,6 @@ public class AppState {
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
 
-    public static BigDecimal balance = BigDecimal.ZERO;
-
     public static Map<String, Long> walletLastTransactionIdCache = new HashMap<>();
 
     public static Short transactionOfferedMaxFeeValue = Const.OFFERED_MAX_FEE;

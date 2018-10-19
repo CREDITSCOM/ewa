@@ -1,11 +1,11 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.exception.CreditsException;
 import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.exception.CreditsNodeException;
+import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
+import com.credits.leveldb.client.thrift.generated.APIResponse;
 import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -32,6 +32,7 @@ import java.math.RoundingMode;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ResourceBundle;
+import java.util.function.BiConsumer;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
@@ -218,30 +219,48 @@ public class WalletController extends Controller implements Initializable {
         CoinTabRow coinTabRow = new CoinTabRow();
         coinTabRow.setName("CS");
         DecimalFormat decimalFormat = new DecimalFormat("##0.00000000000000000000");
-
-        try {
-
-            coinTabRow.setBalance(String.valueOf(
-                decimalFormat.format(AppState.levelDbService.getBalance(AppState.account).setScale(13, BigDecimal.ROUND_DOWN))));
-        } catch (LevelDbClientException | CreditsNodeException | CreditsCommonException e) {
-            coinTabRow.setBalance("Receive error");
-            e.printStackTrace();
-        }
+        coinTabRow.setBalance("Processing");
         coins.getItems().add(coinTabRow);
+            AppState.levelDbService.getAsyncBalance(AppState.account, new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
+                @Override
+                public void onSuccess(BigDecimal resultData) {
+                    coinTabRow.setBalance(String.valueOf(decimalFormat.format(resultData.setScale(13, BigDecimal.ROUND_DOWN))));
+                }
 
-        CoinsUtils.getCoins().forEach((coin, smart) -> {
+                @Override
+                public void onError(Exception e) {
+                    coinTabRow.setBalance("Receive error");
+                    e.printStackTrace();
+                }
+            });
+
+        BiConsumer<String, String> stringStringBiConsumer = (coin, smart) -> {
             CoinTabRow tempCoinTabRow = new CoinTabRow();
             tempCoinTabRow.setName(coin);
             tempCoinTabRow.setSmartName(smart);
+            tempCoinTabRow.setBalance("Processing");
+            coins.getItems().add(tempCoinTabRow);
             try {
-                tempCoinTabRow.setBalance(
-                String.valueOf(decimalFormat.format(SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin)))));
-            } catch (CreditsNodeException | CreditsCommonException | LevelDbClientException e) {
+                SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin), new ApiTransactionThreadRunnable.Callback<APIResponse>() {
+                    @Override
+                    public void onSuccess(APIResponse apiResponse) {
+                        BigDecimal balance =
+                            new BigDecimal(apiResponse.getRet_val().getV_double()).setScale(13, BigDecimal.ROUND_DOWN);
+                        tempCoinTabRow.setBalance(String.valueOf(decimalFormat.format(balance)));
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        tempCoinTabRow.setBalance("Receive error");
+                        e.printStackTrace();
+                    }
+                });
+            } catch (Exception e) {
                 tempCoinTabRow.setBalance("Receive error");
                 e.printStackTrace();
             }
-            coins.getItems().add(tempCoinTabRow);
-        });
+        };
+        CoinsUtils.getCoins().forEach(stringStringBiConsumer);
     }
 
     private void clearLabErr() {

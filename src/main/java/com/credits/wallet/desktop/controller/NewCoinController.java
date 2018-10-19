@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.common.exception.CreditsCommonException;
+import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -78,12 +79,21 @@ public class NewCoinController extends Controller implements Initializable {
             return;
         }
 
-        BigDecimal balance = SmartContractUtils.getSmartContractBalance(token);
-        if (balance != null && balance.compareTo(BigDecimal.ZERO) > 0) {
-            CoinsUtils.saveCoinsToFile(coin + ";" + token);
-        } else {
-            return;
-        }
+        SmartContractUtils.getSmartContractBalance(token, new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
+            @Override
+            public void onSuccess(BigDecimal balance) {
+                if (balance != null && balance.compareTo(BigDecimal.ZERO) > 0) {
+                    CoinsUtils.saveCoinsToFile(coin + ";" + token);
+                } else {
+                    FormUtils.showInfo("Balance is zero");
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                FormUtils.showInfo("Error getting balance\n");
+            }
+        });
 
             VistaNavigator.loadVista(VistaNavigator.WALLET);
         }

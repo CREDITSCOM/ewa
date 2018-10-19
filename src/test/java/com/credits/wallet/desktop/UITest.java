@@ -104,8 +104,6 @@ public class UITest {
         Variant ret_val = new Variant();
         ret_val.setV_double(1000.12345D);
         resp.setRet_val(ret_val);
-        when(mockLevelDbService.directExecuteSmartContract(any())).thenReturn(
-            resp);
 
         //smart-contracts
         when(mockLevelDbService.getTransactions(any(), anyLong(), anyLong())).thenReturn(FakeData.transactionsDataList);

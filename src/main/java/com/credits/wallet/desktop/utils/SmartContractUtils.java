@@ -113,21 +113,18 @@ public class SmartContractUtils {
         return codeArea;
     }
 
-    public static BigDecimal getSmartContractBalance(String smart)
+    public static void getSmartContractBalance(String smart, ApiTransactionThreadRunnable.Callback callback)
         throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
         String method = "balanceOf";
         List<Variant> params = new ArrayList<>();
         SmartContractData smartContractData = AppState.levelDbService.getSmartContract(smart);
         if (smartContractData == null) {
             FormUtils.showInfo("SmartContract not found");
-            return null;
         }
         smartContractData.setMethod(method);
         smartContractData.setParams(
             Collections.singletonList(SourceCodeUtils.createVariantObject("String", AppState.account)));
-        return new BigDecimal(
-            AppState.levelDbService.directExecuteSmartContract(smartContractData).getRet_val().getV_double()).setScale(
-            13, BigDecimal.ROUND_DOWN);
+            AppState.levelDbService.directExecuteSmartContract(smartContractData,callback);
     }
 
     public static void transferTo(String smart, String target, BigDecimal amount) {
@@ -143,7 +140,7 @@ public class SmartContractUtils {
                 return;
             }
             ApiUtils.executeSmartContractProcess(method, params, smartContractData,
-                new ApiTransactionThreadRunnable.Callback() {
+                new ApiTransactionThreadRunnable.Callback<ApiResponseData>() {
                     @Override
                     public void onSuccess(ApiResponseData resultData) {
                         FormUtils.showPlatformInfo("Transfer is ok");
