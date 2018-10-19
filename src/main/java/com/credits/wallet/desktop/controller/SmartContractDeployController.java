@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.common.exception.CreditsException;
+import com.credits.common.utils.Converter;
 import com.credits.common.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -9,11 +10,14 @@ import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.EclipseJdt;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.SimpleInMemoryCompiler;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
+import com.credits.wallet.desktop.utils.compiler.InMemoryCompiler;
+import com.credits.wallet.desktop.utils.compiler.model.CompilationPackage;
+import com.credits.wallet.desktop.utils.compiler.model.CompilationUnit;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -35,6 +39,8 @@ import org.fxmisc.wellbehaved.event.Nodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,10 +63,12 @@ public class SmartContractDeployController extends Controller implements Initial
             "PoolData getPool(String poolNumber)", "void sendTransaction(String account, String target, Double amount, String currency)"};
     //    private static final String NON_CHANGED_STR = "public class Contract extends SmartContract {";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
+    private static final String CLASS_NAME = "Contract";
+    private static final String SUPERCLASS_NAME = "SmartContract";
+
     private CodeArea codeArea;
     private TableView<ErrorCodeTabRow> tabErrors;
     private int tabCount;
-
     @FXML
     BorderPane bp;
 
@@ -76,7 +84,9 @@ public class SmartContractDeployController extends Controller implements Initial
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         FormUtils.resizeForm(bp);
+
         if (AppState.executor != null) {
             AppState.executor.shutdown();
         }
@@ -203,22 +213,6 @@ public class SmartContractDeployController extends Controller implements Initial
     }
 
     @FXML
-    private void handleDeploy() {
-        String token = SourceCodeUtils.generateSmartContractToken();
-        String className = SourceCodeUtils.parseClassName(codeArea.getText(), "SmartContract");
-        try {
-            String javaCode = SourceCodeUtils.normalizeSourceCode(codeArea.getText());
-            byte[] byteCode = SimpleInMemoryCompiler.compile(javaCode, className, token);
-            String hashState = ApiUtils.generateSmartContractHashState(byteCode);
-
-            ApiUtils.deploySmartContractProcess(javaCode, byteCode, hashState);
-        } catch (CompilationException | CreditsException e) {
-            LOGGER.error(e.toString(), e);
-            FormUtils.showError(AppState.NODE_ERROR + ": " + e.getMessage());
-        }
-    }
-
-    @FXML
     private void panelCodeKeyReleased() {
         Thread t = new Thread(this::refreshClassMembersTree);
         t.setDaemon(true);
@@ -265,13 +259,25 @@ public class SmartContractDeployController extends Controller implements Initial
 
     @FXML
     @SuppressWarnings("unchecked")
-    private void checkButtonAction() {
+    private void handleCheck() {
+        debugPane.getChildren().clear();
+
         String sourceCode = codeArea.getText();
 
-        IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
+        String className = SourceCodeUtils.parseClassName(sourceCode, "");
 
+        try {
+            this.checkClassAndSuperclassNames(className, sourceCode);
+        } catch (CreditsException e) {
+            ErrorCodeTabRow tr = new ErrorCodeTabRow();
+            tr.setLine("1");
+            tr.setText(e.getMessage());
+            tabErrors.getItems().add(tr);
+            addTabErrorsToDebugPane();
+            return;
+        }
+        IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
         if (problemArr.length > 0) {
-            tabErrors.getItems().clear();
 
             for (IProblem p : problemArr) {
                 ErrorCodeTabRow tr = new ErrorCodeTabRow();
@@ -279,13 +285,73 @@ public class SmartContractDeployController extends Controller implements Initial
                 tr.setText(p.getMessage());
                 tabErrors.getItems().add(tr);
             }
-
-            debugPane.getChildren().clear();
-            debugPane.getChildren().add(this.tabErrors);
-            debugPane.getChildren().get(1).setLayoutY(debugPane.getPrefHeight());
+            addTabErrorsToDebugPane();
         } else {
-            debugPane.getChildren().clear();
-            FormUtils.showInfo("Everything is OK");
+
+            CompilationPackage compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
+            if (!compilationPackage.isCompilationStatusSuccess()) {
+                DiagnosticCollector collector = compilationPackage.getCollector();
+                List<Diagnostic> diagnostics = collector.getDiagnostics();
+                diagnostics.forEach(action -> {
+                    ErrorCodeTabRow tr = new ErrorCodeTabRow();
+                    tr.setLine(Converter.toString(action.getLineNumber()));
+                    tr.setText(action.getMessage(null));
+                    tabErrors.getItems().add(tr);
+                });
+                addTabErrorsToDebugPane();
+            } else {
+                debugPane.getChildren().clear();
+                FormUtils.showInfo("Everything is OK");
+            }
         }
     }
+
+    private void addTabErrorsToDebugPane() {
+        debugPane.getChildren().clear();
+        debugPane.getChildren().add(this.tabErrors);
+        debugPane.getChildren().get(1).setLayoutY(debugPane.getPrefHeight());
+    }
+
+    @FXML
+    private void handleDeploy() {
+
+        String className = SourceCodeUtils.parseClassName(codeArea.getText(), "SmartContract");
+        try {
+            String javaCode = SourceCodeUtils.normalizeSourceCode(codeArea.getText());
+            CompilationPackage compilationPackage = new InMemoryCompiler().compile(className, javaCode);
+
+            if (compilationPackage.isCompilationStatusSuccess()) {
+                List<CompilationUnit>  compilationUnits = compilationPackage.getUnits();
+                CompilationUnit compilationUnit = compilationUnits.get(0);
+                byte[] byteCode = compilationUnit.getBytecode();
+                String hashState = ApiUtils.generateSmartContractHashState(byteCode);
+                ApiUtils.deploySmartContractProcess(javaCode, byteCode, hashState);
+            } else {
+                DiagnosticCollector collector = compilationPackage.getCollector();
+                List<Diagnostic> diagnostics = collector.getDiagnostics();
+                StringBuilder errors = new StringBuilder();
+                diagnostics.forEach(action -> {
+                    errors.append(String.format("line %s, error %s; ", action.getLineNumber(), action.getMessage(null)));
+                });
+                throw new CompilationException(
+                    String.format("Compilation errors: %s", errors.toString())
+                );
+            }
+        } catch (CompilationException | CreditsException e) {
+            LOGGER.error(e.toString(), e);
+            FormUtils.showError(AppState.NODE_ERROR + ": " + e.getMessage());
+        }
+    }
+
+    private void checkClassAndSuperclassNames(String className, String sourceCode) throws CreditsException {
+        if (!className.equals(CLASS_NAME)) {
+            throw new CreditsException(String.format("Wrong class name %s, class name must be %s", className, CLASS_NAME));
+        }
+        String superclassName = SourceCodeUtils.parseSuperclassName(sourceCode);
+
+        if (!superclassName.equals(SUPERCLASS_NAME)) {
+            throw new CreditsException(String.format("Wrong superclass name %s, superclass name must be %s", superclassName, SUPERCLASS_NAME));
+        }
+    }
+
 }

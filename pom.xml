@@ -55,6 +55,7 @@
             <artifactId>richtextfx</artifactId>
             <version>0.9.1</version>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.jdt</groupId>
             <artifactId>org.eclipse.jdt.core</artifactId>
@@ -70,6 +71,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>25.0-jre</version>
         </dependency>
     </dependencies>
 
