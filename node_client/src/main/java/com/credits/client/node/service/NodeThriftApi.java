@@ -1,6 +1,5 @@
 package com.credits.client.node.service;
 
-import com.credits.client.node.exception.CreditsNodeException;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.thrift.PoolInfoGetResult;
@@ -20,27 +19,27 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 interface NodeThriftApi {
-    TransactionsGetResult getTransactions(byte[] address, long offset, long limit) throws NodeClientException, CreditsNodeException;
+    TransactionsGetResult getTransactions(byte[] address, long offset, long limit) throws NodeClientException;
 
-    TransactionGetResult getTransaction(TransactionIdData transactionIdData) throws NodeClientException, CreditsNodeException;
+    TransactionGetResult getTransaction(TransactionIdData transactionIdData) throws NodeClientException;
 
     PoolInfoGetResult getPoolInfo(ByteBuffer hashByteBuffer, long index) throws NodeClientException;
 
-    PoolListGetResult getPoolList(Long offset, Long limit) throws NodeClientException, CreditsNodeException;
+    PoolListGetResult getPoolList(Long offset, Long limit) throws NodeClientException;
 
-    WalletBalanceGetResult getBalance(byte[] address) throws NodeClientException, CreditsNodeException;
+    WalletBalanceGetResult getBalance(byte[] address) throws NodeClientException;
 
-    SmartContractGetResult getSmartContract(byte[] address) throws NodeClientException, CreditsNodeException;
+    SmartContractGetResult getSmartContract(byte[] address) throws NodeClientException;
 
-    SmartContractsListGetResult getSmartContracts(byte[] address) throws NodeClientException, CreditsNodeException;
+    SmartContractsListGetResult getSmartContracts(byte[] address) throws NodeClientException;
 
-    SmartContractAddressesListGetResult getSmartContractAddresses(byte[] address) throws NodeClientException, CreditsNodeException;
+    SmartContractAddressesListGetResult getSmartContractAddresses(byte[] address) throws NodeClientException;
 
-    WalletDataGetResult getWalletData(byte[] address) throws NodeClientException, CreditsNodeException;
+    WalletDataGetResult getWalletData(byte[] address) throws NodeClientException;
 
-    WalletIdGetResult getWalletId(byte[] address) throws NodeClientException, CreditsNodeException;
+    WalletIdGetResult getWalletId(byte[] address) throws NodeClientException;
 
-    WalletTransactionsCountGetResult getWalletTransactionsCount(byte[] address) throws NodeClientException, CreditsNodeException;
+    WalletTransactionsCountGetResult getWalletTransactionsCount(byte[] address) throws NodeClientException;
 
     TransactionsStateGetResult getTransactionsState(byte[] address, List<Long> transactionIdList) throws NodeClientException;
 

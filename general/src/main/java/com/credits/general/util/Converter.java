@@ -1,9 +1,9 @@
 package com.credits.general.util;
 
-import com.credits.general.exception.CreditsGeneralException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.thrift.generate.APIResponse;
 import com.credits.general.thrift.generate.Variant;
+import com.credits.general.util.exception.ConverterException;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 
 import java.math.BigDecimal;
@@ -27,7 +27,7 @@ public class Converter {
 
     public static String toString(Object value) {
         if (value instanceof Double) {
-            NumberFormat nf = NumberFormat.getNumberInstance(Const.LOCALE);
+            NumberFormat nf = NumberFormat.getNumberInstance(Constants.LOCALE);
             DecimalFormat df = (DecimalFormat) nf;
             df.applyPattern(DOUBLE_FORMAT);
             return df.format(value);
@@ -40,7 +40,7 @@ public class Converter {
         }
         if (value instanceof BigDecimal) {
             BigDecimalConverter bigDecimalConverter = new BigDecimalConverter();
-            bigDecimalConverter.setLocale(Const.LOCALE);
+            bigDecimalConverter.setLocale(Constants.LOCALE);
             bigDecimalConverter.setPattern("#.##################");
             return (String) bigDecimalConverter.convert(String.class, value);
         }
@@ -149,7 +149,7 @@ public class Converter {
         return null;
     }
 
-    public static Double toDouble(Object value, Locale locale, String doubleFormat) throws CreditsGeneralException {
+    public static Double toDouble(Object value, Locale locale, String doubleFormat) throws ConverterException {
         if (value instanceof String) {
             NumberFormat nf = NumberFormat.getNumberInstance(locale);
             DecimalFormat df = (DecimalFormat) nf;
@@ -157,20 +157,20 @@ public class Converter {
             try {
                 return (Double) df.parse((String) value);
             } catch (ParseException e) {
-                throw new CreditsGeneralException(e);
+                throw new ConverterException(e);
             }
         }
         // TODO Добавить Byte, Short, Integer, Long, Float, BigDecimal, Boolean, Date и т.д.
         return null;
     }
 
-    public static BigDecimal toBigDecimal(Object value) throws CreditsGeneralException {
+    public static BigDecimal toBigDecimal(Object value) throws IllegalArgumentException {
 
         if (value == null) {
             return BigDecimal.ZERO;
         }
 
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Const.LOCALE);
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Constants.LOCALE);
 
         if (value instanceof String) {
             String valueAsString = (String) value;
@@ -186,7 +186,7 @@ public class Converter {
             try {
                 return (BigDecimal) decimalFormat.parse(valueAsString);
             } catch (ParseException e) {
-                throw new CreditsGeneralException(e);
+                throw new IllegalArgumentException(e);
             }
         }
 
@@ -219,7 +219,7 @@ public class Converter {
         return Base58.encode(bytes);
     }
 
-    public static byte[] decodeFromBASE58(String string) throws CreditsGeneralException {
+    public static byte[] decodeFromBASE58(String string) throws ConverterException {
         return Base58.decode(string);
     }
 
@@ -239,7 +239,7 @@ public class Converter {
         return ByteBuffer.wrap(bytes);
     }
 
-    public static String byteArrayToString(byte[] bytes, String delimiter) {
+    static String byteArrayToString(byte[] bytes, String delimiter) {
         if (delimiter == null || delimiter == "") {
             delimiter = " ";
         }
@@ -268,14 +268,14 @@ public class Converter {
         throw new IllegalArgumentException(String.format("Unsupported object class: %s", object.getClass().getSimpleName()));
     }
 
-    public static byte[] toByteArray(Object value) {
+    public static byte[] toByteArray(Object value) throws ConverterException {
         if (value instanceof Long) {
             ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
             buffer.putLong((Long)value);
             return buffer.array();
         }
         // TODO Добавить String, Byte, Short, Integer, Float, Double, BigDecimal, Date и т.д.
-        throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
+        throw new ConverterException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
 
     }
 

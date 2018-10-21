@@ -1,6 +1,5 @@
 package com.credits.client.node.service;
 
-import com.credits.client.node.exception.CreditsNodeException;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.client.node.pojo.TransactionRoundData;
@@ -55,12 +54,10 @@ class TransactionProcessThread implements Runnable {
             LOGGER.info("TException");
             callback.onError(e);
             pool.returnBrokenResource(client);
-        } catch (CreditsNodeException e) {
-            callback.onError(e);
-            LOGGER.info("Node exception");
-            pool.returnResource(client);
         } catch (NodeClientException e) {
+            LOGGER.info("Node client exception");
             callback.onError(e);
+            pool.returnResource(client);
         }
     }
 

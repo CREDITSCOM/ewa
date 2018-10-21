@@ -1,6 +1,6 @@
 package com.credits.general.crypto;
 
-import com.credits.general.crypto.exception.CreditsCryptoException;
+import com.credits.general.crypto.exception.CryptoException;
 import org.bouncycastle.crypto.digests.Blake2sDigest;
 
 import java.security.NoSuchAlgorithmException;
@@ -11,7 +11,7 @@ import java.security.SecureRandom;
  */
 public class Blake2S {
 
-    public static byte[] generateHash(int digestSize) throws CreditsCryptoException {
+    public static byte[] generateHash(int digestSize) throws CryptoException {
         SecureRandom random = null;
         try {
             random = SecureRandom.getInstance("SHA1PRNG");
@@ -21,7 +21,7 @@ public class Blake2S {
             blake2sDigest.doFinal(outDigest, 0);
             return outDigest;
         } catch (NoSuchAlgorithmException e) {
-            throw new CreditsCryptoException(e);
+            throw new CryptoException(e);
         }
     }
 }

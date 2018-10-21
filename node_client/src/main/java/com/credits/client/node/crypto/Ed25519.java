@@ -3,7 +3,7 @@ package com.credits.client.node.crypto;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.thrift.Amount;
 import com.credits.client.node.util.NodePojoConverter;
-import com.credits.general.crypto.exception.CreditsCryptoException;
+import com.credits.general.crypto.exception.CryptoException;
 import com.credits.general.util.Converter;
 import com.credits.general.util.Utils;
 import net.i2p.crypto.eddsa.EdDSAEngine;
@@ -45,25 +45,25 @@ public class Ed25519 {
         }
     }
 
-    public static byte[] sign(byte[] data, PrivateKey privateKey) throws CreditsCryptoException {
+    public static byte[] sign(byte[] data, PrivateKey privateKey) throws CryptoException {
 
         EdDSAEngine edDSAEngine = new EdDSAEngine();
         try {
             edDSAEngine.initSign(privateKey);
             return edDSAEngine.signOneShot(data);
         } catch (InvalidKeyException | SignatureException e) {
-            throw new CreditsCryptoException(e);
+            throw new CryptoException(e);
         }
     }
 
-    public static Boolean verify(byte[] data, byte[] signature, PublicKey publicKey) throws CreditsCryptoException {
+    public static Boolean verify(byte[] data, byte[] signature, PublicKey publicKey) throws CryptoException {
 
         EdDSAEngine edDSAEngine = new EdDSAEngine();
         try {
             edDSAEngine.initVerify(publicKey);
             return edDSAEngine.verifyOneShot(data, signature);
         } catch (InvalidKeyException | SignatureException e) {
-            throw new CreditsCryptoException(e);
+            throw new CryptoException(e);
         }
     }
 
@@ -103,7 +103,7 @@ public class Ed25519 {
         byte[] signature;
         try {
             signature = Ed25519.sign(transaction.getBytes(StandardCharsets.US_ASCII), privateKey);
-        } catch (CreditsCryptoException e) {
+        } catch (CryptoException e) {
             throw new NodeClientException(e);
         }
 

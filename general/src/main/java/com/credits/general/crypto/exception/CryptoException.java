@@ -6,13 +6,13 @@ import com.credits.general.exception.CreditsException;
 /**
  * Created by Rustem.Saidaliyev on 27.03.2018.
  */
-public class CreditsCryptoException extends CreditsException {
+public class CryptoException extends CreditsException {
 
-    public CreditsCryptoException(String errorMessage) {
+    public CryptoException(String errorMessage) {
         super(errorMessage);
     }
 
-    public CreditsCryptoException(Exception e) {
+    public CryptoException(Exception e) {
         super(e);
     }
 }

@@ -1,6 +1,5 @@
 package com.credits.client.node.util;
 
-import com.credits.client.node.exception.CreditsNodeException;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.exception.NodeClientException;
@@ -27,11 +26,11 @@ public class NodeClientUtils {
         LOGGER.info(String.format("<--- resultCode = %s; resultMessage = %s", resultCode, resultMessage));
     }
 
-    public static void processApiResponse(APIResponse apiResponse) throws CreditsNodeException {
+    public static void processApiResponse(APIResponse apiResponse) throws NodeClientException {
         ApiResponseCode resultCode = ApiResponseCode.valueOf((int)apiResponse.getCode());
         if (resultCode != SUCCESS && resultCode != NOT_FOUND) {
             String resultMessage = apiResponse.getMessage();
-            throw new CreditsNodeException(String.format("Credits Node error: %s", resultMessage));
+            throw new NodeClientException(String.format("Credits Node error: %s", resultMessage));
         }
     }
 

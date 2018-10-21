@@ -1,18 +1,11 @@
 package com.credits.client.node.util;
 
-import com.credits.general.pojo.ApiResponseData;
+import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.PoolData;
-import com.credits.general.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.general.exception.CreditsException;
-import com.credits.general.thrift.generate.Variant;
-import com.credits.general.util.Const;
-import com.credits.general.util.Converter;
-import com.credits.client.node.exception.NodeClientException;
-import com.credits.general.thrift.generate.APIResponse;
 import com.credits.client.node.thrift.Amount;
 import com.credits.client.node.thrift.Pool;
 import com.credits.client.node.thrift.SealedTransaction;
@@ -20,6 +13,12 @@ import com.credits.client.node.thrift.SmartContract;
 import com.credits.client.node.thrift.SmartContractInvocation;
 import com.credits.client.node.thrift.Transaction;
 import com.credits.client.node.thrift.TransactionId;
+import com.credits.general.pojo.ApiResponseData;
+import com.credits.general.pojo.SmartContractData;
+import com.credits.general.thrift.generate.APIResponse;
+import com.credits.general.thrift.generate.Variant;
+import com.credits.general.util.Constants;
+import com.credits.general.util.Converter;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -40,22 +39,16 @@ public class NodePojoConverter {
         return Double.valueOf(integralPart) + fractionPart;
     }
 
-    public static BigDecimal amountToBigDecimal(Amount amount) throws NodeClientException {
+    public static BigDecimal amountToBigDecimal(Amount amount) {
 
-        Integer integralPart = amount.getIntegral();
-        BigDecimal fractionPart =
-                null;
-        try {
-            fractionPart = Converter.toBigDecimal(amount.getFraction())
-                    .divide(Converter.toBigDecimal("1000000000000000000"));
-        } catch (CreditsException e) {
-            throw new NodeClientException(e);
-        }
+        int integralPart = amount.getIntegral();
+        BigDecimal fractionPart;
+        fractionPart = Converter.toBigDecimal(amount.getFraction()).divide(Converter.toBigDecimal("1000000000000000000"));
 
         integralPart += fractionPart.intValue();
         String integralPartAsString = Converter.toString(integralPart);
         String fractionPartAsString = Converter.toString(fractionPart);
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Const.LOCALE);
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Constants.LOCALE);
         char sep = symbols.getDecimalSeparator();
         String separator = Character.toString(sep);
 
@@ -92,7 +85,7 @@ public class NodePojoConverter {
 
         String valueAsString = Converter.toString(value);
 
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Const.LOCALE);
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Constants.LOCALE);
         char sep = symbols.getDecimalSeparator();
         String separator = Character.toString(sep);
 
@@ -109,7 +102,7 @@ public class NodePojoConverter {
     }
 
 
-    public static TransactionData transactionToTransactionData(SealedTransaction sealedTransaction) throws NodeClientException {
+    public static TransactionData transactionToTransactionData(SealedTransaction sealedTransaction) {
 
         Transaction trxn = sealedTransaction.getTrxn();
         TransactionData data = new TransactionData();
@@ -123,7 +116,7 @@ public class NodePojoConverter {
         return data;
     }
 
-    public static TransactionData transactionToTransactionData(Transaction trxn) throws NodeClientException {
+    public static TransactionData transactionToTransactionData(Transaction trxn) {
         TransactionData data = new TransactionData();
         Long innerId = trxn.getId();
         if(trxn.getAmount() == null) {
@@ -143,7 +136,7 @@ public class NodePojoConverter {
     }
 
 
-    public static WalletData walletToWalletData(com.credits.client.node.thrift.WalletData walletData) throws NodeClientException {
+    public static WalletData walletToWalletData(com.credits.client.node.thrift.WalletData walletData) {
 
         WalletData data = new WalletData(
                 walletData.getWalletId(),
