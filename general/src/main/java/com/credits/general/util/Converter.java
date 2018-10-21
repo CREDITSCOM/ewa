@@ -164,7 +164,7 @@ public class Converter {
         return null;
     }
 
-    public static BigDecimal toBigDecimal(Object value) throws IllegalArgumentException {
+    public static BigDecimal toBigDecimal(Object value) {
 
         if (value == null) {
             return BigDecimal.ZERO;

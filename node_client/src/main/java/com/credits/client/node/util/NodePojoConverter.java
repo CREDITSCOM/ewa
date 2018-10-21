@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.credits.general.util.Converter.*;
+
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
  */
@@ -35,15 +37,14 @@ public class NodePojoConverter {
     public static Double amountToDouble(Amount amount) {
 
         int integralPart = amount.getIntegral();
-        Double fractionPart = amount.getFraction() / 1000000000000000000D;
-        return Double.valueOf(integralPart) + fractionPart;
+        double fractionPart = amount.getFraction() / 1000000000000000000D;
+        return (double) integralPart + fractionPart;
     }
 
     public static BigDecimal amountToBigDecimal(Amount amount) {
 
         int integralPart = amount.getIntegral();
-        BigDecimal fractionPart;
-        fractionPart = Converter.toBigDecimal(amount.getFraction()).divide(Converter.toBigDecimal("1000000000000000000"));
+        BigDecimal fractionPart = toBigDecimal(amount.getFraction()).divide(toBigDecimal("1000000000000000000"), BigDecimal.ROUND_DOWN);
 
         integralPart += fractionPart.intValue();
         String integralPartAsString = Converter.toString(integralPart);
@@ -53,7 +54,7 @@ public class NodePojoConverter {
         String separator = Character.toString(sep);
 
         if (fractionPartAsString.contains(separator)) {
-            String[] valueDelimited = fractionPartAsString.split("\\" + separator); //FIXME ???
+            String[] valueDelimited = fractionPartAsString.split(separator);
             fractionPartAsString = valueDelimited[1];
         } else {
             fractionPartAsString = "0";
@@ -68,8 +69,8 @@ public class NodePojoConverter {
         }
         String valueAsString = String.format(Locale.ROOT, "%.18f", value);
         String[] valueDelimited = valueAsString.split("\\.");
-        Integer integral = Integer.valueOf(valueDelimited[0]);
-        Long fraction = Long.valueOf(valueDelimited[1]);
+        int integral = Integer.parseInt(valueDelimited[0]);
+        long fraction = Long.parseLong(valueDelimited[1]);
         return new Amount(integral, fraction);
     }
 
@@ -79,9 +80,9 @@ public class NodePojoConverter {
             throw new NodeClientException("value is null");
         }
 
-        Integer integral;
+        int integral;
 
-        Long fraction;
+        long fraction;
 
         String valueAsString = Converter.toString(value);
 
@@ -90,12 +91,12 @@ public class NodePojoConverter {
         String separator = Character.toString(sep);
 
         if (valueAsString.contains(separator)) {
-            String[] valueDelimited = valueAsString.split("\\" + separator); //FIXME ???
-            integral = Integer.valueOf(valueDelimited[0]);
+            String[] valueDelimited = valueAsString.split(separator);
+            integral = Integer.parseInt(valueDelimited[0]);
             String fractionAsString = String.format("%-18s", valueDelimited[1]).replace(' ', '0');
-            fraction = Long.valueOf(fractionAsString);
+            fraction = Long.parseLong(fractionAsString);
         } else {
-            integral = Integer.valueOf(valueAsString);
+            integral = Integer.parseInt(valueAsString);
             fraction = 0L;
         }
         return new Amount(integral, fraction);
@@ -138,13 +139,11 @@ public class NodePojoConverter {
 
     public static WalletData walletToWalletData(com.credits.client.node.thrift.WalletData walletData) {
 
-        WalletData data = new WalletData(
+        return new WalletData(
                 walletData.getWalletId(),
                 NodePojoConverter.amountToBigDecimal(walletData.getBalance()),
                 walletData.getLastTransactionId()
         );
-
-        return data;
     }
 
     public static PoolData poolToPoolData(Pool pool) {
@@ -205,25 +204,24 @@ public class NodePojoConverter {
 
     private static Variant objectToVariant(Object object) {
         Class clazz = object.getClass();
-        Object value = object;
         Variant variant = new Variant();
         if (clazz.equals(String.class)) {
-            variant.setV_string((String)value);
+            variant.setV_string((String) object);
         } else if (clazz.equals(Integer.class)) {
-            variant.setV_i32((Integer)value);
+            variant.setV_i32((Integer) object);
         } else if (clazz.equals(Double.class)) {
-            variant.setV_double((Double)value);
+            variant.setV_double((Double) object);
         } else if (clazz.equals(Byte.class)) {
-            variant.setV_i8((Byte)value);
+            variant.setV_i8((Byte) object);
         } else if (clazz.equals(Short.class)) {
-            variant.setV_i16((Short)value);
+            variant.setV_i16((Short) object);
         } else if (clazz.equals(Long.class)) {
-            variant.setV_i64((Long)value);
+            variant.setV_i64((Long) object);
         } else if (clazz.equals(Boolean.class)) {
-            variant.setV_bool((Boolean)value);
+            variant.setV_bool((Boolean) object);
         } else if (clazz.equals(List.class)) {
-            List objectList = (List)value;
-            List<Variant> variantList = new ArrayList();
+            List objectList = (List) object;
+            List<Variant> variantList = new ArrayList<>();
             objectList.forEach(obj -> {
                 variantList.add(objectToVariant(obj));
             });
@@ -250,7 +248,7 @@ public class NodePojoConverter {
 
     public static TransactionId transactionIdDataToTransactionId(TransactionIdData transactionIdData) {
         TransactionId transactionId = new TransactionId();
-        transactionId.setPoolHash(Converter.byteArrayToByteBuffer(transactionIdData.getPoolHash()));
+        transactionId.setPoolHash(byteArrayToByteBuffer(transactionIdData.getPoolHash()));
         transactionId.setIndex(transactionIdData.getIndex());
         return transactionId;
     }
