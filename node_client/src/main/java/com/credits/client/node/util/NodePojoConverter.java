@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.credits.general.util.Converter.*;
+import static com.credits.general.util.Converter.byteArrayToByteBuffer;
+import static com.credits.general.util.Converter.toBigDecimal;
 
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
@@ -105,33 +106,33 @@ public class NodePojoConverter {
 
     public static TransactionData transactionToTransactionData(SealedTransaction sealedTransaction) {
 
-        Transaction trxn = sealedTransaction.getTrxn();
+        Transaction transaction = sealedTransaction.getTrxn();
         TransactionData data = new TransactionData();
-        Long innerId = trxn.getId();
-        data.setAmount(NodePojoConverter.amountToBigDecimal(trxn.getAmount()));
-        data.setCurrency(trxn.getCurrency());
+        Long innerId = transaction.getId();
+        data.setAmount(NodePojoConverter.amountToBigDecimal(transaction.getAmount()));
+        data.setCurrency(transaction.getCurrency());
         data.setId(innerId);
-        data.setSource(trxn.getSource());
-        data.setTarget(trxn.getTarget());
-        data.setBalance(NodePojoConverter.amountToBigDecimal(trxn.getBalance()));
+        data.setSource(transaction.getSource());
+        data.setTarget(transaction.getTarget());
+        data.setBalance(NodePojoConverter.amountToBigDecimal(transaction.getBalance()));
         return data;
     }
 
-    public static TransactionData transactionToTransactionData(Transaction trxn) {
+    public static TransactionData transactionToTransactionData(Transaction transaction) {
         TransactionData data = new TransactionData();
-        Long innerId = trxn.getId();
-        if(trxn.getAmount() == null) {
+        Long innerId = transaction.getId();
+        if(transaction.getAmount() == null) {
             data.setAmount(BigDecimal.ZERO);
         } else {
-            data.setAmount(NodePojoConverter.amountToBigDecimal(trxn.getAmount()));
-        }        data.setCurrency(trxn.getCurrency());
+            data.setAmount(NodePojoConverter.amountToBigDecimal(transaction.getAmount()));
+        }        data.setCurrency(transaction.getCurrency());
         data.setId(innerId);
-        data.setSource(trxn.getSource());
-        data.setTarget(trxn.getTarget());
-        if(trxn.getBalance() == null) {
+        data.setSource(transaction.getSource());
+        data.setTarget(transaction.getTarget());
+        if(transaction.getBalance() == null) {
             data.setBalance(BigDecimal.ZERO);
         } else {
-            data.setBalance(NodePojoConverter.amountToBigDecimal(trxn.getBalance()));
+            data.setBalance(NodePojoConverter.amountToBigDecimal(transaction.getBalance()));
         }
         return data;
     }
@@ -171,7 +172,7 @@ public class NodePojoConverter {
 
     public static SmartContractData smartContractToSmartContractData(SmartContract smartContract) {
 
-        SmartContractData smartContractData = new SmartContractData(
+        return new SmartContractData(
                 smartContract.getAddress(),
                 smartContract.getDeployer(),
                 smartContract.getSourceCode(),
@@ -179,18 +180,15 @@ public class NodePojoConverter {
                 smartContract.getHashState(),
                 smartContract.getObjectState()
         );
-        return smartContractData;
     }
 
     public static SmartContractInvocation smartContractInvocationDataToSmartContractInvocation(SmartContractInvocationData smartContractInvocationData) {
 
         List<Variant> params = new ArrayList<>();
 
-        smartContractInvocationData.getParams().forEach(object -> {
-            params.add(NodePojoConverter.objectToVariant(object));
-        });
+        smartContractInvocationData.getParams().forEach(object -> params.add(NodePojoConverter.objectToVariant(object)));
 
-        SmartContractInvocation smartContractInvocation = new SmartContractInvocation(
+        return new SmartContractInvocation(
                 smartContractInvocationData.getSourceCode(),
                 ByteBuffer.wrap(smartContractInvocationData.getByteCode()),
                 smartContractInvocationData.getHashState(),
@@ -198,8 +196,6 @@ public class NodePojoConverter {
                 params,
                 smartContractInvocationData.isForgetNewState()
         );
-
-        return smartContractInvocation;
     }
 
     private static Variant objectToVariant(Object object) {
@@ -222,9 +218,7 @@ public class NodePojoConverter {
         } else if (clazz.equals(List.class)) {
             List objectList = (List) object;
             List<Variant> variantList = new ArrayList<>();
-            objectList.forEach(obj -> {
-                variantList.add(objectToVariant(obj));
-            });
+            for (Object obj : objectList) variantList.add(objectToVariant(obj));
             variant.setV_list(variantList);
         }
         return variant;

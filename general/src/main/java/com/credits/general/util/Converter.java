@@ -17,6 +17,9 @@ import java.text.ParseException;
 import java.util.Base64;
 import java.util.BitSet;
 import java.util.Locale;
+import java.util.Objects;
+
+import static java.util.Arrays.stream;
 
 /**
  * Created by Rustem.Saidaliyev on 29.01.2018.
@@ -240,12 +243,12 @@ public class Converter {
     }
 
     static String byteArrayToString(byte[] bytes, String delimiter) {
-        if (delimiter == null || delimiter == "") {
+        if (delimiter == null || Objects.equals(delimiter, "")) {
             delimiter = " ";
         }
         StringBuilder stringBuilder = new StringBuilder();
         for(byte b : bytes) {
-            stringBuilder.append(b + delimiter);
+            stringBuilder.append(b).append(delimiter);
         }
         return stringBuilder.toString();
     }
@@ -262,8 +265,13 @@ public class Converter {
             return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).putShort((Short)object).array();
         } else if (object.getClass().equals(Byte.class)) {
             return ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put((Byte)object).array();
-        } else if (object instanceof byte[] || object instanceof Byte[]) {
-            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).put((byte[])object).array();
+        } else if (object instanceof byte[]) {
+            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).put((byte)object).array();
+        } else if (object instanceof Byte[]) {
+            Byte[] bigBytes = (Byte[]) object;
+            ByteBuffer byteBuffer = ByteBuffer.allocate(bigBytes.length);
+            stream(bigBytes).forEachOrdered(byteBuffer::put);
+            return byteBuffer.order(ByteOrder.LITTLE_ENDIAN).array();
         }
         throw new IllegalArgumentException(String.format("Unsupported object class: %s", object.getClass().getSimpleName()));
     }

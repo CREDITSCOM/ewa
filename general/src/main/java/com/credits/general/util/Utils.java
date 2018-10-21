@@ -10,26 +10,14 @@ public class Utils {
     private static final String ALPHA_LOWER_CASE_NUMERIC_STRING = "abcdefghijklmnopqrstuvwxyz0123456789";
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
 
-    /**
-     * Gets the subarray
-     * @param array - account
-     * @param offset - starts position
-     * @param length - length
-     * @return
-     */
-    public static byte[] parseSubarray(byte[] array, int offset, int length) {
+
+    public static byte[] parseSubArray(byte[] array, int offset, int length) {
         byte[] result = new byte[length];
         System.arraycopy(array, offset, result, 0, length);
         return result;
     }
 
-    /**
-     * Concatinate byte arrays
-     * @param firstArr
-     * @param secondArr
-     * @return
-     */
-    public static byte[] concatinateArrays(byte[] firstArr, byte[] secondArr) {
+    public static byte[] concatenateArrays(byte[] firstArr, byte[] secondArr) {
         byte[] resultArr = new byte[firstArr.length + secondArr.length];
         System.arraycopy(firstArr, 0, resultArr, 0, firstArr.length);
         System.arraycopy(secondArr, 0, resultArr, firstArr.length, secondArr.length);
@@ -68,11 +56,11 @@ public class Utils {
 
     public static boolean isEmpty(final Object object) {
         if (object instanceof String) {
-            return object == null || ((String) object).trim().isEmpty();
+            return ((String) object).trim().isEmpty();
         } else if (object instanceof ByteBuffer) {
-            return object == null || ((ByteBuffer)object).position() == 0;
+            return ((ByteBuffer) object).position() == 0;
         } else if (object instanceof byte[]) {
-            return object == null || ((byte[])object).length == 0;
+            return ((byte[]) object).length == 0;
         } else {
             return object == null;
         }

@@ -20,8 +20,6 @@ import com.credits.client.node.thrift.WalletTransactionsCountGetResult;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.thrift.ThriftClientPool;
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -33,8 +31,8 @@ import java.util.concurrent.Executors;
  */
 class NodeThriftApiClient implements NodeThriftApi {
     private static volatile NodeThriftApiClient instance;
-    private ExecutorService threadPoolExecutor;
-    private ThriftClientPool<API.Client> pool;
+    private final ExecutorService threadPoolExecutor;
+    private final ThriftClientPool<API.Client> pool;
 
     private NodeThriftApiClient(String apiServerHost, Integer apiServerPort) {
         pool = new ThriftClientPool<>(API.Client::new, apiServerHost, apiServerPort);
@@ -140,6 +138,6 @@ class NodeThriftApiClient implements NodeThriftApi {
     }
 
     private interface Function<R> {
-        R apply() throws TException, NodeClientException;
+        R apply() throws TException;
     }
 }

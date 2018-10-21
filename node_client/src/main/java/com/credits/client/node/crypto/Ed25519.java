@@ -75,7 +75,7 @@ public class Ed25519 {
 
     public static PrivateKey bytesToPrivateKey(byte[] bytes) {
 
-        byte[] seedByteArr = Utils.parseSubarray(bytes, 0, 32); // seed
+        byte[] seedByteArr = Utils.parseSubArray(bytes, 0, 32); // seed
         EdDSAParameterSpec spec = EdDSANamedCurveTable.getByName(ED_25519);
         EdDSAPrivateKeySpec key = new EdDSAPrivateKeySpec(seedByteArr, spec);
         return new EdDSAPrivateKey(key);
@@ -117,6 +117,6 @@ public class Ed25519 {
 
     public static byte[] privateKeyToBytes(PrivateKey privateKey) {
         EdDSAPrivateKey edDSAPrivateKey = (EdDSAPrivateKey) privateKey;
-        return Utils.concatinateArrays(edDSAPrivateKey.getSeed(), edDSAPrivateKey.getAbyte());
+        return Utils.concatenateArrays(edDSAPrivateKey.getSeed(), edDSAPrivateKey.getAbyte());
     }
 }

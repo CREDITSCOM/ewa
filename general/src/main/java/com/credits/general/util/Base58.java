@@ -64,7 +64,7 @@ public class Base58 {
      * Encodes the given version and bytes as a base58 string. A checksum is appended.
      *
      * @param version the version to encode
-     * @param payload the bytes to encode, e.g. pubkey hash
+     * @param payload the bytes to encode, e.g. public key hash
      * @return the base58-encoded string
      */
     public static String encodeChecked(int version, byte[] payload) {
@@ -86,7 +86,6 @@ public class Base58 {
      *
      * @param input the base58-encoded string to decode
      * @return the decoded data bytes
-     * @throws ConverterException
      */
     public static byte[] decode(String input) throws ConverterException {
         if (input.length() == 0) {

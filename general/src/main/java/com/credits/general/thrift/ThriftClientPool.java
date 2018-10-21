@@ -38,15 +38,14 @@ public class ThriftClientPool<T extends TServiceClient> implements
     public ThriftClientPool(ClientFactory<T> clientFactory, String host, int port) {
         GenericObjectPool.Config poolConfig = getPoolConfig();
         ProtocolFactory protocolFactory = new BinaryOverSocketProtocolFactory(host, port);
-        this.internalPool = new GenericObjectPool<T>(new ThriftClientFactory(
-            clientFactory, protocolFactory), poolConfig);
+        this.internalPool = new GenericObjectPool<>(new ThriftClientFactory(clientFactory, protocolFactory), poolConfig);
     }
 
 
     class ThriftClientFactory extends BasePoolableObjectFactory<T> {
 
-        private ClientFactory<T> clientFactory;
-        private ProtocolFactory protocolFactory;
+        private final ClientFactory<T> clientFactory;
+        private final ProtocolFactory protocolFactory;
 
         public ThriftClientFactory(ClientFactory<T> clientFactory,
             ProtocolFactory protocolFactory) {
@@ -77,19 +76,19 @@ public class ThriftClientPool<T extends TServiceClient> implements
         }
     }
 
-    public static interface ClientFactory<T> {
+    public interface ClientFactory<T> {
         T make(TProtocol tProtocol);
     }
 
-    public static interface ProtocolFactory {
+    public interface ProtocolFactory {
         TProtocol make();
     }
 
     public static class BinaryOverSocketProtocolFactory implements
         ProtocolFactory {
 
-        private String host;
-        private int port;
+        private final String host;
+        private final int port;
 
         public BinaryOverSocketProtocolFactory(String host, int port) {
             this.host = host;

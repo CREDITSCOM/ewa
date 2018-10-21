@@ -12,7 +12,7 @@ import java.security.SecureRandom;
 public class Blake2S {
 
     public static byte[] generateHash(int digestSize) throws CryptoException {
-        SecureRandom random = null;
+        SecureRandom random;
         try {
             random = SecureRandom.getInstance("SHA1PRNG");
             byte[] seed = random.generateSeed(digestSize);

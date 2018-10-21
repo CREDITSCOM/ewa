@@ -2,8 +2,6 @@ package com.credits.client.node.util;
 
 import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.pojo.CreateTransactionData;
-import com.credits.general.exception.CreditsException;
-import com.credits.general.util.Converter;
 import com.credits.general.util.Utils;
 import com.credits.general.util.exception.ConverterException;
 
@@ -19,7 +17,6 @@ public class Validator {
      * Проверка transaction hash
      * @param hash
      * пример "8iif6oqo"
-     * @throws CreditsException
      */
     public static void validateTransactionHash(String hash) throws ConverterException {
         if (hash.length() != 8) {
@@ -29,7 +26,6 @@ public class Validator {
 
     /**
      * Проверка правильности кошелька, на который выполняется транзакция (перевод)
-     * @param toAddress
      */
     public static void validateToAddress(String toAddress) throws ConverterException {
         // Проверка: является ли toAddress правильным публичным ключом провайдера ED25519

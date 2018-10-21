@@ -18,7 +18,7 @@ import static com.credits.client.executor.thrift.ContractExecutor.Client;
 public class ContractExecutorThriftApiClient implements ContractExecutorThriftApi {
 
     private static ContractExecutorThriftApiClient instance;
-    private ThriftClientPool<Client> pool;
+    private final ThriftClientPool<Client> pool;
 
     private ContractExecutorThriftApiClient(String host, int port) {
         pool = new ThriftClientPool<>(Client::new, host, port);
@@ -61,6 +61,6 @@ public class ContractExecutorThriftApiClient implements ContractExecutorThriftAp
     }
 
     private interface Function<R> {
-        R apply() throws ContractExecutorClientException, TException;
+        R apply() throws TException;
     }
 }

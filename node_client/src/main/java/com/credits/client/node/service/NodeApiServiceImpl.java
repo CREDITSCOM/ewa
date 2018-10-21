@@ -60,10 +60,10 @@ import static com.credits.general.util.Converter.decodeFromBASE58;
 public class NodeApiServiceImpl implements NodeApiService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeApiServiceImpl.class);
-    public static ConcurrentHashMap<String, ConcurrentHashMap<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, ConcurrentHashMap<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();
     public static String account;
     private static volatile NodeApiServiceImpl instance;
-    private NodeThriftApiClient nodeClient;
+    private final NodeThriftApiClient nodeClient;
 
     private NodeApiServiceImpl(String host, int port) {
         nodeClient = NodeThriftApiClient.getInstance(host, port);
@@ -227,8 +227,14 @@ public class NodeApiServiceImpl implements NodeApiService {
         //currency = String.format("%s|%s", currency, signature);
 
         LOGGER.info(
-            String.format("---> account = %s; target = %s; amount = %s; balance = %s; currency = %s; signature = %s; innerId = %s", source, target, serverAmount, serverBalance,
-                currency, signature, innerId));
+            String.format("---> account = %s; target = %s; amount = %s; balance = %s; currency = %s; signature = %s; innerId = %s",
+                Arrays.toString(source),
+                Arrays.toString(target),
+                serverAmount,
+                serverBalance,
+                currency,
+                Arrays.toString(signature),
+                innerId));
 
 
         return new Transaction(innerId, ByteBuffer.wrap(source), ByteBuffer.wrap(target), serverAmount, serverBalance, currency, ByteBuffer.wrap(signature), serverFee);

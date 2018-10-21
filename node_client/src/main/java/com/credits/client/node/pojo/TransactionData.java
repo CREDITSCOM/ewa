@@ -2,6 +2,7 @@ package com.credits.client.node.pojo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
@@ -76,8 +77,8 @@ public class TransactionData implements Serializable {
     public String toString() {
         return String.format("{id : %s, account : %s, target : %s, amount : %s, balance : %s, currency : %s}",
             this.id,
-            this.source,
-            this.target,
+            Arrays.toString(this.source),
+            Arrays.toString(this.target),
             this.amount,
             this.balance,
             this.currency
