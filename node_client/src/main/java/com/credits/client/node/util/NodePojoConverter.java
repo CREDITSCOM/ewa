@@ -17,16 +17,15 @@ import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generate.APIResponse;
 import com.credits.general.thrift.generate.Variant;
-import com.credits.general.util.Constants;
 import com.credits.general.util.Converter;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.credits.general.util.Constants.ds;
 import static com.credits.general.util.Converter.byteArrayToByteBuffer;
 import static com.credits.general.util.Converter.toBigDecimal;
 
@@ -42,27 +41,6 @@ public class NodePojoConverter {
         return (double) integralPart + fractionPart;
     }
 
-    public static BigDecimal amountToBigDecimal(Amount amount) {
-
-        int integralPart = amount.getIntegral();
-        BigDecimal fractionPart = toBigDecimal(amount.getFraction()).divide(toBigDecimal("1000000000000000000"), BigDecimal.ROUND_DOWN);
-
-        integralPart += fractionPart.intValue();
-        String integralPartAsString = Converter.toString(integralPart);
-        String fractionPartAsString = Converter.toString(fractionPart);
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Constants.LOCALE);
-        char sep = symbols.getDecimalSeparator();
-        String separator = Character.toString(sep);
-
-        if (fractionPartAsString.contains(separator)) {
-            String[] valueDelimited = fractionPartAsString.split(separator);
-            fractionPartAsString = valueDelimited[1];
-        } else {
-            fractionPartAsString = "0";
-        }
-        return new BigDecimal(String.format("%s.%s", integralPartAsString, fractionPartAsString));
-    }
-
     public static Amount doubleToAmount(Double value) throws NodeClientException {
 
         if (value == null) {
@@ -75,6 +53,7 @@ public class NodePojoConverter {
         return new Amount(integral, fraction);
     }
 
+    @SuppressWarnings("unsupported")
     public static Amount bigDecimalToAmount(BigDecimal value) throws NodeClientException {
 
         if (value == null) {
@@ -87,12 +66,8 @@ public class NodePojoConverter {
 
         String valueAsString = Converter.toString(value);
 
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Constants.LOCALE);
-        char sep = symbols.getDecimalSeparator();
-        String separator = Character.toString(sep);
-
-        if (valueAsString.contains(separator)) {
-            String[] valueDelimited = valueAsString.split(separator);
+        if (valueAsString.contains(ds)) {
+            String[] valueDelimited = valueAsString.split("[" + ds + "]");
             integral = Integer.parseInt(valueDelimited[0]);
             String fractionAsString = String.format("%-18s", valueDelimited[1]).replace(' ', '0');
             fraction = Long.parseLong(fractionAsString);
@@ -102,7 +77,6 @@ public class NodePojoConverter {
         }
         return new Amount(integral, fraction);
     }
-
 
     public static TransactionData transactionToTransactionData(SealedTransaction sealedTransaction) {
 
@@ -121,15 +95,16 @@ public class NodePojoConverter {
     public static TransactionData transactionToTransactionData(Transaction transaction) {
         TransactionData data = new TransactionData();
         Long innerId = transaction.getId();
-        if(transaction.getAmount() == null) {
+        if (transaction.getAmount() == null) {
             data.setAmount(BigDecimal.ZERO);
         } else {
             data.setAmount(NodePojoConverter.amountToBigDecimal(transaction.getAmount()));
-        }        data.setCurrency(transaction.getCurrency());
+        }
+        data.setCurrency(transaction.getCurrency());
         data.setId(innerId);
         data.setSource(transaction.getSource());
         data.setTarget(transaction.getTarget());
-        if(transaction.getBalance() == null) {
+        if (transaction.getBalance() == null) {
             data.setBalance(BigDecimal.ZERO);
         } else {
             data.setBalance(NodePojoConverter.amountToBigDecimal(transaction.getBalance()));
@@ -137,14 +112,29 @@ public class NodePojoConverter {
         return data;
     }
 
+    public static BigDecimal amountToBigDecimal(Amount amount) {
+
+        int integralPart = amount.getIntegral();
+        BigDecimal fractionPart = toBigDecimal(amount.getFraction()).divide(toBigDecimal("1000000000000000000"), BigDecimal.ROUND_UP);
+
+        integralPart += fractionPart.intValue();
+        String integralPartAsString = Converter.toString(integralPart);
+        String fractionPartAsString = Converter.toString(fractionPart);
+
+
+        if (fractionPartAsString.contains(ds)) {
+            String[] valueDelimited = fractionPartAsString.split("[" + ds + "]");
+            fractionPartAsString = valueDelimited[1];
+        } else {
+            fractionPartAsString = "0";
+        }
+        return new BigDecimal(String.format("%s.%s", integralPartAsString, fractionPartAsString));
+    }
 
     public static WalletData walletToWalletData(com.credits.client.node.thrift.WalletData walletData) {
 
-        return new WalletData(
-                walletData.getWalletId(),
-                NodePojoConverter.amountToBigDecimal(walletData.getBalance()),
-                walletData.getLastTransactionId()
-        );
+        return new WalletData(walletData.getWalletId(), NodePojoConverter.amountToBigDecimal(walletData.getBalance()),
+            walletData.getLastTransactionId());
     }
 
     public static PoolData poolToPoolData(Pool pool) {
@@ -172,30 +162,20 @@ public class NodePojoConverter {
 
     public static SmartContractData smartContractToSmartContractData(SmartContract smartContract) {
 
-        return new SmartContractData(
-                smartContract.getAddress(),
-                smartContract.getDeployer(),
-                smartContract.getSourceCode(),
-                smartContract.getByteCode(),
-                smartContract.getHashState(),
-                smartContract.getObjectState()
-        );
+        return new SmartContractData(smartContract.getAddress(), smartContract.getDeployer(), smartContract.getSourceCode(),
+            smartContract.getByteCode(), smartContract.getHashState(), smartContract.getObjectState());
     }
 
-    public static SmartContractInvocation smartContractInvocationDataToSmartContractInvocation(SmartContractInvocationData smartContractInvocationData) {
+    public static SmartContractInvocation smartContractInvocationDataToSmartContractInvocation(
+        SmartContractInvocationData smartContractInvocationData) {
 
         List<Variant> params = new ArrayList<>();
 
         smartContractInvocationData.getParams().forEach(object -> params.add(NodePojoConverter.objectToVariant(object)));
 
-        return new SmartContractInvocation(
-                smartContractInvocationData.getSourceCode(),
-                ByteBuffer.wrap(smartContractInvocationData.getByteCode()),
-                smartContractInvocationData.getHashState(),
-                smartContractInvocationData.getMethod(),
-                params,
-                smartContractInvocationData.isForgetNewState()
-        );
+        return new SmartContractInvocation(smartContractInvocationData.getSourceCode(), ByteBuffer.wrap(smartContractInvocationData.getByteCode()),
+            smartContractInvocationData.getHashState(), smartContractInvocationData.getMethod(), params,
+            smartContractInvocationData.isForgetNewState());
     }
 
     private static Variant objectToVariant(Object object) {
@@ -218,26 +198,20 @@ public class NodePojoConverter {
         } else if (clazz.equals(List.class)) {
             List objectList = (List) object;
             List<Variant> variantList = new ArrayList<>();
-            for (Object obj : objectList) variantList.add(objectToVariant(obj));
+            for (Object obj : objectList) {
+                variantList.add(objectToVariant(obj));
+            }
             variant.setV_list(variantList);
         }
         return variant;
     }
 
     public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {
-        return new ApiResponseData(
-                apiResponse.getCode(),
-                apiResponse.getMessage(),
-            null
-        );
+        return new ApiResponseData(apiResponse.getCode(), apiResponse.getMessage(), null);
     }
 
     public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse, Variant smartContractResult) {
-        return new ApiResponseData(
-                apiResponse.getCode(),
-                apiResponse.getMessage(),
-                smartContractResult
-        );
+        return new ApiResponseData(apiResponse.getCode(), apiResponse.getMessage(), smartContractResult);
     }
 
     public static TransactionId transactionIdDataToTransactionId(TransactionIdData transactionIdData) {

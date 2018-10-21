@@ -61,6 +61,7 @@ class TransactionProcessThread implements Runnable {
         }
     }
 
+    @SuppressWarnings("EmptyMethod")
     public interface Callback{
         void onSuccess(ApiResponseData resultData);
         void onError(Exception e);
