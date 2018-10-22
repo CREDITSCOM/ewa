@@ -1,6 +1,7 @@
 package com.credits.general.pojo;
 
 import com.credits.general.thrift.generate.Variant;
+import com.credits.general.util.Converter;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ public class SmartContractData implements Serializable {
     private byte[] objectState;
     private String method;
     private List<Variant> params;
+    private String base58Address;
 
     public SmartContractData(byte[] address, byte[] deployer, String sourceCode, byte[] byteCode, String hashState,
         byte[] objectState) {
@@ -127,6 +129,13 @@ public class SmartContractData implements Serializable {
             return false;
         }
         return params != null ? params.equals(that.params) : that.params == null;
+    }
+
+    public String getBase58Address() {
+        if(base58Address == null) {
+            base58Address = Converter.encodeToBASE58(address);
+        }
+        return base58Address;
     }
 
     @Override
