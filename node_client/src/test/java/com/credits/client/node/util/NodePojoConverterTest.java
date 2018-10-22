@@ -1,6 +1,5 @@
 package com.credits.client.node.util;
 
-import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.thrift.Amount;
 import com.credits.client.node.thrift.AmountCommission;
@@ -8,6 +7,7 @@ import com.credits.client.node.thrift.SealedTransaction;
 import com.credits.client.node.thrift.Transaction;
 import com.credits.client.node.thrift.TransactionId;
 import com.credits.client.node.thrift.WalletData;
+import com.credits.general.util.exception.ConverterException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class NodePojoConverterTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(NodePojoConverterTest.class);
 
     @Test
-    public void bigDecimalToAmountTest1() throws NodeClientException {
+    public void bigDecimalToAmountTest1() throws ConverterException {
         String valueAsString = "1.1111111111111";
         BigDecimal value = toBigDecimal(valueAsString);
         LOGGER.info("bigDecimalToAmountTest, {}", bigDecimalToAmount(value));
@@ -40,7 +40,7 @@ public class NodePojoConverterTest {
     }
 
     @Test
-    public void bigDecimalToAmountTest2() throws NodeClientException {
+    public void bigDecimalToAmountTest2() throws ConverterException {
             String valueAsString = "0.1000000000000000055511151231257827021181583404541015625" ;
             BigDecimal value;
             value = toBigDecimal(valueAsString);
@@ -111,12 +111,8 @@ public class NodePojoConverterTest {
     }
 
     @Test
-    public void doubleToAmountTest() {
-        try {
-            LOGGER.info("doubleToAmountTest, {}", doubleToAmount(99.999));
-        } catch (NodeClientException e) {
-            e.printStackTrace();
-        }
+    public void doubleToAmountTest() throws ConverterException {
+        LOGGER.info("doubleToAmountTest, {}", doubleToAmount(99.999));
     }
 
     @Test

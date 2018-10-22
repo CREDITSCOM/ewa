@@ -1,6 +1,5 @@
 package com.credits.client.node.util;
 
-import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.PoolData;
 import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.TransactionData;
@@ -18,6 +17,7 @@ import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generate.APIResponse;
 import com.credits.general.thrift.generate.Variant;
 import com.credits.general.util.Converter;
+import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -41,10 +41,9 @@ public class NodePojoConverter {
         return (double) integralPart + fractionPart;
     }
 
-    public static Amount doubleToAmount(Double value) throws NodeClientException {
-
+    public static Amount doubleToAmount(Double value) throws ConverterException {
         if (value == null) {
-            throw new NodeClientException("value is null");
+            throw new ConverterException("value is null");
         }
         String valueAsString = String.format(Locale.ROOT, "%.18f", value);
         String[] valueDelimited = valueAsString.split("\\.");
@@ -54,10 +53,10 @@ public class NodePojoConverter {
     }
 
     @SuppressWarnings("unsupported")
-    public static Amount bigDecimalToAmount(BigDecimal value) throws NodeClientException {
+    public static Amount bigDecimalToAmount(BigDecimal value) throws ConverterException {
 
         if (value == null) {
-            throw new NodeClientException("value is null");
+            throw new ConverterException("value is null");
         }
 
         int integral;

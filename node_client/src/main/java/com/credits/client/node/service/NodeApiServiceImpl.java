@@ -60,7 +60,7 @@ import static com.credits.general.util.Converter.decodeFromBASE58;
 public class NodeApiServiceImpl implements NodeApiService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeApiServiceImpl.class);
-    public static final ConcurrentHashMap<String, ConcurrentHashMap<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, ConcurrentHashMap<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();
     public static String account;
     private static volatile NodeApiServiceImpl instance;
     private final NodeThriftApiClient nodeClient;

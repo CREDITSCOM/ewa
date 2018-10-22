@@ -6,6 +6,7 @@ import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.crypto.exception.CryptoException;
 import com.credits.general.util.Converter;
 import com.credits.general.util.Utils;
+import com.credits.general.util.exception.ConverterException;
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;
 import net.i2p.crypto.eddsa.EdDSAPublicKey;
@@ -82,7 +83,8 @@ public class Ed25519 {
     }
 
     public static String generateSignOfTransaction(String innerId, String source, String target, BigDecimal amount,
-        BigDecimal balance, byte currency, PrivateKey privateKey) throws NodeClientException {
+        BigDecimal balance, byte currency, PrivateKey privateKey)
+        throws ConverterException, CryptoException {
 
         Amount amountValue = NodePojoConverter.bigDecimalToAmount(amount);
 
@@ -101,11 +103,7 @@ public class Ed25519 {
 
         LOGGER.debug("Signing the message [{}]", transaction);
         byte[] signature;
-        try {
-            signature = Ed25519.sign(transaction.getBytes(StandardCharsets.US_ASCII), privateKey);
-        } catch (CryptoException e) {
-            throw new NodeClientException(e);
-        }
+        signature = Ed25519.sign(transaction.getBytes(StandardCharsets.US_ASCII), privateKey);
 
         return Converter.encodeToBASE58(signature);
     }

@@ -118,7 +118,7 @@ public class Ed25519Test {
     }
 
     @Test
-    public void generateSignOfTransactionTest() throws NodeClientException {
+    public void generateSignOfTransactionTest() throws ConverterException, CryptoException {
         KeyPair keyPair = Ed25519.generateKeyPair();
         PrivateKey privateKey = keyPair.getPrivate();
 
