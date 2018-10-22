@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-class TransactionProcessThread implements Runnable {
+public class TransactionProcessThread implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionProcessThread.class);
     private final Transaction transaction;
     private final Callback callback;
