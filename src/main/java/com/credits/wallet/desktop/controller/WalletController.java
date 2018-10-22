@@ -245,7 +245,7 @@ public class WalletController extends Controller implements Initializable {
                     @Override
                     public void onSuccess(APIResponse apiResponse) {
                         BigDecimal balance =
-                            new BigDecimal(apiResponse.getRet_val().getV_double()).setScale(13, BigDecimal.ROUND_DOWN);
+                            new BigDecimal(apiResponse.getRet_val().getV_string()).setScale(13, BigDecimal.ROUND_DOWN);
                         tempCoinTabRow.setBalance(String.valueOf(decimalFormat.format(balance)));
                     }
 

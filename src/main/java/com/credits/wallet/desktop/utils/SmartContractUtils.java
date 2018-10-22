@@ -4,6 +4,7 @@ import com.credits.common.exception.CreditsCommonException;
 import com.credits.common.utils.sourcecode.SourceCodeUtils;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.data.ApiResponseData;
+import com.credits.leveldb.client.data.ExecuteSmartContractData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +36,8 @@ import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.credits.common.utils.Converter.decodeFromBASE58;
 
 public class SmartContractUtils {
     private final static Logger LOGGER = LoggerFactory.getLogger(SmartContractUtils.class);
@@ -118,13 +122,18 @@ public class SmartContractUtils {
         String method = "balanceOf";
         List<Variant> params = new ArrayList<>();
         SmartContractData smartContractData = AppState.levelDbService.getSmartContract(smart);
-        if (smartContractData == null) {
+        if (smartContractData == null || smartContractData.getObjectState().length == 0) {
+            LOGGER.info("SmartContract not found");
             FormUtils.showInfo("SmartContract not found");
         }
-        smartContractData.setMethod(method);
         smartContractData.setParams(
             Collections.singletonList(SourceCodeUtils.createVariantObject("String", AppState.account)));
-            AppState.levelDbService.directExecuteSmartContract(smartContractData,callback);
+        ExecuteSmartContractData executeSmartContractData = new ExecuteSmartContractData(ByteBuffer.wrap(decodeFromBASE58(AppState.account)),
+            ByteBuffer.wrap(smartContractData.getByteCode()),
+            ByteBuffer.wrap(smartContractData.getObjectState()),
+            method,
+            Collections.singletonList(SourceCodeUtils.createVariantObject("String", AppState.account)));
+        AppState.levelDbService.directExecuteSmartContract(executeSmartContractData,callback);
     }
 
     public static void transferTo(String smart, String target, BigDecimal amount) {
@@ -133,7 +142,7 @@ public class SmartContractUtils {
             List<Object> params = new ArrayList<>();
 
             params.add(SourceCodeUtils.createVariantObject("String", target));
-            params.add(SourceCodeUtils.createVariantObject("double",amount.toString()));
+            params.add(SourceCodeUtils.createVariantObject("String",amount.toString()));
             SmartContractData smartContractData = AppState.levelDbService.getSmartContract(smart);
             if (smartContractData == null) {
                 FormUtils.showInfo("SmartContract not found");

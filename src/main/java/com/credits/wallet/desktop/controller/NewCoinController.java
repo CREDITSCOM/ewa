@@ -4,6 +4,7 @@ import com.credits.common.exception.CreditsCommonException;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.thrift.generated.APIResponse;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -79,19 +80,25 @@ public class NewCoinController extends Controller implements Initializable {
             return;
         }
 
-        SmartContractUtils.getSmartContractBalance(token, new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
+        SmartContractUtils.getSmartContractBalance(token, new ApiTransactionThreadRunnable.Callback<APIResponse>() {
             @Override
-            public void onSuccess(BigDecimal balance) {
-                if (balance != null && balance.compareTo(BigDecimal.ZERO) > 0) {
-                    CoinsUtils.saveCoinsToFile(coin + ";" + token);
+            public void onSuccess(APIResponse apiResponse) {
+                if(apiResponse.getRet_val() != null) {
+                    BigDecimal balance = new BigDecimal(apiResponse.getRet_val().getV_string()).setScale(13, BigDecimal.ROUND_DOWN);
+                    if (balance != null && balance.compareTo(BigDecimal.ZERO) >= 0) {
+                        CoinsUtils.saveCoinsToFile(coin + ";" + token);
+                        FormUtils.showPlatformInfo("Make new coin was successful");
+                    } else {
+                        FormUtils.showPlatformInfo("Error make new coin");
+                    }
                 } else {
-                    FormUtils.showInfo("Balance is zero");
+                    FormUtils.showPlatformInfo("Error make new coin");
                 }
             }
 
             @Override
             public void onError(Exception e) {
-                FormUtils.showInfo("Error getting balance\n");
+                FormUtils.showPlatformInfo("Error make new coin");
             }
         });
 
