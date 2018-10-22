@@ -51,7 +51,7 @@ public class Form7Controller extends Controller implements Initializable {
     private void handleGenerate() {
         try {
             String coin = AppState.coin;
-            if(coin.equals("cs")) {
+            if(coin.equals("CS")) {
                 ApiUtils.callCreateTransaction();
             } else {
                 if (CoinsUtils.getCoins().get(coin)!= null) {
