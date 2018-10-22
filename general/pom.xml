@@ -11,4 +11,11 @@
         <groupId>com.credits.client</groupId>
         <version>1.0.0</version>
     </parent>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>25.0-jre</version>
+        </dependency>
+    </dependencies>
 </project>
