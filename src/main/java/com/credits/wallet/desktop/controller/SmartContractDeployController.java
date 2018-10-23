@@ -307,9 +307,9 @@ public class SmartContractDeployController extends Controller implements Initial
     }
 
     private void addTabErrorsToDebugPane() {
+        this.tabErrors.setPrefHeight(30+this.tabErrors.getItems().size()*25);
         debugPane.getChildren().clear();
         debugPane.getChildren().add(this.tabErrors);
-        debugPane.getChildren().get(1).setLayoutY(debugPane.getPrefHeight());
     }
 
     @FXML
