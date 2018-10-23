@@ -3,14 +3,8 @@ package com.credits.wallet.desktop.testUtils;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.data.TransactionData;
 import com.credits.leveldb.client.data.TransactionRoundData;
-import com.credits.leveldb.client.thrift.Amount;
-import com.credits.leveldb.client.thrift.AmountCommission;
-import com.credits.leveldb.client.thrift.SmartContractInvocation;
-import com.credits.leveldb.client.thrift.Transaction;
-import com.credits.leveldb.client.thrift.TransactionGetResult;
 import com.credits.leveldb.client.thrift.TransactionState;
 import com.credits.leveldb.client.thrift.TransactionsStateGetResult;
-import com.credits.leveldb.client.util.LevelDbClientConverter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -47,7 +41,7 @@ public class FakeData {
         try {
             byte[] byteAddress = decodeFromBASE58("G2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZZ");
             smartContractDataList.add(
-                new SmartContractData(decodeFromBASE58("11111111111111111111111111111111111111111111"),
+                new SmartContractData(decodeFromBASE58("UYXYXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAWWE"),
                     byteAddress,
                     "public class Contract extends SmartContract {\n" + "\n" + " public Contract() {\n" +
                         " total = 0;\n" + " }\n" + "}", decodeFromBASE58(

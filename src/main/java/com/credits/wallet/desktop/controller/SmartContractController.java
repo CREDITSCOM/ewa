@@ -239,7 +239,7 @@ public class SmartContractController extends Controller implements Initializable
                 paramValueTextField.setLayoutY(layoutY);
                 paramValueTextField.setStyle(
                     "-fx-background-color:  #fff; -fx-border-radius:15; -fx-border-width: 1; -fx-border-color:  #000; -fx-font-size: 16px");
-                paramValueTextField.setPrefSize(300, 30);
+                paramValueTextField.setPrefSize(500, 30);
                 Label paramNameLabel = new Label(param.toString());
                 paramNameLabel.setLayoutX(10);
                 paramNameLabel.setLayoutY(layoutY + 5);

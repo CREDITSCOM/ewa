@@ -364,6 +364,7 @@
 
 /*SMART-TABLEVIEW*/
 .credits-smart-table-view {
+    -fx-font-size: 11px;
     -fx-background-color: transparent;
     -fx-border-width: 0 0 0 0;
     -fx-background-insets: 0;

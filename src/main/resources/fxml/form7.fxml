@@ -28,9 +28,9 @@
                     <children>
                         <VBox prefHeight="83.0" prefWidth="500.0">
                             <children>
-                                <Label style="-fx-font-size: 16px;" styleClass="credits-label" text="Make a payment to address which opened on credits only">
+                                <Label style="-fx-font-size: 16px;" styleClass="arrow" text="   Make a payment to address which opened on credits only">
                                 </Label>
-                                <TextField fx:id="toAddress" editable="false" maxHeight="45.0" maxWidth="500.0" minWidth="0.0" prefHeight="45.0" prefWidth="500.0" style="-fx-font-size: 16px;" styleClass="credits-textField" />
+                                <TextField fx:id="toAddress" editable="false" maxHeight="45.0" maxWidth="500.0" minWidth="0.0" prefHeight="45.0" prefWidth="500.0" style="-fx-font-size: 16px; -fx-border-color: transparent;" styleClass="credits-textField" />
                             </children>
                         </VBox>
                     </children>
@@ -39,9 +39,9 @@
                     <children>
                         <VBox prefHeight="83.0" prefWidth="500.0">
                             <children>
-                                <Label styleClass="credits-label" text="Amount">
+                                <Label style="-fx-font-size: 16;" styleClass="arrow" text="   Amount">
                                 </Label>
-                                <TextField fx:id="amountInCs" editable="false" maxHeight="45.0" maxWidth="300.0" prefHeight="45.0" prefWidth="300.0" style="-fx-font-size: 16px;" styleClass="credits-textFieldGray" />
+                                <TextField fx:id="amountInCs" editable="false" maxHeight="45.0" prefHeight="45.0" prefWidth="500.0" style="-fx-font-size: 16px; -fx-border-color: transparent;" styleClass="credits-textFieldGray" />
                             </children>
                         </VBox>
                     </children>
@@ -50,9 +50,9 @@
                     <children>
                         <VBox prefHeight="83.0" prefWidth="500.0">
                             <children>
-                                <Label style="-fx-font-size: 16px;" styleClass="credits-label" text="Transaction fee">
+                                <Label style="-fx-font-size: 16px;" styleClass="arrow" text="   Transaction fee">
                                 </Label>
-                                <TextField fx:id="transactionFeeValue" editable="false" maxHeight="45.0" maxWidth="300.0" prefHeight="45.0" prefWidth="300.0" style="-fx-font-size: 16px;" styleClass="credits-textField">
+                                <TextField fx:id="transactionFeeValue" editable="false" maxHeight="45.0" prefHeight="45.0" prefWidth="500.0" style="-fx-font-size: 16px; -fx-border-color: transparent;" styleClass="credits-textField">
                                 </TextField>
                             </children>
                         </VBox>
@@ -62,8 +62,8 @@
                     <children>
                         <VBox prefHeight="83.0" prefWidth="500.0">
                             <children>
-                                <Label style="-fx-font-size: 16px;" styleClass="credits-label" text="Send text (it's not free). It's not necessary to fill in" />
-                                <TextField fx:id="transactionData" editable="false" maxHeight="45.0" maxWidth="516.0" prefHeight="45.0" prefWidth="516.0" style="-fx-font-size: 16px;" styleClass="credits-textField" />
+                                <Label style="-fx-font-size: 16px;" styleClass="arrow" text="   Send text (it's not free). It's not necessary to fill in" />
+                                <TextField fx:id="transactionData" editable="false" maxHeight="45.0" maxWidth="516.0" prefHeight="45.0" prefWidth="516.0" style="-fx-font-size: 16px; -fx-border-color: transparent;" styleClass="credits-textField" />
                             </children>
                         </VBox>
                     </children>
