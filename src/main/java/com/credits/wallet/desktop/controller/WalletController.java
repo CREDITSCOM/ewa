@@ -21,6 +21,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,13 @@ public class WalletController extends Controller implements Initializable {
     private TextField numFee;
 
     @FXML
+    private TextField transText;
+
+    @FXML
     private TableView<CoinTabRow> coins;
+
+    @FXML
+    private Pane coinsPane;
 
     private void refreshTransactionFeePercent(BigDecimal transactionFeeValue, BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) == 0) {
@@ -121,6 +128,7 @@ public class WalletController extends Controller implements Initializable {
     private void handleGenerate() throws CreditsException {
         AppState.amount = Converter.toBigDecimal(numAmount.getText());
         AppState.toAddress = txKey.getText();
+        AppState.text = transText.getText();
 
         // VALIDATE
         boolean isValidationSuccessful = true;
@@ -128,7 +136,7 @@ public class WalletController extends Controller implements Initializable {
         if (coins.getSelectionModel().getSelectedItem()==null ||
             coins.getSelectionModel().getSelectedItem().getName().isEmpty()) {
             labErrorCoin.setText(ERR_COIN);
-            /*cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));*/
+            coinsPane.getStyleClass().add("credits-border-red");
             isValidationSuccessful = false;
         } else {
             AppState.coin = coins.getSelectionModel().getSelectedItem().getName();
@@ -264,6 +272,7 @@ public class WalletController extends Controller implements Initializable {
     }
 
     private void clearLabErr() {
+        coinsPane.getStyleClass().remove("credits-border-red");
         labErrorCoin.setText("");
         labErrorAmount.setText("");
         labErrorFee.setText("");

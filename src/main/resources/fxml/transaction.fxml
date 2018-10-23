@@ -30,8 +30,8 @@
                   <RowConstraints />
                     </rowConstraints>
                     <children>
-                        <Label text="Target" GridPane.rowIndex="1" />
-                        <Label text="Currency" GridPane.rowIndex="2" />
+                        <Label text="Source" GridPane.rowIndex="1" />
+                        <Label text="Target" GridPane.rowIndex="2" />
                         <Label text="Amount" GridPane.rowIndex="3" />
                         <Label text="State" GridPane.rowIndex="4" />
                         <Label fx:id="labTarget" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />

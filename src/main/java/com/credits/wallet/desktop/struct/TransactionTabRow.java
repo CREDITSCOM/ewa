@@ -5,10 +5,19 @@ package com.credits.wallet.desktop.struct;
  */
 public class TransactionTabRow {
     private String innerId;
+    private String source;
     private String target;
     private byte currency;
     private String amount;
     private String state;
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     public String getState() {
         return state;

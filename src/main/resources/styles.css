@@ -32,11 +32,22 @@
     -fx-font-size: 16px;
 }
 
+.credits-not-padding-label {
+    -fx-font-size: 16px;
+}
+
+
 .credits-labelError {
     -fx-padding:  5 0 0 15;
     -fx-font-size: 16px;
     -fx-text-fill: red
 }
+
+.credits--not-padding-labelError {
+    -fx-font-size: 16px;
+    -fx-text-fill: red
+}
+
 
 .credits-footerLabel {
     -fx-font-size: 12px;
@@ -200,8 +211,8 @@
 /*SMART COMBOBOX*/
 
 #cbMethods .combo-box-popup>.list-view {
-    -fx-pref-width: 780;
-    -fx-pref-height: 250;
+    -fx-pref-width: 770;
+    -fx-pref-height: 150;
 }
 
 
@@ -230,8 +241,8 @@
     -fx-padding: -25 0 0 0;
     -fx-border-color: black;
     */
-    -fx-pref-width: 70;
-    -fx-pref-height: 254;
+    -fx-pref-width: 80;
+    -fx-pref-height: 300;
     -fx-background-color: transparent;
 }
 
@@ -303,7 +314,13 @@
 }
 /*CREDITS HISTORY*/
 
+
 /*SMART TAB PANE*/
+
+.credits-tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-radius: 10 10 0 0;
+}
+
 .credits-tab-pane .tab-header-area .tab-header-background {
     -fx-opacity: 0;
 }
@@ -424,4 +441,12 @@
 .credits-welcome-column-label {
     -fx-font-size: 14px;
     -fx-text-fill: #808080;
+}
+
+.credits-border-red {
+    -fx-border-color: red;
+}
+
+.credits-border-black {
+    -fx-border-color: black;
 }

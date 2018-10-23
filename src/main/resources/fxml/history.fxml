@@ -18,18 +18,18 @@
             <children>
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Transaction history" />
                 <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can see transaction history" />
-                <ComboBox fx:id="cbPageSize" layoutX="20.0" layoutY="135.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="27.0" prefWidth="70.0" promptText="1" styleClass="credits-hist-combobox" />
-                <Label layoutX="100.0" layoutY="140.0" text="transactions on the page" />
+                <ComboBox fx:id="cbPageSize" layoutX="20.0" layoutY="135.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="27.0" prefWidth="80.0" promptText="1" styleClass="credits-hist-combobox" />
+                <Label layoutX="120.0" layoutY="140.0" text="transactions on the page" />
                 <TableView fx:id="tabTransaction" layoutX="20.0" layoutY="175.0" prefHeight="375.0" prefWidth="1250.0" styleClass="credits-history">
                     <columns>
-                        <TableColumn prefWidth="162.0" text="Id" />
-                        <TableColumn prefWidth="471.0" text="Target" />
-                        <TableColumn prefWidth="156.0" text="Currency" />
-                        <TableColumn prefWidth="303.0" text="Amount" />
+                        <TableColumn prefWidth="40.0" text="Id" />
+                        <TableColumn prefWidth="420.0" text="Source" />
+                        <TableColumn prefWidth="420.0" text="Target" />
+                        <TableColumn prefWidth="210.0" text="Amount" />
                         <TableColumn prefWidth="145.0" text="State" />
                     </columns>
                 </TableView>
-                <Label layoutX="1110.0" layoutY="574.0" text="Page:" />
+                <Label layoutX="1100.0" layoutY="574.0" text="Page:" />
                 <Button fx:id="btnFirst" layoutX="1151.0" layoutY="570.0" maxHeight="25.0 " maxWidth="25.0" minHeight="25.0" minWidth="25.0" onAction="#handlePageFirst" prefHeight="25.0" prefWidth="25.0" styleClass="credits-history-control">
                     <graphic>
                         <ImageView fitHeight="15.0" fitWidth="15.0">

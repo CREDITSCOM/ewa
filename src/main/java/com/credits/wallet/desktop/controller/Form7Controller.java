@@ -72,6 +72,7 @@ public class Form7Controller extends Controller implements Initializable {
 FormUtils.resizeForm(bp);
         this.toAddress.setText(AppState.toAddress);
         this.amountInCs.setText(Converter.toString(AppState.amount) + " " + AppState.coin);
+        this.transactionData.setText(AppState.text);
     }
 
 }

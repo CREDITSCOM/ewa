@@ -73,8 +73,8 @@ public class HistoryController extends Controller implements Initializable {
         }
 
         tabTransaction.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("innerId"));
-        tabTransaction.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("target"));
-        tabTransaction.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("currency"));
+        tabTransaction.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("source"));
+        tabTransaction.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("target"));
         tabTransaction.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("amount"));
         tabTransaction.getColumns().get(4).setCellValueFactory(new PropertyValueFactory<>("state"));
 
@@ -179,8 +179,8 @@ public class HistoryController extends Controller implements Initializable {
         transactionList.forEach(transactionData -> {
             TransactionTabRow tableRow = new TransactionTabRow();
             tableRow.setAmount(Converter.toString(transactionData.getAmount()));
-            tableRow.setCurrency(transactionData.getCurrency());
-            tableRow.setTarget(Converter.encodeToBASE58(transactionData.getTarget()));
+            tableRow.setSource(transactionData.getStringSource());
+            tableRow.setTarget(transactionData.getStringTarget());
             tableRow.setInnerId(transactionData.getId().toString());
             tableRow.setState("VALID");
             tabTransaction.getItems().add(tableRow);
