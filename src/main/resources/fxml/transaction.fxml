@@ -34,8 +34,8 @@
                         <Label text="Target" GridPane.rowIndex="2" />
                         <Label text="Amount" GridPane.rowIndex="3" />
                         <Label text="State" GridPane.rowIndex="4" />
-                        <Label fx:id="labTarget" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label fx:id="labCurrency" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label fx:id="labSource" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="labTarget" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label fx:id="labAmount" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <Label fx:id="labState" prefHeight="20.0" prefWidth="550.0" text="State" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                         <Label text="InnerId" />

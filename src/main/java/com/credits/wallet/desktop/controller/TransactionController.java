@@ -23,9 +23,9 @@ public class TransactionController extends Controller implements Initializable {
     @FXML
     private Label labInnerId;
     @FXML
-    private Label labTarget;
+    private Label labSource;
     @FXML
-    private Label labCurrency;
+    private Label labTarget;
     @FXML
     private Label labAmount;
     @FXML
@@ -43,9 +43,9 @@ public class TransactionController extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         FormUtils.resizeForm(bp);
         labInnerId.setText(AppState.selectedTransactionRow.getInnerId());
+        labSource.setText(AppState.selectedTransactionRow.getSource());
+        //labTarget.setText(AppState.selectedTransactionRow.getCurrency());
         labTarget.setText(AppState.selectedTransactionRow.getTarget());
-        //labCurrency.setText(AppState.selectedTransactionRow.getCurrency());
-        labCurrency.setText("CS");
         labAmount.setText(AppState.selectedTransactionRow.getAmount());
         labState.setText(AppState.selectedTransactionRow.getState());
     }
