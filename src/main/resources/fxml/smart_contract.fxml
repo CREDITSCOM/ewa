@@ -25,7 +25,7 @@
             <children>
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contracts from blockhain" />
                 <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" text="🡰" />
-                <TabPane layoutX="490.0" layoutY="220.0" maxHeight="355.0" minHeight="340.0" prefHeight="355.0" prefWidth="800.0" style="-fx-border-radius: 15;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
+                <TabPane layoutX="490.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="800.0" style="-fx-border-radius: 15;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="Choose method">
                             <content>
@@ -79,7 +79,7 @@
                         <Button layoutX="596.0" layoutY="10.0" onAction="#handleCreate" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #E5E5E5;" styleClass="credits-button" text="Go" />
                     </children>
                 </Pane>
-                <TabPane layoutX="20.0" layoutY="220.0" maxHeight="355.0" minHeight="355.0" prefHeight="355.0" prefWidth="430.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
+                <TabPane layoutX="20.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="430.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="My smart contracts">
                             <content>
