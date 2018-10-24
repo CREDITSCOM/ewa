@@ -148,8 +148,7 @@ public class HistoryController extends Controller implements Initializable {
 
                     int curRound = transactionsStateResult.getRoundNum();
                     sourceTransactionMap.entrySet()
-                        .removeIf(e -> e.getValue().getRoundNumber() == null ||
-                            curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
+                        .removeIf(e -> e.getValue().getRoundNumber()!=null && curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
 
                     sourceTransactionMap.forEach((key, value) -> {
                         TransactionTabRow tableRow = new TransactionTabRow();
@@ -159,14 +158,17 @@ public class HistoryController extends Controller implements Initializable {
                         tableRow.setCurrency(transaction.getCurrency());
                         tableRow.setTarget(Converter.encodeToBASE58(transaction.getTarget()));
                         if(states.get(key)!=null) {
+                            if(value.getRoundNumber()==null) {
+                                value.setRoundNumber(curRound);
+                            }
                             if(states.get(key).getValue()==TransactionState.INVALID.getValue()) {
                                 tableRow.setState("INVALID");
                             }
+                            if(states.get(key).getValue()==TransactionState.INPROGRES.getValue()) {
+                                tableRow.setState("INPROGRESS");
+                            }
+                            tabTransaction.getItems().add(tableRow);
                         }
-                        if(states.get(key).getValue()==TransactionState.INPROGRES.getValue()) {
-                            tableRow.setState("INPROGRESS");
-                        }
-                        tabTransaction.getItems().add(tableRow);
                     });
                 }
             }
