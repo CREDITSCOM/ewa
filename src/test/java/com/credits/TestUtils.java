@@ -1,7 +1,7 @@
 package com.credits;
 
-import com.credits.common.exception.CreditsException;
 import com.credits.exception.CompilationException;
+import com.credits.general.exception.CreditsException;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -2,13 +2,14 @@ package com.credits.thrift.utils;
 
 import com.credits.exception.ContractExecutorException;
 import com.credits.exception.UnsupportedTypeException;
+import com.credits.general.thrift.generate.Variant;
 import com.credits.thrift.DeployReturnValue;
-import com.credits.thrift.generated.Variant;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.credits.serialise.Serializer.serialize;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;

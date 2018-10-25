@@ -1,9 +1,9 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.thrift.generate.Variant;
 import com.credits.service.ServiceTest;
-import com.credits.service.db.leveldb.LevelDbInteractionService;
-import com.credits.thrift.generated.Variant;
+import com.credits.service.db.leveldb.NodeApiInteractionService;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -17,13 +17,14 @@ import java.math.BigDecimal;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static java.io.File.separator;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class ThriftIntegrationMockTest extends ServiceTest {
+
     @Inject
-    LevelDbInteractionService dbservice;
+    NodeApiInteractionService dbservice;
 
     private byte[] contractBytecode;
     private byte[] contractState;
@@ -36,7 +37,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
 
         Field client = dbservice.getClass().getDeclaredField("service");
         client.setAccessible(true);
-        client.set(dbservice, mockLevelDbService);
+        client.set(dbservice, mockNodeApiService);
 
         Class<?> contract = Class.forName("SmartContract");
         Field interactionService = contract.getDeclaredField("service");
@@ -57,7 +58,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
 
     @Test
     public void execute_contract_using_bytecode_getBalance() throws Exception {
-        when(mockLevelDbService.getBalance(any())).thenReturn(new BigDecimal(555));
+        when(mockNodeApiService.getBalance(any())).thenReturn(new BigDecimal(555));
         String balance = (String) ceService.execute(address, contractBytecode,
             contractState, "balanceGet", new Variant[0]).getVariant().getFieldValue();
         assertEquals("555", balance);

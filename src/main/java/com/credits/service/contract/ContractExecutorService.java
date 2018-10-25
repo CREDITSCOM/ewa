@@ -1,9 +1,9 @@
 package com.credits.service.contract;
 
+import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
-import com.credits.thrift.MethodDescription;
+import com.credits.general.thrift.generate.Variant;
 import com.credits.thrift.ReturnValue;
-import com.credits.thrift.generated.Variant;
 
 import java.util.List;
 
@@ -30,5 +30,5 @@ public interface ContractExecutorService {
 
     ReturnValue execute( byte[] initiatorAddress, byte[] bytecode, byte[] contractState, String methodName, Variant[] params ) throws ContractExecutorException;
 
-    List<MethodDescription> getContractsMethods(byte[] contractBytecode) throws ContractExecutorException;
+    List<MethodDescriptionData> getContractsMethods(byte[] contractBytecode) throws ContractExecutorException;
 }

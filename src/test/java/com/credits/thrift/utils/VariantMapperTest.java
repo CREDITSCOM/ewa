@@ -1,7 +1,6 @@
 package com.credits.thrift.utils;
 
-import com.credits.thrift.generated.Variant;
-import com.credits.thrift.utils.VariantMapper;
+import com.credits.general.thrift.generate.Variant;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

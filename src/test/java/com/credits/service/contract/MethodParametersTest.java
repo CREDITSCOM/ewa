@@ -1,8 +1,8 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.thrift.generate.Variant;
 import com.credits.service.ServiceTest;
-import com.credits.thrift.generated.Variant;
 import com.credits.thrift.utils.ContractUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MethodParametersTest extends ServiceTest {

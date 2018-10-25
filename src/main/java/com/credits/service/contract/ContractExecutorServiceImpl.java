@@ -2,15 +2,14 @@ package com.credits.service.contract;
 
 import com.credits.ApplicationProperties;
 import com.credits.classload.ByteArrayContractClassLoader;
-import com.credits.common.utils.Base58;
+import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
-import com.credits.leveldb.client.ApiClient;
+import com.credits.general.thrift.generate.Variant;
+import com.credits.general.util.Base58;
 import com.credits.secure.Sandbox;
-import com.credits.service.db.leveldb.LevelDbInteractionService;
+import com.credits.service.db.leveldb.NodeApiInteractionService;
 import com.credits.thrift.DeployReturnValue;
-import com.credits.thrift.MethodDescription;
 import com.credits.thrift.ReturnValue;
-import com.credits.thrift.generated.Variant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,10 +49,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public ApplicationProperties properties;
 
     @Inject
-    public LevelDbInteractionService dbInteractionService;
-
-    @Inject
-    public ApiClient apiClient;
+    public NodeApiInteractionService dbInteractionService;
 
     public ContractExecutorServiceImpl() {
         INJECTOR.component.inject(this);
@@ -68,8 +64,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] objectState, String methodName,
-        Variant[] params) throws ContractExecutorException {
+    public ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] objectState, String methodName, Variant[] params)
+        throws ContractExecutorException {
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
         Class<?> contractClass = classLoader.buildClass(bytecode);
@@ -81,8 +77,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             contractInstance = deserialize(objectState, classLoader);
         } else {
             DeployReturnValue deployReturnValue = deployAndGetContractVariables(contractClass, initiator);
-            return new ReturnValue(deployReturnValue.getContractState(), null,
-                deployReturnValue.getContractVariables());
+            return new ReturnValue(deployReturnValue.getContractState(), null, deployReturnValue.getContractVariables());
         }
 
         initializeInitiator(initiator, contractClass, contractInstance);
@@ -92,8 +87,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Method targetMethod = null;
         Object[] argValues = null;
         if (methods.isEmpty()) {
-            throw new ContractExecutorException("Cannot execute the contract: " + initiator +
-                ". Reason: Cannot find a method by name and parameters specified");
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + initiator + ". Reason: Cannot find a method by name and parameters specified");
         } else {
             for (Method method : methods) {
                 try {
@@ -104,8 +99,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 } catch (ClassCastException e) {
                     continue;
                 } catch (ContractExecutorException e) {
-                    throw new ContractExecutorException(
-                        "Cannot execute the contract: " + initiator + "Reason: " + getRootCauseMessage(e), e);
+                    throw new ContractExecutorException("Cannot execute the contract: " + initiator + "Reason: " + getRootCauseMessage(e), e);
                 }
                 targetMethod = method;
                 break;
@@ -113,8 +107,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         if (targetMethod == null) {
-            throw new ContractExecutorException("Cannot execute the contract: " + initiator +
-                ". Reason: Cannot cast parameters to the method found by name: " + methodName);
+            throw new ContractExecutorException(
+                "Cannot execute the contract: " + initiator + ". Reason: Cannot cast parameters to the method found by name: " + methodName);
         }
 
         //Invoking target method
@@ -124,8 +118,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Sandbox.confine(contractClass, createPermissions());
             returnObject = targetMethod.invoke(contractInstance, argValues);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new ContractExecutorException(
-                "Cannot execute the contract: " + initiator + ". Reason: " + getRootCauseMessage(e));
+            throw new ContractExecutorException("Cannot execute the contract: " + initiator + ". Reason: " + getRootCauseMessage(e));
         }
 
         Variant returnValue = null;
@@ -139,17 +132,17 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public List<MethodDescription> getContractsMethods(byte[] bytecode) {
+    public List<MethodDescriptionData> getContractsMethods(byte[] bytecode) {
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
         Class<?> contractClass = classLoader.buildClass(bytecode);
 
-        List<MethodDescription> result = new ArrayList<>();
+        List<MethodDescriptionData> result = new ArrayList<>();
         for (Method method : contractClass.getMethods()) {
             ArrayList<String> argTypes = new ArrayList<>();
             for (Type type : method.getGenericParameterTypes()) {
                 argTypes.add(type.getTypeName());
             }
-            result.add(new MethodDescription(method.getName(), argTypes, method.getGenericReturnType().getTypeName()));
+            result.add(new MethodDescriptionData(method.getName(), argTypes, method.getGenericReturnType().getTypeName()));
         }
 
         return result;

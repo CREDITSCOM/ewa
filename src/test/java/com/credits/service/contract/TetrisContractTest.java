@@ -1,8 +1,8 @@
 package com.credits.service.contract;
 
+import com.credits.general.thrift.generate.Variant;
 import com.credits.service.ServiceTest;
 import com.credits.thrift.ReturnValue;
-import com.credits.thrift.generated.Variant;
 import com.credits.thrift.utils.ContractUtils;
 import org.junit.Assert;
 import org.junit.Before;

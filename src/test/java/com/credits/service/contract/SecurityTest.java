@@ -1,8 +1,8 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.thrift.generate.Variant;
 import com.credits.service.ServiceTest;
-import com.credits.thrift.generated.Variant;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,8 +11,8 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.credits.thrift.generated.Variant._Fields.V_I32;
-import static com.credits.thrift.generated.Variant._Fields.V_STRING;
+import static com.credits.general.thrift.generate.Variant._Fields.V_I32;
+import static com.credits.general.thrift.generate.Variant._Fields.V_STRING;
 import static java.io.File.separator;
 import static org.junit.Assert.fail;
 import static org.junit.runners.Parameterized.Parameter;

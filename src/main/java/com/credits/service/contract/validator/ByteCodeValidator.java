@@ -1,8 +1,8 @@
 package com.credits.service.contract.validator;
 
-import com.credits.common.exception.CreditsException;
 import com.credits.exception.ContractExecutorException;
-import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.general.exception.CreditsException;
+import com.credits.general.pojo.SmartContractData;
 import org.apache.commons.codec.binary.Hex;
 
 import java.security.MessageDigest;

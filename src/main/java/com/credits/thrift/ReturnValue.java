@@ -1,6 +1,6 @@
 package com.credits.thrift;
 
-import com.credits.thrift.generated.Variant;
+import com.credits.general.thrift.generate.Variant;
 
 import java.util.Map;
 

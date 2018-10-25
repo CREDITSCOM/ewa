@@ -1,9 +1,9 @@
 package com.credits.service.contract;
 
-import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.general.pojo.SmartContractData;
+import com.credits.general.thrift.generate.Variant;
+import com.credits.general.util.Converter;
 import com.credits.service.ServiceTest;
-import com.credits.thrift.generated.Variant;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +30,7 @@ public class ThriftIT extends ServiceTest {
 
         contractBytecode = compile(sourceCode, "Contract", "TKN");
 
-        when(mockLevelDbService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
+        when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
             new SmartContractData(address, address, sourceCode, contractBytecode,null, null));
 
         contractState = ceService.execute(address, contractBytecode, null, null, null).getContractState();

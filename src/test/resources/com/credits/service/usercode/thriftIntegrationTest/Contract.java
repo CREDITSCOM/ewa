@@ -17,7 +17,7 @@ public class Contract extends SmartContract {
 
     public void sendZeroCS() throws Exception {
         System.out.println("try to send 0 credits...");
-        sendTransaction("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", 0, "CS", 1.0);
+        sendTransaction("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", 0, 1.0);
         System.out.println("success");
     }
 

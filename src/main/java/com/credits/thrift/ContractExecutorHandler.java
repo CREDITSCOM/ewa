@@ -1,13 +1,14 @@
 package com.credits.thrift;
 
-import com.credits.common.utils.Converter;
+import com.credits.client.executor.pojo.MethodDescriptionData;
+import com.credits.client.executor.thrift.APIResponse;
+import com.credits.client.executor.thrift.ContractExecutor;
+import com.credits.client.executor.thrift.GetContractMethodsResult;
+import com.credits.client.executor.thrift.MethodDescription;
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.thrift.generate.Variant;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
-import com.credits.thrift.generated.APIResponse;
-import com.credits.thrift.generated.ContractExecutor;
-import com.credits.thrift.generated.GetContractMethodsResult;
-import com.credits.thrift.generated.Variant;
 import org.apache.thrift.TUnion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import static com.credits.common.utils.Converter.*;
+import static com.credits.general.util.Converter.encodeToBASE58;
 import static java.util.stream.Collectors.toList;
 
 public class ContractExecutorHandler implements ContractExecutor.Iface {
@@ -55,8 +56,8 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         logger.debug("<-- getContractMethods(bytecode = " + bytecode.array().length + " bytes)");
         GetContractMethodsResult result = new GetContractMethodsResult();
         try {
-            List<MethodDescription> contractsMethods = service.getContractsMethods(bytecode.array());
-            result.methods = contractsMethods.stream().map( it -> new com.credits.thrift.generated.MethodDescription(it.name, it.argTypes, it.returnType)).collect(toList());
+            List<MethodDescriptionData> contractsMethods = service.getContractsMethods(bytecode.array());
+            result.methods = contractsMethods.stream().map( it -> new MethodDescription(it.name, it.argTypes, it.returnType)).collect(toList());
         } catch (ContractExecutorException e) {
           result.setCode((byte) 1);
           result.setMessage(e.getMessage());

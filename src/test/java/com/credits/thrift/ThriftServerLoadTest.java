@@ -1,6 +1,6 @@
 package com.credits.thrift;
 
-import com.credits.thrift.generated.ContractExecutor;
+import com.credits.client.executor.thrift.ContractExecutor;
 import org.apache.commons.io.FileUtils;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -77,9 +77,4 @@ public class ThriftServerLoadTest {
         }
         file.delete();
     }
-
-//    @Test
-//    public void execute() throws TException {
-//        client.execute("987", "foo", null);
-//    }
 }

@@ -1,8 +1,8 @@
 package com.credits.service;
 
-import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.leveldb.client.service.LevelDbService;
+import com.credits.client.node.service.NodeApiService;
+import com.credits.general.pojo.SmartContractData;
+import com.credits.general.util.Converter;
 import com.credits.service.contract.ContractExecutorService;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -33,7 +33,7 @@ public abstract class ServiceTest {
     @Inject
     protected ContractExecutorService ceService;
     @Mock
-    protected LevelDbService mockLevelDbService;
+    protected NodeApiService mockNodeApiService;
 
     @Before
     public void setUp() throws Exception {
@@ -44,7 +44,7 @@ public abstract class ServiceTest {
     protected byte[] compileSourceCode(String sourceCodePath) throws Exception {
         String sourceCode = readSourceCode(sourceCodePath);
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
-        when(mockLevelDbService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(new SmartContractData(address, address, sourceCode, bytecode, null, null));
+        when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(new SmartContractData(address, address, sourceCode, bytecode, null, null));
         return bytecode;
     }
 

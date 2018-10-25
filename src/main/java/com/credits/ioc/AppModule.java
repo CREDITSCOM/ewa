@@ -1,11 +1,10 @@
 package com.credits.ioc;
 
 import com.credits.ApplicationProperties;
-import com.credits.leveldb.client.ApiClient;
-import com.credits.leveldb.client.service.LevelDbService;
-import com.credits.leveldb.client.service.LevelDbServiceImpl;
-import com.credits.service.db.leveldb.LevelDbInteractionService;
-import com.credits.service.db.leveldb.LevelDbInteractionServiceThriftImpl;
+import com.credits.client.node.service.NodeApiService;
+import com.credits.client.node.service.NodeApiServiceImpl;
+import com.credits.service.db.leveldb.NodeApiInteractionService;
+import com.credits.service.db.leveldb.NodeApiInteractionServiceThriftImpl;
 import dagger.Module;
 import dagger.Provides;
 
@@ -20,21 +19,15 @@ public class AppModule {
 
     @Singleton
     @Provides
-    public LevelDbInteractionService provideLevelDbInteractionService() {
-        return new LevelDbInteractionServiceThriftImpl();
+    public NodeApiInteractionService provideLevelDbInteractionService() {
+        return new NodeApiInteractionServiceThriftImpl();
     }
 
 
     @Singleton
     @Provides
-    public LevelDbService provideLevelDbService(ApplicationProperties properties) {
-        return LevelDbServiceImpl.getInstance(properties.apiHost, properties.apiPort);
-    }
-
-    @Singleton
-    @Provides
-    public ApiClient provideApiClient(ApplicationProperties properties) {
-        return ApiClient.getInstance(properties.apiHost, properties.apiPort);
+    public NodeApiService provideNodeThriftApi(ApplicationProperties properties) {
+        return NodeApiServiceImpl.getInstance(properties.apiHost, properties.apiPort);
     }
 
     @Singleton
