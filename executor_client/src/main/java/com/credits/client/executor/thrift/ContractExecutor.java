@@ -6,7 +6,6 @@
  */
 package com.credits.client.executor.thrift;
 
-import com.credits.general.thrift.generate.APIResponse;
 import com.credits.general.thrift.generate.Variant;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked", "unused"})

@@ -1,10 +1,10 @@
 package com.credits.client.executor.service;
 
 import com.credits.client.executor.exception.ContractExecutorClientException;
+import com.credits.client.executor.thrift.APIResponse;
+import com.credits.client.executor.util.ContractExecutorPojoConverter;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
-import com.credits.general.thrift.generate.APIResponse;
-import com.credits.general.util.Converter;
 
 /**
  * Created by Igor Goryunov on 18.10.2018
@@ -40,8 +40,7 @@ public class ContractExecutorApiServiceImpl implements ContractExecutorApiServic
                     smartContractData.getObjectState(),
                     smartContractData.getMethod(),
                     smartContractData.getParams());
-            return Converter.apiResponseToApiResponseData(apiResponse);
-
+            return ContractExecutorPojoConverter.apiResponseToApiResponseData(apiResponse);
         } else {
             throw new NullPointerException("SmartContractData is null");
         }

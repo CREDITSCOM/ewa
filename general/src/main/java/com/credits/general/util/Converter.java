@@ -2,7 +2,6 @@ package com.credits.general.util;
 
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.thrift.generate.APIResponse;
-import com.credits.general.thrift.generate.Variant;
 import com.credits.general.util.exception.ConverterException;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 
@@ -321,11 +320,5 @@ public class Converter {
         );
     }
 
-    public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse, Variant smartContractResult) {
-        return new ApiResponseData(
-            apiResponse.getCode(),
-            apiResponse.getMessage(),
-            smartContractResult
-        );
-    }
+
 }

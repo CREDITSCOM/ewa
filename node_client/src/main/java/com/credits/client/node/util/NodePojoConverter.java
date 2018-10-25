@@ -177,7 +177,7 @@ public class NodePojoConverter {
             smartContractInvocationData.isForgetNewState());
     }
 
-    private static Variant objectToVariant(Object object) {
+    public static Variant objectToVariant(Object object) {
         Class clazz = object.getClass();
         Variant variant = new Variant();
         if (clazz.equals(String.class)) {

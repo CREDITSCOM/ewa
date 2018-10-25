@@ -1,10 +1,11 @@
 package com.credits.client.executor.service;
 
 import com.credits.client.executor.exception.ContractExecutorClientException;
+import com.credits.client.executor.thrift.APIResponse;
 import com.credits.client.executor.thrift.GetContractMethodsResult;
 import com.credits.general.thrift.ThriftClientPool;
-import com.credits.general.thrift.generate.APIResponse;
 import com.credits.general.thrift.generate.Variant;
+import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
 
 import java.nio.ByteBuffer;
@@ -49,7 +50,7 @@ public class ContractExecutorThriftApiClient implements ContractExecutorThriftAp
         return callThrift(client, () -> client.getContractMethods(ByteBuffer.wrap(address)));
     }
 
-    private <R> R callThrift(Client client, Function<R> method) throws ContractExecutorClientException {
+    private <R extends TBase> R callThrift(Client client, Function<R> method) throws ContractExecutorClientException {
         try {
             R res = method.apply();
             pool.returnResource(client);
