@@ -5,6 +5,8 @@ import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.common.utils.Base58;
 import com.credits.exception.ContractExecutorException;
 import com.credits.leveldb.client.ApiClient;
+import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.leveldb.client.util.LevelDbClientConverter;
 import com.credits.secure.Sandbox;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.thrift.DeployReturnValue;
@@ -26,12 +28,9 @@ import java.security.Permissions;
 import java.security.SecurityPermission;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.PropertyPermission;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.credits.ioc.Injector.INJECTOR;
@@ -69,7 +68,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     @Override
     public ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] objectState, String methodName,
-        Variant[] params) throws ContractExecutorException {
+        Variant[] params) throws ContractExecutorException, LevelDbClientException {
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
         Class<?> contractClass = classLoader.buildClass(bytecode);
@@ -202,50 +201,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         return permissions;
     }
 
-    @SuppressWarnings("unchecked")
-    private Object parseObjectFromVariant(Variant variant) throws ContractExecutorException {
-        //        Object value = null;
-        if (variant.isSetV_string()) {
-            return variant.getV_string();
-        } else if (variant.isSetV_bool()) {
-            return variant.getV_bool();
-        } else if (variant.isSetV_double()) {
-            return variant.getV_double();
-        } else if (variant.isSetV_i8()) {
-            return variant.getV_i8();
-        } else if (variant.isSetV_i16()) {
-            return variant.getV_i16();
-        } else if (variant.isSetV_i32()) {
-            return variant.getV_i32();
-        } else if (variant.isSetV_i64()) {
-            return variant.getV_i64();
-
-        } else if (variant.isSetV_list()) {
-            List<Variant> variantList = variant.getV_list();
-            List objectList = new ArrayList();
-            for (Variant element : variantList) {
-                objectList.add(parseObjectFromVariant(element));
-            }
-            return objectList;
-        } else if (variant.isSetV_map()) {
-            Map<Variant, Variant> variantMap = variant.getV_map();
-            Map objectMap = new HashMap();
-            for (Map.Entry<Variant, Variant> entry : variantMap.entrySet()) {
-                objectMap.put(parseObjectFromVariant(entry.getKey()), parseObjectFromVariant(entry.getValue()));
-            }
-            return objectMap;
-        } else if (variant.isSetV_set()) {
-            Set<Variant> variantSet = variant.getV_set();
-            Set objectSet = new HashSet();
-            for (Variant element : variantSet) {
-                objectSet.add(parseObjectFromVariant(element));
-            }
-            return objectSet;
-        }
-        throw new ContractExecutorException("Unsupported variant type");
-    }
-
-    private Object[] castValues(Class<?>[] types, Variant[] params) throws ContractExecutorException {
+    private Object[] castValues(Class<?>[] types, Variant[] params)
+        throws ContractExecutorException, LevelDbClientException {
         if (params == null || params.length != types.length) {
             throw new ContractExecutorException("Not enough arguments passed");
         }
@@ -260,7 +217,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 }
             }
 
-            retVal[i] = parseObjectFromVariant(param);
+            retVal[i] = LevelDbClientConverter.parseObjectFromVariant(param);
             logger.info(String.format("param[%s] = %s", i, retVal[i]));
             i++;
         }

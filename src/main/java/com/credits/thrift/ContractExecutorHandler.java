@@ -1,7 +1,7 @@
 package com.credits.thrift;
 
-import com.credits.common.utils.Converter;
 import com.credits.exception.ContractExecutorException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.thrift.generated.APIResponse;
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import static com.credits.common.utils.Converter.*;
+import static com.credits.common.utils.Converter.encodeToBASE58;
 import static java.util.stream.Collectors.toList;
 
 public class ContractExecutorHandler implements ContractExecutor.Iface {
@@ -42,7 +42,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             response.contractState = ByteBuffer.wrap(returnValue.getContractState());
             response.ret_val = returnValue.getVariant();
             response.contractVariables = returnValue.getContractVariables();
-        } catch (ContractExecutorException e) {
+        } catch (ContractExecutorException | LevelDbClientException e) {
             response.setCode((byte) 1);
             response.setMessage(e.getMessage());
         }

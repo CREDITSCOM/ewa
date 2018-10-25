@@ -1,6 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.service.ServiceTest;
 import com.credits.thrift.generated.Variant;
 import com.credits.thrift.utils.ContractUtils;
@@ -10,7 +11,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MethodParametersTest extends ServiceTest {
@@ -24,7 +24,7 @@ public class MethodParametersTest extends ServiceTest {
     }
 
     @Test
-    public void executionTest() throws ContractExecutorException {
+    public void executionTest() throws ContractExecutorException, LevelDbClientException {
         Variant[] params = {
                 ContractUtils.mapObjectToVariant("test string"),
                 ContractUtils.mapObjectToVariant(200),
@@ -34,7 +34,7 @@ public class MethodParametersTest extends ServiceTest {
     }
 
     @Test
-    public void collectionExecutionTest() throws ContractExecutorException {
+    public void collectionExecutionTest() throws ContractExecutorException, LevelDbClientException {
         Variant[] params = {
                 ContractUtils.mapObjectToVariant("test1"),
                 ContractUtils.mapObjectToVariant("test2"),
@@ -62,7 +62,7 @@ public class MethodParametersTest extends ServiceTest {
     }
 
     @Test
-    public void arrayBooleanTest() throws ContractExecutorException {
+    public void arrayBooleanTest() throws ContractExecutorException, LevelDbClientException {
         Variant[] params = {};
         List<Boolean> boolList = new ArrayList<>();
         boolList.add(true);
@@ -72,7 +72,7 @@ public class MethodParametersTest extends ServiceTest {
     }
 
     @Test
-    public void arrayIntTest() throws ContractExecutorException {
+    public void arrayIntTest() throws ContractExecutorException, LevelDbClientException {
         Variant[] params = {};
         List<Integer> list = new ArrayList<>();
         list.add(1);
@@ -83,7 +83,7 @@ public class MethodParametersTest extends ServiceTest {
     }
 
     @Test
-    public void arrayShortTest() throws ContractExecutorException {
+    public void arrayShortTest() throws ContractExecutorException, LevelDbClientException {
         Variant[] params = {};
         List<Short> list = new ArrayList<>();
         list.add((short)1);
@@ -93,7 +93,7 @@ public class MethodParametersTest extends ServiceTest {
     }
 
     @Test
-    public void arrayLongTest() throws ContractExecutorException {
+    public void arrayLongTest() throws ContractExecutorException, LevelDbClientException {
         Variant[] params = {};
         List<Long> list = new ArrayList<>();
         list.add(1L);
@@ -104,7 +104,7 @@ public class MethodParametersTest extends ServiceTest {
 
     @Test
     @Ignore
-    public void arrayFloatTest() throws ContractExecutorException {
+    public void arrayFloatTest() throws ContractExecutorException, LevelDbClientException {
         Variant[] params = {};
         List<Float> list = new ArrayList<>();
         list.add(1f);
@@ -115,7 +115,7 @@ public class MethodParametersTest extends ServiceTest {
 
     @Ignore
     @Test
-    public void moreVariousParameters() throws ContractExecutorException {
+    public void moreVariousParameters() throws ContractExecutorException, LevelDbClientException {
 
         String[] stringParams = {
             "3f", "4f", "1", "2", "200d", "220d",

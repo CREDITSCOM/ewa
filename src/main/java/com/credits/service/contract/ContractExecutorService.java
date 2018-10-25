@@ -1,6 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.thrift.MethodDescription;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.generated.Variant;
@@ -28,7 +29,8 @@ public interface ContractExecutorService {
 //    void execute(String address, String methodName, String[] params) throws ContractExecutorException;
 
 
-    ReturnValue execute( byte[] initiatorAddress, byte[] bytecode, byte[] contractState, String methodName, Variant[] params ) throws ContractExecutorException;
+    ReturnValue execute( byte[] initiatorAddress, byte[] bytecode, byte[] contractState, String methodName, Variant[] params )
+        throws ContractExecutorException, LevelDbClientException;
 
     List<MethodDescription> getContractsMethods(byte[] contractBytecode) throws ContractExecutorException;
 }

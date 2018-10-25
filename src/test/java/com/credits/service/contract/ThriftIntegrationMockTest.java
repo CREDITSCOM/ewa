@@ -1,6 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
+import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.service.ServiceTest;
 import com.credits.service.db.leveldb.LevelDbInteractionService;
 import com.credits.thrift.generated.Variant;
@@ -17,7 +18,7 @@ import java.math.BigDecimal;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static java.io.File.separator;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -64,7 +65,8 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     }
 
     @Test
-    public void execute_contract_method_with_variant_parameters() throws ContractExecutorException {
+    public void execute_contract_method_with_variant_parameters()
+        throws ContractExecutorException, LevelDbClientException {
         Integer newValue =
         ceService.execute(address, contractBytecode,
             contractState, "addValue", new Variant[]{new Variant(Variant._Fields.V_I32, 112233)}).getVariant().getV_i32();
