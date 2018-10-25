@@ -99,7 +99,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 } catch (ClassCastException e) {
                     continue;
                 } catch (ContractExecutorException e) {
-                    throw new ContractExecutorException("Cannot execute the contract: " + initiator + "Reason: " + getRootCauseMessage(e), e);
+                    throw new ContractExecutorException(
+                        "Cannot execute the contract: " + initiator + "Reason: " + getRootCauseMessage(e), e);
                 }
                 targetMethod = method;
                 break;
