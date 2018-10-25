@@ -53,6 +53,6 @@ public class AppState {
 
     public static Short transactionOfferedMaxFeeValue = Const.OFFERED_MAX_FEE;
 
-    public static ObjectKeeper<ConcurrentHashMap<String, SmartContractData>> objectKeeper = new ObjectKeeper<>("obj.ser");
+    public static ObjectKeeper<ConcurrentHashMap<String, SmartContractData>> smartContractsKeeper = new ObjectKeeper<>("smarts.ser");
     public static String text;
 }

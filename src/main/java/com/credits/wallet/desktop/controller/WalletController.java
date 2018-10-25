@@ -6,6 +6,7 @@ import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
 import com.credits.leveldb.client.thrift.generated.APIResponse;
+import com.credits.leveldb.client.util.LevelDbClientConverter;
 import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -16,10 +17,15 @@ import com.credits.wallet.desktop.utils.NumberUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
@@ -33,7 +39,7 @@ import java.math.RoundingMode;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ResourceBundle;
-import java.util.function.BiConsumer;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
@@ -133,7 +139,7 @@ public class WalletController extends Controller implements Initializable {
         // VALIDATE
         boolean isValidationSuccessful = true;
         clearLabErr();
-        if (coins.getSelectionModel().getSelectedItem()==null ||
+        if (coins.getSelectionModel().getSelectedItem() == null ||
             coins.getSelectionModel().getSelectedItem().getName().isEmpty()) {
             labErrorCoin.setText(ERR_COIN);
             coinsPane.getStyleClass().add("credits-border-red");
@@ -229,10 +235,12 @@ public class WalletController extends Controller implements Initializable {
         DecimalFormat decimalFormat = new DecimalFormat("##0.00000000000000000000");
         coinTabRow.setBalance("Processing");
         coins.getItems().add(coinTabRow);
-            AppState.levelDbService.getAsyncBalance(AppState.account, new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
+        AppState.levelDbService.getAsyncBalance(AppState.account,
+            new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
                 @Override
                 public void onSuccess(BigDecimal resultData) {
-                    coinTabRow.setBalance(String.valueOf(decimalFormat.format(resultData.setScale(13, BigDecimal.ROUND_DOWN))));
+                    coinTabRow.setBalance(
+                        String.valueOf(decimalFormat.format(resultData.setScale(13, BigDecimal.ROUND_DOWN))));
                 }
 
                 @Override
@@ -242,33 +250,69 @@ public class WalletController extends Controller implements Initializable {
                 }
             });
 
-        BiConsumer<String, String> stringStringBiConsumer = (coin, smart) -> {
-            CoinTabRow tempCoinTabRow = new CoinTabRow();
-            tempCoinTabRow.setName(coin);
-            tempCoinTabRow.setSmartName(smart);
-            tempCoinTabRow.setBalance("Processing");
-            coins.getItems().add(tempCoinTabRow);
-            try {
-                SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin), new ApiTransactionThreadRunnable.Callback<APIResponse>() {
-                    @Override
-                    public void onSuccess(APIResponse apiResponse) {
-                        BigDecimal balance =
-                            new BigDecimal(apiResponse.getRet_val().getV_string()).setScale(13, BigDecimal.ROUND_DOWN);
-                        tempCoinTabRow.setBalance(String.valueOf(decimalFormat.format(balance)));
-                    }
+        coins.setRowFactory( tv -> {
+            TableRow<CoinTabRow> row = new TableRow<>();
+            CoinTabRow rowData = row.getItem();
+            ContextMenu cm = new ContextMenu();
+                                /*
+                                            MenuItem refreshItem = new MenuItem("Refresh");
+                                            cm.getItems().add(refreshItem);
+                                */
+            MenuItem removeItem = new MenuItem("Delete");
 
-                    @Override
-                    public void onError(Exception e) {
-                        tempCoinTabRow.setBalance("Receive error");
-                        e.printStackTrace();
-                    }
-                });
-            } catch (Exception e) {
-                tempCoinTabRow.setBalance("Receive error");
-                e.printStackTrace();
-            }
-        };
-        CoinsUtils.getCoins().forEach(stringStringBiConsumer);
+            cm.getItems().add(removeItem);
+            row.setOnMouseClicked(event -> {
+                if ((! row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals("CS") ) {
+                        row.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
+                            if (t.getButton() == MouseButton.SECONDARY) {
+                                removeItem.setOnAction(event1 -> {
+                                    coins.getItems().remove(row.getItem());
+                                    ConcurrentHashMap<String, String> coinsMap = CoinsUtils.getCoins();
+                                    coinsMap.remove(row.getItem().getName());
+                                    CoinsUtils.saveCoinsToFile(coinsMap);
+                                });
+                                cm.show(coins, t.getScreenX(), t.getScreenY());
+                            }
+                        });
+                }
+            });
+            return row ;
+        });
+
+
+        try {
+            CoinsUtils.getCoins().forEach((coin, smart) -> {
+                CoinTabRow tempCoinTabRow = new CoinTabRow();
+                tempCoinTabRow.setName(coin);
+                tempCoinTabRow.setSmartName(smart);
+                tempCoinTabRow.setBalance("Processing");
+                coins.getItems().add(tempCoinTabRow);
+                try {
+                    SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin),
+                        new ApiTransactionThreadRunnable.Callback<APIResponse>() {
+                            @Override
+                            public void onSuccess(APIResponse apiResponse) throws LevelDbClientException {
+                                if(apiResponse.getRet_val() != null) {
+                                    BigDecimal balance = LevelDbClientConverter.getBigDecimalFromVariant(apiResponse.getRet_val());
+                                    LOGGER.info("Get balance");
+                                    tempCoinTabRow.setBalance(String.valueOf(decimalFormat.format(balance)));
+                                }
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                tempCoinTabRow.setBalance("Receive error");
+                                e.printStackTrace();
+                            }
+                        });
+                } catch (Exception e) {
+                    tempCoinTabRow.setBalance("Receive error");
+                    e.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void clearLabErr() {

@@ -5,6 +5,7 @@ import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.thrift.generated.APIResponse;
+import com.credits.leveldb.client.util.LevelDbClientConverter;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by goncharov-eg on 07.02.2018.
@@ -82,11 +84,13 @@ public class NewCoinController extends Controller implements Initializable {
 
         SmartContractUtils.getSmartContractBalance(token, new ApiTransactionThreadRunnable.Callback<APIResponse>() {
             @Override
-            public void onSuccess(APIResponse apiResponse) {
+            public void onSuccess(APIResponse apiResponse) throws LevelDbClientException {
                 if(apiResponse.getRet_val() != null) {
-                    BigDecimal balance = new BigDecimal(apiResponse.getRet_val().getV_string()).setScale(13, BigDecimal.ROUND_DOWN);
+                    BigDecimal balance = LevelDbClientConverter.getBigDecimalFromVariant(apiResponse.getRet_val());
                     if (balance != null && balance.compareTo(BigDecimal.ZERO) >= 0) {
-                        CoinsUtils.saveCoinsToFile(coin + ";" + token);
+                        ConcurrentHashMap<String, String> coins = CoinsUtils.getCoins();
+                        coins.put(coin,token);
+                        CoinsUtils.saveCoinsToFile(coins);
                         FormUtils.showPlatformInfo("Make new coin was successful");
                     } else {
                         FormUtils.showPlatformInfo("Error make new coin");

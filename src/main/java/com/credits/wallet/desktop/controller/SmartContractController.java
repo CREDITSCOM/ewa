@@ -182,14 +182,14 @@ public class SmartContractController extends Controller implements Initializable
 
     private void saveFavorite(SmartContractData smartContractData) {
         String contractName = smartContractData.getStringAddress();
-        ConcurrentHashMap<String, SmartContractData> map = AppState.objectKeeper.deserialize();
+        ConcurrentHashMap<String, SmartContractData> map = AppState.smartContractsKeeper.deserialize();
         if (map != null && map.size() > 0) {
             map.put(contractName, smartContractData);
         } else {
             map = new ConcurrentHashMap<>();
             map.put(contractName, smartContractData);
         }
-        AppState.objectKeeper.serialize(map);
+        AppState.smartContractsKeeper.serialize(map);
 
     }
 
@@ -204,7 +204,7 @@ public class SmartContractController extends Controller implements Initializable
             this.pCodePanel.setVisible(true);
             this.currentSmartContract = smartContractData;
 
-            ConcurrentHashMap<String, SmartContractData> map = AppState.objectKeeper.deserialize();
+            ConcurrentHashMap<String, SmartContractData> map = AppState.smartContractsKeeper.deserialize();
             setFavorite(tbFavourite, map, smartContractData);
             setFavoriteButtonEvent(tbFavourite, currentSmartContract);
             this.tbFavourite.setVisible(true);
@@ -305,7 +305,7 @@ public class SmartContractController extends Controller implements Initializable
     private void initMySmartTab() throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
         mySmart.getItems().clear();
         List<SmartContractData> smartContracts = AppState.levelDbService.getSmartContracts(AppState.account);
-        ConcurrentHashMap<String, SmartContractData> map = AppState.objectKeeper.deserialize();
+        ConcurrentHashMap<String, SmartContractData> map = AppState.smartContractsKeeper.deserialize();
         smartContracts.forEach(smartContractData -> {
             ToggleButton favoriteButton = new ToggleButton();
             setFavorite(favoriteButton, map, smartContractData);
@@ -326,7 +326,7 @@ public class SmartContractController extends Controller implements Initializable
     private void initFavoriteTab() {
         favSmart.getItems().clear();
         try {
-            Map<String, SmartContractData> map = AppState.objectKeeper.deserialize();
+            Map<String, SmartContractData> map = AppState.smartContractsKeeper.deserialize();
             if (map != null && map.size() > 0) {
                 map.forEach((smartName, smartContractData) -> {
                     if (smartContractData.isFavorite()) {

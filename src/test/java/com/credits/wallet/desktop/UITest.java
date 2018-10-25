@@ -115,7 +115,8 @@ public class UITest {
         spyInitializer.startForm = VistaNavigator.SMART_CONTRACT_DEPLOY;
         app.appStateInitializer = spyInitializer;
         AppState.account = walletAddress;
-        AppState.objectKeeper = new ObjectKeeper<>(walletAddress+".ser");
+        AppState.smartContractsKeeper = new ObjectKeeper<>(walletAddress+".ser");
+
         LevelDbServiceImpl.account = AppState.account;
         runApp();
     }
