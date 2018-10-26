@@ -8,7 +8,6 @@ import com.credits.leveldb.client.data.ExecuteSmartContractData;
 import com.credits.leveldb.client.data.SmartContractData;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
-import com.credits.thrift.generated.Variant;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import javafx.concurrent.Task;
@@ -120,20 +119,10 @@ public class SmartContractUtils {
     public static void getSmartContractBalance(String smart, ApiTransactionThreadRunnable.Callback callback)
         throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
         String method = "balanceOf";
-        List<Variant> params = new ArrayList<>();
-        SmartContractData smartContractData = AppState.levelDbService.getSmartContract(smart);
-        if (smartContractData == null || smartContractData.getObjectState().length == 0) {
-            LOGGER.info("SmartContract not found");
-            FormUtils.showInfo("SmartContract not found");
-        }
-        smartContractData.setParams(
-            Collections.singletonList(SourceCodeUtils.createVariantObject("String", AppState.account)));
         ExecuteSmartContractData executeSmartContractData = new ExecuteSmartContractData(ByteBuffer.wrap(decodeFromBASE58(AppState.account)),
-            ByteBuffer.wrap(smartContractData.getByteCode()),
-            ByteBuffer.wrap(smartContractData.getObjectState()),
             method,
             Collections.singletonList(SourceCodeUtils.createVariantObject("String", AppState.account)));
-        AppState.levelDbService.directExecuteSmartContract(executeSmartContractData,callback);
+        AppState.levelDbService.getSmartContractBalance(executeSmartContractData,smart, callback);
     }
 
     public static void transferTo(String smart, String target, BigDecimal amount) {

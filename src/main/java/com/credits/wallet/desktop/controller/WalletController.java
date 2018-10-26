@@ -5,8 +5,6 @@ import com.credits.common.utils.Converter;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.leveldb.client.service.LevelDbServiceImpl;
-import com.credits.leveldb.client.thrift.generated.APIResponse;
-import com.credits.leveldb.client.util.LevelDbClientConverter;
 import com.credits.leveldb.client.util.Validator;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -230,11 +228,42 @@ public class WalletController extends Controller implements Initializable {
 
     private void initializeCoinsView() {
         coins.getItems().clear();
+        coins.setRowFactory( tv -> {
+            TableRow<CoinTabRow> row = new TableRow<>();
+            CoinTabRow rowData = row.getItem();
+            ContextMenu cm = new ContextMenu();
+                                /*
+                                            MenuItem refreshItem = new MenuItem("Refresh");
+                                            cm.getItems().add(refreshItem);
+                                */
+            MenuItem removeItem = new MenuItem("Delete");
+
+            cm.getItems().add(removeItem);
+            row.setOnMouseClicked(event -> {
+                if ((! row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals("CS") ) {
+                    row.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
+                        if (t.getButton() == MouseButton.SECONDARY) {
+                            removeItem.setOnAction(event1 -> {
+                                coins.getItems().remove(row.getItem());
+                                ConcurrentHashMap<String, String> coinsMap = CoinsUtils.getCoins();
+                                coinsMap.remove(row.getItem().getName());
+                                CoinsUtils.saveCoinsToFile(coinsMap);
+                            });
+                            cm.show(coins, t.getScreenX(), t.getScreenY());
+                        }
+                    });
+                }
+            });
+            return row ;
+        });
+
         CoinTabRow coinTabRow = new CoinTabRow();
         coinTabRow.setName("CS");
         DecimalFormat decimalFormat = new DecimalFormat("##0.00000000000000000000");
         coinTabRow.setBalance("Processing");
-        coins.getItems().add(coinTabRow);
+        synchronized (coins.getItems()) {
+            coins.getItems().add(coinTabRow);
+        }
         AppState.levelDbService.getAsyncBalance(AppState.account,
             new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
                 @Override
@@ -250,34 +279,6 @@ public class WalletController extends Controller implements Initializable {
                 }
             });
 
-        coins.setRowFactory( tv -> {
-            TableRow<CoinTabRow> row = new TableRow<>();
-            CoinTabRow rowData = row.getItem();
-            ContextMenu cm = new ContextMenu();
-                                /*
-                                            MenuItem refreshItem = new MenuItem("Refresh");
-                                            cm.getItems().add(refreshItem);
-                                */
-            MenuItem removeItem = new MenuItem("Delete");
-
-            cm.getItems().add(removeItem);
-            row.setOnMouseClicked(event -> {
-                if ((! row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals("CS") ) {
-                        row.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
-                            if (t.getButton() == MouseButton.SECONDARY) {
-                                removeItem.setOnAction(event1 -> {
-                                    coins.getItems().remove(row.getItem());
-                                    ConcurrentHashMap<String, String> coinsMap = CoinsUtils.getCoins();
-                                    coinsMap.remove(row.getItem().getName());
-                                    CoinsUtils.saveCoinsToFile(coinsMap);
-                                });
-                                cm.show(coins, t.getScreenX(), t.getScreenY());
-                            }
-                        });
-                }
-            });
-            return row ;
-        });
 
 
         try {
@@ -286,22 +287,19 @@ public class WalletController extends Controller implements Initializable {
                 tempCoinTabRow.setName(coin);
                 tempCoinTabRow.setSmartName(smart);
                 tempCoinTabRow.setBalance("Processing");
-                coins.getItems().add(tempCoinTabRow);
                 try {
                     SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin),
-                        new ApiTransactionThreadRunnable.Callback<APIResponse>() {
+                        new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
                             @Override
-                            public void onSuccess(APIResponse apiResponse) throws LevelDbClientException {
-                                if(apiResponse.getRet_val() != null) {
-                                    BigDecimal balance = LevelDbClientConverter.getBigDecimalFromVariant(apiResponse.getRet_val());
-                                    LOGGER.info("Get balance");
+                            public void onSuccess(BigDecimal balance) throws LevelDbClientException {
+                                synchronized (coins.getItems()) {
                                     tempCoinTabRow.setBalance(String.valueOf(decimalFormat.format(balance)));
+                                    coins.getItems().add(tempCoinTabRow);
                                 }
                             }
-
                             @Override
                             public void onError(Exception e) {
-                                tempCoinTabRow.setBalance("Receive error");
+                                tempCoinTabRow.setBalance("Balance receive error");
                                 e.printStackTrace();
                             }
                         });

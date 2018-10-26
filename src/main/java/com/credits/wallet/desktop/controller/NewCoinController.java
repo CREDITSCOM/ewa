@@ -4,8 +4,6 @@ import com.credits.common.exception.CreditsCommonException;
 import com.credits.leveldb.client.ApiTransactionThreadRunnable;
 import com.credits.leveldb.client.exception.CreditsNodeException;
 import com.credits.leveldb.client.exception.LevelDbClientException;
-import com.credits.leveldb.client.thrift.generated.APIResponse;
-import com.credits.leveldb.client.util.LevelDbClientConverter;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -82,11 +80,10 @@ public class NewCoinController extends Controller implements Initializable {
             return;
         }
 
-        SmartContractUtils.getSmartContractBalance(token, new ApiTransactionThreadRunnable.Callback<APIResponse>() {
+        SmartContractUtils.getSmartContractBalance(token, new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
             @Override
-            public void onSuccess(APIResponse apiResponse) throws LevelDbClientException {
-                if(apiResponse.getRet_val() != null) {
-                    BigDecimal balance = LevelDbClientConverter.getBigDecimalFromVariant(apiResponse.getRet_val());
+            public void onSuccess(BigDecimal balance) throws LevelDbClientException {
+
                     if (balance != null && balance.compareTo(BigDecimal.ZERO) >= 0) {
                         ConcurrentHashMap<String, String> coins = CoinsUtils.getCoins();
                         coins.put(coin,token);
@@ -95,14 +92,11 @@ public class NewCoinController extends Controller implements Initializable {
                     } else {
                         FormUtils.showPlatformInfo("Error make new coin");
                     }
-                } else {
-                    FormUtils.showPlatformInfo("Error make new coin");
                 }
-            }
 
             @Override
             public void onError(Exception e) {
-                FormUtils.showPlatformInfo("Error make new coin");
+                FormUtils.showPlatformInfo(e.getMessage());
             }
         });
 
