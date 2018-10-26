@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -27,11 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,7 +85,7 @@ public class SmartContractUtils {
         CodeArea codeArea = new CodeArea();
         codeArea.setPrefHeight(paneCode.getPrefHeight());
         codeArea.setPrefWidth(paneCode.getPrefWidth());
-        paneCode.getChildren().add(codeArea);
+        paneCode.getChildren().add(new VirtualizedScrollPane<>(codeArea));
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
         codeArea.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
             .successionEnds(Duration.ofMillis(500)).supplyTask(() -> {

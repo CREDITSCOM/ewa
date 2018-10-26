@@ -16,6 +16,13 @@
         <logging.version>2.10.0</logging.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <!--
         API
@@ -51,9 +58,9 @@
 
         <!-- RichTextFX -->
         <dependency>
-            <groupId>org.fxmisc.richtext</groupId>
-            <artifactId>richtextfx</artifactId>
-            <version>0.9.1</version>
+            <groupId>com.github.MrChebik</groupId>
+            <artifactId>RichTextFX</artifactId>
+            <version>cabee30961</version>
         </dependency>
 
         <dependency>
