@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.utils;
 
-import com.credits.common.exception.CreditsException;
+import com.credits.general.exception.CreditsException;
+import com.credits.general.util.exception.ConverterException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public class ApiUtilsTest {
     }
 
     @Test
-    public void createTransactionId01() {
+    public void createTransactionId01() throws ConverterException {
         LOGGER.info(ApiUtils.createTransactionId(true, false, 1L) + "");
     }
 }

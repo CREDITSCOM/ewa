@@ -1,10 +1,11 @@
 package com.credits.wallet.desktop.testUtils;
 
-import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.leveldb.client.data.TransactionData;
-import com.credits.leveldb.client.data.TransactionRoundData;
-import com.credits.leveldb.client.thrift.TransactionState;
-import com.credits.leveldb.client.thrift.TransactionsStateGetResult;
+import com.credits.client.node.pojo.CreateTransactionData;
+import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionRoundData;
+import com.credits.client.node.thrift.generated.TransactionState;
+import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
+import com.credits.general.pojo.SmartContractData;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -12,7 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.credits.common.utils.Converter.decodeFromBASE58;
+import static com.credits.general.util.Converter.decodeFromBASE58;
+
 
 public class FakeData {
 
@@ -114,32 +116,32 @@ public class FakeData {
             transactionsDataList.add(transactionData9);
             transactionsDataList.add(transactionData10);
 
-            TransactionData transaction0 = new TransactionData();
-            transaction0.setId(0L);
+            CreateTransactionData transaction0 = new CreateTransactionData();
+            transaction0.setInnerId(0L);
             transaction0.setSource(byteAddress);
             transaction0.setTarget(byteAddress);
             transaction0.setAmount(new BigDecimal(99.999));
             transaction0.setCurrency((byte)1);
-            TransactionData transaction1 = new TransactionData();
-            transaction1.setId(1L);
+            CreateTransactionData transaction1 = new CreateTransactionData();
+            transaction1.setInnerId(1L);
             transaction1.setSource(byteAddress);
             transaction1.setTarget(byteAddress);
             transaction1.setAmount(new BigDecimal(99.999));
             transaction1.setCurrency((byte)1);
-            TransactionData transaction2 = new TransactionData();
-            transaction2.setId(2L);
+            CreateTransactionData transaction2 = new CreateTransactionData();
+            transaction2.setInnerId(2L);
             transaction2.setSource(byteAddress);
             transaction2.setTarget(byteAddress);
             transaction2.setAmount(new BigDecimal(99.999));
             transaction2.setCurrency((byte)1);
-            TransactionData transaction3 = new TransactionData();
-            transaction3.setId(3L);
+            CreateTransactionData transaction3 = new CreateTransactionData();
+            transaction3.setInnerId(3L);
             transaction3.setSource(byteAddress);
             transaction3.setTarget(byteAddress);
             transaction3.setAmount(new BigDecimal(99.999));
             transaction3.setCurrency((byte)1);
-            TransactionData transaction4 = new TransactionData();
-            transaction4.setId(4L);
+            CreateTransactionData transaction4 = new CreateTransactionData();
+            transaction4.setInnerId(4L);
             transaction4.setSource(byteAddress);
             transaction4.setTarget(byteAddress);
             transaction4.setAmount(new BigDecimal(99.999));
@@ -153,11 +155,11 @@ public class FakeData {
             TransactionRoundData transactionRoundData4 = new TransactionRoundData(transaction4, 25);
 
             ConcurrentHashMap<Long, TransactionRoundData> map = new ConcurrentHashMap<>();
-            map.put(transactionRoundData0.getTransaction().getId(), transactionRoundData0);
-            map.put(transactionRoundData1.getTransaction().getId(), transactionRoundData1);
-            map.put(transactionRoundData2.getTransaction().getId(), transactionRoundData2);
-            map.put(transactionRoundData3.getTransaction().getId(), transactionRoundData3);
-            map.put(transactionRoundData4.getTransaction().getId(), transactionRoundData4);
+            map.put(transactionRoundData0.getTransaction().getInnerId(), transactionRoundData0);
+            map.put(transactionRoundData1.getTransaction().getInnerId(), transactionRoundData1);
+            map.put(transactionRoundData2.getTransaction().getInnerId(), transactionRoundData2);
+            map.put(transactionRoundData3.getTransaction().getInnerId(), transactionRoundData3);
+            map.put(transactionRoundData4.getTransaction().getInnerId(), transactionRoundData4);
 
             Map<Long, TransactionState> transactionStateMap = new HashMap<>();
             transactionStateMap.put(0L, TransactionState.INPROGRES);

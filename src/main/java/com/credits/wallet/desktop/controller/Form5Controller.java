@@ -1,9 +1,9 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.exception.CreditsException;
-import com.credits.common.utils.Converter;
-import com.credits.crypto.Ed25519;
-import com.credits.leveldb.client.service.LevelDbServiceImpl;
+import com.credits.client.node.crypto.Ed25519;
+import com.credits.client.node.service.NodeApiServiceImpl;
+import com.credits.general.exception.CreditsException;
+import com.credits.general.util.Converter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
@@ -171,7 +171,7 @@ public class Form5Controller extends Controller implements Initializable {
         }
 
         AppState.account = pubKey;
-        LevelDbServiceImpl.account = pubKey;
+        NodeApiServiceImpl.account = pubKey;
         try {
             byte[] privateKeyByteArr = Converter.decodeFromBASE58(privKey);
             AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);

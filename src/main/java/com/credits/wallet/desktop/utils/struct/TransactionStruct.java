@@ -1,15 +1,16 @@
 package com.credits.wallet.desktop.utils.struct;
 
-import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.exception.LevelDbClientException;
-import com.credits.leveldb.client.thrift.Amount;
-import com.credits.leveldb.client.util.LevelDbClientConverter;
+import com.credits.client.node.thrift.generated.Amount;
+import com.credits.general.util.Converter;
+import com.credits.general.util.exception.ConverterException;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+
+import static com.credits.client.node.util.NodePojoConverter.bigDecimalToAmount;
 
 /**
  * Created by goncharov-eg on 20.07.2018.
@@ -26,27 +27,26 @@ public class TransactionStruct implements Serializable {
     private int scLen;
     private byte[] sc;
 
-    public TransactionStruct(long id, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee, byte currency,
-                             byte[] sc)
-            throws LevelDbClientException {
+    public TransactionStruct(long id, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee,
+        byte currency, byte[] sc) throws ConverterException {
         this.id = id;
         this.source = source;
         this.target = target;
 
-        Amount aAmount = LevelDbClientConverter.bigDecimalToAmount(amount);
-        this.amountInt=aAmount.integral;
-        this.amountFrac=aAmount.fraction;
+        Amount aAmount = bigDecimalToAmount(amount);
+        this.amountInt = aAmount.integral;
+        this.amountFrac = aAmount.fraction;
 
         this.offeredMaxFee = offeredMaxFee;
 
         this.currency = currency;
 
-        if (sc==null)
-            ufNum=0;
-        else {
+        if (sc == null) {
+            ufNum = 0;
+        } else {
             this.ufNum = 1;
             this.scLen = sc.length;
-            this.sc=sc;
+            this.sc = sc;
         }
     }
 
@@ -64,7 +64,7 @@ public class TransactionStruct implements Serializable {
             os.write(Converter.toByteArrayLittleEndian(offeredMaxFee, 2));
             os.write(Converter.toByteArrayLittleEndian(currency, 1));
             os.write(Converter.toByteArrayLittleEndian(ufNum, 1));
-            if (sc!=null) {
+            if (sc != null) {
                 os.write(Converter.toByteArrayLittleEndian(scLen, 4));
                 os.write(Converter.toByteArrayLittleEndian(sc, scLen));
             }

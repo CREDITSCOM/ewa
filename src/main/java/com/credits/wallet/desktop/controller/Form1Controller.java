@@ -1,6 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.crypto.Ed25519;
+import com.credits.client.node.crypto.Ed25519;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.FormUtils;

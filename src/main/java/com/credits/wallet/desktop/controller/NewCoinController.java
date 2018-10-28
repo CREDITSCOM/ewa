@@ -1,13 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.exception.CreditsCommonException;
-import com.credits.leveldb.client.ApiTransactionThreadRunnable;
-import com.credits.leveldb.client.exception.CreditsNodeException;
-import com.credits.leveldb.client.exception.LevelDbClientException;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.SmartContractUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -16,10 +11,8 @@ import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by goncharov-eg on 07.02.2018.
@@ -50,7 +43,8 @@ public class NewCoinController extends Controller implements Initializable {
     }
 
     @FXML
-    private void handleSave() throws CreditsCommonException, LevelDbClientException, CreditsNodeException {
+    private void handleSave(){
+
         clearLabErr();
 
         String coin = txCoin.getText().replace(";", "");
@@ -80,26 +74,26 @@ public class NewCoinController extends Controller implements Initializable {
             return;
         }
 
-        SmartContractUtils.getSmartContractBalance(token, new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
-            @Override
-            public void onSuccess(BigDecimal balance) throws LevelDbClientException {
-
-                    if (balance != null && balance.compareTo(BigDecimal.ZERO) >= 0) {
-                        ConcurrentHashMap<String, String> coins = CoinsUtils.getCoins();
-                        coins.put(coin,token);
-                        CoinsUtils.saveCoinsToFile(coins);
-                        FormUtils.showPlatformInfo("Make new coin was successful");
-                    } else {
-                        FormUtils.showPlatformInfo("Error make new coin");
-                    }
-                }
-
-            @Override
-            public void onError(Exception e) {
-                FormUtils.showPlatformInfo(e.getMessage());
-            }
-        });
-
+        //todo add the use of the getSmartContractBalance method
+//        SmartContractUtils.getSmartContractBalance(token, new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
+//            @Override
+//            public void onSuccess(BigDecimal balance) throws LevelDbClientException {
+//
+//                    if (balance != null && balance.compareTo(BigDecimal.ZERO) >= 0) {
+//                        ConcurrentHashMap<String, String> coins = CoinsUtils.getCoins();
+//                        coins.put(coin,token);
+//                        CoinsUtils.saveCoinsToFile(coins);
+//                        FormUtils.showPlatformInfo("Make new coin was successful");
+//                    } else {
+//                        FormUtils.showPlatformInfo("Error make new coin");
+//                    }
+//                }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                FormUtils.showPlatformInfo(e.getMessage());
+//            }
+//        });
             VistaNavigator.loadVista(VistaNavigator.WALLET);
         }
 

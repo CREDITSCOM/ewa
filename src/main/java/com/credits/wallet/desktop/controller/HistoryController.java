@@ -1,14 +1,13 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.exception.CreditsCommonException;
-import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.data.TransactionData;
-import com.credits.leveldb.client.data.TransactionRoundData;
-import com.credits.leveldb.client.exception.CreditsNodeException;
-import com.credits.leveldb.client.exception.LevelDbClientException;
-import com.credits.leveldb.client.service.LevelDbServiceImpl;
-import com.credits.leveldb.client.thrift.TransactionState;
-import com.credits.leveldb.client.thrift.TransactionsStateGetResult;
+import com.credits.client.node.pojo.CreateTransactionData;
+import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionRoundData;
+import com.credits.client.node.service.NodeApiServiceImpl;
+import com.credits.client.node.thrift.generated.TransactionState;
+import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
+import com.credits.general.exception.CreditsException;
+import com.credits.general.util.Converter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
@@ -35,10 +34,8 @@ import java.util.ResourceBundle;
  */
 public class HistoryController extends Controller implements Initializable {
     private static final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
-
     private static final int INIT_PAGE_SIZE = 10;
     private static final int FIRST_PAGE_NUMBER = 1;
-
     private final static Logger LOGGER = LoggerFactory.getLogger(HistoryController.class);
     public static final int COUNT_ROUNDS_LIFE = 10;
 
@@ -47,16 +44,12 @@ public class HistoryController extends Controller implements Initializable {
 
     @FXML
     BorderPane bp;
-
     @FXML
     private ComboBox<Integer> cbPageSize;
-
     @FXML
     private TableView<TransactionTabRow> tabTransaction;
-
     @FXML
     private Label labPage;
-
     @FXML
     private Button btnFirst;
     @FXML
@@ -107,20 +100,10 @@ public class HistoryController extends Controller implements Initializable {
         tabTransaction.getItems().clear();
         List<TransactionData> transactionList;
         try {
-            transactionList = AppState.levelDbService.getTransactions(AppState.account,
-                (pageNumber - 1) * pageSize, pageSize);
-        } catch (LevelDbClientException | CreditsCommonException e) {
+            transactionList = AppState.nodeApiService.getTransactions(AppState.account, (pageNumber - 1) * pageSize, pageSize);
+        } catch (CreditsException e) {
             LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
             FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
-
-            LOGGER.error(AppState.NODE_ERROR + ": " + e.toString(), e);
-            FormUtils.showError(AppState.NODE_ERROR);
-
-            return;
-        } catch (CreditsNodeException e) {
-            LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
-            FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
-
             LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);
             FormUtils.showError(AppState.NODE_ERROR);
 
@@ -131,13 +114,11 @@ public class HistoryController extends Controller implements Initializable {
 
 
         try {
-            if (LevelDbServiceImpl.sourceMap != null && LevelDbServiceImpl.sourceMap.get(AppState.account) != null) {
-                Map<Long, TransactionRoundData> sourceTransactionMap =
-                    LevelDbServiceImpl.sourceMap.get(AppState.account);
+            if (NodeApiServiceImpl.sourceMap.get(AppState.account) != null) {
+                Map<Long, TransactionRoundData> sourceTransactionMap = NodeApiServiceImpl.sourceMap.get(AppState.account);
                 synchronized (sourceTransactionMap) {
                     List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
-                    TransactionsStateGetResult transactionsStateResult =
-                        AppState.levelDbService.getTransactionsState(AppState.account, ids);
+                    TransactionsStateGetResult transactionsStateResult = AppState.nodeApiService.getTransactionsState(AppState.account, ids);
 
                     Map<Long, TransactionState> states = transactionsStateResult.getStates();
                     states.forEach((k, v) -> {
@@ -148,19 +129,16 @@ public class HistoryController extends Controller implements Initializable {
 
                     int curRound = transactionsStateResult.getRoundNum();
                     sourceTransactionMap.entrySet()
-                        .removeIf(e -> e.getValue().getRoundNumber()!=null && curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
+                        .removeIf(e -> curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
 
                     sourceTransactionMap.forEach((key, value) -> {
                         TransactionTabRow tableRow = new TransactionTabRow();
-                        TransactionData transaction = value.getTransaction();
+                        CreateTransactionData transaction = value.getTransaction();
                         tableRow.setInnerId(key.toString());
                         tableRow.setAmount(Converter.toString(transaction.getAmount()));
                         tableRow.setCurrency(transaction.getCurrency());
                         tableRow.setTarget(Converter.encodeToBASE58(transaction.getTarget()));
                         if(states.get(key)!=null) {
-                            if(value.getRoundNumber()==null) {
-                                value.setRoundNumber(curRound);
-                            }
                             if(states.get(key).getValue()==TransactionState.INVALID.getValue()) {
                                 tableRow.setState("INVALID");
                             }
@@ -172,8 +150,7 @@ public class HistoryController extends Controller implements Initializable {
                     });
                 }
             }
-
-        } catch (CreditsNodeException | LevelDbClientException | CreditsCommonException e) {
+        } catch (CreditsException e) {
             tabTransaction.getItems().clear();
         }
 
@@ -181,8 +158,8 @@ public class HistoryController extends Controller implements Initializable {
         transactionList.forEach(transactionData -> {
             TransactionTabRow tableRow = new TransactionTabRow();
             tableRow.setAmount(Converter.toString(transactionData.getAmount()));
-            tableRow.setSource(transactionData.getStringSource());
-            tableRow.setTarget(transactionData.getStringTarget());
+            tableRow.setSource(Converter.encodeToBASE58(transactionData.getSource()));
+            tableRow.setTarget(Converter.encodeToBASE58(transactionData.getTarget()));
             tableRow.setInnerId(transactionData.getId().toString());
             tableRow.setState("VALID");
             tabTransaction.getItems().add(tableRow);
@@ -198,7 +175,6 @@ public class HistoryController extends Controller implements Initializable {
     private void handleRefresh() {
         fillTable();
     }
-
 
     @FXML
     private void handlePageFirst() {

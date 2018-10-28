@@ -1,6 +1,6 @@
 package com.credits.wallet.desktop.struct;
 
-import com.credits.leveldb.client.data.SmartContractData;
+import com.credits.general.pojo.SmartContractData;
 import javafx.scene.control.ToggleButton;
 
 import java.io.Serializable;

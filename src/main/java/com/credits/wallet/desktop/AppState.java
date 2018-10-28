@@ -1,8 +1,9 @@
 package com.credits.wallet.desktop;
 
-import com.credits.common.utils.ObjectKeeper;
-import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.leveldb.client.service.LevelDbService;
+import com.credits.client.executor.service.ContractExecutorApiService;
+import com.credits.client.node.service.NodeApiService;
+import com.credits.general.pojo.SmartContractData;
+import com.credits.general.util.ObjectKeeper;
 import com.credits.wallet.desktop.controller.Const;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 
@@ -21,9 +22,10 @@ import java.util.concurrent.ExecutorService;
  */
 public class AppState {
     public static final String NODE_ERROR="A problem connecting to the Node";
+    public static final int CREDITS_DECIMAL = 18;
 
-//    public static ApiClientInterface apiClient;
-    public static LevelDbService levelDbService;
+    public static NodeApiService nodeApiService;
+    public static ContractExecutorApiService contractExecutorService;
     public static String decimalSeparator;
     public static String creditMonitorURL;
     public static Double screenWidth;
@@ -53,6 +55,6 @@ public class AppState {
 
     public static Short transactionOfferedMaxFeeValue = Const.OFFERED_MAX_FEE;
 
-    public static ObjectKeeper<ConcurrentHashMap<String, SmartContractData>> smartContractsKeeper = new ObjectKeeper<>("smarts.ser");
+    public static ObjectKeeper<ConcurrentHashMap<String, SmartContractData>> smartContractsKeeper; //fixme add correct initialization
     public static String text;
 }

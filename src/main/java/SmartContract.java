@@ -1,5 +1,5 @@
-import com.credits.leveldb.client.data.PoolData;
-import com.credits.leveldb.client.data.TransactionData;
+import com.credits.client.node.pojo.PoolData;
+import com.credits.client.node.pojo.TransactionData;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

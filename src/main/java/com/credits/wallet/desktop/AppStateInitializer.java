@@ -1,7 +1,9 @@
 package com.credits.wallet.desktop;
 
-import com.credits.leveldb.client.service.LevelDbService;
-import com.credits.leveldb.client.service.LevelDbServiceImpl;
+import com.credits.client.executor.service.ContractExecutorApiService;
+import com.credits.client.executor.service.ContractExecutorApiServiceImpl;
+import com.credits.client.node.service.NodeApiService;
+import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.wallet.desktop.utils.FormUtils;
 
 import java.io.FileInputStream;
@@ -29,7 +31,8 @@ public class AppStateInitializer {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         AppState.decimalSeparator = Character.toString(symbols.getDecimalSeparator());
         AppState.creditMonitorURL = properties.getProperty("creditmonitor.url");
-        AppState.levelDbService = initializeLevelDbService();
+        AppState.nodeApiService = initializeNodeApiService();
+        AppState.contractExecutorService = initializeContractExecutorApiService();
     }
 
     Properties loadProperties() {
@@ -45,13 +48,23 @@ public class AppStateInitializer {
         return properties;
     }
 
-    LevelDbService initializeLevelDbService() {
-        String apiAddr = properties.getProperty("api.addr");
+    NodeApiService initializeNodeApiService() {
+        String apiAddr = properties.getProperty("api.host");
         String apiPort = properties.getProperty("api.port");
 
         if (apiAddr == null || apiAddr.isEmpty() || apiPort == null || apiPort.isEmpty()) {
             FormUtils.showError(ERR_NO_API_ADDR);
         }
-        return LevelDbServiceImpl.getInstance(apiAddr, apiPort == null ? 9090 : Integer.parseInt(apiPort));
+        return NodeApiServiceImpl.getInstance(apiAddr, apiPort == null ? 9090 : Integer.parseInt(apiPort));
+    }
+
+    ContractExecutorApiService initializeContractExecutorApiService() {
+        String executorHost = properties.getProperty("executor.host");
+        String executorPort = properties.getProperty("executor.port");
+
+        if (executorHost == null || executorHost.isEmpty() || executorPort == null || executorPort.isEmpty()) {
+            FormUtils.showError(ERR_NO_API_ADDR);
+        }
+        return ContractExecutorApiServiceImpl.getInstance(executorHost, executorPort == null ? 9090 : Integer.parseInt(executorPort));
     }
 }

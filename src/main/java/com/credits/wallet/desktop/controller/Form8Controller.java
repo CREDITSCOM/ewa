@@ -1,6 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.utils.Converter;
+import com.credits.general.util.Converter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;

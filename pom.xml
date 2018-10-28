@@ -27,12 +27,12 @@
         <!--
         API
         Для использования этой зависимости необходимо выполнить установку jar файла из проекта leveldb-client
-        mvn install:install-file -Dfile=leveldb-client.jar -DgroupId=com.credits -DartifactId=leveldb-client -Dversion=1.0-SNAPSHOT -Dpackaging=jar -DpomFile=../pom.xml
+        mvn install:install-file -Dfile=node-client.jar -DgroupId=com.credits.client -DartifactId=node-client -Dversion=1.0.0 -Dpackaging=jar -DpomFile=../pom.xml
         -->
         <dependency>
-            <groupId>com.credits</groupId>
-            <artifactId>leveldb-client</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.credits.client</groupId>
+            <artifactId>node_client</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -80,9 +80,9 @@
             <version>3.7</version>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>25.0-jre</version>
+            <groupId>com.credits.client</groupId>
+            <artifactId>executor_client</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

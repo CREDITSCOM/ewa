@@ -1,13 +1,9 @@
 package com.credits.wallet.desktop.utils;
 
-import com.credits.common.exception.CreditsCommonException;
-import com.credits.common.utils.sourcecode.SourceCodeUtils;
-import com.credits.leveldb.client.ApiTransactionThreadRunnable;
-import com.credits.leveldb.client.data.ApiResponseData;
-import com.credits.leveldb.client.data.ExecuteSmartContractData;
-import com.credits.leveldb.client.data.SmartContractData;
-import com.credits.leveldb.client.exception.CreditsNodeException;
-import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.client.executor.exception.ContractExecutorClientException;
+import com.credits.client.node.exception.NodeClientException;
+import com.credits.client.node.thrift.call.ThriftCallThread.Callback;
+import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import javafx.concurrent.Task;
@@ -26,14 +22,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.nio.ByteBuffer;
 import java.time.Duration;
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.credits.common.utils.Converter.decodeFromBASE58;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singleton;
 
 public class SmartContractUtils {
     private final static Logger LOGGER = LoggerFactory.getLogger(SmartContractUtils.class);
@@ -68,11 +65,11 @@ public class SmartContractUtils {
                     : matcher.group("SEMICOLON") != null ? "semicolon" : matcher.group("STRING") != null ? "string"
                         : matcher.group("COMMENT") != null ? "comment" : null; /* never happens */
             assert styleClass != null;
-            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
-            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
+            spansBuilder.add(emptyList(), matcher.start() - lastKwEnd);
+            spansBuilder.add(singleton(styleClass), matcher.end() - matcher.start());
             lastKwEnd = matcher.end();
         }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+        spansBuilder.add(emptyList(), text.length() - lastKwEnd);
         return spansBuilder.create();
     }
 
@@ -113,43 +110,44 @@ public class SmartContractUtils {
         return codeArea;
     }
 
-    public static void getSmartContractBalance(String smart, ApiTransactionThreadRunnable.Callback callback)
-        throws LevelDbClientException, CreditsNodeException, CreditsCommonException {
-        String method = "balanceOf";
-        ExecuteSmartContractData executeSmartContractData = new ExecuteSmartContractData(ByteBuffer.wrap(decodeFromBASE58(AppState.account)),
-            method,
-            Collections.singletonList(SourceCodeUtils.createVariantObject("String", AppState.account)));
-        AppState.levelDbService.getSmartContractBalance(executeSmartContractData,smart, callback);
+    //todo add implementation
+    public static void getSmartContractBalance(String smart, Callback<BigDecimal> callback) throws NodeClientException, ConverterException, ContractExecutorClientException {
+//        String method = "balanceOf";
+//        ExecuteSmartContractData executeSmartContractData = new ExecuteSmartContractData(ByteBuffer.wrap(decodeFromBASE58(AppState.account)),
+//            method,
+//            Collections.singletonList(SourceCodeUtils.createVariantObject("String", AppState.account)));
+//        AppState.levelDbService.getSmartContractBalance(executeSmartContractData,smart, callback);
     }
 
+    //todo add implementation
     public static void transferTo(String smart, String target, BigDecimal amount) {
-        try {
-            String method = "transfer";
-            List<Object> params = new ArrayList<>();
-
-            params.add(SourceCodeUtils.createVariantObject("String", target));
-            params.add(SourceCodeUtils.createVariantObject("String",amount.toString()));
-            SmartContractData smartContractData = AppState.levelDbService.getSmartContract(smart);
-            if (smartContractData == null) {
-                FormUtils.showInfo("SmartContract not found");
-                return;
-            }
-            ApiUtils.executeSmartContractProcess(method, params, smartContractData,
-                new ApiTransactionThreadRunnable.Callback<ApiResponseData>() {
-                    @Override
-                    public void onSuccess(ApiResponseData resultData) {
-                        FormUtils.showPlatformInfo("Transfer is ok");
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        FormUtils.showPlatformError(e.getMessage());
-                    }
-                });
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            FormUtils.showError(e.getMessage());
-        }
+//        try {
+//            String method = "transfer";
+//            List<Object> params = new ArrayList<>();
+//
+//            params.add(createVariantObject("String", target));
+//            params.add(createVariantObject("String",amount.toString()));
+//            SmartContractData smartContractData = nodeApiService.getSmartContract(smart);
+//            if (smartContractData == null) {
+//                FormUtils.showInfo("SmartContract not found");
+//                return;
+//            }
+//            ApiUtils.executeSmartContractProcess(method, params, smartContractData,
+//                new Callback() {
+//                    @Override
+//                    public void onSuccess(ApiResponseData resultData) {
+//                        FormUtils.showPlatformInfo("Transfer is ok");
+//                    }
+//
+//                    @Override
+//                    public void onError(Exception e) {
+//                        FormUtils.showPlatformError(e.getMessage());
+//                    }
+//                });
+//        } catch (Exception e) {
+//            LOGGER.error(e.getMessage(), e);
+//            FormUtils.showError(e.getMessage());
+//        }
     }
 
     public static void initCodeAreaContextMenu(CodeArea codeArea, boolean readOnly) {
@@ -185,15 +183,12 @@ public class SmartContractUtils {
 
         popup.getContent().add(box);
 
-        EventHandler contextMenu = new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (event.getButton() == event.getButton().SECONDARY) {
-                    popup.setAutoFix(false);
-                    popup.show(codeArea, event.getScreenX(), event.getScreenY());
-                } else if (popup.isShowing() && event.getClickCount() == 1) {
-                    popup.hide();
-                }
+        EventHandler contextMenu = (EventHandler<MouseEvent>) event -> {
+            if (event.getButton() == event.getButton().SECONDARY) {
+                popup.setAutoFix(false);
+                popup.show(codeArea, event.getScreenX(), event.getScreenY());
+            } else if (popup.isShowing() && event.getClickCount() == 1) {
+                popup.hide();
             }
         };
 

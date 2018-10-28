@@ -1,11 +1,10 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.common.exception.CreditsException;
-import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.ApiTransactionThreadRunnable;
-import com.credits.leveldb.client.exception.LevelDbClientException;
-import com.credits.leveldb.client.service.LevelDbServiceImpl;
-import com.credits.leveldb.client.util.Validator;
+import com.credits.client.node.service.NodeApiServiceImpl;
+import com.credits.client.node.thrift.call.ThriftCallThread.Callback;
+import com.credits.client.node.util.Validator;
+import com.credits.general.util.Converter;
+import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.CoinTabRow;
@@ -55,7 +54,6 @@ public class WalletController extends Controller implements Initializable {
 
     @FXML
     BorderPane bp;
-
     @FXML
     private Label labErrorCoin;
     @FXML
@@ -129,7 +127,7 @@ public class WalletController extends Controller implements Initializable {
     }
 
     @FXML
-    private void handleGenerate() throws CreditsException {
+    private void handleGenerate() {
         AppState.amount = Converter.toBigDecimal(numAmount.getText());
         AppState.toAddress = txKey.getText();
         AppState.text = transText.getText();
@@ -164,7 +162,7 @@ public class WalletController extends Controller implements Initializable {
         */
         try {
             Validator.validateToAddress(AppState.toAddress);
-        } catch (LevelDbClientException e) {
+        } catch (ConverterException e) {
             labErrorKey.setText("Invalid Address");
             txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             isValidationSuccessful = false;
@@ -184,38 +182,25 @@ public class WalletController extends Controller implements Initializable {
 
         initializeCoinsView();
 
-        this.wallet.setText(AppState.account);
+        wallet.setText(AppState.account);
 
         FormUtils.resizeForm(bp);
         clearLabErr();
         // Fill coin list
-        LevelDbServiceImpl.account = AppState.account;
+        NodeApiServiceImpl.account = AppState.account;
 
-        this.numAmount.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                refreshTransactionFeePercent(Converter.toBigDecimal(this.numFee.getText()),
-                    Converter.toBigDecimal(newValue));
-            } catch (CreditsException e) {
-                LOGGER.error(e.getMessage());
-            }
-        });
+        numAmount.textProperty()
+            .addListener((observable, oldValue, newValue) -> refreshTransactionFeePercent(
+                Converter.toBigDecimal(numFee.getText()), Converter.toBigDecimal(newValue)));
 
-        this.numFee.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                refreshTransactionFeePercent(Converter.toBigDecimal(newValue),
-                    Converter.toBigDecimal(this.numAmount.getText()));
-            } catch (CreditsException e) {
-                LOGGER.error(e.getMessage());
-            }
-        });
+        numFee.textProperty()
+            .addListener(
+                (observable, oldValue, newValue) -> refreshTransactionFeePercent(Converter.toBigDecimal(newValue),
+                    Converter.toBigDecimal(numAmount.getText())));
 
-        this.numAmount.setOnKeyReleased(event -> {
-            NumberUtils.correctNum(event.getText(), this.numAmount);
-        });
+        numAmount.setOnKeyReleased(event -> NumberUtils.correctNum(event.getText(), numAmount));
 
-        this.numFee.setOnKeyReleased(event -> {
-            NumberUtils.correctNum(event.getText(), this.numFee);
-        });
+        numFee.setOnKeyReleased(event -> NumberUtils.correctNum(event.getText(), numFee));
 
         if (AppState.noClearForm6) {
             txKey.setText(AppState.toAddress);
@@ -228,7 +213,7 @@ public class WalletController extends Controller implements Initializable {
 
     private void initializeCoinsView() {
         coins.getItems().clear();
-        coins.setRowFactory( tv -> {
+        coins.setRowFactory(tv -> {
             TableRow<CoinTabRow> row = new TableRow<>();
             CoinTabRow rowData = row.getItem();
             ContextMenu cm = new ContextMenu();
@@ -240,7 +225,7 @@ public class WalletController extends Controller implements Initializable {
 
             cm.getItems().add(removeItem);
             row.setOnMouseClicked(event -> {
-                if ((! row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals("CS") ) {
+                if ((!row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals("CS") ) {
                     row.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
                         if (t.getButton() == MouseButton.SECONDARY) {
                             removeItem.setOnAction(event1 -> {
@@ -254,7 +239,7 @@ public class WalletController extends Controller implements Initializable {
                     });
                 }
             });
-            return row ;
+            return row;
         });
 
         CoinTabRow coinTabRow = new CoinTabRow();
@@ -264,8 +249,8 @@ public class WalletController extends Controller implements Initializable {
         synchronized (coins.getItems()) {
             coins.getItems().add(coinTabRow);
         }
-        AppState.levelDbService.getAsyncBalance(AppState.account,
-            new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
+        AppState.nodeApiService.getAsyncBalance(AppState.account,
+            new Callback<BigDecimal>() {
                 @Override
                 public void onSuccess(BigDecimal resultData) {
                     coinTabRow.setBalance(
@@ -288,10 +273,9 @@ public class WalletController extends Controller implements Initializable {
                 tempCoinTabRow.setSmartName(smart);
                 tempCoinTabRow.setBalance("Processing");
                 try {
-                    SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin),
-                        new ApiTransactionThreadRunnable.Callback<BigDecimal>() {
+                    SmartContractUtils.getSmartContractBalance(CoinsUtils.getCoins().get(coin), new Callback<BigDecimal>() {
                             @Override
-                            public void onSuccess(BigDecimal balance) throws LevelDbClientException {
+                            public void onSuccess(BigDecimal balance){
                                 synchronized (coins.getItems()) {
                                     tempCoinTabRow.setBalance(String.valueOf(decimalFormat.format(balance)));
                                     coins.getItems().add(tempCoinTabRow);

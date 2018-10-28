@@ -1,10 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
 
-import com.credits.common.exception.CreditsCommonException;
-import com.credits.common.utils.Converter;
-import com.credits.leveldb.client.exception.CreditsNodeException;
-import com.credits.leveldb.client.exception.LevelDbClientException;
+import com.credits.general.exception.CreditsException;
+import com.credits.general.util.Converter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
@@ -58,7 +56,7 @@ public class Form7Controller extends Controller implements Initializable {
                     SmartContractUtils.transferTo(CoinsUtils.getCoins().get(coin),AppState.toAddress,AppState.amount);
                 }
             }
-        } catch (LevelDbClientException | CreditsNodeException | CreditsCommonException e) {
+        } catch (CreditsException e) {
             LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);
             FormUtils.showError(AppState.NODE_ERROR);
             return;

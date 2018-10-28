@@ -1,7 +1,8 @@
 package com.credits.wallet.desktop.utils.struct;
 
-import com.credits.common.exception.CreditsCommonException;
-import com.credits.common.utils.Converter;
+
+import com.credits.general.util.Converter;
+import com.credits.general.util.exception.ConverterException;
 
 public class CalcTransactionIdSourceTargetResult {
     private long transactionId;
@@ -38,10 +39,10 @@ public class CalcTransactionIdSourceTargetResult {
         return target;
     }
 
-    public byte[] getByteSource() throws CreditsCommonException {
+    public byte[] getByteSource() throws ConverterException {
         return Converter.decodeFromBASE58(source);
     }
-    public byte[] getByteTarget() throws CreditsCommonException {
+    public byte[] getByteTarget() throws ConverterException {
         return Converter.decodeFromBASE58(target);
     }
 }
