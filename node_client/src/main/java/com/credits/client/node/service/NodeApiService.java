@@ -22,7 +22,7 @@ public interface NodeApiService {
 
     BigDecimal getBalance(String address) throws NodeClientException, ConverterException;
 
-    abstract void getAsyncBalance(String address, ThriftCallThread.Callback<BigDecimal> callback);
+    void getAsyncBalance(String address, ThriftCallThread.Callback<BigDecimal> callback);
 
     List<TransactionData> getTransactions(String address, long offset, long limit) throws NodeClientException, ConverterException;
 
