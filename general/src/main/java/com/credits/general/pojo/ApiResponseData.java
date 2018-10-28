@@ -12,6 +12,7 @@ public class ApiResponseData {
     private Variant scExecRetVal;
     private String source;
     private String target;
+    private long roundNumber;
 
     public ApiResponseData(
             byte code,
@@ -21,6 +22,14 @@ public class ApiResponseData {
         this.code = code;
         this.message = message;
         this.scExecRetVal = scExecRetVal;
+    }
+
+    public long getRoundNumber() {
+        return roundNumber;
+    }
+
+    public void setRoundNumber(long roundNumber) {
+        this.roundNumber = roundNumber;
     }
 
     public byte getCode() {

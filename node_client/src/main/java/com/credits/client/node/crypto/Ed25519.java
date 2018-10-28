@@ -1,7 +1,6 @@
 package com.credits.client.node.crypto;
 
-import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.thrift.Amount;
+import com.credits.client.node.thrift.generated.Amount;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.crypto.exception.CryptoException;
 import com.credits.general.util.Converter;

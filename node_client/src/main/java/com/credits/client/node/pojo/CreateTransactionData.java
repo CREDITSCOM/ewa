@@ -16,6 +16,8 @@ public class CreateTransactionData {
     private Short offeredMaxFee;
     private byte[] signature;
 
+    public CreateTransactionData(){}
+
     public CreateTransactionData(
             long innerId,
             byte[] source,

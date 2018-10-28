@@ -8,26 +8,28 @@ import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.TransactionRoundData;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.Amount;
-import com.credits.client.node.thrift.AmountCommission;
-import com.credits.client.node.thrift.Pool;
-import com.credits.client.node.thrift.PoolInfoGetResult;
-import com.credits.client.node.thrift.PoolListGetResult;
-import com.credits.client.node.thrift.SealedTransaction;
-import com.credits.client.node.thrift.SmartContract;
-import com.credits.client.node.thrift.SmartContractAddressesListGetResult;
-import com.credits.client.node.thrift.SmartContractGetResult;
-import com.credits.client.node.thrift.SmartContractInvocation;
-import com.credits.client.node.thrift.SmartContractsListGetResult;
-import com.credits.client.node.thrift.Transaction;
-import com.credits.client.node.thrift.TransactionFlowResult;
-import com.credits.client.node.thrift.TransactionGetResult;
-import com.credits.client.node.thrift.TransactionsGetResult;
-import com.credits.client.node.thrift.TransactionsStateGetResult;
-import com.credits.client.node.thrift.WalletBalanceGetResult;
-import com.credits.client.node.thrift.WalletDataGetResult;
-import com.credits.client.node.thrift.WalletIdGetResult;
-import com.credits.client.node.thrift.WalletTransactionsCountGetResult;
+import com.credits.client.node.thrift.call.BalanceGetThread;
+import com.credits.client.node.thrift.call.ThriftCallThread;
+import com.credits.client.node.thrift.generated.Amount;
+import com.credits.client.node.thrift.generated.AmountCommission;
+import com.credits.client.node.thrift.generated.Pool;
+import com.credits.client.node.thrift.generated.PoolInfoGetResult;
+import com.credits.client.node.thrift.generated.PoolListGetResult;
+import com.credits.client.node.thrift.generated.SealedTransaction;
+import com.credits.client.node.thrift.generated.SmartContract;
+import com.credits.client.node.thrift.generated.SmartContractAddressesListGetResult;
+import com.credits.client.node.thrift.generated.SmartContractGetResult;
+import com.credits.client.node.thrift.generated.SmartContractInvocation;
+import com.credits.client.node.thrift.generated.SmartContractsListGetResult;
+import com.credits.client.node.thrift.generated.Transaction;
+import com.credits.client.node.thrift.generated.TransactionFlowResult;
+import com.credits.client.node.thrift.generated.TransactionGetResult;
+import com.credits.client.node.thrift.generated.TransactionsGetResult;
+import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
+import com.credits.client.node.thrift.generated.WalletBalanceGetResult;
+import com.credits.client.node.thrift.generated.WalletDataGetResult;
+import com.credits.client.node.thrift.generated.WalletIdGetResult;
+import com.credits.client.node.thrift.generated.WalletTransactionsCountGetResult;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.client.node.util.Validator;
 import com.credits.general.pojo.ApiResponseData;
@@ -42,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import static com.credits.client.node.util.NodeClientUtils.logApiResponse;
@@ -64,9 +68,11 @@ public class NodeApiServiceImpl implements NodeApiService {
     public static String account;
     private static volatile NodeApiServiceImpl instance;
     private final NodeThriftApiClient nodeClient;
+    private ExecutorService threadPoolExecutor;
 
     private NodeApiServiceImpl(String host, int port) {
         nodeClient = NodeThriftApiClient.getInstance(host, port);
+        threadPoolExecutor = new ForkJoinPool();
     }
 
     public static NodeApiServiceImpl getInstance(String host, int port) {
@@ -91,6 +97,13 @@ public class NodeApiServiceImpl implements NodeApiService {
         BigDecimal balance = amountToBigDecimal(amount);
         LOGGER.info(String.format("getBalance: <--- balance = %s", balance));
         return balance;
+    }
+
+    @Override
+    public void getAsyncBalance(String address, ThriftCallThread.Callback<BigDecimal> callback) {
+        LOGGER.info(String.format("getBalance: ---> address = %s", address));
+        ThriftCallThread threadRunnable = new BalanceGetThread(callback, address);
+        threadPoolExecutor.submit(threadRunnable);
     }
 
     @Override
@@ -150,7 +163,7 @@ public class NodeApiServiceImpl implements NodeApiService {
      */
     @Override
     public void executeSmartContract(long transactionInnerId, String source, String target, SmartContractInvocationData smartContractInvocationData, byte[] signature,
-        TransactionProcessThread.Callback callback) throws NodeClientException, ConverterException {
+        ThriftCallThread.Callback callback) throws NodeClientException, ConverterException {
 
         if (smartContractInvocationData == null) {
             throw new NodeClientException("Empty smart-contract");
@@ -171,7 +184,7 @@ public class NodeApiServiceImpl implements NodeApiService {
         executeAsyncTransactionFlow(callback, transaction);
     }
 
-    private void executeAsyncTransactionFlow(TransactionProcessThread.Callback callback, Transaction transaction) {
+    private void executeAsyncTransactionFlow(ThriftCallThread.Callback callback, Transaction transaction) {
         nodeClient.executeAsyncTransactionFlow(transaction, callback);
     }
 
@@ -186,7 +199,7 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     @Override
-    public void asyncCreateTransaction(CreateTransactionData createTransactionData, boolean checkBalance, TransactionProcessThread.Callback callback)
+    public void asyncCreateTransaction(CreateTransactionData createTransactionData, boolean checkBalance, ThriftCallThread.Callback callback)
         throws NodeClientException, ConverterException {
         Transaction transaction = createTransactionProcess(createTransactionData, checkBalance);
         executeAsyncTransactionFlow(callback, transaction);

@@ -5,13 +5,13 @@ import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.Amount;
-import com.credits.client.node.thrift.Pool;
-import com.credits.client.node.thrift.SealedTransaction;
-import com.credits.client.node.thrift.SmartContract;
-import com.credits.client.node.thrift.SmartContractInvocation;
-import com.credits.client.node.thrift.Transaction;
-import com.credits.client.node.thrift.TransactionId;
+import com.credits.client.node.thrift.generated.Amount;
+import com.credits.client.node.thrift.generated.Pool;
+import com.credits.client.node.thrift.generated.SealedTransaction;
+import com.credits.client.node.thrift.generated.SmartContract;
+import com.credits.client.node.thrift.generated.SmartContractInvocation;
+import com.credits.client.node.thrift.generated.Transaction;
+import com.credits.client.node.thrift.generated.TransactionId;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generate.APIResponse;
@@ -130,7 +130,7 @@ public class NodePojoConverter {
         return new BigDecimal(String.format("%s.%s", integralPartAsString, fractionPartAsString));
     }
 
-    public static WalletData walletToWalletData(com.credits.client.node.thrift.WalletData walletData) {
+    public static WalletData walletToWalletData(com.credits.client.node.thrift.generated.WalletData walletData) {
 
         return new WalletData(walletData.getWalletId(), NodePojoConverter.amountToBigDecimal(walletData.getBalance()),
             walletData.getLastTransactionId());

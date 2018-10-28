@@ -1,12 +1,12 @@
 package com.credits.client.node.util;
 
 import com.credits.client.node.pojo.TransactionData;
-import com.credits.client.node.thrift.Amount;
-import com.credits.client.node.thrift.AmountCommission;
-import com.credits.client.node.thrift.SealedTransaction;
-import com.credits.client.node.thrift.Transaction;
-import com.credits.client.node.thrift.TransactionId;
-import com.credits.client.node.thrift.WalletData;
+import com.credits.client.node.thrift.generated.Amount;
+import com.credits.client.node.thrift.generated.AmountCommission;
+import com.credits.client.node.thrift.generated.SealedTransaction;
+import com.credits.client.node.thrift.generated.Transaction;
+import com.credits.client.node.thrift.generated.TransactionId;
+import com.credits.client.node.thrift.generated.WalletData;
 import com.credits.general.util.exception.ConverterException;
 import org.junit.Assert;
 import org.junit.Test;

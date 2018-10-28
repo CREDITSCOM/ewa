@@ -5,7 +5,8 @@ import com.credits.client.node.pojo.CreateTransactionData;
 import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionIdData;
-import com.credits.client.node.thrift.API;
+import com.credits.client.node.thrift.call.ThriftCallThread;
+import com.credits.client.node.thrift.generated.API;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
@@ -125,9 +126,11 @@ public class NodeClientTestIT {
             new SmartContractInvocationData("sourceCode", address.getBytes(), "hashState", "method", null, true);
 
         nodeService.executeSmartContract(transactionInnerId, transactionSource, transactionTarget, smartContractInvocationData,
-            "signature01".getBytes(), new TransactionProcessThread.Callback() {
+            "signature01".getBytes(), new ThriftCallThread.Callback() {
+
                 @Override
-                public void onSuccess(ApiResponseData resultData) {
+                public void onSuccess(Object resultData) throws NodeClientException {
+
                 }
 
                 @Override

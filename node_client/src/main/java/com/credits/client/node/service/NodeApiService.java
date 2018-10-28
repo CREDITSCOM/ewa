@@ -8,7 +8,8 @@ import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.TransactionsStateGetResult;
+import com.credits.client.node.thrift.call.ThriftCallThread;
+import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.util.exception.ConverterException;
@@ -21,6 +22,8 @@ public interface NodeApiService {
 
     BigDecimal getBalance(String address) throws NodeClientException, ConverterException;
 
+    abstract void getAsyncBalance(String address, ThriftCallThread.Callback<BigDecimal> callback);
+
     List<TransactionData> getTransactions(String address, long offset, long limit) throws NodeClientException, ConverterException;
 
     TransactionData getTransaction(TransactionIdData transactionIdData) throws NodeClientException;
@@ -30,11 +33,11 @@ public interface NodeApiService {
     List<PoolData> getPoolList(Long offset, Long limit) throws NodeClientException;
 
     void executeSmartContract(long transactionInnerId, String source, String target, SmartContractInvocationData smartContractInvocationData, byte[] signature,
-        TransactionProcessThread.Callback callback) throws NodeClientException, ConverterException;
+        ThriftCallThread.Callback callback) throws NodeClientException, ConverterException;
 
     ApiResponseData createTransaction(CreateTransactionData createTransactionData, boolean checkBalance) throws NodeClientException, ConverterException;
 
-    void asyncCreateTransaction(CreateTransactionData createTransactionData, boolean checkBalance, TransactionProcessThread.Callback callback)
+    void asyncCreateTransaction(CreateTransactionData createTransactionData, boolean checkBalance, ThriftCallThread.Callback callback)
         throws NodeClientException, ConverterException;
 
     SmartContractData getSmartContract(String address) throws NodeClientException, ConverterException;
