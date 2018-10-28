@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
+import static com.credits.general.util.Constants.ds;
+
 /**
  * Created by goncharov-eg on 19.01.2018.
  */
@@ -26,7 +28,7 @@ public class AppState {
 
     public static NodeApiService nodeApiService;
     public static ContractExecutorApiService contractExecutorService;
-    public static String decimalSeparator;
+    public static String decimalSeparator = ds;
     public static String creditMonitorURL;
     public static Double screenWidth;
     public static Double screenHeight;
