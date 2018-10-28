@@ -4,6 +4,7 @@ import com.credits.client.executor.service.ContractExecutorApiService;
 import com.credits.client.executor.service.ContractExecutorApiServiceImpl;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
+import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.utils.FormUtils;
 
 import java.io.FileInputStream;
@@ -32,6 +33,7 @@ public class AppStateInitializer {
         AppState.creditMonitorURL = properties.getProperty("creditmonitor.url");
         AppState.nodeApiService = initializeNodeApiService();
         AppState.contractExecutorService = initializeContractExecutorApiService();
+        AppState.contractInteractionService = initializeContractInteractionService();
     }
 
     Properties loadProperties() {
@@ -45,6 +47,10 @@ public class AppStateInitializer {
             throw new RuntimeException(e.getMessage(), e);
         }
         return properties;
+    }
+
+    ContractInteractionService initializeContractInteractionService() {
+        return new ContractInteractionService();
     }
 
     NodeApiService initializeNodeApiService() {

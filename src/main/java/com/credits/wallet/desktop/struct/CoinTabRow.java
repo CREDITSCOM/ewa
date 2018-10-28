@@ -10,6 +10,15 @@ public class CoinTabRow implements Serializable {
     private String balance;
     private String smartName;
 
+    public CoinTabRow(String coinName, String value, String smartContractAddress) {
+        name = coinName;
+        balance = value;
+        smartName = smartContractAddress;
+    }
+
+
+    public CoinTabRow() {}
+
     public String getSmartName() {
         return smartName;
     }

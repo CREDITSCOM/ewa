@@ -5,6 +5,7 @@ import com.credits.client.node.service.NodeApiService;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.util.ObjectKeeper;
 import com.credits.wallet.desktop.controller.Const;
+import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 
 import java.math.BigDecimal;
@@ -28,6 +29,7 @@ public class AppState {
 
     public static NodeApiService nodeApiService;
     public static ContractExecutorApiService contractExecutorService;
+    public static ContractInteractionService contractInteractionService;
     public static String decimalSeparator = ds;
     public static String creditMonitorURL;
     public static Double screenWidth;

@@ -8,7 +8,6 @@ import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.SmartContractUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -18,6 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static com.credits.wallet.desktop.AppState.contractInteractionService;
 
 /**
  * Created by Rustem.Saidaliyev on 26.01.2018.
@@ -53,7 +54,7 @@ public class Form7Controller extends Controller implements Initializable {
                 ApiUtils.callCreateTransaction();
             } else {
                 if (CoinsUtils.getCoins().get(coin)!= null) {
-                    SmartContractUtils.transferTo(CoinsUtils.getCoins().get(coin),AppState.toAddress,AppState.amount);
+                    contractInteractionService.transferTo(CoinsUtils.getCoins().get(coin),AppState.toAddress,AppState.amount);
                 }
             }
         } catch (CreditsException e) {

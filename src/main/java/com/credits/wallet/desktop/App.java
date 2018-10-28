@@ -56,7 +56,6 @@ public class App extends Application {
             )
         );
         stage.show();
-        //ScenicView.show(stage.getScene());
     }
 
 

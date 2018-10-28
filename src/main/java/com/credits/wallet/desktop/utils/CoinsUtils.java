@@ -13,7 +13,10 @@ public class CoinsUtils {
     private static ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper = new ObjectKeeper<>(AppState.account, "coins");
 
     public static ConcurrentHashMap<String,String> getCoins() {
-        if (coinsKeeper.deserialize() == null) return new ConcurrentHashMap<>(); else return coinsKeeper.deserialize();
+        if (coinsKeeper.deserialize() == null)
+            return new ConcurrentHashMap<>();
+        else
+            return coinsKeeper.deserialize();
     }
 
 

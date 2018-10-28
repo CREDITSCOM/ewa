@@ -23,10 +23,9 @@ public class FakeData {
     public static final String addressBase58 = "G2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZZ";
     public static ConcurrentHashMap<String, ConcurrentHashMap<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();
     public static TransactionsStateGetResult transactionsStateGetResult;
+    public static ConcurrentHashMap<String, String> coins = new ConcurrentHashMap<>();
 
     static {
-
-
         smartContractDataList = new ArrayList<>();
         transactionsDataList = new ArrayList<>();
         TransactionData transactionData1;
@@ -39,6 +38,11 @@ public class FakeData {
         TransactionData transactionData8;
         TransactionData transactionData9;
         TransactionData transactionData10;
+
+        coins.put("TKN", "b2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZb");
+        coins.put("BC", "c2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZc");
+        coins.put("ETH", "d2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZd");
+        coins.put("NEO", "e2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZe");
 
         try {
             byte[] byteAddress = decodeFromBASE58("G2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZZ");
