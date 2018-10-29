@@ -7,7 +7,7 @@ import com.credits.general.thrift.generate.Variant;
  * Created by Rustem Saidaliyev on 17.05.2018.
  */
 public class ApiResponseData {
-    private byte code;
+    private ApiResponseCode code;
     private String message;
     private Variant scExecRetVal;
     private String source;
@@ -15,7 +15,7 @@ public class ApiResponseData {
     private long roundNumber;
 
     public ApiResponseData(
-            byte code,
+            ApiResponseCode code,
             String message,
             Variant scExecRetVal
     ) {
@@ -32,11 +32,11 @@ public class ApiResponseData {
         this.roundNumber = roundNumber;
     }
 
-    public byte getCode() {
+    public ApiResponseCode getCode() {
         return code;
     }
 
-    public void setCode(byte code) {
+    public void setCode(ApiResponseCode code) {
         this.code = code;
     }
 

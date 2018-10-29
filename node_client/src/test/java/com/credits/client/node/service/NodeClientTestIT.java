@@ -134,7 +134,7 @@ public class NodeClientTestIT {
                 }
 
                 @Override
-                public void onError(Exception e) {
+                public void onError(Throwable e) {
                 }
             });
     }

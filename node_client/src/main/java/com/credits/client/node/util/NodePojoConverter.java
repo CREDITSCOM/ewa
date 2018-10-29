@@ -12,6 +12,7 @@ import com.credits.client.node.thrift.generated.SmartContract;
 import com.credits.client.node.thrift.generated.SmartContractInvocation;
 import com.credits.client.node.thrift.generated.Transaction;
 import com.credits.client.node.thrift.generated.TransactionId;
+import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generate.APIResponse;
@@ -206,11 +207,11 @@ public class NodePojoConverter {
     }
 
     public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {
-        return new ApiResponseData(apiResponse.getCode(), apiResponse.getMessage(), null);
+        return new ApiResponseData(ApiResponseCode.valueOf(apiResponse.getCode()), apiResponse.getMessage(), null);
     }
 
     public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse, Variant smartContractResult) {
-        return new ApiResponseData(apiResponse.getCode(), apiResponse.getMessage(), smartContractResult);
+        return new ApiResponseData(ApiResponseCode.valueOf(apiResponse.getCode()), apiResponse.getMessage(), smartContractResult);
     }
 
     public static TransactionId transactionIdDataToTransactionId(TransactionIdData transactionIdData) {

@@ -1,9 +1,9 @@
 package com.credits.client.node.util;
 
-import com.credits.general.pojo.SmartContractData;
-import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.service.ApiResponseCode;
+import com.credits.client.node.pojo.SmartContractInvocationData;
+import com.credits.general.pojo.ApiResponseCode;
+import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generate.APIResponse;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
@@ -11,8 +11,8 @@ import org.apache.thrift.TSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.credits.client.node.service.ApiResponseCode.NOT_FOUND;
-import static com.credits.client.node.service.ApiResponseCode.SUCCESS;
+import static com.credits.general.pojo.ApiResponseCode.NOT_FOUND;
+import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 
 /**
  * Created by Rustem Saidaliyev on 09.05.2018.

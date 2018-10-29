@@ -29,6 +29,6 @@ public abstract class ThriftCallThread<T> implements Runnable {
     @SuppressWarnings("EmptyMethod")
     public interface Callback<T>{
         void onSuccess(T resultData) throws CreditsException;
-        void onError(Exception e);
+        void onError(Throwable e);
     }
 }

@@ -1,5 +1,6 @@
 package com.credits.general.util;
 
+import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.thrift.generate.APIResponse;
 import com.credits.general.thrift.generate.Variant;
@@ -321,7 +322,7 @@ public class Converter {
 
     public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {
         return new ApiResponseData(
-            apiResponse.getCode(),
+            ApiResponseCode.valueOf(apiResponse.getCode()),
             apiResponse.getMessage(),
             null
         );

@@ -1,4 +1,4 @@
-package com.credits.client.node.service;
+package com.credits.general.pojo;
 
 /**
  * Created by Igor Goryunov on 17.10.2018
