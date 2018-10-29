@@ -56,6 +56,18 @@ public class SourceCodeUtils {
 
     private static final String COLLECTION_VALUES_DELIMITER = "\\|";
 
+    //todo fill to other types
+    enum VariantTypeSupport{
+        STRING("String");
+
+        final String type;
+        VariantTypeSupport(String type) {
+            this.type = type;
+        }
+    }
+
+    public static final String STRING_TYPE = "String";
+
     public static String normalizeSourceCode(String sourceCode) {
         String normalizedSourceCode =
             sourceCode.replace("\r", " ").replace("\t", " ").replace("{", " {");
@@ -291,6 +303,7 @@ public class SourceCodeUtils {
         }
     }
 
+    //todo change String className type to enum type
     public static Object createVariantObject(String className, String value) {
 
         int openingBracketPosition = className.indexOf("<");
@@ -306,7 +319,7 @@ public class SourceCodeUtils {
 
         switch (classNameWOGeneric) {
             case "Object": return value;
-            case "String": return value;
+            case STRING_TYPE: return value;
             case "Byte": return Converter.toByte(value);
             case "byte": return Converter.toByte(value);
             case "Short": return Converter.toShort(value);

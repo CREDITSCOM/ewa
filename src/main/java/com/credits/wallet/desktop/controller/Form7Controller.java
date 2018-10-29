@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 
+import com.credits.client.node.thrift.call.ThriftCallThread.Callback;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Converter;
 import com.credits.wallet.desktop.AppState;
@@ -54,7 +55,17 @@ public class Form7Controller extends Controller implements Initializable {
                 ApiUtils.callCreateTransaction();
             } else {
                 if (CoinsUtils.getCoins().get(coin)!= null) {
-                    contractInteractionService.transferTo(CoinsUtils.getCoins().get(coin),AppState.toAddress,AppState.amount);
+                    contractInteractionService.transferTo(CoinsUtils.getCoins().get(coin), AppState.toAddress, AppState.amount, new Callback<String>() {
+                        @Override
+                        public void onSuccess(String message) throws CreditsException {
+                            FormUtils.showPlatformInfo(message);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            FormUtils.showPlatformError(e.getLocalizedMessage());
+                        }
+                    });
                 }
             }
         } catch (CreditsException e) {
@@ -68,7 +79,7 @@ public class Form7Controller extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-FormUtils.resizeForm(bp);
+        FormUtils.resizeForm(bp);
         this.toAddress.setText(AppState.toAddress);
         this.amountInCs.setText(Converter.toString(AppState.amount) + " " + AppState.coin);
         this.transactionData.setText(AppState.text);
