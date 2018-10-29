@@ -4,13 +4,11 @@ import com.credits.client.node.crypto.Ed25519;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.FormUtils;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
@@ -48,34 +46,25 @@ public class Form1Controller extends Controller implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources) {  //fixme jumping fields
         FormUtils.resizeForm(bp);
         txPassword.setVisible(true);
         labPassword.setVisible(false);
 
-        btnShowPassword.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                labPassword.setText(txPassword.getText());
-                txPassword.setVisible(false);
-                labPassword.setVisible(true);
-            }
+        btnShowPassword.setOnMousePressed(event -> {
+            labPassword.setText(txPassword.getText());
+            txPassword.setVisible(false);
+            labPassword.setVisible(true);
         });
 
-        btnShowPassword.setOnMouseReleased(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                txPassword.setVisible(true);
-                labPassword.setVisible(false);
-            }
+        btnShowPassword.setOnMouseReleased(event -> {
+            txPassword.setVisible(true);
+            labPassword.setVisible(false);
         });
 
-        btnShowPassword.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                txPassword.setVisible(true);
-                labPassword.setVisible(false);
-            }
+        btnShowPassword.setOnMouseExited(event -> {
+            txPassword.setVisible(true);
+            labPassword.setVisible(false);
         });
     }
 }

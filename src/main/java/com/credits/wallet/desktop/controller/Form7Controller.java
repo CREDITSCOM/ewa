@@ -26,6 +26,7 @@ import static com.credits.wallet.desktop.AppState.contractInteractionService;
  */
 public class Form7Controller extends Controller implements Initializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(Form7Controller.class);
+    private final static String CreditsSymbol = "CS";
 
     @FXML
     BorderPane bp;
@@ -51,7 +52,7 @@ public class Form7Controller extends Controller implements Initializable {
     private void handleGenerate() {
         try {
             String coin = AppState.coin;
-            if(coin.equals("CS")) {
+            if(coin.equals(CreditsSymbol)) {
                 ApiUtils.callCreateTransaction();
             } else {
                 if (CoinsUtils.getCoins().get(coin)!= null) {
