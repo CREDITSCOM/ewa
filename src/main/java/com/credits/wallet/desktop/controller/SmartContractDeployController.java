@@ -52,7 +52,7 @@ import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
  * Created by goncharov-eg on 30.01.2018.
  */
 //TODO: This class is a GODZILLA please refactor it ASAP!
-public class SmartContractDeployController extends Controller implements Initializable {
+public class SmartContractDeployController implements Initializable {
 
     private static final String DEFAULT_SOURCE_CODE =
         "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n" + "        total = 0;\n" + "    }" + "\n" + "}";

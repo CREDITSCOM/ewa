@@ -32,8 +32,8 @@ import java.util.ResourceBundle;
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class Form5Controller extends Controller implements Initializable {
-    private static Logger LOGGER = LoggerFactory.getLogger(Form5Controller.class);
+public class PutKeysController implements Initializable {
+    private static Logger LOGGER = LoggerFactory.getLogger(PutKeysController.class);
 
     private static final String ERR_KEYS = "Public and private keys pair is not valid";
     private static final String ERROR_EMPTY_PUBLIC  = "Public key is empty";

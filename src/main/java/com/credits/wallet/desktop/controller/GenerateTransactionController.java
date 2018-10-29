@@ -24,8 +24,8 @@ import static com.credits.wallet.desktop.AppState.contractInteractionService;
 /**
  * Created by Rustem.Saidaliyev on 26.01.2018.
  */
-public class Form7Controller extends Controller implements Initializable {
-    private final static Logger LOGGER = LoggerFactory.getLogger(Form7Controller.class);
+public class GenerateTransactionController implements Initializable {
+    private final static Logger LOGGER = LoggerFactory.getLogger(GenerateTransactionController.class);
     private final static String CreditsSymbol = "CS";
 
     @FXML

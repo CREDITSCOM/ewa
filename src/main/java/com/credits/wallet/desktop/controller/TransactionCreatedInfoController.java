@@ -21,8 +21,8 @@ import java.util.ResourceBundle;
 /**
  * Created by Rustem.Saidaliyev on 26.01.2018.
  */
-public class Form8Controller extends Controller implements Initializable {
-    private final static Logger LOGGER = LoggerFactory.getLogger(Form8Controller.class);
+public class TransactionCreatedInfoController implements Initializable {
+    private final static Logger LOGGER = LoggerFactory.getLogger(TransactionCreatedInfoController.class);
 
     @FXML
     BorderPane bp;

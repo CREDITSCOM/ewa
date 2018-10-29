@@ -9,7 +9,7 @@ import javafx.scene.control.Button;
 /**
  * Created by goncharov-eg on 23.11.2017.
  */
-public class HeaderController extends Controller {
+public class HeaderController {
 
     @FXML
     private Button btnLogout;

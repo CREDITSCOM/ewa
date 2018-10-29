@@ -23,7 +23,7 @@ import static com.credits.wallet.desktop.AppState.contractInteractionService;
 /**
  * Created by goncharov-eg on 07.02.2018.
  */
-public class NewCoinController extends Controller implements Initializable {
+public class NewCoinController implements Initializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(NewCoinController.class);
 
     private static final String ERR_COIN = "You must enter coin mnemonic";

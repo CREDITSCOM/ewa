@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by goncharov-eg on 30.01.2018.
  */
-public class SmartContractController extends Controller implements Initializable {
+public class SmartContractController implements Initializable {
 
     private static final String PERSONAL_CONTRACTS = "Personal contracts";
     private static final String FOUND_CONTRACTS = "Found contracts";

@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class Form4Controller extends Controller implements Initializable {
+public class SaveKeysController implements Initializable {
     @FXML
     private TextField txKey;
 
@@ -35,6 +35,7 @@ public class Form4Controller extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-    FormUtils.resizeForm(bp);        txKey.setText(Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
+        FormUtils.resizeForm(bp);
+        txKey.setText(Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
     }
 }

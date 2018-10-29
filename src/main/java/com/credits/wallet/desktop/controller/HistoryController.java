@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
 /**
  * Created by goncharov-eg on 29.01.2018.
  */
-public class HistoryController extends Controller implements Initializable {
+public class HistoryController implements Initializable {
     private static final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
     private static final int INIT_PAGE_SIZE = 10;
     private static final int FIRST_PAGE_NUMBER = 1;

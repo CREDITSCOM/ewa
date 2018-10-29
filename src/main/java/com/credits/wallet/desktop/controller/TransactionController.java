@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
 /**
  * Created by goncharov-eg on 30.01.2018.
  */
-public class TransactionController extends Controller implements Initializable {
+public class TransactionController implements Initializable {
     private static final String ERR_GETTING_TRANSACTION = "Error getting transaction details";
 
     @FXML

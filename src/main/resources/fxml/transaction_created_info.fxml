@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.credits.wallet.desktop.controller.Form8Controller" maxHeight="-Infinity"
+            fx:controller="com.credits.wallet.desktop.controller.TransactionCreatedInfoController" maxHeight="-Infinity"
             fx:id="bp"
             prefHeight="700.0" prefWidth="1300.0"
             maxWidth="-Infinity" minHeight="-Infinity"
