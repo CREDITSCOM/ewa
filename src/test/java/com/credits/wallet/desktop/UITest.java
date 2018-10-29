@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Properties;
 
-import static com.credits.client.node.service.ApiResponseCode.SUCCESS;
+import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.thrift.generate.Variant._Fields.V_STRING;
 import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,7 +45,7 @@ public class UITest {
     String addressTwo;
     String addressThree;
 
-    ApiResponseData successResponse = new ApiResponseData((byte) SUCCESS.code, "Success", new Variant(V_STRING, "Success"));
+    ApiResponseData successResponse = new ApiResponseData(SUCCESS, "Success", new Variant(V_STRING, "Success"));
 
     @Mock
     AppStateInitializer mockInitializer;

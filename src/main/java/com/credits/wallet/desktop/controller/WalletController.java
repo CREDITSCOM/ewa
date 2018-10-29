@@ -187,7 +187,7 @@ public class WalletController extends Controller implements Initializable {
             }
 
             @Override
-            public void onError(Exception e) {
+            public void onError(Throwable e) {
                 coinRow.setBalance("Receive error");
                 e.printStackTrace();
             }

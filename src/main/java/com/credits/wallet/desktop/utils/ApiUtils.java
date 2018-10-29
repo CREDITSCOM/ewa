@@ -195,7 +195,7 @@ public class ApiUtils {
                     FormUtils.showPlatformInfo(String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", target));
                 }
                 @Override
-                public void onError(Exception e) {
+                public void onError(Throwable e) {
                     FormUtils.showPlatformError(e.getMessage());
                 }
             });

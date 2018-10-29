@@ -285,7 +285,7 @@ public class SmartContractController extends Controller implements Initializable
                     }
 
                     @Override
-                    public void onError(Exception e) {
+                    public void onError(Throwable e) {
                         FormUtils.showPlatformError(e.getMessage());
                     }
                 });
