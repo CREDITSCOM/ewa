@@ -273,7 +273,7 @@ public class Converter {
         } else if (object.getClass().equals(Byte.class)) {
             return ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put((Byte)object).array();
         } else if (object instanceof byte[]) {
-            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).put((byte)object).array();
+            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).put((byte[])object).array();
         } else if (object instanceof Byte[]) {
             Byte[] bigBytes = (Byte[]) object;
             ByteBuffer byteBuffer = ByteBuffer.allocate(bigBytes.length);

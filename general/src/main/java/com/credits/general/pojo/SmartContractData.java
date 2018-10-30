@@ -21,6 +21,7 @@ public class SmartContractData implements Serializable {
     private String method;
     private List<Variant> params;
     private String base58Address;
+    private boolean favorite;
 
     public SmartContractData(byte[] address, byte[] deployer, String sourceCode, byte[] byteCode, String hashState,
         byte[] objectState) {
@@ -94,6 +95,14 @@ public class SmartContractData implements Serializable {
 
     public void setHashState(String hashState) {
         this.hashState = hashState;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
     @Override
