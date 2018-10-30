@@ -3,18 +3,20 @@ package com.credits.client.node.pojo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
  */
 public class TransactionData implements Serializable {
-    private static final long serialVersionUID = 4544650022718657167L;
-    private Long id;
-    private byte[] source;
-    private byte[] target;
-    private BigDecimal amount;
-    private BigDecimal balance;
-    private byte currency;
+    protected static final long serialVersionUID = 4544650022718657167L;
+    protected long id;
+    protected byte[] source;
+    protected byte[] target;
+    protected BigDecimal amount;
+    protected BigDecimal balance;
+    protected byte currency;
+
 
     public TransactionData(){}
 
@@ -25,7 +27,7 @@ public class TransactionData implements Serializable {
         this.amount = amount;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
@@ -74,14 +76,38 @@ public class TransactionData implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TransactionData)) {
+            return false;
+        }
+        TransactionData that = (TransactionData) o;
+        return id == that.id && currency == that.currency && Arrays.equals(source, that.source) &&
+            Arrays.equals(target, that.target) && Objects.equals(amount, that.amount) &&
+            Objects.equals(balance, that.balance);
+    }
+
+    @Override
+    public int hashCode() {
+
+        int result = Objects.hash(id, amount, balance, currency);
+        result = 31 * result + Arrays.hashCode(source);
+        result = 31 * result + Arrays.hashCode(target);
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return String.format("{id : %s, account : %s, target : %s, amount : %s, balance : %s, currency : %s}",
-            this.id,
-            Arrays.toString(this.source),
-            Arrays.toString(this.target),
-            this.amount,
-            this.balance,
-            this.currency
-        );
+        final StringBuilder sb = new StringBuilder("TransactionData{");
+        sb.append("id=").append(id);
+        sb.append(", source=").append(Arrays.toString(source));
+        sb.append(", target=").append(Arrays.toString(target));
+        sb.append(", amount=").append(amount);
+        sb.append(", balance=").append(balance);
+        sb.append(", currency=").append(currency);
+        sb.append('}');
+        return sb.toString();
     }
 }

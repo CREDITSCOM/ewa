@@ -1,15 +1,19 @@
 package com.credits.client.node.thrift.call;
 
+import com.credits.client.node.service.NodeApiService;
 import com.credits.general.exception.CreditsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public abstract class ThriftCallThread<T> implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThriftCallThread.class);
-    private final Callback<T> callback;
+    private final com.credits.general.util.Callback<T> callback;
+    NodeApiService nodeApiService;
 
-    ThriftCallThread(Callback<T> callback) {
+    ThriftCallThread(NodeApiService nodeApiService, com.credits.general.util.Callback<T> callback) {
         this.callback = callback;
+        this.nodeApiService = nodeApiService;
     }
 
     @Override
@@ -27,8 +31,6 @@ public abstract class ThriftCallThread<T> implements Runnable {
     protected abstract T call() throws CreditsException;
 
     @SuppressWarnings("EmptyMethod")
-    public interface Callback<T>{
-        void onSuccess(T resultData) throws CreditsException;
-        void onError(Throwable e);
+    public interface Callback<T> extends com.credits.general.util.Callback<T> {
     }
 }

@@ -1,11 +1,11 @@
 package com.credits.client.node.service;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.CreateTransactionData;
 import com.credits.client.node.pojo.SmartContractInvocationData;
+import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionIdData;
-import com.credits.client.node.thrift.call.ThriftCallThread;
 import com.credits.client.node.thrift.generated.API;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.credits.client.node.service.NodeApiServiceImpl.async;
+import static com.credits.client.node.thrift.call.ThriftCallThread.Callback;
+import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
+import static com.credits.general.util.Converter.decodeFromBASE58;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.junit.Assert.fail;
 
@@ -88,11 +92,17 @@ public class NodeClientTestIT {
 
     @Test
     public void transactionFlowTest() throws NodeClientException, ConverterException {
-        CreateTransactionData createTransactionData =
-            new CreateTransactionData(12327, "qwerty".getBytes(), "qwerty".getBytes(), new BigDecimal("0.123"), new BigDecimal("0.123"), (byte) 1,
-                (short) 10, "signature".getBytes());
-        ApiResponseData responseData = nodeService.createTransaction(createTransactionData, false);
-        Assert.assertEquals(0, responseData.getCode());
+        TransactionFlowData transactionFlowData =
+            new TransactionFlowData(
+                12327,
+                "qwerty".getBytes(),
+                "qwerty".getBytes(),
+                new BigDecimal("0.123"),
+                (byte) 1,
+                (short) 10,
+                "signature".getBytes());
+        ApiResponseData responseData = nodeService.transactionFlow(transactionFlowData);
+        Assert.assertEquals(SUCCESS, responseData.getCode());
     }
 
     @Test
@@ -119,23 +129,24 @@ public class NodeClientTestIT {
     @Test
     public void deploySmartContractTest() throws NodeClientException, ConverterException {
         String address = "address";
-        long transactionInnerId = 12327;
-        String transactionSource = "4ESD7KpGzJCfDL8pZKhMfcfekqdoBdjSBUF5FiJdkBAC";
-        String transactionTarget = "transactionTarget";
-        SmartContractInvocationData smartContractInvocationData =
-            new SmartContractInvocationData("sourceCode", address.getBytes(), "hashState", "method", null, true);
+        long transactionId = 12327;
+        String source = "4ESD7KpGzJCfDL8pZKhMfcfekqdoBdjSBUF5FiJdkBAC";
+        String target = "transactionTarget";
 
-        nodeService.executeSmartContract(transactionInnerId, transactionSource, transactionTarget, smartContractInvocationData,
-            "signature01".getBytes(), new ThriftCallThread.Callback() {
+        SmartContractInvocationData scData = new SmartContractInvocationData("sourceCode", address.getBytes(), "hashState", "method", null, true);
+        TransactionFlowData transactionData = new TransactionFlowData(transactionId, decodeFromBASE58(source), decodeFromBASE58(target), new BigDecimal(1), (byte)1, (short) 0x001, null);
+        SmartContractTransactionFlowData smartContractFlowData = new SmartContractTransactionFlowData(transactionData,scData);
 
-                @Override
-                public void onSuccess(Object resultData) throws NodeClientException {
+        async(() -> nodeService.smartContractTransactionFlow(smartContractFlowData), new Callback<ApiResponseData>() {
+            @Override
+            public void onSuccess(ApiResponseData resultData) throws CreditsException {
+                System.out.println(resultData.getMessage());
+            }
 
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                }
-            });
+            @Override
+            public void onError(Throwable e) {
+                System.out.println(e.getMessage());
+            }
+        });
     }
 }

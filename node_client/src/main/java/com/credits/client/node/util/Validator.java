@@ -1,7 +1,7 @@
 package com.credits.client.node.util;
 
 import com.credits.client.node.crypto.Ed25519;
-import com.credits.client.node.pojo.CreateTransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.general.util.Utils;
 import com.credits.general.util.exception.ConverterException;
 
@@ -37,19 +37,19 @@ public class Validator {
         }
     }
 
-    public static void validateCreateTransactionData(CreateTransactionData createTransactionData) throws ConverterException {
+    public static void validateTransactionFlowData(TransactionFlowData transactionFlowData) throws ConverterException {
 
-        if (Utils.isEmpty(createTransactionData.getSource())) {
+        if (Utils.isEmpty(transactionFlowData.getSource())) {
             throw new ConverterException("account is empty");
         }
-        if (Utils.isEmpty(createTransactionData.getTarget())) {
+        if (Utils.isEmpty(transactionFlowData.getTarget())) {
             throw new ConverterException("target is empty");
         }
-//        if (Utils.isEmpty(createTransactionData.getSignature())) {
+//        if (Utils.isEmpty(transactionFlowData.getSignature())) {
 //            throw new NodeClientException("signature is empty");
 //        }
-        validateTransactionAmount(createTransactionData.getAmount());
-        validateTransactionBalance(createTransactionData.getBalance());
+        validateTransactionAmount(transactionFlowData.getAmount());
+        validateTransactionBalance(transactionFlowData.getBalance());
     }
 
     public static void validateTransactionAmount(BigDecimal amount) throws ConverterException {

@@ -1,17 +1,14 @@
 package com.credits.client.node.service;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.CreateTransactionData;
 import com.credits.client.node.pojo.PoolData;
-import com.credits.client.node.pojo.SmartContractInvocationData;
+import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.TransactionRoundData;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.call.BalanceGetThread;
-import com.credits.client.node.thrift.call.ThriftCallThread;
 import com.credits.client.node.thrift.generated.Amount;
-import com.credits.client.node.thrift.generated.AmountCommission;
 import com.credits.client.node.thrift.generated.Pool;
 import com.credits.client.node.thrift.generated.PoolInfoGetResult;
 import com.credits.client.node.thrift.generated.PoolListGetResult;
@@ -19,10 +16,8 @@ import com.credits.client.node.thrift.generated.SealedTransaction;
 import com.credits.client.node.thrift.generated.SmartContract;
 import com.credits.client.node.thrift.generated.SmartContractAddressesListGetResult;
 import com.credits.client.node.thrift.generated.SmartContractGetResult;
-import com.credits.client.node.thrift.generated.SmartContractInvocation;
 import com.credits.client.node.thrift.generated.SmartContractsListGetResult;
 import com.credits.client.node.thrift.generated.Transaction;
-import com.credits.client.node.thrift.generated.TransactionFlowResult;
 import com.credits.client.node.thrift.generated.TransactionGetResult;
 import com.credits.client.node.thrift.generated.TransactionsGetResult;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
@@ -31,9 +26,9 @@ import com.credits.client.node.thrift.generated.WalletDataGetResult;
 import com.credits.client.node.thrift.generated.WalletIdGetResult;
 import com.credits.client.node.thrift.generated.WalletTransactionsCountGetResult;
 import com.credits.client.node.util.NodePojoConverter;
-import com.credits.client.node.util.Validator;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.util.Callback;
 import com.credits.general.util.exception.ConverterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,19 +38,18 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 import static com.credits.client.node.util.NodeClientUtils.logApiResponse;
 import static com.credits.client.node.util.NodeClientUtils.processApiResponse;
 import static com.credits.client.node.util.NodePojoConverter.amountToBigDecimal;
 import static com.credits.client.node.util.NodePojoConverter.apiResponseToApiResponseData;
-import static com.credits.client.node.util.NodePojoConverter.bigDecimalToAmount;
 import static com.credits.client.node.util.NodePojoConverter.poolToPoolData;
-import static com.credits.client.node.util.NodePojoConverter.smartContractInvocationDataToSmartContractInvocation;
 import static com.credits.client.node.util.NodePojoConverter.smartContractToSmartContractData;
+import static com.credits.client.node.util.NodePojoConverter.smartContractTransactionFlowDataToTransaction;
+import static com.credits.client.node.util.NodePojoConverter.transactionFlowDataToTransaction;
 import static com.credits.client.node.util.NodePojoConverter.transactionToTransactionData;
 import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
 import static com.credits.general.util.Converter.byteArrayToByteBuffer;
@@ -68,11 +62,9 @@ public class NodeApiServiceImpl implements NodeApiService {
     public static String account;
     private static volatile NodeApiServiceImpl instance;
     private final NodeThriftApiClient nodeClient;
-    private ExecutorService threadPoolExecutor;
 
     private NodeApiServiceImpl(String host, int port) {
         nodeClient = NodeThriftApiClient.getInstance(host, port);
-        threadPoolExecutor = new ForkJoinPool();
     }
 
     public static NodeApiServiceImpl getInstance(String host, int port) {
@@ -97,13 +89,6 @@ public class NodeApiServiceImpl implements NodeApiService {
         BigDecimal balance = amountToBigDecimal(amount);
         LOGGER.info(String.format("getBalance: <--- balance = %s", balance));
         return balance;
-    }
-
-    @Override
-    public void getAsyncBalance(String address, ThriftCallThread.Callback<BigDecimal> callback) {
-        LOGGER.info(String.format("getBalance: ---> address = %s", address));
-        ThriftCallThread threadRunnable = new BalanceGetThread(callback, address);
-        threadPoolExecutor.submit(threadRunnable);
     }
 
     @Override
@@ -157,101 +142,25 @@ public class NodeApiServiceImpl implements NodeApiService {
         return poolDataList;
     }
 
-
-    /**
-     * Деплой и исполнение смарт-контракта
-     */
     @Override
-    public void executeSmartContract(long transactionInnerId, String source, String target, SmartContractInvocationData smartContractInvocationData, byte[] signature,
-        ThriftCallThread.Callback callback) throws NodeClientException, ConverterException {
+    public ApiResponseData smartContractTransactionFlow(SmartContractTransactionFlowData scTransaction) throws NodeClientException, ConverterException {
+        //todo validation
+        Transaction transaction = smartContractTransactionFlowDataToTransaction(scTransaction);
 
-        if (smartContractInvocationData == null) {
-            throw new NodeClientException("Empty smart-contract");
-        }
+        LOGGER.debug("---> transactionInnerId = {}; transactionSource = {}; transactionTarget = {}; " +
+                "smartContract.method = {}; smartContract.params = {};", transaction.id, transaction.source, transaction.target,
+            transaction.getSmartContract().method, transaction.smartContract.getParams() == null ? "" : transaction.smartContract.getParams().toArray());
 
-        SmartContractInvocation smartContractInvocation = smartContractInvocationDataToSmartContractInvocation(smartContractInvocationData);
-
-        Transaction transaction =
-            new Transaction(transactionInnerId, ByteBuffer.wrap(decodeFromBASE58(source)), ByteBuffer.wrap(decodeFromBASE58(target)), null, null, (byte) 1,
-                ByteBuffer.wrap(signature), null);
-        transaction.setSmartContract(smartContractInvocation);
-        transaction.setSmartContractIsSet(true);
-
-        LOGGER.info("---> transactionInnerId = {}; transactionSource = {}; transactionTarget = {}; smartContract.hashState = {}; " +
-                "smartContract.method = {}; smartContract.params = {};", transactionInnerId, source, target, smartContractInvocationData.getHashState(),
-            smartContractInvocationData.getMethod(), smartContractInvocationData.getParams() == null ? "" : smartContractInvocationData.getParams().toArray());
-
-        executeAsyncTransactionFlow(callback, transaction);
-    }
-
-    private void executeAsyncTransactionFlow(ThriftCallThread.Callback callback, Transaction transaction) {
-        nodeClient.executeAsyncTransactionFlow(transaction, callback);
-    }
-
-    /**
-     * Генерация транзакции
-     */
-    @Override
-    public ApiResponseData createTransaction(CreateTransactionData createTransactionData, boolean checkBalance) throws NodeClientException, ConverterException {
-        Transaction transaction = createTransactionProcess(createTransactionData, checkBalance);
-        TransactionFlowResult result = nodeClient.executeSyncTransactionFlow(transaction);
-        return apiResponseToApiResponseData(result.getStatus());
+        return apiResponseToApiResponseData(nodeClient.transactionFlow(transaction).getStatus());
     }
 
     @Override
-    public void asyncCreateTransaction(CreateTransactionData createTransactionData, boolean checkBalance, ThriftCallThread.Callback callback)
-        throws NodeClientException, ConverterException {
-        Transaction transaction = createTransactionProcess(createTransactionData, checkBalance);
-        executeAsyncTransactionFlow(callback, transaction);
-    }
-
-    private Transaction createTransactionProcess(CreateTransactionData createTransactionData, boolean checkBalance) throws NodeClientException, ConverterException {
-        Validator.validateCreateTransactionData(createTransactionData);
-
-        long innerId = createTransactionData.getInnerId();
-        byte[] source = createTransactionData.getSource();
-        byte[] target = createTransactionData.getTarget();
-        BigDecimal amount = createTransactionData.getAmount();
-        BigDecimal balance = createTransactionData.getBalance();
-        byte currency = createTransactionData.getCurrency();
-        byte[] signature = createTransactionData.getSignature();
-        Short offeredMaxFee = createTransactionData.getOfferedMaxFee();
-
-//        if (checkBalance) {
-//            /*
-//            TODO Необходимо добавить блокировку кошелька.
-//            В многопоточной среде баланс может вернуться неактуальный (измененный созданием транзакции в параллельном потоке)
-//             */
-//            BigDecimal balanceFromNode = getBalance(encodeToBASE58(source));
-//
-//            if (balanceFromNode.compareTo(amount) < 0) {
-//                throw new NodeClientException(
-//                    String.format("Wallet %s with balance [%s] is less than transaction amount [%s]", encodeToBASE58(source), Converter.toString(balanceFromNode),
-//                        Converter.toString(amount)));
-//            }
-//        }
-
-
-        Amount serverAmount = bigDecimalToAmount(amount);
-        Amount serverBalance = bigDecimalToAmount(balance);
-        AmountCommission serverFee = new AmountCommission(offeredMaxFee);
-
-
-        //currency = String.format("%s|%s", currency, signature);
-
-        LOGGER.info(
-            String.format("---> account = %s; target = %s; amount = %s; balance = %s; currency = %s; signature = %s; innerId = %s",
-                Arrays.toString(source),
-                Arrays.toString(target),
-                serverAmount,
-                serverBalance,
-                currency,
-                Arrays.toString(signature),
-                innerId));
-
-
-        return new Transaction(innerId, ByteBuffer.wrap(source), ByteBuffer.wrap(target), serverAmount, serverBalance, currency, ByteBuffer.wrap(signature), serverFee);
-
+    public ApiResponseData transactionFlow(TransactionFlowData transaction) {
+        //todo validation
+        LOGGER.debug("transaction flow -> {}", transaction);
+        ApiResponseData response = apiResponseToApiResponseData(nodeClient.transactionFlow(transactionFlowDataToTransaction(transaction)).getStatus());
+        LOGGER.debug("transaction flow <- {}", response);
+        return apiResponseToApiResponseData(nodeClient.transactionFlow(transactionFlowDataToTransaction(transaction)).getStatus());
     }
 
     @Override
@@ -273,8 +182,6 @@ public class NodeApiServiceImpl implements NodeApiService {
         logApiResponse(result.getStatus());
         processApiResponse(result.getStatus());
         return result.getSmartContractsList().stream().map(NodePojoConverter::smartContractToSmartContractData).collect(Collectors.toList());
-
-
     }
 
     @Override
@@ -291,7 +198,6 @@ public class NodeApiServiceImpl implements NodeApiService {
         processApiResponse(result.getStatus());
         return walletToWalletData(result.getWalletData());
     }
-
 
     @Override
     public Integer getWalletId(String address) throws NodeClientException, ConverterException {
@@ -312,6 +218,23 @@ public class NodeApiServiceImpl implements NodeApiService {
         TransactionsStateGetResult result = nodeClient.getTransactionsState(decodeFromBASE58(address), transactionIdList);
         processApiResponse(result.getStatus());
         return result;
+    }
+
+    public static <R> void async(Function<R> apiCall, Callback<R> callback) {
+        CompletableFuture
+            .supplyAsync(apiCall::apply)
+            .whenComplete((result, error) -> {
+            if (error == null)
+                callback.onSuccess(result);
+            else{
+                LOGGER.error(error.getLocalizedMessage());
+                callback.onError(error);
+            }
+        });
+    }
+
+    public interface Function<R> {
+        R apply();
     }
 
 }

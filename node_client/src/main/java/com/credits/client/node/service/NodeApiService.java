@@ -2,13 +2,12 @@ package com.credits.client.node.service;
 
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.CreateTransactionData;
 import com.credits.client.node.pojo.PoolData;
-import com.credits.client.node.pojo.SmartContractInvocationData;
+import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.call.ThriftCallThread;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
@@ -22,23 +21,18 @@ public interface NodeApiService {
 
     BigDecimal getBalance(String address) throws NodeClientException, ConverterException;
 
-    void getAsyncBalance(String address, ThriftCallThread.Callback<BigDecimal> callback);
-
     List<TransactionData> getTransactions(String address, long offset, long limit) throws NodeClientException, ConverterException;
 
+    @Deprecated
     TransactionData getTransaction(TransactionIdData transactionIdData) throws NodeClientException;
 
     PoolData getPoolInfo(byte[] hash, long index) throws NodeClientException;
 
     List<PoolData> getPoolList(Long offset, Long limit) throws NodeClientException;
 
-    void executeSmartContract(long transactionInnerId, String source, String target, SmartContractInvocationData smartContractInvocationData, byte[] signature,
-        ThriftCallThread.Callback callback) throws NodeClientException, ConverterException;
+    ApiResponseData smartContractTransactionFlow(SmartContractTransactionFlowData scData) throws NodeClientException, ConverterException;
 
-    ApiResponseData createTransaction(CreateTransactionData createTransactionData, boolean checkBalance) throws NodeClientException, ConverterException;
-
-    void asyncCreateTransaction(CreateTransactionData createTransactionData, boolean checkBalance, ThriftCallThread.Callback callback)
-        throws NodeClientException, ConverterException;
+    ApiResponseData transactionFlow(TransactionFlowData transaction);
 
     SmartContractData getSmartContract(String address) throws NodeClientException, ConverterException;
 

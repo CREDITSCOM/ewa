@@ -2,7 +2,6 @@ package com.credits.client.node.service;
 
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionIdData;
-import com.credits.client.node.thrift.call.ThriftCallThread;
 import com.credits.client.node.thrift.generated.API;
 import com.credits.client.node.thrift.generated.PoolInfoGetResult;
 import com.credits.client.node.thrift.generated.PoolListGetResult;
@@ -112,7 +111,7 @@ class NodeThriftApiClient implements NodeThriftApi {
         return callThrift(client, () -> client.WalletTransactionsCountGet(ByteBuffer.wrap(address)));
     }
 
-    public TransactionFlowResult executeSyncTransactionFlow(Transaction transaction) throws NodeClientException {
+    public TransactionFlowResult transactionFlow(Transaction transaction) throws NodeClientException {
         API.Client client = pool.getResource();
         return callThrift(client, () -> client.TransactionFlow(transaction));
     }
@@ -120,12 +119,6 @@ class NodeThriftApiClient implements NodeThriftApi {
     public TransactionsStateGetResult getTransactionsState(byte[] address, List<Long> transactionIdList) throws NodeClientException {
         API.Client client = pool.getResource();
         return callThrift(client, () -> client.TransactionsStateGet(ByteBuffer.wrap(address),transactionIdList));
-    }
-
-    //fixme move to other service
-    public void executeAsyncTransactionFlow(Transaction transaction, ThriftCallThread.Callback callback) {
-//        ThriftCallThread threadRunnable = new ThriftCallThread(transaction, pool, callback);
-//        threadPoolExecutor.submit(threadRunnable);
     }
 
     private <R> R callThrift(API.Client client, Function<R> method) throws NodeClientException {

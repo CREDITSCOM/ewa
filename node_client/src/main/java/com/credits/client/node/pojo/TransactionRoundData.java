@@ -4,24 +4,24 @@ import java.io.Serializable;
 
 public class TransactionRoundData implements Serializable {
     private static final long serialVersionUID = 5544650022718657167L;
-    private CreateTransactionData transaction;
+    private TransactionFlowData transaction;
     private long roundNumber;
     /*private State state;*/
 
-    public TransactionRoundData(CreateTransactionData transaction) {
+    public TransactionRoundData(TransactionFlowData transaction) {
         this.transaction = transaction;
     }
 
-    public TransactionRoundData(CreateTransactionData transaction, long roundNumber) {
+    public TransactionRoundData(TransactionFlowData transaction, long roundNumber) {
         this.transaction = transaction;
         this.roundNumber = roundNumber;
     }
 
-    public CreateTransactionData getTransaction() {
+    public TransactionFlowData getTransaction() {
         return transaction;
     }
 
-    public void setTransaction(CreateTransactionData transaction) {
+    public void setTransaction(TransactionFlowData transaction) {
         this.transaction = transaction;
     }
 

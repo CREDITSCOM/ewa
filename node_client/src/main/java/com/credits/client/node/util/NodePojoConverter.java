@@ -2,10 +2,13 @@ package com.credits.client.node.util;
 
 import com.credits.client.node.pojo.PoolData;
 import com.credits.client.node.pojo.SmartContractInvocationData;
+import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.WalletData;
 import com.credits.client.node.thrift.generated.Amount;
+import com.credits.client.node.thrift.generated.AmountCommission;
 import com.credits.client.node.thrift.generated.Pool;
 import com.credits.client.node.thrift.generated.SealedTransaction;
 import com.credits.client.node.thrift.generated.SmartContract;
@@ -178,6 +181,23 @@ public class NodePojoConverter {
             smartContractInvocationData.isForgetNewState());
     }
 
+    public static Transaction smartContractTransactionFlowDataToTransaction(SmartContractTransactionFlowData scTransaction){
+
+        Transaction transaction = new Transaction();
+        transaction.id = scTransaction.getId();
+        transaction.source = ByteBuffer.wrap(scTransaction.getSource());
+        transaction.target = ByteBuffer.wrap(scTransaction.getTarget());
+        transaction.amount = null;
+        transaction.balance = null;
+        transaction.currency = (byte) 1;
+        transaction.signature = ByteBuffer.wrap(scTransaction.getSignature());
+        transaction.fee = null;
+        SmartContractInvocation smartContractInvocation = smartContractInvocationDataToSmartContractInvocation(scTransaction.getSmartContractData());
+        transaction.setSmartContract(smartContractInvocation);
+        transaction.setSmartContractIsSet(true);
+        return transaction;
+    }
+
     public static Variant objectToVariant(Object object) {
         Class clazz = object.getClass();
         Variant variant = new Variant();
@@ -214,6 +234,18 @@ public class NodePojoConverter {
         return new ApiResponseData(ApiResponseCode.valueOf(apiResponse.getCode()), apiResponse.getMessage(), smartContractResult);
     }
 
+    public static Transaction transactionFlowDataToTransaction(TransactionFlowData transactionData){
+        Transaction transaction = new Transaction();
+        transaction.id = transactionData.getId();
+        transaction.source = ByteBuffer.wrap(transactionData.getSource());
+        transaction.target = ByteBuffer.wrap(transactionData.getTarget());
+        transaction.amount = bigDecimalToAmount(transactionData.getAmount());
+        transaction.fee =  new AmountCommission(transactionData.getOfferedMaxFee());
+        transaction.signature = ByteBuffer.wrap(transactionData.getSignature());
+        return transaction;
+    }
+
+    @Deprecated
     public static TransactionId transactionIdDataToTransactionId(TransactionIdData transactionIdData) {
         TransactionId transactionId = new TransactionId();
         transactionId.setPoolHash(byteArrayToByteBuffer(transactionIdData.getPoolHash()));
