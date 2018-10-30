@@ -1,9 +1,9 @@
 package com.credits.service.db.leveldb;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.CreateTransactionData;
 import com.credits.client.node.pojo.PoolData;
 import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.general.util.Base58;
@@ -53,9 +53,8 @@ public class NodeApiInteractionServiceThriftImpl implements NodeApiInteractionSe
     public void transactionFlow(Long innerId, String source, String target, BigDecimal amount, BigDecimal balance, byte currency, byte[] signature,
                                 BigDecimal fee) throws ConverterException, NodeClientException {
         short maxFee = 0x6648; //TODO need add fee converter from BigDecimal to short
-        CreateTransactionData CreateTransactionData =
-            new CreateTransactionData(System.currentTimeMillis(), Base58.decode(source), Base58.decode(target), amount, balance, currency, maxFee,
-                signature);
-        service.createTransaction(CreateTransactionData, true);
+        TransactionFlowData TransactionFlowData =
+            new TransactionFlowData(System.currentTimeMillis(), Base58.decode(source), Base58.decode(target), amount, currency, maxFee, signature);
+        service.transactionFlow(TransactionFlowData);
     }
 }
