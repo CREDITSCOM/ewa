@@ -7,30 +7,30 @@ import java.util.List;
 
 public abstract class SmartContract implements Serializable {
 
-    protected double total = 0;
+    private static final long serialVersionUID = -7544650022718657167L;
 
     protected transient String initiator;
 
-    protected BigDecimal getBalance(String address, String currency) {
+    final protected BigDecimal getBalance(String address, String currency) {
         return null;
     }
 
-    protected TransactionData getTransaction(String transactionId) {
+    final protected TransactionData getTransaction(String transactionId) {
         return null;
     }
 
-    protected List<TransactionData> getTransactions(String address, long offset, long limit) {
+    final protected List<TransactionData> getTransactions(String address, long offset, long limit) {
         return null;
     }
 
-    protected List<PoolData> getPoolList(long offset, long limit) {
+    final protected List<PoolData> getPoolList(long offset, long limit) {
         return null;
     }
 
-    protected PoolData getPoolInfo(byte[] hash, long index) {
+    final protected PoolData getPoolInfo(byte[] hash, long index) {
         return null;
     }
 
-    protected void sendTransaction(String source, String target, double amount, String currency, double fee) {
+    final protected void sendTransaction(String source, String target, double amount, String currency, double fee) {
     }
 }

@@ -168,20 +168,19 @@ public class ApiUtils {
         }
         LOGGER.debug("SmartContractData structure vvvvv");
 
-        SmartContractData scData = new SmartContractData(decodeFromBASE58(transactionTarget), decodeFromBASE58(AppState.account), javaCode, byteCode, "", null);
+        SmartContractData scData = new SmartContractData(decodeFromBASE58(transactionTarget), decodeFromBASE58(AppState.account), javaCode, byteCode, "", null); //todo unused hashState
         executeSmartContractProcess("", new ArrayList<>(), scData, callback);
     }
 
     public static void executeSmartContractProcess(String method, List<Object> params, SmartContractData smartContractData, Callback<ApiResponseData> callback) throws NodeClientException, ConverterException {
 
-        SmartContractInvocationData smartContractInvocationData = new SmartContractInvocationData("", new byte[0], smartContractData.getHashState(), method, params, false);
+        SmartContractInvocationData smartContractInvocationData = new SmartContractInvocationData(smartContractData.getSourceCode(), smartContractData.getByteCode(), smartContractData.getHashState(), method, params, false);
         CalcTransactionIdSourceTargetResult result = calcTransactionIdSourceTarget(account, encodeToBASE58(smartContractData.getAddress()));
 
         long id = result.getTransactionId();
         byte[] source = result.getByteSource();
         byte[] target = result.getByteTarget();
         BigDecimal amount = new BigDecimal(0);
-        BigDecimal balance = new BigDecimal(1);
         short fee = 0;
         byte currency = 0x01;
         byte[] scBytes = serializeByThrift(smartContractInvocationData);
