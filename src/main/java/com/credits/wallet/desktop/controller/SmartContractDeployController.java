@@ -1,6 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.general.exception.CreditsException;
+import com.credits.general.pojo.ApiResponseData;
+import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
@@ -40,6 +42,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -324,8 +329,20 @@ public class SmartContractDeployController implements Initializable {
                 List<CompilationUnit>  compilationUnits = compilationPackage.getUnits();
                 CompilationUnit compilationUnit = compilationUnits.get(0);
                 byte[] byteCode = compilationUnit.getBytecode();
-                String hashState = ApiUtils.generateSmartContractHashState(byteCode);
-                ApiUtils.deploySmartContractProcess(javaCode, byteCode, hashState);
+                ApiUtils.deploySmartContractProcess(javaCode, byteCode, new Callback<ApiResponseData>(){
+                    @Override
+                    public void onSuccess(ApiResponseData resultData) {
+                        String target = resultData.getTarget();
+                        StringSelection selection = new StringSelection(target);
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(selection, selection);
+                        FormUtils.showPlatformInfo(String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", target));
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        FormUtils.showPlatformError(e.getMessage());
+                    }
+                });
             } else {
                 DiagnosticCollector collector = compilationPackage.getCollector();
                 List<Diagnostic> diagnostics = collector.getDiagnostics();

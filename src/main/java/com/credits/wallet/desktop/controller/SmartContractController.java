@@ -1,11 +1,11 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.thrift.call.ThriftCallThread;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generate.Variant;
+import com.credits.general.util.Callback;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -269,7 +269,7 @@ public class SmartContractController implements Initializable {
 
             SmartContractData smartContractData = this.currentSmartContract;
             ApiUtils.executeSmartContractProcess(method, params, smartContractData,
-                new ThriftCallThread.Callback<ApiResponseData>() {
+                new Callback<ApiResponseData>() {
                     @Override
                     public void onSuccess(ApiResponseData resultData) {
                         Variant res = resultData.getScExecRetVal();

@@ -1,7 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.client.node.pojo.CreateTransactionData;
 import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionRoundData;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.thrift.generated.TransactionState;
@@ -133,7 +133,7 @@ public class HistoryController implements Initializable {
 
                     sourceTransactionMap.forEach((key, value) -> {
                         TransactionTabRow tableRow = new TransactionTabRow();
-                        CreateTransactionData transaction = value.getTransaction();
+                        TransactionFlowData transaction = value.getTransaction();
                         tableRow.setInnerId(key.toString());
                         tableRow.setAmount(Converter.toString(transaction.getAmount()));
                         tableRow.setCurrency(transaction.getCurrency());
@@ -160,7 +160,7 @@ public class HistoryController implements Initializable {
             tableRow.setAmount(Converter.toString(transactionData.getAmount()));
             tableRow.setSource(Converter.encodeToBASE58(transactionData.getSource()));
             tableRow.setTarget(Converter.encodeToBASE58(transactionData.getTarget()));
-            tableRow.setInnerId(transactionData.getId().toString());
+            tableRow.setInnerId(String.valueOf(transactionData.getId()));
             tableRow.setState("VALID");
             tabTransaction.getItems().add(tableRow);
         });

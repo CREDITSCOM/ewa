@@ -1,7 +1,7 @@
 package com.credits.wallet.desktop.testUtils;
 
-import com.credits.client.node.pojo.CreateTransactionData;
 import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionRoundData;
 import com.credits.client.node.thrift.generated.TransactionState;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
@@ -120,32 +120,32 @@ public class FakeData {
             transactionsDataList.add(transactionData9);
             transactionsDataList.add(transactionData10);
 
-            CreateTransactionData transaction0 = new CreateTransactionData();
-            transaction0.setInnerId(0L);
+            TransactionFlowData transaction0 = new TransactionFlowData();
+            transaction0.setId(0L);
             transaction0.setSource(byteAddress);
             transaction0.setTarget(byteAddress);
             transaction0.setAmount(new BigDecimal(99.999));
             transaction0.setCurrency((byte)1);
-            CreateTransactionData transaction1 = new CreateTransactionData();
-            transaction1.setInnerId(1L);
+            TransactionFlowData transaction1 = new TransactionFlowData();
+            transaction1.setId(1L);
             transaction1.setSource(byteAddress);
             transaction1.setTarget(byteAddress);
             transaction1.setAmount(new BigDecimal(99.999));
             transaction1.setCurrency((byte)1);
-            CreateTransactionData transaction2 = new CreateTransactionData();
-            transaction2.setInnerId(2L);
+            TransactionFlowData transaction2 = new TransactionFlowData();
+            transaction2.setId(2L);
             transaction2.setSource(byteAddress);
             transaction2.setTarget(byteAddress);
             transaction2.setAmount(new BigDecimal(99.999));
             transaction2.setCurrency((byte)1);
-            CreateTransactionData transaction3 = new CreateTransactionData();
-            transaction3.setInnerId(3L);
+            TransactionFlowData transaction3 = new TransactionFlowData();
+            transaction3.setId(3L);
             transaction3.setSource(byteAddress);
             transaction3.setTarget(byteAddress);
             transaction3.setAmount(new BigDecimal(99.999));
             transaction3.setCurrency((byte)1);
-            CreateTransactionData transaction4 = new CreateTransactionData();
-            transaction4.setInnerId(4L);
+            TransactionFlowData transaction4 = new TransactionFlowData();
+            transaction4.setId(4L);
             transaction4.setSource(byteAddress);
             transaction4.setTarget(byteAddress);
             transaction4.setAmount(new BigDecimal(99.999));
@@ -159,11 +159,11 @@ public class FakeData {
             TransactionRoundData transactionRoundData4 = new TransactionRoundData(transaction4, 25);
 
             ConcurrentHashMap<Long, TransactionRoundData> map = new ConcurrentHashMap<>();
-            map.put(transactionRoundData0.getTransaction().getInnerId(), transactionRoundData0);
-            map.put(transactionRoundData1.getTransaction().getInnerId(), transactionRoundData1);
-            map.put(transactionRoundData2.getTransaction().getInnerId(), transactionRoundData2);
-            map.put(transactionRoundData3.getTransaction().getInnerId(), transactionRoundData3);
-            map.put(transactionRoundData4.getTransaction().getInnerId(), transactionRoundData4);
+            map.put(transactionRoundData0.getTransaction().getId(), transactionRoundData0);
+            map.put(transactionRoundData1.getTransaction().getId(), transactionRoundData1);
+            map.put(transactionRoundData2.getTransaction().getId(), transactionRoundData2);
+            map.put(transactionRoundData3.getTransaction().getId(), transactionRoundData3);
+            map.put(transactionRoundData4.getTransaction().getId(), transactionRoundData4);
 
             Map<Long, TransactionState> transactionStateMap = new HashMap<>();
             transactionStateMap.put(0L, TransactionState.INPROGRES);

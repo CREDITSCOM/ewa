@@ -3,11 +3,13 @@ package com.credits.wallet.desktop.utils;
 import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.SmartContractInvocationData;
-import com.credits.client.node.thrift.call.ThriftCallThread;
+import com.credits.client.node.pojo.SmartContractTransactionFlowData;
+import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.general.crypto.Md5;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.util.Callback;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.struct.CalcTransactionIdSourceTargetResult;
@@ -15,9 +17,6 @@ import com.credits.wallet.desktop.utils.struct.TransactionStruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.security.KeyPair;
@@ -27,13 +26,20 @@ import java.util.BitSet;
 import java.util.Date;
 import java.util.List;
 
+import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
 import static com.credits.general.util.Converter.byteArrayToHex;
+import static com.credits.general.util.Converter.decodeFromBASE58;
 import static com.credits.general.util.Converter.encodeToBASE58;
 import static com.credits.general.util.Converter.toBitSet;
 import static com.credits.general.util.Converter.toByteArray;
 import static com.credits.general.util.Converter.toByteArrayLittleEndian;
 import static com.credits.general.util.Converter.toLong;
+import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.nodeApiService;
+import static com.credits.wallet.desktop.AppState.toAddress;
+import static com.credits.wallet.desktop.AppState.transactionOfferedMaxFeeValue;
+import static com.credits.wallet.desktop.AppState.walletLastTransactionIdCache;
 
 /**
  * Created by Rustem Saidaliyev on 20-Mar-18.
@@ -42,21 +48,22 @@ public class ApiUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
-    public static void callCreateTransaction() throws NodeClientException, ConverterException {
+    //todo need refactoring
+    public static void callCreateTransaction(Callback<ApiResponseData> callback) throws NodeClientException, ConverterException {
 
-        String sourceBase58 = AppState.account;
-        String targetBase58 = AppState.toAddress;
+        String sourceBase58 = account;
+        String targetBase58 = toAddress;
 
-        CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult = ApiUtils.calcTransactionIdSourceTarget(sourceBase58, targetBase58);
+        CalcTransactionIdSourceTargetResult transactionData = ApiUtils.calcTransactionIdSourceTarget(sourceBase58, targetBase58);
 
         BigDecimal amount = AppState.amount;
         byte currency = 1;
-        Short offeredMaxFee = AppState.transactionOfferedMaxFeeValue;
+        short offeredMaxFee = transactionOfferedMaxFeeValue;
 
         TransactionStruct tStruct = new TransactionStruct(
-                calcTransactionIdSourceTargetResult.getTransactionId(),
-                calcTransactionIdSourceTargetResult.getByteSource(),
-                calcTransactionIdSourceTargetResult.getByteTarget(),
+                transactionData.getTransactionId(),
+                transactionData.getByteSource(),
+                transactionData.getByteTarget(),
                 amount,
                 offeredMaxFee,
                 currency,
@@ -65,30 +72,17 @@ public class ApiUtils {
 
         ByteBuffer signature = Utils.signTransactionStruct(tStruct);
 
-        //todo add the use the async TransactionFlow call
-//        CreateTransactionData createTransactionData = new CreateTransactionData(
-//                calcTransactionIdSourceTargetResult.getTransactionId(),
-//                calcTransactionIdSourceTargetResult.getByteSource(),
-//                calcTransactionIdSourceTargetResult.getByteTarget(),
-//                amount,
-//                currency,
-//                offeredMaxFee,
-//                signature.array()
-//        );
+        TransactionFlowData transaction = new TransactionFlowData(
+                transactionData.getTransactionId(),
+                transactionData.getByteSource(),
+                transactionData.getByteTarget(),
+                amount,
+                currency,
+                offeredMaxFee,
+                signature.array()
+        );
 
-//        AppState.nodeApiService.asyncCreateTransaction(createTransactionData, false, new ThriftCallThread.Callback() {
-//            @Override
-//            public void onSuccess(ApiResponseData apiResponseData) {
-//                FormUtils.showPlatformInfo("Execute transaction was success");
-//            }
-//
-//            @Override
-//            public void onError(Exception e) {
-//                FormUtils.showPlatformError(e.getMessage());
-//            }
-//        });
-
-        // add or update transactionId in cache
+        async(() -> nodeApiService.transactionFlow(transaction), callback);
     }
 
     public static long generateTransactionInnerId() {
@@ -118,24 +112,24 @@ public class ApiUtils {
     ) throws NodeClientException, ConverterException {
 
         // get transactions count from Node and increment it
-        Long transactionId = AppState.nodeApiService.getWalletTransactionsCount(sourceBase58) + 1;
+        Long transactionId = nodeApiService.getWalletTransactionsCount(sourceBase58) + 1;
         // get last transaction id from cache
-        Long walletLastTransactionIdInCache = AppState.walletLastTransactionIdCache.get(sourceBase58);
+        Long walletLastTransactionIdInCache = walletLastTransactionIdCache.get(sourceBase58);
 
         if (walletLastTransactionIdInCache != null && transactionId < walletLastTransactionIdInCache) {
             transactionId = walletLastTransactionIdInCache + 1;
         }
-        AppState.walletLastTransactionIdCache.put(sourceBase58, transactionId);
+        walletLastTransactionIdCache.put(sourceBase58, transactionId);
 
         boolean sourceIndexExists = false;
         boolean targetIndexExists = false;
 
-        Integer sourceWalletId = AppState.nodeApiService.getWalletId(sourceBase58);
+        Integer sourceWalletId = nodeApiService.getWalletId(sourceBase58);
         if (sourceWalletId != 0) {
             sourceIndexExists = true;
             sourceBase58 = encodeToBASE58(toByteArrayLittleEndian(sourceWalletId, 4));
         }
-        Integer targetWalletId = AppState.nodeApiService.getWalletId(targetBase58);
+        Integer targetWalletId = nodeApiService.getWalletId(targetBase58);
         if (targetWalletId != 0) {
             targetIndexExists = true;
             targetBase58 = encodeToBASE58(toByteArrayLittleEndian(targetWalletId, 4));
@@ -148,9 +142,9 @@ public class ApiUtils {
         );
     }
 
-    public static void deploySmartContractProcess(String javaCode, byte[] byteCode, String hashState) throws NodeClientException, ConverterException {
-        SmartContractInvocationData smartContractInvocationData =
-            new SmartContractInvocationData(javaCode, byteCode, hashState, "", new ArrayList<>(), false);
+    //todo need refactoring
+    public static void deploySmartContractProcess(String javaCode, byte[] byteCode, Callback<ApiResponseData> callback) throws NodeClientException, ConverterException {
+            SmartContractInvocationData smartContractInvocationData = new SmartContractInvocationData(javaCode, byteCode, "", "", new ArrayList<>(), false);
 
         String transactionTarget = generatePublicKeyBase58();
         LOGGER.info("transactionTarget = {}", transactionTarget);
@@ -174,52 +168,33 @@ public class ApiUtils {
         }
         LOGGER.debug("SmartContractData structure vvvvv");
 
-        byte[] scBytes = serializeByThrift(smartContractInvocationData);
-        CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
-            ApiUtils.calcTransactionIdSourceTarget(AppState.account, transactionTarget);
-
-        TransactionStruct tStruct = new TransactionStruct(calcTransactionIdSourceTargetResult.getTransactionId(),
-            calcTransactionIdSourceTargetResult.getByteSource(), calcTransactionIdSourceTargetResult.getByteTarget(),
-            new BigDecimal(0), (short)0, (byte) 1, scBytes);
-        ByteBuffer signature = Utils.signTransactionStruct(tStruct);
-
-        AppState.nodeApiService.executeSmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
-            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(), smartContractInvocationData,
-            signature.array(), new ThriftCallThread.Callback<ApiResponseData>() {
-                @Override
-                public void onSuccess(ApiResponseData resultData) {
-                    String target = resultData.getTarget();
-                    StringSelection selection = new StringSelection(target);
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    clipboard.setContents(selection, selection);
-                    FormUtils.showPlatformInfo(String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", target));
-                }
-                @Override
-                public void onError(Throwable e) {
-                    FormUtils.showPlatformError(e.getMessage());
-                }
-            });
+        SmartContractData scData = new SmartContractData(decodeFromBASE58(transactionTarget), decodeFromBASE58(AppState.account), javaCode, byteCode, "", null);
+        executeSmartContractProcess("", new ArrayList<>(), scData, callback);
     }
 
-    public static void executeSmartContractProcess(String method, List<Object> params,
-        SmartContractData smartContractData, ThriftCallThread.Callback callback) throws NodeClientException, ConverterException {
-        SmartContractInvocationData smartContractInvocationData =
-            new SmartContractInvocationData("", new byte[0], smartContractData.getHashState(), method, params, false);
+    public static void executeSmartContractProcess(String method, List<Object> params, SmartContractData smartContractData, Callback<ApiResponseData> callback) throws NodeClientException, ConverterException {
 
+        SmartContractInvocationData smartContractInvocationData = new SmartContractInvocationData("", new byte[0], smartContractData.getHashState(), method, params, false);
+        CalcTransactionIdSourceTargetResult result = calcTransactionIdSourceTarget(account, encodeToBASE58(smartContractData.getAddress()));
+
+        long id = result.getTransactionId();
+        byte[] source = result.getByteSource();
+        byte[] target = result.getByteTarget();
+        BigDecimal amount = new BigDecimal(0);
+        BigDecimal balance = new BigDecimal(1);
+        short fee = 0;
+        byte currency = 0x01;
         byte[] scBytes = serializeByThrift(smartContractInvocationData);
-        CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
-            calcTransactionIdSourceTarget(AppState.account, encodeToBASE58(smartContractData.getAddress()));
 
-        TransactionStruct tStruct =
-            new TransactionStruct(calcTransactionIdSourceTargetResult.getTransactionId(), calcTransactionIdSourceTargetResult.getByteSource(),
-                calcTransactionIdSourceTargetResult.getByteTarget(), new BigDecimal(0), (short) 0, (byte) 1, scBytes);
+        ByteBuffer signature = Utils.signTransactionStruct(new TransactionStruct(id, source, target, amount, fee, currency, scBytes));
 
-        ByteBuffer signature = Utils.signTransactionStruct(tStruct);
+        TransactionFlowData transactionFlowData = new TransactionFlowData(id, source, target, amount, currency, fee, signature.array());
 
-        AppState.nodeApiService.executeSmartContract(calcTransactionIdSourceTargetResult.getTransactionId(),
-            calcTransactionIdSourceTargetResult.getSource(), calcTransactionIdSourceTargetResult.getTarget(),
-            smartContractInvocationData, signature.array(), callback);
+        SmartContractTransactionFlowData scData = new SmartContractTransactionFlowData(transactionFlowData,smartContractInvocationData);
+
+        async(() -> nodeApiService.smartContractTransactionFlow(scData), callback);
     }
+
     private static String generatePublicKeyBase58() {
         KeyPair keyPair = Ed25519.generateKeyPair();
         PublicKey publicKey = keyPair.getPublic();

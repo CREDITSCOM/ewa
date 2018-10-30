@@ -3,10 +3,10 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.thrift.call.ThriftCallThread.Callback;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.util.Converter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
-import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
@@ -19,7 +19,13 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static com.credits.wallet.desktop.AppState.NODE_ERROR;
+import static com.credits.wallet.desktop.AppState.amount;
+import static com.credits.wallet.desktop.AppState.coin;
 import static com.credits.wallet.desktop.AppState.contractInteractionService;
+import static com.credits.wallet.desktop.AppState.noClearForm6;
+import static com.credits.wallet.desktop.AppState.text;
+import static com.credits.wallet.desktop.utils.ApiUtils.callCreateTransaction;
 
 /**
  * Created by Rustem.Saidaliyev on 26.01.2018.
@@ -44,7 +50,7 @@ public class GenerateTransactionController implements Initializable {
 
     @FXML
     private void handleBack() {
-        AppState.noClearForm6 = true;
+        noClearForm6 = true;
         VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
@@ -53,37 +59,53 @@ public class GenerateTransactionController implements Initializable {
         try {
             String coin = AppState.coin;
             if(coin.equals(CreditsSymbol)) {
-                ApiUtils.callCreateTransaction();
-            } else {
-                if (CoinsUtils.getCoins().get(coin)!= null) {
-                    contractInteractionService.transferTo(CoinsUtils.getCoins().get(coin), AppState.toAddress, AppState.amount, new Callback<String>() {
-                        @Override
-                        public void onSuccess(String message) throws CreditsException {
-                            FormUtils.showPlatformInfo(message);
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            FormUtils.showPlatformError(e.getLocalizedMessage());
-                        }
-                    });
-                }
+                callCreateTransaction(processTransactionResult());
+            } else if (CoinsUtils.getCoins().get(coin)!= null) {
+                contractInteractionService.transferTo(CoinsUtils.getCoins().get(coin), AppState.toAddress, amount, processTransferTokenResult());
             }
         } catch (CreditsException e) {
-            LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);
-            FormUtils.showError(AppState.NODE_ERROR);
+            LOGGER.error(NODE_ERROR + ": " + e.getMessage(), e);
+            FormUtils.showError(NODE_ERROR);
             return;
         }
 
         VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
+    private Callback<String> processTransferTokenResult() {
+        return new Callback<String>() {
+            @Override
+            public void onSuccess(String message) throws CreditsException {
+                FormUtils.showPlatformInfo(message);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                FormUtils.showPlatformError(e.getLocalizedMessage());
+            }
+        };
+    }
+
+    private Callback<ApiResponseData> processTransactionResult() {
+        return new Callback<ApiResponseData>() {
+        @Override
+        public void onSuccess(ApiResponseData response) {
+            FormUtils.showPlatformInfo("Execute transaction was success");
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            FormUtils.showPlatformError(e.getMessage());
+        }
+    };
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FormUtils.resizeForm(bp);
         this.toAddress.setText(AppState.toAddress);
-        this.amountInCs.setText(Converter.toString(AppState.amount) + " " + AppState.coin);
-        this.transactionData.setText(AppState.text);
+        this.amountInCs.setText(Converter.toString(amount) + " " + coin);
+        this.transactionData.setText(text);
     }
 
 }

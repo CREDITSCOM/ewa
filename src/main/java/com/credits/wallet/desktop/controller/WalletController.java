@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.amount;
@@ -63,7 +64,8 @@ public class WalletController implements Initializable {
     private static final String ERR_TO_ADDRESS = "To address must not be empty";
     private static Logger LOGGER = LoggerFactory.getLogger(WalletController.class);
     private final String WAITING_STATE_MESSAGE = "Processing...";
-    private final String CREDITS_TOKEN_NAME = "CS";
+    public final String CREDITS_TOKEN_NAME = "CS";
+
     @FXML
     BorderPane bp;
     @FXML
@@ -165,15 +167,13 @@ public class WalletController implements Initializable {
     private void addCsCoinRow(List<CoinTabRow> coinRows) {
         CoinTabRow newCoinRow = new CoinTabRow(CREDITS_TOKEN_NAME, WAITING_STATE_MESSAGE, null);
         DecimalFormat decimalFormat = new DecimalFormat("##0." + repeat('0', CREDITS_DECIMAL));
-        nodeApiService.getAsyncBalance(account, updateCoinValue(coinRows, newCoinRow, decimalFormat));
-        coinRows.add(newCoinRow);
+        async(() -> nodeApiService.getBalance(account), updateCoinValue(coinRows, newCoinRow, decimalFormat));
     }
 
     private void addUserCoin(String coinName, String smartContractAddress, List<CoinTabRow> coinRows) {
         CoinTabRow newCoinRow = new CoinTabRow(coinName, WAITING_STATE_MESSAGE, smartContractAddress);
         DecimalFormat decimalFormat = new DecimalFormat("##0.000000000000000000"); // fixme must use the method "tokenContract.decimal()"
         contractInteractionService.getSmartContractBalance(smartContractAddress, updateCoinValue(coinRows, newCoinRow, decimalFormat));
-        coinRows.add(newCoinRow);
     }
 
     private Callback<BigDecimal> updateCoinValue(List<CoinTabRow> coinsList, CoinTabRow coinRow, DecimalFormat decimalFormat) {

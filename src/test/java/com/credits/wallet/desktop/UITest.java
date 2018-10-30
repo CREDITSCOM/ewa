@@ -3,9 +3,9 @@ package com.credits.wallet.desktop;
 import com.credits.client.executor.service.ContractExecutorApiService;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
-import com.credits.client.node.thrift.call.ThriftCallThread.Callback;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.thrift.generate.Variant;
+import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.testUtils.FakeData;
 import com.credits.wallet.desktop.utils.CoinsUtils;
@@ -27,7 +27,6 @@ import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.thrift.generate.Variant._Fields.V_STRING;
 import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
@@ -84,15 +83,14 @@ public class UITest {
         CoinsUtils.saveCoinsToFile(FakeData.coins);
 
         //balances
-        doAnswer(returnBalance(new BigDecimal("100000.123456789012345678"))).when(mockNodeApiService).getAsyncBalance(anyString(), any());
         doAnswer(returnBalance(new BigDecimal("2443113.00192177821876551"))).when(mockContractInteractionService).getSmartContractBalance(anyString(), any());
 
-//        when(mockNodeApiService.getBalance(walletAddress)).thenReturn(new BigDecimal("1000.123456789012345678"));
+        when(mockNodeApiService.getBalance(anyString())).thenReturn(new BigDecimal("1000.123456789012345678"));
         when(mockNodeApiService.getTransactionsState(any(), any())).thenReturn(FakeData.transactionsStateGetResult);
 
         //transactions
         when(mockNodeApiService.getTransactions(any(), anyLong(), anyLong())).thenReturn(FakeData.transactionsDataList);
-        when(mockNodeApiService.createTransaction(any(), anyBoolean())).thenReturn(successResponse);
+        when(mockNodeApiService.transactionFlow(any())).thenReturn(successResponse);
         when(mockNodeApiService.getWalletTransactionsCount(any())).thenReturn(new Long(1));
         when(mockNodeApiService.getWalletId(walletAddress)).thenReturn(1);
         when(mockNodeApiService.getWalletId(addressTwo)).thenReturn(2);

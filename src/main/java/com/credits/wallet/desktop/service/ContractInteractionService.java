@@ -1,10 +1,10 @@
 package com.credits.wallet.desktop.service;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.thrift.call.ThriftCallThread.Callback;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generate.Variant;
+import com.credits.general.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
