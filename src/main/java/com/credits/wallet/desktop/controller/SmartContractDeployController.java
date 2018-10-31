@@ -60,7 +60,7 @@ import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 public class SmartContractDeployController implements Initializable {
 
     private static final String DEFAULT_SOURCE_CODE =
-        "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n" + "        total = 0;\n" + "    }" + "\n" + "}";
+        "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n\n    }" + "\n" + "}";
     private static final String[] PARENT_METHODS =
         new String[] {"double total", "Double getBalance(String address, String currency)", "TransactionData getTransaction(String transactionId)",
             "List<TransactionData> getTransactions(String address, long offset, long limit)", "List<PoolData> getPoolList(long offset, long limit)",
