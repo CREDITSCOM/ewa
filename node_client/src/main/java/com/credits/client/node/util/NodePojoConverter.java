@@ -14,6 +14,7 @@ import com.credits.client.node.thrift.generated.SealedTransaction;
 import com.credits.client.node.thrift.generated.SmartContract;
 import com.credits.client.node.thrift.generated.SmartContractInvocation;
 import com.credits.client.node.thrift.generated.Transaction;
+import com.credits.client.node.thrift.generated.TransactionFlowResult;
 import com.credits.client.node.thrift.generated.TransactionId;
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
@@ -191,7 +192,7 @@ public class NodePojoConverter {
         transaction.balance = null;
         transaction.currency = (byte) 1;
         transaction.signature = ByteBuffer.wrap(scTransaction.getSignature());
-        transaction.fee = null;
+        transaction.fee = new AmountCommission(scTransaction.getOfferedMaxFee());
         SmartContractInvocation smartContractInvocation = smartContractInvocationDataToSmartContractInvocation(scTransaction.getSmartContractData());
         transaction.setSmartContract(smartContractInvocation);
         transaction.setSmartContractIsSet(true);
@@ -224,6 +225,10 @@ public class NodePojoConverter {
             variant.setV_list(variantList);
         }
         return variant;
+    }
+
+    public static ApiResponseData transactionFlowResultToApiResponseData(TransactionFlowResult result){
+        return new ApiResponseData(ApiResponseCode.valueOf(result.getStatus().getCode()), result.getStatus().message, result.smart_contract_result);
     }
 
     public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {

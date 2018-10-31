@@ -51,6 +51,7 @@ import static com.credits.client.node.util.NodePojoConverter.poolToPoolData;
 import static com.credits.client.node.util.NodePojoConverter.smartContractToSmartContractData;
 import static com.credits.client.node.util.NodePojoConverter.smartContractTransactionFlowDataToTransaction;
 import static com.credits.client.node.util.NodePojoConverter.transactionFlowDataToTransaction;
+import static com.credits.client.node.util.NodePojoConverter.transactionFlowResultToApiResponseData;
 import static com.credits.client.node.util.NodePojoConverter.transactionToTransactionData;
 import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
 import static com.credits.general.util.Converter.byteArrayToByteBuffer;
@@ -152,16 +153,17 @@ public class NodeApiServiceImpl implements NodeApiService {
                 "smartContract.method = {}; smartContract.params = {};", transaction.id, transaction.source, transaction.target,
             transaction.getSmartContract().method, transaction.smartContract.getParams() == null ? "" : transaction.smartContract.getParams().toArray());
 
-        return apiResponseToApiResponseData(nodeClient.transactionFlow(transaction).getStatus());
+        return transactionFlowResultToApiResponseData(nodeClient.transactionFlow(transaction));
     }
 
+    //fixme response not full
     @Override
     public ApiResponseData transactionFlow(TransactionFlowData transaction) {
         //todo validation
         LOGGER.debug("transaction flow -> {}", transaction);
         ApiResponseData response = apiResponseToApiResponseData(nodeClient.transactionFlow(transactionFlowDataToTransaction(transaction)).getStatus());
         LOGGER.debug("transaction flow <- {}", response);
-        return apiResponseToApiResponseData(nodeClient.transactionFlow(transactionFlowDataToTransaction(transaction)).getStatus());
+        return response;
     }
 
     @Override
