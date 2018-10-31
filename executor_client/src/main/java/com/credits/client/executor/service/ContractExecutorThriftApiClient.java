@@ -1,17 +1,17 @@
 package com.credits.client.executor.service;
 
 import com.credits.client.executor.exception.ContractExecutorClientException;
-import com.credits.client.executor.thrift.APIResponse;
-import com.credits.client.executor.thrift.GetContractMethodsResult;
+import com.credits.client.executor.thrift.generated.APIResponse;
+import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
 import com.credits.general.thrift.ThriftClientPool;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
 
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import static com.credits.client.executor.thrift.ContractExecutor.Client;
+import static com.credits.client.executor.thrift.generated.ContractExecutor.Client;
 
 /**
  * Created by Igor Goryunov on 18.10.2018

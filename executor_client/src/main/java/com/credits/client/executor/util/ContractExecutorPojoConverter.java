@@ -1,6 +1,6 @@
 package com.credits.client.executor.util;
 
-import com.credits.client.executor.thrift.APIResponse;
+import com.credits.client.executor.thrift.generated.APIResponse;
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
 

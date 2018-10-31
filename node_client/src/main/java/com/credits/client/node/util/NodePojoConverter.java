@@ -19,8 +19,8 @@ import com.credits.client.node.thrift.generated.TransactionId;
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
-import com.credits.general.thrift.generate.APIResponse;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.APIResponse;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Converter;
 import com.credits.general.util.exception.ConverterException;
 

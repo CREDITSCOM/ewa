@@ -4,7 +4,7 @@ import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.SmartContractData;
-import com.credits.general.thrift.generate.APIResponse;
+import com.credits.general.thrift.generated.APIResponse;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;

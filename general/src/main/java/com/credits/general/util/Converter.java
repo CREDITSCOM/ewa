@@ -2,8 +2,8 @@ package com.credits.general.util;
 
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
-import com.credits.general.thrift.generate.APIResponse;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.APIResponse;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.exception.ConverterException;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 

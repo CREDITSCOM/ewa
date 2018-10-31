@@ -1,7 +1,7 @@
 package com.credits.general.pojo;
 
 
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 
 /**
  * Created by Rustem Saidaliyev on 17.05.2018.

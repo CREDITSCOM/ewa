@@ -1,6 +1,6 @@
 package com.credits.general.pojo;
 
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Converter;
 
 import java.io.Serializable;

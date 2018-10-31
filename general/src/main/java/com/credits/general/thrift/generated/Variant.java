@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package com.credits.general.thrift.generate;
+package com.credits.general.thrift.generated;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked", "unused"})
 public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> {
