@@ -3,7 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;

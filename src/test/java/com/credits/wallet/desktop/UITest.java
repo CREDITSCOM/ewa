@@ -4,7 +4,7 @@ import com.credits.client.executor.service.ContractExecutorApiService;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.general.pojo.ApiResponseData;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.testUtils.FakeData;
@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import java.util.Properties;
 
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
-import static com.credits.general.thrift.generate.Variant._Fields.V_STRING;
+import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
