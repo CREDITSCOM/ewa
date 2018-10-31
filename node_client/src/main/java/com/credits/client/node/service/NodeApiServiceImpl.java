@@ -29,6 +29,7 @@ import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.util.Callback;
+import com.credits.general.util.Function;
 import com.credits.general.util.exception.ConverterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,10 +232,6 @@ public class NodeApiServiceImpl implements NodeApiService {
                 callback.onError(error);
             }
         });
-    }
-
-    public interface Function<R> {
-        R apply();
     }
 
 }

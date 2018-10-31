@@ -10,7 +10,7 @@ package com.credits.client.node.thrift.generated;
 public enum TransactionState implements org.apache.thrift.TEnum {
   INVALID(0),
   VALID(1),
-  INPROGRES(2);
+  INPROGRESS(2);
 
   private final int value;
 
@@ -36,7 +36,7 @@ public enum TransactionState implements org.apache.thrift.TEnum {
       case 1:
         return VALID;
       case 2:
-        return INPROGRES;
+        return INPROGRESS;
       default:
         return null;
     }
