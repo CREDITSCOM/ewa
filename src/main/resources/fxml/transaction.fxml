@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="com.credits.wallet.desktop.controller.TransactionController">
+    <top>
+        <fx:include source="header.fxml" />
+    </top>
+    <center>
+        <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
+            <children>
+                <Label layoutX="20.0" styleClass="credits-topLabelText" text="Transaction details" />
+                <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can see transaction details" />
+                <Button layoutX="24.0" layoutY="345.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
+                <GridPane layoutX="24.0" layoutY="140.0" prefHeight="154.0" prefWidth="693.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="278.0" minWidth="10.0" prefWidth="121.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="572.0" minWidth="10.0" prefWidth="572.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints />
+                    </rowConstraints>
+                    <children>
+                        <Label text="Source" GridPane.rowIndex="1" />
+                        <Label text="Target" GridPane.rowIndex="2" />
+                        <Label text="Amount" GridPane.rowIndex="3" />
+                        <Label text="State" GridPane.rowIndex="4" />
+                        <Label fx:id="labSource" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="labTarget" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label fx:id="labAmount" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label fx:id="labState" prefHeight="20.0" prefWidth="550.0" text="State" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label text="InnerId" />
+                        <Label fx:id="labInnerId" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" />
+                    </children>
+                </GridPane>
+            </children>
+        </Pane>
+    </center>
+</BorderPane>

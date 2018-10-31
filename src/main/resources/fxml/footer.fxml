@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<BorderPane maxHeight="200.0" minHeight="200.0" prefHeight="200.0" styleClass="credits-borderWhitePane" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+	<center>
+		<Pane maxHeight="200.0" maxWidth="874.0" minHeight="200.0" minWidth="0.0" prefHeight="200.0" prefWidth="874.0" BorderPane.alignment="CENTER">
+			<children>
+				<Label layoutY="10.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits-footerLabel"  text="About CREDITS" wrapText="true" />
+				<Label layoutY="30.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits-footerLabel"  text="CREDITS.COM PTE. LTD." />
+				<Label layoutY="50.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits-footerLabel"  text="Reg. No.: 201725929C" />
+				<Label layoutY="70.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits-footerLabel"  text="1 GEORGE STREET #10-01" />
+				<Label layoutY="90.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits-footerLabel"  text="ONE GEORGE STREET SINGAPORE 049145" />
+				<Label layoutX="270.0" layoutY="10.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits-footerLabel"  text="Contacts" />
+				<Label layoutX="270.0" layoutY="30.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits-footerLabel"  text="Advertising &amp; PR: pr@credits.com" />
+				<Label layoutX="270.0" layoutY="50.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits-footerLabel"  text="Press &amp; news: press@credits.com" />
+				<Label layoutX="270.0" layoutY="70.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits-footerLabel"  text="General issues: info@credits.com" />
+				<Label layoutX="270.0" layoutY="90.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits-footerLabel"  text="Tel: +65 8114 9362" />
+
+				<ImageView fitHeight="51.0" fitWidth="34.0" layoutX="833.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
+					<image>
+						<Image url="@../img/logo_black.png" />
+					</image>
+				</ImageView>
+				<Label layoutX="538.0" layoutY="163.0" styleClass="credits-footerLabel"  text="Copyright © 2017 CREDITS.COM All Rights Reserved." />
+			</children>
+		</Pane>
+	</center>
+</BorderPane>

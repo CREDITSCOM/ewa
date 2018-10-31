@@ -1,0 +1,450 @@
+.credits-combobox {
+    -fx-background-color: #fff;
+    -fx-border-width: 1;
+    -fx-border-color: #000;
+    -fx-font-size: 16px;
+    -fx-border-radius: 15;
+}
+
+
+.credits-combobox .combo-box-popup>.list-view
+{
+    -fx-padding: -35 0 0 0;
+    -fx-border-color: black;
+}
+
+
+.credits-topLabelText {
+    -fx-font-size: 28px
+}
+
+.credits-topLabelGrayText {
+    -fx-font-size: 16px;
+    -fx-text-fill: #818181
+}
+
+.root{
+    -fx-font-family: "Montserrat";
+}
+
+.credits-label {
+    -fx-padding:  5 0 0 15;
+    -fx-font-size: 16px;
+}
+
+.credits-not-padding-label {
+    -fx-font-size: 16px;
+}
+
+
+.credits-labelError {
+    -fx-padding:  5 0 0 15;
+    -fx-font-size: 16px;
+    -fx-text-fill: red
+}
+
+.credits--not-padding-labelError {
+    -fx-font-size: 16px;
+    -fx-text-fill: red
+}
+
+
+.credits-footerLabel {
+    -fx-font-size: 12px;
+    -fx-wrap-text: true;
+}
+
+.credits-headerLabel {
+    -fx-font-size: 24px;}
+
+.credits-textField {
+    /*-fx-padding:  5 0 0 15;*/
+    -fx-background-color: #fff;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-text-fill:black;
+    -fx-border-radius: 15;
+    -fx-wrap-text: true;
+    /*-fx-alignment: top-left;*/
+
+}
+
+.credits-borderWhitePane {
+    -fx-background-color: #fff;
+}
+
+.credits-borderGrayPane {
+    -fx-background-color: #ececec;
+}
+
+
+
+.credits-textFieldGray {
+    /*-fx-padding:  5 0 0 15;*/
+    -fx-background-color: #fff;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-text-fill:black;
+    -fx-border-radius: 15;
+    -fx-wrap-text: true;
+    /*-fx-alignment: top-left;*/
+}
+
+.credits-button {
+    -fx-font-weight: bold;
+    -fx-background-color: #fff;
+    -fx-background-radius: 22;
+    -fx-border-color: #000;
+    -fx-border-width: 2;
+    -fx-font-size: 16;
+    -fx-text-fill:black;
+    -fx-border-radius: 30;
+    -fx-wrap-text: true;
+    -fx-alignment: center;
+}
+
+.credits-headerButton {
+    -fx-font-weight: bold;
+    -fx-background-color:  transparent;
+    -fx-font-size: 16px;
+    -fx-alignment: center;
+}
+
+
+.credits-headerButton:hover {
+    -fx-text-fill:#2196f3;
+}
+.credits-headerButton .context-menu {
+    -fx-background-color: #FFF607;
+    -fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;
+}
+
+.credits-headerButton .menu-item {
+    -fx-background-color: #FFF607;
+}
+/*
+.menu-button {
+    -fx-background-color:black;
+}
+.menu-item:focused {
+    -fx-background-color: darkgray;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: blue;
+}
+*/
+
+.menu-button:hover .label{
+    -fx-text-fill:#2196f3;
+}
+
+.credits-button:hover{
+    -fx-font-weight: bold;
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-font-size: 16;
+    -fx-text-fill:#2196f3;
+    -fx-border-radius: 30;
+}
+
+.credits-button:pressed {
+    -fx-font-weight: bold;
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-text-fill:#2196f3;
+    -fx-border-radius: 30;
+    -fx-rotate:1;
+}
+
+.keyword {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
+}
+.semicolon {
+    -fx-font-weight: bold;
+}
+.paren {
+    -fx-fill: firebrick;
+    -fx-font-weight: bold;
+}
+.bracket {
+    -fx-fill: darkgreen;
+    -fx-font-weight: bold;
+}
+.brace {
+    -fx-fill: teal;
+    -fx-font-weight: bold;
+}
+.string {
+    -fx-fill: blue;
+}
+
+.comment {
+	-fx-fill: cadetblue;
+}
+
+/** Size the combo-box drop down list. */
+.combo-box-popup > .list-view {
+    -fx-pref-width: 1000;
+}
+
+.tree-cell  {
+    -fx-font-size: 14px;
+}
+
+
+.paragraph-box:has-caret {
+    -fx-background-color: #f2f9fc;
+}
+
+.credits-textFieldGray:error {
+    -fx-text-box-border: red ;
+    -fx-focus-color: red ;
+}
+
+
+/*SMART COMBOBOX*/
+
+#cbMethods .combo-box-popup>.list-view {
+    -fx-pref-width: 770;
+    -fx-pref-height: 200;
+}
+
+
+#cbMethods:showing
+{
+    -fx-background-radius: 15 15 0 0;
+    -fx-border-radius: 15 15 0 0;
+}
+/*SMART COMBOBOX*/
+
+
+/*CREDITS HISTORY*/
+
+.credits-hist-combobox .arrow-button .arrow{
+    -fx-background-color: white;
+}
+
+.credits-history-pane .combo-box-base .cell {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.credits-history-pane .combo-box-popup .list-view {
+    /*
+    -fx-padding: -25 0 0 0;
+    -fx-border-color: black;
+    */
+    -fx-pref-width: 80;
+    -fx-pref-height: 300;
+    -fx-background-color: transparent;
+}
+
+
+.credits-history-pane .combo-box-popup .cell{
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-text-fill: white;
+    -fx-background-color: #808080;
+    -fx-alignment: left;
+}
+
+.credits-history-pane .combo-box-popup .cell:hover{
+    -fx-text-fill: black;
+    -fx-background-color: #00FF90;
+}
+
+.credits-hist-combobox .arrow-button {
+    -fx-alignment: left;
+}
+
+
+.credits-history-pane .combo-box-base {
+    -fx-alignment: center;
+    -fx-background-color: #808080;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-text-fill: white;
+}
+
+.credits-history {
+    -fx-background-color: transparent;
+}
+
+.credits-history .column-header,
+.credits-history .column-header-background,
+.credits-history .filler,
+.credits-history .virtual-flow .scroll-bar .thumb {
+    -fx-background-color: #424141;
+}
+
+.credits-history .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.credits-history .virtual-flow .scroll-bar .increment-button,
+.credits-history .virtual-flow .scroll-bar .decrement-button,
+.credits-history .virtual-flow .scroll-bar .track
+{
+    -fx-background-color: white;
+}
+
+
+
+.credits-history-control {
+    -fx-background-color: #808080;
+    -fx-border-color: black;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+}
+
+.credits-history-control:pressed {
+    -fx-rotate:3;
+}
+/*CREDITS HISTORY*/
+
+
+/*SMART TAB PANE*/
+
+.credits-tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-radius: 10 10 0 0;
+}
+
+.credits-tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.credits-tab-pane
+{
+    -fx-tab-min-width:90px;
+}
+
+.credits-tab-pane .tab{
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-radius: 10 10 0 0;
+    -fx-background-insets: 0 1 0 1,0,0;
+}
+.credits-tab-pane .tab
+{
+    -fx-background-color: #808080;
+
+}
+
+.credits-tab-pane .tab:selected
+{
+    -fx-background-color: #3c3c3c;
+}
+
+.credits-tab-pane .tab .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.credits-tab-pane .tab:selected .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: white;
+}
+
+.credits-PaneInTab {
+    -fx-border-color: black;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+}
+
+.tab-pane:top *.tab-header-area {
+    -fx-padding: 0 0 0 15; /* overridden as 5 2 0 0 */
+}
+
+.toggle-button {
+    -fx-background-color: transparent;
+    -fx-graphic: url('img/star.png');
+}
+
+.toggle-button:selected {
+    -fx-graphic: url('img/star1.png');
+}
+/*SMART TAB PANE*/
+
+
+/*SMART-TABLEVIEW*/
+.credits-smart-table-view {
+    -fx-font-size: 11px;
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 0 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.credits-smart-table-view .column-header,
+.credits-smart-table-view .column-header-background,
+.credits-smart-table-view .filler,
+.credits-smart-table-view .virtual-flow .scroll-bar .thumb {
+    -fx-background-color: transparent;
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+
+}
+.credits-smart-table-view table-row-cell:odd{
+    -fx-background-color: white;
+}
+
+
+.credits-smart-table-view .table-row-cell{
+    -fx-border-color: transparent;
+    -fx-background-color: white;
+    -fx-table-cell-border-color:transparent;
+}
+
+.credits-smart-table-view .table-row-cell .cell {
+    -fx-alignment: CENTER-LEFT;
+}
+
+.credits-smart-table-view .table-row-cell:selected {
+    -fx-background-color: #FFF607;
+    -fx-font-weight: bold;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+    -fx-text-background-color: black;
+
+}
+
+.credits-smart-table-view .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: transparent;
+}
+/*SMART-TABLEVIEW*/
+
+.styled-text-area .paragraph-box .label {
+    -fx-background-color: white;
+    -fx-font-weight: bold;
+}
+
+.credits-welcome-column-top-label {
+    -fx-font-size:16px;
+    -fx-font-weight: bold;
+}
+
+.credits-welcome-column-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #808080;
+}
+
+.credits-border-red {
+    -fx-border-color: red;
+}
+
+.credits-border-black {
+    -fx-border-color: black;
+}
