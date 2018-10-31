@@ -200,8 +200,7 @@ public class SmartContractController implements Initializable {
     }
 
     private void refreshFormState(SmartContractData smartContractData) {
-        if (smartContractData == null || smartContractData.getHashState().isEmpty() ||
-            smartContractData.getAddress().length == 0) {
+        if (smartContractData == null || smartContractData.getHashState().isEmpty() || smartContractData.getAddress().length == 0) {
             this.tbFavourite.setVisible(false);
             this.pControls.setVisible(false);
             this.pCodePanel.setVisible(false);
