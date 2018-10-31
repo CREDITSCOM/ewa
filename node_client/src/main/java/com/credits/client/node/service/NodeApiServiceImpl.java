@@ -56,6 +56,7 @@ import static com.credits.client.node.util.NodePojoConverter.transactionToTransa
 import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
 import static com.credits.general.util.Converter.byteArrayToByteBuffer;
 import static com.credits.general.util.Converter.decodeFromBASE58;
+import static com.credits.general.util.Converter.encodeToBASE58;
 
 public class NodeApiServiceImpl implements NodeApiService {
 
@@ -149,22 +150,25 @@ public class NodeApiServiceImpl implements NodeApiService {
         //todo validation
         Transaction transaction = smartContractTransactionFlowDataToTransaction(scTransaction);
 
-        LOGGER.debug("---> transactionInnerId = {}; transactionSource = {}; transactionTarget = {}; " +
-                "smartContract.method = {}; smartContract.params = {};", transaction.id, transaction.source, transaction.target,
-            transaction.getSmartContract().method, transaction.smartContract.getParams() == null ? "" : transaction.smartContract.getParams().toArray());
-
-        return transactionFlowResultToApiResponseData(nodeClient.transactionFlow(transaction));
+        LOGGER.debug("smartContractTransactionFlow -> {}", transaction);
+        ApiResponseData response = transactionFlowResultToApiResponseData(nodeClient.transactionFlow(transaction));
+        response.setSource(encodeToBASE58(transaction.getSource()));
+        response.setTarget(encodeToBASE58(transaction.getTarget()));
+        LOGGER.debug("smartContractTransactionFlow <- {}", response);
+        return response;
     }
 
-    //fixme response not full
     @Override
     public ApiResponseData transactionFlow(TransactionFlowData transaction) {
         //todo validation
         LOGGER.debug("transaction flow -> {}", transaction);
         ApiResponseData response = apiResponseToApiResponseData(nodeClient.transactionFlow(transactionFlowDataToTransaction(transaction)).getStatus());
+        response.setSource(encodeToBASE58(transaction.getSource()));
+        response.setTarget(encodeToBASE58(transaction.getTarget()));
         LOGGER.debug("transaction flow <- {}", response);
         return response;
     }
+
 
     @Override
     public SmartContractData getSmartContract(String address) throws NodeClientException, ConverterException {
@@ -217,6 +221,7 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     @Override
+    //todo add pojo TransactionsStateGetResult
     public TransactionsStateGetResult getTransactionsState(String address, List<Long> transactionIdList) throws NodeClientException, ConverterException {
         TransactionsStateGetResult result = nodeClient.getTransactionsState(decodeFromBASE58(address), transactionIdList);
         processApiResponse(result.getStatus());
