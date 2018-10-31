@@ -1,6 +1,6 @@
 package com.credits.thrift;
 
-import com.credits.client.executor.thrift.ContractExecutor;
+import com.credits.client.executor.thrift.generated.ContractExecutor;
 import org.apache.commons.io.FileUtils;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;

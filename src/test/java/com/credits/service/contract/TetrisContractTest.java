@@ -1,6 +1,6 @@
 package com.credits.service.contract;
 
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.service.ServiceTest;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractUtils;

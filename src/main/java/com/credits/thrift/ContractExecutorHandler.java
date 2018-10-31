@@ -1,12 +1,12 @@
 package com.credits.thrift;
 
 import com.credits.client.executor.pojo.MethodDescriptionData;
-import com.credits.client.executor.thrift.APIResponse;
-import com.credits.client.executor.thrift.ContractExecutor;
-import com.credits.client.executor.thrift.GetContractMethodsResult;
-import com.credits.client.executor.thrift.MethodDescription;
+import com.credits.client.executor.thrift.generated.APIResponse;
+import com.credits.client.executor.thrift.generated.ContractExecutor;
+import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
+import com.credits.client.executor.thrift.generated.MethodDescription;
 import com.credits.exception.ContractExecutorException;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import org.apache.thrift.TUnion;

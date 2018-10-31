@@ -1,7 +1,7 @@
 package com.credits.thrift;
 
 import com.credits.ApplicationProperties;
-import com.credits.client.executor.thrift.ContractExecutor;
+import com.credits.client.executor.thrift.generated.ContractExecutor;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;

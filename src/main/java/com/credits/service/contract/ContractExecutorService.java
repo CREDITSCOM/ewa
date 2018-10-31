@@ -2,7 +2,7 @@ package com.credits.service.contract;
 
 import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.thrift.ReturnValue;
 
 import java.util.List;

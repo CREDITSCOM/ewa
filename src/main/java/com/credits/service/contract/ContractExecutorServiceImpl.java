@@ -4,7 +4,7 @@ import com.credits.ApplicationProperties;
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.secure.Sandbox;
 import com.credits.service.db.leveldb.NodeApiInteractionService;

@@ -1,7 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.service.ServiceTest;
 import com.credits.service.db.leveldb.NodeApiInteractionService;
 import org.apache.commons.io.FileUtils;

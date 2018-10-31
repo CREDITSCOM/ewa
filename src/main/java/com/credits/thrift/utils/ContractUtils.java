@@ -2,7 +2,7 @@ package com.credits.thrift.utils;
 
 import com.credits.exception.ContractExecutorException;
 import com.credits.exception.UnsupportedTypeException;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.thrift.DeployReturnValue;
 
 import java.lang.reflect.Constructor;

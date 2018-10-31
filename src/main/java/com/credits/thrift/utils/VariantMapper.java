@@ -1,7 +1,7 @@
 package com.credits.thrift.utils;
 
 import com.credits.exception.UnsupportedTypeException;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 
 import java.util.List;
 import java.util.Map;

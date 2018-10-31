@@ -3,7 +3,7 @@ package com.credits.service.contract;
 import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.SmartContractData;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.general.util.Converter;
 import com.credits.service.ServiceTest;

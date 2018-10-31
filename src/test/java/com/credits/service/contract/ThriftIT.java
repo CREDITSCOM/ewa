@@ -1,7 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.general.pojo.SmartContractData;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Converter;
 import com.credits.service.ServiceTest;
 import org.apache.commons.io.FileUtils;

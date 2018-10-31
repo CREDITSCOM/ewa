@@ -3,7 +3,7 @@ package com.credits.thrift.utils;
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
-import com.credits.general.thrift.generate.Variant;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.service.ServiceTest;
 import org.junit.Assert;
 import org.junit.Before;
