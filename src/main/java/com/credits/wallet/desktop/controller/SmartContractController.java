@@ -123,7 +123,7 @@ public class SmartContractController implements Initializable {
             @Override
             public void onError(Throwable e) {
                 LOGGER.error(e.getMessage(), e);
-                FormUtils.showError(e.getMessage());
+                FormUtils.showError("Can't get smart-contract from the node. Reason: " + e.getMessage());
             }
         };
     }
@@ -308,7 +308,6 @@ public class SmartContractController implements Initializable {
 
     private void initMySmartTab() {
         mySmart.getItems().clear();
-        List<SmartContractData> smartContracts = null;
         async(() -> nodeApiService.getSmartContracts(account), handleGetSmartContractsResult());
     }
 
@@ -333,7 +332,7 @@ public class SmartContractController implements Initializable {
             @Override
             public void onError(Throwable e) {
                 LOGGER.error(e.getMessage(), e);
-                FormUtils.showError(e.getMessage());
+                FormUtils.showError("Can't get smart-contracts from the node. Reason: " + e.getMessage());
             }
         };
     }

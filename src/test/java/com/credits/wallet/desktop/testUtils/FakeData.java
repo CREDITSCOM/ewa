@@ -166,10 +166,10 @@ public class FakeData {
             map.put(transactionRoundData4.getTransaction().getId(), transactionRoundData4);
 
             Map<Long, TransactionState> transactionStateMap = new HashMap<>();
-            transactionStateMap.put(0L, TransactionState.INPROGRES);
+            transactionStateMap.put(0L, TransactionState.INPROGRESS);
             transactionStateMap.put(1L, TransactionState.VALID);
             transactionStateMap.put(2L, TransactionState.VALID);
-            transactionStateMap.put(3L, TransactionState.INPROGRES);
+            transactionStateMap.put(3L, TransactionState.INPROGRESS);
             transactionStateMap.put(4L, TransactionState.INVALID);
             transactionsStateGetResult =
                 new TransactionsStateGetResult(null, transactionStateMap, 27);

@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionRoundData;
@@ -7,8 +8,8 @@ import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.thrift.generated.TransactionState;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
-import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -28,6 +29,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import static com.credits.client.node.service.NodeApiServiceImpl.async;
+import static com.credits.client.node.thrift.generated.TransactionState.INPROGRESS;
+import static com.credits.client.node.thrift.generated.TransactionState.INVALID;
+import static com.credits.client.node.thrift.generated.TransactionState.VALID;
+import static com.credits.general.util.CriticalSection.doSafe;
+import static com.credits.wallet.desktop.AppState.NODE_ERROR;
+import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.detailFromHistory;
+import static com.credits.wallet.desktop.AppState.nodeApiService;
+import static com.credits.wallet.desktop.AppState.selectedTransactionRow;
 
 /**
  * Created by goncharov-eg on 29.01.2018.
@@ -88,8 +103,8 @@ public class HistoryController implements Initializable {
             if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
                 TransactionTabRow tabRow = tabTransaction.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
-                    AppState.selectedTransactionRow = tabRow;
-                    AppState.detailFromHistory = true;
+                    selectedTransactionRow = tabRow;
+                    detailFromHistory = true;
                     VistaNavigator.loadVista(VistaNavigator.TRANSACTION);
                 }
             }
@@ -98,73 +113,90 @@ public class HistoryController implements Initializable {
 
     private void fillTable() {
         tabTransaction.getItems().clear();
-        List<TransactionData> transactionList;
-        try {
-            transactionList = AppState.nodeApiService.getTransactions(AppState.account, (pageNumber - 1) * pageSize, pageSize);
-        } catch (CreditsException e) {
-            LOGGER.error(ERR_GETTING_TRANSACTION_HISTORY, e);
-            FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
-            LOGGER.error(AppState.NODE_ERROR + ": " + e.getMessage(), e);
-            FormUtils.showError(AppState.NODE_ERROR);
-
-            return;
-        }
-
-        btnNext.setDisable(transactionList.size() < pageSize);
-
-
-        try {
-            if (NodeApiServiceImpl.sourceMap.get(AppState.account) != null) {
-                Map<Long, TransactionRoundData> sourceTransactionMap = NodeApiServiceImpl.sourceMap.get(AppState.account);
-                synchronized (sourceTransactionMap) {
-                    List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
-                    TransactionsStateGetResult transactionsStateResult = AppState.nodeApiService.getTransactionsState(AppState.account, ids);
-
-                    Map<Long, TransactionState> states = transactionsStateResult.getStates();
-                    states.forEach((k, v) -> {
-                        if (v.getValue() == TransactionState.VALID.getValue()) {
-                            sourceTransactionMap.remove(k);
-                        }
-                    });
-
-                    int curRound = transactionsStateResult.getRoundNum();
-                    sourceTransactionMap.entrySet()
-                        .removeIf(e -> curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
-
-                    sourceTransactionMap.forEach((key, value) -> {
-                        TransactionTabRow tableRow = new TransactionTabRow();
-                        TransactionFlowData transaction = value.getTransaction();
-                        tableRow.setInnerId(key.toString());
-                        tableRow.setAmount(Converter.toString(transaction.getAmount()));
-                        tableRow.setCurrency(transaction.getCurrency());
-                        tableRow.setTarget(Converter.encodeToBASE58(transaction.getTarget()));
-                        if(states.get(key)!=null) {
-                            if(states.get(key).getValue()==TransactionState.INVALID.getValue()) {
-                                tableRow.setState("INVALID");
-                            }
-                            if(states.get(key).getValue()==TransactionState.INPROGRES.getValue()) {
-                                tableRow.setState("INPROGRESS");
-                            }
-                            tabTransaction.getItems().add(tableRow);
-                        }
-                    });
-                }
-            }
-        } catch (CreditsException e) {
-            tabTransaction.getItems().clear();
-        }
-
-
-        transactionList.forEach(transactionData -> {
-            TransactionTabRow tableRow = new TransactionTabRow();
-            tableRow.setAmount(Converter.toString(transactionData.getAmount()));
-            tableRow.setSource(Converter.encodeToBASE58(transactionData.getSource()));
-            tableRow.setTarget(Converter.encodeToBASE58(transactionData.getTarget()));
-            tableRow.setInnerId(String.valueOf(transactionData.getId()));
-            tableRow.setState("VALID");
-            tabTransaction.getItems().add(tableRow);
-        });
+        async(() -> nodeApiService.getTransactions(account, (pageNumber - 1) * pageSize, pageSize), handleGetTransactionsResult());
     }
+
+    private Callback<List<TransactionData>> handleGetTransactionsResult() {
+       return new Callback<List<TransactionData>>() {
+
+           @Override
+           public void onSuccess(List<TransactionData> transactionsList) throws CreditsException {
+                btnNext.setDisable(transactionsList.size() < pageSize);
+
+                if (NodeApiServiceImpl.sourceMap.get(account) != null) {
+                    ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = NodeApiServiceImpl.sourceMap.get(account);
+                        List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
+                        Lock lock = new ReentrantLock();
+                        async(() -> nodeApiService.getTransactionsState(account, ids), handleGetTransactionsStateResult(sourceTransactionMap, lock));
+                }
+
+                transactionsList.forEach(transactionData -> {
+                    TransactionTabRow tableRow = new TransactionTabRow();
+                    tableRow.setAmount(Converter.toString(transactionData.getAmount()));
+                    tableRow.setSource(Converter.encodeToBASE58(transactionData.getSource()));
+                    tableRow.setTarget(Converter.encodeToBASE58(transactionData.getTarget()));
+                    tableRow.setInnerId(String.valueOf(transactionData.getId()));
+                    tableRow.setState(VALID.name());
+                    tabTransaction.getItems().add(tableRow);
+                });
+           }
+
+           @Override
+           public void onError(Throwable e) {
+               LOGGER.error(e.getMessage());
+               if(e instanceof NodeClientException){
+                   FormUtils.showError(NODE_ERROR);
+               }else {
+                   FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
+               }
+           }
+       };
+    }
+
+    private Callback<TransactionsStateGetResult> handleGetTransactionsStateResult(
+        ConcurrentHashMap<Long, TransactionRoundData> transactionMap, Lock lock) {
+        return new Callback<TransactionsStateGetResult>() {
+            @Override
+            public void onSuccess(TransactionsStateGetResult transactionsStates) throws CreditsException {
+                Map<Long, TransactionState> states = transactionsStates.getStates();
+                states.forEach((k, v) -> {
+                    if (v.getValue() == VALID.getValue()) {
+                        transactionMap.remove(k);
+                    }
+                });
+
+                int curRound = transactionsStates.getRoundNum();
+                transactionMap.entrySet()
+                    .removeIf(e -> curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
+
+                transactionMap.forEach((key, value) -> {
+                    TransactionTabRow tableRow = new TransactionTabRow();
+                    TransactionFlowData transaction = value.getTransaction();
+                    tableRow.setInnerId(key.toString());
+                    tableRow.setAmount(Converter.toString(transaction.getAmount()));
+                    tableRow.setCurrency(transaction.getCurrency());
+                    tableRow.setTarget(Converter.encodeToBASE58(transaction.getTarget()));
+                    if (states.get(key) != null) {
+                        if (states.get(key).getValue() == INVALID.getValue()) {
+                            tableRow.setState(INVALID.name());
+                        }
+                        if (states.get(key).getValue() == INPROGRESS.getValue()) {
+                            tableRow.setState(INPROGRESS.name());
+                        }
+                        doSafe(() -> tabTransaction.getItems().add(tableRow), lock);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                doSafe(() -> tabTransaction.getItems().clear(), lock);
+            }
+        };
+    }
+
+
+
 
     @FXML
     private void handleBack() {
