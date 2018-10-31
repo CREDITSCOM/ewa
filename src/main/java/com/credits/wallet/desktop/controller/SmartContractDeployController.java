@@ -11,7 +11,6 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.exception.CompilationException;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
-import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.EclipseJdt;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
@@ -51,6 +50,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 
+import static com.credits.wallet.desktop.utils.ApiUtils.deploySmartContractProcess;
 import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 
 /**
@@ -329,27 +329,12 @@ public class SmartContractDeployController implements Initializable {
                 List<CompilationUnit>  compilationUnits = compilationPackage.getUnits();
                 CompilationUnit compilationUnit = compilationUnits.get(0);
                 byte[] byteCode = compilationUnit.getBytecode();
-                ApiUtils.deploySmartContractProcess(javaCode, byteCode, new Callback<ApiResponseData>(){
-                    @Override
-                    public void onSuccess(ApiResponseData resultData) {
-                        String target = resultData.getTarget();
-                        StringSelection selection = new StringSelection(target);
-                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                        clipboard.setContents(selection, selection);
-                        FormUtils.showPlatformInfo(String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", target));
-                    }
-                    @Override
-                    public void onError(Throwable e) {
-                        FormUtils.showPlatformError(e.getMessage());
-                    }
-                });
+                deploySmartContractProcess(javaCode, byteCode, handleDeployResult());
             } else {
                 DiagnosticCollector collector = compilationPackage.getCollector();
                 List<Diagnostic> diagnostics = collector.getDiagnostics();
                 StringBuilder errors = new StringBuilder();
-                diagnostics.forEach(action -> {
-                    errors.append(String.format("line %s, error %s; ", action.getLineNumber(), action.getMessage(null)));
-                });
+                diagnostics.forEach(action -> errors.append(String.format("line %s, error %s; ", action.getLineNumber(), action.getMessage(null))));
                 throw new CompilationException(
                     String.format("Compilation errors: %s", errors.toString())
                 );
@@ -358,6 +343,23 @@ public class SmartContractDeployController implements Initializable {
             LOGGER.error(e.toString(), e);
             FormUtils.showError(AppState.NODE_ERROR + ": " + e.getMessage());
         }
+    }
+
+    private Callback<ApiResponseData> handleDeployResult() {
+        return new Callback<ApiResponseData>(){
+            @Override
+            public void onSuccess(ApiResponseData resultData) {
+                String target = resultData.getTarget();
+                StringSelection selection = new StringSelection(target);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(selection, selection);
+                FormUtils.showPlatformInfo(String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", target));
+            }
+            @Override
+            public void onError(Throwable e) {
+                FormUtils.showPlatformError(e.getMessage());
+            }
+        };
     }
 
     private void checkClassAndSuperclassNames(String className, String sourceCode) throws CreditsException {
