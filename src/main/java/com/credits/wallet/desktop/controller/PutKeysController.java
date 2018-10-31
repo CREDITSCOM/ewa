@@ -4,6 +4,7 @@ import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Converter;
+import com.credits.general.util.ObjectKeeper;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
@@ -172,6 +173,7 @@ public class PutKeysController implements Initializable {
 
         AppState.account = pubKey;
         NodeApiServiceImpl.account = pubKey;
+        AppState.smartContractsKeeper = new ObjectKeeper<>(AppState.account, "scobj");
         try {
             byte[] privateKeyByteArr = Converter.decodeFromBASE58(privKey);
             AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);

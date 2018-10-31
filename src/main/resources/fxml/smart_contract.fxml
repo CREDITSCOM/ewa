@@ -85,7 +85,7 @@
                             <content>
                                 <Pane maxHeight="325.0" maxWidth="430.0" minHeight="325.0" minWidth="390.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-PaneInTab">
                                     <children>
-                                        <TableView fx:id="mySmart" layoutX="7.0" layoutY="15.0" maxHeight="300.0" maxWidth="417.0" minHeight="290.0" minWidth="417.0" prefHeight="300.0" prefWidth="357.0" styleClass="credits-smart-table-view">
+                                        <TableView fx:id="smartContractTableView" layoutX="7.0" layoutY="15.0" maxHeight="300.0" maxWidth="417.0" minHeight="290.0" minWidth="417.0" prefHeight="300.0" prefWidth="357.0" styleClass="credits-smart-table-view">
                                             <columns>
                                                 <TableColumn editable="false" maxWidth="310.0" minWidth="365.0" prefWidth="310.0" text="C1" />
                                                 <TableColumn editable="false" maxWidth="45.0" minWidth="45.0" prefWidth="45.0" text="C2" />
@@ -99,7 +99,7 @@
                             <content>
                                 <Pane maxHeight="325.0" maxWidth="430.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-PaneInTab">
                                     <children>
-                                        <TableView fx:id="favSmart" layoutX="7.0" layoutY="15.0" maxHeight="300.0" maxWidth="417.0" minHeight="290.0" minWidth="417.0" prefHeight="300.0" prefWidth="417.0" styleClass="credits-smart-table-view">
+                                        <TableView fx:id="favoriteContractTableView" layoutX="7.0" layoutY="15.0" maxHeight="300.0" maxWidth="417.0" minHeight="290.0" minWidth="417.0" prefHeight="300.0" prefWidth="417.0" styleClass="credits-smart-table-view">
                                             <columns>
                                                 <TableColumn editable="false" maxWidth="310.0" minWidth="365.0" prefWidth="310.0" text="C1" />
                                                 <TableColumn editable="false" maxWidth="50.0" minWidth="45.0" prefWidth="45.0" text="C2" />

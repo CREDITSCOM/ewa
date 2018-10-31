@@ -71,10 +71,10 @@ public class SmartContractController implements Initializable {
     private ComboBox<MethodDeclaration> cbMethods;
 
     @FXML
-    TableView<SmartContractTabRow> mySmart;
+    TableView<SmartContractTabRow> smartContractTableView;
 
     @FXML
-    TableView<SmartContractTabRow> favSmart;
+    TableView<SmartContractTabRow> favoriteContractTableView;
 
     @FXML
     private TextField tfSearchAddress;
@@ -142,15 +142,15 @@ public class SmartContractController implements Initializable {
 
     private void initSmartContracts() {
 
-        setRowFactory(mySmart);
-        setRowFactory(favSmart);
-        FormUtils.addTooltipToColumnCells(mySmart.getColumns().get(0));
-        FormUtils.addTooltipToColumnCells(favSmart.getColumns().get(0));
+        setRowFactory(smartContractTableView);
+        setRowFactory(favoriteContractTableView);
+        FormUtils.addTooltipToColumnCells(smartContractTableView.getColumns().get(0));
+        FormUtils.addTooltipToColumnCells(favoriteContractTableView.getColumns().get(0));
 
-        mySmart.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
-        mySmart.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
-        favSmart.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
-        favSmart.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
+        smartContractTableView.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
+        smartContractTableView.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
+        favoriteContractTableView.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
+        favoriteContractTableView.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
         initMySmartTab();
     }
 
@@ -200,7 +200,7 @@ public class SmartContractController implements Initializable {
     }
 
     private void refreshFormState(SmartContractData smartContractData) {
-        if (smartContractData == null || smartContractData.getHashState().isEmpty() || smartContractData.getAddress().length == 0) {
+        if (smartContractData == null || smartContractData.getByteCode().length == 0 || smartContractData.getAddress().length == 0) {
             this.tbFavourite.setVisible(false);
             this.pControls.setVisible(false);
             this.pCodePanel.setVisible(false);
@@ -306,7 +306,7 @@ public class SmartContractController implements Initializable {
     }
 
     private void initMySmartTab() {
-        mySmart.getItems().clear();
+        smartContractTableView.getItems().clear();
         async(() -> nodeApiService.getSmartContracts(account), handleGetSmartContractsResult());
     }
 
@@ -319,9 +319,8 @@ public class SmartContractController implements Initializable {
                     ToggleButton favoriteButton = new ToggleButton();
                     setFavorite(favoriteButton, map, smartContractData);
                     setFavoriteButtonEvent(favoriteButton, smartContractData);
-                    mySmart.getItems()
-                        .add(new SmartContractTabRow(smartContractData.getBase58Address(), favoriteButton,
-                            smartContractData));
+                    smartContractTableView.getItems()
+                        .add(new SmartContractTabRow(smartContractData.getBase58Address(), favoriteButton, smartContractData));
                 });
                 if (currentSmartContract != null) {
                     setFavorite(tbFavourite, map, currentSmartContract);
@@ -336,10 +335,9 @@ public class SmartContractController implements Initializable {
         };
     }
 
-
     @FXML
     private void initFavoriteTab() {
-        favSmart.getItems().clear();
+        favoriteContractTableView.getItems().clear();
         try {
             Map<String, SmartContractData> map = smartContractsKeeper.deserialize();
             if (map != null && map.size() > 0) {
@@ -348,7 +346,7 @@ public class SmartContractController implements Initializable {
                         ToggleButton favoriteButton = new ToggleButton();
                         favoriteButton.setSelected(true);
                         setFavoriteButtonEvent(favoriteButton, smartContractData);
-                        favSmart.getItems()
+                        favoriteContractTableView.getItems()
                             .add(new SmartContractTabRow(smartContractData.getBase58Address(), favoriteButton,
                                 smartContractData));
                     }
