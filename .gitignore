@@ -1,0 +1,13 @@
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### Compiled output ###
+target
+/credits
+/cache
+
+### Build output files
+dependency-reduced-pom.xml

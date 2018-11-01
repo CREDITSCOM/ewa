@@ -5,18 +5,23 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>executor_client</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.0</version>
+    <parent>
+        <artifactId>api-client</artifactId>
+        <groupId>com.credits.client</groupId>
+        <version>1.0</version>
+    </parent>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>com.credits.client</groupId>
             <artifactId>general</artifactId>
-            <version>1.0.0</version>
+            <version>1.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
-    <parent>
-        <artifactId>root</artifactId>
-        <groupId>com.credits.client</groupId>
-        <version>1.0.0</version>
-    </parent>
 </project>

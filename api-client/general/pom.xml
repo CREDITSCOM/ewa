@@ -5,17 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <artifactId>general</artifactId>
-    <version>1.0.0</version>
+    <version>1.0</version>
     <parent>
-        <artifactId>root</artifactId>
+        <artifactId>api-client</artifactId>
         <groupId>com.credits.client</groupId>
-        <version>1.0.0</version>
+        <version>1.0</version>
     </parent>
-    <dependencies>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>25.0-jre</version>
-        </dependency>
-    </dependencies>
+
+	<build>
+        <defaultGoal>install</defaultGoal>
+    </build>
 </project>
