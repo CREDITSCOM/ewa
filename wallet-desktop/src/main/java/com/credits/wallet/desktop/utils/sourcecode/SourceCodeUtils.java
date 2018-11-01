@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.utils.sourcecode;
 
 
+import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Converter;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
@@ -137,6 +138,10 @@ public class SourceCodeUtils {
         TypeDeclaration typeDeclaration = (TypeDeclaration) typeList.get(0);
 
         Type superclassType = typeDeclaration.getSuperclassType();
+
+        if (superclassType == null) {
+            throw new CreditsException("Superclass is not exists");
+        }
 
         return ((SimpleType)superclassType).getName().getFullyQualifiedName();
     }
