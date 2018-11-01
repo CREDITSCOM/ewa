@@ -185,7 +185,7 @@
 }
 
 .comment {
-	-fx-fill: cadetblue;
+    -fx-fill: cadetblue;
 }
 
 /** Size the combo-box drop down list. */
@@ -281,9 +281,11 @@
 
 .credits-history .column-header,
 .credits-history .column-header-background,
-.credits-history .filler,
-.credits-history .virtual-flow .scroll-bar .thumb {
+.credits-history .filler {
     -fx-background-color: #424141;
+}
+.credits-history .virtual-flow .scroll-bar .thumb {
+    /*-fx-background-color: #424141;*/
 }
 
 .credits-history .column-header-background .label{
@@ -448,3 +450,38 @@
 .credits-border-black {
     -fx-border-color: black;
 }
+
+
+/*SCROLL BAR STYLE*/
+/*.deploy-pane*/  .scroll-pane {
+                      -fx-background-color: white;
+                  }
+.scroll-bar .increment-button {
+    visibility: hidden;
+}
+.scroll-bar .decrement-button {
+    visibility: hidden;
+}
+.scroll-bar {
+    -fx-background-color: white;
+}
+.scroll-bar .track-background {
+    visibility: white;
+}
+.scroll-bar .track {
+    visibility: white;
+}
+.hide-thumb .scroll-bar .thumb {
+    -fx-background-color: white;
+}
+
+
+.deploy-pane .corner {
+    -fx-background-color: white;
+}
+
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: white;
+}
+/*SCROLL BAR STYLE*/
