@@ -1,5 +1,6 @@
 package com.credits.general.util.compiler;
 
+import com.credits.general.exception.CompilationException;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import org.junit.Test;
@@ -18,12 +19,17 @@ public class InMemoryCompilerTest {
     @Test
     public void compileTest01() {
         InMemoryCompiler compiler = new InMemoryCompiler();
-        CompilationPackage compilationPackage = compiler.compile("Contract",
-                "public class Contract extends SmartContract { \n" +
-                        "public Contract() { \n" +
-                        "total = 0;wqwe \n" +
-                        "} \n" +
-                        "}");
+        CompilationPackage compilationPackage = null;
+        try {
+            compilationPackage = compiler.compile("Contract",
+                    "public class Contract extends SmartContract { \n" +
+                            "public Contract() { \n" +
+                            "total = 0;wqwe \n" +
+                            "} \n" +
+                            "}");
+        } catch (CompilationException e) {
+            e.printStackTrace();
+        }
         if (compilationPackage.isCompilationStatusSuccess()) {
             List<CompilationUnit>  compilationUnits = compilationPackage.getUnits();
             CompilationUnit compilationUnit = compilationUnits.get(0);
@@ -37,5 +43,15 @@ public class InMemoryCompilerTest {
             });
         }
 
+    }
+
+    @Test
+    public void loadJdkPathFromEnvironmentVariablesTest() {
+        InMemoryCompiler compiler = new InMemoryCompiler();
+        try {
+            LOGGER.info(compiler.loadJdkPathFromEnvironmentVariables());
+        } catch (CompilationException e) {
+            e.printStackTrace();
+        }
     }
 }

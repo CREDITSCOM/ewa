@@ -1,25 +1,32 @@
 package com.credits.general.util.compiler;
 
+
+import com.credits.general.exception.CompilationException;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
-import com.credits.general.util.compiler.model.JavaMemoryObject;
 import com.credits.general.util.compiler.model.JavaSourceFromString;
 
-import javax.tools.*;
+
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
+import javax.tools.JavaFileObject;
+import javax.tools.ToolProvider;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * The dynamic compiler uses the JavaCompiler with custom implementations of a JavaFileManager and
  * JavaFileObject to compile a Java Source from a String to Bytecode.
- * 
+ *
  * @see InMemoryClassManager
  * @see JavaSourceFromString
- * @see JavaMemoryObject
  */
 public class InMemoryCompiler {
 
@@ -30,14 +37,19 @@ public class InMemoryCompiler {
 	 * @param code class code
 	 * @return Compilation package
 	 */
-	public CompilationPackage compile(String className, String code){
+	public CompilationPackage compile(String className, String code) throws CompilationException {
 		JavaCompiler compiler = getSystemJavaCompiler();
 
 		DiagnosticCollector<JavaFileObject> collector = getDiagnosticCollector();
 		InMemoryClassManager manager = getClassManager(compiler);
 
 		// defining classpath
-		String classpath = loadClasspath();
+		String classpath = null;
+		try {
+			classpath = loadClasspath();
+		} catch (UnsupportedEncodingException e) {
+			throw new CompilationException(e);
+		}
 
 		// add classpath to options
 		List<String> options = Arrays.asList("-classpath", classpath);
@@ -62,19 +74,34 @@ public class InMemoryCompiler {
 		return new InMemoryClassManager(compiler.getStandardFileManager(null, null, null));
 	}
 
-	JavaCompiler getSystemJavaCompiler() {
-		return ToolProvider.getSystemJavaCompiler();
+	JavaCompiler getSystemJavaCompiler() throws CompilationException {
+
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		if (compiler == null) {
+			String jdkPath = this.loadJdkPathFromEnvironmentVariables();
+			System.setProperty("java.home", jdkPath);
+			compiler = ToolProvider.getSystemJavaCompiler();
+		}
+		return compiler;
 	}
 
-	String loadClasspath() {
+	String loadJdkPathFromEnvironmentVariables() throws CompilationException {
+		Pattern regexpJdkPath = Pattern.compile("jdk[\\d]\\.[\\d]\\.[\\d]([\\d._])");
+		String jdkBinPath = Arrays.stream(System.getenv("Path").split(";"))
+				.filter(it -> regexpJdkPath.matcher(it).find())
+				.findFirst()
+				.orElseThrow(() -> new CompilationException("Cannot compile the file. The java compiler has not been found, Java Development Kit should be installed."));
+		return jdkBinPath.substring(0, jdkBinPath.length() - 4); // remove last 4 symbols "\bin"
+	}
+
+	String loadClasspath() throws UnsupportedEncodingException {
 		StringBuilder sb = new StringBuilder();
 		URLClassLoader urlClassLoader = (URLClassLoader) Thread
 				.currentThread().getContextClassLoader();
 		for (URL url : urlClassLoader.getURLs()) {
-			sb.append(url.getFile()).append(
+			sb.append(URLDecoder.decode(url.getFile(), "UTF-8")).append(
 					System.getProperty("path.separator"));
 		}
-
 		return sb.toString();
 	}
 }
