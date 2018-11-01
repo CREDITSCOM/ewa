@@ -9,7 +9,7 @@ import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
-import com.credits.wallet.desktop.exception.CompilationException;
+import com.credits.general.exception.CompilationException;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.EclipseJdt;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -293,7 +293,13 @@ public class SmartContractDeployController implements Initializable {
             addTabErrorsToDebugPane();
         } else {
 
-            CompilationPackage compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
+            CompilationPackage compilationPackage = null;
+            try {
+                compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
+            } catch (CompilationException e) {
+                LOGGER.error(e.toString(), e);
+                FormUtils.showError(e.getMessage());
+            }
             if (!compilationPackage.isCompilationStatusSuccess()) {
                 DiagnosticCollector collector = compilationPackage.getCollector();
                 List<Diagnostic> diagnostics = collector.getDiagnostics();
