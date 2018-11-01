@@ -36,7 +36,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                     "\naddress = {}," +
                     "\nbyteCode length= {}, " +
                     "\ncontractState length= {}, " +
-                    "\ncontractStateHash= {} " +
+                    "\ncontractState hash= {} " +
                     "\nmethod = {}, " +
                     "\nparams = {}.",
             encodeToBASE58(address.array()), byteCode.array().length, contractState.array().length, contractState.hashCode(),
