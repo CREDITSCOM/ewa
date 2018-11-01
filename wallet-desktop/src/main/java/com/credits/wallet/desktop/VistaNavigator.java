@@ -2,6 +2,8 @@ package com.credits.wallet.desktop;
 
 import com.credits.wallet.desktop.controller.MainController;
 import javafx.fxml.FXMLLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -12,6 +14,7 @@ import java.io.IOException;
  * simple access from anywhere in the application.
  */
 public class VistaNavigator {
+    private final static Logger LOGGER = LoggerFactory.getLogger(VistaNavigator.class);
 
     /**
      * Convenience constants for fxml layouts managed by the navigator.
@@ -71,7 +74,7 @@ public class VistaNavigator {
                 )
             );
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("failed!", e );
         }
     }
 

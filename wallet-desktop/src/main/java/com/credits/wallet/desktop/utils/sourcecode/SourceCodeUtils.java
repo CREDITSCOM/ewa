@@ -3,6 +3,7 @@ package com.credits.wallet.desktop.utils.sourcecode;
 
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Converter;
+import com.credits.wallet.desktop.VistaNavigator;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -23,6 +24,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.ValidationException;
 import java.util.ArrayList;
@@ -35,6 +38,8 @@ import static com.credits.general.util.Utils.randomAlphaNumeric;
 
 
 public class SourceCodeUtils {
+    private final static Logger LOGGER = LoggerFactory.getLogger(SourceCodeUtils.class);
+
     private static final String[] KEYWORDS =
         new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
             "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for",
@@ -254,7 +259,7 @@ public class SourceCodeUtils {
         try {
             edit.apply(document);
         } catch (BadLocationException e) {
-            e.printStackTrace();
+            LOGGER.error("failed!", e );
         }
 
         // display the formatted string on the System out

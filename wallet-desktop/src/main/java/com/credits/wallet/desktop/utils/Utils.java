@@ -42,7 +42,7 @@ public class Utils {
             signature = ByteBuffer.wrap(signatureArr);
 
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("failed!", e);
             signature = ByteBuffer.wrap(new byte[] {});
         }
         return signature;

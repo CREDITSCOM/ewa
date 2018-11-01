@@ -320,7 +320,7 @@ public class SmartContractDeployController implements Initializable {
             try {
                 compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
             } catch (CompilationException e) {
-                LOGGER.error(e.toString(), e);
+                LOGGER.error("failed!", e);
                 FormUtils.showError(e.getMessage());
             }
             if (!compilationPackage.isCompilationStatusSuccess()) {
@@ -369,7 +369,7 @@ public class SmartContractDeployController implements Initializable {
                 );
             }
         } catch (CompilationException | CreditsException e) {
-            LOGGER.error(e.toString(), e);
+            LOGGER.error("failed!", e);
             FormUtils.showError(AppState.NODE_ERROR + ": " + e.getMessage());
         }
     }
@@ -386,6 +386,7 @@ public class SmartContractDeployController implements Initializable {
             }
             @Override
             public void onError(Throwable e) {
+                LOGGER.error("failed!", e);
                 FormUtils.showPlatformError(e.getMessage());
             }
         };

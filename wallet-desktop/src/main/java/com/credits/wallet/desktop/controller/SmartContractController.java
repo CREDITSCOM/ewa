@@ -122,7 +122,7 @@ public class SmartContractController implements Initializable {
 
             @Override
             public void onError(Throwable e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error("failed!", e);
                 FormUtils.showError("Can't get smart-contract from the node. Reason: " + e.getMessage());
             }
         };
@@ -296,11 +296,12 @@ public class SmartContractController implements Initializable {
 
                 @Override
                 public void onError(Throwable e) {
+                    LOGGER.error("failed!", e);
                     FormUtils.showPlatformError(e.getMessage());
                 }
             });
         } catch (CreditsException e) {
-            LOGGER.error(e.toString(), e);
+            LOGGER.error("failed!", e);
             FormUtils.showError(e.toString());
         }
     }
@@ -329,7 +330,7 @@ public class SmartContractController implements Initializable {
 
             @Override
             public void onError(Throwable e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error("failed!", e);
                 FormUtils.showError("Can't get smart-contracts from the node. Reason: " + e.getMessage());
             }
         };
@@ -353,7 +354,7 @@ public class SmartContractController implements Initializable {
                 });
             }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("failed!", e);
             FormUtils.showError(e.getMessage());
         }
     }
