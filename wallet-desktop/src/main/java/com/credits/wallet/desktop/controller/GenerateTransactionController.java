@@ -1,9 +1,9 @@
 package com.credits.wallet.desktop.controller;
 
 
-import com.credits.client.node.thrift.call.ThriftCallThread.Callback;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
+import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;

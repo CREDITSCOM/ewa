@@ -1,7 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.client.node.thrift.call.ThriftCallThread.Callback;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
