@@ -466,20 +466,17 @@
     -fx-background-color: white;
 }
 .scroll-bar .track-background {
-    visibility: white;
+    -fx-background-color: white;
 }
 .scroll-bar .track {
-    visibility: white;
+    -fx-background-color: white;
 }
 .hide-thumb .scroll-bar .thumb {
     -fx-background-color: white;
 }
-
-
-.deploy-pane .corner {
+.corner {
     -fx-background-color: white;
 }
-
 .scroll-bar > .increment-button > .increment-arrow,
 .scroll-bar > .decrement-button > .decrement-arrow {
     -fx-background-color: white;
