@@ -25,15 +25,22 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     private ContractExecutorService service;
 
-    public ContractExecutorHandler(){
+    ContractExecutorHandler(){
         service = new ContractExecutorServiceImpl();
     }
 
     @Override
     public APIResponse executeByteCode(ByteBuffer address, ByteBuffer byteCode, ByteBuffer contractState, String method,
                                        List<Variant> params) {
-        logger.debug(String.format("<-- execute(\naddress = %s, \nbyteCode length= %d, \ncontractState length= %d, \nmethod = %s, \nparams = %s.",
-            encodeToBASE58(address.array()), byteCode.array().length, contractState.array().length, method, (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat))));
+        logger.debug("<-- execute(" +
+                    "\naddress = {}," +
+                    "\nbyteCode length= {}, " +
+                    "\ncontractState length= {}, " +
+                    "\ncontractStateHash= {} " +
+                    "\nmethod = {}, " +
+                    "\nparams = {}.",
+            encodeToBASE58(address.array()), byteCode.array().length, contractState.array().length, contractState.hashCode(),
+            method, (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat)));
 
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
 
@@ -47,13 +54,13 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             response.setCode((byte) 1);
             response.setMessage(e.getMessage());
         }
-        logger.debug("--> " + response);
+        logger.debug("execute --> contractStateHash {} {}", contractState.hashCode(), response);
         return response;
     }
 
     @Override
     public GetContractMethodsResult getContractMethods(ByteBuffer bytecode) {
-        logger.debug("<-- getContractMethods(bytecode = " + bytecode.array().length + " bytes)");
+        logger.debug("<-- getContractMethods(bytecode = {} bytes)", bytecode.array().length);
         GetContractMethodsResult result = new GetContractMethodsResult();
         try {
             List<MethodDescriptionData> contractsMethods = service.getContractsMethods(bytecode.array());
@@ -62,7 +69,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
           result.setCode((byte) 1);
           result.setMessage(e.getMessage());
         }
-        logger.debug("--> " + result);
+        logger.debug("getContractMethods --> {}", result);
         return result;
     }
 }
