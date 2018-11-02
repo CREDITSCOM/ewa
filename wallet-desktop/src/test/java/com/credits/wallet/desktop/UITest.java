@@ -6,6 +6,7 @@ import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
+import com.credits.general.util.ObjectKeeper;
 import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.testUtils.FakeData;
 import com.credits.wallet.desktop.utils.CoinsUtils;
@@ -78,7 +79,7 @@ public class UITest {
     @Ignore
     @Test
     public void allForms() throws Exception {
-        mockInitializer.startForm = VistaNavigator.SMART_CONTRACT;
+        mockInitializer.startForm = VistaNavigator.WELCOME;
         NodeApiServiceImpl.sourceMap = FakeData.sourceMap;
         CoinsUtils.saveCoinsToFile(FakeData.coins);
 
@@ -100,6 +101,17 @@ public class UITest {
         when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
         when(mockNodeApiService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
 
+        runApp();
+    }
+
+    @Ignore
+    @Test
+    public void smartContractsForm() throws Exception {
+        mockInitializer.startForm = VistaNavigator.SMART_CONTRACT;
+        AppState.account = walletAddress;
+        AppState.smartContractsKeeper = new ObjectKeeper<>(AppState.account, "scobj");
+        when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
+        when(mockNodeApiService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
         runApp();
     }
 
