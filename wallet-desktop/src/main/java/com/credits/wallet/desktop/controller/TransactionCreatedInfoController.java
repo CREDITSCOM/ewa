@@ -44,7 +44,7 @@ public class TransactionCreatedInfoController implements Initializable {
             try {
                 Desktop.getDesktop().browse(new URL(AppState.creditMonitorURL+AppState.account).toURI());
             } catch (URISyntaxException | IOException e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error("failed!", e);
                 FormUtils.showError(e.getMessage());
             }
         }

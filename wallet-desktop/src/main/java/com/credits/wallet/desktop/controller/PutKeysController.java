@@ -113,7 +113,7 @@ public class PutKeysController implements Initializable {
                 byte[] keyFileBytes = Files.readAllBytes(file.toPath());
                 keyFileContent = new String(keyFileBytes);
             } catch (IOException e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error("failed!", e);
                 FormUtils.showError("Error reading keys from file " + file.getAbsolutePath() + " " + e.toString());
                 return;
             }
@@ -144,7 +144,7 @@ public class PutKeysController implements Initializable {
             try {
                 handleSaveKeys();
             } catch (WalletDesktopException e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error("failed!", e);
             }
         }
 
@@ -183,7 +183,7 @@ public class PutKeysController implements Initializable {
             } else {
                 errorLabelPrivate.setText("Private key error");
             }
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("failed!", e);
             //return;
         }
         try {
@@ -195,7 +195,7 @@ public class PutKeysController implements Initializable {
             } else {
                 errorLabelPrivate.setText("Public key error");
             }
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("failed!", e);
             //return;
         }
 
@@ -211,7 +211,7 @@ public class PutKeysController implements Initializable {
             publicKeyByteArr = Converter.decodeFromBASE58(publicKey);
             privateKeyByteArr = Converter.decodeFromBASE58(privateKey);
         } catch (CreditsException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("failed!", e);
             return false;
         }
 

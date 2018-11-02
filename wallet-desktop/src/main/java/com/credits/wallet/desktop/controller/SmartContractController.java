@@ -17,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -122,7 +123,7 @@ public class SmartContractController implements Initializable {
 
             @Override
             public void onError(Throwable e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error("failed!", e);
                 FormUtils.showError("Can't get smart-contract from the node. Reason: " + e.getMessage());
             }
         };
@@ -142,16 +143,26 @@ public class SmartContractController implements Initializable {
 
     private void initSmartContracts() {
 
-        setRowFactory(smartContractTableView);
-        setRowFactory(favoriteContractTableView);
-        FormUtils.addTooltipToColumnCells(smartContractTableView.getColumns().get(0));
-        FormUtils.addTooltipToColumnCells(favoriteContractTableView.getColumns().get(0));
-
-        smartContractTableView.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
-        smartContractTableView.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
-        favoriteContractTableView.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
-        favoriteContractTableView.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("fav"));
+        initializeTable(smartContractTableView);
+        initializeTable(favoriteContractTableView);
         initMySmartTab();
+    }
+
+    private void initializeTable(TableView<SmartContractTabRow> tableView) {
+        setRowFactory(tableView);
+        initColumns(tableView);
+        FormUtils.addTooltipToColumnCells(tableView.getColumns().get(0));
+    }
+
+    private void initColumns(TableView<SmartContractTabRow> tableView) {
+        TableColumn<SmartContractTabRow, String> idColumn = new TableColumn<>();
+        idColumn.setPrefWidth(tableView.getPrefWidth() * 0.85);
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        TableColumn<SmartContractTabRow, String> favColumn = new TableColumn<>();
+        favColumn.setPrefWidth(tableView.getPrefWidth() * 0.1);
+        favColumn.setCellValueFactory(new PropertyValueFactory<>("fav"));
+        tableView.getColumns().add(idColumn);
+        tableView.getColumns().add(favColumn);
     }
 
     private void setRowFactory(TableView<SmartContractTabRow> tableView) {
@@ -178,7 +189,7 @@ public class SmartContractController implements Initializable {
 
     private void setFavoriteButtonEvent(ToggleButton favoriteButton, SmartContractData smartContractData) {
         favoriteButton.setOnAction(event -> {
-            smartContractData.setFavorite(favoriteButton.isSelected()); //fixme set favorite
+            smartContractData.setFavorite(favoriteButton.isSelected());
             saveFavorite(smartContractData);
             initMySmartTab();
             initFavoriteTab();
@@ -296,11 +307,12 @@ public class SmartContractController implements Initializable {
 
                 @Override
                 public void onError(Throwable e) {
+                    LOGGER.error("failed!", e);
                     FormUtils.showPlatformError(e.getMessage());
                 }
             });
         } catch (CreditsException e) {
-            LOGGER.error(e.toString(), e);
+            LOGGER.error("failed!", e);
             FormUtils.showError(e.toString());
         }
     }
@@ -329,7 +341,7 @@ public class SmartContractController implements Initializable {
 
             @Override
             public void onError(Throwable e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.error("failed!", e);
                 FormUtils.showError("Can't get smart-contracts from the node. Reason: " + e.getMessage());
             }
         };
@@ -353,7 +365,7 @@ public class SmartContractController implements Initializable {
                 });
             }
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("failed!", e);
             FormUtils.showError(e.getMessage());
         }
     }

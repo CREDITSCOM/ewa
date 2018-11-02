@@ -30,7 +30,10 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        LOGGER.info("\n\n\n");
+        LOGGER.info("---------------------------------------------------------------------------");
         LOGGER.info("Starting Wallet app");
+        LOGGER.info("---------------------------------------------------------------------------\n\n\n");
         appStateInitializer = appStateInitializer != null ? appStateInitializer : new AppStateInitializer();
         LOGGER.info("Initializing application state");
         appStateInitializer.init();

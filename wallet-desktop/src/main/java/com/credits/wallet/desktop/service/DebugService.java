@@ -55,7 +55,7 @@ public class DebugService {
             else
                 return "Compilation errors:\n" + error;
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("failed!", e);
             return "Error compiling smart contract " + e.toString();
         }
     }
@@ -68,7 +68,7 @@ public class DebugService {
             dbgStdErr = dbgProcess.getErrorStream();
             return "";
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("failed!", e);
             return "Error starting debug "+e.toString();
         }
     }
@@ -101,7 +101,7 @@ public class DebugService {
 
             return result;
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("failed!", e);
             return "Error executing debug commang\n" + cmd + "\n" + e.toString();
         }
     }

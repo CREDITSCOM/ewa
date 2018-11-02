@@ -95,6 +95,7 @@ public class GenerateTransactionController implements Initializable {
 
         @Override
         public void onError(Throwable e) {
+            LOGGER.error("failed!", e);
             FormUtils.showPlatformError(e.getMessage());
         }
     };

@@ -185,7 +185,7 @@
 }
 
 .comment {
-	-fx-fill: cadetblue;
+    -fx-fill: cadetblue;
 }
 
 /** Size the combo-box drop down list. */
@@ -281,9 +281,11 @@
 
 .credits-history .column-header,
 .credits-history .column-header-background,
-.credits-history .filler,
-.credits-history .virtual-flow .scroll-bar .thumb {
+.credits-history .filler {
     -fx-background-color: #424141;
+}
+.credits-history .virtual-flow .scroll-bar .thumb {
+    /*-fx-background-color: #424141;*/
 }
 
 .credits-history .column-header-background .label{
@@ -379,17 +381,19 @@
 
 /*SMART-TABLEVIEW*/
 .credits-smart-table-view {
+    -fx-padding: 8px 3px;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
     -fx-font-size: 11px;
     -fx-background-color: transparent;
-    -fx-border-width: 0 0 0 0;
     -fx-background-insets: 0;
-    -fx-padding: 0;
 }
 
 .credits-smart-table-view .column-header,
 .credits-smart-table-view .column-header-background,
-.credits-smart-table-view .filler,
-.credits-smart-table-view .virtual-flow .scroll-bar .thumb {
+.credits-smart-table-view .filler {
     -fx-background-color: transparent;
     -fx-max-height: 0;
     -fx-pref-height: 0;
@@ -448,3 +452,35 @@
 .credits-border-black {
     -fx-border-color: black;
 }
+
+
+/*SCROLL BAR STYLE*/
+/*.deploy-pane*/  .scroll-pane {
+                      -fx-background-color: white;
+                  }
+.scroll-bar .increment-button {
+    visibility: hidden;
+}
+.scroll-bar .decrement-button {
+    visibility: hidden;
+}
+.scroll-bar {
+    -fx-background-color: white;
+}
+.scroll-bar .track-background {
+    -fx-background-color: white;
+}
+.scroll-bar .track {
+    -fx-background-color: white;
+}
+.hide-thumb .scroll-bar .thumb {
+    -fx-background-color: white;
+}
+.corner {
+    -fx-background-color: white;
+}
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: white;
+}
+/*SCROLL BAR STYLE*/

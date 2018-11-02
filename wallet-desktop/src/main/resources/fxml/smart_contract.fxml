@@ -4,9 +4,9 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
+
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
     <top>
         <fx:include source="header.fxml" />
@@ -83,30 +84,12 @@
                     <tabs>
                         <Tab text="My smart contracts">
                             <content>
-                                <Pane maxHeight="325.0" maxWidth="430.0" minHeight="325.0" minWidth="390.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-PaneInTab">
-                                    <children>
-                                        <TableView fx:id="smartContractTableView" layoutX="7.0" layoutY="15.0" maxHeight="300.0" maxWidth="417.0" minHeight="290.0" minWidth="417.0" prefHeight="300.0" prefWidth="357.0" styleClass="credits-smart-table-view">
-                                            <columns>
-                                                <TableColumn editable="false" maxWidth="310.0" minWidth="365.0" prefWidth="310.0" text="C1" />
-                                                <TableColumn editable="false" maxWidth="45.0" minWidth="45.0" prefWidth="45.0" text="C2" />
-                                            </columns>
-                                        </TableView>
-                                    </children>
-                                </Pane>
+                                <TableView fx:id="smartContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view"/>
                             </content>
                         </Tab>
                         <Tab onSelectionChanged="#initFavoriteTab" text="Favorites">
                             <content>
-                                <Pane maxHeight="325.0" maxWidth="430.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-PaneInTab">
-                                    <children>
-                                        <TableView fx:id="favoriteContractTableView" layoutX="7.0" layoutY="15.0" maxHeight="300.0" maxWidth="417.0" minHeight="290.0" minWidth="417.0" prefHeight="300.0" prefWidth="417.0" styleClass="credits-smart-table-view">
-                                            <columns>
-                                                <TableColumn editable="false" maxWidth="310.0" minWidth="365.0" prefWidth="310.0" text="C1" />
-                                                <TableColumn editable="false" maxWidth="50.0" minWidth="45.0" prefWidth="45.0" text="C2" />
-                                            </columns>
-                                        </TableView>
-                                    </children>
-                                </Pane>
+                                <TableView fx:id="favoriteContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view"/>
                             </content>
                         </Tab>
                     </tabs>

@@ -188,6 +188,7 @@ public class NodeApiServiceImpl implements NodeApiService {
         SmartContractsListGetResult result = nodeClient.getSmartContracts(decodeFromBASE58(address));
         logApiResponse(result.getStatus());
         processApiResponse(result.getStatus());
+        LOGGER.info("<--- smart contracts size = {}", result.getSmartContractsList().size());
         return result.getSmartContractsList().stream().map(NodePojoConverter::smartContractToSmartContractData).collect(Collectors.toList());
     }
 
@@ -210,6 +211,7 @@ public class NodeApiServiceImpl implements NodeApiService {
     public Integer getWalletId(String address) throws NodeClientException, ConverterException {
         WalletIdGetResult result = nodeClient.getWalletId(decodeFromBASE58(address));
         processApiResponse(result.getStatus());
+        LOGGER.debug("<---  get wallet id {}",result.getWalletId());
         return result.getWalletId();
     }
 
@@ -217,6 +219,7 @@ public class NodeApiServiceImpl implements NodeApiService {
     public Long getWalletTransactionsCount(String address) throws NodeClientException, ConverterException {
         WalletTransactionsCountGetResult result = nodeClient.getWalletTransactionsCount(decodeFromBASE58(address));
         processApiResponse(result.getStatus());
+        LOGGER.debug("<---  get transaction count(id) {}",result.getLastTransactionInnerId());
         return result.getLastTransactionInnerId();
     }
 

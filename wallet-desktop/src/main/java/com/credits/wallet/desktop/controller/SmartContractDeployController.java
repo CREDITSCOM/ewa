@@ -16,11 +16,14 @@ import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
@@ -71,8 +74,14 @@ public class SmartContractDeployController implements Initializable {
     private static final String SUPERCLASS_NAME = "SmartContract";
 
     private CodeArea codeArea;
-    private TableView<ErrorCodeTabRow> tabErrors;
     private int tabCount;
+
+    @FXML
+    private TableView<ErrorCodeTabRow> errorTableView;
+
+    @FXML
+    private SplitPane splitPane;
+
     @FXML
     BorderPane bp;
 
@@ -128,11 +137,25 @@ public class SmartContractDeployController implements Initializable {
         }));
 
         codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
+        debugPane.getChildren().clear();
+        errorTableView.getStyleClass().add("credits-history");
+        errorTableView.setMinHeight(debugPane.getPrefHeight());
+        errorTableView.setMinWidth(debugPane.getPrefWidth());
 
-        this.tabErrors = new TableView<>();
-        tabErrors.getStyleClass().add("credits-history");
-        this.tabErrors.setPrefHeight(debugPane.getPrefHeight());
-        this.tabErrors.setPrefWidth(debugPane.getPrefWidth());
+        for (SplitPane.Divider d : splitPane.getDividers()) {
+            d.positionProperty().addListener(new ChangeListener<Number>() {
+
+                @Override
+                public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+                    errorTableView.setPrefHeight(debugPane.getHeight());
+                }
+            });
+        }
+
+        this.errorTableView = new TableView<>();
+        errorTableView.getStyleClass().add("credits-history");
+        this.errorTableView.setPrefHeight(debugPane.getPrefHeight());
+        this.errorTableView.setPrefWidth(debugPane.getPrefWidth());
 
         TableColumn<ErrorCodeTabRow, String> tabErrorsColLine = new TableColumn<>();
         tabErrorsColLine.setText("Line");
@@ -144,12 +167,12 @@ public class SmartContractDeployController implements Initializable {
         tabErrorsColText.setCellValueFactory(new PropertyValueFactory<>("text"));
         tabErrorsColText.setPrefWidth(debugPane.getPrefWidth() * 0.88);
 
-        tabErrors.getColumns().add(tabErrorsColLine);
-        tabErrors.getColumns().add(tabErrorsColText);
+        errorTableView.getColumns().add(tabErrorsColLine);
+        errorTableView.getColumns().add(tabErrorsColText);
 
-        tabErrors.setOnMousePressed(event -> {
+        errorTableView.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown()) {
-                ErrorCodeTabRow tabRow = tabErrors.getSelectionModel().getSelectedItem();
+                ErrorCodeTabRow tabRow = errorTableView.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
                     positionCursorToLine(Integer.valueOf(tabRow.getLine()));
                 }
@@ -264,7 +287,7 @@ public class SmartContractDeployController implements Initializable {
     @FXML
     @SuppressWarnings("unchecked")
     private void handleCheck() {
-        tabErrors.getItems().clear();
+        errorTableView.getItems().clear();
         debugPane.getChildren().clear();
 
         String sourceCode = codeArea.getText();
@@ -277,7 +300,7 @@ public class SmartContractDeployController implements Initializable {
             ErrorCodeTabRow tr = new ErrorCodeTabRow();
             tr.setLine("1");
             tr.setText(e.getMessage());
-            tabErrors.getItems().add(tr);
+            errorTableView.getItems().add(tr);
             addTabErrorsToDebugPane();
             return;
         }
@@ -288,7 +311,7 @@ public class SmartContractDeployController implements Initializable {
                 ErrorCodeTabRow tr = new ErrorCodeTabRow();
                 tr.setLine(Integer.toString(p.getSourceLineNumber()));
                 tr.setText(p.getMessage());
-                tabErrors.getItems().add(tr);
+                errorTableView.getItems().add(tr);
             }
             addTabErrorsToDebugPane();
         } else {
@@ -297,7 +320,7 @@ public class SmartContractDeployController implements Initializable {
             try {
                 compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
             } catch (CompilationException e) {
-                LOGGER.error(e.toString(), e);
+                LOGGER.error("failed!", e);
                 FormUtils.showError(e.getMessage());
             }
             if (!compilationPackage.isCompilationStatusSuccess()) {
@@ -307,7 +330,7 @@ public class SmartContractDeployController implements Initializable {
                     ErrorCodeTabRow tr = new ErrorCodeTabRow();
                     tr.setLine(Converter.toString(action.getLineNumber()));
                     tr.setText(action.getMessage(null));
-                    tabErrors.getItems().add(tr);
+                    errorTableView.getItems().add(tr);
                 });
                 addTabErrorsToDebugPane();
             } else {
@@ -318,9 +341,9 @@ public class SmartContractDeployController implements Initializable {
     }
 
     private void addTabErrorsToDebugPane() {
-        this.tabErrors.setPrefHeight(30+this.tabErrors.getItems().size()*25);
+        this.errorTableView.setPrefHeight(30+this.errorTableView.getItems().size()*25);
         debugPane.getChildren().clear();
-        debugPane.getChildren().add(this.tabErrors);
+        debugPane.getChildren().add(this.errorTableView);
     }
 
     @FXML
@@ -346,7 +369,7 @@ public class SmartContractDeployController implements Initializable {
                 );
             }
         } catch (CompilationException | CreditsException e) {
-            LOGGER.error(e.toString(), e);
+            LOGGER.error("failed!", e);
             FormUtils.showError(AppState.NODE_ERROR + ": " + e.getMessage());
         }
     }
@@ -363,6 +386,7 @@ public class SmartContractDeployController implements Initializable {
             }
             @Override
             public void onError(Throwable e) {
+                LOGGER.error("failed!", e);
                 FormUtils.showPlatformError(e.getMessage());
             }
         };

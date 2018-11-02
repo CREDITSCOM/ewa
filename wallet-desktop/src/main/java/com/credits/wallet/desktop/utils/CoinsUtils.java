@@ -24,7 +24,7 @@ public class CoinsUtils {
         try {
             coinsKeeper.serialize(map);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("failed!", e );
         }
     }
 
