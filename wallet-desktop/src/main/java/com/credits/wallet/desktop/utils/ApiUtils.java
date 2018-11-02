@@ -5,6 +5,8 @@ import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.pojo.TransactionRoundData;
+import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.crypto.Md5;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
@@ -22,6 +24,8 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
@@ -105,7 +109,16 @@ public class ApiUtils {
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
         SignUtils.signTransaction(transactionFlowData);
+        saveTransactionIntoMap(id, transactionFlowData);
         return transactionFlowData;
+    }
+
+    private static void saveTransactionIntoMap(long id, TransactionFlowData transactionFlowData) {
+        AppState.sourceMap.computeIfAbsent(AppState.account, key -> new ConcurrentHashMap<>());
+        Map<Long, TransactionRoundData> sourceMap = AppState.sourceMap.get(AppState.account);
+        TransactionRoundData transactionRoundData = new TransactionRoundData(transactionFlowData);
+        long shortTransactionId = NodePojoConverter.getShortTransactionId(id);
+        sourceMap.put(shortTransactionId, transactionRoundData);
     }
 
     public static long createTransactionId(boolean senderIndexExists, boolean receiverIndexExists, long transactionId)

@@ -1,5 +1,4 @@
 package com.credits.client.node.pojo;
-
 import java.io.Serializable;
 
 public class TransactionRoundData implements Serializable {
