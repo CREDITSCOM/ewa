@@ -5,6 +5,7 @@ import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
+import com.credits.general.util.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +33,14 @@ public class ContractInteractionService {
     public void getSmartContractBalance(String smartContractAddress, Callback<BigDecimal> callback) {
         CompletableFuture
             .supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress))
-            .thenApply((sc) -> new BigDecimal(executeSmartContract(smartContractAddress, sc, BALANCE_OF_METHOD, variantOf(STRING_TYPE, account))))
+            .thenApply((sc) -> new BigDecimal(executeSmartContract(account, sc, BALANCE_OF_METHOD, variantOf(STRING_TYPE, account))))
             .whenComplete(handleCallback(callback));
     }
 
     public void transferTo(String smartContractAddress, String target, BigDecimal amount, Callback<String> callback) {
         CompletableFuture
             .supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress))
-            .thenApply((sc) -> executeSmartContract(smartContractAddress, sc, TRANSFER_METHOD, variantOf(STRING_TYPE, target), variantOf(STRING_TYPE, amount.toString())))
+            .thenApply((sc) -> executeSmartContract(account, sc, TRANSFER_METHOD, variantOf(STRING_TYPE, target), variantOf(STRING_TYPE, amount.toString())))
             .whenComplete(handleCallback(callback));
     }
 
@@ -60,7 +61,7 @@ public class ContractInteractionService {
         }
 
         ApiResponseData response = contractExecutorService.executeContractMethod(
-            sc.getAddress(),
+            Converter.decodeFromBASE58(smartContractAddress),
             sc.getByteCode(),
             sc.getObjectState(),
             methodName,
