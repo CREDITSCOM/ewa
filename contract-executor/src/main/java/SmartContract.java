@@ -66,6 +66,7 @@ public abstract class SmartContract implements Serializable {
             BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
             BigDecimal balance = service.getBalance(source, currencyByte);
             BigDecimal decFee = new BigDecimal(String.valueOf(fee));
+            //todo add signature
             byte[] signature = new byte[0];
             Instant instant = Instant.now();
             service.transactionFlow(instant.toEpochMilli(), source, target, decAmount, balance, currencyByte, signature, decFee);

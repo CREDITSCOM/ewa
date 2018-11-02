@@ -80,7 +80,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             return new ReturnValue(deployReturnValue.getContractState(), null, deployReturnValue.getContractVariables());
         }
 
-        initializeInitiator(initiator, contractClass, contractInstance);
+        initializeField("initiator", initiator, contractClass, contractInstance);
 
         List<Method> methods = getMethods(contractClass, methodName, params);
 
@@ -157,16 +157,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 return method.getName().equals(methodName) && method.getParameterCount() == params.length;
             }
         }).collect(Collectors.toList());
-    }
-
-    private void initializeInitiator(String initiator, Class<?> clazz, Object instance) {
-        try {
-            Field initiatorField = clazz.getField("initiator");
-            initiatorField.setAccessible(true);
-            initiatorField.set(instance, initiator);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Cannot initialize \"initiator\" field. Reason:" + e.getMessage());
-        }
     }
 
     private Permissions createPermissions() {
@@ -259,5 +249,15 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             i++;
         }
         return retVal;
+    }
+
+    private void initializeField(String fieldName, Object value, Class<?> clazz, Object instance){
+        try {
+            Field field = clazz.getSuperclass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(instance, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            logger.error("Cannot initialize \"{}\" field. Reason:{}", fieldName, e.getMessage());
+        }
     }
 }
