@@ -173,7 +173,6 @@ public class PutKeysController implements Initializable {
 
         AppState.account = pubKey;
         NodeApiServiceImpl.account = pubKey;
-        AppState.smartContractsKeeper = new ObjectKeeper<>(AppState.account, "scobj");
         try {
             byte[] privateKeyByteArr = Converter.decodeFromBASE58(privKey);
             AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);

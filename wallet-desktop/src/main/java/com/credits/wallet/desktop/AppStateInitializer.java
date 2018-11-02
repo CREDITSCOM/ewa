@@ -4,6 +4,7 @@ import com.credits.client.executor.service.ContractExecutorApiService;
 import com.credits.client.executor.service.ContractExecutorApiServiceImpl;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
+import com.credits.general.util.ObjectKeeper;
 import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.utils.FormUtils;
 
@@ -34,6 +35,7 @@ public class AppStateInitializer {
         AppState.nodeApiService = initializeNodeApiService();
         AppState.contractExecutorService = initializeContractExecutorApiService();
         AppState.contractInteractionService = initializeContractInteractionService();
+        AppState.smartContractsKeeper = new ObjectKeeper<>(AppState.account, "scobj");
     }
 
     Properties loadProperties() {

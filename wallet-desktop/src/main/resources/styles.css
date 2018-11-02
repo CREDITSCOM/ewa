@@ -390,8 +390,7 @@
 
 .credits-smart-table-view .column-header,
 .credits-smart-table-view .column-header-background,
-.credits-smart-table-view .filler,
-.credits-smart-table-view .virtual-flow .scroll-bar .thumb {
+.credits-smart-table-view .filler {
     -fx-background-color: transparent;
     -fx-max-height: 0;
     -fx-pref-height: 0;

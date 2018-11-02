@@ -78,7 +78,7 @@ public class UITest {
     @Ignore
     @Test
     public void allForms() throws Exception {
-        mockInitializer.startForm = VistaNavigator.WELCOME;
+        mockInitializer.startForm = VistaNavigator.SMART_CONTRACT;
         NodeApiServiceImpl.sourceMap = FakeData.sourceMap;
         CoinsUtils.saveCoinsToFile(FakeData.coins);
 
