@@ -54,7 +54,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             response.setCode((byte) 1);
             response.setMessage(e.getMessage());
         }
-        logger.debug("execute --> contractStateHash {} {}", response.hashCode(), response);
+        logger.debug("execute --> contractStateHash {} {}", response.contractState.hashCode(), response);
         return response;
     }
 
