@@ -151,16 +151,18 @@ public class SmartContractController implements Initializable {
     private void initializeTable(TableView<SmartContractTabRow> tableView) {
         setRowFactory(tableView);
         initColumns(tableView);
-        FormUtils.addTooltipToColumnCells(tableView.getColumns().get(0));
     }
 
     private void initColumns(TableView<SmartContractTabRow> tableView) {
         TableColumn<SmartContractTabRow, String> idColumn = new TableColumn<>();
         idColumn.setPrefWidth(tableView.getPrefWidth() * 0.85);
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        FormUtils.addTooltipToColumnCells(idColumn);
+
         TableColumn<SmartContractTabRow, String> favColumn = new TableColumn<>();
         favColumn.setPrefWidth(tableView.getPrefWidth() * 0.1);
         favColumn.setCellValueFactory(new PropertyValueFactory<>("fav"));
+
         tableView.getColumns().add(idColumn);
         tableView.getColumns().add(favColumn);
     }

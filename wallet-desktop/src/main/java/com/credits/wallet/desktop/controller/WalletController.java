@@ -7,14 +7,17 @@ import com.credits.general.util.Converter;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.CoinTabRow;
+import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -22,7 +25,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +52,6 @@ import static com.credits.wallet.desktop.AppState.text;
 import static com.credits.wallet.desktop.AppState.toAddress;
 import static com.credits.wallet.desktop.AppState.transactionFeePercent;
 import static com.credits.wallet.desktop.AppState.transactionFeeValue;
-import static com.credits.wallet.desktop.utils.CoinsUtils.getCoins;
 import static com.credits.wallet.desktop.utils.CoinsUtils.saveCoinsToFile;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
@@ -87,9 +88,7 @@ public class WalletController implements Initializable {
     @FXML
     private TextField transText;
     @FXML
-    private TableView<CoinTabRow> coins;
-    @FXML
-    private Pane coinsPane;
+    private TableView<CoinTabRow> coinsTableView;
 
     @FXML
     private void handleLogout() {
@@ -97,20 +96,8 @@ public class WalletController implements Initializable {
     }
 
     @FXML
-    private void handleDetails() {
-        newAccount = false;
-        VistaNavigator.loadVista("/fxml/history.fxml");
-    }
-
-    @FXML
     private void handleAddCoin() {
         VistaNavigator.loadVista(VistaNavigator.NEW_COIN);
-    }
-
-    @FXML
-    private void handleSmartContract() {
-        newAccount = false;
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT);
     }
 
     @FXML
@@ -122,28 +109,14 @@ public class WalletController implements Initializable {
 
     @FXML
     private void handleRefreshBalance() {
-        initializeCoinsView();
+        getCoins(coinsTableView);
     }
 
-    private void initializeCoinsView() {
-        coins.getItems().clear();
-        coins.setRowFactory(tv -> {
-            TableRow<CoinTabRow> row = new TableRow<>();
-            ContextMenu contextMenu = new ContextMenu();
-/*
-            MenuItem refreshItem = new MenuItem("Refresh");
-            contextMenu.getItems().add(refreshItem);
-*/
-            MenuItem removeItem = new MenuItem("Delete");
-
-            contextMenu.getItems().add(removeItem);
-            row.setOnMouseClicked(handleDeleteToken(row, contextMenu, removeItem));
-            return row;
-        });
-
-        List<CoinTabRow> coinRows = coins.getItems();
-        addCsCoinRow(coinRows);
-        getCoins().forEach((coinName, smartContract) -> addUserCoin(coinName, smartContract, coinRows));
+    private void getCoins(TableView<CoinTabRow> tableView) {
+        ObservableList<CoinTabRow> tableViewItems = tableView.getItems();
+        tableViewItems.clear();
+        addCsCoinRow(tableViewItems);
+        CoinsUtils.getCoins().forEach((coinName, smartContract) -> addUserCoin(coinName, smartContract, tableViewItems));
     }
 
     private EventHandler<MouseEvent> handleDeleteToken(TableRow<CoinTabRow> row, ContextMenu cm, MenuItem removeItem) {
@@ -152,22 +125,22 @@ public class WalletController implements Initializable {
                 row.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
                     if (t.getButton() == MouseButton.SECONDARY) {
                         removeItem.setOnAction(event1 -> {
-                            coins.getItems().remove(row.getItem());
-                            ConcurrentHashMap<String, String> coinsMap = getCoins();
+                            coinsTableView.getItems().remove(row.getItem());
+                            ConcurrentHashMap<String, String> coinsMap = CoinsUtils.getCoins();
                             coinsMap.remove(row.getItem().getName());
                             saveCoinsToFile(coinsMap);
                         });
-                        cm.show(coins, t.getScreenX(), t.getScreenY());
+                        cm.show(coinsTableView, t.getScreenX(), t.getScreenY());
                     }
                 });
             }
         };
     }
 
-    private void addCsCoinRow(List<CoinTabRow> coinRows) {
+    private void addCsCoinRow(List<CoinTabRow> tableViewItems) {
         CoinTabRow newCoinRow = new CoinTabRow(CREDITS_TOKEN_NAME, WAITING_STATE_MESSAGE, null);
         DecimalFormat decimalFormat = new DecimalFormat("##0." + repeat('0', CREDITS_DECIMAL));
-        async(() -> nodeApiService.getBalance(account), updateCoinValue(coinRows, newCoinRow, decimalFormat));
+        async(() -> nodeApiService.getBalance(account), updateCoinValue(tableViewItems, newCoinRow, decimalFormat));
     }
 
     private void addUserCoin(String coinName, String smartContractAddress, List<CoinTabRow> coinRows) {
@@ -203,12 +176,12 @@ public class WalletController implements Initializable {
         // VALIDATE
         boolean isValidationSuccessful = true;
         clearLabErr();
-        if (coins.getSelectionModel().getSelectedItem() == null || coins.getSelectionModel().getSelectedItem().getName().isEmpty()) {
+        if (coinsTableView.getSelectionModel().getSelectedItem() == null || coinsTableView.getSelectionModel().getSelectedItem().getName().isEmpty()) {
             labErrorCoin.setText(ERR_COIN);
-            coinsPane.getStyleClass().add("credits-border-red");
+            coinsTableView.getStyleClass().add("credits-border-red");
             isValidationSuccessful = false;
         } else {
-            coin = coins.getSelectionModel().getSelectedItem().getName();
+            coin = coinsTableView.getSelectionModel().getSelectedItem().getName();
         }
         if (toAddress == null || toAddress.isEmpty()) {
             labErrorKey.setText(ERR_TO_ADDRESS);
@@ -241,7 +214,7 @@ public class WalletController implements Initializable {
     }
 
     private void clearLabErr() {
-        coinsPane.getStyleClass().remove("credits-border-red");
+        coinsTableView.getStyleClass().remove("credits-border-red");
         labErrorCoin.setText("");
         labErrorAmount.setText("");
         labErrorFee.setText("");
@@ -253,14 +226,43 @@ public class WalletController implements Initializable {
         numFee.setStyle(numFee.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
     }
 
+    private void initializeTable(TableView<CoinTabRow> tableView) {
+        setRowFactory(tableView);
+        initColumns(tableView);
+    }
+
+    private void initColumns(TableView<CoinTabRow> tableView) {
+        TableColumn<CoinTabRow, String> nameColumn = new TableColumn<>();
+        nameColumn.setPrefWidth(tableView.getPrefWidth() * 0.55);
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        FormUtils.addTooltipToColumnCells(nameColumn);
+
+        TableColumn<CoinTabRow, String> balanceColumn = new TableColumn<>();
+        balanceColumn.setPrefWidth(tableView.getPrefWidth() * 0.4);
+        balanceColumn.setCellValueFactory(new PropertyValueFactory<>("balance"));
+        FormUtils.addTooltipToColumnCells(balanceColumn);
+
+        tableView.getColumns().add(nameColumn);
+        tableView.getColumns().add(balanceColumn);
+    }
+
+    private void setRowFactory(TableView<CoinTabRow> tableView) {
+        ContextMenu contextMenu = new ContextMenu();
+        tableView.setRowFactory(tv -> {
+            TableRow<CoinTabRow> row = new TableRow<>();
+            MenuItem removeItem = new MenuItem("Delete");
+
+            contextMenu.getItems().add(removeItem);
+            row.setOnMouseClicked(handleDeleteToken(row, contextMenu, removeItem));
+            return row;
+        });
+    }
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FormUtils.addTooltipToColumnCells(coins.getColumns().get(0));
-        FormUtils.addTooltipToColumnCells(coins.getColumns().get(1));
-        coins.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("name"));
-        coins.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("balance"));
-
-        initializeCoinsView();
+        initializeTable(coinsTableView);
+        getCoins(coinsTableView);
 
         wallet.setText(account);
 
