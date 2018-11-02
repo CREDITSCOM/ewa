@@ -170,7 +170,7 @@ public class SmartContractController implements Initializable {
         SmartContractData smartContractData) {
         String smartContractAddress = smartContractData.getBase58Address();
         if (map != null && map.size() > 0 && map.get(smartContractAddress) != null) {
-            //            favoriteButton.setSelected(map.get(smartContractAddress).isFavorite()); //fixme get favorite
+            favoriteButton.setSelected(map.get(smartContractAddress).isFavorite()); //fixme get favorite
         } else {
             favoriteButton.setSelected(false);
         }
