@@ -261,15 +261,15 @@ public class WalletController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        FormUtils.resizeForm(bp);
+
         initializeTable(coinsTableView);
         getCoins(coinsTableView);
 
+        NodeApiServiceImpl.account = account;
         wallet.setText(account);
 
-        FormUtils.resizeForm(bp);
         clearLabErr();
-        // Fill coin list
-        NodeApiServiceImpl.account = account;
 
         numAmount.textProperty()
                  .addListener((observable, oldValue, newValue) -> refreshTransactionFeePercent(Converter.toBigDecimal(numFee.getText()),
