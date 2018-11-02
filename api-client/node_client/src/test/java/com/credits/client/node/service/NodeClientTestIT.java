@@ -11,6 +11,7 @@ import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.ThriftClientPool;
+import com.credits.general.util.Callback;
 import com.credits.general.util.exception.ConverterException;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -25,7 +26,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
-import static com.credits.client.node.thrift.call.ThriftCallThread.Callback;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Converter.decodeFromBASE58;
 import static java.util.concurrent.TimeUnit.MINUTES;

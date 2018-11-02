@@ -1,8 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.service.NodeApiServiceImpl;
-import com.credits.client.node.thrift.call.ThriftCallThread.Callback;
 import com.credits.client.node.util.Validator;
+import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.VistaNavigator;
