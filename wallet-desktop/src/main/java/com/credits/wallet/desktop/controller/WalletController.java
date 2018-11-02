@@ -240,6 +240,7 @@ public class WalletController implements Initializable {
         TableColumn<CoinTabRow, String> balanceColumn = new TableColumn<>();
         balanceColumn.setPrefWidth(tableView.getPrefWidth() * 0.4);
         balanceColumn.setCellValueFactory(new PropertyValueFactory<>("balance"));
+        balanceColumn.setStyle("-fx-alignment: top_right");
         FormUtils.addTooltipToColumnCells(balanceColumn);
 
         tableView.getColumns().add(nameColumn);
