@@ -7,21 +7,17 @@ import java.util.Objects;
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
  */
-public class TransactionFlowData extends TransactionData{
+public class TransactionFlowData extends TransactionData {
     protected Short offeredMaxFee;
+    protected byte[] smartContractBytes;
     protected byte[] signature;
 
-    public TransactionFlowData(){}
+    public TransactionFlowData() {
+    }
 
-    public TransactionFlowData(
-            long innerId,
-            byte[] source,
-            byte[] target,
-            BigDecimal amount,
-            byte currency,
-            Short offeredMaxFee,
-            byte[] signature
-    ) {
+
+    public TransactionFlowData(long innerId, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee,
+        byte currency, byte[] smartContractBytes) {
         super();
         this.setId(innerId);
         this.setSource(source);
@@ -30,17 +26,27 @@ public class TransactionFlowData extends TransactionData{
         this.setBalance(balance);
         this.setCurrency(currency);
         this.setOfferedMaxFee(offeredMaxFee);
+        this.setSmartContractBytes(smartContractBytes);
+    }
+
+    public TransactionFlowData(long innerId, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee,
+        byte currency, byte[] smartContractBytes, byte[] signature) {
+        super();
+        this.setId(innerId);
+        this.setSource(source);
+        this.setTarget(target);
+        this.setAmount(amount);
+        this.setBalance(balance);
+        this.setCurrency(currency);
+        this.setOfferedMaxFee(offeredMaxFee);
+        this.setSmartContractBytes(smartContractBytes);
         this.setSignature(signature);
     }
 
+
     public TransactionFlowData(TransactionFlowData transaction) {
-        this(transaction.id,
-            transaction.source,
-            transaction.target,
-            transaction.amount,
-            transaction.currency,
-            transaction.offeredMaxFee,
-            transaction.signature);
+        this(transaction.id, transaction.source, transaction.target, transaction.amount, transaction.offeredMaxFee,
+            transaction.currency, transaction.smartContractBytes, transaction.signature);
     }
 
     public Short getOfferedMaxFee() {
@@ -81,6 +87,15 @@ public class TransactionFlowData extends TransactionData{
         result = 31 * result + Arrays.hashCode(signature);
         return result;
     }
+
+    public byte[] getSmartContractBytes() {
+        return smartContractBytes;
+    }
+
+    public void setSmartContractBytes(byte[] smartContractBytes) {
+        this.smartContractBytes = smartContractBytes;
+    }
+
 
     @Override
     public String toString() {

@@ -63,8 +63,8 @@ public class ApiUtils {
         byte currency = 1;
         byte[] smartContractBytes = null;
 
-        TransactionFlowData transactionFlowData = new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency,smartContractBytes);
-        SignUtils.signTransaction(transactionFlowData);
+        TransactionFlowData transactionFlowData =
+            getTransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
 
         async(() -> nodeApiService.transactionFlow(transactionFlowData), callback);
     }
@@ -90,14 +90,22 @@ public class ApiUtils {
         byte currency = 0x01;
         byte[] smartContractBytes = serializeByThrift(smartContractInvocationData);
 
-        TransactionFlowData transactionFlowData = new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency,smartContractBytes);
-        SignUtils.signTransaction(transactionFlowData);
+        TransactionFlowData transactionFlowData =
+            getTransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
 
 
         SmartContractTransactionFlowData scData =
             new SmartContractTransactionFlowData(transactionFlowData, smartContractInvocationData);
 
         async(() -> nodeApiService.smartContractTransactionFlow(scData), callback);
+    }
+
+    private static TransactionFlowData getTransactionFlowData(long id, byte[] source, byte[] target, BigDecimal amount,
+        short offeredMaxFee, byte currency, byte[] smartContractBytes) {
+        TransactionFlowData transactionFlowData =
+            new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
+        SignUtils.signTransaction(transactionFlowData);
+        return transactionFlowData;
     }
 
     public static long createTransactionId(boolean senderIndexExists, boolean receiverIndexExists, long transactionId)
