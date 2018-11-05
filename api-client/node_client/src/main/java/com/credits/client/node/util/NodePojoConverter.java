@@ -231,10 +231,6 @@ public class NodePojoConverter {
         return new ApiResponseData(ApiResponseCode.valueOf(result.getStatus().getCode()), result.getStatus().message, result.smart_contract_result);
     }
 
-    public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {
-        return new ApiResponseData(ApiResponseCode.valueOf(apiResponse.getCode()), apiResponse.getMessage(), null);
-    }
-
     public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse, Variant smartContractResult) {
         return new ApiResponseData(ApiResponseCode.valueOf(apiResponse.getCode()), apiResponse.getMessage(), smartContractResult);
     }
@@ -258,4 +254,8 @@ public class NodePojoConverter {
         return transactionId;
     }
 
+    public static long getShortTransactionId(long wideTransactionId) {
+        long maskForZeroingFirstTwoBit = 0x3FFFFFFFFFFFL;
+        return wideTransactionId & maskForZeroingFirstTwoBit;
+    }
 }

@@ -4,12 +4,12 @@ import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionRoundData;
-import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.thrift.generated.TransactionState;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -123,8 +123,8 @@ public class HistoryController implements Initializable {
            public void onSuccess(List<TransactionData> transactionsList) throws CreditsException {
                 btnNext.setDisable(transactionsList.size() < pageSize);
 
-                if (NodeApiServiceImpl.sourceMap.get(account) != null) {
-                    ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = NodeApiServiceImpl.sourceMap.get(account);
+                if (AppState.sourceMap.get(account) != null) {
+                    ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = AppState.sourceMap.get(account);
                         List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
                         Lock lock = new ReentrantLock();
                         async(() -> nodeApiService.getTransactionsState(account, ids), handleGetTransactionsStateResult(sourceTransactionMap, lock));
