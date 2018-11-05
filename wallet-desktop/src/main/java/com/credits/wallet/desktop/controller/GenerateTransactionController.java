@@ -19,8 +19,9 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.wallet.desktop.AppState.*;
-import static com.credits.wallet.desktop.utils.ApiUtils.callCreateTransaction;
+import static com.credits.wallet.desktop.utils.ApiUtils.createTransaction;
 
 /**
  * Created by Rustem.Saidaliyev on 26.01.2018.
@@ -33,7 +34,7 @@ public class GenerateTransactionController implements Initializable {
     BorderPane bp;
 
     @FXML
-    private TextField toAddress;
+    private TextField toAddress; //todo remove global variable
 
     @FXML TextField transactionData;
 
@@ -54,7 +55,7 @@ public class GenerateTransactionController implements Initializable {
         try {
             String coin = AppState.coin;
             if(coin.equals(CREDITS_SYMBOL)) {
-                callCreateTransaction(handleTransactionResult());
+                async(() -> createTransaction(toAddress.getText(), AppState.amount), handleTransactionResult());
             } else if (CoinsUtils.getCoins().get(coin)!= null) {
                 contractInteractionService.transferTo(CoinsUtils.getCoins().get(coin), AppState.toAddress, amount, handleTransferTokenResult());
             }

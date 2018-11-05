@@ -54,7 +54,7 @@ public class NodeApiInteractionServiceThriftImpl implements NodeApiInteractionSe
                                 BigDecimal fee) throws ConverterException, NodeClientException {
         short maxFee = 0x6648; //TODO need add fee converter from BigDecimal to short
         TransactionFlowData TransactionFlowData =
-            new TransactionFlowData(System.currentTimeMillis(), Base58.decode(source), Base58.decode(target), amount, currency, maxFee, signature);
+            new TransactionFlowData(System.currentTimeMillis(), Base58.decode(source), Base58.decode(target), amount, maxFee, currency, signature);
         service.transactionFlow(TransactionFlowData);
     }
 }

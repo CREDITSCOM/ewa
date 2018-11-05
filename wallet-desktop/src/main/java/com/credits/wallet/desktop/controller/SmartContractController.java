@@ -34,17 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.AppState.smartContractsKeeper;
+import static com.credits.wallet.desktop.utils.ApiUtils.*;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -293,30 +290,35 @@ public class SmartContractController implements Initializable {
             }
 
             SmartContractData smartContractData = this.currentSmartContract;
-            ApiUtils.executeSmartContractProcess(method, params, smartContractData, new Callback<ApiResponseData>() {
-                @Override
-                public void onSuccess(ApiResponseData resultData) {
-                    Variant res = resultData.getScExecRetVal();
-                    if (res != null) {
-                        String retVal = res.toString() + '\n';
-                        LOGGER.info("Return value is {}", retVal);
-                        FormUtils.showPlatformInfo("Execute smart contract was success: return value is: " + retVal);
-                    } else {
-                        FormUtils.showPlatformInfo("Execute smart contract was success");
-                    }
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    LOGGER.error("failed!", e);
-                    FormUtils.showPlatformError(e.getMessage());
-                }
-            });
+            smartContractData.setMethod(method);
+            smartContractData.setParams(params);
+            async(() -> createSmartContractTransaction(smartContractData), handleExecuteResult());
         } catch (CreditsException e) {
             LOGGER.error("failed!", e);
             FormUtils.showError(e.toString());
         }
+    }
+
+    private Callback<ApiResponseData> handleExecuteResult() {
+        return new Callback<ApiResponseData>() {
+            @Override
+            public void onSuccess(ApiResponseData resultData) {
+                Variant res = resultData.getScExecRetVal();
+                if (res != null) {
+                    String retVal = res.toString() + '\n';
+                    LOGGER.info("Return value is {}", retVal);
+                    FormUtils.showPlatformInfo("Execute smart contract was success: return value is: " + retVal);
+                } else {
+                    FormUtils.showPlatformInfo("Execute smart contract was success");
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                LOGGER.error("failed!", e);
+                FormUtils.showPlatformError(e.getMessage());
+            }
+        };
     }
 
     private void initMySmartTab() {

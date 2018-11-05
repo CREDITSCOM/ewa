@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 
+import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.wallet.desktop.utils.ApiUtils.deploySmartContractProcess;
 import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 
@@ -358,7 +359,7 @@ public class SmartContractDeployController implements Initializable {
                 List<CompilationUnit>  compilationUnits = compilationPackage.getUnits();
                 CompilationUnit compilationUnit = compilationUnits.get(0);
                 byte[] byteCode = compilationUnit.getBytecode();
-                deploySmartContractProcess(javaCode, byteCode, handleDeployResult());
+                async(() -> deploySmartContractProcess(javaCode, byteCode), handleDeployResult());
             } else {
                 DiagnosticCollector collector = compilationPackage.getCollector();
                 List<Diagnostic> diagnostics = collector.getDiagnostics();

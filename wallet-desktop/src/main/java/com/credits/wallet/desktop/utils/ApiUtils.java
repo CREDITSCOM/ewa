@@ -21,13 +21,10 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.security.KeyPair;
 import java.security.PublicKey;
-import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
 import static com.credits.general.util.Converter.byteArrayToHex;
 import static com.credits.general.util.Converter.decodeFromBASE58;
@@ -36,81 +33,55 @@ import static com.credits.general.util.Converter.toBitSet;
 import static com.credits.general.util.Converter.toByteArray;
 import static com.credits.general.util.Converter.toByteArrayLittleEndian;
 import static com.credits.general.util.Converter.toLong;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.nodeApiService;
-import static com.credits.wallet.desktop.AppState.toAddress;
-import static com.credits.wallet.desktop.AppState.transactionOfferedMaxFeeValue;
-import static com.credits.wallet.desktop.AppState.walletLastTransactionIdCache;
+import static com.credits.wallet.desktop.AppState.*;
+import static java.math.BigDecimal.*;
 
 /**
  * Created by Rustem Saidaliyev on 20-Mar-18.
  */
 public class ApiUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
+    private static byte[] accountBytesAddress;
 
-    //todo need refactoring
-    public static void callCreateTransaction(Callback<ApiResponseData> callback)
-        throws NodeClientException, ConverterException {
-
-        String sourceBase58 = account;
-        String targetBase58 = toAddress;
-
-        CalcTransactionIdSourceTargetResult transactionData =
-            ApiUtils.calcTransactionIdSourceTarget(sourceBase58, targetBase58);
-
-        long id = transactionData.getTransactionId();
-        byte[] source = transactionData.getByteSource();
-        byte[] target = transactionData.getByteTarget();
-        BigDecimal amount = AppState.amount;
-        short offeredMaxFee = transactionOfferedMaxFeeValue;
-        byte currency = 1;
-        byte[] smartContractBytes = null;
-
-        TransactionFlowData transactionFlowData =
-            getTransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
-
-        async(() -> nodeApiService.transactionFlow(transactionFlowData), callback);
+    public static ApiResponseData createTransaction(String targetBase58, BigDecimal amount) throws NodeClientException, ConverterException {
+        return nodeApiService.transactionFlow(getTransactionFlowData(targetBase58, amount, null));
     }
 
-    public static void executeSmartContractProcess(String method, List<Object> params,
-        SmartContractData smartContractData, Callback<ApiResponseData> callback)
+    public static ApiResponseData createSmartContractTransaction(SmartContractData smartContractData)
         throws NodeClientException, ConverterException {
 
         SmartContractInvocationData smartContractInvocationData =
             new SmartContractInvocationData(smartContractData.getSourceCode(), smartContractData.getByteCode(),
-                smartContractData.getHashState(), method, params, false);
-
-
-        String sourceBase58 = account;
-        String targetBase58 = encodeToBASE58(smartContractData.getAddress());
-        CalcTransactionIdSourceTargetResult transactionData = calcTransactionIdSourceTarget(sourceBase58, targetBase58);
-
-        long id = transactionData.getTransactionId();
-        byte[] source = transactionData.getByteSource();
-        byte[] target = transactionData.getByteTarget();
-        BigDecimal amount = new BigDecimal(0);
-        short offeredMaxFee = 0;
-        byte currency = 0x01;
-        byte[] smartContractBytes = serializeByThrift(smartContractInvocationData);
-
-        TransactionFlowData transactionFlowData =
-            getTransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
-
+                smartContractData.getHashState(), smartContractData.getMethod(), smartContractData.getParams(), false);
 
         SmartContractTransactionFlowData scData =
-            new SmartContractTransactionFlowData(transactionFlowData, smartContractInvocationData);
+            new SmartContractTransactionFlowData(
+                    getTransactionFlowData(smartContractData.getBase58Address(), ZERO, serializeByThrift(smartContractInvocationData)),
+                    smartContractInvocationData);
 
-        async(() -> nodeApiService.smartContractTransactionFlow(scData), callback);
+        return nodeApiService.smartContractTransactionFlow(scData);
     }
 
-    private static TransactionFlowData getTransactionFlowData(long id, byte[] source, byte[] target, BigDecimal amount,
-        short offeredMaxFee, byte currency, byte[] smartContractBytes) {
-        TransactionFlowData transactionFlowData =
-            new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
+    private static TransactionFlowData getTransactionFlowData(String targetBase58, BigDecimal amount, byte[] smartContractBytes) {
+        CalcTransactionIdSourceTargetResult transactionData = ApiUtils.calcTransactionIdSourceTarget(account, targetBase58);
+
+        long id = transactionData.getTransactionId();
+        byte[] source = getAccountAddressBytes();
+        byte[] target = transactionData.getByteTarget();
+        short offeredMaxFee = transactionOfferedMaxFeeValue;
+        byte currency = 1;
+
+        TransactionFlowData transactionFlowData = new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
         SignUtils.signTransaction(transactionFlowData);
         saveTransactionIntoMap(id, transactionFlowData);
         return transactionFlowData;
+    }
+
+    private static byte[] getAccountAddressBytes() {
+       if(accountBytesAddress == null) {
+           accountBytesAddress = decodeFromBASE58(AppState.account);
+       }
+       return accountBytesAddress;
     }
 
     private static void saveTransactionIntoMap(long id, TransactionFlowData transactionFlowData) {
@@ -121,7 +92,7 @@ public class ApiUtils {
         sourceMap.put(shortTransactionId, transactionRoundData);
     }
 
-    public static long createTransactionId(boolean senderIndexExists, boolean receiverIndexExists, long transactionId)
+    private static long createTransactionId(boolean senderIndexExists, boolean receiverIndexExists, long transactionId)
         throws ConverterException {
 
         byte[] transactionIdBytes = toByteArray(transactionId);
@@ -134,7 +105,7 @@ public class ApiUtils {
         return toLong(transactionIdBitSet);
     }
 
-    public static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(String sourceBase58,
+    private static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(String sourceBase58,
         String targetBase58) throws NodeClientException, ConverterException {
 
         // get transactions count from Node and increment it
@@ -166,44 +137,15 @@ public class ApiUtils {
             targetBase58);
     }
 
-    //todo need refactoring
-    public static void deploySmartContractProcess(String javaCode, byte[] byteCode, Callback<ApiResponseData> callback)
-        throws NodeClientException, ConverterException {
-        SmartContractInvocationData smartContractInvocationData =
-            new SmartContractInvocationData(javaCode, byteCode, "", "", new ArrayList<>(), false);
-
-        String transactionTarget = generatePublicKeyBase58();
-        LOGGER.info("transactionTarget = {}", transactionTarget);
-
-        LOGGER.debug("SmartContractData structure ^^^^^");
-        LOGGER.debug("sourceCode = " + smartContractInvocationData.getSourceCode());
-        if (smartContractInvocationData.getByteCode() != null) {
-            LOGGER.debug("byteCode.length = " + smartContractInvocationData.getByteCode().length);
-        } else {
-            LOGGER.debug("byteCode.length = 0");
-        }
-        LOGGER.debug("hashState = " + smartContractInvocationData.getHashState());
-        LOGGER.debug("method = " + smartContractInvocationData.getMethod());
-        if (smartContractInvocationData.getParams() != null) {
-            LOGGER.debug("params.length = " + smartContractInvocationData.getParams().size());
-            for (int i = 0; i < smartContractInvocationData.getParams().size(); i++) {
-                LOGGER.debug("params." + i + " = " + smartContractInvocationData.getParams().get(i));
-            }
-        } else {
-            LOGGER.debug("params.length = 0");
-        }
-        LOGGER.debug("SmartContractData structure vvvvv");
-
-        SmartContractData scData =
-            new SmartContractData(decodeFromBASE58(transactionTarget), decodeFromBASE58(account), javaCode, byteCode,
-                "", null); //todo unused hashState
-        executeSmartContractProcess("", new ArrayList<>(), scData, callback);
+    public static ApiResponseData deploySmartContractProcess(String javaCode, byte[] byteCode) throws NodeClientException, ConverterException {
+        SmartContractData scData = new SmartContractData(generateAddress(), accountBytesAddress, javaCode, byteCode, "", null);
+        return createSmartContractTransaction(scData);
     }
 
-    private static String generatePublicKeyBase58() {
+    private static byte[] generateAddress() {
         KeyPair keyPair = Ed25519.generateKeyPair();
         PublicKey publicKey = keyPair.getPublic();
-        return encodeToBASE58(Ed25519.publicKeyToBytes(publicKey));
+        return Ed25519.publicKeyToBytes(publicKey);
     }
 
     public static String generateSmartContractHashState(byte[] byteCode) throws CreditsException {

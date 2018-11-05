@@ -80,7 +80,7 @@ public class UITest {
     @Test
     public void allForms() throws Exception {
         mockInitializer.startForm = VistaNavigator.WELCOME;
-        NodeApiServiceImpl.sourceMap = FakeData.sourceMap;
+//        NodeApiServiceImpl.sourceMap = FakeData.sourceMap; //fixme ???
         CoinsUtils.saveCoinsToFile(FakeData.coins);
 
         //balances

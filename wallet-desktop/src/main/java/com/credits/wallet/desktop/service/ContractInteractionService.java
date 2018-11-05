@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TransferQueue;
 import java.util.function.BiConsumer;
 
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
@@ -19,8 +20,10 @@ import static com.credits.general.util.Converter.objectToVariant;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.contractExecutorService;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
+import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils.STRING_TYPE;
 import static com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils.createVariantObject;
+import static java.util.Arrays.*;
 
 /**
  * Created by Igor Goryunov on 28.10.2018
@@ -40,7 +43,11 @@ public class ContractInteractionService {
     public void transferTo(String smartContractAddress, String target, BigDecimal amount, Callback<String> callback) {
         CompletableFuture
             .supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress))
-            .thenApply((sc) -> executeSmartContract(account, sc, TRANSFER_METHOD, variantOf(STRING_TYPE, target), variantOf(STRING_TYPE, amount.toString())))
+            .thenApply((sc) -> {
+                sc.setMethod(TRANSFER_METHOD);
+                sc.setParams(asList(createVariantObject(STRING_TYPE, target), createVariantObject(STRING_TYPE, amount.toString())));
+                return createSmartContractTransaction(sc).getCode().name();
+            })
             .whenComplete(handleCallback(callback));
     }
 
@@ -65,7 +72,7 @@ public class ContractInteractionService {
             sc.getByteCode(),
             sc.getObjectState(),
             methodName,
-            Arrays.asList(params));
+            asList(params));
 
         if(response.getCode() != SUCCESS) {
             throw new NodeClientException("Failure. Node response: " + response.getMessage());

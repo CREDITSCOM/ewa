@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
  * Created by Rustem Saidaliyev on 20-Mar-18.
  */
 public class ApiUtilsTest {
-    private static Logger LOGGER = LoggerFactory.getLogger(ApiUtilsTest.class);
 
     @Test
     public void generateSmartContractHashStateTest() throws CreditsException {
@@ -20,8 +19,4 @@ public class ApiUtilsTest {
         Assert.assertEquals("A2CDBFDF50500999AEE29823F7D284D7", actual);
     }
 
-    @Test
-    public void createTransactionId01() throws ConverterException {
-        LOGGER.info(ApiUtils.createTransactionId(true, false, 1L) + "");
-    }
 }
