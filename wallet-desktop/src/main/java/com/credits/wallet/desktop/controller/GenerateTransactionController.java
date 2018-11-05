@@ -19,12 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static com.credits.wallet.desktop.AppState.NODE_ERROR;
-import static com.credits.wallet.desktop.AppState.amount;
-import static com.credits.wallet.desktop.AppState.coin;
-import static com.credits.wallet.desktop.AppState.contractInteractionService;
-import static com.credits.wallet.desktop.AppState.noClearForm6;
-import static com.credits.wallet.desktop.AppState.text;
+import static com.credits.wallet.desktop.AppState.*;
 import static com.credits.wallet.desktop.utils.ApiUtils.callCreateTransaction;
 
 /**
@@ -32,7 +27,7 @@ import static com.credits.wallet.desktop.utils.ApiUtils.callCreateTransaction;
  */
 public class GenerateTransactionController implements Initializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(GenerateTransactionController.class);
-    private final static String CreditsSymbol = "CS";
+    private final static String CREDITS_SYMBOL = "CS";
 
     @FXML
     BorderPane bp;
@@ -58,10 +53,10 @@ public class GenerateTransactionController implements Initializable {
     private void handleGenerate() {
         try {
             String coin = AppState.coin;
-            if(coin.equals(CreditsSymbol)) {
-                callCreateTransaction(processTransactionResult());
+            if(coin.equals(CREDITS_SYMBOL)) {
+                callCreateTransaction(handleTransactionResult());
             } else if (CoinsUtils.getCoins().get(coin)!= null) {
-                contractInteractionService.transferTo(CoinsUtils.getCoins().get(coin), AppState.toAddress, amount, processTransferTokenResult());
+                contractInteractionService.transferTo(CoinsUtils.getCoins().get(coin), AppState.toAddress, amount, handleTransferTokenResult());
             }
         } catch (CreditsException e) {
             LOGGER.error(NODE_ERROR + ": " + e.getMessage(), e);
@@ -72,7 +67,7 @@ public class GenerateTransactionController implements Initializable {
         VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
-    private Callback<String> processTransferTokenResult() {
+    private Callback<String> handleTransferTokenResult() {
         return new Callback<String>() {
             @Override
             public void onSuccess(String message) throws CreditsException {
@@ -86,16 +81,16 @@ public class GenerateTransactionController implements Initializable {
         };
     }
 
-    private Callback<ApiResponseData> processTransactionResult() {
+    private Callback<ApiResponseData> handleTransactionResult() {
         return new Callback<ApiResponseData>() {
         @Override
         public void onSuccess(ApiResponseData response) {
-            FormUtils.showPlatformInfo("Execute transaction was success");
+            FormUtils.showPlatformInfo("Transaction created");
         }
 
         @Override
         public void onError(Throwable e) {
-            LOGGER.error("failed!", e);
+            LOGGER.error("Failed!", e);
             FormUtils.showPlatformError(e.getMessage());
         }
     };
