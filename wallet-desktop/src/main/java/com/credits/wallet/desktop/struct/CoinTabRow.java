@@ -1,8 +1,9 @@
 package com.credits.wallet.desktop.struct;
 
+
 import java.io.Serializable;
 
-public class CoinTabRow implements Serializable {
+public class CoinTabRow implements Serializable, Comparable<CoinTabRow>{
 
     private static final long serialVersionUID = 4222650022718657167L;
 
@@ -41,5 +42,9 @@ public class CoinTabRow implements Serializable {
 
     public void setBalance(String balance) {
         this.balance = balance;
+    }
+
+    public int compareTo(CoinTabRow coinTabRow) {
+        return name.compareTo(coinTabRow.getName());
     }
 }

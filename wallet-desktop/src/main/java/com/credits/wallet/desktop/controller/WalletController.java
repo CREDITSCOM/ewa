@@ -35,17 +35,20 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
+import static com.credits.general.util.CriticalSection.doSafe;
 import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.amount;
 import static com.credits.wallet.desktop.AppState.coin;
 import static com.credits.wallet.desktop.AppState.contractInteractionService;
-import static com.credits.wallet.desktop.AppState.newAccount;
 import static com.credits.wallet.desktop.AppState.noClearForm6;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.AppState.text;
@@ -66,6 +69,7 @@ public class WalletController implements Initializable {
     private static Logger LOGGER = LoggerFactory.getLogger(WalletController.class);
     private final String WAITING_STATE_MESSAGE = "Processing...";
     public final String CREDITS_TOKEN_NAME = "CS";
+    private Lock lock = new ReentrantLock();
 
     @FXML
     BorderPane bp;
@@ -121,7 +125,7 @@ public class WalletController implements Initializable {
 
     private EventHandler<MouseEvent> handleDeleteToken(TableRow<CoinTabRow> row, ContextMenu cm, MenuItem removeItem) {
         return event -> {
-            if ((!row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals("CS")) {
+            if ((!row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals(CREDITS_TOKEN_NAME)) {
                 row.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
                     if (t.getButton() == MouseButton.SECONDARY) {
                         removeItem.setOnAction(event1 -> {
@@ -154,17 +158,21 @@ public class WalletController implements Initializable {
             @Override
             public void onSuccess(BigDecimal balance) {
                 coinRow.setBalance(decimalFormat.format(balance));
-                synchronized (coinsList) {
-                    coinsList.add(coinRow);
-                }
+                doSafe(() -> addCoinAndSort(coinsList, coinRow), lock);
             }
 
             @Override
             public void onError(Throwable e) {
-                coinRow.setBalance("Receive error");
-                LOGGER.error("failed!", e );
+                coinRow.setBalance("not available");
+                doSafe(() -> addCoinAndSort(coinsList, coinRow), lock);
+                LOGGER.error("cant't update balance token {}. Reason: {}", coinRow.getName(), e.getMessage() );
             }
         };
+    }
+
+    private void addCoinAndSort(List<CoinTabRow> coinTabRows, CoinTabRow coinRow){
+        coinTabRows.add(coinRow);
+        coinTabRows.sort(Comparator.naturalOrder());
     }
 
     @FXML
