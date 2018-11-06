@@ -167,7 +167,7 @@ public class NodePojoConverter {
     public static SmartContractData smartContractToSmartContractData(SmartContract smartContract) {
 
         return new SmartContractData(smartContract.getAddress(), smartContract.getDeployer(), smartContract.getSourceCode(),
-            smartContract.getByteCode(), smartContract.getHashState(), smartContract.getObjectState());
+            smartContract.getByteCode(), smartContract.getObjectState());
     }
 
     public static SmartContractInvocation smartContractInvocationDataToSmartContractInvocation(

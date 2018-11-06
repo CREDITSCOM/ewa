@@ -27,7 +27,7 @@ public class ObjectKeeperTest {
     public void setUp() throws IOException {
         objectKeeper = new ObjectKeeper<>(account, "obj");
         deleteDirectoryStream(ObjectKeeper.cacheDirectory);
-        someData.put("1",new SmartContractData(null, null, "aaa", null, "bad hash",null));
+        someData.put("1",new SmartContractData(null, null, "aaa", null,null));
     }
 
 
@@ -52,7 +52,7 @@ public class ObjectKeeperTest {
             objectKeeper.new Modifier(){
             @Override
             ConcurrentHashMap<String, SmartContractData> modify(ConcurrentHashMap<String, SmartContractData> restoredObject) {
-                restoredObject.put("2", new SmartContractData(null, null, "BBB", null, "bad hash",null));
+                restoredObject.put("2", new SmartContractData(null, null, "BBB", null, null));
                 return restoredObject;
             }
         });
@@ -63,7 +63,7 @@ public class ObjectKeeperTest {
     public void usingSerializedObject(){
         objectKeeper.serialize(someData);
         ConcurrentHashMap<String, SmartContractData> restoredObject = objectKeeper.deserialize();
-        restoredObject.put("2", new SmartContractData(null, null, "BBB", null, "bad hash",null));
+        restoredObject.put("2", new SmartContractData(null, null, "BBB", null, null));
         objectKeeper.serialize(restoredObject);
         restoredObject = objectKeeper.deserialize();
         assertEquals(2, restoredObject.size());

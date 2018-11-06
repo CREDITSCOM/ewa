@@ -1,8 +1,6 @@
 package com.credits.general.pojo;
 
-import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Converter;
-import org.omg.PortableInterceptor.ObjectReferenceFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,15 +23,16 @@ public class SmartContractData implements Serializable {
     private String base58Address;
     private boolean favorite;
 
-    public SmartContractData(byte[] address, byte[] deployer, String sourceCode, byte[] byteCode, String hashState,
+    public SmartContractData(byte[] address, byte[] deployer, String sourceCode, byte[] byteCode,
         byte[] objectState) {
         this.address = address;
         this.deployer = deployer;
         this.sourceCode = sourceCode;
         this.byteCode = byteCode;
-        this.hashState = hashState;
         this.objectState = objectState;
         this.params = new ArrayList<>();
+        this.method="";
+        this.hashState="";
     }
 
     public String getMethod() {

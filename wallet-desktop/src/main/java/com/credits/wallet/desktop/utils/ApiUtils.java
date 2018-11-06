@@ -11,12 +11,9 @@ import com.credits.general.crypto.Md5;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
-import com.credits.general.util.Callback;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.struct.CalcTransactionIdSourceTargetResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.security.KeyPair;
@@ -33,8 +30,11 @@ import static com.credits.general.util.Converter.toBitSet;
 import static com.credits.general.util.Converter.toByteArray;
 import static com.credits.general.util.Converter.toByteArrayLittleEndian;
 import static com.credits.general.util.Converter.toLong;
-import static com.credits.wallet.desktop.AppState.*;
-import static java.math.BigDecimal.*;
+import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.nodeApiService;
+import static com.credits.wallet.desktop.AppState.transactionOfferedMaxFeeValue;
+import static com.credits.wallet.desktop.AppState.walletLastTransactionIdCache;
+import static java.math.BigDecimal.ZERO;
 
 /**
  * Created by Rustem Saidaliyev on 20-Mar-18.
@@ -129,7 +129,7 @@ public class ApiUtils {
     }
 
     public static ApiResponseData deploySmartContractProcess(String javaCode, byte[] byteCode) throws NodeClientException, ConverterException {
-        SmartContractData scData = new SmartContractData(generateAddress(), decodeFromBASE58(account), javaCode, byteCode, "", null);
+        SmartContractData scData = new SmartContractData(generateAddress(), decodeFromBASE58(account), javaCode, byteCode, null);
         return createSmartContractTransaction(scData);
     }
 

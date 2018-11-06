@@ -18,7 +18,6 @@ public class NodeClientUtilsTest {
             "deployer".getBytes(),
             "sourceCode",
             null,
-            "hashState",
             new byte[]{}
         );
 
