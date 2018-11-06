@@ -41,8 +41,6 @@ import static java.math.BigDecimal.*;
  */
 public class ApiUtils {
 
-    private static byte[] accountBytesAddress;
-
     public static ApiResponseData createTransaction(String targetBase58, BigDecimal amount) throws NodeClientException, ConverterException {
         return nodeApiService.transactionFlow(getTransactionFlowData(targetBase58, amount, null));
     }
@@ -131,7 +129,7 @@ public class ApiUtils {
     }
 
     public static ApiResponseData deploySmartContractProcess(String javaCode, byte[] byteCode) throws NodeClientException, ConverterException {
-        SmartContractData scData = new SmartContractData(generateAddress(), accountBytesAddress, javaCode, byteCode, "", null);
+        SmartContractData scData = new SmartContractData(generateAddress(), decodeFromBASE58(account), javaCode, byteCode, "", null);
         return createSmartContractTransaction(scData);
     }
 
