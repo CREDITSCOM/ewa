@@ -168,7 +168,7 @@ public class NodeApiServiceImpl implements NodeApiService {
 
         TransactionFlowResult transactionFlowResult = nodeClient.transactionFlow(transaction);
         ApiResponseData response = transactionFlowResultToApiResponseData(transactionFlowResult);
-        /*response.setRoundNumber(transactionFlowResult.getStatus());*/
+        response.setRoundNumber(transactionFlowResult.getRoundNum());
         response.setSource(encodeToBASE58(transaction.getSource()));
         response.setTarget(encodeToBASE58(transaction.getTarget()));
 

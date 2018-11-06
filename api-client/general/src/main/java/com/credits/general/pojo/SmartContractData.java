@@ -5,6 +5,7 @@ import com.credits.general.util.Converter;
 import org.omg.PortableInterceptor.ObjectReferenceFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class SmartContractData implements Serializable {
         this.byteCode = byteCode;
         this.hashState = hashState;
         this.objectState = objectState;
+        this.params = new ArrayList<>();
     }
 
     public String getMethod() {

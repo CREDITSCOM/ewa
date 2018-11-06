@@ -66,7 +66,7 @@ public class ApiUtils {
         CalcTransactionIdSourceTargetResult transactionData = ApiUtils.calcTransactionIdSourceTarget(account, targetBase58);
 
         long id = transactionData.getTransactionId();
-        byte[] source = getAccountAddressBytes();
+        byte[] source = transactionData.getByteSource();
         byte[] target = transactionData.getByteTarget();
         short offeredMaxFee = transactionOfferedMaxFeeValue;
         byte currency = 1;
@@ -75,13 +75,6 @@ public class ApiUtils {
         SignUtils.signTransaction(transactionFlowData);
         saveTransactionIntoMap(id, transactionFlowData);
         return transactionFlowData;
-    }
-
-    private static byte[] getAccountAddressBytes() {
-       if(accountBytesAddress == null) {
-           accountBytesAddress = decodeFromBASE58(AppState.account);
-       }
-       return accountBytesAddress;
     }
 
     private static void saveTransactionIntoMap(long id, TransactionFlowData transactionFlowData) {
