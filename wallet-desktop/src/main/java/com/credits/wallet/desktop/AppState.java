@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop;
 
 import com.credits.client.executor.service.ContractExecutorApiService;
-import com.credits.client.node.pojo.TransactionRoundData;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.util.ObjectKeeper;
@@ -41,7 +40,6 @@ public class AppState {
     public static boolean noClearForm6;
     public static String account;
 
-    public static ConcurrentHashMap<String, ConcurrentHashMap<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();
 
     public static BigDecimal amount = BigDecimal.ZERO;
     public static BigDecimal transactionFeeValue = Const.FEE_TRAN_AMOUNT;
