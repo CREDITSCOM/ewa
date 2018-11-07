@@ -12,6 +12,8 @@ public class ApiResponseData {
     private Variant scExecRetVal;
     private String source;
     private String target;
+    private int roundNumber;
+    private long transactionId;
 
     public ApiResponseData(
             ApiResponseCode code,
@@ -53,6 +55,22 @@ public class ApiResponseData {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public int getRoundNumber() {
+        return roundNumber;
+    }
+
+    public void setRoundNumber(int roundNumber) {
+        this.roundNumber = roundNumber;
+    }
+
+    public long getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(long transactionId) {
+        this.transactionId = transactionId;
     }
 
     public String getTarget() {

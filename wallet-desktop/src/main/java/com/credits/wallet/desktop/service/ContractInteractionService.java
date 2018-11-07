@@ -6,15 +6,14 @@ import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
+import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TransferQueue;
-import java.util.function.BiConsumer;
 
+import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Converter.objectToVariant;
 import static com.credits.wallet.desktop.AppState.account;
@@ -23,7 +22,7 @@ import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils.STRING_TYPE;
 import static com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils.createVariantObject;
-import static java.util.Arrays.*;
+import static java.util.Arrays.asList;
 
 /**
  * Created by Igor Goryunov on 28.10.2018
@@ -46,21 +45,13 @@ public class ContractInteractionService {
             .thenApply((sc) -> {
                 sc.setMethod(TRANSFER_METHOD);
                 sc.setParams(asList(createVariantObject(STRING_TYPE, target), createVariantObject(STRING_TYPE, amount.toString())));
-                return createSmartContractTransaction(sc).getCode().name();
+                TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData =
+                    TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account, sc.getBase58Address());
+                return createSmartContractTransaction(transactionData, sc).getCode().name();
             })
             .whenComplete(handleCallback(callback));
     }
 
-    private <T> BiConsumer<T, Throwable> handleCallback(Callback<T> callback) {
-        return (result, error) -> {
-            if (error == null)
-                callback.onSuccess(result);
-            else{
-                LOGGER.error(error.getLocalizedMessage());
-                callback.onError(error);
-            }
-        };
-    }
 
     private String executeSmartContract(String smartContractAddress, SmartContractData sc, String methodName, Variant... params) {
         if (sc == null || sc.getObjectState().length == 0) {

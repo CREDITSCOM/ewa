@@ -7,7 +7,9 @@ import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
+import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
+import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -18,9 +20,17 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
-import static com.credits.client.node.service.NodeApiServiceImpl.async;
-import static com.credits.wallet.desktop.AppState.*;
+import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
+import static com.credits.wallet.desktop.AppState.NODE_ERROR;
+import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.amount;
+import static com.credits.wallet.desktop.AppState.coin;
+import static com.credits.wallet.desktop.AppState.coinsKeeper;
+import static com.credits.wallet.desktop.AppState.contractInteractionService;
+import static com.credits.wallet.desktop.AppState.noClearForm6;
+import static com.credits.wallet.desktop.AppState.text;
 import static com.credits.wallet.desktop.utils.ApiUtils.createTransaction;
 
 /**
@@ -56,7 +66,10 @@ public class GenerateTransactionController implements Initializable {
             String coin = AppState.coin;
             Map<String, String> coins;
             if(coin.equals(CREDITS_SYMBOL)) {
-                async(() -> createTransaction(toAddress.getText(), AppState.amount), handleTransactionResult());
+                CompletableFuture
+                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,toAddress.getText()))
+                    .thenApply((transactionData) -> createTransaction(transactionData, AppState.amount))
+                    .whenComplete(handleCallback(handleTransactionResult()));
             } else if ((coins = coinsKeeper.getKeptObject()) != null) {
                 if (coinsKeeper.getKeptObject().get(coin) != null) {
                     contractInteractionService.transferTo(coins.get(coin), AppState.toAddress, amount,
@@ -89,7 +102,8 @@ public class GenerateTransactionController implements Initializable {
     private Callback<ApiResponseData> handleTransactionResult() {
         return new Callback<ApiResponseData>() {
         @Override
-        public void onSuccess(ApiResponseData response) {
+        public void onSuccess(ApiResponseData resultData) {
+            ApiUtils.saveTransactionRoundNumberIntoMap(resultData);
             FormUtils.showPlatformInfo("Transaction created");
         }
 

@@ -8,7 +8,7 @@ import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
-import com.credits.general.util.Utils;
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -124,8 +124,8 @@ public class HistoryController implements Initializable {
             public void onSuccess(List<TransactionData> transactionsList) throws CreditsException {
                 btnNext.setDisable(transactionsList.size() < pageSize);
 
-                if (Utils.sourceMap.get(account) != null) {
-                    ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = Utils.sourceMap.get(account);
+                if (AppState.sourceMap.get(account) != null) {
+                    ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = AppState.sourceMap.get(account);
                     List<Long> validIds =
                         transactionsList.stream().map(TransactionData::getId).collect(Collectors.toList());
                     sourceTransactionMap.remove(validIds);

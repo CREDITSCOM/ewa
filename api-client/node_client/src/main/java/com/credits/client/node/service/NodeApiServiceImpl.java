@@ -28,10 +28,8 @@ import com.credits.client.node.thrift.generated.WalletTransactionsCountGetResult
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
-import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Function;
-import com.credits.general.util.Utils;
 import com.credits.general.util.exception.ConverterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static com.credits.client.node.util.NodeClientUtils.logApiResponse;
@@ -95,15 +93,18 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     @Override
-    public List<TransactionData> getTransactions(String address, long offset, long limit) throws NodeClientException, ConverterException {
-        LOGGER.info(String.format("getTransactions: ---> address = %s, offset = %d, limit = %d", address, offset, limit));
+    public List<TransactionData> getTransactions(String address, long offset, long limit)
+        throws NodeClientException, ConverterException {
+        LOGGER.info(
+            String.format("getTransactions: ---> address = %s, offset = %d, limit = %d", address, offset, limit));
         TransactionsGetResult result = nodeClient.getTransactions(decodeFromBASE58(address), offset, limit);
         processApiResponse(result.getStatus());
         List<TransactionData> transactionDataList = new ArrayList<>();
         for (SealedTransaction sealedTransaction : result.getTransactions()) {
             transactionDataList.add(transactionToTransactionData(sealedTransaction));
         }
-        LOGGER.info(String.format("getTransactions: <--- address = %s, transactions count = %d", address, transactionDataList.size()));
+        LOGGER.info(String.format("getTransactions: <--- address = %s, transactions count = %d", address,
+            transactionDataList.size()));
         return transactionDataList;
     }
 
@@ -125,7 +126,8 @@ public class NodeApiServiceImpl implements NodeApiService {
         processApiResponse(result.getStatus());
 
         if (!result.isIsFound()) {
-            throw new NodeClientException(String.format("Pool by hash %s and index %s is not found", Arrays.toString(hash), index));
+            throw new NodeClientException(
+                String.format("Pool by hash %s and index %s is not found", Arrays.toString(hash), index));
         }
         PoolData poolData = poolToPoolData(result.getPool());
         LOGGER.info(String.format("getPoolInfo: <--- index = %d", index));
@@ -146,7 +148,8 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     @Override
-    public ApiResponseData smartContractTransactionFlow(SmartContractTransactionFlowData scTransaction) throws NodeClientException, ConverterException {
+    public ApiResponseData smartContractTransactionFlow(SmartContractTransactionFlowData scTransaction)
+        throws NodeClientException, ConverterException {
         //todo validation
         Transaction transaction = smartContractTransactionFlowDataToTransaction(scTransaction);
         LOGGER.debug("smartContractTransactionFlow -> {}", transaction);
@@ -168,19 +171,13 @@ public class NodeApiServiceImpl implements NodeApiService {
     private ApiResponseData callTransactionFlow(Transaction transaction) {
         TransactionFlowResult transactionFlowResult = nodeClient.transactionFlow(transaction);
         ApiResponseData response = transactionFlowResultToApiResponseData(transactionFlowResult);
-        transactionMapSetRoundNumber(transaction, transactionFlowResult);
+        response.setRoundNumber(transactionFlowResult.getRoundNum());
+        response.setTransactionId(transaction.getId());
         response.setSource(encodeToBASE58(transaction.getSource()));
         response.setTarget(encodeToBASE58(transaction.getTarget()));
         return response;
     }
 
-    private void transactionMapSetRoundNumber(Transaction transaction, TransactionFlowResult transactionFlowResult) {
-        ConcurrentHashMap<Long, TransactionRoundData> tempTransactionsData =
-            Utils.sourceMap.get(NodeApiServiceImpl.account);
-        TransactionRoundData transactionRoundData =
-            tempTransactionsData.get(NodePojoConverter.getShortTransactionId(transaction.getId()));
-        transactionRoundData.setRoundNumber(transactionFlowResult.getRoundNum());
-    }
 
     @Override
     public SmartContractData getSmartContract(String address) throws NodeClientException, ConverterException {
@@ -201,7 +198,10 @@ public class NodeApiServiceImpl implements NodeApiService {
         logApiResponse(result.getStatus());
         processApiResponse(result.getStatus());
         LOGGER.info("<--- smart contracts size = {}", result.getSmartContractsList().size());
-        return result.getSmartContractsList().stream().map(NodePojoConverter::smartContractToSmartContractData).collect(Collectors.toList());
+        return result.getSmartContractsList()
+            .stream()
+            .map(NodePojoConverter::smartContractToSmartContractData)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -223,7 +223,7 @@ public class NodeApiServiceImpl implements NodeApiService {
     public Integer getWalletId(String address) throws NodeClientException, ConverterException {
         WalletIdGetResult result = nodeClient.getWalletId(decodeFromBASE58(address));
         processApiResponse(result.getStatus());
-        LOGGER.debug("<---  get wallet id {}",result.getWalletId());
+        LOGGER.debug("<---  get wallet id {}", result.getWalletId());
         return result.getWalletId();
     }
 
@@ -236,23 +236,27 @@ public class NodeApiServiceImpl implements NodeApiService {
 
     @Override
     //todo add pojo TransactionsStateGetResult
-    public TransactionsStateGetResult getTransactionsState(String address, List<Long> transactionIdList) throws NodeClientException, ConverterException {
-        TransactionsStateGetResult result = nodeClient.getTransactionsState(decodeFromBASE58(address), transactionIdList);
+    public TransactionsStateGetResult getTransactionsState(String address, List<Long> transactionIdList)
+        throws NodeClientException, ConverterException {
+        TransactionsStateGetResult result =
+            nodeClient.getTransactionsState(decodeFromBASE58(address), transactionIdList);
         processApiResponse(result.getStatus());
         return result;
     }
 
     public static <R> void async(Function<R> apiCall, Callback<R> callback) {
-        CompletableFuture
-            .supplyAsync(apiCall::apply)
-            .whenComplete((result, error) -> {
-            if (error == null)
+        CompletableFuture.supplyAsync(apiCall::apply).whenComplete(handleCallback(callback));
+    }
+
+    public static <R> BiConsumer<R, Throwable> handleCallback(Callback<R> callback) {
+        return (result, error) -> {
+            if (error == null) {
                 callback.onSuccess(result);
-            else{
+            } else {
                 LOGGER.error(error.getLocalizedMessage());
                 callback.onError(error);
             }
-        });
+        };
     }
 
 }
