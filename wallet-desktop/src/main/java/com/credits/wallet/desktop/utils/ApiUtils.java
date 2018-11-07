@@ -11,27 +11,18 @@ import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.Utils;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.utils.struct.CalcTransactionIdSourceTargetResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.BitSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
 import static com.credits.general.util.Converter.decodeFromBASE58;
-import static com.credits.general.util.Converter.encodeToBASE58;
-import static com.credits.general.util.Converter.toBitSet;
-import static com.credits.general.util.Converter.toByteArray;
-import static com.credits.general.util.Converter.toByteArrayLittleEndian;
-import static com.credits.general.util.Converter.toLong;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.AppState.transactionOfferedMaxFeeValue;
-import static com.credits.wallet.desktop.AppState.walletLastTransactionIdCache;
 import static java.math.BigDecimal.ZERO;
 
 /**
@@ -62,8 +53,8 @@ public class ApiUtils {
 
     private static TransactionFlowData getTransactionFlowData(String targetBase58, BigDecimal amount,
         byte[] smartContractBytes) {
-        CalcTransactionIdSourceTargetResult transactionData =
-            ApiUtils.calcTransactionIdSourceTarget(account, targetBase58);
+        TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData =
+            TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account, targetBase58);
 
         long id = transactionData.getTransactionId();
         byte[] source = transactionData.getByteSource();
@@ -71,8 +62,7 @@ public class ApiUtils {
         short offeredMaxFee = transactionOfferedMaxFeeValue;
         byte currency = 1;
 
-        saveTransactionIntoMap(id, account, targetBase58, amount.toString(),
-            String.valueOf(currency));
+        saveTransactionIntoMap(id, account, targetBase58, amount.toString(), String.valueOf(currency));
 
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
@@ -89,53 +79,6 @@ public class ApiUtils {
         sourceMap.put(shortTransactionId, transactionRoundData);
     }
 
-    private static long createTransactionId(boolean senderIndexExists, boolean receiverIndexExists, long transactionId)
-        throws ConverterException {
-
-        byte[] transactionIdBytes = toByteArray(transactionId);
-        BitSet transactionIdBitSet = toBitSet(transactionIdBytes);
-        for (int i = 63; i > 45; i--) {
-            transactionIdBitSet.set(i, false);
-        }
-        transactionIdBitSet.set(47, senderIndexExists);
-        transactionIdBitSet.set(46, receiverIndexExists);
-        return toLong(transactionIdBitSet);
-    }
-
-    private static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(String sourceBase58,
-        String targetBase58) throws NodeClientException, ConverterException {
-
-        // get transactions count from Node and increment it
-        Long transactionId = nodeApiService.getWalletTransactionsCount(sourceBase58) + 1;
-        // get last transaction id from cache
-        AtomicLong lastTransactionId = walletLastTransactionIdCache.get(sourceBase58);
-
-        if(lastTransactionId==null || transactionId > lastTransactionId.get()) {
-            walletLastTransactionIdCache.put(sourceBase58,new AtomicLong(transactionId));
-        } else {
-            transactionId = lastTransactionId.incrementAndGet();
-        }
-
-        LOGGER.info("transaction ID = {}",transactionId);
-
-        boolean sourceIndexExists = false;
-        boolean targetIndexExists = false;
-
-        Integer sourceWalletId = nodeApiService.getWalletId(sourceBase58);
-        if (sourceWalletId != 0) {
-            sourceIndexExists = true;
-            sourceBase58 = encodeToBASE58(toByteArrayLittleEndian(sourceWalletId, 4));
-        }
-        Integer targetWalletId = nodeApiService.getWalletId(targetBase58);
-        if (targetWalletId != 0) {
-            targetIndexExists = true;
-            targetBase58 = encodeToBASE58(toByteArrayLittleEndian(targetWalletId, 4));
-        }
-
-        return new CalcTransactionIdSourceTargetResult(
-            ApiUtils.createTransactionId(sourceIndexExists, targetIndexExists, transactionId), sourceBase58,
-            targetBase58);
-    }
 
     public static ApiResponseData deploySmartContractProcess(String javaCode, byte[] byteCode,
         byte[] smartContractAddress) throws NodeClientException, ConverterException {

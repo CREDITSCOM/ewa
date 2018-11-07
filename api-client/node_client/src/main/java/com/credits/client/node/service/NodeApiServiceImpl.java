@@ -231,7 +231,6 @@ public class NodeApiServiceImpl implements NodeApiService {
     public Long getWalletTransactionsCount(String address) throws NodeClientException, ConverterException {
         WalletTransactionsCountGetResult result = nodeClient.getWalletTransactionsCount(decodeFromBASE58(address));
         processApiResponse(result.getStatus());
-        LOGGER.debug("<---  get transaction count(id) {}",result.getLastTransactionInnerId());
         return result.getLastTransactionInnerId();
     }
 
