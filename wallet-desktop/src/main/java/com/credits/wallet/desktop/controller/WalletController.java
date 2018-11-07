@@ -34,8 +34,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.Comparator;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -66,9 +64,11 @@ public class WalletController implements Initializable {
     private static final String ERR_AMOUNT = "Amount must be greater than 0";
     private static final String ERR_TO_ADDRESS = "To address must not be empty";
     private static Logger LOGGER = LoggerFactory.getLogger(WalletController.class);
-    private final String WAITING_STATE_MESSAGE = "Processing...";
+    private final String WAITING_STATE_MESSAGE = "processing...";
+    private final String ERROR_STATE_MESSAGE = "not available";
+    private final DecimalFormat creditsDecimalFormat = new DecimalFormat("##0." + repeat('0', CREDITS_DECIMAL));
+    private Lock lock = new ReentrantLock(true);
     public final String CREDITS_TOKEN_NAME = "CS";
-    private Lock lock = new ReentrantLock();
 
     @FXML
     BorderPane bp;
@@ -91,7 +91,9 @@ public class WalletController implements Initializable {
     @FXML
     private TextField transText;
     @FXML
-    private TableView<CoinTabRow> coinsTableView;
+    private volatile TableView<CoinTabRow> coinsTableView;
+    private String GET_ERROR_MESSAGE;
+
 
     @FXML
     private void handleLogout() {
@@ -112,14 +114,13 @@ public class WalletController implements Initializable {
 
     @FXML
     private void handleRefreshBalance() {
-        getCoins(coinsTableView);
+        updateCoins(coinsTableView);
     }
 
-    private void getCoins(TableView<CoinTabRow> tableView) {
+    private void updateCoins(TableView<CoinTabRow> tableView) {
         ObservableList<CoinTabRow> tableViewItems = tableView.getItems();
-        tableViewItems.clear();
-        addCsCoinRow(tableViewItems);
-        coinsKeeper.getKeptObject(ConcurrentHashMap::new).forEach((coinName, smartContract) -> addUserCoin(coinName, smartContract, tableViewItems));
+        addOrUpdateCsCoinRow(tableViewItems);
+        coinsKeeper.getKeptObject(ConcurrentHashMap::new).forEach((coinName, contractAddress) -> addOrUpdateUserCoinRow(tableViewItems, coinName, contractAddress));
     }
 
     private EventHandler<MouseEvent> handleDeleteToken(TableRow<CoinTabRow> row, ContextMenu cm, MenuItem removeItem) {
@@ -130,13 +131,12 @@ public class WalletController implements Initializable {
                         removeItem.setOnAction(event1 -> {
                             coinsTableView.getItems().remove(row.getItem());
                             coinsKeeper.modify(coinsKeeper.new Modifier() {
-                                   @Override
-                                   public ConcurrentHashMap<String, String> modify(
-                                       ConcurrentHashMap<String, String> restoredObject) {
-                                   restoredObject.remove(row.getItem().getName());
-                                   return restoredObject;
-                                   }
-                               });
+                                @Override
+                                public ConcurrentHashMap<String, String> modify(ConcurrentHashMap<String, String> restoredObject) {
+                                    restoredObject.remove(row.getItem().getName());
+                                    return restoredObject;
+                                }
+                            });
                         });
                         cm.show(coinsTableView, t.getScreenX(), t.getScreenY());
                     }
@@ -145,38 +145,55 @@ public class WalletController implements Initializable {
         };
     }
 
-    private void addCsCoinRow(List<CoinTabRow> tableViewItems) {
-        CoinTabRow newCoinRow = new CoinTabRow(CREDITS_TOKEN_NAME, WAITING_STATE_MESSAGE, null);
-        DecimalFormat decimalFormat = new DecimalFormat("##0." + repeat('0', CREDITS_DECIMAL));
-        async(() -> nodeApiService.getBalance(account), updateCoinValue(tableViewItems, newCoinRow, decimalFormat));
+    private void addOrUpdateCsCoinRow(ObservableList<CoinTabRow> tableViewItems) {
+        CoinTabRow coinRow = getCoinTabRow(tableViewItems, CREDITS_TOKEN_NAME, null);
+        changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
+        async(() -> nodeApiService.getBalance(account), updateCoinValue(coinRow, creditsDecimalFormat));
     }
 
-    private void addUserCoin(String coinName, String smartContractAddress, List<CoinTabRow> coinRows) {
-        CoinTabRow newCoinRow = new CoinTabRow(coinName, WAITING_STATE_MESSAGE, smartContractAddress);
-        DecimalFormat decimalFormat = new DecimalFormat("##0.000000000000000000"); // fixme must use the method "tokenContract.decimal()"
-        contractInteractionService.getSmartContractBalance(smartContractAddress, updateCoinValue(coinRows, newCoinRow, decimalFormat));
+    private void addOrUpdateUserCoinRow(ObservableList<CoinTabRow> tableViewItems, String coinName, String smartContractAddress) {
+        CoinTabRow coinRow = getCoinTabRow(tableViewItems, coinName, smartContractAddress);
+        if(coinRow.getLock().tryLock()) {
+            LOGGER.debug("{} take lock", coinName);
+            changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
+            DecimalFormat decimalFormat = new DecimalFormat("##0.000000000000000000"); // fixme must use the method "tokenContract.decimal()"
+            contractInteractionService.getSmartContractBalance(smartContractAddress, updateCoinValue(coinRow, decimalFormat));
+        }
     }
 
-    private Callback<BigDecimal> updateCoinValue(List<CoinTabRow> coinsList, CoinTabRow coinRow, DecimalFormat decimalFormat) {
+    private void changeTableViewValue(CoinTabRow coinRow, String value) {
+            coinRow.setValue(value);
+            coinsTableView.refresh();
+    }
+
+    private CoinTabRow getCoinTabRow(ObservableList<CoinTabRow> tableViewItems, String tokenName, String contractAddress) {
+        CoinTabRow coinRow = new CoinTabRow(tokenName, WAITING_STATE_MESSAGE, contractAddress);
+        return tableViewItems.stream()
+            .filter(foundCoinRow -> foundCoinRow.getName().equals(coinRow.getName()))
+            .findFirst()
+            .orElseGet(() -> {
+                tableViewItems.add(coinRow);
+                return coinRow;
+            });
+    }
+
+    private Callback<BigDecimal> updateCoinValue(CoinTabRow coinRow, DecimalFormat decimalFormat) {
         return new Callback<BigDecimal>() {
             @Override
             public void onSuccess(BigDecimal balance) {
-                coinRow.setBalance(decimalFormat.format(balance));
-                doSafe(() -> addCoinAndSort(coinsList, coinRow), lock);
+                changeTableViewValue(coinRow, decimalFormat.format(balance));
+                LOGGER.debug("{} free lock", coinRow.getName());
+                coinRow.getLock().unlock();
             }
 
             @Override
             public void onError(Throwable e) {
-                coinRow.setBalance("not available");
-                doSafe(() -> addCoinAndSort(coinsList, coinRow), lock);
-                LOGGER.error("cant't update balance token {}. Reason: {}", coinRow.getName(), e.getMessage() );
+                changeTableViewValue(coinRow, ERROR_STATE_MESSAGE);
+                LOGGER.debug("{} free lock", coinRow.getName());
+                coinRow.getLock().unlock();
+                LOGGER.error("cant't update balance token {}. Reason: {}", coinRow.getName(), e.getMessage());
             }
         };
-    }
-
-    private void addCoinAndSort(List<CoinTabRow> coinTabRows, CoinTabRow coinRow){
-        coinTabRows.add(coinRow);
-        coinTabRows.sort(Comparator.naturalOrder());
     }
 
     @FXML
@@ -277,7 +294,7 @@ public class WalletController implements Initializable {
         FormUtils.resizeForm(bp);
 
         initializeTable(coinsTableView);
-        getCoins(coinsTableView);
+        updateCoins(coinsTableView);
 
         NodeApiServiceImpl.account = account;
         wallet.setText(account);
