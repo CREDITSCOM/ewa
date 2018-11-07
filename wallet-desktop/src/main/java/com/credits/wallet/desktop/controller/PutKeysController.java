@@ -171,9 +171,7 @@ public class PutKeysController implements Initializable {
             return;
         }
 
-        AppState.account = pubKey;
-        NodeApiServiceImpl.account = pubKey;
-        AppState.smartContractsKeeper = new ObjectKeeper<>(AppState.account, "scobj");
+        initStaticData(pubKey);
         try {
             byte[] privateKeyByteArr = Converter.decodeFromBASE58(privKey);
             AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
@@ -202,6 +200,12 @@ public class PutKeysController implements Initializable {
         if (validateKeys(pubKey, privKey)) {
             VistaNavigator.loadVista(VistaNavigator.WALLET);
         }
+    }
+
+    private void initStaticData(String pubKey) {
+        AppState.account = pubKey;
+        NodeApiServiceImpl.account = pubKey;
+        AppState.smartContractsKeeper = new ObjectKeeper<>(AppState.account, "scobj");
     }
 
     private boolean validateKeys(String publicKey, String privateKey) {

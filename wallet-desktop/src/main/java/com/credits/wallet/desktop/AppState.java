@@ -12,11 +12,10 @@ import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.credits.general.util.Constants.ds;
 
@@ -56,7 +55,7 @@ public class AppState {
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
 
-    public static Map<String, Long> walletLastTransactionIdCache = new HashMap<>();
+    public static ConcurrentHashMap<String, AtomicLong> walletLastTransactionIdCache = new ConcurrentHashMap<>();
 
     public static Short transactionOfferedMaxFeeValue = Const.OFFERED_MAX_FEE;
 

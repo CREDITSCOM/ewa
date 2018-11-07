@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.general.exception.CompilationException;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.util.Callback;
@@ -9,7 +10,6 @@ import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
-import com.credits.general.exception.CompilationException;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.EclipseJdt;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -66,9 +66,11 @@ public class SmartContractDeployController implements Initializable {
     private static final String DEFAULT_SOURCE_CODE =
         "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n\n    }" + "\n" + "}";
     private static final String[] PARENT_METHODS =
-        new String[] {"double total", "Double getBalance(String address, String currency)", "TransactionData getTransaction(String transactionId)",
-            "List<TransactionData> getTransactions(String address, long offset, long limit)", "List<PoolData> getPoolList(long offset, long limit)",
-            "PoolData getPool(String poolNumber)", "void sendTransaction(String account, String target, Double amount, String currency)"};
+        new String[] {"double total", "Double getBalance(String address, String currency)",
+            "TransactionData getTransaction(String transactionId)",
+            "List<TransactionData> getTransactions(String address, long offset, long limit)",
+            "List<PoolData> getPoolList(long offset, long limit)", "PoolData getPool(String poolNumber)",
+            "void sendTransaction(String account, String target, Double amount, String currency)"};
     //    private static final String NON_CHANGED_STR = "public class Contract extends SmartContract {";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
     private static final String CLASS_NAME = "Contract";
@@ -110,8 +112,8 @@ public class SmartContractDeployController implements Initializable {
 
         codeArea.setOnKeyPressed(k -> {
             KeyCode code = k.getCode();
-            if (code != KeyCode.TAB){
-                if(code.isLetterKey() || code.isDigitKey() || code.isNavigationKey() || code.isWhitespaceKey()){
+            if (code != KeyCode.TAB) {
+                if (code.isLetterKey() || code.isDigitKey() || code.isNavigationKey() || code.isWhitespaceKey()) {
                     tabCount = 0;
                 }
             }
@@ -188,7 +190,8 @@ public class SmartContractDeployController implements Initializable {
         String word = "";
         int pos = codeArea.getCaretPosition() - 1;
         String txt = codeArea.getText();
-        while (pos > 0 && !txt.substring(pos, pos + 1).equals(" ") && !txt.substring(pos, pos + 1).equals("\r") && !txt.substring(pos, pos + 1).equals("\n")) {
+        while (pos > 0 && !txt.substring(pos, pos + 1).equals(" ") && !txt.substring(pos, pos + 1).equals("\r") &&
+            !txt.substring(pos, pos + 1).equals("\n")) {
             word = txt.substring(pos, pos + 1) + word;
             pos--;
         }
@@ -210,7 +213,8 @@ public class SmartContractDeployController implements Initializable {
             contextMenu.getItems().add(action);
         }
 
-        contextMenu.show(codeArea, codeArea.getCaretBounds().get().getMaxX(), codeArea.getCaretBounds().get().getMaxY());
+        contextMenu.show(codeArea, codeArea.getCaretBounds().get().getMaxX(),
+            codeArea.getCaretBounds().get().getMaxY());
     }
 
     private void positionCursorToLine(int line) {
@@ -342,7 +346,7 @@ public class SmartContractDeployController implements Initializable {
     }
 
     private void addTabErrorsToDebugPane() {
-        this.errorTableView.setPrefHeight(30+this.errorTableView.getItems().size()*25);
+        this.errorTableView.setPrefHeight(30 + this.errorTableView.getItems().size() * 25);
         debugPane.getChildren().clear();
         debugPane.getChildren().add(this.errorTableView);
     }
@@ -356,18 +360,19 @@ public class SmartContractDeployController implements Initializable {
             CompilationPackage compilationPackage = new InMemoryCompiler().compile(className, javaCode);
 
             if (compilationPackage.isCompilationStatusSuccess()) {
-                List<CompilationUnit>  compilationUnits = compilationPackage.getUnits();
+                List<CompilationUnit> compilationUnits = compilationPackage.getUnits();
                 CompilationUnit compilationUnit = compilationUnits.get(0);
                 byte[] byteCode = compilationUnit.getBytecode();
-                async(() -> deploySmartContractProcess(javaCode, byteCode), handleDeployResult());
+                async(() -> deploySmartContractProcess(javaCode, byteCode,
+                    SmartContractUtils.generateSmartContractAddress()), handleDeployResult());
+
             } else {
                 DiagnosticCollector collector = compilationPackage.getCollector();
                 List<Diagnostic> diagnostics = collector.getDiagnostics();
                 StringBuilder errors = new StringBuilder();
-                diagnostics.forEach(action -> errors.append(String.format("line %s, error %s; ", action.getLineNumber(), action.getMessage(null))));
-                throw new CompilationException(
-                    String.format("Compilation errors: %s", errors.toString())
-                );
+                diagnostics.forEach(action -> errors.append(
+                    String.format("line %s, error %s; ", action.getLineNumber(), action.getMessage(null))));
+                throw new CompilationException(String.format("Compilation errors: %s", errors.toString()));
             }
         } catch (CompilationException | CreditsException e) {
             LOGGER.error("failed!", e);
@@ -376,15 +381,17 @@ public class SmartContractDeployController implements Initializable {
     }
 
     private Callback<ApiResponseData> handleDeployResult() {
-        return new Callback<ApiResponseData>(){
+        return new Callback<ApiResponseData>() {
             @Override
             public void onSuccess(ApiResponseData resultData) {
                 String target = resultData.getTarget();
                 StringSelection selection = new StringSelection(target);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);
-                FormUtils.showPlatformInfo(String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", target));
+                FormUtils.showPlatformInfo(
+                    String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", target));
             }
+
             @Override
             public void onError(Throwable e) {
                 LOGGER.error("failed!", e);
@@ -395,12 +402,14 @@ public class SmartContractDeployController implements Initializable {
 
     private void checkClassAndSuperclassNames(String className, String sourceCode) throws CreditsException {
         if (!className.equals(CLASS_NAME)) {
-            throw new CreditsException(String.format("Wrong class name %s, class name must be %s", className, CLASS_NAME));
+            throw new CreditsException(
+                String.format("Wrong class name %s, class name must be %s", className, CLASS_NAME));
         }
         String superclassName = SourceCodeUtils.parseSuperclassName(sourceCode);
 
         if (!superclassName.equals(SUPERCLASS_NAME)) {
-            throw new CreditsException(String.format("Wrong superclass name %s, superclass name must be %s", superclassName, SUPERCLASS_NAME));
+            throw new CreditsException(
+                String.format("Wrong superclass name %s, superclass name must be %s", superclassName, SUPERCLASS_NAME));
         }
     }
 

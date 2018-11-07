@@ -1,5 +1,8 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.client.node.crypto.Ed25519;
+import com.credits.general.crypto.Md5;
+import com.credits.general.exception.CreditsException;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import javafx.concurrent.Task;
@@ -17,6 +20,8 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.KeyPair;
+import java.security.PublicKey;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Optional;
@@ -24,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.credits.general.util.Converter.byteArrayToHex;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 
@@ -148,5 +154,16 @@ public class SmartContractUtils {
         };
 
         codeArea.setOnMouseClicked(contextMenu);
+    }
+
+    public static byte[] generateSmartContractAddress() {
+        KeyPair keyPair = Ed25519.generateKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
+        return Ed25519.publicKeyToBytes(publicKey);
+    }
+
+    public static String generateSmartContractHashState(byte[] byteCode) throws CreditsException {
+        byte[] hashBytes = Md5.encrypt(byteCode);
+        return byteArrayToHex(hashBytes);
     }
 }
