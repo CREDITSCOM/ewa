@@ -60,5 +60,6 @@ public class AppState {
     public static Short transactionOfferedMaxFeeValue = Const.OFFERED_MAX_FEE;
 
     public static ObjectKeeper<ConcurrentHashMap<String, SmartContractData>> smartContractsKeeper;
+    public static ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper;
     public static String text;
 }

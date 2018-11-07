@@ -206,6 +206,7 @@ public class PutKeysController implements Initializable {
         AppState.account = pubKey;
         NodeApiServiceImpl.account = pubKey;
         AppState.smartContractsKeeper = new ObjectKeeper<>(AppState.account, "scobj");
+        AppState.coinsKeeper = new ObjectKeeper<>(AppState.account, "coins");
     }
 
     private boolean validateKeys(String publicKey, String privateKey) {

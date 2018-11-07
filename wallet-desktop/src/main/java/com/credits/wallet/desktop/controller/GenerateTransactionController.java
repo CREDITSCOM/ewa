@@ -7,7 +7,6 @@ import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
-import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
@@ -54,10 +54,14 @@ public class GenerateTransactionController implements Initializable {
     private void handleGenerate() {
         try {
             String coin = AppState.coin;
+            Map<String, String> coins;
             if(coin.equals(CREDITS_SYMBOL)) {
                 async(() -> createTransaction(toAddress.getText(), AppState.amount), handleTransactionResult());
-            } else if (CoinsUtils.getCoins().get(coin)!= null) {
-                contractInteractionService.transferTo(CoinsUtils.getCoins().get(coin), AppState.toAddress, amount, handleTransferTokenResult());
+            } else if ((coins = coinsKeeper.getKeptObject()) != null) {
+                if (coinsKeeper.getKeptObject().get(coin) != null) {
+                    contractInteractionService.transferTo(coins.get(coin), AppState.toAddress, amount,
+                        handleTransferTokenResult());
+                }
             }
         } catch (CreditsException e) {
             LOGGER.error(NODE_ERROR + ": " + e.getMessage(), e);

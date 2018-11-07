@@ -7,7 +7,6 @@ import com.credits.general.util.Converter;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.CoinTabRow;
-import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
 import javafx.collections.ObservableList;
@@ -48,6 +47,7 @@ import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.amount;
 import static com.credits.wallet.desktop.AppState.coin;
+import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static com.credits.wallet.desktop.AppState.contractInteractionService;
 import static com.credits.wallet.desktop.AppState.noClearForm6;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
@@ -55,7 +55,6 @@ import static com.credits.wallet.desktop.AppState.text;
 import static com.credits.wallet.desktop.AppState.toAddress;
 import static com.credits.wallet.desktop.AppState.transactionFeePercent;
 import static com.credits.wallet.desktop.AppState.transactionFeeValue;
-import static com.credits.wallet.desktop.utils.CoinsUtils.saveCoinsToFile;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 /**
@@ -120,7 +119,7 @@ public class WalletController implements Initializable {
         ObservableList<CoinTabRow> tableViewItems = tableView.getItems();
         tableViewItems.clear();
         addCsCoinRow(tableViewItems);
-        CoinsUtils.getCoins().forEach((coinName, smartContract) -> addUserCoin(coinName, smartContract, tableViewItems));
+        coinsKeeper.getKeptObject(ConcurrentHashMap::new).forEach((coinName, smartContract) -> addUserCoin(coinName, smartContract, tableViewItems));
     }
 
     private EventHandler<MouseEvent> handleDeleteToken(TableRow<CoinTabRow> row, ContextMenu cm, MenuItem removeItem) {
@@ -130,9 +129,14 @@ public class WalletController implements Initializable {
                     if (t.getButton() == MouseButton.SECONDARY) {
                         removeItem.setOnAction(event1 -> {
                             coinsTableView.getItems().remove(row.getItem());
-                            ConcurrentHashMap<String, String> coinsMap = CoinsUtils.getCoins();
-                            coinsMap.remove(row.getItem().getName());
-                            saveCoinsToFile(coinsMap);
+                            coinsKeeper.modify(coinsKeeper.new Modifier() {
+                                   @Override
+                                   public ConcurrentHashMap<String, String> modify(
+                                       ConcurrentHashMap<String, String> restoredObject) {
+                                   restoredObject.remove(row.getItem().getName());
+                                   return restoredObject;
+                                   }
+                               });
                         });
                         cm.show(coinsTableView, t.getScreenX(), t.getScreenY());
                     }

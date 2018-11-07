@@ -9,7 +9,6 @@ import com.credits.general.util.Callback;
 import com.credits.general.util.ObjectKeeper;
 import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.testUtils.FakeData;
-import com.credits.wallet.desktop.utils.CoinsUtils;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
@@ -80,8 +79,6 @@ public class UITest {
     @Test
     public void allForms() throws Exception {
         mockInitializer.startForm = VistaNavigator.WELCOME;
-//        NodeApiServiceImpl.sourceMap = FakeData.sourceMap; //fixme ???
-        CoinsUtils.saveCoinsToFile(FakeData.coins);
 
         //balances
         doAnswer(returnBalance(new BigDecimal("2443113.00192177821876551"))).when(mockContractInteractionService).getSmartContractBalance(anyString(), any());

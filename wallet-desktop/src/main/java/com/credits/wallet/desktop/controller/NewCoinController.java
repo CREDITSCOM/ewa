@@ -3,7 +3,6 @@ package com.credits.wallet.desktop.controller;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.VistaNavigator;
-import com.credits.wallet.desktop.utils.CoinsUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,11 +17,13 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static com.credits.wallet.desktop.AppState.contractInteractionService;
 
 /**
  * Created by goncharov-eg on 07.02.2018.
  */
+//TODO need refactoring
 public class NewCoinController implements Initializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(NewCoinController.class);
 
@@ -70,10 +71,12 @@ public class NewCoinController implements Initializable {
             isValidationSuccessful = false;
         }
 
-        if (CoinsUtils.getCoins().containsKey(coinName)) {
-            labelErrorCoin.setText(ERR_COIN_DUPLICATE);
-            txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful = false;
+        if (coinsKeeper.getKeptObject() != null){
+            if(coinsKeeper.getKeptObject().containsKey(coinName)) {
+                labelErrorCoin.setText(ERR_COIN_DUPLICATE);
+                txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+                isValidationSuccessful = false;
+            }
         }
 
         if (!isValidationSuccessful) {
@@ -84,9 +87,9 @@ public class NewCoinController implements Initializable {
             @Override
             public void onSuccess(BigDecimal balance) throws CreditsException {
                 if(balance != null){
-                    ConcurrentHashMap<String, String> coins = CoinsUtils.getCoins();
+                    ConcurrentHashMap<String, String> coins = coinsKeeper.getKeptObject(ConcurrentHashMap::new);
                     coins.put(coinName, smartContractAddress);
-                    CoinsUtils.saveCoinsToFile(coins);
+                    coinsKeeper.keepObject(coins);
                     FormUtils.showPlatformInfo("Coin \"" + coinName + "\" was created successfully");
                 }
             }
