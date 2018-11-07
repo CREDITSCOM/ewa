@@ -43,6 +43,15 @@ public class ObjectKeeper<T extends ConcurrentHashMap> {
         return storedObject;
     }
 
+    public T getKeptObject(Function<T> createIfAbsent) {
+        if (storedObject == null) {
+            if(doSafe(this::deserialize, lock) == null){
+                return createIfAbsent.apply();
+            }
+        }
+        return storedObject;
+    }
+
     public void modify(Modifier changeObject) {
         doSafe(() -> keepObject(changeObject.modify(getKeptObject())), lock);
     }
@@ -62,7 +71,7 @@ public class ObjectKeeper<T extends ConcurrentHashMap> {
             File serFile = serObjectFile.toFile();
             if (!serFile.exists()) {
                 if(!serFile.createNewFile()){
-                    throw new IOException("Object can't serialized. Reason: can't create new file");
+                    throw new IOException("can't create new file");
                 }
             }
 
@@ -71,7 +80,7 @@ public class ObjectKeeper<T extends ConcurrentHashMap> {
                 storedObject = object;
             }
         }catch (SecurityException | IOException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Object can't serialized. Reason: {}", e.getMessage());
         }
     }
 
