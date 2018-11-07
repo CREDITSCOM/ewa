@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
-import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.AppState.transactionOfferedMaxFeeValue;
 import static java.math.BigDecimal.ZERO;
@@ -61,7 +60,7 @@ public class ApiUtils {
         short offeredMaxFee = transactionOfferedMaxFeeValue;
         byte currency = 1;
 
-        saveTransactionIntoMap(id, account, transactionData.getTarget(), amount.toString(), String.valueOf(currency));
+        saveTransactionIntoMap(transactionData, amount.toString(), String.valueOf(currency));
 
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
@@ -69,12 +68,16 @@ public class ApiUtils {
         return transactionFlowData;
     }
 
-    private static void saveTransactionIntoMap(long id, String source, String target, String amount, String currency) {
+
+    private static void saveTransactionIntoMap(
+        TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData, String amount,
+        String currency) {
         AppState.sourceMap.computeIfAbsent(AppState.account, key -> new ConcurrentHashMap<>());
         Map<Long, TransactionRoundData> sourceMap = AppState.sourceMap.get(AppState.account);
-        long shortTransactionId = NodePojoConverter.getShortTransactionId(id);
+        long shortTransactionId = NodePojoConverter.getShortTransactionId(transactionData.getTransactionId());
         TransactionRoundData transactionRoundData =
-            new TransactionRoundData(String.valueOf(shortTransactionId), source, target, amount, currency);
+            new TransactionRoundData(String.valueOf(shortTransactionId), transactionData.getWideSource(),
+                transactionData.getWideTarget(), amount, currency);
         sourceMap.put(shortTransactionId, transactionRoundData);
     }
 

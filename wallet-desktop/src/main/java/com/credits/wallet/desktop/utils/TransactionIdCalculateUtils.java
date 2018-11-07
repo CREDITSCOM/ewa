@@ -36,18 +36,18 @@ public class TransactionIdCalculateUtils {
         return toLong(transactionIdBitSet);
     }
 
-    public static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(String sourceBase58,
-        String targetBase58) throws NodeClientException, ConverterException {
+    public static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(String wideSource,
+        String wideTarget) throws NodeClientException, ConverterException {
 
         // get transactions count from Node and increment it
-        long transactionId = nodeApiService.getWalletTransactionsCount(sourceBase58) + 1;
-        LOGGER.debug("<---  Transaction ID from node = {}",transactionId);
+        long transactionId = nodeApiService.getWalletTransactionsCount(wideSource) + 1;
+        LOGGER.debug("<---  Transaction ID from node = {}", transactionId);
 
         // get last transaction id from cache
-        AtomicLong lastTransactionId = walletLastTransactionIdCache.get(sourceBase58);
+        AtomicLong lastTransactionId = walletLastTransactionIdCache.get(wideSource);
 
         if (lastTransactionId == null || transactionId > lastTransactionId.get()) {
-            walletLastTransactionIdCache.put(sourceBase58, new AtomicLong(transactionId));
+            walletLastTransactionIdCache.put(wideSource, new AtomicLong(transactionId));
         } else {
             transactionId = lastTransactionId.incrementAndGet();
         }
@@ -55,21 +55,24 @@ public class TransactionIdCalculateUtils {
         LOGGER.info("Result transaction ID = {}", transactionId);
 
         boolean sourceIndexExists = false;
+        String shortSource = wideSource;
         boolean targetIndexExists = false;
+        String shortTarget = wideTarget;
 
-        Integer sourceWalletId = nodeApiService.getWalletId(sourceBase58);
+        Integer sourceWalletId = nodeApiService.getWalletId(wideSource);
         if (sourceWalletId != 0) {
             sourceIndexExists = true;
-            sourceBase58 = encodeToBASE58(toByteArrayLittleEndian(sourceWalletId, 4));
+            shortSource = encodeToBASE58(toByteArrayLittleEndian(sourceWalletId, 4));
         }
-        Integer targetWalletId = nodeApiService.getWalletId(targetBase58);
+        Integer targetWalletId = nodeApiService.getWalletId(wideTarget);
         if (targetWalletId != 0) {
             targetIndexExists = true;
-            targetBase58 = encodeToBASE58(toByteArrayLittleEndian(targetWalletId, 4));
+            shortTarget = encodeToBASE58(toByteArrayLittleEndian(targetWalletId, 4));
         }
 
         return new CalcTransactionIdSourceTargetResult(
-            createTransactionId(sourceIndexExists, targetIndexExists, transactionId), sourceBase58, targetBase58);
+            createTransactionId(sourceIndexExists, targetIndexExists, transactionId), wideSource, wideTarget,
+            shortSource, shortTarget);
     }
 
 
@@ -77,9 +80,31 @@ public class TransactionIdCalculateUtils {
         private long transactionId;
         private String source;
         private String target;
+        private String wideSource;
 
-        public CalcTransactionIdSourceTargetResult(long transactionId, String source, String target) {
+        public String getWideSource() {
+            return wideSource;
+        }
+
+        public void setWideSource(String wideSource) {
+            this.wideSource = wideSource;
+        }
+
+        public String getWideTarget() {
+            return wideTarget;
+        }
+
+        public void setWideTarget(String wideTarget) {
+            this.wideTarget = wideTarget;
+        }
+
+        private String wideTarget;
+
+        public CalcTransactionIdSourceTargetResult(long transactionId, String wideSource, String wideTarget,
+            String source, String target) {
             this.transactionId = transactionId;
+            this.wideSource = wideSource;
+            this.wideTarget = wideTarget;
             this.source = source;
             this.target = target;
         }

@@ -112,7 +112,6 @@ public class HistoryController implements Initializable {
     }
 
     private void fillTable() {
-        tabTransaction.getItems().clear();
         async(() -> nodeApiService.getTransactions(account, (pageNumber - 1) * pageSize, pageSize),
             handleGetTransactionsResult());
     }
@@ -122,6 +121,7 @@ public class HistoryController implements Initializable {
 
             @Override
             public void onSuccess(List<TransactionData> transactionsList) throws CreditsException {
+                tabTransaction.getItems().clear();
                 btnNext.setDisable(transactionsList.size() < pageSize);
 
                 if (AppState.sourceMap.get(account) != null) {
@@ -178,6 +178,7 @@ public class HistoryController implements Initializable {
                     tableRow.setInnerId(key.toString());
                     tableRow.setAmount(value.getAmount());
                     tableRow.setCurrency(value.getCurrency());
+                    tableRow.setSource(value.getSource());
                     tableRow.setTarget(value.getTarget());
                     if (states.get(key) != null) {
                         if (states.get(key).getValue() == INVALID.getValue()) {
