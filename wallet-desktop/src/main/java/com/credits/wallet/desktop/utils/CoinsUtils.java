@@ -13,16 +13,16 @@ public class CoinsUtils {
     private static ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper = new ObjectKeeper<>(AppState.account, "coins");
 
     public static ConcurrentHashMap<String,String> getCoins() {
-        if (coinsKeeper.get() == null)
+        if (coinsKeeper.getKeptObject() == null)
             return new ConcurrentHashMap<>();
         else
-            return coinsKeeper.get();
+            return coinsKeeper.getKeptObject();
     }
 
 
     public static void saveCoinsToFile(ConcurrentHashMap<String, String> map) {
         try {
-            coinsKeeper.keep(map);
+            coinsKeeper.keepObject(map);
         } catch (Exception e) {
             LOGGER.error("failed!", e );
         }

@@ -44,7 +44,7 @@ public abstract class ServiceTest {
     protected byte[] compileSourceCode(String sourceCodePath) throws Exception {
         String sourceCode = readSourceCode(sourceCodePath);
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
-        when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(new SmartContractData(address, address, sourceCode, bytecode, null, null));
+        when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(new SmartContractData(address, address, sourceCode, bytecode, null));
         return bytecode;
     }
 

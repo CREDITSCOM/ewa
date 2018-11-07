@@ -2,14 +2,13 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionData;
-import com.credits.client.node.pojo.TransactionFlowData;
-import com.credits.client.node.pojo.TransactionRoundData;
 import com.credits.client.node.thrift.generated.TransactionState;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
-import com.credits.wallet.desktop.AppState;
+import com.credits.general.util.Utils;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -32,6 +31,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.thrift.generated.TransactionState.INPROGRESS;
@@ -52,7 +52,7 @@ public class HistoryController implements Initializable {
     private static final int INIT_PAGE_SIZE = 10;
     private static final int FIRST_PAGE_NUMBER = 1;
     private final static Logger LOGGER = LoggerFactory.getLogger(HistoryController.class);
-    public static final int COUNT_ROUNDS_LIFE = 10;
+    public static final int COUNT_ROUNDS_LIFE = 50;
 
     private int pageNumber = FIRST_PAGE_NUMBER;
     private int pageSize = INIT_PAGE_SIZE;
@@ -113,21 +113,26 @@ public class HistoryController implements Initializable {
 
     private void fillTable() {
         tabTransaction.getItems().clear();
-        async(() -> nodeApiService.getTransactions(account, (pageNumber - 1) * pageSize, pageSize), handleGetTransactionsResult());
+        async(() -> nodeApiService.getTransactions(account, (pageNumber - 1) * pageSize, pageSize),
+            handleGetTransactionsResult());
     }
 
     private Callback<List<TransactionData>> handleGetTransactionsResult() {
-       return new Callback<List<TransactionData>>() {
+        return new Callback<List<TransactionData>>() {
 
-           @Override
-           public void onSuccess(List<TransactionData> transactionsList) throws CreditsException {
+            @Override
+            public void onSuccess(List<TransactionData> transactionsList) throws CreditsException {
                 btnNext.setDisable(transactionsList.size() < pageSize);
 
-                if (AppState.sourceMap.get(account) != null) {
-                    ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = AppState.sourceMap.get(account);
-                        List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
-                        Lock lock = new ReentrantLock();
-                        async(() -> nodeApiService.getTransactionsState(account, ids), handleGetTransactionsStateResult(sourceTransactionMap, lock));
+                if (Utils.sourceMap.get(account) != null) {
+                    ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = Utils.sourceMap.get(account);
+                    List<Long> validIds =
+                        transactionsList.stream().map(TransactionData::getId).collect(Collectors.toList());
+                    sourceTransactionMap.remove(validIds);
+                    List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
+                    Lock lock = new ReentrantLock();
+                    async(() -> nodeApiService.getTransactionsState(account, ids),
+                        handleGetTransactionsStateResult(sourceTransactionMap, lock));
                 }
 
                 transactionsList.forEach(transactionData -> {
@@ -139,18 +144,18 @@ public class HistoryController implements Initializable {
                     tableRow.setState(VALID.name());
                     tabTransaction.getItems().add(tableRow);
                 });
-           }
+            }
 
-           @Override
-           public void onError(Throwable e) {
-               LOGGER.error(e.getMessage());
-               if(e instanceof NodeClientException){
-                   FormUtils.showError(NODE_ERROR);
-               }else {
-                   FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
-               }
-           }
-       };
+            @Override
+            public void onError(Throwable e) {
+                LOGGER.error(e.getMessage());
+                if (e instanceof NodeClientException) {
+                    FormUtils.showError(NODE_ERROR);
+                } else {
+                    FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
+                }
+            }
+        };
     }
 
     private Callback<TransactionsStateGetResult> handleGetTransactionsStateResult(
@@ -166,21 +171,18 @@ public class HistoryController implements Initializable {
                 });
 
                 int curRound = transactionsStates.getRoundNum();
-                transactionMap.entrySet()
-                    .removeIf(e -> curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
+                transactionMap.entrySet().removeIf(e -> e.getValue().getRoundNumber() != 0 && curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
 
                 transactionMap.forEach((key, value) -> {
                     TransactionTabRow tableRow = new TransactionTabRow();
-                    TransactionFlowData transaction = value.getTransaction();
                     tableRow.setInnerId(key.toString());
-                    tableRow.setAmount(Converter.toString(transaction.getAmount()));
-                    tableRow.setCurrency(transaction.getCurrency());
-                    tableRow.setTarget(Converter.encodeToBASE58(transaction.getTarget()));
+                    tableRow.setAmount(value.getAmount());
+                    tableRow.setCurrency(value.getCurrency());
+                    tableRow.setTarget(value.getTarget());
                     if (states.get(key) != null) {
                         if (states.get(key).getValue() == INVALID.getValue()) {
                             tableRow.setState(INVALID.name());
-                        }
-                        if (states.get(key).getValue() == INPROGRESS.getValue()) {
+                        } else if (curRound == 0 || states.get(key).getValue() == INPROGRESS.getValue()) {
                             tableRow.setState(INPROGRESS.name());
                         }
                         doSafe(() -> tabTransaction.getItems().add(tableRow), lock);
@@ -194,8 +196,6 @@ public class HistoryController implements Initializable {
             }
         };
     }
-
-
 
 
     @FXML

@@ -60,7 +60,7 @@ public class TransactionCreatedInfoController implements Initializable {
         TransactionTabRow transactionTabRow = new TransactionTabRow();
 
         transactionTabRow.setTarget(AppState.toAddress);
-        transactionTabRow.setCurrency((byte)1);
+        transactionTabRow.setCurrency("1");
         transactionTabRow.setAmount(Converter.toString(AppState.amount));
         transactionTabRow.setInnerId(Converter.toString(AppState.walletLastTransactionIdCache.get(AppState.account)));
         AppState.selectedTransactionRow = transactionTabRow;

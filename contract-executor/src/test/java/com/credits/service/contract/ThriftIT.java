@@ -31,7 +31,7 @@ public class ThriftIT extends ServiceTest {
         contractBytecode = compile(sourceCode, "Contract", "TKN");
 
         when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
-            new SmartContractData(address, address, sourceCode, contractBytecode,null, null));
+            new SmartContractData(address, address, sourceCode, contractBytecode,null));
 
         contractState = ceService.execute(address, contractBytecode, null, null, null).getContractState();
     }

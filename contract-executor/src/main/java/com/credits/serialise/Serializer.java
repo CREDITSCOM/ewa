@@ -22,7 +22,7 @@ public class Serializer {
         try (ObjectInputStream ous = new ObjectInputStreamWithClassLoader(new ByteArrayInputStream(contractState), classLoader)) {
             instance = ous.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new ContractExecutorException("Cannot get smart contract instance. " + e);
+            throw new ContractExecutorException("Cannot getObject smart contract instance. " + e);
         }
         return instance;
     }
@@ -34,7 +34,7 @@ public class Serializer {
         try (ObjectOutputStream ous = new ObjectOutputStream(baos)) {
             ous.writeObject(instance);
         } catch (IOException e) {
-            throw new ContractExecutorException("Cannot keep smart contract instance. " + e);
+            throw new ContractExecutorException("Cannot keepObject smart contract instance. " + e);
         }
         return baos.toByteArray();
     }

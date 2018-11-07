@@ -41,12 +41,12 @@ public class ContractExecutorTest extends ServiceTest {
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
 
         when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
-                new SmartContractData(address, address, sourceCode, bytecode, null,null));
+                new SmartContractData(address, address, sourceCode, bytecode, null));
 
         ceService.execute(address, bytecode, null, "foo", new Variant[0]);
 
         when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
-                new SmartContractData(address, address, sourceCode, bytecode, "bad hash",null));
+                new SmartContractData(address, address, sourceCode, bytecode, null));
 
         try {
             ceService.execute(address, bytecode, null, "foo", new Variant[0]);

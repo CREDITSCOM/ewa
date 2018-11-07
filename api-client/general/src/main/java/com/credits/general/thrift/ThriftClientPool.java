@@ -120,7 +120,7 @@ public class ThriftClientPool<T extends TServiceClient> implements
             return internalPool.borrowObject();
         } catch (Exception e) {
             throw new ThriftClientException(
-                "Could not get a resource from the pool", e);
+                "Could not getObject a resource from the pool", e);
         }
     }
 

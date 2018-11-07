@@ -7,7 +7,7 @@ public class TransactionTabRow {
     private String innerId;
     private String source;
     private String target;
-    private byte currency;
+    private String currency;
     private String amount;
     private String state;
 
@@ -43,11 +43,11 @@ public class TransactionTabRow {
         this.target = target;
     }
 
-    public byte getCurrency() {
+    public String getCurrency() {
         return currency;
     }
 
-    public void setCurrency(byte currency) {
+    public void setCurrency(String currency) {
         this.currency = currency;
     }
 

@@ -37,7 +37,7 @@ public class ContractUtils {
                     fieldValue = field.get(object);
                 } catch (IllegalAccessException e) {
                     throw new ContractExecutorException(
-                        "Cannot get access to field: " + name + ". Reason: " + getRootCauseMessage(e), e);
+                        "Cannot getObject access to field: " + name + ". Reason: " + getRootCauseMessage(e), e);
                 }
 
                 if (fieldValue != null) {

@@ -32,11 +32,11 @@ public class ObjectKeeper<T extends ConcurrentHashMap> {
         this.objectFileName = objectName + ".ser";
     }
 
-    public void keep(T object) {
+    public void keepObject(T object) {
         doSafe(() -> serialize(object), lock);
     }
 
-    public T get() {
+    public T getKeptObject() {
         if (storedObject == null) {
             return doSafe(this::deserialize, lock);
         }
@@ -44,7 +44,7 @@ public class ObjectKeeper<T extends ConcurrentHashMap> {
     }
 
     public void modify(Modifier changeObject) {
-        doSafe(() -> keep(changeObject.modify(get())), lock);
+        doSafe(() -> keepObject(changeObject.modify(getKeptObject())), lock);
     }
 
     Path getSerializedObjectPath() {

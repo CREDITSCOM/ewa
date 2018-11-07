@@ -6,7 +6,6 @@ import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionIdData;
-import com.credits.client.node.pojo.TransactionRoundData;
 import com.credits.client.node.pojo.WalletData;
 import com.credits.client.node.thrift.generated.Amount;
 import com.credits.client.node.thrift.generated.Pool;
@@ -29,8 +28,10 @@ import com.credits.client.node.thrift.generated.WalletTransactionsCountGetResult
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Function;
+import com.credits.general.util.Utils;
 import com.credits.general.util.exception.ConverterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +42,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static com.credits.client.node.util.NodeClientUtils.logApiResponse;
 import static com.credits.client.node.util.NodeClientUtils.processApiResponse;
 import static com.credits.client.node.util.NodePojoConverter.amountToBigDecimal;
-import static com.credits.client.node.util.NodePojoConverter.apiResponseToApiResponseData;
 import static com.credits.client.node.util.NodePojoConverter.poolToPoolData;
 import static com.credits.client.node.util.NodePojoConverter.smartContractToSmartContractData;
 import static com.credits.client.node.util.NodePojoConverter.smartContractTransactionFlowDataToTransaction;
@@ -165,14 +166,20 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     private ApiResponseData callTransactionFlow(Transaction transaction) {
-
         TransactionFlowResult transactionFlowResult = nodeClient.transactionFlow(transaction);
         ApiResponseData response = transactionFlowResultToApiResponseData(transactionFlowResult);
-        response.setRoundNumber(transactionFlowResult.getRoundNum());
+        transactionMapSetRoundNumber(transaction, transactionFlowResult);
         response.setSource(encodeToBASE58(transaction.getSource()));
         response.setTarget(encodeToBASE58(transaction.getTarget()));
-
         return response;
+    }
+
+    private void transactionMapSetRoundNumber(Transaction transaction, TransactionFlowResult transactionFlowResult) {
+        ConcurrentHashMap<Long, TransactionRoundData> tempTransactionsData =
+            Utils.sourceMap.get(NodeApiServiceImpl.account);
+        TransactionRoundData transactionRoundData =
+            tempTransactionsData.get(NodePojoConverter.getShortTransactionId(transaction.getId()));
+        transactionRoundData.setRoundNumber(transactionFlowResult.getRoundNum());
     }
 
     @Override

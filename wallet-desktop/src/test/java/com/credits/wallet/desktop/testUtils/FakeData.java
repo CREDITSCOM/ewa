@@ -2,10 +2,11 @@ package com.credits.wallet.desktop.testUtils;
 
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
-import com.credits.client.node.pojo.TransactionRoundData;
 import com.credits.client.node.thrift.generated.TransactionState;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.pojo.TransactionRoundData;
+import com.credits.general.util.Converter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -153,18 +154,29 @@ public class FakeData {
             transaction4.setCurrency((byte)1);
 
 
-            TransactionRoundData transactionRoundData0 = new TransactionRoundData(transaction0, 15);
-            TransactionRoundData transactionRoundData1 = new TransactionRoundData(transaction1, 15);
-            TransactionRoundData transactionRoundData2 = new TransactionRoundData(transaction2, 18);
-            TransactionRoundData transactionRoundData3 = new TransactionRoundData(transaction3, 21);
-            TransactionRoundData transactionRoundData4 = new TransactionRoundData(transaction4, 25);
+            TransactionRoundData transactionRoundData0 = new TransactionRoundData(String.valueOf(transaction0.getId()),
+                Converter.encodeToBASE58(transaction0.getSource()),Converter.encodeToBASE58(transaction0.getTarget()),transaction0.getAmount().toString(),String.valueOf(transaction0.getCurrency()));
+            transactionRoundData0.setRoundNumber(15);
+            TransactionRoundData transactionRoundData1 = new TransactionRoundData(String.valueOf(transaction1.getId()),
+                Converter.encodeToBASE58(transaction1.getSource()),Converter.encodeToBASE58(transaction1.getTarget()),transaction1.getAmount().toString(),String.valueOf(transaction1.getCurrency()));
+            transactionRoundData1.setRoundNumber(15);
+            TransactionRoundData transactionRoundData2 = new TransactionRoundData(String.valueOf(transaction2.getId()),
+                Converter.encodeToBASE58(transaction2.getSource()),Converter.encodeToBASE58(transaction2.getTarget()),transaction2.getAmount().toString(),String.valueOf(transaction2.getCurrency()));
+            transactionRoundData2.setRoundNumber(18);
+            TransactionRoundData transactionRoundData3 = new TransactionRoundData(String.valueOf(transaction3.getId()),
+                Converter.encodeToBASE58(transaction3.getSource()),Converter.encodeToBASE58(transaction3.getTarget()),transaction3.getAmount().toString(),String.valueOf(transaction3.getCurrency()));
+            transactionRoundData3.setRoundNumber(21);
+            TransactionRoundData transactionRoundData4 = new TransactionRoundData(String.valueOf(transaction4.getId()),
+                Converter.encodeToBASE58(transaction4.getSource()),Converter.encodeToBASE58(transaction4.getTarget()),transaction4.getAmount().toString(),String.valueOf(transaction4.getCurrency()));
+            transactionRoundData4.setRoundNumber(25);
 
             ConcurrentHashMap<Long, TransactionRoundData> map = new ConcurrentHashMap<>();
-            map.put(transactionRoundData0.getTransaction().getId(), transactionRoundData0);
-            map.put(transactionRoundData1.getTransaction().getId(), transactionRoundData1);
-            map.put(transactionRoundData2.getTransaction().getId(), transactionRoundData2);
-            map.put(transactionRoundData3.getTransaction().getId(), transactionRoundData3);
-            map.put(transactionRoundData4.getTransaction().getId(), transactionRoundData4);
+
+            map.put(transaction0.getId(), transactionRoundData0);
+            map.put(transaction1.getId(), transactionRoundData1);
+            map.put(transaction2.getId(), transactionRoundData2);
+            map.put(transaction3.getId(), transactionRoundData3);
+            map.put(transaction4.getId(), transactionRoundData4);
 
             Map<Long, TransactionState> transactionStateMap = new HashMap<>();
             transactionStateMap.put(0L, TransactionState.INPROGRESS);

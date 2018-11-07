@@ -38,16 +38,16 @@ public class ObjectKeeperTest {
 
     @Test
     public void serializeThenDeserialize(){
-        objectKeeper.keep(someData);
+        objectKeeper.keepObject(someData);
         assertTrue(objectKeeper.getSerializedObjectPath().toFile().exists());
 
-        Map restoredObject = objectKeeper.get();
+        Map restoredObject = objectKeeper.getKeptObject();
         assertEquals(someData, restoredObject);
     }
 
     @Test
     public void deserializeThenSerialize() {
-        objectKeeper.keep(someData);
+        objectKeeper.keepObject(someData);
         objectKeeper.modify(
             objectKeeper.new Modifier(){
             @Override
@@ -61,11 +61,11 @@ public class ObjectKeeperTest {
 
     @Test
     public void usingSerializedObject(){
-        objectKeeper.keep(someData);
-        ConcurrentHashMap<String, SmartContractData> restoredObject = objectKeeper.get();
+        objectKeeper.keepObject(someData);
+        ConcurrentHashMap<String, SmartContractData> restoredObject = objectKeeper.getKeptObject();
         restoredObject.put("2", new SmartContractData(null, null, "BBB", null, null));
-        objectKeeper.keep(restoredObject);
-        restoredObject = objectKeeper.get();
+        objectKeeper.keepObject(restoredObject);
+        restoredObject = objectKeeper.getKeptObject();
         assertEquals(2, restoredObject.size());
     }
 
