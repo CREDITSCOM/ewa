@@ -3,6 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.general.exception.CompilationException;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
+import com.credits.general.pojo.SmartContractData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
 import com.credits.general.util.compiler.InMemoryCompiler;
@@ -11,9 +12,11 @@ import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
+import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.EclipseJdt;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
+import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -51,10 +54,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
-import static com.credits.client.node.service.NodeApiServiceImpl.async;
-import static com.credits.wallet.desktop.utils.ApiUtils.deploySmartContractProcess;
+import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
+import static com.credits.general.util.Converter.decodeFromBASE58;
+import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 
 /**
@@ -363,9 +369,15 @@ public class SmartContractDeployController implements Initializable {
                 List<CompilationUnit> compilationUnits = compilationPackage.getUnits();
                 CompilationUnit compilationUnit = compilationUnits.get(0);
                 byte[] byteCode = compilationUnit.getBytecode();
-                async(() -> deploySmartContractProcess(javaCode, byteCode,
-                    SmartContractUtils.generateSmartContractAddress()), handleDeployResult());
 
+                SmartContractData smartContractData =
+                    new SmartContractData(SmartContractUtils.generateSmartContractAddress(), decodeFromBASE58(account),
+                        javaCode, byteCode, null);
+
+                CompletableFuture.supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,
+                    smartContractData.getBase58Address()))
+                    .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
+                    .whenComplete(handleCallback(handleDeployResult()));
             } else {
                 DiagnosticCollector collector = compilationPackage.getCollector();
                 List<Diagnostic> diagnostics = collector.getDiagnostics();
@@ -384,6 +396,7 @@ public class SmartContractDeployController implements Initializable {
         return new Callback<ApiResponseData>() {
             @Override
             public void onSuccess(ApiResponseData resultData) {
+                ApiUtils.saveTransactionRoundNumberIntoMap(resultData);
                 String target = resultData.getTarget();
                 StringSelection selection = new StringSelection(target);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

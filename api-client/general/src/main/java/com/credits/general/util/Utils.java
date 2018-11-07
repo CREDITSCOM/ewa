@@ -1,10 +1,7 @@
 package com.credits.general.util;
 
-import com.credits.general.pojo.TransactionRoundData;
-
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by goncharov-eg on 26.01.2018.
@@ -12,9 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Utils {
     private static final String ALPHA_LOWER_CASE_NUMERIC_STRING = "abcdefghijklmnopqrstuvwxyz0123456789";
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
-
-    public static ConcurrentHashMap<String, ConcurrentHashMap<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();
-
 
     public static byte[] parseSubArray(byte[] array, int offset, int length) {
         byte[] result = new byte[length];

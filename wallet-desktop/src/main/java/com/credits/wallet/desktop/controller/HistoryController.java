@@ -8,7 +8,7 @@ import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
-import com.credits.general.util.Utils;
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -112,7 +112,6 @@ public class HistoryController implements Initializable {
     }
 
     private void fillTable() {
-        tabTransaction.getItems().clear();
         async(() -> nodeApiService.getTransactions(account, (pageNumber - 1) * pageSize, pageSize),
             handleGetTransactionsResult());
     }
@@ -122,10 +121,11 @@ public class HistoryController implements Initializable {
 
             @Override
             public void onSuccess(List<TransactionData> transactionsList) throws CreditsException {
+                tabTransaction.getItems().clear();
                 btnNext.setDisable(transactionsList.size() < pageSize);
 
-                if (Utils.sourceMap.get(account) != null) {
-                    ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = Utils.sourceMap.get(account);
+                if (AppState.sourceMap.get(account) != null) {
+                    ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = AppState.sourceMap.get(account);
                     List<Long> validIds =
                         transactionsList.stream().map(TransactionData::getId).collect(Collectors.toList());
                     sourceTransactionMap.remove(validIds);
@@ -178,6 +178,7 @@ public class HistoryController implements Initializable {
                     tableRow.setInnerId(key.toString());
                     tableRow.setAmount(value.getAmount());
                     tableRow.setCurrency(value.getCurrency());
+                    tableRow.setSource(value.getSource());
                     tableRow.setTarget(value.getTarget());
                     if (states.get(key) != null) {
                         if (states.get(key).getValue() == INVALID.getValue()) {

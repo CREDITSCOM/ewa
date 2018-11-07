@@ -7,8 +7,10 @@ import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
+import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
+import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -33,14 +35,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
+import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.AppState.smartContractsKeeper;
-import static com.credits.wallet.desktop.utils.ApiUtils.*;
+import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -292,7 +300,13 @@ public class SmartContractController implements Initializable {
             SmartContractData smartContractData = this.currentSmartContract;
             smartContractData.setMethod(method);
             smartContractData.setParams(params);
-            async(() -> createSmartContractTransaction(smartContractData), handleExecuteResult());
+
+            CompletableFuture
+                .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,smartContractData.getBase58Address()))
+                .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
+                .whenComplete(handleCallback(handleExecuteResult()));
+
+
         } catch (CreditsException e) {
             LOGGER.error("failed!", e);
             FormUtils.showError(e.toString());
@@ -303,6 +317,7 @@ public class SmartContractController implements Initializable {
         return new Callback<ApiResponseData>() {
             @Override
             public void onSuccess(ApiResponseData resultData) {
+                ApiUtils.saveTransactionRoundNumberIntoMap(resultData);
                 Variant res = resultData.getScExecRetVal();
                 if (res != null) {
                     String retVal = res.toString() + '\n';
