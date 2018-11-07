@@ -9,6 +9,7 @@ import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.CoinTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -154,7 +155,7 @@ public class WalletController implements Initializable {
     private void addOrUpdateUserCoinRow(ObservableList<CoinTabRow> tableViewItems, String coinName, String smartContractAddress) {
         CoinTabRow coinRow = getCoinTabRow(tableViewItems, coinName, smartContractAddress);
         if(coinRow.getLock().tryLock()) {
-            LOGGER.debug("{} take lock", coinName);
+            LOGGER.debug("{} take lock {}", coinName, coinRow.getLock().hashCode());
             changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
             DecimalFormat decimalFormat = new DecimalFormat("##0.000000000000000000"); // fixme must use the method "tokenContract.decimal()"
             contractInteractionService.getSmartContractBalance(smartContractAddress, updateCoinValue(coinRow, decimalFormat));
@@ -162,8 +163,8 @@ public class WalletController implements Initializable {
     }
 
     private void changeTableViewValue(CoinTabRow coinRow, String value) {
-            coinRow.setValue(value);
-            coinsTableView.refresh();
+        coinsTableView.refresh();
+        coinRow.setValue(value);
     }
 
     private CoinTabRow getCoinTabRow(ObservableList<CoinTabRow> tableViewItems, String tokenName, String contractAddress) {
@@ -181,16 +182,18 @@ public class WalletController implements Initializable {
         return new Callback<BigDecimal>() {
             @Override
             public void onSuccess(BigDecimal balance) {
-                changeTableViewValue(coinRow, decimalFormat.format(balance));
-                LOGGER.debug("{} free lock", coinRow.getName());
-                coinRow.getLock().unlock();
+                Platform.runLater(() -> {
+                    changeTableViewValue(coinRow, decimalFormat.format(balance));
+                    coinRow.getLock().unlock();
+                });
             }
 
             @Override
             public void onError(Throwable e) {
-                changeTableViewValue(coinRow, ERROR_STATE_MESSAGE);
-                LOGGER.debug("{} free lock", coinRow.getName());
-                coinRow.getLock().unlock();
+                Platform.runLater(() -> {
+                    changeTableViewValue(coinRow, ERROR_STATE_MESSAGE);
+                    coinRow.getLock().unlock();
+                });
                 LOGGER.error("cant't update balance token {}. Reason: {}", coinRow.getName(), e.getMessage());
             }
         };
