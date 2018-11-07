@@ -7,7 +7,6 @@ import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
-import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
@@ -198,14 +197,14 @@ public class SmartContractController implements Initializable {
 
     private void saveFavorite(SmartContractData smartContractData) {
         String contractName = smartContractData.getBase58Address();
-        ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.deserialize();
-        if (map != null && map.size() > 0) {
+        ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.get();
+        if (map != null) {
             map.put(contractName, smartContractData);
         } else {
             map = new ConcurrentHashMap<>();
             map.put(contractName, smartContractData);
         }
-        smartContractsKeeper.serialize(map);
+        smartContractsKeeper.keep(map);
 
     }
 
@@ -219,7 +218,7 @@ public class SmartContractController implements Initializable {
             this.pCodePanel.setVisible(true);
             this.currentSmartContract = smartContractData;
 
-            ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.deserialize();
+            ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.get();
             setFavorite(tbFavourite, map, smartContractData);
             setFavoriteButtonEvent(tbFavourite, currentSmartContract);
             this.tbFavourite.setVisible(true);
@@ -330,7 +329,7 @@ public class SmartContractController implements Initializable {
         return new Callback<List<SmartContractData>>() {
             @Override
             public void onSuccess(List<SmartContractData> smartContracts) throws CreditsException {
-                ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.deserialize();
+                ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.get();
                 smartContracts.forEach(smartContractData -> {
                     ToggleButton favoriteButton = new ToggleButton();
                     setFavorite(favoriteButton, map, smartContractData);
@@ -355,7 +354,7 @@ public class SmartContractController implements Initializable {
     private void initFavoriteTab() {
         favoriteContractTableView.getItems().clear();
         try {
-            Map<String, SmartContractData> map = smartContractsKeeper.deserialize();
+            Map<String, SmartContractData> map = smartContractsKeeper.get();
             if (map != null && map.size() > 0) {
                 map.forEach((smartName, smartContractData) -> {
                     if (smartContractData.isFavorite()) { //fixme get favorite

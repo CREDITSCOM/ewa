@@ -15,13 +15,12 @@ import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.credits.general.util.CriticalSection.doSafe;
 import static java.io.File.separator;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ObjectKeeper<T extends ConcurrentHashMap> {
 
     static final Path cacheDirectory = Paths.get(System.getProperty("user.dir") + separator + "cache");
-    static final Integer TRY_LOCK_TIMEOUT = 3;
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectKeeper.class);
     private final String objectFileName;
     private final String account;
@@ -33,37 +32,19 @@ public class ObjectKeeper<T extends ConcurrentHashMap> {
         this.objectFileName = objectName + ".ser";
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void serialize(T object) {
-        try {
-            lock.tryLock(TRY_LOCK_TIMEOUT, SECONDS);
-            Files.createDirectories(getAccountDirectory());
-            Path serObjectFile = getSerializedObjectPath();
-            File serFile = serObjectFile.toFile();
-            if (!serFile.exists()) {
-                serFile.createNewFile();
-            }
-
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(serObjectFile.toString()))) {
-                oos.writeObject(object);
-                storedObject = object;
-            }
-        } catch (IOException | InterruptedException e) {
-            LOGGER.error(e.getMessage());
-        } finally {
-            lock.unlock();
-        }
+    public void keep(T object) {
+        doSafe(() -> serialize(object), lock);
     }
 
-    public void deserializeThenSerialize(Modifier changeObject) {
-        try {
-            lock.tryLock(TRY_LOCK_TIMEOUT, SECONDS);
-            serialize(changeObject.modify(deserialize()));
-        } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage());
-        } finally {
-            lock.unlock();
+    public T get() {
+        if (storedObject == null) {
+            return doSafe(this::deserialize, lock);
         }
+        return storedObject;
+    }
+
+    public void modify(Modifier changeObject) {
+        doSafe(() -> keep(changeObject.modify(get())), lock);
     }
 
     Path getSerializedObjectPath() {
@@ -74,22 +55,34 @@ public class ObjectKeeper<T extends ConcurrentHashMap> {
         return Paths.get(cacheDirectory + separator + account);
     }
 
-    @SuppressWarnings("unchecked")
-    public T deserialize() {
-        if (storedObject == null) {
-            try {
-                lock.tryLock(TRY_LOCK_TIMEOUT, SECONDS);
-                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getSerializedObjectPath().toString()))) {
-                    storedObject = (T) ois.readObject();
+    private void serialize(T object) {
+        try {
+            Files.createDirectories(getAccountDirectory());
+            Path serObjectFile = getSerializedObjectPath();
+            File serFile = serObjectFile.toFile();
+            if (!serFile.exists()) {
+                if(!serFile.createNewFile()){
+                    throw new IOException("Object can't serialized. Reason: can't create new file");
                 }
-            } catch (IOException | ClassNotFoundException | InterruptedException e) {
-                LOGGER.error(e.getMessage());
-                return null;
-            } finally {
-                lock.unlock();
             }
+
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(serObjectFile.toString()))) {
+                oos.writeObject(object);
+                storedObject = object;
+            }
+        }catch (SecurityException | IOException e) {
+            LOGGER.error(e.getMessage());
         }
-        return storedObject;
+    }
+
+    @SuppressWarnings("unchecked")
+    private T deserialize() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getSerializedObjectPath().toString()))) {
+            return storedObject = (T) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
     }
 
     abstract class Modifier {

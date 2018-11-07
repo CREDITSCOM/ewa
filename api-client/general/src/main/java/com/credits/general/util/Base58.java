@@ -40,7 +40,7 @@ public class Base58 {
             ++zeros;
         }
         // Convert base-256 digits to base-58 digits (plus conversion to ASCII characters)
-        input = Arrays.copyOf(input, input.length); // since we modify it in-place
+        input = Arrays.copyOf(input, input.length); // since we modifyObject it in-place
         char[] encoded = new char[input.length * 2]; // upper bound
         int outputStart = encoded.length;
         for (int inputStart = zeros; inputStart < input.length; ) {
