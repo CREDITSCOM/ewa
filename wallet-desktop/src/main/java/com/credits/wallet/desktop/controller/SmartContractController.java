@@ -197,15 +197,16 @@ public class SmartContractController implements Initializable {
 
     private void saveFavorite(SmartContractData smartContractData) {
         String contractName = smartContractData.getBase58Address();
-        ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.getKeptObject();
-        if (map != null) {
-            map.put(contractName, smartContractData);
-        } else {
-            map = new ConcurrentHashMap<>();
-            map.put(contractName, smartContractData);
-        }
-        smartContractsKeeper.keepObject(map);
-
+        smartContractsKeeper.modify(smartContractsKeeper.new Modifier() {
+            @Override
+            public ConcurrentHashMap<String, SmartContractData> modify( ConcurrentHashMap<String, SmartContractData> keptObject) {
+            if (keptObject == null) {
+                keptObject = new ConcurrentHashMap<>();
+            }
+            keptObject.put(contractName, smartContractData);
+            return keptObject;
+            }
+        });
     }
 
     private void refreshFormState(SmartContractData smartContractData) {

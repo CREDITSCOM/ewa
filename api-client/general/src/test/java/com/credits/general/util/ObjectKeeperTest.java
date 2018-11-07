@@ -51,7 +51,8 @@ public class ObjectKeeperTest {
         objectKeeper.modify(
             objectKeeper.new Modifier(){
             @Override
-            ConcurrentHashMap<String, SmartContractData> modify(ConcurrentHashMap<String, SmartContractData> restoredObject) {
+            public ConcurrentHashMap<String, SmartContractData> modify(
+                ConcurrentHashMap<String, SmartContractData> restoredObject) {
                 restoredObject.put("2", new SmartContractData(null, null, "BBB", null, null));
                 return restoredObject;
             }

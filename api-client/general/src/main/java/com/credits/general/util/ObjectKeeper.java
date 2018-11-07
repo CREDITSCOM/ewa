@@ -85,7 +85,7 @@ public class ObjectKeeper<T extends ConcurrentHashMap> {
         }
     }
 
-    abstract class Modifier {
-        abstract T modify(T restoredObject);
+    public abstract class Modifier {
+        public abstract T modify(T restoredObject);
     }
 }
