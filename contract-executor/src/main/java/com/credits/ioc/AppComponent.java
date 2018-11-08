@@ -1,7 +1,7 @@
 package com.credits.ioc;
 
 import com.credits.service.contract.ContractExecutorServiceImpl;
-import com.credits.service.db.leveldb.NodeApiInteractionServiceThriftImpl;
+import com.credits.service.node.api.NodeApiInteractionServiceThriftImpl;
 import com.credits.thrift.ContractExecutorServer;
 import dagger.Component;
 

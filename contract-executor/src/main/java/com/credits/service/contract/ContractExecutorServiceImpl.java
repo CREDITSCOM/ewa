@@ -7,7 +7,7 @@ import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.secure.Sandbox;
-import com.credits.service.db.leveldb.NodeApiInteractionService;
+import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.thrift.DeployReturnValue;
 import com.credits.thrift.ReturnValue;
 import org.slf4j.Logger;
