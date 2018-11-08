@@ -3,8 +3,8 @@ package com.credits.ioc;
 import com.credits.ApplicationProperties;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
-import com.credits.service.db.leveldb.NodeApiInteractionService;
-import com.credits.service.db.leveldb.NodeApiInteractionServiceThriftImpl;
+import com.credits.service.node.api.NodeApiInteractionService;
+import com.credits.service.node.api.NodeApiInteractionServiceThriftImpl;
 import dagger.Module;
 import dagger.Provides;
 

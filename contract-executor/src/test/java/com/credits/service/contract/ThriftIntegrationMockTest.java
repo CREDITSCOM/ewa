@@ -3,7 +3,7 @@ package com.credits.service.contract;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.service.ServiceTest;
-import com.credits.service.db.leveldb.NodeApiInteractionService;
+import com.credits.service.node.api.NodeApiInteractionService;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;

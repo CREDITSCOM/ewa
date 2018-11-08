@@ -1,7 +1,7 @@
 import com.credits.client.node.pojo.PoolData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.general.exception.CreditsException;
-import com.credits.service.db.leveldb.NodeApiInteractionService;
+import com.credits.service.node.api.NodeApiInteractionService;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
