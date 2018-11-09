@@ -41,7 +41,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
-import static com.credits.general.util.CriticalSection.doSafe;
 import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.amount;
@@ -95,6 +94,7 @@ public class WalletController implements Initializable {
     private volatile TableView<CoinTabRow> coinsTableView;
     private String GET_ERROR_MESSAGE;
 
+    ContextMenu contextMenu = new ContextMenu();
 
     @FXML
     private void handleLogout() {
@@ -124,22 +124,29 @@ public class WalletController implements Initializable {
         coinsKeeper.getKeptObject(ConcurrentHashMap::new).forEach((coinName, contractAddress) -> addOrUpdateUserCoinRow(tableViewItems, coinName, contractAddress));
     }
 
-    private EventHandler<MouseEvent> handleDeleteToken(TableRow<CoinTabRow> row, ContextMenu cm, MenuItem removeItem) {
+    private EventHandler<MouseEvent> handleDeleteToken(TableRow<CoinTabRow> row) {
         return event -> {
             if ((!row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals(CREDITS_TOKEN_NAME)) {
                 row.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
                     if (t.getButton() == MouseButton.SECONDARY) {
-                        removeItem.setOnAction(event1 -> {
-                            coinsTableView.getItems().remove(row.getItem());
-                            coinsKeeper.modify(coinsKeeper.new Modifier() {
-                                @Override
-                                public ConcurrentHashMap<String, String> modify(ConcurrentHashMap<String, String> restoredObject) {
-                                    restoredObject.remove(row.getItem().getName());
-                                    return restoredObject;
-                                }
+                        Platform.runLater(() -> {
+                            contextMenu.getItems().clear();
+                            contextMenu.hide();
+                            MenuItem removeItem = new MenuItem("Delete");
+                            contextMenu.getItems().add(removeItem);
+
+                            removeItem.setOnAction(event1 -> {
+                                coinsTableView.getItems().remove(row.getItem());
+                                coinsKeeper.modify(coinsKeeper.new Modifier() {
+                                    @Override
+                                    public ConcurrentHashMap<String, String> modify(ConcurrentHashMap<String, String> restoredObject) {
+                                        restoredObject.remove(row.getItem().getName());
+                                        return restoredObject;
+                                    }
+                                });
                             });
+                            contextMenu.show(coinsTableView, t.getScreenX(), t.getScreenY());
                         });
-                        cm.show(coinsTableView, t.getScreenX(), t.getScreenY());
                     }
                 });
             }
@@ -280,13 +287,9 @@ public class WalletController implements Initializable {
     }
 
     private void setRowFactory(TableView<CoinTabRow> tableView) {
-        ContextMenu contextMenu = new ContextMenu();
         tableView.setRowFactory(tv -> {
             TableRow<CoinTabRow> row = new TableRow<>();
-            MenuItem removeItem = new MenuItem("Delete");
-
-            contextMenu.getItems().add(removeItem);
-            row.setOnMouseClicked(handleDeleteToken(row, contextMenu, removeItem));
+            row.setOnMouseClicked(handleDeleteToken(row));
             return row;
         });
     }
