@@ -12,23 +12,18 @@ import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -332,8 +327,8 @@ public class SmartContractController implements Initializable {
             smartContractData.setMethod(method);
             smartContractData.setParams(params);
 
-            CompletableFuture.supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,
-                smartContractData.getBase58Address()))
+            CompletableFuture
+                .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,smartContractData.getBase58Address()))
                 .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                 .whenComplete(handleCallback(handleExecuteResult()));
 
@@ -376,12 +371,7 @@ public class SmartContractController implements Initializable {
         table.getItems().add(row);
     }
 
-    private void changeFavoriteStateIntoTab(TableView<SmartContractTabRow> table, SmartContractData smartContractData, boolean isSelected) {
-        table.getItems()
-            .stream()
-            .filter(row -> row.getSmartContractData().equals(smartContractData))
-            .findFirst()
-            .ifPresent(row -> row.getFav().setSelected(isSelected));
-        table.refresh();
+    public void handleRefreshSmarts() {
+
     }
 }
