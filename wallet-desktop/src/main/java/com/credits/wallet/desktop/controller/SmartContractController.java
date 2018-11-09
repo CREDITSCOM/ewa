@@ -227,7 +227,7 @@ public class SmartContractController implements Initializable {
             this.pCodePanel.setVisible(true);
             this.currentSmartContract = smartContractData;
 
-            ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.getKeptObject();
+            ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new);
             setFavorite(tbFavourite, map, smartContractData);
             setFavoriteButtonEvent(tbFavourite, currentSmartContract);
             this.tbFavourite.setVisible(true);
@@ -345,7 +345,7 @@ public class SmartContractController implements Initializable {
         return new Callback<List<SmartContractData>>() {
             @Override
             public void onSuccess(List<SmartContractData> smartContracts) throws CreditsException {
-                ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.getKeptObject();
+                ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new);
                 smartContracts.forEach(smartContractData -> {
                     ToggleButton favoriteButton = new ToggleButton();
                     setFavorite(favoriteButton, map, smartContractData);
@@ -370,8 +370,8 @@ public class SmartContractController implements Initializable {
     private void initFavoriteTab() {
         favoriteContractTableView.getItems().clear();
         try {
-            Map<String, SmartContractData> map = smartContractsKeeper.getKeptObject();
-            if (map != null && map.size() > 0) {
+            Map<String, SmartContractData> map = smartContractsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new);
+            if (map.size() > 0) {
                 map.forEach((smartName, smartContractData) -> {
                     if (smartContractData.isFavorite()) { //fixme get favorite
                         ToggleButton favoriteButton = new ToggleButton();

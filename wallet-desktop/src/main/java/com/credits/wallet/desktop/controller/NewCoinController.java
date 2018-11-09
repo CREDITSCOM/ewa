@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static com.credits.wallet.desktop.AppState.contractInteractionService;
@@ -58,28 +59,28 @@ public class NewCoinController implements Initializable {
         String smartContractAddress = txToken.getText().replace(";", "");
 
         // VALIDATE
-        boolean isValidationSuccessful = true;
+        AtomicBoolean isValidationSuccessful = new AtomicBoolean(true);
         if (coinName.isEmpty()) {
             labelErrorCoin.setText(ERR_COIN);
             txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful = false;
+            isValidationSuccessful.set(false);
         }
 
         if (smartContractAddress.isEmpty()) {
             labelErrorToken.setText(ERR_TOKEN);
             txToken.setStyle(txToken.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful = false;
+            isValidationSuccessful.set(false);
         }
 
-        if (coinsKeeper.getKeptObject() != null){
-            if(coinsKeeper.getKeptObject().containsKey(coinName)) {
+        coinsKeeper.getKeptObject().ifPresent(coinsMap -> {
+            if(coinsMap.containsKey(coinName)) {
                 labelErrorCoin.setText(ERR_COIN_DUPLICATE);
                 txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-                isValidationSuccessful = false;
+                isValidationSuccessful.set(false);
             }
-        }
+        });
 
-        if (!isValidationSuccessful) {
+        if (!isValidationSuccessful.get()) {
                 return;
         }
 
@@ -87,7 +88,7 @@ public class NewCoinController implements Initializable {
             @Override
             public void onSuccess(BigDecimal balance) throws CreditsException {
                 if(balance != null){
-                    ConcurrentHashMap<String, String> coins = coinsKeeper.getKeptObject(ConcurrentHashMap::new);
+                    ConcurrentHashMap<String, String> coins = coinsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new);
                     coins.put(coinName, smartContractAddress);
                     coinsKeeper.keepObject(coins);
                     FormUtils.showPlatformInfo("Coin \"" + coinName + "\" was created successfully");

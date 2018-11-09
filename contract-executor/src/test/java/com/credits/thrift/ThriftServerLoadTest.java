@@ -1,6 +1,8 @@
 package com.credits.thrift;
 
 import com.credits.client.executor.thrift.generated.ContractExecutor;
+import com.credits.client.node.service.NodeApiService;
+import com.credits.client.node.service.NodeApiServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -43,24 +45,22 @@ public class ThriftServerLoadTest {
 
     @Test
     public void store() {
+        NodeApiService nodeApiService = NodeApiServiceImpl.getInstance("localhost", 9080);
         ArrayList<Thread> threads = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             Thread t = new Thread("" + i) {
                 @Override
                 public void run() {
                     System.out.println("Starting new thread" + this.getName());
-                    try {
-                        TTransport transport = new TSocket("localhost", 9080);
-                        transport.open();
-                        TProtocol protocol = new TBinaryProtocol(transport);
-                        ContractExecutor.Client client = new ContractExecutor.Client(protocol);
-                        // TODO: 6/20/2018 required place client.executeBytecode() here
-//                        APIResponse response = client.store(new ContractFile("Contract.java", bytes), String.valueOf(Math.abs(new Random().nextInt())), "ekiT2ej+PL+eeaydVVpkvuuLWDXY7r9pZTsO4wosnVuvN5CHjFO2aSR65IBI8zl9T4jMDkutsGPAVRAeYvOKnQ==");
-//                        System.out.println(response.getCode() + " " + response.getMessage());
-                        transport.close();
-                    } catch (TTransportException e) {
-                        System.out.println(e.getMessage() + e);
-                    }
+                    //                        TTransport transport = new TSocket("localhost", 9080);
+                    //                        transport.open();
+                    //                        TProtocol protocol = new TBinaryProtocol(transport);
+                    //                        ContractExecutor.Client client = new ContractExecutor.Client(protocol);
+                    nodeApiService.getBalance("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe");
+                    // TODO: 6/20/2018 required place client.executeBytecode() here
+                    //                        APIResponse response = client.store(new ContractFile("Contract.java", bytes), String.valueOf(Math.abs(new Random().nextInt())), "ekiT2ej+PL+eeaydVVpkvuuLWDXY7r9pZTsO4wosnVuvN5CHjFO2aSR65IBI8zl9T4jMDkutsGPAVRAeYvOKnQ==");
+                    //                        System.out.println(response.getCode() + " " + response.getMessage());
+                    //                        transport.close();
                 }
             };
             t.start();
@@ -75,6 +75,6 @@ public class ThriftServerLoadTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        file.delete();
+//        file.delete();
     }
 }

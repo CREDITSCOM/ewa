@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
@@ -63,18 +64,15 @@ public class GenerateTransactionController implements Initializable {
     @FXML
     private void handleGenerate() {
         try {
-            String coin = AppState.coin;
-            Map<String, String> coins;
             if(coin.equals(CREDITS_SYMBOL)) {
                 CompletableFuture
                     .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,toAddress.getText()))
                     .thenApply((transactionData) -> createTransaction(transactionData, AppState.amount))
                     .whenComplete(handleCallback(handleTransactionResult()));
-            } else if ((coins = coinsKeeper.getKeptObject()) != null) {
-                if (coinsKeeper.getKeptObject().get(coin) != null) {
-                    contractInteractionService.transferTo(coins.get(coin), AppState.toAddress, amount,
-                        handleTransferTokenResult());
-                }
+            } else {
+                coinsKeeper.getKeptObject().ifPresent(coinsMap ->
+                    Optional.ofNullable(coinsMap.get(coin)).ifPresent(
+                        coin -> contractInteractionService.transferTo(coin, AppState.toAddress, amount, handleTransferTokenResult())));
             }
         } catch (CreditsException e) {
             LOGGER.error(NODE_ERROR + ": " + e.getMessage(), e);
