@@ -48,8 +48,14 @@ public class GenerateKeysController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {  //fixme jumping fields
         FormUtils.resizeForm(bp);
+
         txPassword.setVisible(true);
         labPassword.setVisible(false);
+
+        labPassword.setPrefWidth(txPassword.getPrefWidth());
+        labPassword.setPrefHeight(txPassword.getPrefHeight());
+        labPassword.setLayoutX(txPassword.getLayoutX());
+        labPassword.setLayoutY(txPassword.getLayoutY());
 
         btnShowPassword.setOnMousePressed(event -> {
             labPassword.setText(txPassword.getText());
