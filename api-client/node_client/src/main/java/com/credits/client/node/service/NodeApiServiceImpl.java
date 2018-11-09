@@ -56,6 +56,7 @@ import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
 import static com.credits.general.util.Converter.byteArrayToByteBuffer;
 import static com.credits.general.util.Converter.decodeFromBASE58;
 import static com.credits.general.util.Converter.encodeToBASE58;
+import static com.credits.general.util.Utils.threadPool;
 
 public class NodeApiServiceImpl implements NodeApiService {
 
@@ -245,7 +246,7 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     public static <R> void async(Function<R> apiCall, Callback<R> callback) {
-        CompletableFuture.supplyAsync(apiCall::apply).whenComplete(handleCallback(callback));
+        CompletableFuture.supplyAsync(apiCall::apply,threadPool).whenComplete(handleCallback(callback));
     }
 
     public static <R> BiConsumer<R, Throwable> handleCallback(Callback<R> callback) {

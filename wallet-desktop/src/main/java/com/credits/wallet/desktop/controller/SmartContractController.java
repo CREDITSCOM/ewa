@@ -12,6 +12,7 @@ import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -45,6 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
+import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.AppState.smartContractsKeeper;
@@ -302,7 +304,7 @@ public class SmartContractController implements Initializable {
             smartContractData.setParams(params);
 
             CompletableFuture
-                .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,smartContractData.getBase58Address()))
+                .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,smartContractData.getBase58Address()),threadPool)
                 .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                 .whenComplete(handleCallback(handleExecuteResult()));
 
@@ -337,7 +339,6 @@ public class SmartContractController implements Initializable {
     }
 
     private void initMySmartTab() {
-        smartContractTableView.getItems().clear();
         async(() -> nodeApiService.getSmartContracts(account), handleGetSmartContractsResult());
     }
 
@@ -345,6 +346,8 @@ public class SmartContractController implements Initializable {
         return new Callback<List<SmartContractData>>() {
             @Override
             public void onSuccess(List<SmartContractData> smartContracts) throws CreditsException {
+                Platform.runLater(()->{
+                smartContractTableView.getItems().clear();
                 ConcurrentHashMap<String, SmartContractData> map = smartContractsKeeper.getKeptObject();
                 smartContracts.forEach(smartContractData -> {
                     ToggleButton favoriteButton = new ToggleButton();
@@ -356,6 +359,7 @@ public class SmartContractController implements Initializable {
                 if (currentSmartContract != null) {
                     setFavorite(tbFavourite, map, currentSmartContract);
                 }
+                });
             }
 
             @Override

@@ -55,7 +55,6 @@ public class AppState {
     public static PublicKey publicKey;
 
     public static ConcurrentHashMap<String, AtomicLong> walletLastTransactionIdCache = new ConcurrentHashMap<>();
-
     public static Short transactionOfferedMaxFeeValue = Const.OFFERED_MAX_FEE;
 
     public static ObjectKeeper<ConcurrentHashMap<String, SmartContractData>> smartContractsKeeper;

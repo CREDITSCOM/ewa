@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Converter.objectToVariant;
+import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.contractExecutorService;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
@@ -34,14 +35,14 @@ public class ContractInteractionService {
 
     public void getSmartContractBalance(String smartContractAddress, Callback<BigDecimal> callback) {
         CompletableFuture
-            .supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress))
+            .supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress),threadPool)
             .thenApply((sc) -> new BigDecimal(executeSmartContract(account, sc, BALANCE_OF_METHOD, variantOf(STRING_TYPE, account))))
             .whenComplete(handleCallback(callback));
     }
 
     public void transferTo(String smartContractAddress, String target, BigDecimal amount, Callback<String> callback) {
         CompletableFuture
-            .supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress))
+            .supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress),threadPool)
             .thenApply((sc) -> {
                 sc.setMethod(TRANSFER_METHOD);
                 sc.setParams(asList(createVariantObject(STRING_TYPE, target), createVariantObject(STRING_TYPE, amount.toString())));

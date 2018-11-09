@@ -12,6 +12,7 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -134,8 +135,7 @@ public class HistoryController implements Initializable {
                     async(() -> nodeApiService.getTransactionsState(account, ids),
                         handleGetTransactionsStateResult(sourceTransactionMap, lock));
                 }
-
-                transactionsList.forEach(transactionData -> {
+                Platform.runLater(()-> transactionsList.forEach(transactionData -> {
                     TransactionTabRow tableRow = new TransactionTabRow();
                     tableRow.setAmount(Converter.toString(transactionData.getAmount()));
                     tableRow.setSource(Converter.encodeToBASE58(transactionData.getSource()));
@@ -143,7 +143,7 @@ public class HistoryController implements Initializable {
                     tableRow.setInnerId(String.valueOf(transactionData.getId()));
                     tableRow.setState(VALID.name());
                     tabTransaction.getItems().add(tableRow);
-                });
+                }));
             }
 
             @Override
@@ -173,7 +173,7 @@ public class HistoryController implements Initializable {
                 int curRound = transactionsStates.getRoundNum();
                 transactionMap.entrySet().removeIf(e -> e.getValue().getRoundNumber() != 0 && curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
 
-                transactionMap.forEach((key, value) -> {
+                Platform.runLater(()-> transactionMap.forEach((key, value) -> {
                     TransactionTabRow tableRow = new TransactionTabRow();
                     tableRow.setInnerId(key.toString());
                     tableRow.setAmount(value.getAmount());
@@ -188,7 +188,7 @@ public class HistoryController implements Initializable {
                         }
                         doSafe(() -> tabTransaction.getItems().add(tableRow), lock);
                     }
-                });
+                }));
             }
 
             @Override
