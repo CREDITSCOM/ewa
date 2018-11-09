@@ -389,4 +389,7 @@ public class SmartContractController implements Initializable {
         }
     }
 
+    public void handleRefreshSmarts() {
+        initMySmartTab();
+    }
 }
