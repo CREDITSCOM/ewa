@@ -59,6 +59,7 @@ import java.util.concurrent.Executors;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.util.Converter.decodeFromBASE58;
+import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
@@ -375,7 +376,7 @@ public class SmartContractDeployController implements Initializable {
                         javaCode, byteCode, null);
 
                 CompletableFuture.supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,
-                    smartContractData.getBase58Address()))
+                    smartContractData.getBase58Address()),threadPool)
                     .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                     .whenComplete(handleCallback(handleDeployResult()));
             } else {

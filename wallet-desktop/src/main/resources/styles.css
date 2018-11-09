@@ -233,7 +233,6 @@
 .credits-history-pane .combo-box-base .cell {
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-alignment: center;
 }
 
 .credits-history-pane .combo-box-popup .list-view {

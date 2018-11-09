@@ -328,7 +328,7 @@ public class SmartContractController implements Initializable {
             smartContractData.setParams(params);
 
             CompletableFuture
-                .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,smartContractData.getBase58Address()))
+                .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,smartContractData.getBase58Address()),threadPool)
                 .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                 .whenComplete(handleCallback(handleExecuteResult()));
 
