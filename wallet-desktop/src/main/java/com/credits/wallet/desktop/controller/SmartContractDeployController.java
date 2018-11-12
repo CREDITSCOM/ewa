@@ -145,8 +145,11 @@ public class SmartContractDeployController implements Initializable {
                 codeArea.deletePreviousChar();
             }
         }));
-
-        codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
+        if(AppState.lastSmartContract == null) {
+            codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
+        } else {
+            codeArea.replaceText(AppState.lastSmartContract);
+        }
         debugPane.getChildren().clear();
         errorTableView.getStyleClass().add("credits-history");
         errorTableView.setMinHeight(debugPane.getPrefHeight());
@@ -379,6 +382,8 @@ public class SmartContractDeployController implements Initializable {
                     smartContractData.getBase58Address()),threadPool)
                     .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                     .whenComplete(handleCallback(handleDeployResult()));
+                AppState.lastSmartContract = codeArea.getText();
+                VistaNavigator.loadVista(VistaNavigator.WALLET);
             } else {
                 DiagnosticCollector collector = compilationPackage.getCollector();
                 List<Diagnostic> diagnostics = collector.getDiagnostics();
