@@ -62,7 +62,7 @@ public class TransactionCreatedInfoController implements Initializable {
         transactionTabRow.setTarget(AppState.toAddress);
         transactionTabRow.setCurrency("1");
         transactionTabRow.setAmount(Converter.toString(AppState.amount));
-        transactionTabRow.setInnerId(Converter.toString(AppState.walletLastTransactionIdCache.get(AppState.account)));
+        transactionTabRow.setInnerId(1L);
         AppState.selectedTransactionRow = transactionTabRow;
         AppState.detailFromHistory=false;
         VistaNavigator.loadVista(VistaNavigator.TRANSACTION);

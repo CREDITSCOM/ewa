@@ -32,7 +32,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.thrift.generated.TransactionState.INPROGRESS;
@@ -63,7 +62,11 @@ public class HistoryController implements Initializable {
     @FXML
     private ComboBox<Integer> cbPageSize;
     @FXML
-    private TableView<TransactionTabRow> tabTransaction;
+    private TableView<TransactionTabRow> approvedTableView;
+
+    @FXML
+    private TableView<TransactionTabRow> unapprovedTableView;
+
     @FXML
     private Label labPage;
     @FXML
@@ -77,32 +80,40 @@ public class HistoryController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         FormUtils.resizeForm(bp);
 
-        for (int i = 1; i <= INIT_PAGE_SIZE; i++) {
-            cbPageSize.getItems().add(INIT_PAGE_SIZE * i);
-        }
+        initCombobox(cbPageSize);
 
-        tabTransaction.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("innerId"));
-        tabTransaction.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("source"));
-        tabTransaction.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("target"));
-        tabTransaction.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("amount"));
-        tabTransaction.getColumns().get(4).setCellValueFactory(new PropertyValueFactory<>("state"));
+        initTable(approvedTableView);
+        initTable(unapprovedTableView);
 
-
-        cbPageSize.getSelectionModel().select(0);
         setPage();
-        fillTable();
 
-        cbPageSize.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            pageSize = cbPageSize.getItems().get((int) newValue);
+        fillApprovedTable();
+        fillUnapprovedTable();
+
+    }
+
+    private void initCombobox(ComboBox<Integer> comboBox) {
+        for (int i = 1; i <= INIT_PAGE_SIZE; i++) {
+            comboBox.getItems().add(INIT_PAGE_SIZE * i);
+        }
+        comboBox.getSelectionModel().select(0);
+        comboBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            pageSize = comboBox.getItems().get((int) newValue);
             pageNumber = 1;
             setPage();
-
-            fillTable();
+            fillApprovedTable();
         });
+    }
 
-        tabTransaction.setOnMousePressed(event -> {
+    private void initTable(TableView<TransactionTabRow> tableView) {
+        tableView.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("innerId"));
+        tableView.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("source"));
+        tableView.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("target"));
+        tableView.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("amount"));
+        tableView.getColumns().get(4).setCellValueFactory(new PropertyValueFactory<>("state"));
+        tableView.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
-                TransactionTabRow tabRow = tabTransaction.getSelectionModel().getSelectedItem();
+                TransactionTabRow tabRow = tableView.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
                     selectedTransactionRow = tabRow;
                     detailFromHistory = true;
@@ -112,38 +123,43 @@ public class HistoryController implements Initializable {
         });
     }
 
-    private void fillTable() {
-        async(() -> nodeApiService.getTransactions(account, (pageNumber - 1) * pageSize, pageSize),
-            handleGetTransactionsResult());
+    private void fillUnapprovedTable() {
+        if (AppState.sourceMap.get(account) != null) {
+            ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = AppState.sourceMap.get(account);
+            /*List<Long> validIds =
+                transactionsList.stream().map(TransactionData::getId).collect(Collectors.toList());
+            sourceTransactionMap.remove(validIds)*/
+            List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
+            Lock lock = new ReentrantLock();
+            async(() -> nodeApiService.getTransactionsState(account, ids),
+                handleGetTransactionsStateResult(sourceTransactionMap, lock));
+        }
     }
 
-    private Callback<List<TransactionData>> handleGetTransactionsResult() {
+    private void fillApprovedTable() {
+        Lock lock = new ReentrantLock();
+        async(() -> nodeApiService.getTransactions(account, (pageNumber - 1) * pageSize, pageSize),
+            handleGetTransactionsResult(lock));
+    }
+
+    private Callback<List<TransactionData>> handleGetTransactionsResult(Lock lock) {
         return new Callback<List<TransactionData>>() {
 
             @Override
             public void onSuccess(List<TransactionData> transactionsList) throws CreditsException {
-                tabTransaction.getItems().clear();
                 btnNext.setDisable(transactionsList.size() < pageSize);
 
-                if (AppState.sourceMap.get(account) != null) {
-                    ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = AppState.sourceMap.get(account);
-                    List<Long> validIds =
-                        transactionsList.stream().map(TransactionData::getId).collect(Collectors.toList());
-                    sourceTransactionMap.remove(validIds);
-                    List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
-                    Lock lock = new ReentrantLock();
-                    async(() -> nodeApiService.getTransactionsState(account, ids),
-                        handleGetTransactionsStateResult(sourceTransactionMap, lock));
-                }
-                Platform.runLater(()-> transactionsList.forEach(transactionData -> {
+                List<TransactionTabRow> approvedList = new ArrayList<>();
+                transactionsList.forEach(transactionData -> {
                     TransactionTabRow tableRow = new TransactionTabRow();
                     tableRow.setAmount(Converter.toString(transactionData.getAmount()));
                     tableRow.setSource(Converter.encodeToBASE58(transactionData.getSource()));
                     tableRow.setTarget(Converter.encodeToBASE58(transactionData.getTarget()));
-                    tableRow.setInnerId(String.valueOf(transactionData.getId()));
+                    tableRow.setInnerId(transactionData.getId());
                     tableRow.setState(VALID.name());
-                    tabTransaction.getItems().add(tableRow);
-                }));
+                    approvedList.add(tableRow);
+                });
+                doSafe(() -> refreshTableViewItems(approvedTableView, approvedList), lock);
             }
 
             @Override
@@ -171,33 +187,46 @@ public class HistoryController implements Initializable {
                 });
 
                 int curRound = transactionsStates.getRoundNum();
-                transactionMap.entrySet().removeIf(e -> e.getValue().getRoundNumber() != 0 && curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
+                transactionMap.entrySet()
+                    .removeIf(e -> e.getValue().getRoundNumber() != 0 &&
+                        curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);
 
-                Platform.runLater(()-> transactionMap.forEach((key, value) -> {
+                List<TransactionTabRow> unapprovedList = new ArrayList<>();
+
+                transactionMap.forEach((id, value) -> {
                     TransactionTabRow tableRow = new TransactionTabRow();
-                    tableRow.setInnerId(key.toString());
+                    tableRow.setInnerId(id);
                     tableRow.setAmount(value.getAmount());
                     tableRow.setCurrency(value.getCurrency());
                     tableRow.setSource(value.getSource());
                     tableRow.setTarget(value.getTarget());
-                    if (states.get(key) != null) {
-                        if (states.get(key).getValue() == INVALID.getValue()) {
+                    if (states.get(id) != null) {
+                        if (states.get(id).getValue() == INVALID.getValue()) {
                             tableRow.setState(INVALID.name());
-                        } else if (curRound == 0 || states.get(key).getValue() == INPROGRESS.getValue()) {
+                        } else if (curRound == 0 || states.get(id).getValue() == INPROGRESS.getValue()) {
                             tableRow.setState(INPROGRESS.name());
                         }
-                        doSafe(() -> tabTransaction.getItems().add(tableRow), lock);
+                        unapprovedList.add(tableRow);
                     }
-                }));
+                });
+                doSafe(() -> refreshTableViewItems(unapprovedTableView, unapprovedList), lock);
+
+
             }
 
             @Override
             public void onError(Throwable e) {
-                doSafe(() -> tabTransaction.getItems().clear(), lock);
+                doSafe(() -> approvedTableView.getItems().clear(), lock);
             }
         };
     }
 
+    private void refreshTableViewItems(TableView<TransactionTabRow> tableView, List<TransactionTabRow> itemList) {
+        Platform.runLater(() -> {
+            tableView.getItems().clear();
+            tableView.getItems().addAll(itemList);
+        });
+    }
 
     @FXML
     private void handleBack() {
@@ -206,14 +235,15 @@ public class HistoryController implements Initializable {
 
     @FXML
     private void handleRefresh() {
-        fillTable();
+        fillApprovedTable();
+        fillUnapprovedTable();
     }
 
     @FXML
     private void handlePageFirst() {
         pageNumber = FIRST_PAGE_NUMBER;
         setPage();
-        fillTable();
+        fillApprovedTable();
     }
 
     @FXML
@@ -222,14 +252,14 @@ public class HistoryController implements Initializable {
             pageNumber = pageNumber - 1;
         }
         setPage();
-        fillTable();
+        fillApprovedTable();
     }
 
     @FXML
     private void handlePageNext() {
         pageNumber = pageNumber + 1;
         setPage();
-        fillTable();
+        fillApprovedTable();
     }
 
     private void setPage() {
