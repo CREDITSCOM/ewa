@@ -4,7 +4,7 @@ package com.credits.wallet.desktop.struct;
  * Created by Rustem Saidaliyev on 25.06.2018.
  */
 public class TransactionTabRow {
-    private String innerId;
+    private Long innerId;
     private String source;
     private String target;
     private String currency;
@@ -27,11 +27,11 @@ public class TransactionTabRow {
         this.state = state;
     }
 
-    public String getInnerId() {
+    public Long getInnerId() {
         return innerId;
     }
 
-    public void setInnerId(String innerId) {
+    public void setInnerId(Long innerId) {
         this.innerId = innerId;
     }
 
