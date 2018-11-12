@@ -60,4 +60,5 @@ public class AppState {
     public static ObjectKeeper<ConcurrentHashMap<String, SmartContractData>> smartContractsKeeper;
     public static ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper;
     public static String text;
+    public static String lastSmartContract;
 }
