@@ -30,14 +30,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.thrift.generated.TransactionState.INPROGRESS;
 import static com.credits.client.node.thrift.generated.TransactionState.INVALID;
 import static com.credits.client.node.thrift.generated.TransactionState.VALID;
-import static com.credits.general.util.CriticalSection.doSafe;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.detailFromHistory;
@@ -130,19 +127,17 @@ public class HistoryController implements Initializable {
                 transactionsList.stream().map(TransactionData::getId).collect(Collectors.toList());
             sourceTransactionMap.remove(validIds)*/
             List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
-            Lock lock = new ReentrantLock();
             async(() -> nodeApiService.getTransactionsState(account, ids),
-                handleGetTransactionsStateResult(sourceTransactionMap, lock));
+                handleGetTransactionsStateResult(sourceTransactionMap));
         }
     }
 
     private void fillApprovedTable() {
-        Lock lock = new ReentrantLock();
         async(() -> nodeApiService.getTransactions(account, (pageNumber - 1) * pageSize, pageSize),
-            handleGetTransactionsResult(lock));
+            handleGetTransactionsResult());
     }
 
-    private Callback<List<TransactionData>> handleGetTransactionsResult(Lock lock) {
+    private Callback<List<TransactionData>> handleGetTransactionsResult() {
         return new Callback<List<TransactionData>>() {
 
             @Override
@@ -159,7 +154,14 @@ public class HistoryController implements Initializable {
                     tableRow.setState(VALID.name());
                     approvedList.add(tableRow);
                 });
-                doSafe(() -> refreshTableViewItems(approvedTableView, approvedList), lock);
+                refreshTableViewItems(approvedTableView, approvedList);
+            }
+
+            private void refreshTableViewItems(TableView<TransactionTabRow> tableView, List<TransactionTabRow> itemList) {
+                Platform.runLater(() -> {
+                    tableView.getItems().clear();
+                    tableView.getItems().addAll(itemList);
+                });
             }
 
             @Override
@@ -175,7 +177,7 @@ public class HistoryController implements Initializable {
     }
 
     private Callback<TransactionsStateGetResult> handleGetTransactionsStateResult(
-        ConcurrentHashMap<Long, TransactionRoundData> transactionMap, Lock lock) {
+        ConcurrentHashMap<Long, TransactionRoundData> transactionMap) {
         return new Callback<TransactionsStateGetResult>() {
             @Override
             public void onSuccess(TransactionsStateGetResult transactionsStates) throws CreditsException {
@@ -209,14 +211,14 @@ public class HistoryController implements Initializable {
                         unapprovedList.add(tableRow);
                     }
                 });
-                doSafe(() -> refreshTableViewItems(unapprovedTableView, unapprovedList), lock);
+                refreshTableViewItems(unapprovedTableView, unapprovedList);
 
 
             }
 
             @Override
             public void onError(Throwable e) {
-                doSafe(() -> approvedTableView.getItems().clear(), lock);
+                Platform.runLater(()->approvedTableView.getItems().clear());
             }
         };
     }
