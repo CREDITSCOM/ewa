@@ -30,18 +30,24 @@ public class ObjectKeeper<T extends Serializable> {
 
     public ObjectKeeper(String account, String objectName) {
         this.account = account;
-        this.objectFileName = objectName + ".ser";
+        this.objectFileName = objectName;
     }
 
     public void keepObject(T object) {
         if(object != null) {
-            doSafe(() -> serialize(object), lock);
+            doSafe(() -> storedObject = object, lock);
+        }
+    }
+
+    public void flush(){
+        if(storedObject != null) {
+            doSafe(() -> serialize(storedObject), lock);
         }
     }
 
     public Optional<T> getKeptObject() {
-        if (storedObject != null) {
-            return Optional.of(doSafe(this::deserialize, lock));
+        if (storedObject == null) {
+            return Optional.ofNullable(storedObject = doSafe(this::deserialize, lock));
         }
         return Optional.ofNullable(storedObject);
     }

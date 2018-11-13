@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -40,6 +41,8 @@ public class ObjectKeeperTest {
     @Test
     public void serializeThenDeserialize(){
         objectKeeper.keepObject(someData);
+        assertFalse(objectKeeper.getSerializedObjectPath().toFile().exists());
+        objectKeeper.flush();
         assertTrue(objectKeeper.getSerializedObjectPath().toFile().exists());
 
         Map restoredObject = objectKeeper.getKeptObject().orElseGet(HashMap::new);
