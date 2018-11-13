@@ -12,18 +12,23 @@ import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -43,6 +48,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
+import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
@@ -135,7 +141,7 @@ public class SmartContractController implements Initializable {
     }
 
     @FXML
-    private void onSelectTab(){
+    private void updateSelectedTab(){
        if(myContractsTab.isSelected()){
            refreshContractsTab();
        }else if (favoriteContractsTab.isSelected()){
@@ -197,7 +203,16 @@ public class SmartContractController implements Initializable {
         }
         refreshFavoriteContractsTab();
     }
-
+    
+    private void changeFavoriteStateIntoTab(TableView<SmartContractTabRow> table, SmartContractData smartContractData, boolean isSelected) {
+        table.getItems()
+            .stream()
+            .filter(row -> row.getSmartContractData().equals(smartContractData))
+            .findFirst()
+            .ifPresent(row -> row.getFav().setSelected(isSelected));
+        table.refresh();
+    }
+    
     private void setFavoriteCurrentContract(SmartContractData smartContractData, boolean isSelected) {
         if(currentSmartContract != null && smartContractData.getBase58Address().equals(currentSmartContract.getBase58Address())) {
             tbFavorite.setSelected(isSelected);
@@ -328,7 +343,7 @@ public class SmartContractController implements Initializable {
             smartContractData.setParams(params);
 
             CompletableFuture
-                .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,smartContractData.getBase58Address()),threadPool)
+                .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,smartContractData.getBase58Address()), threadPool)
                 .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                 .whenComplete(handleCallback(handleExecuteResult()));
 
@@ -372,6 +387,6 @@ public class SmartContractController implements Initializable {
     }
 
     public void handleRefreshSmarts() {
-
+        updateSelectedTab();
     }
 }

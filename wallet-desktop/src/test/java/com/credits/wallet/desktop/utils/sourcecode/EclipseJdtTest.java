@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.wallet.desktop.utils.sourcecode.EclipseJdt;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.junit.Test;
 

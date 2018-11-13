@@ -82,12 +82,12 @@
                 </Pane>
                 <TabPane layoutX="20.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="430.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                        <Tab fx:id="favoriteContractsTab" onSelectionChanged="#onSelectTab" text="Favorites">
+                        <Tab fx:id="favoriteContractsTab" onSelectionChanged="#updateSelectedTab" text="Favorites">
                             <content>
                                 <TableView fx:id="favoriteContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view" />
                             </content>
                         </Tab>
-                        <Tab fx:id="myContractsTab" onSelectionChanged="#onSelectTab" text="My smart contracts">
+                        <Tab fx:id="myContractsTab" onSelectionChanged="#updateSelectedTab" text="My smart contracts">
                             <content>
                                 <TableView fx:id="smartContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view"/>
                             </content>
