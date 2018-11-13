@@ -156,7 +156,7 @@ public class WalletController implements Initializable {
     private void addOrUpdateCsCoinRow(ObservableList<CoinTabRow> tableViewItems) {
         CoinTabRow coinRow = getCoinTabRow(tableViewItems, CREDITS_TOKEN_NAME, null);
         changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
-        async(() -> nodeApiService.getBalance(account), updateCoinValue(coinRow, creditsDecimalFormat));
+        async(() -> nodeApiService.getBalance(account), handleUpdateCoinValue(coinRow, creditsDecimalFormat));
     }
 
     private void addOrUpdateUserCoinRow(ObservableList<CoinTabRow> tableViewItems, String coinName, String smartContractAddress) {
@@ -165,7 +165,7 @@ public class WalletController implements Initializable {
             LOGGER.debug("{} take lock {}", coinName, coinRow.getLock().hashCode());
             changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
             DecimalFormat decimalFormat = new DecimalFormat("##0.000000000000000000"); // fixme must use the method "tokenContract.decimal()"
-            contractInteractionService.getSmartContractBalance(smartContractAddress, updateCoinValue(coinRow, decimalFormat));
+            contractInteractionService.getSmartContractBalance(smartContractAddress, handleUpdateCoinValue(coinRow, decimalFormat));
         }
     }
 
@@ -185,7 +185,7 @@ public class WalletController implements Initializable {
             });
     }
 
-    private Callback<BigDecimal> updateCoinValue(CoinTabRow coinRow, DecimalFormat decimalFormat) {
+    private Callback<BigDecimal> handleUpdateCoinValue(CoinTabRow coinRow, DecimalFormat decimalFormat) {
         return new Callback<BigDecimal>() {
             @Override
             public void onSuccess(BigDecimal balance) {

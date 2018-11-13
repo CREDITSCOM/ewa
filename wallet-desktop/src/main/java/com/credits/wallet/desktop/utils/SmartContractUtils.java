@@ -5,9 +5,13 @@ import com.credits.general.crypto.Md5;
 import com.credits.general.exception.CreditsException;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.exception.WalletDesktopException;
+import com.credits.wallet.desktop.utils.sourcecode.AutocompleteHelper;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -17,6 +21,8 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.fxmisc.wellbehaved.event.InputMap;
+import org.fxmisc.wellbehaved.event.Nodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +38,7 @@ import java.util.regex.Pattern;
 import static com.credits.general.util.Converter.byteArrayToHex;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
+import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 
 public class SmartContractUtils {
     private final static Logger LOGGER = LoggerFactory.getLogger(SmartContractUtils.class);
@@ -42,6 +49,7 @@ public class SmartContractUtils {
             "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package",
             "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch",
             "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while"};
+    private static AutocompleteHelper autocompleteHelper;
 
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
     private static final String PAREN_PATTERN = "[()]";
@@ -166,4 +174,66 @@ public class SmartContractUtils {
         byte[] hashBytes = Md5.encrypt(byteCode);
         return byteArrayToHex(hashBytes);
     }
+
+
+
+    private static int tabCount;
+    private static final String DEFAULT_SOURCE_CODE =
+        "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n\n    }" + "\n" + "}";
+    private static final String[] PARENT_METHODS =
+        new String[] {"double total", "Double getBalance(String address, String currency)",
+            "TransactionData getTransaction(String transactionId)",
+            "List<TransactionData> getTransactions(String address, long offset, long limit)",
+            "List<PoolData> getPoolList(long offset, long limit)", "PoolData getPool(String poolNumber)",
+            "void sendTransaction(String account, String target, Double amount, String currency)"};
+
+
+    public static void initCodeAreaLogic(CodeArea codeArea) {
+
+        try {
+            autocompleteHelper = AutocompleteHelper.init(codeArea);
+        } catch (WalletDesktopException e) {
+            LOGGER.error("", e);
+            FormUtils.showError(e.getMessage());
+        }
+
+        codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
+            KeyCode code = k.getCode();
+            if (code != KeyCode.TAB) {
+                if (code.isLetterKey() || code.isDigitKey() || code.isNavigationKey() || code.isWhitespaceKey()) {
+                    tabCount = 0;
+                }
+            }
+
+            autocompleteHelper.handleKeyPressEvent(k);
+        });
+
+        Nodes.addInputMap(codeArea, InputMap.consume(keyPressed(KeyCode.TAB), e -> {
+            tabCount++;
+            codeArea.replaceSelection("    ");
+        }));
+
+        Nodes.addInputMap(codeArea, InputMap.consume(keyPressed(KeyCode.BACK_SPACE), e -> {
+            if (tabCount > 0) {
+                for (int i = 0; i < 4; i++) {
+                    codeArea.deletePreviousChar();
+                }
+                tabCount--;
+            } else {
+                codeArea.deletePreviousChar();
+            }
+        }));
+
+        if(AppState.lastSmartContract == null) {
+            codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
+        } else {
+            codeArea.replaceText(AppState.lastSmartContract);
+        }
+    }
+
+
+
+
+
+
 }

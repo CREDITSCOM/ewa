@@ -14,17 +14,16 @@ import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
-import com.credits.wallet.desktop.utils.sourcecode.AutocompleteHelper;
-import com.credits.wallet.desktop.utils.sourcecode.EclipseJdt;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
+import com.credits.wallet.desktop.utils.sourcecode.AutocompleteHelper;
+import com.credits.wallet.desktop.utils.sourcecode.EclipseJdt;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
@@ -32,7 +31,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -40,8 +39,6 @@ import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.wellbehaved.event.InputMap;
-import org.fxmisc.wellbehaved.event.Nodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,10 +47,10 @@ import javax.tools.DiagnosticCollector;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
@@ -62,7 +59,6 @@ import static com.credits.general.util.Converter.decodeFromBASE58;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
-import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -70,14 +66,15 @@ import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 //TODO: This class is a GODZILLA please refactor it ASAP!
 public class SmartContractDeployController implements Initializable {
 
-    private static final String DEFAULT_SOURCE_CODE =
-        "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n\n    }" + "\n" + "}";
+    public static final String BUILD = "Build";
+    public static final String COMPILING = "Compiling...";
+    //    private static final String NON_CHANGED_STR = "public class Contract extends SmartContract {";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
     private static final String CLASS_NAME = "Contract";
     private static final String SUPERCLASS_NAME = "SmartContract";
 
     private CodeArea codeArea;
-    private int tabCount;
+
 
     @FXML
     private TableView<ErrorCodeTabRow> errorTableView;
@@ -97,7 +94,15 @@ public class SmartContractDeployController implements Initializable {
     @FXML
     private TreeView<Label> classTreeView;
 
+    @FXML
+    public Button deployButton;
+
+    @FXML
+    public Button checkButton;
+
     private AutocompleteHelper autocompleteHelper;
+
+    public CompilationPackage compilationPackage;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -111,6 +116,13 @@ public class SmartContractDeployController implements Initializable {
 
         codeArea = SmartContractUtils.initCodeArea(paneCode, false);
 
+        SmartContractUtils.initCodeAreaLogic(codeArea);
+
+        codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (evt) -> {
+            deployButton.setDisable(true);
+            checkButton.setDisable(false);
+        });
+
         try {
             autocompleteHelper = AutocompleteHelper.init(codeArea);
         } catch (WalletDesktopException e) {
@@ -118,83 +130,16 @@ public class SmartContractDeployController implements Initializable {
             FormUtils.showError(e.getMessage());
         }
 
-        codeArea.setOnKeyPressed(k -> {
-            KeyCode code = k.getCode();
-            if (code != KeyCode.TAB) {
-                if (code.isLetterKey() || code.isDigitKey() || code.isNavigationKey() || code.isWhitespaceKey()) {
-                    tabCount = 0;
-                }
-            }
-
-            autocompleteHelper.handleKeyPressEvent(k);
-        });
-
-        Nodes.addInputMap(codeArea, InputMap.consume(keyPressed(KeyCode.TAB), e -> {
-            tabCount++;
-            codeArea.replaceSelection("    ");
-        }));
-
-        Nodes.addInputMap(codeArea, InputMap.consume(keyPressed(KeyCode.BACK_SPACE), e -> {
-            if (tabCount > 0) {
-                for (int i = 0; i < 4; i++) {
-                    codeArea.deletePreviousChar();
-                }
-                tabCount--;
-            } else {
-                codeArea.deletePreviousChar();
-            }
-        }));
-        if(AppState.lastSmartContract == null) {
-            codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
-        } else {
-            codeArea.replaceText(AppState.lastSmartContract);
-        }
-        debugPane.getChildren().clear();
-        errorTableView.getStyleClass().add("credits-history");
-        errorTableView.setMinHeight(debugPane.getPrefHeight());
-        errorTableView.setMinWidth(debugPane.getPrefWidth());
-
         for (SplitPane.Divider d : splitPane.getDividers()) {
-            d.positionProperty().addListener(new ChangeListener<Number>() {
-
-                @Override
-                public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-                    errorTableView.setPrefHeight(debugPane.getHeight());
-                }
-            });
+            d.positionProperty()
+                .addListener((observable, oldValue, newValue) -> errorTableView.setPrefHeight(debugPane.getHeight()));
         }
 
-        this.errorTableView = new TableView<>();
-        errorTableView.getStyleClass().add("credits-history");
-        this.errorTableView.setPrefHeight(debugPane.getPrefHeight());
-        this.errorTableView.setPrefWidth(debugPane.getPrefWidth());
+        panelCodeKeyReleased();
+        initErrorTableView();
 
-        TableColumn<ErrorCodeTabRow, String> tabErrorsColLine = new TableColumn<>();
-        tabErrorsColLine.setText("Line");
-        tabErrorsColLine.setCellValueFactory(new PropertyValueFactory<>("line"));
-        tabErrorsColLine.setPrefWidth(debugPane.getPrefWidth() * 0.1);
-
-        TableColumn<ErrorCodeTabRow, String> tabErrorsColText = new TableColumn<>();
-        tabErrorsColText.setText("Error");
-        tabErrorsColText.setCellValueFactory(new PropertyValueFactory<>("text"));
-        tabErrorsColText.setPrefWidth(debugPane.getPrefWidth() * 0.88);
-
-        errorTableView.getColumns().add(tabErrorsColLine);
-        errorTableView.getColumns().add(tabErrorsColText);
-
-        errorTableView.setOnMousePressed(event -> {
-            if (event.isPrimaryButtonDown()) {
-                ErrorCodeTabRow tabRow = errorTableView.getSelectionModel().getSelectedItem();
-                if (tabRow != null) {
-                    positionCursorToLine(Integer.valueOf(tabRow.getLine()));
-                }
-            }
-        });
-
-        Thread t = new Thread(this::refreshClassMembersTree);
-        t.setDaemon(true);
-        t.start();
     }
+
 
     private void positionCursorToLine(int line) {
         char[] text = codeArea.getText().toCharArray();
@@ -269,24 +214,64 @@ public class SmartContractDeployController implements Initializable {
     }
 
     @FXML
-    @SuppressWarnings("unchecked")
     private void handleCheck() {
-        errorTableView.getItems().clear();
-        debugPane.getChildren().clear();
+        checkButton.setText(COMPILING);
+        checkButton.setDisable(true);
+        errorTableView.setVisible(false);
+        CompletableFuture.supplyAsync(() -> buildSourceCode(codeArea.getText()))
+            .whenComplete(handleCallback(handleCheckResult()));
+    }
 
-        String sourceCode = codeArea.getText();
 
+    private Callback<CompilationResult> handleCheckResult() {
+        return new Callback<CompilationResult>() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public void onSuccess(CompilationResult compilationResult) {
+                List listOfError = compilationResult.getErrors();
+                Platform.runLater(() -> {
+                    checkButton.setText(BUILD);
+                });
+
+                if (listOfError.size() > 0) {
+                    Platform.runLater(() -> {
+                        checkButton.setDisable(false);
+                        errorTableView.getItems().clear();
+                        errorTableView.getItems().addAll(listOfError);
+                        errorTableView.setVisible(true);
+                    });
+                } else {
+                    compilationPackage = compilationResult.getCompilationPackage();
+                    Platform.runLater(() -> {
+                        checkButton.setDisable(true);
+                        deployButton.setDisable(false);
+                    });
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Platform.runLater(() -> {
+                    checkButton.setDisable(false);
+                    checkButton.setText(BUILD);
+                    FormUtils.showPlatformError(e.getMessage());
+                });
+                LOGGER.error("failed!", e);
+            }
+        };
+    }
+
+    private CompilationResult buildSourceCode(String sourceCode) {
+        CompilationPackage compilationPackage = null;
         String className = SourceCodeUtils.parseClassName(sourceCode, "");
-
+        List<ErrorCodeTabRow> listOfError = new ArrayList<>();
         try {
             this.checkClassAndSuperclassNames(className, sourceCode);
         } catch (CreditsException e) {
             ErrorCodeTabRow tr = new ErrorCodeTabRow();
             tr.setLine("1");
             tr.setText(e.getMessage());
-            errorTableView.getItems().add(tr);
-            addTabErrorsToDebugPane();
-            return;
+            listOfError.add(tr);
         }
         IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
         if (problemArr.length > 0) {
@@ -295,18 +280,10 @@ public class SmartContractDeployController implements Initializable {
                 ErrorCodeTabRow tr = new ErrorCodeTabRow();
                 tr.setLine(Integer.toString(p.getSourceLineNumber()));
                 tr.setText(p.getMessage());
-                errorTableView.getItems().add(tr);
+                listOfError.add(tr);
             }
-            addTabErrorsToDebugPane();
         } else {
-
-            CompilationPackage compilationPackage = null;
-            try {
-                compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
-            } catch (CompilationException e) {
-                LOGGER.error("failed!", e);
-                FormUtils.showError(e.getMessage());
-            }
+             compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
             if (!compilationPackage.isCompilationStatusSuccess()) {
                 DiagnosticCollector collector = compilationPackage.getCollector();
                 List<Diagnostic> diagnostics = collector.getDiagnostics();
@@ -314,20 +291,42 @@ public class SmartContractDeployController implements Initializable {
                     ErrorCodeTabRow tr = new ErrorCodeTabRow();
                     tr.setLine(Converter.toString(action.getLineNumber()));
                     tr.setText(action.getMessage(null));
-                    errorTableView.getItems().add(tr);
+                    listOfError.add(tr);
                 });
-                addTabErrorsToDebugPane();
-            } else {
-                debugPane.getChildren().clear();
-                FormUtils.showInfo("Everything is OK");
             }
+        }
+        return new CompilationResult(compilationPackage,listOfError);
+    }
+
+    private class CompilationResult {
+        List<ErrorCodeTabRow> errorCodeTabRows;
+        CompilationPackage compilationPackage;
+
+        public CompilationResult(CompilationPackage compilationPackage, List<ErrorCodeTabRow> listOfError) {
+            this.errorCodeTabRows = listOfError;
+            this.compilationPackage = compilationPackage;
+        }
+
+        public List<ErrorCodeTabRow> getErrors() {
+            return errorCodeTabRows;
+        }
+
+        public void setErrorCodeTabRows(List<ErrorCodeTabRow> errorCodeTabRows) {
+            this.errorCodeTabRows = errorCodeTabRows;
+        }
+
+        public CompilationPackage getCompilationPackage() {
+            return compilationPackage;
+        }
+
+        public void setCompilationPackage(CompilationPackage compilationPackage) {
+            this.compilationPackage = compilationPackage;
         }
     }
 
     private void addTabErrorsToDebugPane() {
-        this.errorTableView.setPrefHeight(30 + this.errorTableView.getItems().size() * 25);
-        debugPane.getChildren().clear();
-        debugPane.getChildren().add(this.errorTableView);
+        errorTableView.setPrefHeight(30 + errorTableView.getItems().size() * 25);
+        errorTableView.setVisible(true);
     }
 
     @FXML
@@ -348,7 +347,7 @@ public class SmartContractDeployController implements Initializable {
                         javaCode, byteCode, null);
 
                 CompletableFuture.supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,
-                    smartContractData.getBase58Address()),threadPool)
+                    smartContractData.getBase58Address()), threadPool)
                     .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                     .whenComplete(handleCallback(handleDeployResult()));
                 AppState.lastSmartContract = codeArea.getText();
@@ -361,7 +360,7 @@ public class SmartContractDeployController implements Initializable {
                     String.format("line %s, error %s; ", action.getLineNumber(), action.getMessage(null))));
                 throw new CompilationException(String.format("Compilation errors: %s", errors.toString()));
             }
-        } catch (CompilationException | CreditsException e) {
+        } catch (CreditsException e) {
             LOGGER.error("failed!", e);
             FormUtils.showError(AppState.NODE_ERROR + ": " + e.getMessage());
         }
@@ -395,10 +394,38 @@ public class SmartContractDeployController implements Initializable {
         }
         String superclassName = SourceCodeUtils.parseSuperclassName(sourceCode);
 
-        if (!superclassName.equals(SUPERCLASS_NAME)) {
+        if (superclassName == null || !superclassName.equals(SUPERCLASS_NAME)) {
             throw new CreditsException(
                 String.format("Wrong superclass name %s, superclass name must be %s", superclassName, SUPERCLASS_NAME));
         }
+    }
+
+    private void initErrorTableView() {
+        TableColumn<ErrorCodeTabRow, String> tabErrorsColLine = new TableColumn<>();
+        tabErrorsColLine.setText("Line");
+        tabErrorsColLine.setCellValueFactory(new PropertyValueFactory<>("line"));
+        tabErrorsColLine.setPrefWidth(debugPane.getPrefWidth() * 0.1);
+
+        TableColumn<ErrorCodeTabRow, String> tabErrorsColText = new TableColumn<>();
+        tabErrorsColText.setText("Error");
+        tabErrorsColText.setCellValueFactory(new PropertyValueFactory<>("text"));
+        tabErrorsColText.setPrefWidth(debugPane.getPrefWidth() * 0.88);
+
+        errorTableView.setVisible(false);
+        errorTableView.setPrefHeight(debugPane.getPrefHeight());
+        errorTableView.setPrefWidth(debugPane.getPrefWidth());
+
+        errorTableView.getColumns().add(tabErrorsColLine);
+        errorTableView.getColumns().add(tabErrorsColText);
+
+        errorTableView.setOnMousePressed(event -> {
+            if (event.isPrimaryButtonDown()) {
+                ErrorCodeTabRow tabRow = errorTableView.getSelectionModel().getSelectedItem();
+                if (tabRow != null) {
+                    positionCursorToLine(Integer.valueOf(tabRow.getLine()));
+                }
+            }
+        });
     }
 
 }

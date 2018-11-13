@@ -6,7 +6,6 @@ import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.compiler.model.JavaSourceFromString;
 
-
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
@@ -104,4 +103,6 @@ public class InMemoryCompiler {
 		}
 		return sb.toString();
 	}
+
+
 }

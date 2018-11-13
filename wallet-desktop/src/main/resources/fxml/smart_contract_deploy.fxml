@@ -18,8 +18,8 @@
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contract making" />
                 <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can check and deploy smart contract" />
                 <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" text="🡰" />
-                <Button fx:id="checkButton" layoutX="633.0" layoutY="590.0" onAction="#handleCheck" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Check" />
-                <Button layoutX="1086.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="DEPLOY" />
+                <Button fx:id="checkButton" layoutX="633.0" layoutY="590.0" onAction="#handleCheck" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Build" />
+                <Button fx:id="deployButton" disable="true" layoutX="1086.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Deploy" />
                 <TreeView fx:id="classTreeView" layoutX="920.0" layoutY="85.0" prefHeight="498.0" prefWidth="364.0" style="-fx-border-color: transparent; -fx-border-width: 0; -fx-border-style: none; -fx-background-color: transparent;" />
                 <Pane layoutX="920.0" layoutY="70.0" pickOnBounds="false" prefHeight="513.0" prefWidth="364.0" style="-fx-border-radius: 15; -fx-border-radius: 15; -fx-border-color: black; -fx-border-width: 1;" />
                 <SplitPane fx:id="splitPane" dividerPositions="0.9" layoutX="20.0" layoutY="70.0" orientation="VERTICAL" prefHeight="513.0" prefWidth="813.0" style="-fx-background-color: white;  -fx-padding:  15 0 0 0; -fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 15; -fx-background-radius: 15;">
@@ -27,7 +27,7 @@
                         <VBox fx:id="paneCode" maxHeight="384.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="384.0" prefWidth="811.0" />
                         <VBox fx:id="debugPane" minHeight="95.0" prefHeight="95.0" prefWidth="811.0" style="-fx-padding:  0 0 15 0; -fx-border-width: 1 0 0 0;-fx-border-color: black;">
                             <children>
-                                <TableView fx:id="errorTableView" />
+                                <TableView fx:id="errorTableView" styleClass="credits-history"/>
                             </children>
                         </VBox>
                     </items>
