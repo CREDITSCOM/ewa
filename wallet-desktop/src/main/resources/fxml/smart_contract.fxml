@@ -82,14 +82,14 @@
                 </Pane>
                 <TabPane layoutX="20.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="430.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                        <Tab text="My smart contracts">
-                            <content>
-                                <TableView fx:id="smartContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view"/>
-                            </content>
-                        </Tab>
-                        <Tab onSelectionChanged="#initFavoriteTab" text="Favorites">
+                        <Tab fx:id="favoriteContractsTab" onSelectionChanged="#onSelectTab" text="Favorites">
                             <content>
                                 <TableView fx:id="favoriteContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view"/>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="myContractsTab" onSelectionChanged="#onSelectTab" text="My smart contracts">
+                            <content>
+                                <TableView fx:id="smartContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view"/>
                             </content>
                         </Tab>
                     </tabs>
@@ -100,7 +100,7 @@
             <HBox layoutX="490.0" layoutY="121.0" maxWidth="800.0" prefHeight="32.0" prefWidth="800.0">
                <children>
                       <TextField fx:id="tfAddress" editable="false" prefHeight="32.0" prefWidth="450.0" style="-fx-background-color: transparent; -fx-background-insets: 0px; -fx-font-size: 14px;" styleClass="arrow" text="Please choose smart contract" />
-                      <ToggleButton fx:id="tbFavourite" mnemonicParsing="false" prefHeight="55.0" prefWidth="71.0" styleClass="credits-checkbox">
+                      <ToggleButton fx:id="tbFavorite" mnemonicParsing="false" prefHeight="55.0" prefWidth="71.0" styleClass="credits-checkbox">
                 </ToggleButton>
                </children>
             </HBox>
