@@ -41,7 +41,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
-import static com.credits.general.util.CriticalSection.doSafe;
 import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.amount;
@@ -68,6 +67,7 @@ public class WalletController implements Initializable {
     private final String WAITING_STATE_MESSAGE = "processing...";
     private final String ERROR_STATE_MESSAGE = "not available";
     private final DecimalFormat creditsDecimalFormat = new DecimalFormat("##0." + repeat('0', CREDITS_DECIMAL));
+    private Lock lock = new ReentrantLock(true);
     public final String CREDITS_TOKEN_NAME = "CS";
 
     @FXML
@@ -92,6 +92,9 @@ public class WalletController implements Initializable {
     private TextField transText;
     @FXML
     private volatile TableView<CoinTabRow> coinsTableView;
+    private String GET_ERROR_MESSAGE;
+
+    ContextMenu contextMenu = new ContextMenu();
 
     @FXML
     private void handleLogout() {
@@ -113,6 +116,94 @@ public class WalletController implements Initializable {
     @FXML
     private void handleRefreshBalance() {
         updateCoins(coinsTableView);
+    }
+
+    private void updateCoins(TableView<CoinTabRow> tableView) {
+        ObservableList<CoinTabRow> tableViewItems = tableView.getItems();
+        addOrUpdateCsCoinRow(tableViewItems);
+        coinsKeeper.getKeptObject(ConcurrentHashMap::new).forEach((coinName, contractAddress) -> addOrUpdateUserCoinRow(tableViewItems, coinName, contractAddress));
+    }
+
+    private EventHandler<MouseEvent> handleDeleteToken(TableRow<CoinTabRow> row) {
+        return event -> {
+            if ((!row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals(CREDITS_TOKEN_NAME)) {
+                row.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
+                    if (t.getButton() == MouseButton.SECONDARY) {
+                        Platform.runLater(() -> {
+                            contextMenu.getItems().clear();
+                            contextMenu.hide();
+                            MenuItem removeItem = new MenuItem("Delete");
+                            contextMenu.getItems().add(removeItem);
+
+                            removeItem.setOnAction(event1 -> {
+                                coinsTableView.getItems().remove(row.getItem());
+                                coinsKeeper.modify(coinsKeeper.new Modifier() {
+                                    @Override
+                                    public ConcurrentHashMap<String, String> modify(ConcurrentHashMap<String, String> restoredObject) {
+                                        restoredObject.remove(row.getItem().getName());
+                                        return restoredObject;
+                                    }
+                                });
+                            });
+                            contextMenu.show(coinsTableView, t.getScreenX(), t.getScreenY());
+                        });
+                    }
+                });
+            }
+        };
+    }
+
+    private void addOrUpdateCsCoinRow(ObservableList<CoinTabRow> tableViewItems) {
+        CoinTabRow coinRow = getCoinTabRow(tableViewItems, CREDITS_TOKEN_NAME, null);
+        changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
+        async(() -> nodeApiService.getBalance(account), updateCoinValue(coinRow, creditsDecimalFormat));
+    }
+
+    private void addOrUpdateUserCoinRow(ObservableList<CoinTabRow> tableViewItems, String coinName, String smartContractAddress) {
+        CoinTabRow coinRow = getCoinTabRow(tableViewItems, coinName, smartContractAddress);
+        if(coinRow.getLock().tryLock()) {
+            LOGGER.debug("{} take lock {}", coinName, coinRow.getLock().hashCode());
+            changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
+            DecimalFormat decimalFormat = new DecimalFormat("##0.000000000000000000"); // fixme must use the method "tokenContract.decimal()"
+            contractInteractionService.getSmartContractBalance(smartContractAddress, updateCoinValue(coinRow, decimalFormat));
+        }
+    }
+
+    private void changeTableViewValue(CoinTabRow coinRow, String value) {
+        coinsTableView.refresh();
+        coinRow.setValue(value);
+    }
+
+    private CoinTabRow getCoinTabRow(ObservableList<CoinTabRow> tableViewItems, String tokenName, String contractAddress) {
+        CoinTabRow coinRow = new CoinTabRow(tokenName, WAITING_STATE_MESSAGE, contractAddress);
+        return tableViewItems.stream()
+            .filter(foundCoinRow -> foundCoinRow.getName().equals(coinRow.getName()))
+            .findFirst()
+            .orElseGet(() -> {
+                tableViewItems.add(coinRow);
+                return coinRow;
+            });
+    }
+
+    private Callback<BigDecimal> updateCoinValue(CoinTabRow coinRow, DecimalFormat decimalFormat) {
+        return new Callback<BigDecimal>() {
+            @Override
+            public void onSuccess(BigDecimal balance) {
+                Platform.runLater(() -> {
+                    changeTableViewValue(coinRow, decimalFormat.format(balance));
+                    coinRow.getLock().unlock();
+                });
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Platform.runLater(() -> {
+                    changeTableViewValue(coinRow, ERROR_STATE_MESSAGE);
+                    coinRow.getLock().unlock();
+                });
+                LOGGER.error("cant't update balance token {}. Reason: {}", coinRow.getName(), e.getMessage());
+            }
+        };
     }
 
     @FXML
@@ -161,86 +252,6 @@ public class WalletController implements Initializable {
         }
     }
 
-    private void updateCoins(TableView<CoinTabRow> tableView) {
-        ObservableList<CoinTabRow> tableViewItems = tableView.getItems();
-        addOrUpdateCsCoinRow(tableViewItems);
-        coinsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new).forEach((coinName, contractAddress) -> addOrUpdateUserCoinRow(tableViewItems, coinName, contractAddress));
-    }
-
-    private EventHandler<MouseEvent> handleDeleteToken(TableRow<CoinTabRow> row, ContextMenu cm, MenuItem removeItem) {
-        return event -> {
-            if ((!row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals(CREDITS_TOKEN_NAME)) {
-                row.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
-                    if (t.getButton() == MouseButton.SECONDARY) {
-                        removeItem.setOnAction(event1 -> {
-                            coinsTableView.getItems().remove(row.getItem());
-                            coinsKeeper.modify(coinsKeeper.new Modifier() {
-                                @Override
-                                public ConcurrentHashMap<String, String> modify(ConcurrentHashMap<String, String> restoredObject) {
-                                    restoredObject.remove(row.getItem().getName());
-                                    return restoredObject;
-                                }
-                            });
-                        });
-                        cm.show(coinsTableView, t.getScreenX(), t.getScreenY());
-                    }
-                });
-            }
-        };
-    }
-
-    private void addOrUpdateCsCoinRow(ObservableList<CoinTabRow> tableViewItems) {
-        CoinTabRow coinRow = getCoinTabRow(tableViewItems, CREDITS_TOKEN_NAME, null);
-        changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
-        async(() -> nodeApiService.getBalance(account), updateCoinValue(coinRow, creditsDecimalFormat));
-    }
-
-    private void addOrUpdateUserCoinRow(ObservableList<CoinTabRow> tableViewItems, String coinName, String smartContractAddress) {
-        CoinTabRow coinRow = getCoinTabRow(tableViewItems, coinName, smartContractAddress);
-        if(coinRow.getLock().tryLock()) {
-            changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
-            DecimalFormat decimalFormat = new DecimalFormat("##0.000000000000000000"); // fixme must use the method "tokenContract.decimal()"
-            contractInteractionService.getSmartContractBalance(smartContractAddress, updateCoinValue(coinRow, decimalFormat));
-        }
-    }
-
-    private void changeTableViewValue(CoinTabRow coinRow, String value) {
-        coinsTableView.refresh();
-        coinRow.setValue(value);
-    }
-
-    private CoinTabRow getCoinTabRow(ObservableList<CoinTabRow> tableViewItems, String tokenName, String contractAddress) {
-        CoinTabRow coinRow = new CoinTabRow(tokenName, WAITING_STATE_MESSAGE, contractAddress);
-        return tableViewItems.stream()
-            .filter(foundCoinRow -> foundCoinRow.getName().equals(coinRow.getName()))
-            .findFirst()
-            .orElseGet(() -> {
-                tableViewItems.add(coinRow);
-                return coinRow;
-            });
-    }
-
-    private Callback<BigDecimal> updateCoinValue(CoinTabRow coinRow, DecimalFormat decimalFormat) {
-        return new Callback<BigDecimal>() {
-            @Override
-            public void onSuccess(BigDecimal balance) {
-                Platform.runLater(() -> {
-                    changeTableViewValue(coinRow, decimalFormat.format(balance));
-                    coinRow.getLock().unlock();
-                });
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Platform.runLater(() -> {
-                    changeTableViewValue(coinRow, ERROR_STATE_MESSAGE);
-                    coinRow.getLock().unlock();
-                });
-                LOGGER.error("cant't update balance token {}. Reason: {}", coinRow.getName(), e.getMessage());
-            }
-        };
-    }
-
     private void clearLabErr() {
         coinsTableView.getStyleClass().remove("credits-border-red");
         labErrorCoin.setText("");
@@ -276,16 +287,13 @@ public class WalletController implements Initializable {
     }
 
     private void setRowFactory(TableView<CoinTabRow> tableView) {
-        ContextMenu contextMenu = new ContextMenu();
         tableView.setRowFactory(tv -> {
             TableRow<CoinTabRow> row = new TableRow<>();
-            MenuItem removeItem = new MenuItem("Delete");
-
-            contextMenu.getItems().add(removeItem);
-            row.setOnMouseClicked(handleDeleteToken(row, contextMenu, removeItem));
+            row.setOnMouseClicked(handleDeleteToken(row));
             return row;
         });
     }
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
