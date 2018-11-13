@@ -11,9 +11,11 @@ import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
+import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
-import com.credits.wallet.desktop.utils.EclipseJdt;
+import com.credits.wallet.desktop.utils.sourcecode.AutocompleteHelper;
+import com.credits.wallet.desktop.utils.sourcecode.EclipseJdt;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
@@ -23,9 +25,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -50,10 +50,10 @@ import javax.tools.DiagnosticCollector;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
@@ -72,13 +72,6 @@ public class SmartContractDeployController implements Initializable {
 
     private static final String DEFAULT_SOURCE_CODE =
         "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n\n    }" + "\n" + "}";
-    private static final String[] PARENT_METHODS =
-        new String[] {"double total", "Double getBalance(String address, String currency)",
-            "TransactionData getTransaction(String transactionId)",
-            "List<TransactionData> getTransactions(String address, long offset, long limit)",
-            "List<PoolData> getPoolList(long offset, long limit)", "PoolData getPool(String poolNumber)",
-            "void sendTransaction(String account, String target, Double amount, String currency)"};
-    //    private static final String NON_CHANGED_STR = "public class Contract extends SmartContract {";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
     private static final String CLASS_NAME = "Contract";
     private static final String SUPERCLASS_NAME = "SmartContract";
@@ -104,6 +97,7 @@ public class SmartContractDeployController implements Initializable {
     @FXML
     private TreeView<Label> classTreeView;
 
+    private AutocompleteHelper autocompleteHelper;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -117,6 +111,13 @@ public class SmartContractDeployController implements Initializable {
 
         codeArea = SmartContractUtils.initCodeArea(paneCode, false);
 
+        try {
+            autocompleteHelper = AutocompleteHelper.init(codeArea);
+        } catch (WalletDesktopException e) {
+            LOGGER.error("", e);
+            FormUtils.showError(e.getMessage());
+        }
+
         codeArea.setOnKeyPressed(k -> {
             KeyCode code = k.getCode();
             if (code != KeyCode.TAB) {
@@ -125,9 +126,7 @@ public class SmartContractDeployController implements Initializable {
                 }
             }
 
-            if (k.isControlDown() && k.getCode().equals(KeyCode.SPACE)) {
-                codeCompletionPopup();
-            }
+            autocompleteHelper.handleKeyPressEvent(k);
         });
 
         Nodes.addInputMap(codeArea, InputMap.consume(keyPressed(KeyCode.TAB), e -> {
@@ -192,39 +191,9 @@ public class SmartContractDeployController implements Initializable {
             }
         });
 
-    }
-
-    private void codeCompletionPopup() {
-        ContextMenu contextMenu = new ContextMenu();
-
-        String word = "";
-        int pos = codeArea.getCaretPosition() - 1;
-        String txt = codeArea.getText();
-        while (pos > 0 && !txt.substring(pos, pos + 1).equals(" ") && !txt.substring(pos, pos + 1).equals("\r") &&
-            !txt.substring(pos, pos + 1).equals("\n")) {
-            word = txt.substring(pos, pos + 1) + word;
-            pos--;
-        }
-
-        for (String method : PARENT_METHODS) {
-            if (word.trim().isEmpty() || method.toUpperCase().indexOf(word.trim().toUpperCase()) > 0) {
-                MenuItem action = new MenuItem(method);
-                contextMenu.getItems().add(action);
-                action.setOnAction(event -> {
-                    int pos1 = codeArea.getCaretPosition();
-                    String txtToIns = SourceCodeUtils.normalizeMethodName(method);
-                    codeArea.replaceText(pos1, pos1, txtToIns);
-                });
-            }
-        }
-
-        if (contextMenu.getItems().isEmpty()) {
-            MenuItem action = new MenuItem("No suggestions");
-            contextMenu.getItems().add(action);
-        }
-
-        contextMenu.show(codeArea, codeArea.getCaretBounds().get().getMaxX(),
-            codeArea.getCaretBounds().get().getMaxY());
+        Thread t = new Thread(this::refreshClassMembersTree);
+        t.setDaemon(true);
+        t.start();
     }
 
     private void positionCursorToLine(int line) {

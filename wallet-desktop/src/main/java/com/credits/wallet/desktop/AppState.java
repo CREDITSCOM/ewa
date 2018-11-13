@@ -41,7 +41,6 @@ public class AppState {
     public static boolean noClearForm6;
     public static String account;
 
-
     public static BigDecimal amount = BigDecimal.ZERO;
     public static BigDecimal transactionFeeValue = Const.FEE_TRAN_AMOUNT;
     public static BigDecimal transactionFeePercent = BigDecimal.ZERO;

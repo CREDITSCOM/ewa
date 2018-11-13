@@ -1,16 +1,7 @@
 package com.credits.wallet.desktop.utils;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.Comment;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * Created by Rustem Saidaliyev on 27-Mar-18.
@@ -105,7 +96,7 @@ public class EclipseJdtTest {
                 "\n" +
                 "        System.out.println(\"Done\");\n" +
                 "    }\n" +
-                "\n//some comment here" +
+                "\n" +
                 "    static public void foo() {\n" +
                 "        System.out.println(\"Static method without params has been invoked\");\n" +
                 "    }\n" +
