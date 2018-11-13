@@ -2,12 +2,13 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
-<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" fx:controller="com.credits.wallet.desktop.controller.TransactionController">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.TransactionController">
     <top>
         <fx:include source="header.fxml" />
     </top>
@@ -30,16 +31,16 @@
                   <RowConstraints />
                     </rowConstraints>
                     <children>
+                        <Label text="InnerId" />
                         <Label text="Source" GridPane.rowIndex="1" />
                         <Label text="Target" GridPane.rowIndex="2" />
                         <Label text="Amount" GridPane.rowIndex="3" />
                         <Label text="State" GridPane.rowIndex="4" />
-                        <Label fx:id="labSource" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label fx:id="labTarget" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label fx:id="labAmount" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label fx:id="labState" prefHeight="20.0" prefWidth="550.0" text="State" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label text="InnerId" />
-                        <Label fx:id="labInnerId" prefHeight="20.0" prefWidth="550.0" text="Label" GridPane.columnIndex="1" />
+                        <TextField fx:id="labInnerId" editable="false" prefHeight="20.0" prefWidth="550.0" styleClass="copyable-label" text="Label" GridPane.columnIndex="1" />
+                        <TextField fx:id="labSource" editable="false" prefHeight="20.0" prefWidth="550.0" styleClass="copyable-label" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="labTarget" editable="false" prefHeight="20.0" prefWidth="550.0" styleClass="copyable-label" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="labAmount" editable="false" prefHeight="20.0" prefWidth="550.0" styleClass="copyable-label" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="labState" editable="false" prefHeight="20.0" prefWidth="550.0" styleClass="copyable-label" text="State" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                     </children>
                 </GridPane>
             </children>

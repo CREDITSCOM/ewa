@@ -483,3 +483,11 @@
     -fx-background-color: white;
 }
 /*SCROLL BAR STYLE*/
+
+
+/*COPYABLE LABEL*/
+.copyable-label, .copyable-label:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+}
+/*COPYABLE LABEL*/

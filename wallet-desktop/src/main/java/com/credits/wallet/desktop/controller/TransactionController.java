@@ -5,7 +5,7 @@ import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
@@ -21,15 +21,15 @@ public class TransactionController implements Initializable {
     BorderPane bp;
 
     @FXML
-    private Label labInnerId;
+    private TextField labInnerId;
     @FXML
-    private Label labSource;
+    private TextField labSource;
     @FXML
-    private Label labTarget;
+    private TextField labTarget;
     @FXML
-    private Label labAmount;
+    private TextField labAmount;
     @FXML
-    private Label labState;
+    private TextField labState;
 
     @FXML
     private void handleBack() {
