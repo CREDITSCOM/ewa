@@ -32,7 +32,6 @@ import java.util.Locale;
 
 import static com.credits.general.util.Constants.ds;
 import static com.credits.general.util.Converter.byteArrayToByteBuffer;
-import static com.credits.general.util.Converter.toBigDecimal;
 
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
@@ -119,20 +118,12 @@ public class NodePojoConverter {
     public static BigDecimal amountToBigDecimal(Amount amount) {
 
         int integralPart = amount.getIntegral();
-        BigDecimal fractionPart = toBigDecimal(amount.getFraction()).divide(toBigDecimal("1000000000000000000"), BigDecimal.ROUND_UP);
+        long fractionPart = amount.getFraction();
 
-        integralPart += fractionPart.intValue();
         String integralPartAsString = Converter.toString(integralPart);
         String fractionPartAsString = Converter.toString(fractionPart);
 
-
-        if (fractionPartAsString.contains(ds)) {
-            String[] valueDelimited = fractionPartAsString.split("[" + ds + "]");
-            fractionPartAsString = valueDelimited[1];
-        } else {
-            fractionPartAsString = "0";
-        }
-        return new BigDecimal(String.format("%s.%s", integralPartAsString, fractionPartAsString));
+        return new BigDecimal(integralPartAsString + "." + fractionPartAsString);
     }
 
     public static WalletData walletToWalletData(com.credits.client.node.thrift.generated.WalletData walletData) {
