@@ -1,10 +1,17 @@
 package com.credits.wallet.desktop.utils.sourcecode;
 
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.search.*;
 
 import java.util.Map;
 
@@ -28,5 +35,4 @@ public class EclipseJdt {
         parser.setCompilerOptions(compilerOptions);
         return (CompilationUnit) parser.createAST(null);
     }
-
 }

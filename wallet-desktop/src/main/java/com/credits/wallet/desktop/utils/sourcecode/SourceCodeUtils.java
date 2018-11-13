@@ -95,6 +95,7 @@ public class SourceCodeUtils {
         return className;
     }
 
+    // TODO unused, candidate to removing
     public static String normalizeMethodName(String methodSignature) {
         int ind1 = methodSignature.indexOf(" ");
         String result = methodSignature.substring(ind1 + 1);

@@ -11,3 +11,5 @@ target
 
 ### Build output files
 dependency-reduced-pom.xml
+
+log
