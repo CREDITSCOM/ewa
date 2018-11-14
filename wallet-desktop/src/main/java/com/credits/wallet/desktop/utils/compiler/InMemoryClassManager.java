@@ -1,7 +1,7 @@
-package com.credits.general.util.compiler;
+package com.credits.wallet.desktop.utils.compiler;
 
-import com.credits.general.util.compiler.model.CompilationUnit;
-import com.credits.general.util.compiler.model.JavaMemoryObject;
+import com.credits.wallet.desktop.utils.compiler.model.CompilationUnit;
+import com.credits.wallet.desktop.utils.compiler.model.JavaMemoryObject;
 
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;

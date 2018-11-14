@@ -1,11 +1,19 @@
-package com.credits.general.util.compiler;
+package com.credits.wallet.desktop.utils.compiler;
 
 
 import com.credits.general.exception.CompilationException;
-import com.credits.general.util.compiler.model.CompilationPackage;
-import com.credits.general.util.compiler.model.CompilationUnit;
-import com.credits.general.util.compiler.model.JavaSourceFromString;
+import com.credits.general.exception.CreditsException;
+import com.credits.general.util.Converter;
+import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
+import com.credits.wallet.desktop.utils.compiler.model.CompilationPackage;
+import com.credits.wallet.desktop.utils.compiler.model.CompilationResult;
+import com.credits.wallet.desktop.utils.compiler.model.CompilationUnit;
+import com.credits.wallet.desktop.utils.compiler.model.JavaSourceFromString;
+import com.credits.wallet.desktop.utils.sourcecode.EclipseJdt;
+import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
+import org.eclipse.jdt.core.compiler.IProblem;
 
+import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
@@ -104,5 +112,41 @@ public class InMemoryCompiler {
 		return sb.toString();
 	}
 
+    public static CompilationResult compileSourceCode(String sourceCode) {
+        CompilationPackage compilationPackage = null;
+        String className = SourceCodeUtils.parseClassName(sourceCode, "");
+        List<ErrorCodeTabRow> listOfError = new ArrayList<>();
+        try {
+            SourceCodeUtils.checkClassAndSuperclassNames(className, sourceCode);
+        } catch (CreditsException e) {
+            ErrorCodeTabRow tr = new ErrorCodeTabRow();
+            tr.setLine("1");
+            tr.setText(e.getMessage());
+            listOfError.add(tr);
+        }
+        IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
+        if (problemArr.length > 0) {
+
+            for (IProblem p : problemArr) {
+                ErrorCodeTabRow tr = new ErrorCodeTabRow();
+                tr.setLine(Integer.toString(p.getSourceLineNumber()));
+                tr.setText(p.getMessage());
+                listOfError.add(tr);
+            }
+        } else {
+            compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
+            if (!compilationPackage.isCompilationStatusSuccess()) {
+                DiagnosticCollector collector = compilationPackage.getCollector();
+                List<Diagnostic> diagnostics = collector.getDiagnostics();
+                diagnostics.forEach(action -> {
+                    ErrorCodeTabRow tr = new ErrorCodeTabRow();
+                    tr.setLine(Converter.toString(action.getLineNumber()));
+                    tr.setText(action.getMessage(null));
+                    listOfError.add(tr);
+                });
+            }
+        }
+        return new CompilationResult(compilationPackage,listOfError);
+    }
 
 }

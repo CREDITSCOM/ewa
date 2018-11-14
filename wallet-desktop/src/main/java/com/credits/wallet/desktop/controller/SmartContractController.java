@@ -8,8 +8,8 @@ import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
+import com.credits.wallet.desktop.utils.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import javafx.application.Platform;
@@ -131,7 +131,7 @@ public class SmartContractController implements Initializable {
         tbFavorite.setVisible(false);
         pControls.setVisible(false);
         pCodePanel.setVisible(false);
-        codeArea = SmartContractUtils.initCodeArea(this.pCodePanel, true);
+        codeArea = CodeAreaUtils.initCodeArea(this.pCodePanel, true);
         codeArea.setEditable(false);
         codeArea.copy();
         favoriteContracts = favoriteContractsKeeper.getKeptObject().orElseGet(HashMap::new);
@@ -203,7 +203,7 @@ public class SmartContractController implements Initializable {
         }
         refreshFavoriteContractsTab();
     }
-    
+
     private void changeFavoriteStateIntoTab(TableView<SmartContractTabRow> table, SmartContractData smartContractData, boolean isSelected) {
         table.getItems()
             .stream()
@@ -212,7 +212,7 @@ public class SmartContractController implements Initializable {
             .ifPresent(row -> row.getFav().setSelected(isSelected));
         table.refresh();
     }
-    
+
     private void setFavoriteCurrentContract(SmartContractData smartContractData, boolean isSelected) {
         if(currentSmartContract != null && smartContractData.getBase58Address().equals(currentSmartContract.getBase58Address())) {
             tbFavorite.setSelected(isSelected);
