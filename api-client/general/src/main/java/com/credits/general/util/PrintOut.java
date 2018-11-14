@@ -1,4 +1,4 @@
-package test.utils;
+package com.credits.general.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
