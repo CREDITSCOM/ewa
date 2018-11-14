@@ -66,6 +66,9 @@ public class UITest {
         when(mockInitializer.loadProperties()).thenReturn(mockProperties);
         doCallRealMethod().when(mockInitializer).init();
 
+        AppState.account = walletAddress;
+        AppState.favoriteContractsKeeper = new ObjectKeeper<>(AppState.account, "favorite");
+
         app = new App();
         app.appStateInitializer = mockInitializer;
         walletAddress = addressBase58;
@@ -105,8 +108,6 @@ public class UITest {
     @Test
     public void smartContractsForm() throws Exception {
         mockInitializer.startForm = VistaNavigator.SMART_CONTRACT;
-        AppState.account = walletAddress;
-        AppState.favoriteContractsKeeper = new ObjectKeeper<>(AppState.account, "favorite");
         when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
         when(mockNodeApiService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
         runApp();
