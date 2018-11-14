@@ -91,7 +91,6 @@ public class NewCoinController implements Initializable {
                     ConcurrentHashMap<String, String> coins = coinsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new);
                     coins.put(coinName, smartContractAddress);
                     coinsKeeper.keepObject(coins);
-                    coinsKeeper.flush();
                     FormUtils.showPlatformInfo("Coin \"" + coinName + "\" was created successfully");
                 }
             }

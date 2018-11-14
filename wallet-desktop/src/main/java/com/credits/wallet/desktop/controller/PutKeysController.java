@@ -211,7 +211,9 @@ public class PutKeysController implements Initializable {
     private void initStaticData(String pubKey) {
         account = pubKey;
         NodeApiServiceImpl.account = pubKey;
+        if(favoriteContractsKeeper != null) favoriteContractsKeeper.flush();
         favoriteContractsKeeper = new ObjectKeeper<>(account, "favorite");
+        if(coinsKeeper != null) coinsKeeper.flush();
         coinsKeeper = new ObjectKeeper<>(account, "coins");
     }
 
