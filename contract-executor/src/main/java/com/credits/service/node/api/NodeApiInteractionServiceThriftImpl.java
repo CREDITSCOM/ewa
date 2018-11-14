@@ -30,7 +30,6 @@ public class NodeApiInteractionServiceThriftImpl implements NodeApiInteractionSe
 
     @Override
     public TransactionData getTransaction(String transactionId) throws NodeClientException {
-        //TODO need add adapter from String to TransactionIdData
         return service.getTransaction(new TransactionIdData());
     }
 

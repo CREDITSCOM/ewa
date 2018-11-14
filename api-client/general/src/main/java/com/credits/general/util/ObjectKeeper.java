@@ -9,16 +9,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.credits.general.util.CriticalSection.doSafe;
 import static java.io.File.separator;
 
-public class ObjectKeeper<T extends ConcurrentHashMap> {
+public class ObjectKeeper<T extends Serializable> {
 
     static final Path cacheDirectory = Paths.get(System.getProperty("user.dir") + separator + "cache");
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectKeeper.class);
@@ -29,31 +30,36 @@ public class ObjectKeeper<T extends ConcurrentHashMap> {
 
     public ObjectKeeper(String account, String objectName) {
         this.account = account;
-        this.objectFileName = objectName + ".ser";
+        this.objectFileName = objectName;
     }
 
     public void keepObject(T object) {
-        doSafe(() -> serialize(object), lock);
-    }
-
-    public T getKeptObject() {
-        if (storedObject == null) {
-            return doSafe(this::deserialize, lock);
+        if(object != null) {
+            doSafe(() -> storedObject = object, lock);
         }
-        return storedObject;
     }
 
-    public T getKeptObject(Function<T> createIfAbsent) {
-        if (storedObject == null) {
-            if(doSafe(this::deserialize, lock) == null){
-                return createIfAbsent.apply();
-            }
+    public void flush(){
+        if(storedObject != null) {
+            doSafe(() -> serialize(storedObject), lock);
         }
-        return storedObject;
     }
 
-    public void modify(Modifier changeObject) {
-        doSafe(() -> keepObject(changeObject.modify(getKeptObject())), lock);
+    public Optional<T> getKeptObject() {
+        if (storedObject == null) {
+            return Optional.ofNullable(storedObject = doSafe(this::deserialize, lock));
+        }
+        return Optional.ofNullable(storedObject);
+    }
+
+    /**
+     *  modify deserialized object then serializes it back
+     *  <p><b>Attention! you don't have to use ObjectKeeper methods into this method</b></p>
+     *
+     * @param modifyFunction callback function when take deserialized object or null if object not found
+     */
+    public void modify(Modifier modifyFunction) {
+        doSafe(() -> getKeptObject().ifPresent(oldObject -> keepObject(modifyFunction.modify(oldObject))), lock);
     }
 
     Path getSerializedObjectPath() {
@@ -95,6 +101,6 @@ public class ObjectKeeper<T extends ConcurrentHashMap> {
     }
 
     public abstract class Modifier {
-        public abstract T modify(T restoredObject);
+        public abstract T modify(T keptObject);
     }
 }

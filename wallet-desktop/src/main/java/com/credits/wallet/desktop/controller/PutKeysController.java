@@ -5,7 +5,6 @@ import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Converter;
 import com.credits.general.util.ObjectKeeper;
-import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -29,6 +28,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ResourceBundle;
+
+import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.coinsKeeper;
+import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
+import static com.credits.wallet.desktop.AppState.newAccount;
+import static com.credits.wallet.desktop.AppState.privateKey;
+import static com.credits.wallet.desktop.AppState.publicKey;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
@@ -87,8 +93,8 @@ public class PutKeysController implements Initializable {
             try {
                 writer = new PrintWriter(file.getAbsolutePath(), "UTF-8");
                 String json = String.format("{\"key\":{\"public\":\"%s\",\"private\":\"%s\"}}",
-                    Converter.encodeToBASE58(Ed25519.publicKeyToBytes(AppState.publicKey)),
-                    Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
+                    Converter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)),
+                    Converter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
                 writer.println(json);
                 writer.close();
                 FormUtils.showInfo(String.format("Keys successfully saved in \n\n%s", file.getAbsolutePath()));
@@ -132,15 +138,15 @@ public class PutKeysController implements Initializable {
         FormUtils.resizeForm(bp);
         clearLabErr();
 
-        btnBack.setVisible(!AppState.newAccount);
-        btnUpload.setVisible(!AppState.newAccount);
-        lblUpload.setVisible(!AppState.newAccount);
-        txPublic.setEditable(!AppState.newAccount);
-        txKey.setEditable(!AppState.newAccount);
+        btnBack.setVisible(!newAccount);
+        btnUpload.setVisible(!newAccount);
+        lblUpload.setVisible(!newAccount);
+        txPublic.setEditable(!newAccount);
+        txKey.setEditable(!newAccount);
 
-        if (AppState.newAccount) {
-            txKey.setText(Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
-            txPublic.setText(Converter.encodeToBASE58(Ed25519.publicKeyToBytes(AppState.publicKey)));
+        if (newAccount) {
+            txKey.setText(Converter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
+            txPublic.setText(Converter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)));
             try {
                 handleSaveKeys();
             } catch (WalletDesktopException e) {
@@ -174,7 +180,7 @@ public class PutKeysController implements Initializable {
         initStaticData(pubKey);
         try {
             byte[] privateKeyByteArr = Converter.decodeFromBASE58(privKey);
-            AppState.privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
+            privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
         } catch ( Exception e) {
             if (e.getMessage() != null) {
                 errorLabelPrivate.setText(e.getMessage());
@@ -186,7 +192,7 @@ public class PutKeysController implements Initializable {
         }
         try {
             byte[] publicKeyByteArr = Converter.decodeFromBASE58(pubKey);
-            AppState.publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
+            publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
         } catch ( Exception e) {
             if (e.getMessage() != null) {
                 errorLabelPublic.setText(e.getMessage());
@@ -203,10 +209,10 @@ public class PutKeysController implements Initializable {
     }
 
     private void initStaticData(String pubKey) {
-        AppState.account = pubKey;
+        account = pubKey;
         NodeApiServiceImpl.account = pubKey;
-        AppState.smartContractsKeeper = new ObjectKeeper<>(AppState.account, "scobj");
-        AppState.coinsKeeper = new ObjectKeeper<>(AppState.account, "coins");
+        favoriteContractsKeeper = new ObjectKeeper<>(account, "favorite");
+        coinsKeeper = new ObjectKeeper<>(account, "coins");
     }
 
     private boolean validateKeys(String publicKey, String privateKey) {

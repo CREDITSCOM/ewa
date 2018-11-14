@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static com.credits.wallet.desktop.AppState.*;
+
 /**
  * Created by goncharov-eg on 23.11.2017.
  */
@@ -90,8 +92,11 @@ public class App extends Application {
 
     @Override
     public void stop() {
-        if (AppState.executor != null) {
-            AppState.executor.shutdown();
+        if (executor != null) {
+            executor.shutdown();
+        }
+        if(favoriteContractsKeeper != null){
+            favoriteContractsKeeper.flush();
         }
     }
 

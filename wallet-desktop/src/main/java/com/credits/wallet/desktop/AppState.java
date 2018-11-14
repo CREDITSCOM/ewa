@@ -12,6 +12,7 @@ import com.credits.wallet.desktop.struct.TransactionTabRow;
 import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
@@ -56,8 +57,8 @@ public class AppState {
     public static ConcurrentHashMap<String, AtomicLong> walletLastTransactionIdCache = new ConcurrentHashMap<>();
     public static Short transactionOfferedMaxFeeValue = Const.OFFERED_MAX_FEE;
 
-    public static ObjectKeeper<ConcurrentHashMap<String, SmartContractData>> smartContractsKeeper;
     public static ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper;
+    public static ObjectKeeper<HashMap<String, SmartContractData>> favoriteContractsKeeper;
     public static String text;
     public static String lastSmartContract;
 }

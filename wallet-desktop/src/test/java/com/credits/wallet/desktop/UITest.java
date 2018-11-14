@@ -106,7 +106,7 @@ public class UITest {
     public void smartContractsForm() throws Exception {
         mockInitializer.startForm = VistaNavigator.SMART_CONTRACT;
         AppState.account = walletAddress;
-        AppState.smartContractsKeeper = new ObjectKeeper<>(AppState.account, "scobj");
+        AppState.favoriteContractsKeeper = new ObjectKeeper<>(AppState.account, "favorite");
         when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
         when(mockNodeApiService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
         runApp();
