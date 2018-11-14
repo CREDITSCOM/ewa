@@ -9,7 +9,7 @@
             xmlns="http://javafx.com/javafx/10.0.1"
             fx:controller="com.credits.wallet.desktop.controller.MainController">
     <center>
-        <ScrollPane style="-fx-background-color: transparent" fitToHeight="true" fitToWidth="true">
+        <ScrollPane style="-fx-padding: 0"  fitToHeight="true" fitToWidth="true">
             <VBox alignment="TOP_CENTER" prefHeight="650" prefWidth="500" style="-fx-background-color: #f2f2f2 /*#13c0be*/  ;"
                   fx:id="vistaHolder"/>
         </ScrollPane>
