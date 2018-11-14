@@ -142,9 +142,9 @@ public class SmartContractController implements Initializable {
 
     @FXML
     private void updateSelectedTab(){
-       if(myContractsTab.isSelected()){
+       if(myContractsTab != null && myContractsTab.isSelected()){
            refreshContractsTab();
-       }else if (favoriteContractsTab.isSelected()){
+       }else if (favoriteContractsTab != null &&favoriteContractsTab.isSelected()){
            refreshFavoriteContractsTab();
        }
     }
@@ -262,8 +262,11 @@ public class SmartContractController implements Initializable {
     }
 
     private void refreshFavoriteContractsTab() {
-        favoriteContractTableView.getItems().clear();
-        favoriteContracts.forEach((contractName, contractData) -> addContractToTable(favoriteContractTableView, contractData));
+        if(favoriteContractTableView != null && favoriteContracts != null) {
+            favoriteContractTableView.getItems().clear();
+            favoriteContracts.forEach(
+                (contractName, contractData) -> addContractToTable(favoriteContractTableView, contractData));
+        }
         favoriteContractsKeeper.keepObject(favoriteContracts);
     }
 
