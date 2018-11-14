@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.util.Converter.decodeFromBASE58;
@@ -62,6 +61,8 @@ public class SmartContractDeployController implements Initializable {
 
     public static final String BUILD = "Build";
     public static final String COMPILING = "Compiling...";
+    public static final int HEADER_HEIGHT = 30;
+    public static final int TABLE_LINE_HEIGHT = 25;
     //    private static final String NON_CHANGED_STR = "public class Contract extends SmartContract {";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
 
@@ -99,11 +100,6 @@ public class SmartContractDeployController implements Initializable {
 
         FormUtils.resizeForm(bp);
 
-        if (AppState.executor != null) {
-            AppState.executor.shutdown();
-        }
-        AppState.executor = Executors.newSingleThreadExecutor();
-
         codeArea = CodeAreaUtils.initCodeArea(paneCode, false);
 
         CodeAreaUtils.initCodeAreaLogic(codeArea);
@@ -113,8 +109,6 @@ public class SmartContractDeployController implements Initializable {
             deployButton.setDisable(true);
             buildButton.setDisable(false);
         });
-
-
 
         for (SplitPane.Divider d : splitPane.getDividers()) {
             d.positionProperty()
@@ -127,86 +121,31 @@ public class SmartContractDeployController implements Initializable {
     }
 
 
-
-
     @FXML
-    private void handleBack() {
-        if (AppState.executor != null) {
-            AppState.executor.shutdown();
-            AppState.executor = null;
-        }
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT);
-    }
-
-    @FXML
-    private void panelCodeKeyReleased() {
-        Thread t = new Thread(this::refreshClassMembersTree);
-        t.setDaemon(true);
-        t.start();
-    }
-
-    private synchronized void refreshClassMembersTree() {
-        Platform.runLater(() -> {
-            classTreeView.setRoot(null);
-            String sourceCode = codeArea.getText();
-            String className = SourceCodeUtils.parseClassName(sourceCode);
-            Label labelRoot = new Label(className);
-            TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
-
-            List<FieldDeclaration> fields = SourceCodeUtils.parseFields(sourceCode);
-            List<MethodDeclaration> constructors = SourceCodeUtils.parseConstructors(sourceCode);
-            List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
-
-            List<BodyDeclaration> classMembers = new ArrayList<>();
-            classMembers.addAll(fields);
-            classMembers.addAll(constructors);
-            classMembers.addAll(methods);
-
-            classMembers.forEach(classMember -> {
-                if (classMember instanceof MethodDeclaration) {
-                    ((MethodDeclaration) classMember).setBody(null);
-                }
-
-                Label label = new Label(classMember.toString());
-                label.setOnMousePressed(event -> {
-                    if (event.isPrimaryButtonDown()) {
-                        CodeAreaUtils.positionCursorToLine(codeArea,SourceCodeUtils.getLineNumber(sourceCode, classMember));
-                    }
-                });
-                TreeItem<Label> treeItem = new TreeItem<>();
-                treeItem.setValue(label);
-                treeRoot.getChildren().add(treeItem);
-            });
-
-            treeRoot.setExpanded(true);
-            classTreeView.setRoot(treeRoot);
-        });
-    }
-
-    @FXML
-    private void handleCheck() {
+    private void handleBuild() {
         buildButton.setText(COMPILING);
         buildButton.setDisable(true);
         errorTableView.setVisible(false);
+        codeArea.setDisable(true);
         CompletableFuture.supplyAsync(() -> InMemoryCompiler.compileSourceCode(codeArea.getText()))
-            .whenComplete(handleCallback(handleCheckResult()));
+            .whenComplete(handleCallback(handleBuildResult()));
     }
 
-
-    private Callback<CompilationResult> handleCheckResult() {
+    private Callback<CompilationResult> handleBuildResult() {
         return new Callback<CompilationResult>() {
             @Override
             @SuppressWarnings("unchecked")
             public void onSuccess(CompilationResult compilationResult) {
                 List errorsList = compilationResult.getErrors();
                 Platform.runLater(() -> {
+                    codeArea.setDisable(false);
                     buildButton.setText(BUILD);
                 });
 
                 if (errorsList.size() > 0) {
                     Platform.runLater(() -> {
                         buildButton.setDisable(false);
-                        addErrorsToErrorTable(errorsList);
+                        refillErrorsTableView(errorsList);
                     });
                 } else {
                     compilationPackage = compilationResult.getCompilationPackage();
@@ -220,6 +159,7 @@ public class SmartContractDeployController implements Initializable {
             @Override
             public void onError(Throwable e) {
                 Platform.runLater(() -> {
+                    codeArea.setDisable(false);
                     buildButton.setDisable(false);
                     buildButton.setText(BUILD);
                     FormUtils.showPlatformError(e.getMessage());
@@ -229,20 +169,8 @@ public class SmartContractDeployController implements Initializable {
         };
     }
 
-
-
-
-    private void addErrorsToErrorTable(List<ErrorCodeTabRow> listOfError) {
-        errorTableView.getItems().clear();
-        errorTableView.getItems().addAll(listOfError);
-        errorTableView.setVisible(true);
-        errorTableView.setPrefHeight(30 + errorTableView.getItems().size() * 25);
-    }
-
     @FXML
     private void handleDeploy() {
-
-        String className = SourceCodeUtils.parseClassName(codeArea.getText(), "SmartContract");
         try {
             String javaCode = SourceCodeUtils.normalizeSourceCode(codeArea.getText());
             if (compilationPackage==null) {
@@ -295,6 +223,62 @@ public class SmartContractDeployController implements Initializable {
         };
     }
 
+    @FXML
+    private void handleBack() {
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT);
+    }
+
+    @FXML
+    private void panelCodeKeyReleased() {
+        Thread t = new Thread(this::refreshClassMembersTree);
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private synchronized void refreshClassMembersTree() {
+        Platform.runLater(() -> {
+            classTreeView.setRoot(null);
+            String sourceCode = codeArea.getText();
+            String className = SourceCodeUtils.parseClassName(sourceCode);
+            Label labelRoot = new Label(className);
+            TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
+
+            List<FieldDeclaration> fields = SourceCodeUtils.parseFields(sourceCode);
+            List<MethodDeclaration> constructors = SourceCodeUtils.parseConstructors(sourceCode);
+            List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
+
+            List<BodyDeclaration> classMembers = new ArrayList<>();
+            classMembers.addAll(fields);
+            classMembers.addAll(constructors);
+            classMembers.addAll(methods);
+
+            classMembers.forEach(classMember -> {
+                if (classMember instanceof MethodDeclaration) {
+                    ((MethodDeclaration) classMember).setBody(null);
+                }
+
+                Label label = new Label(classMember.toString());
+                label.setOnMousePressed(event -> {
+                    if (event.isPrimaryButtonDown()) {
+                        CodeAreaUtils.positionCursorToLine(codeArea,SourceCodeUtils.getLineNumber(sourceCode, classMember));
+                    }
+                });
+                TreeItem<Label> treeItem = new TreeItem<>();
+                treeItem.setValue(label);
+                treeRoot.getChildren().add(treeItem);
+            });
+
+            treeRoot.setExpanded(true);
+            classTreeView.setRoot(treeRoot);
+        });
+    }
+
+    private void refillErrorsTableView(List<ErrorCodeTabRow> listOfError) {
+        errorTableView.getItems().clear();
+        errorTableView.getItems().addAll(listOfError);
+        errorTableView.setVisible(true);
+        errorTableView.setPrefHeight(HEADER_HEIGHT + errorTableView.getItems().size() * TABLE_LINE_HEIGHT);
+    }
 
     private void initErrorTableView() {
         TableColumn<ErrorCodeTabRow, String> tabErrorsColLine = new TableColumn<>();

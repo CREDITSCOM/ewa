@@ -115,14 +115,14 @@ public class InMemoryCompiler {
     public static CompilationResult compileSourceCode(String sourceCode) {
         CompilationPackage compilationPackage = null;
         String className = SourceCodeUtils.parseClassName(sourceCode, "");
-        List<ErrorCodeTabRow> listOfError = new ArrayList<>();
+        List<ErrorCodeTabRow> errorsList = new ArrayList<>();
         try {
             SourceCodeUtils.checkClassAndSuperclassNames(className, sourceCode);
         } catch (CreditsException e) {
             ErrorCodeTabRow tr = new ErrorCodeTabRow();
             tr.setLine("1");
             tr.setText(e.getMessage());
-            listOfError.add(tr);
+            errorsList.add(tr);
         }
         IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
         if (problemArr.length > 0) {
@@ -131,7 +131,7 @@ public class InMemoryCompiler {
                 ErrorCodeTabRow tr = new ErrorCodeTabRow();
                 tr.setLine(Integer.toString(p.getSourceLineNumber()));
                 tr.setText(p.getMessage());
-                listOfError.add(tr);
+                errorsList.add(tr);
             }
         } else {
             compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
@@ -142,11 +142,11 @@ public class InMemoryCompiler {
                     ErrorCodeTabRow tr = new ErrorCodeTabRow();
                     tr.setLine(Converter.toString(action.getLineNumber()));
                     tr.setText(action.getMessage(null));
-                    listOfError.add(tr);
+                    errorsList.add(tr);
                 });
             }
         }
-        return new CompilationResult(compilationPackage,listOfError);
+        return new CompilationResult(compilationPackage,errorsList);
     }
 
 }
