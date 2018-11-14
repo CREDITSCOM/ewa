@@ -232,19 +232,15 @@ public class WalletController implements Initializable {
         return new Callback<BigDecimal>() {
             @Override
             public void onSuccess(BigDecimal balance) {
-                Platform.runLater(() -> {
-                    changeTableViewValue(coinRow, decimalFormat.format(balance));
-                    coinRow.getLock().unlock();
-                });
+                Platform.runLater(() -> changeTableViewValue(coinRow, decimalFormat.format(balance)));
+                coinRow.getLock().unlock();
             }
 
             @Override
             public void onError(Throwable e) {
-                Platform.runLater(() -> {
-                    changeTableViewValue(coinRow, ERROR_STATE_MESSAGE);
-                    coinRow.getLock().unlock();
-                });
+                Platform.runLater(() -> changeTableViewValue(coinRow, ERROR_STATE_MESSAGE));
                 LOGGER.error("cant't update balance token {}. Reason: {}", coinRow.getName(), e.getMessage());
+                coinRow.getLock().unlock();
             }
         };
     }
