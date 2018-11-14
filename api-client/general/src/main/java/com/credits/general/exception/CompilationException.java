@@ -1,13 +1,14 @@
 package com.credits.general.exception;
 
-public class CompilationException extends Exception {
-    public CompilationException(String message, Throwable e) {
-        super(message, e);
-    }
+import java.io.UnsupportedEncodingException;
+
+public class CompilationException extends CreditsException {
 
     public CompilationException(String message) {
         super(message);
     }
 
-    public CompilationException(Throwable e) { super(e); }
+    public CompilationException(UnsupportedEncodingException e) {
+        super(e);
+    }
 }

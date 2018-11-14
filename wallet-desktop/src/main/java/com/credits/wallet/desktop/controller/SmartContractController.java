@@ -8,8 +8,8 @@ import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
+import com.credits.wallet.desktop.utils.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.SmartContractUtils;
 import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import javafx.application.Platform;
@@ -141,7 +141,7 @@ public class SmartContractController implements Initializable {
         this.tbFavourite.setVisible(false);
         this.pControls.setVisible(false);
         this.pCodePanel.setVisible(false);
-        this.codeArea = SmartContractUtils.initCodeArea(this.pCodePanel, true);
+        this.codeArea = CodeAreaUtils.initCodeArea(this.pCodePanel, true);
         initSmartContracts();
         this.codeArea.setEditable(false);
         this.codeArea.copy();

@@ -1,12 +1,12 @@
-package com.credits.general.util.compiler;
+package com.credits.wallet.desktop.utils.compiler;
 
 import com.credits.general.exception.CompilationException;
-import com.credits.general.util.compiler.model.CompilationPackage;
-import com.credits.general.util.compiler.model.CompilationUnit;
+import com.credits.general.util.PrintOut;
+import com.credits.wallet.desktop.utils.compiler.model.CompilationPackage;
+import com.credits.wallet.desktop.utils.compiler.model.CompilationUnit;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import test.utils.PrintOut;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;

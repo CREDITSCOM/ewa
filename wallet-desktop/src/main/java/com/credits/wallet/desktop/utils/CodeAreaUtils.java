@@ -1,13 +1,14 @@
 package com.credits.wallet.desktop.utils;
 
-import com.credits.client.node.crypto.Ed25519;
-import com.credits.general.crypto.Md5;
-import com.credits.general.exception.CreditsException;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.exception.WalletDesktopException;
+import com.credits.wallet.desktop.utils.sourcecode.AutocompleteHelper;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -17,11 +18,11 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.fxmisc.wellbehaved.event.InputMap;
+import org.fxmisc.wellbehaved.event.Nodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.KeyPair;
-import java.security.PublicKey;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Optional;
@@ -29,12 +30,21 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.credits.general.util.Converter.byteArrayToHex;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
+import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 
-public class SmartContractUtils {
-    private final static Logger LOGGER = LoggerFactory.getLogger(SmartContractUtils.class);
+public class CodeAreaUtils {
+    private final static Logger LOGGER = LoggerFactory.getLogger(CodeAreaUtils.class);
+
+    private static final String DEFAULT_SOURCE_CODE =
+        "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n\n    }" + "\n" + "}";
+    private static final String[] PARENT_METHODS =
+        new String[] {"double total", "Double getBalance(String address, String currency)",
+            "TransactionData getTransaction(String transactionId)",
+            "List<TransactionData> getTransactions(String address, long offset, long limit)",
+            "List<PoolData> getPoolList(long offset, long limit)", "PoolData getPool(String poolNumber)",
+            "void sendTransaction(String account, String target, Double amount, String currency)"};
 
     private static final String[] KEYWORDS =
         new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
@@ -56,22 +66,52 @@ public class SmartContractUtils {
             ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")" + "|(?<STRING>" +
             STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
 
-    public static StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Matcher matcher = PATTERN.matcher(text);
-        int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        while (matcher.find()) {
-            String styleClass = matcher.group("KEYWORD") != null ? "keyword" : matcher.group("PAREN") != null ? "paren"
-                : matcher.group("BRACE") != null ? "brace" : matcher.group("BRACKET") != null ? "bracket"
-                    : matcher.group("SEMICOLON") != null ? "semicolon" : matcher.group("STRING") != null ? "string"
-                        : matcher.group("COMMENT") != null ? "comment" : null; /* never happens */
-            assert styleClass != null;
-            spansBuilder.add(emptyList(), matcher.start() - lastKwEnd);
-            spansBuilder.add(singleton(styleClass), matcher.end() - matcher.start());
-            lastKwEnd = matcher.end();
+
+
+    private static AutocompleteHelper autocompleteHelper;
+    private static int tabCount;
+
+    public static void initCodeAreaLogic(CodeArea codeArea) {
+
+        try {
+            autocompleteHelper = AutocompleteHelper.init(codeArea);
+        } catch (WalletDesktopException e) {
+            LOGGER.error("", e);
+            FormUtils.showError(e.getMessage());
         }
-        spansBuilder.add(emptyList(), text.length() - lastKwEnd);
-        return spansBuilder.create();
+
+        codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
+            KeyCode code = k.getCode();
+            if (code != KeyCode.TAB) {
+                if (code.isLetterKey() || code.isDigitKey() || code.isNavigationKey() || code.isWhitespaceKey()) {
+                    tabCount = 0;
+                }
+            }
+
+            autocompleteHelper.handleKeyPressEvent(k);
+        });
+
+        Nodes.addInputMap(codeArea, InputMap.consume(keyPressed(KeyCode.TAB), e -> {
+            tabCount++;
+            codeArea.replaceSelection("    ");
+        }));
+
+        Nodes.addInputMap(codeArea, InputMap.consume(keyPressed(KeyCode.BACK_SPACE), e -> {
+            if (tabCount > 0) {
+                for (int i = 0; i < 4; i++) {
+                    codeArea.deletePreviousChar();
+                }
+                tabCount--;
+            } else {
+                codeArea.deletePreviousChar();
+            }
+        }));
+
+        if(AppState.lastSmartContract == null) {
+            codeArea.replaceText(0, 0, DEFAULT_SOURCE_CODE);
+        } else {
+            codeArea.replaceText(AppState.lastSmartContract);
+        }
     }
 
     public static CodeArea initCodeArea(Pane paneCode, boolean readOnly) {
@@ -91,7 +131,7 @@ public class SmartContractUtils {
             Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
                 @Override
                 protected StyleSpans<Collection<String>> call() {
-                    return SmartContractUtils.computeHighlighting(sourceCode);
+                    return computeHighlighting(sourceCode);
                 }
             };
 
@@ -106,9 +146,45 @@ public class SmartContractUtils {
             }
         }).subscribe(highlighting -> codeArea.setStyleSpans(0, highlighting));
 
-        SmartContractUtils.initCodeAreaContextMenu(codeArea, readOnly);
+        initCodeAreaContextMenu(codeArea, readOnly);
 
         return codeArea;
+    }
+
+    public static void positionCursorToLine(CodeArea codeArea, int line) {
+        char[] text = codeArea.getText().toCharArray();
+        int pos = 0;
+        int curLine = 1;
+        while (pos < text.length) {
+            if (line <= curLine) {
+                break;
+            }
+            if (text[pos] == '\n') {
+                curLine++;
+            }
+            pos++;
+        }
+        codeArea.displaceCaret(pos);
+        codeArea.showParagraphAtTop(Math.max(0, line - 5));
+        codeArea.requestFocus();
+    }
+
+    public static StyleSpans<Collection<String>> computeHighlighting(String text) {
+        Matcher matcher = PATTERN.matcher(text);
+        int lastKwEnd = 0;
+        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+        while (matcher.find()) {
+            String styleClass = matcher.group("KEYWORD") != null ? "keyword" : matcher.group("PAREN") != null ? "paren"
+                : matcher.group("BRACE") != null ? "brace" : matcher.group("BRACKET") != null ? "bracket"
+                    : matcher.group("SEMICOLON") != null ? "semicolon" : matcher.group("STRING") != null ? "string"
+                        : matcher.group("COMMENT") != null ? "comment" : null; /* never happens */
+            assert styleClass != null;
+            spansBuilder.add(emptyList(), matcher.start() - lastKwEnd);
+            spansBuilder.add(singleton(styleClass), matcher.end() - matcher.start());
+            lastKwEnd = matcher.end();
+        }
+        spansBuilder.add(emptyList(), text.length() - lastKwEnd);
+        return spansBuilder.create();
     }
 
     public static void initCodeAreaContextMenu(CodeArea codeArea, boolean readOnly) {
@@ -156,14 +232,17 @@ public class SmartContractUtils {
         codeArea.setOnMouseClicked(contextMenu);
     }
 
-    public static byte[] generateSmartContractAddress() {
-        KeyPair keyPair = Ed25519.generateKeyPair();
-        PublicKey publicKey = keyPair.getPublic();
-        return Ed25519.publicKeyToBytes(publicKey);
-    }
 
-    public static String generateSmartContractHashState(byte[] byteCode) throws CreditsException {
-        byte[] hashBytes = Md5.encrypt(byteCode);
-        return byteArrayToHex(hashBytes);
-    }
+
+
+
+
+
+
+
+
+
+
+
+
 }

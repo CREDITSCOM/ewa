@@ -3,7 +3,6 @@ package com.credits.wallet.desktop.utils.sourcecode;
 
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Converter;
-import com.credits.wallet.desktop.VistaNavigator;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -61,6 +60,9 @@ public class SourceCodeUtils {
             STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
 
     private static final String COLLECTION_VALUES_DELIMITER = "\\|";
+
+    private static final String CLASS_NAME = "Contract";
+    private static final String SUPERCLASS_NAME = "SmartContract";
 
     //todo fill to other types
     enum VariantTypeSupport{
@@ -359,4 +361,18 @@ public class SourceCodeUtils {
             default: throw new IllegalArgumentException(String.format("Unsupported class: %s", className));
         }
     }
+
+    public static void checkClassAndSuperclassNames(String className, String sourceCode) throws CreditsException {
+        if (!className.equals(CLASS_NAME)) {
+            throw new CreditsException(
+                String.format("Wrong class name %s, class name must be %s", className, CLASS_NAME));
+        }
+        String superclassName = SourceCodeUtils.parseSuperclassName(sourceCode);
+
+        if (superclassName == null || !superclassName.equals(SUPERCLASS_NAME)) {
+            throw new CreditsException(
+                String.format("Wrong superclass name %s, superclass name must be %s", superclassName, SUPERCLASS_NAME));
+        }
+    }
+
 }
