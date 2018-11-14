@@ -14,7 +14,6 @@ public class HeaderController {
     @FXML
     private Button btnLogout;
 
-
     @FXML
     private Button btnWallet;
 

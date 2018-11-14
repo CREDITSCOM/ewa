@@ -107,41 +107,6 @@
     -fx-alignment: center;
 }
 
-.credits-headerButton {
-    -fx-font-weight: bold;
-    -fx-background-color:  transparent;
-    -fx-font-size: 16px;
-    -fx-alignment: center;
-}
-
-
-.credits-headerButton:hover {
-    -fx-text-fill:#2196f3;
-}
-.credits-headerButton .context-menu {
-    -fx-background-color: #FFF607;
-    -fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;
-}
-
-.credits-headerButton .menu-item {
-    -fx-background-color: #FFF607;
-}
-/*
-.menu-button {
-    -fx-background-color:black;
-}
-.menu-item:focused {
-    -fx-background-color: darkgray;
-}
-
-.menu-item:focused .label {
-    -fx-text-fill: blue;
-}
-*/
-
-.menu-button:hover .label{
-    -fx-text-fill:#2196f3;
-}
 
 .credits-button:hover{
     -fx-font-weight: bold;
@@ -491,3 +456,31 @@
     -fx-background-insets: 0px ;
 }
 /*COPYABLE LABEL*/
+
+/*HEADER*/
+.credits-headerPane,
+.credits-headerButton .menu-item,
+.credits-headerButton .context-menu {
+    -fx-background-color: #343A40;
+}
+
+.credits-headerButton,
+.menu-button .label,
+.credits-menuitemButton{
+    -fx-font-weight: bold;
+    -fx-background-color:  transparent;
+    -fx-font-size: 16px;
+    -fx-alignment: center;
+    -fx-text-fill: white;
+}
+
+.credits-headerButton .arrow-button .arrow {
+    -fx-background-color: white;
+}
+
+.credits-headerButton:hover,
+.menu-button:hover .label,
+.credits-menuitemButton:hover {
+    -fx-text-fill:#CCCECF;
+}
+/*HEADER*/

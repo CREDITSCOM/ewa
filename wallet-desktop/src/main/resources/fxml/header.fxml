@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<BorderPane maxHeight="40.0" minHeight="40.0" prefWidth="1300.0" style="-fx-background-color: #FFF607;" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.HeaderController">
+<BorderPane styleClass="credits-headerPane" maxHeight="40.0" minHeight="40.0" prefWidth="1300.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.HeaderController">
     <center>
         <Pane maxHeight="40.0" maxWidth="1300.0" minHeight="70.0" minWidth="0.0" prefHeight="40.0" prefWidth="1300.0" BorderPane.alignment="CENTER">
             <children>
@@ -25,12 +25,12 @@
                     <items>
                         <MenuItem>
                             <graphic>
-                                <Button fx:id="btnSmartExecute" onAction="#handleSmartExecute" styleClass="credits-headerButton" text="Execute smart" />
+                                <Button fx:id="btnSmartExecute" onAction="#handleSmartExecute" styleClass="credits-menuitemButton" text="Execute smart" />
                             </graphic>
                         </MenuItem>
                         <MenuItem>
                             <graphic>
-                                <Button fx:id="btnSmartDeploy" onAction="#handleSmartDeploy" styleClass="credits-headerButton" text="Deploy new smart" />
+                                <Button fx:id="btnSmartDeploy" onAction="#handleSmartDeploy" styleClass="credits-menuitemButton" text="Deploy new smart" />
                             </graphic>
                         </MenuItem>
                     </items>
@@ -38,7 +38,7 @@
                 <Button fx:id="btnLogout" layoutX="1172.0" layoutY="17.0" onAction="#handleLogout" styleClass="credits-headerButton" text="Logout">
                     <graphic>
                         <ImageView fitHeight="15.0" fitWidth="15.0">
-                            <Image url="@../img/logout.png" />
+                            <Image url="@../img/logout_white.png" />
                         </ImageView>
                     </graphic>
                 </Button>
