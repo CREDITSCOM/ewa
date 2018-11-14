@@ -1,7 +1,8 @@
 package com.credits.thrift;
 
 import com.credits.client.executor.pojo.MethodDescriptionData;
-import com.credits.client.executor.thrift.generated.APIResponse;
+import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
+import com.credits.general.thrift.generated.APIResponse;
 import com.credits.client.executor.thrift.generated.ContractExecutor;
 import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
 import com.credits.client.executor.thrift.generated.MethodDescription;
@@ -30,8 +31,8 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     }
 
     @Override
-    public APIResponse executeByteCode(ByteBuffer address, ByteBuffer byteCode, ByteBuffer contractState, String method,
-                                       List<Variant> params) {
+    public ExecuteByteCodeResult/* TODO refactor APIResponse*/ executeByteCode(ByteBuffer address, ByteBuffer byteCode, ByteBuffer contractState, String method,
+                                                                                      List<Variant> params) {
         logger.debug("<-- execute(" +
                     "\naddress = {}," +
                     "\nbyteCode length= {}, " +
@@ -43,19 +44,21 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             method, (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat)));
 
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
-
-        APIResponse response = new APIResponse((byte) 0, "", contractState);
+        APIResponse response = new APIResponse((byte) 0, ""/* TODO refactor , contractState*/);
+        ExecuteByteCodeResult result = new ExecuteByteCodeResult(response, contractState);
         try {
             ReturnValue returnValue = service.execute(address.array(), byteCode.array(), contractState.array(), method, paramsArray);
+            /* TODO refactor
             response.contractState = ByteBuffer.wrap(returnValue.getContractState());
             response.ret_val = returnValue.getVariant();
             response.contractVariables = returnValue.getContractVariables();
+            */
         } catch (ContractExecutorException e) {
             response.setCode((byte) 1);
             response.setMessage(e.getMessage());
         }
-        logger.debug("execute --> contractStateHash {} {}", response.contractState.hashCode(), response);
-        return response;
+        logger.debug("execute --> contractStateHash {} {}", null /* TODO refactor response.contractState.hashCode()*/, response);
+        return result;
     }
 
     @Override
@@ -66,8 +69,8 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             List<MethodDescriptionData> contractsMethods = service.getContractsMethods(bytecode.array());
             result.methods = contractsMethods.stream().map( it -> new MethodDescription(it.name, it.argTypes, it.returnType)).collect(toList());
         } catch (ContractExecutorException e) {
-          result.setCode((byte) 1);
-          result.setMessage(e.getMessage());
+            APIResponse apiResponse = new APIResponse((byte) 1, e.getMessage());
+          result.setStatus(apiResponse);
         }
         logger.debug("getContractMethods --> {}", result);
         return result;

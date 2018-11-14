@@ -76,7 +76,8 @@ public class NodePojoConverterTest {
                 new Amount(0,0),
                 (byte)1,
                 ByteBuffer.wrap("signature".getBytes()),
-                new AmountCommission((short)1)
+                new AmountCommission((short)1),
+                0
         );
         SealedTransaction sealedTransaction = new SealedTransaction(transactionId, transaction);
         TransactionData transactionData = transactionToTransactionData(sealedTransaction);
@@ -93,7 +94,8 @@ public class NodePojoConverterTest {
                 new Amount(0,0),
                 (byte)1,
                 ByteBuffer.wrap("signature".getBytes()),
-                new AmountCommission((short)1)
+                new AmountCommission((short)1),
+                0
         );
         TransactionData transactionData = transactionToTransactionData(transaction);
         LOGGER.info(transactionData.toString());

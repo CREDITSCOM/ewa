@@ -1,7 +1,7 @@
 package com.credits.client.executor.service;
 
 import com.credits.client.executor.exception.ContractExecutorClientException;
-import com.credits.client.executor.thrift.generated.APIResponse;
+import com.credits.general.thrift.generated.APIResponse;
 import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
 import com.credits.general.thrift.ThriftClientPool;
 import com.credits.general.thrift.generated.Variant;
@@ -41,7 +41,7 @@ public class ContractExecutorThriftApiClient implements ContractExecutorThriftAp
     @Override
     public APIResponse executeContractMethod(byte[] address, byte[] bytecode, byte[] objectState, String method, List<Variant> params) throws ContractExecutorClientException {
         Client client = pool.getResource();
-        return callThrift(client, () -> client.executeByteCode(ByteBuffer.wrap(address), ByteBuffer.wrap(bytecode), ByteBuffer.wrap(objectState), method, params));
+        return callThrift(client, null/* TODO refactor() -> client.executeByteCode(ByteBuffer.wrap(address), ByteBuffer.wrap(bytecode), ByteBuffer.wrap(objectState), method, params)*/);
     }
 
     @Override

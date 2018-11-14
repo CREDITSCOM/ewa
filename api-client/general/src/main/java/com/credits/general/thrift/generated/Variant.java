@@ -686,7 +686,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_BOOL) {
       return (java.lang.Boolean)getFieldValue();
     } else {
-      throw new java.lang.RuntimeException("Cannot getObject field 'v_bool' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_bool' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -699,7 +699,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_I8) {
       return (java.lang.Byte)getFieldValue();
     } else {
-      throw new java.lang.RuntimeException("Cannot getObject field 'v_i8' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_i8' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -712,7 +712,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_I16) {
       return (java.lang.Short)getFieldValue();
     } else {
-      throw new java.lang.RuntimeException("Cannot getObject field 'v_i16' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_i16' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -725,7 +725,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_I32) {
       return (java.lang.Integer)getFieldValue();
     } else {
-      throw new java.lang.RuntimeException("Cannot getObject field 'v_i32' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_i32' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -738,7 +738,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_I64) {
       return (java.lang.Long)getFieldValue();
     } else {
-      throw new java.lang.RuntimeException("Cannot getObject field 'v_i64' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_i64' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -751,7 +751,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_DOUBLE) {
       return (java.lang.Double)getFieldValue();
     } else {
-      throw new java.lang.RuntimeException("Cannot getObject field 'v_double' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_double' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -764,7 +764,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_STRING) {
       return (java.lang.String)getFieldValue();
     } else {
-      throw new java.lang.RuntimeException("Cannot getObject field 'v_string' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_string' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -778,7 +778,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_LIST) {
       return (java.util.List<Variant>)getFieldValue();
     } else {
-      throw new java.lang.RuntimeException("Cannot getObject field 'v_list' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_list' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -792,7 +792,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_SET) {
       return (java.util.Set<Variant>)getFieldValue();
     } else {
-      throw new java.lang.RuntimeException("Cannot getObject field 'v_set' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_set' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -806,7 +806,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_MAP) {
       return (java.util.Map<Variant,Variant>)getFieldValue();
     } else {
-      throw new java.lang.RuntimeException("Cannot getObject field 'v_map' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_map' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 

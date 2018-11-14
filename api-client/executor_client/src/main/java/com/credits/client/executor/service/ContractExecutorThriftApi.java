@@ -1,7 +1,7 @@
 package com.credits.client.executor.service;
 
 import com.credits.client.executor.exception.ContractExecutorClientException;
-import com.credits.client.executor.thrift.generated.APIResponse;
+import com.credits.general.thrift.generated.APIResponse;
 import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
 import com.credits.general.thrift.generated.Variant;
 
