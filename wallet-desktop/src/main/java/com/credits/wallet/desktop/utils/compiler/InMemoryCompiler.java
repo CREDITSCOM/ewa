@@ -114,7 +114,7 @@ public class InMemoryCompiler {
 
     public static CompilationResult compileSourceCode(String sourceCode) {
         CompilationPackage compilationPackage = null;
-        String className = SourceCodeUtils.parseClassName(sourceCode, "");
+        String className = SourceCodeUtils.parseClassName(sourceCode, "SmartContract");
         List<ErrorCodeTabRow> errorsList = new ArrayList<>();
         try {
             SourceCodeUtils.checkClassAndSuperclassNames(className, sourceCode);

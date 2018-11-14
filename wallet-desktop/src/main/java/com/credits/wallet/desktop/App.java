@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-import static com.credits.wallet.desktop.AppState.*;
+import static com.credits.wallet.desktop.AppState.executor;
+import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
 
 /**
  * Created by goncharov-eg on 23.11.2017.
@@ -60,6 +61,7 @@ public class App extends Application {
                 loadMainPane()
             )
         );
+        //ScenicView.show(stage.getScene());
         stage.show();
     }
 
@@ -86,7 +88,6 @@ public class App extends Application {
         scene.getStylesheets().setAll(
             App.class.getResource("/styles.css").toExternalForm()
         );
-
         return scene;
     }
 

@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
+import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -67,7 +68,9 @@ public class UITest {
         doCallRealMethod().when(mockInitializer).init();
 
         AppState.account = walletAddress;
+        AppState.coinsKeeper = new ObjectKeeper<>(account, "coins");
         AppState.favoriteContractsKeeper = new ObjectKeeper<>(AppState.account, "favorite");
+        when(mockNodeApiService.getBalance(anyString())).thenReturn(new BigDecimal("1000.123456789012345678"));
 
         app = new App();
         app.appStateInitializer = mockInitializer;
@@ -86,7 +89,6 @@ public class UITest {
         //balances
         doAnswer(returnBalance(new BigDecimal("2443113.00192177821876551"))).when(mockContractInteractionService).getSmartContractBalance(anyString(), any());
 
-        when(mockNodeApiService.getBalance(anyString())).thenReturn(new BigDecimal("1000.123456789012345678"));
         when(mockNodeApiService.getTransactionsState(any(), any())).thenReturn(FakeData.transactionsStateGetResult);
 
         //transactions
