@@ -1,9 +1,9 @@
 package com.credits.general.util;
 
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractDeployData;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -14,9 +14,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class ObjectKeeperTest {
@@ -29,7 +27,8 @@ public class ObjectKeeperTest {
     public void setUp() throws IOException {
         objectKeeper = new ObjectKeeper<>(account, "obj");
         deleteCacheDirectory();
-        someData.put("1",new SmartContractData(null, null, "aaa", null,null));
+        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("aaa", null, (short)0);
+        someData.put("1",new SmartContractData(null, null, smartContractDeployData,null));
     }
 
 
@@ -57,7 +56,8 @@ public class ObjectKeeperTest {
                 @Override
                 public HashMap<String, SmartContractData> modify(HashMap<String, SmartContractData> keptObject) {
                     if (keptObject != null) {
-                        keptObject.put("2", new SmartContractData(null, null, "BBB", null, null));
+                        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("BBB", null, (short)0);
+                        keptObject.put("2", new SmartContractData(null, null, smartContractDeployData, null));
                     }
                     return keptObject;
                 }
@@ -69,7 +69,8 @@ public class ObjectKeeperTest {
     public void usingSerializedObject(){
         objectKeeper.keepObject(someData);
         HashMap<String, SmartContractData> restoredObject = objectKeeper.getKeptObject().get();
-        restoredObject.put("2", new SmartContractData(null, null, "BBB", null, null));
+        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("BBB", null, (short)0);
+        restoredObject.put("2", new SmartContractData(null, null, smartContractDeployData, null));
         objectKeeper.keepObject(restoredObject);
         restoredObject = objectKeeper.getKeptObject().get();
         assertEquals(2, restoredObject.size());
