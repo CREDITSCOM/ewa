@@ -41,8 +41,8 @@ public class ApiUtils {
         SmartContractData smartContractData) throws NodeClientException, ConverterException {
 
         SmartContractInvocationData smartContractInvocationData =
-            new SmartContractInvocationData(smartContractData.getSourceCode(), smartContractData.getByteCode(),
-                smartContractData.getHashState(), smartContractData.getMethod(), smartContractData.getParams(), false);
+            new SmartContractInvocationData(smartContractData.getSmartContractDeployData(),
+                    smartContractData.getMethod(), smartContractData.getParams(), false);
 
         SmartContractTransactionFlowData scData = new SmartContractTransactionFlowData(
             getTransactionFlowData(transactionData, ZERO, serializeByThrift(smartContractInvocationData)),
@@ -63,7 +63,7 @@ public class ApiUtils {
         saveTransactionIntoMap(transactionData, amount.toString(), String.valueOf(currency));
 
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
+            new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes, null /*TODO refactor, add or not add userFields*/);
         SignUtils.signTransaction(transactionFlowData);
         return transactionFlowData;
     }

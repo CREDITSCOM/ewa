@@ -3,6 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -183,9 +184,15 @@ public class SmartContractDeployController implements Initializable {
                     CompilationUnit compilationUnit = compilationUnits.get(0);
                     byte[] byteCode = compilationUnit.getBytecode();
 
+                    SmartContractDeployData smartContractDeployData = new SmartContractDeployData(
+                            javaCode,
+                            byteCode,
+                            (short)0 // TODO refactor, put real tokenStandart value
+                    );
+
                     SmartContractData smartContractData =
                         new SmartContractData(SmartContractsUtils.generateSmartContractAddress(), decodeFromBASE58(account),
-                            javaCode, byteCode, null);
+                                smartContractDeployData, null);
 
                     CompletableFuture.supplyAsync(
                         () -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account, smartContractData.getBase58Address()), threadPool)
