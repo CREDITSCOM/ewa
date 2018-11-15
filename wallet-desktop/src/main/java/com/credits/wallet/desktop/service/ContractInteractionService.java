@@ -61,7 +61,7 @@ public class ContractInteractionService {
 
         ApiResponseData response = contractExecutorService.executeContractMethod(
             Converter.decodeFromBASE58(smartContractAddress),
-            sc.getByteCode(),
+            sc.getSmartContractDeployData().getByteCode(),
             sc.getObjectState(),
             methodName,
             asList(params));

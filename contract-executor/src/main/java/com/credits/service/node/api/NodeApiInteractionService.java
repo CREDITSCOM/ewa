@@ -28,5 +28,6 @@ public interface NodeApiInteractionService {
                          BigDecimal balance,
                          byte currency,
                          byte[] signature,
-                         BigDecimal fee) throws ConverterException, NodeClientException;
+                         BigDecimal fee,
+                         byte[] userData) throws ConverterException, NodeClientException;
 }

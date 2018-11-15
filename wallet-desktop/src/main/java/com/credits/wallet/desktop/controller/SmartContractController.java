@@ -222,7 +222,7 @@ public class SmartContractController implements Initializable {
     }
 
     private void refreshFormState(SmartContractData smartContractData) {
-        if (smartContractData == null || smartContractData.getByteCode().length == 0 ||
+        if (smartContractData == null || smartContractData.getSmartContractDeployData().getByteCode().length == 0 ||
             smartContractData.getAddress().length == 0) {
             tbFavorite.setVisible(false);
             pControls.setVisible(false);
@@ -236,7 +236,7 @@ public class SmartContractController implements Initializable {
             tbFavorite.setVisible(true);
             findInFavoriteThenSelect(smartContractData, tbFavorite);
 
-            String sourceCode = smartContractData.getSourceCode();
+            String sourceCode = smartContractData.getSmartContractDeployData().getSourceCode();
             tfAddress.setText(smartContractData.getBase58Address());
             List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
             cbMethods.getItems().clear();
