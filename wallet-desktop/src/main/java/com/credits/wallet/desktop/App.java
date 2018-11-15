@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static com.credits.wallet.desktop.AppState.executor;
 import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
 
@@ -98,6 +99,9 @@ public class App extends Application {
         }
         if(favoriteContractsKeeper != null){
             favoriteContractsKeeper.flush();
+        }
+        if(coinsKeeper != null){
+            coinsKeeper.flush();
         }
     }
 
