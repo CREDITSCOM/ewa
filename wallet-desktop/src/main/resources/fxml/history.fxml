@@ -9,7 +9,6 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.HistoryController">
@@ -51,7 +50,7 @@
                 </Tab>
                 <Tab text="Processed transactions">
                   <content>
-                    <HBox minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
+                    <VBox minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
                            <children>
                               <TableView fx:id="unapprovedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view">
                                  <columns>
@@ -63,7 +62,7 @@
                                  </columns>
                               </TableView>
                            </children>
-                        </HBox>
+                        </VBox>
                   </content>
                 </Tab>
               </tabs>
