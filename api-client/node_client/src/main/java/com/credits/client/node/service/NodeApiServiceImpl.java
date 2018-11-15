@@ -188,7 +188,7 @@ public class NodeApiServiceImpl implements NodeApiService {
         processApiResponse(result.getStatus());
         SmartContract smartContract = result.getSmartContract();
         SmartContractData smartContractData = smartContractToSmartContractData(smartContract);
-        LOGGER.info(String.format("<--- smart contract hashState = %s", smartContractData.getHashState()));
+        LOGGER.info(String.format("<--- smart contract hashState = %s", smartContractData.getSmartContractDeployData().getHashState()));
         return smartContractData;
     }
 

@@ -14,25 +14,21 @@ public class SmartContractData implements Serializable {
 
     private byte[] address;
     private byte[] deployer;
-    private String sourceCode;
-    private byte[] byteCode;
-    private String hashState; //todo unused
     private byte[] objectState;
+    private SmartContractDeployData smartContractDeployData;
     private String method;
     private List<Object> params;
     private String base58Address;
     private int hashCode;
 
-    public SmartContractData(byte[] address, byte[] deployer, String sourceCode, byte[] byteCode,
+    public SmartContractData(byte[] address, byte[] deployer, SmartContractDeployData smartContractDeployData,
         byte[] objectState) {
         this.address = address;
         this.deployer = deployer;
-        this.sourceCode = sourceCode;
-        this.byteCode = byteCode;
+        this.smartContractDeployData = smartContractDeployData;
         this.objectState = objectState;
         this.params = new ArrayList<>();
         this.method="";
-        this.hashState="";
     }
 
     public String getMethod() {
@@ -75,28 +71,12 @@ public class SmartContractData implements Serializable {
         this.deployer = deployer;
     }
 
-    public String getSourceCode() {
-        return sourceCode;
+    public SmartContractDeployData getSmartContractDeployData() {
+        return smartContractDeployData;
     }
 
-    public void setSourceCode(String sourceCode) {
-        this.sourceCode = sourceCode;
-    }
-
-    public byte[] getByteCode() {
-        return byteCode;
-    }
-
-    public void setByteCode(byte[] byteCode) {
-        this.byteCode = byteCode;
-    }
-
-    public String getHashState() {
-        return hashState;
-    }
-
-    public void setHashState(String hashState) {
-        this.hashState = hashState;
+    public void setSmartContractDeployData(SmartContractDeployData smartContractDeployData) {
+        this.smartContractDeployData = smartContractDeployData;
     }
 
 //    public boolean isFavorite() {
@@ -124,15 +104,9 @@ public class SmartContractData implements Serializable {
         if (!Arrays.equals(deployer, that.deployer)) {
             return false;
         }
-        if (sourceCode != null ? !sourceCode.equals(that.sourceCode) : that.sourceCode != null) {
-            return false;
-        }
-        if (!Arrays.equals(byteCode, that.byteCode)) {
-            return false;
-        }
-        if (hashState != null ? !hashState.equals(that.hashState) : that.hashState != null) {
-            return false;
-        }
+
+        // TODO add smartContractDeployData equals
+
         if (!Arrays.equals(objectState, that.objectState)) {
             return false;
         }
@@ -153,9 +127,7 @@ public class SmartContractData implements Serializable {
     public int hashCode() {
         int result = Arrays.hashCode(address);
         result = 31 * result + Arrays.hashCode(deployer);
-        result = 31 * result + (sourceCode != null ? sourceCode.hashCode() : 0);
-        result = 31 * result + Arrays.hashCode(byteCode);
-        result = 31 * result + (hashState != null ? hashState.hashCode() : 0);
+        // TODO add smartContractDeployData hashCode
         result = 31 * result + Arrays.hashCode(objectState);
         result = 31 * result + (method != null ? method.hashCode() : 0);
         result = 31 * result + (params != null ? params.hashCode() : 0);
