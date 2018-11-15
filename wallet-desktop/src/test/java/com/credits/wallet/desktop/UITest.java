@@ -45,7 +45,7 @@ public class UITest {
     String addressTwo;
     String addressThree;
 
-    ApiResponseData successResponse = new ApiResponseData(SUCCESS, "Success", new Variant(V_STRING, "Success"));
+    ApiResponseData successResponse = new ApiResponseData(SUCCESS, "Success");
 
     @Mock
     AppStateInitializer mockInitializer;

@@ -5,6 +5,7 @@ import com.credits.client.node.pojo.PoolData;
 import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.WalletData;
 import com.credits.client.node.thrift.generated.Amount;
@@ -50,7 +51,7 @@ import static com.credits.client.node.util.NodePojoConverter.poolToPoolData;
 import static com.credits.client.node.util.NodePojoConverter.smartContractToSmartContractData;
 import static com.credits.client.node.util.NodePojoConverter.smartContractTransactionFlowDataToTransaction;
 import static com.credits.client.node.util.NodePojoConverter.transactionFlowDataToTransaction;
-import static com.credits.client.node.util.NodePojoConverter.transactionFlowResultToApiResponseData;
+import static com.credits.client.node.util.NodePojoConverter.transactionFlowResultToTransactionFlowResultData;
 import static com.credits.client.node.util.NodePojoConverter.transactionToTransactionData;
 import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
 import static com.credits.general.util.Converter.byteArrayToByteBuffer;
@@ -149,34 +150,29 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     @Override
-    public ApiResponseData smartContractTransactionFlow(SmartContractTransactionFlowData scTransaction)
+    public TransactionFlowResultData smartContractTransactionFlow(SmartContractTransactionFlowData scTransaction)
         throws NodeClientException, ConverterException {
         //todo validation
         Transaction transaction = smartContractTransactionFlowDataToTransaction(scTransaction);
         LOGGER.debug("smartContractTransactionFlow -> {}", transaction);
-        ApiResponseData response = callTransactionFlow(transaction);
+        TransactionFlowResultData response = callTransactionFlow(transaction);
         LOGGER.debug("smartContractTransactionFlow <- {}", response);
         return response;
     }
 
     @Override
-    public ApiResponseData transactionFlow(TransactionFlowData transactionFlowData) {
+    public TransactionFlowResultData transactionFlow(TransactionFlowData transactionFlowData) {
         //todo validation
         Transaction transaction = transactionFlowDataToTransaction(transactionFlowData);
         LOGGER.debug("transaction flow -> {}", transactionFlowData);
-        ApiResponseData response = callTransactionFlow(transaction);
+        TransactionFlowResultData response = callTransactionFlow(transaction);
         LOGGER.debug("transaction flow <- {}", response);
         return response;
     }
 
-    private ApiResponseData callTransactionFlow(Transaction transaction) {
+    private TransactionFlowResultData callTransactionFlow(Transaction transaction) {
         TransactionFlowResult transactionFlowResult = nodeClient.transactionFlow(transaction);
-        ApiResponseData response = transactionFlowResultToApiResponseData(transactionFlowResult);
-        response.setRoundNumber(transactionFlowResult.getRoundNum());
-        response.setTransactionId(transaction.getId());
-        response.setSource(encodeToBASE58(transaction.getSource()));
-        response.setTarget(encodeToBASE58(transaction.getTarget()));
-        return response;
+        return transactionFlowResultToTransactionFlowResultData(transactionFlowResult, transaction.getSource(), transaction.getTarget());
     }
 
 

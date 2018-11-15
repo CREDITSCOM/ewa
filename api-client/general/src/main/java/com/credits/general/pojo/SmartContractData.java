@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class SmartContractData implements Serializable {
 
+    private static final long serialVersionUID = -6040854351366713475L;
     private byte[] address;
     private byte[] deployer;
     private byte[] objectState;

@@ -8,15 +8,16 @@ import java.util.Arrays;
  */
 public class SmartContractDeployData implements Serializable {
 
-    private String sourceCode;
-    private byte[] byteCode;
-    private String hashState; //todo unused
-    private short tokenStandart;
+    private static final long serialVersionUID = -6187425771734674520L;
+    private final String sourceCode;
+    private final byte[] byteCode;
+    private final String hashState; //unused
+    private final short tokenStandard;
 
-    public SmartContractDeployData(String sourceCode, byte[] byteCode,  short tokenStandart) {
+    public SmartContractDeployData(String sourceCode, byte[] byteCode,  short tokenStandard) {
         this.sourceCode = sourceCode;
         this.byteCode = byteCode;
-        this.tokenStandart = tokenStandart;
+        this.tokenStandard = tokenStandard;
         this.hashState="";
     }
 
@@ -24,42 +25,19 @@ public class SmartContractDeployData implements Serializable {
         return sourceCode;
     }
 
-    public void setSourceCode(String sourceCode) {
-        this.sourceCode = sourceCode;
-    }
-
     public byte[] getByteCode() {
         return byteCode;
-    }
-
-    public void setByteCode(byte[] byteCode) {
-        this.byteCode = byteCode;
     }
 
     public String getHashState() {
         return hashState;
     }
 
-    public void setHashState(String hashState) {
-        this.hashState = hashState;
+    public short getTokenStandard() {
+        return tokenStandard;
     }
 
-    public short getTokenStandart() {
-        return tokenStandart;
-    }
-
-    public void setTokenStandart(short tokenStandart) {
-        this.tokenStandart = tokenStandart;
-    }
-
-    //    public boolean isFavorite() {
-//        return favorite;
-//    }
-
-//    public void setFavorite(boolean favorite) {
-//        this.favorite = favorite;
-//    }
-
+    @SuppressWarnings("ConstantConditions")
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -80,15 +58,16 @@ public class SmartContractDeployData implements Serializable {
         if (hashState != null ? !hashState.equals(that.hashState) : that.hashState != null) {
             return false;
         }
-        return tokenStandart == that.tokenStandart;
+        return tokenStandard == that.tokenStandard;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public int hashCode() {
         int result = (sourceCode != null ? sourceCode.hashCode() : 0);
         result = 31 * result + Arrays.hashCode(byteCode);
         result = 31 * result + (hashState != null ? hashState.hashCode() : 0);
-        result = 31 * result + tokenStandart;
+        result = 31 * result + tokenStandard;
         return result;
     }
 }
