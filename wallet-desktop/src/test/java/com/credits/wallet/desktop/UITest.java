@@ -84,8 +84,8 @@ public class UITest {
     @Ignore
     @Test
     public void allForms() throws Exception {
-        mockInitializer.startForm = VistaNavigator.WELCOME;
-
+        mockInitializer.startForm = VistaNavigator.HISTORY;
+        AppState.account = walletAddress;
         //balances
         doAnswer(returnBalance(new BigDecimal("2443113.00192177821876551"))).when(mockContractInteractionService).getSmartContractBalance(anyString(), any());
 
@@ -102,7 +102,6 @@ public class UITest {
         //smart-contracts
         when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
         when(mockNodeApiService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
-
         runApp();
     }
 
