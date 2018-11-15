@@ -482,7 +482,7 @@
 .credits-headerPane,
 .credits-headerButton .menu-item,
 .credits-headerButton .context-menu {
-    -fx-background-color: #343A40;
+    -fx-background-color: #FFE492;
 }
 
 .credits-headerButton,
@@ -492,16 +492,16 @@
     -fx-background-color:  transparent;
     -fx-font-size: 16px;
     -fx-alignment: center;
-    -fx-text-fill: white;
+    -fx-text-fill: black;
 }
 
 .credits-headerButton .arrow-button .arrow {
-    -fx-background-color: white;
+    -fx-background-color: black;
 }
 
 .credits-headerButton:hover,
 .menu-button:hover .label,
 .credits-menuitemButton:hover {
-    -fx-text-fill:#CCCECF;
+    -fx-text-fill:#0058B7;
 }
 /*HEADER*/
