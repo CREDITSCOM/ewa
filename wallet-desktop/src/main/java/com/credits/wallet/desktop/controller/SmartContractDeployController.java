@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
@@ -32,6 +33,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -209,12 +211,12 @@ public class SmartContractDeployController implements Initializable {
         }
     }
 
-    private Callback<ApiResponseData> handleDeployResult() {
-        return new Callback<ApiResponseData>() {
+    private Callback<Pair<Long, TransactionFlowResultData>> handleDeployResult() {
+        return new Callback<Pair<Long, TransactionFlowResultData>>() {
             @Override
-            public void onSuccess(ApiResponseData resultData) {
-                ApiUtils.saveTransactionRoundNumberIntoMap(resultData);
-                String target = resultData.getTarget();
+            public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
+                ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(), resultData.getLeft());
+                String target = resultData.getRight().getTarget();
                 StringSelection selection = new StringSelection(target);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);

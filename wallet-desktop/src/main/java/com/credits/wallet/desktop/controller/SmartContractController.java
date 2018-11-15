@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
@@ -33,6 +34,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.fxmisc.richtext.CodeArea;
@@ -43,6 +45,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
@@ -53,6 +56,7 @@ import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
+import static com.credits.wallet.desktop.utils.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -346,7 +350,7 @@ public class SmartContractController implements Initializable {
             smartContractData.setParams(params);
 
             CompletableFuture
-                .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,smartContractData.getBase58Address()), threadPool)
+                .supplyAsync(() -> calcTransactionIdSourceTarget(account, smartContractData.getBase58Address()), threadPool)
                 .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                 .whenComplete(handleCallback(handleExecuteResult()));
 
@@ -357,19 +361,14 @@ public class SmartContractController implements Initializable {
         }
     }
 
-    private Callback<ApiResponseData> handleExecuteResult() {
-        return new Callback<ApiResponseData>() {
+    private Callback<Pair<Long, TransactionFlowResultData>> handleExecuteResult() {
+        return new Callback<Pair<Long, TransactionFlowResultData>>() {
             @Override
-            public void onSuccess(ApiResponseData resultData) {
-                ApiUtils.saveTransactionRoundNumberIntoMap(resultData);
-                Variant res = resultData.getScExecRetVal();
-                if (res != null) {
-                    String retVal = res.toString() + '\n';
-                    LOGGER.info("Return value is {}", retVal);
-                    FormUtils.showPlatformInfo("Execute smart contract was success: return value is: " + retVal);
-                } else {
-                    FormUtils.showPlatformInfo("Execute smart contract was success");
-                }
+            public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
+                ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(), resultData.getLeft());
+                Variant result = resultData.getRight().getContractResult().orElse(new Variant(Variant._Fields.V_STRING, "void"));
+                LOGGER.info("Return value is {}", result);
+                FormUtils.showPlatformInfo("Execute smart contract was success: return value is: " + result);
             }
 
             @Override

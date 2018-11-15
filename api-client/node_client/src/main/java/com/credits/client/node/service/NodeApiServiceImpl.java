@@ -27,7 +27,6 @@ import com.credits.client.node.thrift.generated.WalletDataGetResult;
 import com.credits.client.node.thrift.generated.WalletIdGetResult;
 import com.credits.client.node.thrift.generated.WalletTransactionsCountGetResult;
 import com.credits.client.node.util.NodePojoConverter;
-import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Function;
@@ -56,7 +55,6 @@ import static com.credits.client.node.util.NodePojoConverter.transactionToTransa
 import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
 import static com.credits.general.util.Converter.byteArrayToByteBuffer;
 import static com.credits.general.util.Converter.decodeFromBASE58;
-import static com.credits.general.util.Converter.encodeToBASE58;
 import static com.credits.general.util.Utils.threadPool;
 
 public class NodeApiServiceImpl implements NodeApiService {

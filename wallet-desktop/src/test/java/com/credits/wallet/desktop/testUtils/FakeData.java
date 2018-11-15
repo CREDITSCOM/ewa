@@ -113,10 +113,8 @@ public class FakeData {
                 (new TransactionData(9L,
                     byteAddress,
                     decodeFromBASE58("BqN3YEfYvJh2JfaQZWcmV9aByikt1DZERgMXuKVdtqBE"), new BigDecimal(8.0)));
-            transactionData10 =
-                (new TransactionData(10L,
-                    byteAddress,
-                    byteAddress, new BigDecimal(2147483647.0)));
+
+
             transactionsDataList.add(transactionData1);
             transactionsDataList.add(transactionData2);
             transactionsDataList.add(transactionData3);
@@ -126,7 +124,13 @@ public class FakeData {
             transactionsDataList.add(transactionData7);
             transactionsDataList.add(transactionData8);
             transactionsDataList.add(transactionData9);
-            transactionsDataList.add(transactionData10);
+            for (int i =0; i<15; i++) {
+                transactionData10 =
+                    (new TransactionData(200L,
+                        byteAddress,
+                        byteAddress, new BigDecimal(2147483647.0)));
+                transactionsDataList.add(transactionData10);
+            }
 
             TransactionFlowData transaction0 = new TransactionFlowData();
             transaction0.setId(0L);

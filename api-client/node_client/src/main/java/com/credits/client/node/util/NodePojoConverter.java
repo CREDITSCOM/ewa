@@ -7,6 +7,7 @@ import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.pojo.SmartContractDeployData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Converter;

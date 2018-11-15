@@ -4,6 +4,7 @@ import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.pojo.ApiResponseData;
@@ -11,10 +12,12 @@ import com.credits.general.pojo.SmartContractData;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.AppState;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,13 +33,13 @@ public class ApiUtils {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
-    public static ApiResponseData createTransaction(
+    public static Pair<Long, TransactionFlowResultData> createTransaction(
         TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData, BigDecimal amount)
         throws NodeClientException, ConverterException {
-        return nodeApiService.transactionFlow(getTransactionFlowData(transactionData, amount, null));
+        return Pair.of(transactionData.getTransactionId(), nodeApiService.transactionFlow(getTransactionFlowData(transactionData, amount, null)));
     }
 
-    public static ApiResponseData createSmartContractTransaction(
+    public static Pair<Long, TransactionFlowResultData> createSmartContractTransaction(
         TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData,
         SmartContractData smartContractData) throws NodeClientException, ConverterException {
 
@@ -48,7 +51,7 @@ public class ApiUtils {
             getTransactionFlowData(transactionData, ZERO, serializeByThrift(smartContractInvocationData)),
             smartContractInvocationData);
 
-        return nodeApiService.smartContractTransactionFlow(scData);
+        return Pair.of(transactionData.getTransactionId(), nodeApiService.smartContractTransactionFlow(scData));
     }
 
     private static TransactionFlowData getTransactionFlowData(
@@ -81,12 +84,12 @@ public class ApiUtils {
         sourceMap.put(shortTransactionId, transactionRoundData);
     }
 
-    public static void saveTransactionRoundNumberIntoMap(ApiResponseData resultData) {
+    public static void saveTransactionRoundNumberIntoMap(int roundNumber, long transactionId) {
         ConcurrentHashMap<Long, TransactionRoundData> tempTransactionsData =
             AppState.sourceMap.get(NodeApiServiceImpl.account);
         TransactionRoundData transactionRoundData =
-            tempTransactionsData.get(NodePojoConverter.getShortTransactionId(resultData.getTransactionId()));
-        transactionRoundData.setRoundNumber(resultData.getRoundNumber());
+            tempTransactionsData.get(NodePojoConverter.getShortTransactionId(transactionId));
+        transactionRoundData.setRoundNumber(roundNumber);
     }
 
 }

@@ -15,9 +15,6 @@ import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
@@ -46,7 +43,7 @@ import static com.credits.wallet.desktop.AppState.selectedTransactionRow;
  */
 public class HistoryController implements Initializable {
     private static final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
-    private static final int INIT_PAGE_SIZE = 10;
+    private static final int INIT_PAGE_SIZE = 100;
     private static final int FIRST_PAGE_NUMBER = 1;
     private final static Logger LOGGER = LoggerFactory.getLogger(HistoryController.class);
     public static final int COUNT_ROUNDS_LIFE = 50;
@@ -57,49 +54,23 @@ public class HistoryController implements Initializable {
     @FXML
     BorderPane bp;
     @FXML
-    private ComboBox<Integer> cbPageSize;
-    @FXML
     private TableView<TransactionTabRow> approvedTableView;
 
     @FXML
     private TableView<TransactionTabRow> unapprovedTableView;
 
-    @FXML
-    private Label labPage;
-    @FXML
-    private Button btnFirst;
-    @FXML
-    private Button btnPrev;
-    @FXML
-    private Button btnNext;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FormUtils.resizeForm(bp);
 
-        initCombobox(cbPageSize);
 
         initTable(approvedTableView);
         initTable(unapprovedTableView);
 
-        setPage();
-
         fillApprovedTable();
         fillUnapprovedTable();
 
-    }
-
-    private void initCombobox(ComboBox<Integer> comboBox) {
-        for (int i = 1; i <= INIT_PAGE_SIZE; i++) {
-            comboBox.getItems().add(INIT_PAGE_SIZE * i);
-        }
-        comboBox.getSelectionModel().select(0);
-        comboBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            pageSize = comboBox.getItems().get((int) newValue);
-            pageNumber = 1;
-            setPage();
-            fillApprovedTable();
-        });
     }
 
     private void initTable(TableView<TransactionTabRow> tableView) {
@@ -121,7 +92,7 @@ public class HistoryController implements Initializable {
     }
 
     private void fillUnapprovedTable() {
-        if (AppState.sourceMap.get(account) != null) {
+        if (AppState.sourceMap !=null && AppState.sourceMap.get(account) != null) {
             ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = AppState.sourceMap.get(account);
             /*List<Long> validIds =
                 transactionsList.stream().map(TransactionData::getId).collect(Collectors.toList());
@@ -133,7 +104,7 @@ public class HistoryController implements Initializable {
     }
 
     private void fillApprovedTable() {
-        async(() -> nodeApiService.getTransactions(account, (pageNumber - 1) * pageSize, pageSize),
+        async(() -> nodeApiService.getTransactions(account, FIRST_PAGE_NUMBER, INIT_PAGE_SIZE),
             handleGetTransactionsResult());
     }
 
@@ -142,7 +113,6 @@ public class HistoryController implements Initializable {
 
             @Override
             public void onSuccess(List<TransactionData> transactionsList) throws CreditsException {
-                btnNext.setDisable(transactionsList.size() < pageSize);
 
                 List<TransactionTabRow> approvedList = new ArrayList<>();
                 transactionsList.forEach(transactionData -> {
@@ -239,35 +209,6 @@ public class HistoryController implements Initializable {
     private void handleRefresh() {
         fillApprovedTable();
         fillUnapprovedTable();
-    }
-
-    @FXML
-    private void handlePageFirst() {
-        pageNumber = FIRST_PAGE_NUMBER;
-        setPage();
-        fillApprovedTable();
-    }
-
-    @FXML
-    private void handlePagePrev() {
-        if (pageNumber > FIRST_PAGE_NUMBER) {
-            pageNumber = pageNumber - 1;
-        }
-        setPage();
-        fillApprovedTable();
-    }
-
-    @FXML
-    private void handlePageNext() {
-        pageNumber = pageNumber + 1;
-        setPage();
-        fillApprovedTable();
-    }
-
-    private void setPage() {
-        btnFirst.setDisable(pageNumber <= FIRST_PAGE_NUMBER);
-        btnPrev.setDisable(pageNumber <= FIRST_PAGE_NUMBER);
-        labPage.setText(Integer.toString(pageNumber));
     }
 }
 

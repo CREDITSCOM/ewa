@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.util.Callback;
@@ -14,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,20 +100,21 @@ public class GenerateTransactionController implements Initializable {
         };
     }
 
-    private Callback<ApiResponseData> handleTransactionResult() {
-        return new Callback<ApiResponseData>() {
-        @Override
-        public void onSuccess(ApiResponseData resultData) {
-            ApiUtils.saveTransactionRoundNumberIntoMap(resultData);
-            FormUtils.showPlatformInfo("Transaction created");
-        }
+    private Callback<Pair<Long, TransactionFlowResultData>> handleTransactionResult() {
+        return new Callback<Pair<Long, TransactionFlowResultData>>() {
+            @Override
+            public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
+                ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(),
+                    resultData.getLeft());
+                FormUtils.showPlatformInfo("Transaction created");
+            }
 
-        @Override
-        public void onError(Throwable e) {
-            LOGGER.error("Failed!", e);
-            FormUtils.showPlatformError(e.getMessage());
-        }
-    };
+            @Override
+            public void onError(Throwable e) {
+                LOGGER.error("Failed!", e);
+                FormUtils.showPlatformError(e.getMessage());
+            }
+        };
     }
 
     @Override
