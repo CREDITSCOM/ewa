@@ -20,14 +20,7 @@
             <children>
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Transaction history" />
                 <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can see transaction history" />
-                <Button layoutX="20.0" layoutY="552.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
-                <Button layoutX="1220.0" layoutY="68.0" onAction="#handleRefresh" prefHeight="27.0" prefWidth="30.0" style="-fx-border-color: transparent; -fx-background-color: transparent;" styleClass="credits-button">
-                    <graphic>
-                        <ImageView fitHeight="32.0" fitWidth="32.0" style="-fx-background-color: transparent;">
-                            <Image url="@../img/reload.png" />
-                        </ImageView>
-                    </graphic>
-                </Button>
+                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
             <TabPane layoutX="20.0" layoutY="80.0" prefHeight="470.0" prefWidth="1250.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                 <Tab text="Approved transactions">
@@ -67,6 +60,13 @@
                 </Tab>
               </tabs>
             </TabPane>
+                <Button layoutX="1220.0" layoutY="68.0" onAction="#handleRefresh" prefHeight="27.0" prefWidth="30.0" style="-fx-border-color: transparent; -fx-background-color: transparent;" styleClass="credits-button">
+                    <graphic>
+                        <ImageView fitHeight="32.0" fitWidth="32.0" style="-fx-background-color: transparent;">
+                            <Image url="@../img/reload.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
 
             </children>
         </Pane>
