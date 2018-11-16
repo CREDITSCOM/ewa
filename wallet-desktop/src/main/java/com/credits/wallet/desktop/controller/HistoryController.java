@@ -42,11 +42,11 @@ import static com.credits.wallet.desktop.AppState.selectedTransactionRow;
  * Created by goncharov-eg on 29.01.2018.
  */
 public class HistoryController implements Initializable {
-    private static final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
-    private static final int INIT_PAGE_SIZE = 100;
-    private static final int FIRST_PAGE_NUMBER = 1;
+    private final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
+    private final int INIT_PAGE_SIZE = 100;
+    private final int FIRST_TRANSACTION_NUMBER = 0;
     private final static Logger LOGGER = LoggerFactory.getLogger(HistoryController.class);
-    public static final int COUNT_ROUNDS_LIFE = 50;
+    private final int COUNT_ROUNDS_LIFE = 50;
 
     @FXML
     BorderPane bp;
@@ -101,7 +101,7 @@ public class HistoryController implements Initializable {
     }
 
     private void fillApprovedTable() {
-        async(() -> nodeApiService.getTransactions(account, FIRST_PAGE_NUMBER, INIT_PAGE_SIZE),
+        async(() -> nodeApiService.getTransactions(account, FIRST_TRANSACTION_NUMBER, INIT_PAGE_SIZE),
             handleGetTransactionsResult());
     }
 
