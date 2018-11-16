@@ -212,7 +212,7 @@ public class SmartContractDeployController implements Initializable {
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);
                 FormUtils.showPlatformInfo(
-                    String.format("Smart-contract address\n\n%s\n\nhas generated and copied to clipboard", target));
+                    String.format("Smart-contract address%n%n%s%n%nhas generated and copied to clipboard", target));
             }
 
             @Override
@@ -302,7 +302,7 @@ public class SmartContractDeployController implements Initializable {
             if (event.isPrimaryButtonDown()) {
                 ErrorCodeTabRow tabRow = errorTableView.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
-                    CodeAreaUtils.positionCursorToLine(codeArea,Integer.valueOf(tabRow.getLine()));
+                    CodeAreaUtils.positionCursorToLine(codeArea,Integer.parseInt(tabRow.getLine()));
                 }
             }
         });

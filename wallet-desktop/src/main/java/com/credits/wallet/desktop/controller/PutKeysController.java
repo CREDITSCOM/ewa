@@ -97,7 +97,7 @@ public class PutKeysController implements Initializable {
                     Converter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
                 writer.println(json);
                 writer.close();
-                FormUtils.showInfo(String.format("Keys successfully saved in \n\n%s", file.getAbsolutePath()));
+                FormUtils.showInfo(String.format("Keys successfully saved in %n%n%s", file.getAbsolutePath()));
             } catch (FileNotFoundException | UnsupportedEncodingException e) {
                 throw new WalletDesktopException(e);
             }
