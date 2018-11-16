@@ -48,7 +48,7 @@ public class TransactionFlowData extends TransactionData {
 
     public TransactionFlowData(TransactionFlowData transaction) {
         this(transaction.id, transaction.source, transaction.target, transaction.amount, transaction.offeredMaxFee,
-            transaction.currency, transaction.smartContractBytes, transaction.signature);
+            transaction.currency, transaction.smartContractBytes, transaction.userFields, transaction.signature);
     }
 
     public Short getOfferedMaxFee() {

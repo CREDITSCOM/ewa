@@ -198,8 +198,7 @@ public class SmartContractDeployController implements Initializable {
 
                     CompletableFuture.supplyAsync(
                         () -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account, smartContractData.getBase58Address()), threadPool)
-                        .thenApply(
-                            (transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
+                        .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                         .whenComplete(handleCallback(handleDeployResult()));
                     AppState.lastSmartContract = codeArea.getText();
                     VistaNavigator.loadVista(VistaNavigator.WALLET);
