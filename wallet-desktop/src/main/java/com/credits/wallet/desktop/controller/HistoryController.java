@@ -48,9 +48,6 @@ public class HistoryController implements Initializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(HistoryController.class);
     public static final int COUNT_ROUNDS_LIFE = 50;
 
-    private int pageNumber = FIRST_PAGE_NUMBER;
-    private int pageSize = INIT_PAGE_SIZE;
-
     @FXML
     BorderPane bp;
     @FXML

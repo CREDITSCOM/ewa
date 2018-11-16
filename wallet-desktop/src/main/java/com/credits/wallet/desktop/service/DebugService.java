@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,8 +32,6 @@ public class DebugService {
 
     public String compile() {
         try {
-            new File(className + ".java").delete();
-            new File(className + ".class").delete();
             FileWriter writer = new FileWriter(className + ".java");
             writer.write(text);
             writer.close();

@@ -51,7 +51,7 @@ public class InMemoryCompiler {
 		InMemoryClassManager manager = getClassManager(compiler);
 
 		// defining classpath
-		String classpath = null;
+		String classpath;
 		try {
 			classpath = loadClasspath();
 		} catch (UnsupportedEncodingException e) {
@@ -62,7 +62,7 @@ public class InMemoryCompiler {
 		List<String> options = Arrays.asList("-classpath", classpath);
 
 		// java source from string
-		List<JavaSourceFromString> strFiles = new ArrayList();
+		List<JavaSourceFromString> strFiles = new ArrayList<>();
 		strFiles.add(new JavaSourceFromString(className, code) );
 
 		// compile

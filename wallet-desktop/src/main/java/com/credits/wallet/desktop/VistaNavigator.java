@@ -19,8 +19,6 @@ public class VistaNavigator {
     /**
      * Convenience constants for fxml layouts managed by the navigator.
      */
-    public static final String ACCOUNT = "/fxml/account.fxml";
-    public static final String FOOTER = "/fxml/footer.fxml";
     public static final String WELCOME = "/fxml/welcome.fxml";
     public static final String FORM_1 = "/fxml/generate_keys.fxml";
     public static final String FORM_4 = "/fxml/save_keys.fxml";

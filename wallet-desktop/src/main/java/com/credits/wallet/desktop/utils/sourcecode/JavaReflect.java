@@ -3,7 +3,9 @@ package com.credits.wallet.desktop.utils.sourcecode;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JavaReflect {
@@ -47,13 +49,9 @@ public class JavaReflect {
 
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
-            StringBuilder fieldString = new StringBuilder();
-            fieldString.append(field.getType().getSimpleName());
 
-            fieldString.append(" ")
-                    .append(field.getName());
-
-            res.put(field, fieldString.toString());
+            String fieldString = field.getType().getSimpleName() + " " + field.getName();
+            res.put(field, fieldString);
         }
         return res;
     }

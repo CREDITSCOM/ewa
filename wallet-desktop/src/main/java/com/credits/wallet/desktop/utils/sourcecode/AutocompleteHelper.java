@@ -12,19 +12,20 @@ import org.fxmisc.richtext.CodeArea;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AutocompleteHelper {
 
-    private static final List<String> javaKeywords = Arrays.asList(
-            new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
-                    "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for",
-                    "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package",
-                    "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch",
-                    "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while"}
-                    );
+    private static final List<String> javaKeywords = Arrays.asList("abstract", "assert", "boolean", "break", "byte",
+        "case", "catch", "char", "class", "const", "continue", "default", "do", "double", "else", "enum", "extends",
+        "final", "finally", "float", "for", "goto", "if", "implements", "import", "instanceof", "int", "interface",
+        "long", "native", "new", "package", "private", "protected", "public", "return", "short", "static", "strictfp",
+        "super", "switch", "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while");
 
     private CodeArea targetCodeArea;
 
@@ -59,9 +60,7 @@ public class AutocompleteHelper {
         return Stream.concat(
                 firstMap.entrySet().stream(),
                 secondMap.entrySet().stream()
-        ).collect(Collectors.toMap(
-                entry -> entry.getKey(),
-                entry -> entry.getValue()
+        ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue
         ));
     }
 
@@ -69,18 +68,14 @@ public class AutocompleteHelper {
         return Stream.concat(
                 firstMap.entrySet().stream(),
                 secondMap.entrySet().stream()
-        ).collect(Collectors.toMap(
-                entry -> entry.getKey(),
-                entry -> entry.getValue()
+        ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue
         ));
     }
     // ===============
     private void updateClassMetadata(String classSource) {
 
         List<FieldDeclaration> fields = SourceCodeUtils.parseFields(classSource);
-        fields.forEach(field -> {
-            this.classFields.put(field, field.toString());
-        });
+        fields.forEach(field -> this.classFields.put(field, field.toString()));
 
         List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(classSource);
         methods.forEach(method -> {
@@ -132,7 +127,7 @@ public class AutocompleteHelper {
 
     private void showProposalsPopup(String enteredChar) {
 
-        String word = "";
+        StringBuilder word = new StringBuilder();
         int pos = targetCodeArea.getCaretPosition();
         String text = targetCodeArea.getText();
         String currentSymbol;
@@ -148,15 +143,15 @@ public class AutocompleteHelper {
                         && !currentSymbol.equals("\r")
                         && !currentSymbol.equals("\n")
                 ) {
-            word = currentSymbol + word;
+            word.insert(0, currentSymbol);
             pos--;
             currentSymbol = text.substring(pos, pos + 1);
         }
 
-        String finalWord = word;
+        String finalWord = word.toString();
 
         AutocompleteHelper.javaKeywords.forEach(v -> {
-            if (finalWord.trim().isEmpty() || v.toUpperCase().indexOf(finalWord.trim().toUpperCase()) != -1) {
+            if (finalWord.trim().isEmpty() || v.toUpperCase().contains(finalWord.trim().toUpperCase())) {
                 MenuItem action = new MenuItem(v);
                 contextMenu.getItems().add(action);
                 action.setOnAction(event -> this.handleActionJavaKeywords(v));
@@ -165,7 +160,7 @@ public class AutocompleteHelper {
 
         classFields.forEach((k, v) -> {
             String fieldName = ((VariableDeclarationFragment)k.fragments().get(0)).getName().toString();
-            if (finalWord.trim().isEmpty() || fieldName.toUpperCase().indexOf(finalWord.trim().toUpperCase()) != -1) {
+            if (finalWord.trim().isEmpty() || fieldName.toUpperCase().contains(finalWord.trim().toUpperCase())) {
                 MenuItem action = new MenuItem(v);
                 contextMenu.getItems().add(action);
                 action.setOnAction(event -> this.handleActionFields(fieldName));
@@ -173,7 +168,7 @@ public class AutocompleteHelper {
         });
 
         parentsFields.forEach((k, v) -> {
-            if (finalWord.trim().isEmpty() || k.getName().toUpperCase().indexOf(finalWord.trim().toUpperCase()) != -1) {
+            if (finalWord.trim().isEmpty() || k.getName().toUpperCase().contains(finalWord.trim().toUpperCase())) {
                 MenuItem action = new MenuItem(v);
                 contextMenu.getItems().add(action);
                 action.setOnAction(event -> handleActionFields(k.getName()));
@@ -181,7 +176,8 @@ public class AutocompleteHelper {
         });
 
         classMethods.forEach((k, v) -> {
-            if (finalWord.trim().isEmpty() || k.getName().getIdentifier().toUpperCase().indexOf(finalWord.trim().toUpperCase()) != -1) {
+            if (finalWord.trim().isEmpty() ||
+                k.getName().getIdentifier().toUpperCase().contains(finalWord.trim().toUpperCase())) {
                 MenuItem action = new MenuItem(v);
                 contextMenu.getItems().add(action);
                 action.setOnAction(event -> this.handleActionMethods(k.getName().getIdentifier()));
@@ -189,7 +185,7 @@ public class AutocompleteHelper {
         });
 
         parentsMethods.forEach((k, v) -> {
-            if (finalWord.trim().isEmpty() || k.getName().toUpperCase().indexOf(finalWord.trim().toUpperCase()) != -1) {
+            if (finalWord.trim().isEmpty() || k.getName().toUpperCase().contains(finalWord.trim().toUpperCase())) {
                 MenuItem action = new MenuItem(v);
                 contextMenu.getItems().add(action);
                 action.setOnAction(event -> handleActionMethods(k.getName()));

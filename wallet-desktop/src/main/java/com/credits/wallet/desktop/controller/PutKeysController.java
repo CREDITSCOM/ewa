@@ -42,7 +42,6 @@ import static com.credits.wallet.desktop.AppState.publicKey;
 public class PutKeysController implements Initializable {
     private static Logger LOGGER = LoggerFactory.getLogger(PutKeysController.class);
 
-    private static final String ERR_KEYS = "Public and private keys pair is not valid";
     private static final String ERROR_EMPTY_PUBLIC  = "Public key is empty";
     private static final String ERROR_EMPTY_PRIVATE = "Private key is empty";
 

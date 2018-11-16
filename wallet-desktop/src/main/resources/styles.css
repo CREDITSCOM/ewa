@@ -49,13 +49,6 @@
 }
 
 
-.credits-footerLabel {
-    -fx-font-size: 12px;
-    -fx-wrap-text: true;
-}
-
-.credits-headerLabel {
-    -fx-font-size: 24px;}
 
 .credits-textField {
     /*-fx-padding:  5 0 0 15;*/
@@ -74,11 +67,6 @@
 .credits-borderWhitePane {
     -fx-background-color: #fff;
 }
-
-.credits-borderGrayPane {
-    -fx-background-color: #ececec;
-}
-
 
 
 .credits-textFieldGray {
@@ -163,14 +151,11 @@
 }
 
 
+/*
 .paragraph-box:has-caret {
     -fx-background-color: #f2f9fc;
 }
-
-.credits-textFieldGray:error {
-    -fx-text-box-border: red ;
-    -fx-focus-color: red ;
-}
+*/
 
 
 /*SMART COMBOBOX*/
@@ -440,7 +425,7 @@
 
 
 /*SCROLL BAR STYLE*/
-/*.deploy-pane*/  .scroll-pane {
+.scroll-pane {
                       -fx-background-color: white;
                   }
 .scroll-bar .increment-button {
