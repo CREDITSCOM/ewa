@@ -3,11 +3,7 @@ package com.credits.wallet.desktop.struct;
 import com.credits.general.pojo.SmartContractData;
 import javafx.scene.control.ToggleButton;
 
-import java.io.Serializable;
-
-public class SmartContractTabRow implements Serializable {
-
-    private static final long serialVersionUID = 4111650022718657167L;
+public class SmartContractTabRow {
 
     private String id;
     private ToggleButton fav;
