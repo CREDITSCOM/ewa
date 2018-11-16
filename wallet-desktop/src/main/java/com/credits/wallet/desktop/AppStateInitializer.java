@@ -38,8 +38,7 @@ public class AppStateInitializer {
 
     Properties loadProperties() {
         Properties properties = new Properties();
-        try {
-            FileInputStream fis = new FileInputStream("settings.properties");
+        try (FileInputStream fis = new FileInputStream("settings.properties")){
             properties.load(fis);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(ERR_NO_PROPERTIES, e);
