@@ -37,8 +37,6 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
@@ -49,7 +47,7 @@ import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static com.credits.wallet.desktop.AppState.contractInteractionService;
 import static com.credits.wallet.desktop.AppState.noClearForm6;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
-import static com.credits.wallet.desktop.AppState.text;
+import static com.credits.wallet.desktop.AppState.transactionText;
 import static com.credits.wallet.desktop.AppState.toAddress;
 import static com.credits.wallet.desktop.AppState.transactionFeePercent;
 import static com.credits.wallet.desktop.AppState.transactionFeeValue;
@@ -120,7 +118,7 @@ public class WalletController implements Initializable {
     private void handleGenerate() {
         amount = Converter.toBigDecimal(numAmount.getText());
         toAddress = txKey.getText();
-        text = transText.getText();
+        transactionText = transText.getText();
 
         // VALIDATE
         boolean isValidationSuccessful = true;
