@@ -43,14 +43,14 @@ public class DebugService {
             Process process = Runtime.getRuntime().exec("javac -g " + className + ".java");
             InputStream stderr = process.getErrorStream();
 
-            String error = "";
+            StringBuilder error = new StringBuilder();
             String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(stderr));
             while ((line = reader.readLine()) != null) {
-                error = error + "+" + line + "\n";
+                error.append("+").append(line).append("\n");
             }
 
-            if (error.isEmpty())
+            if (error.length() == 0)
                 return "";
             else
                 return "Compilation errors:\n" + error;
