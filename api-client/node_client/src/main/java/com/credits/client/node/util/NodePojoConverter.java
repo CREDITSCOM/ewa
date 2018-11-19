@@ -187,8 +187,16 @@ public class NodePojoConverter {
 
         smartContractInvocationData.getParams().forEach(object -> params.add(NodePojoConverter.objectToVariant(object)));
 
-        return new SmartContractInvocation(smartContractInvocationData.getMethod(), params,
-            smartContractInvocationData.isForgetNewState());
+        SmartContractInvocation thriftStruct = new SmartContractInvocation(smartContractInvocationData.getMethod(), params,
+                smartContractInvocationData.isForgetNewState());
+        SmartContractDeployData smartContractDeployData = smartContractInvocationData.getSmartContractDeployData();
+        if (smartContractDeployData != null) {
+            thriftStruct.setSmartContractDeploy(NodePojoConverter.smartContractDeployDataToSmartContractDeploy(
+                    smartContractDeployData
+            ));
+        }
+
+        return thriftStruct;
     }
 
     public static Transaction smartContractTransactionFlowDataToTransaction(SmartContractTransactionFlowData scTransaction){
