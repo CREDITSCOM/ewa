@@ -1,9 +1,11 @@
 package com.credits.client.node.pojo;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class SmartContractTransactionFlowData extends TransactionFlowData {
+public class SmartContractTransactionFlowData extends TransactionFlowData implements Serializable {
+    protected static final long serialVersionUID = 4544650022718657169L;
 
     protected SmartContractInvocationData smartContractData;
 

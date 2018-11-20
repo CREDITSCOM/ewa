@@ -63,7 +63,9 @@ public class ObjectKeeper<T extends Serializable> {
     }
 
     Path getSerializedObjectPath() {
-        return Paths.get(getAccountDirectory() + separator + objectFileName);
+        Path path = Paths.get(getAccountDirectory() + separator + objectFileName);
+        LOGGER.info("Current path is = {}",path.toString());
+        return path;
     }
 
     Path getAccountDirectory() {
@@ -95,7 +97,7 @@ public class ObjectKeeper<T extends Serializable> {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getSerializedObjectPath().toString()))) {
             return storedObject = (T) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            LOGGER.error(e.getMessage());
+                LOGGER.error(e.getMessage());
             return null;
         }
     }

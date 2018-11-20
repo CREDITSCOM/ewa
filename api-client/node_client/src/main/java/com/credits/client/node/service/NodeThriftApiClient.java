@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
  */
-class NodeThriftApiClient implements NodeThriftApi {
+public class NodeThriftApiClient implements NodeThriftApi {
     private static volatile NodeThriftApiClient instance;
     private final ExecutorService threadPoolExecutor;
     private final ThriftClientPool<API.Client> pool;

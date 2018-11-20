@@ -1,12 +1,14 @@
 package com.credits.client.node.pojo;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Rustem Saidaliyev on 06.08.2018.
  */
-public class SmartContractInvocationData {
+public class SmartContractInvocationData implements Serializable {
 
+    protected static final long serialVersionUID = 4544650022718657168L;
     private String sourceCode;
     private byte[] byteCode;
     private String hashState;
