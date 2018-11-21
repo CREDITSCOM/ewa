@@ -53,7 +53,6 @@ import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
-import static com.credits.wallet.desktop.utils.FormUtils.refreshTable;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -211,7 +210,7 @@ public class SmartContractController implements Initializable {
             .filter(row -> row.getSmartContractData().equals(smartContractData))
             .findFirst()
             .ifPresent(row -> row.getFav().setSelected(isSelected));
-        refreshTable(table);
+        table.refresh();
     }
 
     private void setFavoriteCurrentContract(SmartContractData smartContractData, boolean isSelected) {

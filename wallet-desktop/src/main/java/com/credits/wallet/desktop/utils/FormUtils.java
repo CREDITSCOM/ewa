@@ -1,11 +1,9 @@
 package com.credits.wallet.desktop.utils;
 
-import com.sun.javafx.scene.control.skin.TableViewSkinBase;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.stage.StageStyle;
@@ -89,9 +87,6 @@ public class FormUtils {
         pane.setPrefWidth(1300D);
     }
 
-    public static void refreshTable(TableView table) {
-        table.getProperties().put(TableViewSkinBase.RECREATE, Boolean.TRUE);
-    }
 
 
 }
