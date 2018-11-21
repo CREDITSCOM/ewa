@@ -51,6 +51,7 @@ import static com.credits.wallet.desktop.AppState.text;
 import static com.credits.wallet.desktop.AppState.toAddress;
 import static com.credits.wallet.desktop.AppState.transactionFeePercent;
 import static com.credits.wallet.desktop.AppState.transactionFeeValue;
+import static com.credits.wallet.desktop.utils.FormUtils.refreshTable;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 /**
@@ -211,7 +212,7 @@ public class WalletController implements Initializable {
     }
 
     private void changeTableViewValue(CoinTabRow coinRow, String value) {
-        coinsTableView.refresh();
+        refreshTable(coinsTableView);
         coinRow.setValue(value);
     }
 
