@@ -60,20 +60,23 @@ public class SignUtils {
     private static byte[] getBytes(TransactionFlowData tStruct) {
         int amountInt;
         long amountFrac;
-        byte ufNum;
+        byte ufNum = 0;
 
         Amount aAmount = bigDecimalToAmount(tStruct.getAmount());
         amountInt = aAmount.integral;
         amountFrac = aAmount.fraction;
 
 
-        if (tStruct.getSmartContractBytes() == null) {
-            ufNum = 0;
-        } else {
-            ufNum = 1;
+        if (tStruct.getSmartContractBytes() != null) {
+            ufNum++;
             smartContractLen = tStruct.getSmartContractBytes().length;
         }
 
+        byte[] commentBytes = tStruct.getCommentBytes();
+        boolean isCommentBytesExists = (commentBytes != null && commentBytes.length > 0);
+        if (isCommentBytesExists) {
+            ufNum++;
+        }
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
@@ -92,7 +95,10 @@ public class SignUtils {
                 os.write(Converter.toByteArrayLittleEndian(smartContractLen, 4));
                 os.write(Converter.toByteArrayLittleEndian(tStruct.getSmartContractBytes(), smartContractLen));
             }
-
+            if (isCommentBytesExists) {
+                os.write(Converter.toByteArrayLittleEndian(commentBytes.length, 4));
+                os.write(Converter.toByteArrayLittleEndian(commentBytes, commentBytes.length));
+            }
         } catch (IOException e) {
             // do nothing - never happen
         }

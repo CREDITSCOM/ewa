@@ -17,7 +17,7 @@ public class TransactionFlowData extends TransactionData {
 
 
     public TransactionFlowData(long innerId, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee,
-        byte currency, byte[] smartContractBytes, byte[] userFields) {
+        byte currency, byte[] smartContractBytes, byte[] commentBytes) {
         super();
         this.setId(innerId);
         this.setSource(source);
@@ -27,11 +27,11 @@ public class TransactionFlowData extends TransactionData {
         this.setCurrency(currency);
         this.setOfferedMaxFee(offeredMaxFee);
         this.setSmartContractBytes(smartContractBytes);
-        this.setUserFields(userFields);
+        this.setCommentBytes(commentBytes);
     }
 
     public TransactionFlowData(long innerId, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee,
-        byte currency, byte[] smartContractBytes, byte[] userFields, byte[] signature) {
+        byte currency, byte[] smartContractBytes, byte[] commentBytes, byte[] signature) {
         super();
         this.setId(innerId);
         this.setSource(source);
@@ -41,14 +41,14 @@ public class TransactionFlowData extends TransactionData {
         this.setCurrency(currency);
         this.setOfferedMaxFee(offeredMaxFee);
         this.setSmartContractBytes(smartContractBytes);
-        this.setUserFields(userFields);
+        this.setCommentBytes(commentBytes);
         this.setSignature(signature);
     }
 
 
     public TransactionFlowData(TransactionFlowData transaction) {
         this(transaction.id, transaction.source, transaction.target, transaction.amount, transaction.offeredMaxFee,
-            transaction.currency, transaction.smartContractBytes, transaction.userFields, transaction.signature);
+            transaction.currency, transaction.smartContractBytes, transaction.commentBytes, transaction.signature);
     }
 
     public Short getOfferedMaxFee() {
