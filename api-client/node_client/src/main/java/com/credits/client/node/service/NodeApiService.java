@@ -6,6 +6,7 @@ import com.credits.client.node.pojo.PoolData;
 import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.WalletData;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
@@ -30,9 +31,9 @@ public interface NodeApiService {
 
     List<PoolData> getPoolList(Long offset, Long limit) throws NodeClientException;
 
-    ApiResponseData smartContractTransactionFlow(SmartContractTransactionFlowData scData) throws NodeClientException, ConverterException;
+    TransactionFlowResultData smartContractTransactionFlow(SmartContractTransactionFlowData scData) throws NodeClientException, ConverterException;
 
-    ApiResponseData transactionFlow(TransactionFlowData transaction);
+    TransactionFlowResultData transactionFlow(TransactionFlowData transaction);
 
     SmartContractData getSmartContract(String address) throws NodeClientException, ConverterException;
 

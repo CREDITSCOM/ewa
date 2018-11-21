@@ -1,7 +1,7 @@
 package com.credits.wallet.desktop.service;
 
+import com.credits.client.executor.pojo.ExecuteResponseData;
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
@@ -48,7 +48,7 @@ public class ContractInteractionService {
                 sc.setParams(asList(createVariantObject(STRING_TYPE, target), createVariantObject(STRING_TYPE, amount.toString())));
                 TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData =
                     TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account, sc.getBase58Address());
-                return createSmartContractTransaction(transactionData, sc).getCode().name();
+                return createSmartContractTransaction(transactionData, sc).getRight().getCode().name();
             })
             .whenComplete(handleCallback(callback));
     }
@@ -59,9 +59,9 @@ public class ContractInteractionService {
             throw new NodeClientException("SmartContract " + smartContractAddress + " not found");
         }
 
-        ApiResponseData response = contractExecutorService.executeContractMethod(
+        ExecuteResponseData response = contractExecutorService.executeContractMethod(
             Converter.decodeFromBASE58(smartContractAddress),
-            sc.getByteCode(),
+            sc.getSmartContractDeployData().getByteCode(),
             sc.getObjectState(),
             methodName,
             asList(params));
@@ -70,7 +70,7 @@ public class ContractInteractionService {
             throw new NodeClientException("Failure. Node response: " + response.getMessage());
         }
 
-        return response.getScExecRetVal().getV_string();
+        return response.getExecuteBytecodeResult().getV_string();
     }
 
     private Variant variantOf(String type, String value){

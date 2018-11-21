@@ -1,5 +1,7 @@
 package com.credits.client.node.pojo;
 
+import com.credits.general.pojo.SmartContractDeployData;
+
 import java.util.List;
 
 /**
@@ -7,44 +9,24 @@ import java.util.List;
  */
 public class SmartContractInvocationData {
 
-    private String sourceCode;
-    private byte[] byteCode;
-    private String hashState;
+    private SmartContractDeployData smartContractDeployData;
     private String method;
     private List<Object> params;
     private boolean forgetNewState;
 
-    public SmartContractInvocationData(String sourceCode, byte[] byteCode, String hashState, String method, List<Object> params, boolean forgetNewState) {
-        this.sourceCode = sourceCode;
-        this.byteCode = byteCode;
-        this.hashState = hashState;
+    public SmartContractInvocationData(SmartContractDeployData smartContractDeployData, String method, List<Object> params, boolean forgetNewState) {
+        this.smartContractDeployData = smartContractDeployData;
         this.method = method;
         this.params = params;
         this.forgetNewState = forgetNewState;
     }
 
-    public String getSourceCode() {
-        return sourceCode;
+    public SmartContractDeployData getSmartContractDeployData() {
+        return smartContractDeployData;
     }
 
-    public void setSourceCode(String sourceCode) {
-        this.sourceCode = sourceCode;
-    }
-
-    public byte[] getByteCode() {
-        return byteCode;
-    }
-
-    public void setByteCode(byte[] byteCode) {
-        this.byteCode = byteCode;
-    }
-
-    public String getHashState() {
-        return hashState;
-    }
-
-    public void setHashState(String hashState) {
-        this.hashState = hashState;
+    public void setSmartContractDeployData(SmartContractDeployData smartContractDeployData) {
+        this.smartContractDeployData = smartContractDeployData;
     }
 
     public String getMethod() {

@@ -1,11 +1,13 @@
 package com.credits.wallet.desktop;
 
 import com.credits.client.executor.service.ContractExecutorApiService;
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
+import com.credits.general.util.Converter;
 import com.credits.general.util.ObjectKeeper;
 import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.testUtils.FakeData;
@@ -45,7 +47,8 @@ public class UITest {
     String addressTwo;
     String addressThree;
 
-    ApiResponseData successResponse = new ApiResponseData(SUCCESS, "Success", new Variant(V_STRING, "Success"));
+    TransactionFlowResultData successResponse = new TransactionFlowResultData(new ApiResponseData(SUCCESS, "Success"),1312, Converter
+        .decodeFromBASE58(addressOne), Converter.decodeFromBASE58(addressTwo), new Variant(V_STRING, "success variant response"));
 
     @Mock
     AppStateInitializer mockInitializer;

@@ -1,7 +1,7 @@
 package com.credits.client.executor.service;
 
 import com.credits.client.executor.exception.ContractExecutorClientException;
-import com.credits.general.pojo.ApiResponseData;
+import com.credits.client.executor.pojo.ExecuteResponseData;
 import com.credits.general.thrift.generated.Variant;
 
 import java.util.List;
@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface ContractExecutorApiService {
 
-    ApiResponseData executeContractMethod(byte[] address, byte[] bytecode, byte[] objectState, String methodName,
+    ExecuteResponseData executeContractMethod(byte[] address, byte[] bytecode, byte[] objectState, String methodName,
                                           List<Variant> params) throws ContractExecutorClientException;
 }

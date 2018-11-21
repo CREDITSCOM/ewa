@@ -16,6 +16,7 @@ public class TransactionData implements Serializable {
     protected BigDecimal amount;
     protected BigDecimal balance;
     protected byte currency;
+    protected byte[] commentBytes;
 
 
     public TransactionData(){}
@@ -73,6 +74,14 @@ public class TransactionData implements Serializable {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public byte[] getCommentBytes() {
+        return commentBytes;
+    }
+
+    public void setCommentBytes(byte[] commentBytes) {
+        this.commentBytes = commentBytes;
     }
 
     @Override

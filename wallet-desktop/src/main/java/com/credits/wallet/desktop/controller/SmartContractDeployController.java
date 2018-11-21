@@ -1,8 +1,10 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -31,6 +33,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -183,14 +186,19 @@ public class SmartContractDeployController implements Initializable {
                     CompilationUnit compilationUnit = compilationUnits.get(0);
                     byte[] byteCode = compilationUnit.getBytecode();
 
+                    SmartContractDeployData smartContractDeployData = new SmartContractDeployData(
+                            javaCode,
+                            byteCode,
+                            (short)0 // TODO refactor, put real tokenStandart value
+                    );
+
                     SmartContractData smartContractData =
                         new SmartContractData(SmartContractsUtils.generateSmartContractAddress(), decodeFromBASE58(account),
-                            javaCode, byteCode, null);
+                                smartContractDeployData, null);
 
                     CompletableFuture.supplyAsync(
                         () -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account, smartContractData.getBase58Address()), threadPool)
-                        .thenApply(
-                            (transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
+                        .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                         .whenComplete(handleCallback(handleDeployResult()));
                     AppState.lastSmartContract = codeArea.getText();
                     VistaNavigator.loadVista(VistaNavigator.WALLET);
@@ -202,12 +210,12 @@ public class SmartContractDeployController implements Initializable {
         }
     }
 
-    private Callback<ApiResponseData> handleDeployResult() {
-        return new Callback<ApiResponseData>() {
+    private Callback<Pair<Long, TransactionFlowResultData>> handleDeployResult() {
+        return new Callback<Pair<Long, TransactionFlowResultData>>() {
             @Override
-            public void onSuccess(ApiResponseData resultData) {
-                ApiUtils.saveTransactionRoundNumberIntoMap(resultData);
-                String target = resultData.getTarget();
+            public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
+                ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(), resultData.getLeft());
+                String target = resultData.getRight().getTarget();
                 StringSelection selection = new StringSelection(target);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);

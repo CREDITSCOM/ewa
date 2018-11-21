@@ -20,7 +20,7 @@ public class ByteCodeValidator {
             throw new ContractExecutorException("Internal error", e);
         }
 
-        if (!expectedHashState.equals(contractToValidate.getHashState())) {
+        if (!expectedHashState.equals(contractToValidate.getSmartContractDeployData().getHashState())) {
             throw new ContractExecutorException("Unknown contract");
         }
     }

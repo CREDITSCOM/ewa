@@ -2,6 +2,7 @@ package com.credits.service;
 
 import com.credits.client.node.service.NodeApiService;
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.util.Converter;
 import com.credits.service.contract.ContractExecutorService;
 import org.apache.commons.io.FileUtils;
@@ -44,7 +45,13 @@ public abstract class ServiceTest {
     protected byte[] compileSourceCode(String sourceCodePath) throws Exception {
         String sourceCode = readSourceCode(sourceCodePath);
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
-        when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(new SmartContractData(address, address, sourceCode, bytecode, null));
+        when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(new SmartContractData(
+                address,
+                address,
+                new SmartContractDeployData(sourceCode, bytecode, (short)0),
+                null
+                )
+        );
         return bytecode;
     }
 

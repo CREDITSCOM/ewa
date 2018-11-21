@@ -1,24 +1,13 @@
 package com.credits.client.node.util;
 
-import com.credits.client.node.pojo.PoolData;
-import com.credits.client.node.pojo.SmartContractInvocationData;
-import com.credits.client.node.pojo.SmartContractTransactionFlowData;
-import com.credits.client.node.pojo.TransactionData;
-import com.credits.client.node.pojo.TransactionFlowData;
-import com.credits.client.node.pojo.TransactionIdData;
+import com.credits.client.node.pojo.*;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.generated.Amount;
-import com.credits.client.node.thrift.generated.AmountCommission;
-import com.credits.client.node.thrift.generated.Pool;
-import com.credits.client.node.thrift.generated.SealedTransaction;
-import com.credits.client.node.thrift.generated.SmartContract;
-import com.credits.client.node.thrift.generated.SmartContractInvocation;
-import com.credits.client.node.thrift.generated.Transaction;
-import com.credits.client.node.thrift.generated.TransactionFlowResult;
-import com.credits.client.node.thrift.generated.TransactionId;
+import com.credits.client.node.thrift.generated.*;
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractDeployData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Converter;
@@ -92,6 +81,7 @@ public class NodePojoConverter {
         data.setSource(transaction.getSource());
         data.setTarget(transaction.getTarget());
         data.setBalance(NodePojoConverter.amountToBigDecimal(transaction.getBalance()));
+        data.setCommentBytes(transaction.getComment());
         return data;
     }
 
@@ -112,6 +102,7 @@ public class NodePojoConverter {
         } else {
             data.setBalance(NodePojoConverter.amountToBigDecimal(transaction.getBalance()));
         }
+        data.setCommentBytes(transaction.getComment());
         return data;
     }
 
@@ -149,17 +140,45 @@ public class NodePojoConverter {
         SmartContract smartContract = new SmartContract();
         smartContract.setAddress(smartContractData.getAddress());
         smartContract.setDeployer(smartContractData.getDeployer());
-        smartContract.setSourceCode(smartContractData.getSourceCode());
-        smartContract.setByteCode(smartContractData.getByteCode());
-        smartContract.setHashState(smartContractData.getHashState());
+        smartContract.setSmartContractDeploy(
+                NodePojoConverter.smartContractDeployDataToSmartContractDeploy(
+                        smartContractData.getSmartContractDeployData()
+                )
+        );
         return smartContract;
+    }
+
+    public static SmartContractDeploy smartContractDeployDataToSmartContractDeploy(SmartContractDeployData data) {
+
+        SmartContractDeploy thriftStruct = new SmartContractDeploy();
+        thriftStruct.setSourceCode(data.getSourceCode());
+        thriftStruct.setByteCode(data.getByteCode());
+        thriftStruct.setHashState(data.getHashState());
+        thriftStruct.setTokenStandart(data.getTokenStandard());
+        return thriftStruct;
     }
 
     public static SmartContractData smartContractToSmartContractData(SmartContract smartContract) {
 
-        return new SmartContractData(smartContract.getAddress(), smartContract.getDeployer(), smartContract.getSourceCode(),
-            smartContract.getByteCode(), smartContract.getObjectState());
+        return new SmartContractData(
+                smartContract.getAddress(),
+                smartContract.getDeployer(),
+                NodePojoConverter.smartContractDeployToSmartContractDeployData(
+                        smartContract.getSmartContractDeploy()
+                ),
+                smartContract.getObjectState()
+        );
     }
+
+    public static SmartContractDeployData smartContractDeployToSmartContractDeployData(SmartContractDeploy thriftStruct) {
+
+        return new SmartContractDeployData(
+                thriftStruct.getSourceCode(),
+                thriftStruct.getByteCode(),
+                thriftStruct.getTokenStandart()
+        );
+    }
+
 
     public static SmartContractInvocation smartContractInvocationDataToSmartContractInvocation(
         SmartContractInvocationData smartContractInvocationData) {
@@ -168,9 +187,16 @@ public class NodePojoConverter {
 
         smartContractInvocationData.getParams().forEach(object -> params.add(NodePojoConverter.objectToVariant(object)));
 
-        return new SmartContractInvocation(smartContractInvocationData.getSourceCode(), ByteBuffer.wrap(smartContractInvocationData.getByteCode()),
-            smartContractInvocationData.getHashState(), smartContractInvocationData.getMethod(), params,
-            smartContractInvocationData.isForgetNewState());
+        SmartContractInvocation thriftStruct = new SmartContractInvocation(smartContractInvocationData.getMethod(), params,
+                smartContractInvocationData.isForgetNewState());
+        SmartContractDeployData smartContractDeployData = smartContractInvocationData.getSmartContractDeployData();
+        if (smartContractDeployData != null) {
+            thriftStruct.setSmartContractDeploy(NodePojoConverter.smartContractDeployDataToSmartContractDeploy(
+                    smartContractDeployData
+            ));
+        }
+
+        return thriftStruct;
     }
 
     public static Transaction smartContractTransactionFlowDataToTransaction(SmartContractTransactionFlowData scTransaction){
@@ -218,12 +244,17 @@ public class NodePojoConverter {
         return variant;
     }
 
-    public static ApiResponseData transactionFlowResultToApiResponseData(TransactionFlowResult result){
-        return new ApiResponseData(ApiResponseCode.valueOf(result.getStatus().getCode()), result.getStatus().message, result.smart_contract_result);
+    public static TransactionFlowResultData transactionFlowResultToTransactionFlowResultData(TransactionFlowResult result, byte[] source, byte[] target){
+        return new TransactionFlowResultData(
+            apiResponseToApiResponseData(result.getStatus()),
+            result.getRoundNum(),
+            source,
+            target,
+            result.getSmart_contract_result());
     }
 
-    public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse, Variant smartContractResult) {
-        return new ApiResponseData(ApiResponseCode.valueOf(apiResponse.getCode()), apiResponse.getMessage(), smartContractResult);
+    public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {
+        return new ApiResponseData(ApiResponseCode.valueOf(apiResponse.getCode()), apiResponse.getMessage());
     }
 
     public static Transaction transactionFlowDataToTransaction(TransactionFlowData transactionData){
@@ -233,6 +264,7 @@ public class NodePojoConverter {
         transaction.target = ByteBuffer.wrap(transactionData.getTarget());
         transaction.amount = bigDecimalToAmount(transactionData.getAmount());
         transaction.fee =  new AmountCommission(transactionData.getOfferedMaxFee());
+        transaction.comment = ByteBuffer.wrap(transactionData.getCommentBytes());
         transaction.signature = ByteBuffer.wrap(transactionData.getSignature());
         return transaction;
     }

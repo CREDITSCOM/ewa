@@ -63,7 +63,7 @@
                         <VBox prefHeight="83.0" prefWidth="500.0">
                             <children>
                                 <Label style="-fx-font-size: 16px;" styleClass="arrow" text="   Send text (it's not free). It's not necessary to fill in" />
-                                <TextField fx:id="transactionData" editable="false" maxHeight="45.0" maxWidth="516.0" prefHeight="45.0" prefWidth="516.0" style="-fx-font-size: 16px; -fx-border-color: transparent;" styleClass="credits-textField" />
+                                <TextField fx:id="transactionText" editable="false" maxHeight="45.0" maxWidth="516.0" prefHeight="45.0" prefWidth="516.0" style="-fx-font-size: 16px; -fx-border-color: transparent;" styleClass="credits-textField" />
                             </children>
                         </VBox>
                     </children>
