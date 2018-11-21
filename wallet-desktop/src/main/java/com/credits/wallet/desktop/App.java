@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static com.credits.wallet.desktop.AppState.executor;
@@ -34,6 +35,15 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+
+        Properties prop = new Properties();
+        prop.load(App.class.getClassLoader().getResourceAsStream("git.properties"));
+        String commit = null, author = null;
+        if (prop!=null) {
+            commit = (String) prop.get("git.commit.id.abbrev");
+            author = (String) prop.get("git.build.user.name");
+        }
+
         LOGGER.info("\n\n\n");
         LOGGER.info("---------------------------------------------------------------------------");
         LOGGER.info("Starting Wallet app");
@@ -55,7 +65,9 @@ public class App extends Application {
         stage.setHeight(bounds.getHeight());
         stage.setMaximized(true);
 
-        stage.setTitle("Credits");
+        if(author!=null && commit !=null) {
+            stage.setTitle("Credits "+commit+"-"+author);
+        } else {stage.setTitle("Credits");}
 
         stage.setScene(
             createScene(
