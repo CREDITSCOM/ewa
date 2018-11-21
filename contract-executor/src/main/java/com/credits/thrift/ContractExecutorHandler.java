@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.credits.general.util.Converter.encodeToBASE58;
@@ -31,7 +32,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     }
 
     @Override
-    public ExecuteByteCodeResult/* TODO refactor APIResponse*/ executeByteCode(ByteBuffer address, ByteBuffer byteCode, ByteBuffer contractState, String method,
+    public ExecuteByteCodeResult executeByteCode(ByteBuffer address, ByteBuffer byteCode, ByteBuffer contractState, String method,
                                                                                       List<Variant> params) {
         logger.debug("<-- execute(" +
                     "\naddress = {}," +
@@ -44,20 +45,16 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             method, (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat)));
 
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
-        APIResponse response = new APIResponse((byte) 0, ""/* TODO refactor , contractState*/);
-        ExecuteByteCodeResult result = new ExecuteByteCodeResult(response, contractState);
+        ExecuteByteCodeResult result = new ExecuteByteCodeResult(new APIResponse((byte) 0, "success"), null);
         try {
             ReturnValue returnValue = service.execute(address.array(), byteCode.array(), contractState.array(), method, paramsArray);
-            /* TODO refactor
-            response.contractState = ByteBuffer.wrap(returnValue.getContractState());
-            response.ret_val = returnValue.getVariant();
-            response.contractVariables = returnValue.getContractVariables();
-            */
+            result.setContractState(returnValue.getContractState());
+            result.setContractVariables(returnValue.getContractVariables());
         } catch (ContractExecutorException e) {
-            response.setCode((byte) 1);
-            response.setMessage(e.getMessage());
+            result.getStatus().setCode((byte) 1);
+            result.getStatus().setMessage("error during execution \"" + method + "\" method. Reason: " + e.getMessage());
         }
-        logger.debug("execute --> contractStateHash {} {}", null /* TODO refactor response.contractState.hashCode()*/, response);
+        logger.debug("execute --> contractStateHash {} {}", Arrays.hashCode(result.getContractState()), result);
         return result;
     }
 
