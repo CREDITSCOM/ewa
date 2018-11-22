@@ -1,8 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
 
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.exception.CreditsException;
-import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
 import com.credits.wallet.desktop.AppState;
@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,14 +25,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.util.Utils.threadPool;
-import static com.credits.wallet.desktop.AppState.NODE_ERROR;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.amount;
-import static com.credits.wallet.desktop.AppState.coin;
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
-import static com.credits.wallet.desktop.AppState.contractInteractionService;
-import static com.credits.wallet.desktop.AppState.noClearForm6;
-import static com.credits.wallet.desktop.AppState.text;
+import static com.credits.wallet.desktop.AppState.*;
 import static com.credits.wallet.desktop.utils.ApiUtils.createTransaction;
 
 /**
@@ -47,7 +41,7 @@ public class GenerateTransactionController implements Initializable {
     @FXML
     private TextField toAddress; //todo remove global variable
 
-    @FXML TextField transactionData;
+    @FXML TextField transactionText;
 
     @FXML
     private TextField amountInCs;
@@ -67,7 +61,7 @@ public class GenerateTransactionController implements Initializable {
             if(coin.equals(CREDITS_SYMBOL)) {
                 CompletableFuture
                     .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,toAddress.getText()),threadPool)
-                    .thenApply((transactionData) -> createTransaction(transactionData, AppState.amount))
+                    .thenApply((transactionData) -> createTransaction(transactionData, AppState.amount, AppState.transactionText))
                     .whenComplete(handleCallback(handleTransactionResult()));
             } else {
                 coinsKeeper.getKeptObject().ifPresent(coinsMap ->
@@ -97,20 +91,21 @@ public class GenerateTransactionController implements Initializable {
         };
     }
 
-    private Callback<ApiResponseData> handleTransactionResult() {
-        return new Callback<ApiResponseData>() {
-        @Override
-        public void onSuccess(ApiResponseData resultData) {
-            ApiUtils.saveTransactionRoundNumberIntoMap(resultData);
-            FormUtils.showPlatformInfo("Transaction created");
-        }
+    private Callback<Pair<Long, TransactionFlowResultData>> handleTransactionResult() {
+        return new Callback<Pair<Long, TransactionFlowResultData>>() {
+            @Override
+            public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
+                ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(),
+                    resultData.getLeft());
+                FormUtils.showPlatformInfo("Transaction created");
+            }
 
-        @Override
-        public void onError(Throwable e) {
-            LOGGER.error("Failed!", e);
-            FormUtils.showPlatformError(e.getMessage());
-        }
-    };
+            @Override
+            public void onError(Throwable e) {
+                LOGGER.error("Failed!", e);
+                FormUtils.showPlatformError(e.getMessage());
+            }
+        };
     }
 
     @Override
@@ -118,7 +113,7 @@ public class GenerateTransactionController implements Initializable {
         FormUtils.resizeForm(bp);
         this.toAddress.setText(AppState.toAddress);
         this.amountInCs.setText(Converter.toString(amount) + " " + coin);
-        this.transactionData.setText(text);
+        this.transactionText.setText(AppState.transactionText);
     }
 
 }

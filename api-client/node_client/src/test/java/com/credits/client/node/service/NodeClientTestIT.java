@@ -10,6 +10,7 @@ import com.credits.client.node.thrift.generated.API;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.thrift.ThriftClientPool;
 import com.credits.general.util.Callback;
 import com.credits.general.util.exception.ConverterException;
@@ -99,7 +100,8 @@ public class NodeClientTestIT {
                 "qwerty".getBytes(),
                 new BigDecimal("0.123"),
                 (short) 10,
-                (byte) 1,null
+                (byte) 1,null,
+                null
                 );
         transactionFlowData.setSignature("signature".getBytes());
         ApiResponseData responseData = nodeService.transactionFlow(transactionFlowData);
@@ -111,7 +113,7 @@ public class NodeClientTestIT {
         String walletBASE58 = "AoRKdBEbozwTKt5sirqx6ERv2DPsrvTk81hyztnndgWC";
         SmartContractData smartContractData;
         smartContractData = nodeService.getSmartContract(walletBASE58);
-        LOGGER.info("Smart contract hashState = {}", smartContractData.getHashState());
+        LOGGER.info("Smart contract hashState = {}", smartContractData.getSmartContractDeployData().getHashState());
     }
 
     @Test
@@ -124,7 +126,7 @@ public class NodeClientTestIT {
             e.printStackTrace();
             fail();
         }
-        smartContractDataList.forEach(smartContractData -> LOGGER.info("sourceCode = {}", smartContractData.getSourceCode()));
+        smartContractDataList.forEach(smartContractData -> LOGGER.info("sourceCode = {}", smartContractData.getSmartContractDeployData().getSourceCode()));
     }
 
     @Test
@@ -133,9 +135,9 @@ public class NodeClientTestIT {
         long transactionId = 12327;
         String source = "4ESD7KpGzJCfDL8pZKhMfcfekqdoBdjSBUF5FiJdkBAC";
         String target = "transactionTarget";
-
-        SmartContractInvocationData scData = new SmartContractInvocationData("sourceCode", address.getBytes(), "hashState", "method", null, true);
-        TransactionFlowData transactionData = new TransactionFlowData(transactionId, decodeFromBASE58(source), decodeFromBASE58(target), new BigDecimal(1), (short) 0x001,(byte)1,null);
+        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("sourceCode", address.getBytes(), (short)0);
+        SmartContractInvocationData scData = new SmartContractInvocationData(smartContractDeployData, "method", null, true);
+        TransactionFlowData transactionData = new TransactionFlowData(transactionId, decodeFromBASE58(source), decodeFromBASE58(target), new BigDecimal(1), (short) 0x001,(byte)1,null, null);
         SmartContractTransactionFlowData smartContractFlowData = new SmartContractTransactionFlowData(transactionData,scData);
 
         async(() -> nodeService.smartContractTransactionFlow(smartContractFlowData), new Callback<ApiResponseData>() {

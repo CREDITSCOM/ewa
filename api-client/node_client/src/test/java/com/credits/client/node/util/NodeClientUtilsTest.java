@@ -2,6 +2,7 @@ package com.credits.client.node.util;
 
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.util.Converter;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -13,12 +14,12 @@ public class NodeClientUtilsTest {
 
     @Test
     public void serializeByThriftTest01() throws NodeClientException {
+        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("sourceCode", null, (short)0);
         SmartContractData smartContractData = new SmartContractData(
             "address".getBytes(),
             "deployer".getBytes(),
-            "sourceCode",
-            null,
-            new byte[]{}
+            smartContractDeployData,
+            null
         );
 
         byte[] smartContractBytes = NodeClientUtils.serializeByThrift(smartContractData);

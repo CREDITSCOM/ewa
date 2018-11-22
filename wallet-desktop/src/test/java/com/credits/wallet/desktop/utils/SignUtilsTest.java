@@ -37,7 +37,7 @@ public class SignUtilsTest {
                 "SignUtilsTest")).get(0));
 
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
+            new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes, null);
         SignUtils.signTransaction(transactionFlowData);
         Assert.assertEquals("47WZiPHggsXydSvGyRwDHh1nVfsxPYQrn9kczkg4tvgoMHdm9KbTvRHnSSHEejMdnoMYu94ZnboP15hEweuNuqma",
             Converter.encodeToBASE58(transactionFlowData.getSignature()));
@@ -63,7 +63,7 @@ public class SignUtilsTest {
         byte[] smartContractBytes = null;
 
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes);
+            new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes, null);
         SignUtils.signTransaction(transactionFlowData);
         Assert.assertEquals("2jDcD15fkTb4z3Yic1s4hZqNzwtEBVHjncfmRZpFJVztnLNKZHurQPPJHK8NeyFRiQrsxNSrZdKXYXiANnmAbN9f",
             Converter.encodeToBASE58(transactionFlowData.getSignature()));

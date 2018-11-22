@@ -321,11 +321,7 @@ public class Converter {
     }
 
     public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {
-        return new ApiResponseData(
-            ApiResponseCode.valueOf(apiResponse.getCode()),
-            apiResponse.getMessage(),
-            null
-        );
+        return new ApiResponseData(ApiResponseCode.valueOf(apiResponse.getCode()),apiResponse.getMessage());
     }
 
     public static Object parseObjectFromVariant(Variant variant) throws ConverterException {

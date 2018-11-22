@@ -60,7 +60,7 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    final protected void sendTransaction(String source, String target, double amount, double fee) {
+    final protected void sendTransaction(String source, String target, double amount, double fee, byte[] userData) {
         try {
             byte currencyByte = (byte) 1;
             BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
@@ -69,7 +69,7 @@ public abstract class SmartContract implements Serializable {
             //todo add signature
             byte[] signature = new byte[0];
             Instant instant = Instant.now();
-            service.transactionFlow(instant.toEpochMilli(), source, target, decAmount, balance, currencyByte, signature, decFee);
+            service.transactionFlow(instant.toEpochMilli(), source, target, decAmount, balance, currencyByte, signature, decFee, userData);
         } catch (CreditsException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

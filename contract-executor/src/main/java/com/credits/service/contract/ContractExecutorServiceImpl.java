@@ -66,7 +66,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     @Override
     public ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] objectState, String methodName, Variant[] params)
         throws ContractExecutorException {
-
+        if(bytecode == null || bytecode.length == 0) {
+            throw new ContractExecutorException( "Cannot execute the contract. Reason: bytecode is empty");
+        }
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
         Class<?> contractClass = classLoader.buildClass(bytecode);
 

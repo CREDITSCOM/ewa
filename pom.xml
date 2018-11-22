@@ -22,53 +22,7 @@
     </properties>
 
     <build>
-
         <plugins>
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <version>2.2.4</version>
-                <executions>
-                    <execution>
-                        <id>get-the-git-infos</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-                    <prefix>git</prefix>
-                    <verbose>false</verbose>
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
-                    <format>json</format>
-                    <gitDescribe>
-                        <skip>false</skip>
-                        <always>false</always>
-                        <dirty>-dirty</dirty>
-                    </gitDescribe>
-                </configuration>
-            </plugin>
-
-            <!--<plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <doCheck>true</doCheck>
-                    <doUpdate>true</doUpdate>
-                </configuration>
-            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -93,83 +47,83 @@
                     <testFailureIgnore>true</testFailureIgnore>
             </configuration>
             </plugin>
-            <!--<plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.5</version>
-                <configuration>
-                    &lt;!&ndash;
-                        Enables analysis which takes more memory but finds more bugs.
-                        If you run out of memory, changes the value of the effort element
-                        to 'Low'.
-                    &ndash;&gt;
-                    <effort>Max</effort>
-                    &lt;!&ndash; Build doesn't fail if problems are found &ndash;&gt;
-                    <failOnError>false</failOnError>
-                    &lt;!&ndash; Reports all bugs (other values are medium and max) &ndash;&gt;
-                    <threshold>Low</threshold>
-                    &lt;!&ndash; Produces XML report &ndash;&gt;
-                    <xmlOutput>true</xmlOutput>
-                    &lt;!&ndash; Configures the directory in which the XML report is created &ndash;&gt;
-                    <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
-                </configuration>
-                <executions>
-                    &lt;!&ndash;
-                        Ensures that FindBugs inspects source code when project is compiled.
-                    &ndash;&gt;
-                    <execution>
-                        <id>analyze-compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>xml-maven-plugin</artifactId>
-                <version>1.0</version>
-                <configuration>
-                    <transformationSets>
-                        <transformationSet>
-                            &lt;!&ndash; Configures the source directory of XML files. &ndash;&gt;
-                            <dir>${project.build.directory}/findbugs</dir>
-                            &lt;!&ndash; Configures the directory in which the FindBugs report is written.&ndash;&gt;
-                            <outputDir>${project.build.directory}/findbugs</outputDir>
-                            &lt;!&ndash; Selects the used stylesheet. &ndash;&gt;
-                            &lt;!&ndash; <stylesheet>fancy-hist.xsl</stylesheet> &ndash;&gt;
-                            <stylesheet>default.xsl</stylesheet>
-                            &lt;!&ndash;<stylesheet>plain.xsl</stylesheet>&ndash;&gt;
-                            &lt;!&ndash;<stylesheet>fancy.xsl</stylesheet>&ndash;&gt;
-                            &lt;!&ndash;<stylesheet>summary.xsl</stylesheet>&ndash;&gt;
-                            <fileMappers>
-                                &lt;!&ndash; Configures the file extension of the output files. &ndash;&gt;
-                                <fileMapper
-                                        implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
-                                    <targetExtension>.html</targetExtension>
-                                </fileMapper>
-                            </fileMappers>
-                        </transformationSet>
-                    </transformationSets>
-                </configuration>
-                <executions>
-                    &lt;!&ndash; Ensures that the XSLT transformation is run when the project is compiled. &ndash;&gt;
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>transform</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.google.code.findbugs</groupId>
-                        <artifactId>findbugs</artifactId>
-                        <version>2.0.1</version>
-                    </dependency>
-                </dependencies>
-            </plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>findbugs-maven-plugin</artifactId>-->
+                <!--<version>3.0.5</version>-->
+                <!--<configuration>-->
+                    <!--&lt;!&ndash;-->
+                        <!--Enables analysis which takes more memory but finds more bugs.-->
+                        <!--If you run out of memory, changes the value of the effort element-->
+                        <!--to 'Low'.-->
+                    <!--&ndash;&gt;-->
+                    <!--<effort>Max</effort>-->
+                    <!--&lt;!&ndash; Build doesn't fail if problems are found &ndash;&gt;-->
+                    <!--<failOnError>false</failOnError>-->
+                    <!--&lt;!&ndash; Reports all bugs (other values are medium and max) &ndash;&gt;-->
+                    <!--<threshold>Low</threshold>-->
+                    <!--&lt;!&ndash; Produces XML report &ndash;&gt;-->
+                    <!--<xmlOutput>true</xmlOutput>-->
+                    <!--&lt;!&ndash; Configures the directory in which the XML report is created &ndash;&gt;-->
+                    <!--<findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--&lt;!&ndash;-->
+                        <!--Ensures that FindBugs inspects source code when project is compiled.-->
+                    <!--&ndash;&gt;-->
+                    <!--<execution>-->
+                        <!--<id>analyze-compile</id>-->
+                        <!--<phase>compile</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>check</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>xml-maven-plugin</artifactId>-->
+                <!--<version>1.0</version>-->
+                <!--<configuration>-->
+                    <!--<transformationSets>-->
+                        <!--<transformationSet>-->
+                            <!--&lt;!&ndash; Configures the source directory of XML files. &ndash;&gt;-->
+                            <!--<dir>${project.build.directory}/findbugs</dir>-->
+                            <!--&lt;!&ndash; Configures the directory in which the FindBugs report is written.&ndash;&gt;-->
+                            <!--<outputDir>${project.build.directory}/findbugs</outputDir>-->
+                            <!--&lt;!&ndash; Selects the used stylesheet. &ndash;&gt;-->
+                            <!--&lt;!&ndash; <stylesheet>fancy-hist.xsl</stylesheet> &ndash;&gt;-->
+                            <!--<stylesheet>default.xsl</stylesheet>-->
+                            <!--&lt;!&ndash;<stylesheet>plain.xsl</stylesheet>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<stylesheet>fancy.xsl</stylesheet>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<stylesheet>summary.xsl</stylesheet>&ndash;&gt;-->
+                            <!--<fileMappers>-->
+                                <!--&lt;!&ndash; Configures the file extension of the output files. &ndash;&gt;-->
+                                <!--<fileMapper-->
+                                        <!--implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">-->
+                                    <!--<targetExtension>.html</targetExtension>-->
+                                <!--</fileMapper>-->
+                            <!--</fileMappers>-->
+                        <!--</transformationSet>-->
+                    <!--</transformationSets>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--&lt;!&ndash; Ensures that the XSLT transformation is run when the project is compiled. &ndash;&gt;-->
+                    <!--<execution>-->
+                        <!--<phase>compile</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>transform</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <!--<dependencies>-->
+                    <!--<dependency>-->
+                        <!--<groupId>com.google.code.findbugs</groupId>-->
+                        <!--<artifactId>findbugs</artifactId>-->
+                        <!--<version>2.0.1</version>-->
+                    <!--</dependency>-->
+                <!--</dependencies>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>

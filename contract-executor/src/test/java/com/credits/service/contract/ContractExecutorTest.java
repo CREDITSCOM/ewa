@@ -3,6 +3,7 @@ package com.credits.service.contract;
 import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.general.util.Converter;
@@ -41,12 +42,22 @@ public class ContractExecutorTest extends ServiceTest {
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
 
         when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
-                new SmartContractData(address, address, sourceCode, bytecode, null));
+                new SmartContractData(
+                        address,
+                        address,
+                        new SmartContractDeployData(sourceCode, bytecode, (short)0),
+                        null
+                ));
 
         ceService.execute(address, bytecode, null, "foo", new Variant[0]);
 
         when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
-                new SmartContractData(address, address, sourceCode, bytecode, null));
+                new SmartContractData(
+                        address,
+                        address,
+                        new SmartContractDeployData(sourceCode, bytecode, (short)0),
+                        null
+                ));
 
         try {
             ceService.execute(address, bytecode, null, "foo", new Variant[0]);
