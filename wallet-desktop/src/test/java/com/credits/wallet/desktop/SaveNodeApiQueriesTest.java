@@ -24,7 +24,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.when;
 
-public class SaveNodeAdiQueriesTest {
+public class SaveNodeApiQueriesTest {
 
     App app;
     @Mock
