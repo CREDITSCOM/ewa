@@ -3,7 +3,7 @@ package com.credits.wallet.desktop.utils;
 import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
-import com.credits.wallet.desktop.utils.sourcecode.AutocompleteHelper;
+import com.credits.wallet.desktop.utils.sourcecode.autocomplete.AutocompleteHelper;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -87,7 +87,6 @@ public class CodeAreaUtils {
                     tabCount = 0;
                 }
             }
-
             autocompleteHelper.handleKeyPressEvent(k);
         });
 
@@ -231,18 +230,4 @@ public class CodeAreaUtils {
 
         codeArea.setOnMouseClicked(contextMenu);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
