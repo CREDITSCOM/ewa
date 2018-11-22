@@ -1,5 +1,6 @@
 package com.credits.client.node.pojo;
 
+import java.io.Serializable;
 import com.credits.general.pojo.SmartContractDeployData;
 
 import java.util.List;
@@ -7,8 +8,8 @@ import java.util.List;
 /**
  * Created by Rustem Saidaliyev on 06.08.2018.
  */
-public class SmartContractInvocationData {
-
+public class SmartContractInvocationData implements Serializable {
+    private static final long serialVersionUID = 4544650022718657168L;
     private SmartContractDeployData smartContractDeployData;
     private String method;
     private List<Object> params;

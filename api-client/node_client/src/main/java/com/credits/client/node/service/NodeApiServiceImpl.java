@@ -62,7 +62,7 @@ public class NodeApiServiceImpl implements NodeApiService {
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeApiServiceImpl.class);
     public static String account;
     private static volatile NodeApiServiceImpl instance;
-    private final NodeThriftApiClient nodeClient;
+    public NodeThriftApiClient nodeClient;
 
     private NodeApiServiceImpl(String host, int port) {
         nodeClient = NodeThriftApiClient.getInstance(host, port);
