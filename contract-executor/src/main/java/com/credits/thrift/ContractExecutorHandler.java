@@ -1,12 +1,12 @@
 package com.credits.thrift;
 
 import com.credits.client.executor.pojo.MethodDescriptionData;
-import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
-import com.credits.general.thrift.generated.APIResponse;
 import com.credits.client.executor.thrift.generated.ContractExecutor;
+import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
 import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
 import com.credits.client.executor.thrift.generated.MethodDescription;
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
@@ -50,6 +50,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             ReturnValue returnValue = service.execute(address.array(), byteCode.array(), contractState.array(), method, paramsArray);
             result.setContractState(returnValue.getContractState());
             result.setContractVariables(returnValue.getContractVariables());
+            result.setRet_val(returnValue.getVariant());
         } catch (ContractExecutorException e) {
             result.getStatus().setCode((byte) 1);
             result.getStatus().setMessage("error during execution \"" + method + "\" method. Reason: " + e.getMessage());
