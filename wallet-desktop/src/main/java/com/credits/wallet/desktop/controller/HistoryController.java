@@ -119,6 +119,8 @@ public class HistoryController implements Initializable {
                     tableRow.setTarget(Converter.encodeToBASE58(transactionData.getTarget()));
                     tableRow.setInnerId(transactionData.getId());
                     tableRow.setState(VALID.name());
+                    tableRow.setMethod(transactionData.getMethod());
+                    tableRow.setParams(transactionData.getParams());
                     approvedList.add(tableRow);
                 });
                 refreshTableViewItems(approvedTableView, approvedList);

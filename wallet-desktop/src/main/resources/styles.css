@@ -490,3 +490,21 @@
     -fx-text-fill:#0058B7;
 }
 /*HEADER*/
+
+
+/*TRANSACTION INFO LIST*/
+.credits-transaction-params-list { -fx-background-insets: 0; -fx-padding: 0; }
+
+.credits-transaction-params-list .list-cell:odd {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-border-color: transparent;
+
+}
+
+.credits-transaction-params-list .list-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-text-fill: black;
+}
+/*TRANSACTION INFO LIST*/

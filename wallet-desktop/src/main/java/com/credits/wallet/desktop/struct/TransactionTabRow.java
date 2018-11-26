@@ -1,5 +1,7 @@
 package com.credits.wallet.desktop.struct;
 
+import java.util.List;
+
 /**
  * Created by Rustem Saidaliyev on 25.06.2018.
  */
@@ -10,6 +12,8 @@ public class TransactionTabRow {
     private String currency;
     private String amount;
     private String state;
+    private String method;
+    private List<Object> params;
 
     public String getSource() {
         return source;
@@ -57,5 +61,21 @@ public class TransactionTabRow {
 
     public void setAmount(String amount) {
         this.amount = amount;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public List<Object> getParams() {
+        return params;
+    }
+
+    public void setParams(List<Object> params) {
+        this.params = params;
     }
 }

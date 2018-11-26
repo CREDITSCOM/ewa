@@ -3,6 +3,7 @@ package com.credits.client.node.pojo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -17,6 +18,8 @@ public class TransactionData implements Serializable {
     protected BigDecimal balance;
     protected byte currency;
     protected byte[] commentBytes;
+    protected String method;
+    protected List<Object> params;
 
 
     public TransactionData(){}
@@ -82,6 +85,22 @@ public class TransactionData implements Serializable {
 
     public void setCommentBytes(byte[] commentBytes) {
         this.commentBytes = commentBytes;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public List<Object> getParams() {
+        return params;
+    }
+
+    public void setParams(List<Object> params) {
+        this.params = params;
     }
 
     @Override
