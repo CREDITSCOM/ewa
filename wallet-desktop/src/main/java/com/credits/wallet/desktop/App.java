@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Properties;
 
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
@@ -37,9 +38,10 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
 
         Properties prop = new Properties();
-        prop.load(App.class.getClassLoader().getResourceAsStream("git.properties"));
+        URL url = App.class.getResource("/git.properties");
         String commit = null, author = null;
-        if (prop!=null) {
+        if (url != null) {
+            prop.load(url.openStream());
             commit = (String) prop.get("git.commit.id.abbrev");
             author = (String) prop.get("git.build.user.name");
         }
