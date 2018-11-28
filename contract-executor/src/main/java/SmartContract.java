@@ -1,5 +1,7 @@
 import com.credits.client.node.pojo.PoolData;
 import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.service.NodeApiServiceImpl;
+import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.exception.CreditsException;
 import com.credits.service.node.api.NodeApiInteractionService;
 
@@ -12,6 +14,7 @@ public abstract class SmartContract implements Serializable {
 
     private static final long serialVersionUID = -7544650022718657167L;
 
+    protected static NodeApiServiceImpl nodeApiService;
     protected static NodeApiInteractionService service;
     public transient String initiator = "";
     private String specialProperty;
@@ -69,7 +72,10 @@ public abstract class SmartContract implements Serializable {
             //todo add signature
             byte[] signature = new byte[0];
             Instant instant = Instant.now();
-            service.transactionFlow(instant.toEpochMilli(), source, target, decAmount, balance, currencyByte, signature, decFee, userData);
+            TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
+                TransactionIdCalculateUtils.calcTransactionIdSourceTarget(nodeApiService, source, target);
+            service.transactionFlow(calcTransactionIdSourceTargetResult.getTransactionId(), source, target, decAmount,
+                balance, currencyByte, signature, decFee, userData);
         } catch (CreditsException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

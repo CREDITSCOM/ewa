@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.pojo.TransactionFlowResultData;
+import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.pojo.SmartContractDeployData;
@@ -8,7 +9,10 @@ import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
-import com.credits.wallet.desktop.utils.*;
+import com.credits.wallet.desktop.utils.ApiUtils;
+import com.credits.wallet.desktop.utils.CodeAreaUtils;
+import com.credits.wallet.desktop.utils.FormUtils;
+import com.credits.wallet.desktop.utils.SmartContractsUtils;
 import com.credits.wallet.desktop.utils.compiler.InMemoryCompiler;
 import com.credits.wallet.desktop.utils.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.utils.compiler.model.CompilationResult;
@@ -19,7 +23,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -187,7 +195,7 @@ public class SmartContractDeployController implements Initializable {
                                 smartContractDeployData, null);
 
                     CompletableFuture.supplyAsync(
-                        () -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account, smartContractData.getBase58Address()), threadPool)
+                        () -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account, smartContractData.getBase58Address()), threadPool)
                         .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                         .whenComplete(handleCallback(handleDeployResult()));
                     AppState.lastSmartContract = codeArea.getText();

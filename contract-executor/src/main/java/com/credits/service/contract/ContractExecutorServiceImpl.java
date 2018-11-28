@@ -3,10 +3,10 @@ package com.credits.service.contract;
 import com.credits.ApplicationProperties;
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.client.executor.pojo.MethodDescriptionData;
+import com.credits.client.node.service.NodeApiService;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
-import com.credits.secure.Sandbox;
 import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.thrift.DeployReturnValue;
 import com.credits.thrift.ReturnValue;
@@ -34,8 +34,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.credits.ioc.Injector.INJECTOR;
-import static com.credits.serialise.Serializer.deserialize;
-import static com.credits.serialise.Serializer.serialize;
+import static com.credits.serialize.Serializer.deserialize;
+import static com.credits.serialize.Serializer.serialize;
 import static com.credits.thrift.utils.ContractUtils.deployAndGetContractVariables;
 import static com.credits.thrift.utils.ContractUtils.getContractVariables;
 import static com.credits.thrift.utils.ContractUtils.mapObjectToVariant;
@@ -49,6 +49,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public ApplicationProperties properties;
 
     @Inject
+    public NodeApiService nodeApiService;
+
+    @Inject
     public NodeApiInteractionService dbInteractionService;
 
     public ContractExecutorServiceImpl() {
@@ -58,6 +61,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Field interactionService = contract.getDeclaredField("service");
             interactionService.setAccessible(true);
             interactionService.set(null, dbInteractionService);
+            Field nodeApiServiceField = contract.getDeclaredField("nodeApiService");
+            nodeApiServiceField.setAccessible(true);
+            nodeApiServiceField.set(null, nodeApiService);
+
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             logger.error("Cannot load smart contract's super class", e);
         }
@@ -118,7 +125,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Object returnObject;
         Class<?> returnType = targetMethod.getReturnType();
         try {
+/*
             Sandbox.confine(contractClass, createPermissions());
+*/
             returnObject = targetMethod.invoke(contractInstance, argValues);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new ContractExecutorException("Cannot execute the contract: " + initiator + ". Reason: " + getRootCauseMessage(e));

@@ -15,7 +15,6 @@ import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static com.credits.general.util.Constants.ds;
 
@@ -54,7 +53,6 @@ public class AppState {
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
 
-    public static ConcurrentHashMap<String, AtomicLong> walletLastTransactionIdCache = new ConcurrentHashMap<>();
     public static Short transactionOfferedMaxFeeValue = Const.OFFERED_MAX_FEE;
 
     public static ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper;

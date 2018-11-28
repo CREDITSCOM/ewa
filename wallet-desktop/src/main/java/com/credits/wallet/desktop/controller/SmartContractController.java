@@ -2,16 +2,15 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.exception.CreditsException;
-import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -45,18 +44,17 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
+import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
-import static com.credits.wallet.desktop.utils.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -350,7 +348,7 @@ public class SmartContractController implements Initializable {
             smartContractData.setParams(params);
 
             CompletableFuture
-                .supplyAsync(() -> calcTransactionIdSourceTarget(account, smartContractData.getBase58Address()), threadPool)
+                .supplyAsync(() -> calcTransactionIdSourceTarget(AppState.nodeApiService,account, smartContractData.getBase58Address()), threadPool)
                 .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                 .whenComplete(handleCallback(handleExecuteResult()));
 

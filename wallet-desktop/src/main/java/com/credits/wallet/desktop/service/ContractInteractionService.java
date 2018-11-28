@@ -2,11 +2,12 @@ package com.credits.wallet.desktop.service;
 
 import com.credits.client.executor.pojo.ExecuteResponseData;
 import com.credits.client.node.exception.NodeClientException;
+import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
-import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
+import com.credits.wallet.desktop.AppState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,7 @@ public class ContractInteractionService {
                 sc.setMethod(TRANSFER_METHOD);
                 sc.setParams(asList(createVariantObject(STRING_TYPE, target), createVariantObject(STRING_TYPE, amount.toString())));
                 TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData =
-                    TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account, sc.getBase58Address());
+                    TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account, sc.getBase58Address());
                 return createSmartContractTransaction(transactionData, sc).getRight().getCode().name();
             })
             .whenComplete(handleCallback(callback));

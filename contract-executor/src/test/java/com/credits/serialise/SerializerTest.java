@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import java.io.Serializable;
 
-import static com.credits.serialise.Serializer.deserialize;
-import static com.credits.serialise.Serializer.serialize;
+import static com.credits.serialize.Serializer.deserialize;
+import static com.credits.serialize.Serializer.serialize;
 
 public class SerializerTest {
     protected final String address = "1a2b3c";
