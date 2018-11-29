@@ -31,6 +31,11 @@ public class TransactionIdCalculateUtils {
         return Converter.toLong(transactionIdBitSet);
     }
 
+    public CalcTransactionIdSourceTargetResult calcTransactionIdSource(NodeApiService nodeApiService, String wideSource,
+        String wideTarget) throws NodeClientException, ConverterException {
+        return calcTransactionIdSourceTarget(nodeApiService,wideSource,wideTarget);
+    }
+
     public static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(NodeApiService nodeApiService, String wideSource,
         String wideTarget) throws NodeClientException, ConverterException {
 

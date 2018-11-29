@@ -16,6 +16,8 @@ public abstract class SmartContract implements Serializable {
 
     protected static NodeApiServiceImpl nodeApiService;
     protected static NodeApiInteractionService service;
+    protected static TransactionIdCalculateUtils transactionIdCalculateUtils;
+
     public transient String initiator = "";
     private String specialProperty;
 

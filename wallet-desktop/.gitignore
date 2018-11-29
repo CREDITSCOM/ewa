@@ -23,5 +23,7 @@ nbdist/
 ### Compiled output ###
 target
 
+buildNumber.properties
+
 coins.csv
 temp

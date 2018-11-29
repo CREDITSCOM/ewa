@@ -4,9 +4,11 @@ import com.credits.ApplicationProperties;
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.client.node.service.NodeApiService;
+import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
+import com.credits.secure.Sandbox;
 import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.thrift.DeployReturnValue;
 import com.credits.thrift.ReturnValue;
@@ -54,6 +56,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     @Inject
     public NodeApiInteractionService dbInteractionService;
 
+    @Inject
+    public TransactionIdCalculateUtils transactionIdCalculateUtils;
+
     public ContractExecutorServiceImpl() {
         INJECTOR.component.inject(this);
         try {
@@ -64,6 +69,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Field nodeApiServiceField = contract.getDeclaredField("nodeApiService");
             nodeApiServiceField.setAccessible(true);
             nodeApiServiceField.set(null, nodeApiService);
+            Field transactionIdCalculateField = contract.getDeclaredField("transactionIdCalculateUtils");
+            transactionIdCalculateField.setAccessible(true);
+            transactionIdCalculateField.set(null, transactionIdCalculateUtils);
+
 
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             logger.error("Cannot load smart contract's super class", e);
@@ -125,9 +134,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Object returnObject;
         Class<?> returnType = targetMethod.getReturnType();
         try {
-/*
             Sandbox.confine(contractClass, createPermissions());
-*/
             returnObject = targetMethod.invoke(contractInstance, argValues);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new ContractExecutorException("Cannot execute the contract: " + initiator + ". Reason: " + getRootCauseMessage(e));

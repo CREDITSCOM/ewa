@@ -1,5 +1,6 @@
 package com.credits.ioc;
 
+import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.service.node.api.NodeApiInteractionServiceThriftImpl;
 import com.credits.thrift.ContractExecutorServer;
@@ -10,6 +11,7 @@ import javax.inject.Singleton;
 @Singleton
 @Component(modules = {AppModule.class})
 public interface AppComponent {
+    void inject(TransactionIdCalculateUtils transactionIdCalculateUtils);
     void inject(ContractExecutorServiceImpl contractExecutorService);
     void inject(NodeApiInteractionServiceThriftImpl levelDbInteractionServiceThrift);
     void inject(ContractExecutorServer contractExecutorServer);
