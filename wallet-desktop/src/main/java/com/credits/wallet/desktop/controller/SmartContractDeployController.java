@@ -81,10 +81,10 @@ public class SmartContractDeployController implements Initializable {
     private TreeView<Label> classTreeView;
 
     @FXML
-    public Button deployButton;
+    private Button deployButton;
 
     @FXML
-    public Button buildButton;
+    private Button buildButton;
 
     public CompilationPackage compilationPackage;
 
@@ -110,9 +110,7 @@ public class SmartContractDeployController implements Initializable {
 
         panelCodeKeyReleased();
         initErrorTableView();
-
     }
-
 
     @FXML
     private void handleBuild() {

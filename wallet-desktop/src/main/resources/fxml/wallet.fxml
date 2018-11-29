@@ -3,7 +3,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -12,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.WalletController">
     <top>
@@ -52,7 +52,7 @@
                                 <Label layoutX="-13.0" prefHeight="25.0" prefWidth="100.0" style="-fx-font-size: 16px;" text="   My coins" />
                             </children>
                         </Pane>
-                          <TableView fx:id="coinsTableView" maxHeight="305.0" maxWidth="548.0" minHeight="144.0" minWidth="389.0" prefHeight="276.0" prefWidth="550.0" styleClass="credits-smart-table-view"/>
+                          <TableView fx:id="coinsTableView" maxHeight="305.0" maxWidth="548.0" minHeight="144.0" minWidth="389.0" prefHeight="276.0" prefWidth="550.0" styleClass="credits-smart-table-view" />
                     </children>
                 </VBox>
                 <Button layoutX="20.0" layoutY="580.0" onAction="#handleLogout" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
@@ -80,8 +80,14 @@
                         </Label>
                         <HBox prefHeight="32.0" prefWidth="615.0">
                             <children>
-                                <TextField fx:id="numFee" editable="false" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" prefWidth="235.0" styleClass="credits-textField" />
-                                <Label prefHeight="45.0" prefWidth="350.0" styleClass="credits-label" text="0.01 - 0.03 - Recomended" />
+                                <TextField fx:id="numFee" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" prefWidth="112.0" styleClass="credits-textField" />
+                                <Label prefHeight="45.0" prefWidth="220.0" styleClass="credits-label" text="0.01 - 0.03 - Recomended" />
+                        <Label prefHeight="45.0" prefWidth="74.0" styleClass="credits-label" text="Actual:" />
+                        <Label fx:id="actualFeeLabel" prefHeight="45.0" prefWidth="214.0" styleClass="credits-label" text="0" textFill="#0000008e">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
                             </children>
                         </HBox>
                         <Label fx:id="labErrorFee" maxHeight="45.0" minHeight="20.0" prefHeight="37.0" prefWidth="38.0" styleClass="credits--not-padding-labelError" text="Label" />

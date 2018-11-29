@@ -58,7 +58,8 @@ public class Utils {
 
     public static boolean isEmpty(final Object object) {
         if (object instanceof String) {
-            return ((String) object).trim().isEmpty();
+            String objectString = (String)object;
+            return (objectString == null || objectString.trim().isEmpty());
         } else if (object instanceof ByteBuffer) {
             return ((ByteBuffer) object).position() == 0;
         } else if (object instanceof byte[]) {

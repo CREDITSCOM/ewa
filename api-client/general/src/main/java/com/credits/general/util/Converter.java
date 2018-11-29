@@ -87,6 +87,9 @@ public class Converter {
         if (value instanceof String) {
             return Integer.parseInt((String)value);
         }
+        if (value instanceof Double) {
+            return ((Double) value).intValue();
+        }
         // TODO Добавить Byte, Short, Long, Character, Float, Double, Float, BigDecimal, Boolean, Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
@@ -134,6 +137,8 @@ public class Converter {
             buffer.put(bytes);
             buffer.flip();//need flip
             return buffer.getLong();
+        } else if (value instanceof Double) {
+            return ((Double)value).longValue();
         }
         // TODO Добавить Byte, Short, Integer, Float, Double, Character, BigDecimal, Boolean, Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
@@ -316,6 +321,17 @@ public class Converter {
                 longValue = longValue >>> 1;
             }
             return bits;
+        } else if (value instanceof Integer) {
+            BitSet bits = new BitSet();
+            long intValue = (int) value;
+            int index = 0;
+            while (intValue != 0) {
+                if (intValue % 2 != 0) {
+                    bits.set(index);
+                }
+                ++index;
+                intValue = intValue >>> 1;
+            }
         }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
