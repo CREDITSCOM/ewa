@@ -25,9 +25,9 @@ import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
 /**
  * Created by goncharov-eg on 23.11.2017.
  */
-public class App extends Application {
+public class WalettApp extends Application {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(App.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(WalettApp.class);
     AppStateInitializer appStateInitializer;
 
     public static void main(String[] args) {
@@ -38,7 +38,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
 
         Properties prop = new Properties();
-        URL url = App.class.getResource("/git.properties");
+        URL url = WalettApp.class.getResource("/git.properties");
         String commit = null, author = null;
         if (url != null) {
             prop.load(url.openStream());
@@ -55,7 +55,7 @@ public class App extends Application {
         appStateInitializer.init();
         LOGGER.info("Displaying the main window");
 
-        stage.getIcons().add(new Image(App.class.getResourceAsStream("/img/icon.png")));
+        stage.getIcons().add(new Image(WalettApp.class.getResourceAsStream("/img/icon.png")));
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
         AppState.screenHeight = bounds.getHeight();
@@ -84,7 +84,7 @@ public class App extends Application {
     private Pane loadMainPane() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         Pane mainPane = loader.load(
-            App.class.getResourceAsStream(VistaNavigator.MAIN)
+            WalettApp.class.getResourceAsStream(VistaNavigator.MAIN)
         );
         MainController mainController = loader.getController();
 
@@ -101,7 +101,7 @@ public class App extends Application {
         );
         addFonts();
         scene.getStylesheets().setAll(
-            App.class.getResource("/styles.css").toExternalForm()
+            WalettApp.class.getResource("/styles.css").toExternalForm()
         );
         return scene;
     }
@@ -120,24 +120,24 @@ public class App extends Application {
     }
 
     private void addFonts() {
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-Black.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-BlackItalic.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-Bold.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-BoldItalic.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-ExtraBold.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-ExtraBoldItalic.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-ExtraLight.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-ExtraLightItalic.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-Italic.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-Light.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-LightItalic.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-Medium.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-MediumItalic.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-Regular.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-SemiBold.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-SemiBoldItalic.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-Thin.otf").toExternalForm(),14);
-        Font.loadFont(App.class.getResource("/fonts/Montserrat-ThinItalic.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-Black.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-BlackItalic.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-Bold.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-BoldItalic.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-ExtraBold.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-ExtraBoldItalic.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-ExtraLight.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-ExtraLightItalic.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-Italic.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-Light.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-LightItalic.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-Medium.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-MediumItalic.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-Regular.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-SemiBold.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-SemiBoldItalic.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-Thin.otf").toExternalForm(),14);
+        Font.loadFont(WalettApp.class.getResource("/fonts/Montserrat-ThinItalic.otf").toExternalForm(),14);
     }
 
 }

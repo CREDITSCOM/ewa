@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 public class SaveNodeApiQueriesTest {
 
-    App app;
+    WalettApp walettApp;
     @Mock
     AppStateInitializer mockInitializer;
     @Mock
@@ -71,8 +71,8 @@ public class SaveNodeApiQueriesTest {
 
         NodeApiService mock = mockNodeApiService;
 
-        app = new App();
-        app.appStateInitializer = mockInitializer;
+        walettApp = new WalettApp();
+        walettApp.appStateInitializer = mockInitializer;
         mockInitializer.startForm = VistaNavigator.WELCOME;
         runApp();
     }
@@ -91,7 +91,7 @@ public class SaveNodeApiQueriesTest {
         new JFXPanel();
         Platform.runLater(() -> {
             try {
-                app.start(new Stage());
+                walettApp.start(new Stage());
             } catch (IOException e) {
                 e.printStackTrace();
             }

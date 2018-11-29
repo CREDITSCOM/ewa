@@ -1,7 +1,7 @@
 package com.credits.wallet.desktop.utils;
 
-import com.credits.wallet.desktop.App;
 import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.WalettApp;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.sourcecode.autocomplete.AutocompleteHelper;
 import javafx.concurrent.Task;
@@ -213,7 +213,7 @@ public class CodeAreaUtils {
         });
         VBox box = new VBox();
         box.setId("popup");
-        box.getStylesheets().add(App.class.getResource("/context-menu.css").toExternalForm());
+        box.getStylesheets().add(WalettApp.class.getResource("/context-menu.css").toExternalForm());
         box.setPrefSize(80, 50);
         box.getChildren().addAll(cut, copy, paste, select);
 

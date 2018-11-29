@@ -26,14 +26,16 @@ import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Igor Goryunov on 29.09.2018
  */
 public class UITest {
 
-    App app;
+    WalettApp walettApp;
     String walletAddress;
     String addressOne;
     String addressTwo;
@@ -68,8 +70,8 @@ public class UITest {
         AppState.favoriteContractsKeeper = new ObjectKeeper<>(AppState.account, "favorite");
         when(mockNodeApiService.getBalance(anyString())).thenReturn(new BigDecimal("1000.123456789012345678"));
 
-        app = new App();
-        app.appStateInitializer = mockInitializer;
+        walettApp = new WalettApp();
+        walettApp.appStateInitializer = mockInitializer;
         walletAddress = addressBase58;
         addressOne = "11111111111111111111111111111111111111111111";
         addressTwo = "22222222222222222222222222222222222222222222";
@@ -129,7 +131,7 @@ public class UITest {
         new JFXPanel();
         Platform.runLater(() -> {
             try {
-                app.start(new Stage());
+                walettApp.start(new Stage());
             } catch (IOException e) {
                 e.printStackTrace();
             }
