@@ -20,8 +20,15 @@
             <children>
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Transaction history" />
                 <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can see transaction history" />
-                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
-            <TabPane layoutX="20.0" layoutY="80.0" prefHeight="470.0" prefWidth="1250.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
+                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" >
+                    <graphic>
+                        <ImageView fitHeight="26.0" fitWidth="26.0">
+                            <Image url="@../img/arrow_down.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+                <TabPane layoutX="20.0" layoutY="80.0" prefHeight="470.0" prefWidth="1250.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                 <Tab text="Approved transactions">
                   <content>

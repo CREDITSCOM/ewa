@@ -9,6 +9,8 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.PutKeysController">
     <top>
         <fx:include source="header_empty.fxml" />
@@ -23,7 +25,12 @@
                 </Label>
                 <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can open the wallet and make payments in the Credits platform" />
 
-                <Button fx:id="btnBack" layoutX="20.0" layoutY="360.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px" styleClass="credits-button" text="🡰">
+                <Button fx:id="btnBack" layoutX="20.0" layoutY="360.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px" styleClass="credits-button">
+                    <graphic>
+                        <ImageView fitHeight="26.0" fitWidth="26.0">
+                            <Image url="@../img/arrow_down.png" />
+                        </ImageView>
+                    </graphic>
                 </Button>
 
                 <Button layoutX="555.0" layoutY="360.0" onAction="#handleOpen" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Open your wallet" />

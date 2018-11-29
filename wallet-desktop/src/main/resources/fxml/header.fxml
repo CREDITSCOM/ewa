@@ -38,7 +38,7 @@
                 <Button fx:id="btnLogout" layoutX="1172.0" layoutY="17.0" onAction="#handleLogout" styleClass="credits-headerButton" text="Logout">
                     <graphic>
                         <ImageView fitHeight="15.0" fitWidth="15.0">
-                            <Image url="@../img/logout.png" />
+                            <Image url="@../img/logout_white.png" />
                         </ImageView>
                     </graphic>
                 </Button>

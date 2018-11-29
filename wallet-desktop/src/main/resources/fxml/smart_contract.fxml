@@ -25,7 +25,14 @@
         <Pane prefWidth="1300.0" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contracts from blockhain" />
-                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" text="🡰" />
+                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" >
+                    <graphic>
+                        <ImageView fitHeight="26.0" fitWidth="26.0">
+                            <Image url="@../img/arrow_down.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+
                 <TabPane layoutX="490.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="800.0" style="-fx-border-radius: 15;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab text="Choose method">

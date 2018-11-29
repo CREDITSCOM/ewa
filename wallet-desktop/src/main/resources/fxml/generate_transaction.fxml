@@ -8,6 +8,8 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.GenerateTransactionController">
     <top>
         <fx:include source="header.fxml" />
@@ -23,7 +25,14 @@
                 <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can check  and verify your transaction" />
                 <Button fx:id="btnGenerate" layoutX="550.0" layoutY="540.0" onAction="#handleGenerate" prefHeight="60.0" prefWidth="250.0" style="-fx-font-size: 16px;" styleClass="credits-button" text="Generate transaction" wrapText="true">
                 </Button>
-                <Button fx:id="btnBack" layoutX="20.0" layoutY="540.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" text="🡰" />
+                <Button fx:id="btnBack" layoutX="20.0" layoutY="540.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" >
+                    <graphic>
+                        <ImageView fitHeight="26.0" fitWidth="26.0">
+                            <Image url="@../img/arrow_down.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+
                 <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="75.0" prefWidth="885.0">
                     <children>
                         <VBox prefHeight="83.0" prefWidth="500.0">

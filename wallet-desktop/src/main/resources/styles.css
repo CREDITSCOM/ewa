@@ -386,11 +386,11 @@
 }
 
 .credits-smart-table-view .table-row-cell:selected {
-    -fx-background-color: #FFF607;
+    -fx-background-color: #0A85C8;
     -fx-font-weight: bold;
     -fx-background-insets: 0;
     -fx-background-radius: 1;
-    -fx-text-background-color: black;
+    -fx-text-background-color: white;
 
 }
 
@@ -467,7 +467,7 @@
 .credits-headerPane,
 .credits-headerButton .menu-item,
 .credits-headerButton .context-menu {
-    -fx-background-color: #FFE492;
+    -fx-background-color: #0A85C8;
 }
 
 .credits-headerButton,
@@ -477,17 +477,17 @@
     -fx-background-color:  transparent;
     -fx-font-size: 16px;
     -fx-alignment: center;
-    -fx-text-fill: black;
+    -fx-text-fill: white;
 }
 
 .credits-headerButton .arrow-button .arrow {
-    -fx-background-color: black;
+    -fx-background-color: white;
 }
 
 .credits-headerButton:hover,
 .menu-button:hover .label,
 .credits-menuitemButton:hover {
-    -fx-text-fill:#0058B7;
+    -fx-text-fill:black;
 }
 /*HEADER*/
 

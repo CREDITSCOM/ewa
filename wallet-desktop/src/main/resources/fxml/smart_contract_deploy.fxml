@@ -8,6 +8,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController">
     <top>
         <fx:include source="header.fxml" />
@@ -17,7 +19,14 @@
             <children>
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contract making" />
                 <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can check and deploy smart contract" />
-                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" text="🡰" />
+                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button">
+                    <graphic>
+                        <ImageView fitHeight="26.0" fitWidth="26.0">
+                            <Image url="@../img/arrow_down.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+
                 <Button fx:id="buildButton" layoutX="633.0" layoutY="590.0" onAction="#handleBuild" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Build" />
                 <Button fx:id="deployButton" disable="true" layoutX="1086.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Deploy" />
                 <TreeView fx:id="classTreeView" layoutX="920.0" layoutY="85.0" prefHeight="498.0" prefWidth="364.0" style="-fx-border-color: transparent; -fx-border-width: 0; -fx-border-style: none; -fx-background-color: transparent;" />
