@@ -24,7 +24,7 @@ public abstract class SmartContract implements Serializable {
     protected SmartContract() {
     }
 
-    final protected BigDecimal getBalance(String address, String currency) {
+    final protected BigDecimal getBalance(String address) {
         byte currencyByte = (byte) 1;
         try {
             return service.getBalance(address, currencyByte);
@@ -65,19 +65,17 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    final protected void sendTransaction(String source, String target, double amount, double fee, byte[] userData) {
+    final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {
         try {
             byte currencyByte = (byte) 1;
             BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
-            BigDecimal balance = service.getBalance(source, currencyByte);
             BigDecimal decFee = new BigDecimal(String.valueOf(fee));
             //todo add signature
             byte[] signature = new byte[0];
             Instant instant = Instant.now();
             TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
-                TransactionIdCalculateUtils.calcTransactionIdSourceTarget(nodeApiService, source, target);
-            service.transactionFlow(calcTransactionIdSourceTargetResult.getTransactionId(), source, target, decAmount,
-                balance, currencyByte, signature, decFee, userData);
+                TransactionIdCalculateUtils.calcTransactionIdSourceTarget(nodeApiService, initiator, target);
+            service.transactionFlow(calcTransactionIdSourceTargetResult.getTransactionId(), initiator, target, decAmount, signature, decFee, userData);
         } catch (CreditsException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

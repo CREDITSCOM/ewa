@@ -25,8 +25,6 @@ public interface NodeApiInteractionService {
                          String source,
                          String target,
                          BigDecimal amount,
-                         BigDecimal balance,
-                         byte currency,
                          byte[] signature,
                          BigDecimal fee,
                          byte[] userData) throws ConverterException, NodeClientException;

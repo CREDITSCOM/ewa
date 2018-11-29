@@ -7,6 +7,7 @@ import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.NodePojoConverter;
+import com.credits.client.node.util.SignUtils;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.pojo.TransactionRoundData;
@@ -73,8 +74,8 @@ public class ApiUtils {
         saveTransactionIntoMap(transactionData, amount.toString(), String.valueOf(currency));
 
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes, textBytes);
-        SignUtils.signTransaction(transactionFlowData);
+            new TransactionFlowData(id, source, target, amount, offeredMaxFee, smartContractBytes, textBytes);
+        SignUtils.signTransaction(transactionFlowData, AppState.privateKey);
         return transactionFlowData;
     }
 

@@ -2,6 +2,7 @@ package com.credits.wallet.desktop.utils;
 
 import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.util.SignUtils;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Converter;
 import com.credits.wallet.desktop.AppState;
@@ -29,7 +30,6 @@ public class SignUtilsTest {
         byte[] target = Converter.decodeFromBASE58("FpspT");
         BigDecimal amount = new BigDecimal(0);
         short offeredMaxFee = 0;
-        byte currency = 1;
 
 
         byte[] smartContractBytes = Converter.decodeFromBASE58(Files.readAllLines(Paths.get(
@@ -37,8 +37,8 @@ public class SignUtilsTest {
                 "SignUtilsTest")).get(0));
 
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes, null);
-        SignUtils.signTransaction(transactionFlowData);
+            new TransactionFlowData(id, source, target, amount, offeredMaxFee, smartContractBytes, null);
+        SignUtils.signTransaction(transactionFlowData,AppState.privateKey);
         Assert.assertEquals("47WZiPHggsXydSvGyRwDHh1nVfsxPYQrn9kczkg4tvgoMHdm9KbTvRHnSSHEejMdnoMYu94ZnboP15hEweuNuqma",
             Converter.encodeToBASE58(transactionFlowData.getSignature()));
     }
@@ -59,12 +59,11 @@ public class SignUtilsTest {
         byte[] target = Converter.decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpd");
         BigDecimal amount = new BigDecimal(111);
         short offeredMaxFee = 26184;
-        byte currency = 1;
         byte[] smartContractBytes = null;
 
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(id, source, target, amount, offeredMaxFee, currency, smartContractBytes, null);
-        SignUtils.signTransaction(transactionFlowData);
+            new TransactionFlowData(id, source, target, amount, offeredMaxFee, smartContractBytes, null);
+        SignUtils.signTransaction(transactionFlowData,AppState.privateKey);
         Assert.assertEquals("2jDcD15fkTb4z3Yic1s4hZqNzwtEBVHjncfmRZpFJVztnLNKZHurQPPJHK8NeyFRiQrsxNSrZdKXYXiANnmAbN9f",
             Converter.encodeToBASE58(transactionFlowData.getSignature()));
     }

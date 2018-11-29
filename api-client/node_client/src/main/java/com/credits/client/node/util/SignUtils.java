@@ -1,10 +1,9 @@
-package com.credits.wallet.desktop.utils;
+package com.credits.client.node.util;
 
 import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.thrift.generated.Amount;
 import com.credits.general.util.Converter;
-import com.credits.wallet.desktop.AppState;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.security.PrivateKey;
 
 import static com.credits.client.node.util.NodePojoConverter.bigDecimalToAmount;
 
@@ -23,7 +23,7 @@ public class SignUtils {
 
     private static int smartContractLen = 0;
 
-    public static void signTransaction(TransactionFlowData tStruct) {
+    public static void signTransaction(TransactionFlowData tStruct, PrivateKey privateKey) {
         ByteBuffer signature;
         try {
             byte[] tArr = getBytes(tStruct);
@@ -38,7 +38,7 @@ public class SignUtils {
             LOGGER.debug(arrStr.toString());
             LOGGER.debug("--------------------- vvvvv ");
 
-            byte[] signatureArr = Ed25519.sign(tArr, AppState.privateKey);
+            byte[] signatureArr = Ed25519.sign(tArr, privateKey);
 
             LOGGER.debug("Signature ^^^^^ ");
             arrStr = new StringBuilder();

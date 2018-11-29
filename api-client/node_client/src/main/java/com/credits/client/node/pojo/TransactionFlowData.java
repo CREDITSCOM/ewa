@@ -9,7 +9,7 @@ import java.util.Objects;
  * Created by Rustem.Saidaliyev on 01.02.2018.
  */
 public class TransactionFlowData extends TransactionData implements Serializable {
-    protected static final long serialVersionUID = 4544650022718657166L;
+    private static final long serialVersionUID = 4544650022718657166L;
     protected Short offeredMaxFee;
     protected byte[] smartContractBytes;
     protected byte[] signature;
@@ -19,7 +19,7 @@ public class TransactionFlowData extends TransactionData implements Serializable
 
 
     public TransactionFlowData(long innerId, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee,
-        byte currency, byte[] smartContractBytes, byte[] commentBytes) {
+        byte[] smartContractBytes, byte[] commentBytes) {
         super();
         this.setId(innerId);
         this.setSource(source);

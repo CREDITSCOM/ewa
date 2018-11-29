@@ -31,5 +31,5 @@ public abstract class SmartContract implements Serializable {
         return null;
     }
 
-    final protected void sendTransaction(String source, String target, double amount, double fee, byte[] userData) {}
+    final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {}
 }
