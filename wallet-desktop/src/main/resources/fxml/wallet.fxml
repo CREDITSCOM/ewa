@@ -55,7 +55,13 @@
                           <TableView fx:id="coinsTableView" maxHeight="305.0" maxWidth="548.0" minHeight="144.0" minWidth="389.0" prefHeight="276.0" prefWidth="550.0" styleClass="credits-smart-table-view" />
                     </children>
                 </VBox>
-                <Button layoutX="20.0" layoutY="580.0" onAction="#handleLogout" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" text="🡰" />
+                <Button layoutX="20.0" layoutY="580.0" onAction="#handleLogout" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button">
+                    <graphic>
+                        <ImageView fitHeight="26.0" fitWidth="26.0">
+                            <Image url="@../img/arrow_down.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button layoutX="20.0" layoutY="484.0" onAction="#handleAddCoin" prefHeight="45.0" prefWidth="177.0" style="-fx-background-color: #404040; -fx-text-fill: white;" styleClass="credits-button" text="Make new coin" />
 
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Wallet" />
