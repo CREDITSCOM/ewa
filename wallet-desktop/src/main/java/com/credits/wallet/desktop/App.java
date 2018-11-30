@@ -45,10 +45,9 @@ public class App extends Application {
             commit = (String) prop.get("git.commit.id.abbrev");
             author = (String) prop.get("git.build.user.name");
         }
-
         LOGGER.info("\n\n\n");
         LOGGER.info("---------------------------------------------------------------------------");
-        LOGGER.info("Starting Wallet app");
+        LOGGER.info("Starting Wallet app {}-{}",commit,author);
         LOGGER.info("---------------------------------------------------------------------------\n\n\n");
         appStateInitializer = appStateInitializer != null ? appStateInitializer : new AppStateInitializer();
         LOGGER.info("Initializing application state");
@@ -67,9 +66,7 @@ public class App extends Application {
         stage.setHeight(bounds.getHeight());
         stage.setMaximized(true);
 
-        if(author!=null && commit !=null) {
-            stage.setTitle("Credits "+commit+"-"+author);
-        } else {stage.setTitle("Credits");}
+        stage.setTitle("Credits");
 
         stage.setScene(
             createScene(
