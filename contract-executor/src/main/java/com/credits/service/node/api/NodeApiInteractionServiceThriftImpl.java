@@ -62,7 +62,7 @@ public class NodeApiInteractionServiceThriftImpl implements NodeApiInteractionSe
     public void transactionFlow(String source, String target, double amount, double fee, byte[] userData,
         String specialProperty) throws ConverterException, NodeClientException {
         TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
-            TransactionIdCalculateUtils.calcTransactionIdSourceTarget(service, source, target);
+            TransactionIdCalculateUtils.calcTransactionIdSourceTarget(service, source, target, false);
         BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
 
         short maxFee = 0x6648; //TODO need add fee converter from BigDecimal to short

@@ -193,7 +193,8 @@ public class SmartContractDeployController implements Initializable {
                                 smartContractDeployData, null);
 
                     CompletableFuture.supplyAsync(
-                        () -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account, smartContractData.getBase58Address()), threadPool)
+                        () -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account, smartContractData.getBase58Address(),
+                            true), threadPool)
                         .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                         .whenComplete(handleCallback(handleDeployResult()));
                     AppState.lastSmartContract = codeArea.getText();

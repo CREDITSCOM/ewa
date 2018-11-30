@@ -66,7 +66,8 @@ public class GenerateTransactionController implements Initializable {
         try {
             if(coin.equals(CREDITS_SYMBOL)) {
                 CompletableFuture
-                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account,toAddress.getText()),threadPool)
+                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account,toAddress.getText(),
+                        true),threadPool)
                     .thenApply((transactionData) -> createTransaction(transactionData, AppState.amount, AppState.transactionText))
                     .whenComplete(handleCallback(handleTransactionResult()));
             } else {

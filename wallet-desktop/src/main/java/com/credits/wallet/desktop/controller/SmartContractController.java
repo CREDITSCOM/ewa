@@ -348,7 +348,8 @@ public class SmartContractController implements Initializable {
             smartContractData.setParams(params);
 
             CompletableFuture
-                .supplyAsync(() -> calcTransactionIdSourceTarget(AppState.nodeApiService,account, smartContractData.getBase58Address()), threadPool)
+                .supplyAsync(() -> calcTransactionIdSourceTarget(AppState.nodeApiService,account, smartContractData.getBase58Address(),
+                    true), threadPool)
                 .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                 .whenComplete(handleCallback(handleExecuteResult()));
 

@@ -31,13 +31,8 @@ public class TransactionIdCalculateUtils {
         return Converter.toLong(transactionIdBitSet);
     }
 
-    public CalcTransactionIdSourceTargetResult calcTransactionIdSource(NodeApiService nodeApiService, String wideSource,
-        String wideTarget) throws NodeClientException, ConverterException {
-        return calcTransactionIdSourceTarget(nodeApiService,wideSource,wideTarget);
-    }
-
-    public static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(NodeApiService nodeApiService, String wideSource,
-        String wideTarget) throws NodeClientException, ConverterException {
+    public static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(NodeApiService nodeApiService,
+        String wideSource, String wideTarget, boolean isWalletCall) throws NodeClientException, ConverterException {
 
         // get transactions count from Node and increment it
         long transactionId = nodeApiService.getWalletTransactionsCount(wideSource) + 1;
@@ -51,6 +46,7 @@ public class TransactionIdCalculateUtils {
         } else {
             transactionId = lastTransactionId.incrementAndGet();
         }
+        if(!isWalletCall) {transactionId = transactionId + 1;}
 
         LOGGER.info("Result transaction ID = {}", transactionId);
 

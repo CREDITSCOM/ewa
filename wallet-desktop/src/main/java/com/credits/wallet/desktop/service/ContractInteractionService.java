@@ -48,7 +48,8 @@ public class ContractInteractionService {
                 sc.setMethod(TRANSFER_METHOD);
                 sc.setParams(asList(createVariantObject(STRING_TYPE, target), createVariantObject(STRING_TYPE, amount.toString())));
                 TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData =
-                    TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account, sc.getBase58Address());
+                    TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account, sc.getBase58Address(),
+                        true);
                 return createSmartContractTransaction(transactionData, sc).getRight().getCode().name();
             })
             .whenComplete(handleCallback(callback));
