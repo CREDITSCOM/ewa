@@ -34,8 +34,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.credits.ioc.Injector.INJECTOR;
-import static com.credits.serialise.Serializer.deserialize;
-import static com.credits.serialise.Serializer.serialize;
+import static com.credits.serialize.Serializer.deserialize;
+import static com.credits.serialize.Serializer.serialize;
 import static com.credits.thrift.utils.ContractUtils.deployAndGetContractVariables;
 import static com.credits.thrift.utils.ContractUtils.getContractVariables;
 import static com.credits.thrift.utils.ContractUtils.mapObjectToVariant;
@@ -83,7 +83,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         initializeField("initiator", initiator, contractClass, contractInstance);
-
+        initializeField("specialProperty", System.getProperty(initiator), contractClass, contractInstance);
         List<Method> methods = getMethods(contractClass, methodName, params);
 
         Method targetMethod = null;

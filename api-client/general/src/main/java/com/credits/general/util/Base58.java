@@ -2,7 +2,6 @@ package com.credits.general.util;
 
 import com.credits.general.util.exception.ConverterException;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 
 /**
@@ -60,26 +59,6 @@ public class Base58 {
         return new String(encoded, outputStart, encoded.length - outputStart);
     }
 
-    /**
-     * Encodes the given version and bytes as a base58 string. A checksum is appended.
-     *
-     * @param version the version to encode
-     * @param payload the bytes to encode, e.g. public key hash
-     * @return the base58-encoded string
-     */
-    public static String encodeChecked(int version, byte[] payload) {
-        if (version < 0 || version > 255)
-            throw new IllegalArgumentException("Version not in range.");
-
-        // A stringified buffer is:
-        // 1 byte version + data bytes + 4 bytes check code (a truncated hash)
-        byte[] addressBytes = new byte[1 + payload.length + 4];
-        addressBytes[0] = (byte) version;
-        System.arraycopy(payload, 0, addressBytes, 1, payload.length);
-        byte[] checksum = Sha256Hash.hashTwice(addressBytes, 0, payload.length + 1);
-        System.arraycopy(checksum, 0, addressBytes, payload.length + 1, 4);
-        return Base58.encode(addressBytes);
-    }
 
     /**
      * Decodes the given base58 string into the original data bytes.
@@ -121,30 +100,6 @@ public class Base58 {
         }
         // Return decoded data (including original number of leading zeros).
         return Arrays.copyOfRange(decoded, outputStart - zeros, decoded.length);
-    }
-
-    public static BigInteger decodeToBigInteger(String input) throws ConverterException {
-        return new BigInteger(1, decode(input));
-    }
-
-    /**
-     * Decodes the given base58 string into the original data bytes, using the checksum in the
-     * last 4 bytes of the decoded data to verify that the rest are correct. The checksum is
-     * removed from the returned data.
-     *
-     * @param input the base58-encoded string to decode (which should include the checksum)
-     * @throws ConverterException if the input is not base 58 or the checksum does not validate.
-     */
-    public static byte[] decodeChecked(String input) throws ConverterException {
-        byte[] decoded  = decode(input);
-        if (decoded.length < 4)
-            throw new ConverterException("Input too short: " + decoded.length);
-        byte[] data = Arrays.copyOfRange(decoded, 0, decoded.length - 4);
-        byte[] checksum = Arrays.copyOfRange(decoded, decoded.length - 4, decoded.length);
-        byte[] actualChecksum = Arrays.copyOfRange(Sha256Hash.hashTwice(data), 0, 4);
-        if (!Arrays.equals(checksum, actualChecksum))
-            throw new ConverterException("Invalid checksum");
-        return data;
     }
 
     /**

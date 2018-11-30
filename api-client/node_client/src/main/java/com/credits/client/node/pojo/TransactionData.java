@@ -10,13 +10,13 @@ import java.util.Objects;
  * Created by Rustem.Saidaliyev on 01.02.2018.
  */
 public class TransactionData implements Serializable {
-    protected static final long serialVersionUID = 4544650022718657167L;
+    private static final long serialVersionUID = 4544650022718657167L;
     protected long id;
     protected byte[] source;
     protected byte[] target;
     protected BigDecimal amount;
     protected BigDecimal balance;
-    protected byte currency;
+    protected byte currency = (byte) 1;
     protected byte[] commentBytes;
     protected String method;
     protected List<Object> params;

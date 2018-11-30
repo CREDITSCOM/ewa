@@ -37,7 +37,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.credits.App</mainClass>
+                            <mainClass>com.credits.ExecutorApp</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

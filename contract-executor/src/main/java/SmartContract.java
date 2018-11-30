@@ -5,7 +5,6 @@ import com.credits.service.node.api.NodeApiInteractionService;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.List;
 
 public abstract class SmartContract implements Serializable {
@@ -14,12 +13,13 @@ public abstract class SmartContract implements Serializable {
 
     protected static NodeApiInteractionService service;
     public transient String initiator = "";
-    private String specialProperty;
+    private transient String specialProperty = "";
+
 
     protected SmartContract() {
     }
 
-    final protected BigDecimal getBalance(String address, String currency) {
+    final protected BigDecimal getBalance(String address) {
         byte currencyByte = (byte) 1;
         try {
             return service.getBalance(address, currencyByte);
@@ -60,16 +60,9 @@ public abstract class SmartContract implements Serializable {
         }
     }
 
-    final protected void sendTransaction(String source, String target, double amount, double fee, byte[] userData) {
+    final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {
         try {
-            byte currencyByte = (byte) 1;
-            BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
-            BigDecimal balance = service.getBalance(source, currencyByte);
-            BigDecimal decFee = new BigDecimal(String.valueOf(fee));
-            //todo add signature
-            byte[] signature = new byte[0];
-            Instant instant = Instant.now();
-            service.transactionFlow(instant.toEpochMilli(), source, target, decAmount, balance, currencyByte, signature, decFee, userData);
+            service.transactionFlow(initiator, target, amount, fee, userData, specialProperty);
         } catch (CreditsException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

@@ -1,6 +1,8 @@
 package com.credits.exception;
 
-public class ContractExecutorException extends Exception {
+import com.credits.general.exception.CreditsException;
+
+public class ContractExecutorException extends CreditsException {
     public ContractExecutorException(String message, Throwable e) {
         super(message, e);
     }

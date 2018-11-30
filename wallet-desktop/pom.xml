@@ -116,7 +116,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.credits.wallet.desktop.App</mainClass>
+                            <mainClass>com.credits.wallet.desktop.WalettApp</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

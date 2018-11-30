@@ -12,4 +12,9 @@ public class CreditsException extends RuntimeException {
     public CreditsException(Exception e) {
         super(e);
     }
+
+    public CreditsException(String errorMessage, Throwable e) {
+        super(e);
+    }
+
 }

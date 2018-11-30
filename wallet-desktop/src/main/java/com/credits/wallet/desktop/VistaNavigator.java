@@ -66,7 +66,7 @@ public class VistaNavigator {
         try {
             mainController.setVista(
                 FXMLLoader.load(
-                    App.class.getResource(
+                    WalettApp.class.getResource(
                         fxml
                     )
                 )

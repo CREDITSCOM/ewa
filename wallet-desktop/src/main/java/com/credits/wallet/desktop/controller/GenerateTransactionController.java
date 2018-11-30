@@ -2,6 +2,7 @@ package com.credits.wallet.desktop.controller;
 
 
 import com.credits.client.node.pojo.TransactionFlowResultData;
+import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
@@ -9,7 +10,6 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.TransactionIdCalculateUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -25,7 +25,13 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.util.Utils.threadPool;
-import static com.credits.wallet.desktop.AppState.*;
+import static com.credits.wallet.desktop.AppState.NODE_ERROR;
+import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.amount;
+import static com.credits.wallet.desktop.AppState.coin;
+import static com.credits.wallet.desktop.AppState.coinsKeeper;
+import static com.credits.wallet.desktop.AppState.contractInteractionService;
+import static com.credits.wallet.desktop.AppState.noClearForm6;
 import static com.credits.wallet.desktop.utils.ApiUtils.createTransaction;
 
 /**
@@ -60,7 +66,7 @@ public class GenerateTransactionController implements Initializable {
         try {
             if(coin.equals(CREDITS_SYMBOL)) {
                 CompletableFuture
-                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(account,toAddress.getText()),threadPool)
+                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account,toAddress.getText()),threadPool)
                     .thenApply((transactionData) -> createTransaction(transactionData, AppState.amount, AppState.transactionText))
                     .whenComplete(handleCallback(handleTransactionResult()));
             } else {

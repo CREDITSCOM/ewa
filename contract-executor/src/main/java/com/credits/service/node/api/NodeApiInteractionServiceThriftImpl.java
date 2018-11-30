@@ -1,20 +1,30 @@
 package com.credits.service.node.api;
 
+import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.PoolData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.service.NodeApiService;
+import com.credits.client.node.util.SignUtils;
+import com.credits.client.node.util.TransactionIdCalculateUtils;
+import com.credits.exception.ContractExecutorException;
 import com.credits.general.util.Base58;
+import com.credits.general.util.Converter;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.ioc.Injector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
+import java.security.PrivateKey;
 import java.util.List;
 
 public class NodeApiInteractionServiceThriftImpl implements NodeApiInteractionService {
+
+    private final static Logger logger = LoggerFactory.getLogger(NodeApiInteractionServiceThriftImpl.class);
 
     @Inject
     NodeApiService service;
@@ -49,11 +59,22 @@ public class NodeApiInteractionServiceThriftImpl implements NodeApiInteractionSe
     }
 
     @Override
-    public void transactionFlow(Long innerId, String source, String target, BigDecimal amount, BigDecimal balance, byte currency, byte[] signature,
-                                BigDecimal fee, byte[] userData) throws ConverterException, NodeClientException {
+    public void transactionFlow(String source, String target, double amount, double fee, byte[] userData,
+        String specialProperty) throws ConverterException, NodeClientException {
+        TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
+            TransactionIdCalculateUtils.calcTransactionIdSourceTarget(service, source, target);
+        BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
+
         short maxFee = 0x6648; //TODO need add fee converter from BigDecimal to short
-        TransactionFlowData TransactionFlowData =
-            new TransactionFlowData(System.currentTimeMillis(), Base58.decode(source), Base58.decode(target), amount, maxFee, currency, null, userData, signature);
-        service.transactionFlow(TransactionFlowData);
+
+        TransactionFlowData transactionFlowData =
+            new TransactionFlowData(calcTransactionIdSourceTargetResult.getTransactionId(), Base58.decode(calcTransactionIdSourceTargetResult.getSource()), Base58.decode(calcTransactionIdSourceTargetResult.getTarget()), decAmount, maxFee,  null, userData);
+        SignUtils.signTransaction(transactionFlowData, loadPrivateKey(specialProperty));
+        service.transactionFlow(transactionFlowData);
+    }
+
+    private PrivateKey loadPrivateKey(String privateKeyBase58) {
+        if(privateKeyBase58 == null) throw new ContractExecutorException("transaction can't be sign. Private key not found");
+        return Ed25519.bytesToPrivateKey(Converter.decodeFromBASE58(privateKeyBase58));
     }
 }

@@ -11,7 +11,7 @@ public abstract class SmartContract implements Serializable {
 
     protected transient String initiator;
 
-    final protected BigDecimal getBalance(String address, String currency) {
+    final protected BigDecimal getBalance(String address) {
         return null;
     }
 
@@ -31,6 +31,5 @@ public abstract class SmartContract implements Serializable {
         return null;
     }
 
-    final protected void sendTransaction(String source, String target, double amount, String currency, double fee) {
-    }
+    final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {}
 }

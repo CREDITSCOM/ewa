@@ -1,4 +1,4 @@
-package com.credits.serialise;
+package com.credits.serialize;
 
 import java.io.IOException;
 import java.io.InputStream;
