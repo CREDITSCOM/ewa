@@ -21,11 +21,6 @@ public interface NodeApiInteractionService {
 
     PoolData getPoolInfo(byte[] hash, long index) throws NodeClientException;
 
-    void transactionFlow(Long innerId,
-                         String source,
-                         String target,
-                         BigDecimal amount,
-                         byte[] signature,
-                         BigDecimal fee,
-                         byte[] userData) throws ConverterException, NodeClientException;
+    void transactionFlow(String source, String target, double amount, double fee, byte[] userData,
+        String specialProperty) throws ConverterException, NodeClientException;
 }

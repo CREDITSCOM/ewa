@@ -17,7 +17,6 @@ public class TransactionFlowData extends TransactionData implements Serializable
     public TransactionFlowData() {
     }
 
-
     public TransactionFlowData(long innerId, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee,
         byte[] smartContractBytes, byte[] commentBytes) {
         super();

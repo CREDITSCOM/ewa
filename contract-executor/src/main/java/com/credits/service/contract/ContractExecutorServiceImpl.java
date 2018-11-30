@@ -3,8 +3,6 @@ package com.credits.service.contract;
 import com.credits.ApplicationProperties;
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.client.executor.pojo.MethodDescriptionData;
-import com.credits.client.node.service.NodeApiService;
-import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
@@ -51,13 +49,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public ApplicationProperties properties;
 
     @Inject
-    public NodeApiService nodeApiService;
-
-    @Inject
     public NodeApiInteractionService dbInteractionService;
-
-    @Inject
-    public TransactionIdCalculateUtils transactionIdCalculateUtils;
 
     public ContractExecutorServiceImpl() {
         INJECTOR.component.inject(this);
@@ -66,14 +58,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Field interactionService = contract.getDeclaredField("service");
             interactionService.setAccessible(true);
             interactionService.set(null, dbInteractionService);
-            Field nodeApiServiceField = contract.getDeclaredField("nodeApiService");
-            nodeApiServiceField.setAccessible(true);
-            nodeApiServiceField.set(null, nodeApiService);
-            Field transactionIdCalculateField = contract.getDeclaredField("transactionIdCalculateUtils");
-            transactionIdCalculateField.setAccessible(true);
-            transactionIdCalculateField.set(null, transactionIdCalculateUtils);
-
-
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             logger.error("Cannot load smart contract's super class", e);
         }
@@ -99,7 +83,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
 
         initializeField("initiator", initiator, contractClass, contractInstance);
-
+        initializeField("specialProperty", System.getProperty(initiator), contractClass, contractInstance);
         List<Method> methods = getMethods(contractClass, methodName, params);
 
         Method targetMethod = null;

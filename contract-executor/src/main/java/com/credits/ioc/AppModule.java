@@ -3,7 +3,6 @@ package com.credits.ioc;
 import com.credits.ApplicationProperties;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
-import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.service.node.api.NodeApiInteractionServiceThriftImpl;
 import dagger.Module;
@@ -36,11 +35,4 @@ public class AppModule {
     public ApplicationProperties provideProperties() {
         return new ApplicationProperties();
     }
-
-    @Singleton
-    @Provides
-    public TransactionIdCalculateUtils provideTransactionIdCalculateUtils() {
-        return new TransactionIdCalculateUtils();
-    }
-
 }
