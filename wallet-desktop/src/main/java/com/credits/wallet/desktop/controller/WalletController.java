@@ -6,6 +6,7 @@ import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;
 import com.credits.general.util.MathUtils;
 import com.credits.general.util.exception.ConverterException;
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.CoinTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -15,9 +16,12 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
@@ -37,7 +41,18 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
-import static com.credits.wallet.desktop.AppState.*;
+import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
+import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.amount;
+import static com.credits.wallet.desktop.AppState.coin;
+import static com.credits.wallet.desktop.AppState.coinsKeeper;
+import static com.credits.wallet.desktop.AppState.contractInteractionService;
+import static com.credits.wallet.desktop.AppState.noClearForm6;
+import static com.credits.wallet.desktop.AppState.nodeApiService;
+import static com.credits.wallet.desktop.AppState.toAddress;
+import static com.credits.wallet.desktop.AppState.transactionFeePercent;
+import static com.credits.wallet.desktop.AppState.transactionFeeValue;
+import static com.credits.wallet.desktop.AppState.transactionText;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 /**
@@ -291,6 +306,9 @@ public class WalletController implements Initializable {
 
         numFee.textProperty().addListener(
             (observable, oldValue, newValue) -> {
+                if(AppState.decimalSeparator.equals(",")) {
+                    newValue = newValue.replace(',','.');
+                }
                 if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue)) { // check newValue is number
                     return;
                 }
