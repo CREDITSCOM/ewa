@@ -3,6 +3,8 @@ package com.credits.wallet.desktop.utils.sourcecode.autocomplete;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
 
 public class ProposalsMenu extends Popup {
@@ -21,13 +23,23 @@ public class ProposalsMenu extends Popup {
 
         listView.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
             if (k.getCode().equals(KeyCode.ENTER)) {
-                ProposalItem proposalItem = listView.getSelectionModel().getSelectedItem();
-                proposalItem.action();
-                this.hide();
+                doProposalItemAction();
+            }
+        });
+
+        listView.addEventHandler(MouseEvent.MOUSE_CLICKED, (k) -> {
+            if (k.getButton() == MouseButton.PRIMARY) {
+                doProposalItemAction();
             }
         });
 
         this.getContent().add(listView);
+    }
+
+    private void doProposalItemAction() {
+        ProposalItem proposalItem = listView.getSelectionModel().getSelectedItem();
+        proposalItem.action();
+        this.hide();
     }
 
     public void addItem(ProposalItem element) {
