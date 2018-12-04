@@ -426,32 +426,30 @@
 
 /*SCROLL BAR STYLE*/
 .scroll-pane {
-                      -fx-background-color: white;
-                  }
+    -fx-background-color: transparent;
+}
 .scroll-bar .increment-button {
-    visibility: hidden;
-}
+    -fx-background-color: transparent;}
 .scroll-bar .decrement-button {
-    visibility: hidden;
-}
+    -fx-background-color: transparent;}
 .scroll-bar {
-    -fx-background-color: white;
+    -fx-background-color: transparent;
 }
 .scroll-bar .track-background {
-    -fx-background-color: white;
+    -fx-background-color: transparent;
 }
 .scroll-bar .track {
-    -fx-background-color: white;
+    -fx-background-color: transparent;
 }
 .hide-thumb .scroll-bar .thumb {
-    -fx-background-color: white;
+    -fx-background-color: transparent;
 }
 .corner {
-    -fx-background-color: white;
+    -fx-background-color: transparent;
 }
 .scroll-bar > .increment-button > .increment-arrow,
 .scroll-bar > .decrement-button > .decrement-arrow {
-    -fx-background-color: white;
+    -fx-background-color: transparent;
 }
 /*SCROLL BAR STYLE*/
 
