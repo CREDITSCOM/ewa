@@ -27,6 +27,13 @@ public class ProposalsMenu extends Popup {
             }
         });
 
+        listView.focusedProperty().addListener((observable, old, newPropertyValue) -> {
+            if (!newPropertyValue)
+            {
+                ProposalsMenu.this.hide();
+            }
+        });
+
         listView.addEventHandler(MouseEvent.MOUSE_CLICKED, (k) -> {
             if (k.getButton() == MouseButton.PRIMARY) {
                 doProposalItemAction();
