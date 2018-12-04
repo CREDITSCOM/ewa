@@ -33,7 +33,7 @@ public class GenerateKeysController implements Initializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WELCOME);
+        VistaNavigator.loadVista(VistaNavigator.WELCOME,this);
     }
 
     @FXML
@@ -42,7 +42,7 @@ public class GenerateKeysController implements Initializable {
         AppState.publicKey = keyPair.getPublic();
         AppState.privateKey = keyPair.getPrivate();
 
-        VistaNavigator.loadVista(VistaNavigator.FORM_4);
+        VistaNavigator.loadVista(VistaNavigator.FORM_4,this);
     }
 
     @Override

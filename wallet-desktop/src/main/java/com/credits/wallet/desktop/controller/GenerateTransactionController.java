@@ -58,7 +58,7 @@ public class GenerateTransactionController implements Initializable {
     @FXML
     private void handleBack() {
         noClearForm6 = true;
-        VistaNavigator.loadVista(VistaNavigator.WALLET);
+        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
     }
 
     @FXML
@@ -81,7 +81,7 @@ public class GenerateTransactionController implements Initializable {
             return;
         }
 
-        VistaNavigator.loadVista(VistaNavigator.WALLET);
+        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
     }
 
     private Callback<String> handleTransferTokenResult() {

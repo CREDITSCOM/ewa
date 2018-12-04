@@ -86,7 +86,7 @@ public class WalettApp extends Application {
         MainController mainController = loader.getController();
 
         VistaNavigator.setMainController(mainController);
-        VistaNavigator.loadVista(appStateInitializer.startForm);
+        VistaNavigator.loadVista(appStateInitializer.startForm,null);
 
         return mainPane;
     }

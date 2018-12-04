@@ -21,13 +21,13 @@ public class WelcomeController implements Initializable {
     @FXML
     private void handleExistingAccount() {
         AppState.newAccount = false;
-        VistaNavigator.loadVista(VistaNavigator.FORM_5);
+        VistaNavigator.loadVista(VistaNavigator.FORM_5,this);
     }
 
     @FXML
     private void handleNewAccount() {
         AppState.newAccount = true;
-        VistaNavigator.loadVista(VistaNavigator.FORM_1);
+        VistaNavigator.loadVista(VistaNavigator.FORM_1,this);
     }
 
     @Override

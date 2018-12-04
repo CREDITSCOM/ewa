@@ -47,9 +47,9 @@ public class TransactionController implements Initializable {
     @FXML
     private void handleBack() {
         if (AppState.detailFromHistory) {
-            VistaNavigator.loadVista(VistaNavigator.HISTORY);
+            VistaNavigator.loadVista(VistaNavigator.HISTORY,this);
         } else {
-            VistaNavigator.loadVista(VistaNavigator.FORM_8);
+            VistaNavigator.loadVista(VistaNavigator.FORM_8,this);
         }
     }
 

@@ -97,12 +97,12 @@ public class WalletController implements Initializable {
 
     @FXML
     private void handleLogout() {
-        VistaNavigator.loadVista("/fxml/welcome.fxml");
+        VistaNavigator.loadVista(VistaNavigator.WELCOME,this);
     }
 
     @FXML
     private void handleAddCoin() {
-        VistaNavigator.loadVista(VistaNavigator.NEW_COIN);
+        VistaNavigator.loadVista(VistaNavigator.NEW_COIN,this);
     }
 
     @FXML
@@ -159,7 +159,7 @@ public class WalletController implements Initializable {
         }
 
         if (isValidationSuccessful) {
-            VistaNavigator.loadVista(VistaNavigator.FORM_7);
+            VistaNavigator.loadVista(VistaNavigator.FORM_7,this);
         }
     }
 
@@ -347,4 +347,5 @@ public class WalletController implements Initializable {
             transactionFeePercent = (transactionFeeValue.multiply(new BigDecimal("100"))).divide(amount, 18, RoundingMode.HALF_UP);
         }
     }
+
 }

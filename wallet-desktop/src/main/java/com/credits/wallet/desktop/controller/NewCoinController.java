@@ -47,7 +47,7 @@ public class NewCoinController implements Initializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WALLET);
+        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
     }
 
     @FXML
@@ -100,7 +100,7 @@ public class NewCoinController implements Initializable {
                 FormUtils.showError("Coin can't created. Reason: " + e.getMessage());
             }
         });
-        VistaNavigator.loadVista(VistaNavigator.WALLET);
+        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
     }
 
     @Override

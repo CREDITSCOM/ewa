@@ -97,12 +97,12 @@ public class SmartContractController implements Initializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WALLET);
+        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
     }
 
     @FXML
     private void handleCreate() {
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY);
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY,this);
     }
 
     @FXML

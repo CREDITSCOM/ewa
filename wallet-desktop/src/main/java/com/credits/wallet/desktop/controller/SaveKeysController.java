@@ -25,12 +25,12 @@ public class SaveKeysController implements Initializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.FORM_1);
+        VistaNavigator.loadVista(VistaNavigator.FORM_1,this);
     }
 
     @FXML
     private void handleContinue() {
-        VistaNavigator.loadVista(VistaNavigator.FORM_5);
+        VistaNavigator.loadVista(VistaNavigator.FORM_5,this);
     }
 
     @Override
@@ -38,4 +38,5 @@ public class SaveKeysController implements Initializable {
         FormUtils.resizeForm(bp);
         txKey.setText(Converter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
     }
+
 }

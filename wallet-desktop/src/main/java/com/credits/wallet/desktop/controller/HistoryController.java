@@ -82,7 +82,7 @@ public class HistoryController implements Initializable {
                 if (tabRow != null) {
                     selectedTransactionRow = tabRow;
                     detailFromHistory = true;
-                    VistaNavigator.loadVista(VistaNavigator.TRANSACTION);
+                    VistaNavigator.loadVista(VistaNavigator.TRANSACTION,this);
                 }
             }
         });
@@ -201,7 +201,7 @@ public class HistoryController implements Initializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WALLET);
+        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
     }
 
     @FXML

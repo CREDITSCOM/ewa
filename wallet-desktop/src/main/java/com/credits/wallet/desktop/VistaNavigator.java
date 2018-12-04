@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop;
 
+import com.credits.wallet.desktop.controller.Deinitializable;
 import com.credits.wallet.desktop.controller.MainController;
 import javafx.fxml.FXMLLoader;
 import org.slf4j.Logger;
@@ -62,7 +63,22 @@ public class VistaNavigator {
      *
      * @param fxml the fxml file to be loaded.
      */
-    public static void loadVista(String fxml) {
+    public static void loadVista(String fxml, Object oldVistaController) {
+        deinitialize(oldVistaController);
+        changeVista(fxml);
+    }
+
+    private static void deinitialize(Object oldVistaController) {
+        try {
+            if (oldVistaController instanceof Deinitializable) {
+                ((Deinitializable) oldVistaController).deinitialize();
+            }
+        } catch (Exception e) {
+            LOGGER.error("Cannot deinitialize vista", e );
+        }
+    }
+
+    private static void changeVista(String fxml) {
         try {
             mainController.setVista(
                 FXMLLoader.load(
@@ -75,5 +91,4 @@ public class VistaNavigator {
             LOGGER.error("failed!", e );
         }
     }
-
 }

@@ -29,26 +29,26 @@ public class HeaderController {
 
     @FXML
     private void handleLogout() {
-        VistaNavigator.loadVista("/fxml/welcome.fxml");
+        VistaNavigator.loadVista(VistaNavigator.WELCOME,this);
     }
 
     public void handleWallet(ActionEvent actionEvent) {
         AppState.newAccount = false;
-        VistaNavigator.loadVista(VistaNavigator.WALLET);
+        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
     }
 
     public void handleTransaction(ActionEvent actionEvent) {
         AppState.newAccount = false;
-        VistaNavigator.loadVista(VistaNavigator.HISTORY);
+        VistaNavigator.loadVista(VistaNavigator.HISTORY,this);
     }
 
     public void handleSmartExecute(ActionEvent actionEvent) {
         AppState.newAccount = false;
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT);
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT,this);
     }
 
     public void handleSmartDeploy(ActionEvent actionEvent) {
         AppState.newAccount = false;
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY);
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY,this);
     }
 }

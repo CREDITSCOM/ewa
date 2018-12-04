@@ -72,7 +72,7 @@ public class PutKeysController implements Initializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WELCOME);
+        VistaNavigator.loadVista(VistaNavigator.WELCOME,this);
     }
 
     @FXML
@@ -203,7 +203,7 @@ public class PutKeysController implements Initializable {
         }
 
         if (validateKeys(pubKey, privKey)) {
-            VistaNavigator.loadVista(VistaNavigator.WALLET);
+            VistaNavigator.loadVista(VistaNavigator.WALLET,this);
         }
     }
 
@@ -247,4 +247,5 @@ public class PutKeysController implements Initializable {
         txKey.setStyle(txKey.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
         txPublic.setStyle(txPublic.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
     }
+
 }

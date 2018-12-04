@@ -52,7 +52,7 @@ public class TransactionCreatedInfoController implements Initializable {
 
     @FXML
     private void handleOk() {
-        VistaNavigator.loadVista(VistaNavigator.WALLET);
+        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
     }
 
     @FXML
@@ -65,7 +65,7 @@ public class TransactionCreatedInfoController implements Initializable {
         transactionTabRow.setInnerId(1L);
         AppState.selectedTransactionRow = transactionTabRow;
         AppState.detailFromHistory=false;
-        VistaNavigator.loadVista(VistaNavigator.TRANSACTION);
+        VistaNavigator.loadVista(VistaNavigator.TRANSACTION,this);
     }
 
     @Override

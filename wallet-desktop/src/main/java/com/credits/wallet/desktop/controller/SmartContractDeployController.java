@@ -198,7 +198,7 @@ public class SmartContractDeployController implements Initializable {
                         .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                         .whenComplete(handleCallback(handleDeployResult()));
                     AppState.lastSmartContract = codeArea.getText();
-                    VistaNavigator.loadVista(VistaNavigator.WALLET);
+                    VistaNavigator.loadVista(VistaNavigator.WALLET,this);
                 }
             }
         } catch (CreditsException e) {
@@ -230,7 +230,7 @@ public class SmartContractDeployController implements Initializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT);
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT,this);
     }
 
     @FXML
