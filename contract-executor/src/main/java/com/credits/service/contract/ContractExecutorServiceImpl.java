@@ -71,6 +71,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
         Class<?> contractClass = classLoader.buildClass(bytecode);
+        Sandbox.confine(contractClass, createPermissions());
 
         String initiator = Base58.encode(initiatorAddress);
 
@@ -118,7 +119,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Object returnObject;
         Class<?> returnType = targetMethod.getReturnType();
         try {
-            Sandbox.confine(contractClass, createPermissions());
             returnObject = targetMethod.invoke(contractInstance, argValues);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new ContractExecutorException("Cannot execute the contract: " + initiator + ". Reason: " + getRootCauseMessage(e));
