@@ -67,7 +67,7 @@
                 </Tab>
               </tabs>
             </TabPane>
-                <Button layoutX="1220.0" layoutY="68.0" onAction="#handleRefresh" prefHeight="27.0" prefWidth="30.0" style="-fx-border-color: transparent; -fx-background-color: transparent;" styleClass="credits-button">
+                <Button layoutX="1220.0" layoutY="68.0" onAction="#handleRefresh" prefHeight="27.0" prefWidth="30.0" style="-fx-border-color: transparent; -fx-background-color: transparent;" styleClass="credits-button-refresh">
                     <graphic>
                         <ImageView fitHeight="32.0" fitWidth="32.0" style="-fx-background-color: transparent;">
                             <Image url="@../img/reload.png" />

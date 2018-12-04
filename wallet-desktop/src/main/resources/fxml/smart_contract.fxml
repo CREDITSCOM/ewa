@@ -4,8 +4,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -111,7 +109,7 @@
                 </ToggleButton>
                </children>
             </HBox>
-            <Button layoutX="406.0" layoutY="212.0" minHeight="40.0" minWidth="40.0" onAction="#handleRefreshSmarts" prefHeight="40.0" prefWidth="40.0" style="-fx-border-color: transparent; -fx-background-color: transparent;" styleClass="credits-button">
+            <Button layoutX="406.0" layoutY="212.0" minHeight="40.0" minWidth="40.0" onAction="#handleRefreshSmarts" prefHeight="40.0" prefWidth="40.0" style="-fx-border-color: transparent; -fx-background-color: transparent;" styleClass="credits-button-refresh">
                <graphic>
                   <ImageView fitHeight="32.0" fitWidth="32.0" style="-fx-background-color: transparent;">
                      <image>

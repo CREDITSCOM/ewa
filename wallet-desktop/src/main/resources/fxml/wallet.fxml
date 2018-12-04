@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.WalletController">
     <top>
         <fx:include source="header.fxml" />
@@ -42,7 +41,7 @@
                         </HBox>
                         <Pane minHeight="20.0" prefHeight="26.0" prefWidth="550.0">
                             <children>
-                                <Button layoutX="504.0" layoutY="-10.0" minHeight="40.0" minWidth="40.0" onAction="#handleRefreshBalance" prefHeight="40.0" prefWidth="40.0" style="-fx-border-color: transparent;" styleClass="credits-button">
+                                <Button layoutX="504.0" layoutY="-10.0" minHeight="40.0" minWidth="40.0" onAction="#handleRefreshBalance" prefHeight="40.0" prefWidth="40.0" style="-fx-border-color: transparent;" styleClass="credits-button-refresh">
                                     <graphic>
                                     <ImageView fitHeight="32.0" fitWidth="32.0">
                                         <Image url="@../img/reload.png" />

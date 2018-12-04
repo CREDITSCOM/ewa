@@ -82,7 +82,7 @@
     /*-fx-alignment: top-left;*/
 }
 
-.credits-button {
+.credits-button, .credits-button-refresh {
     -fx-font-weight: bold;
     -fx-background-color: #fff;
     -fx-background-radius: 22;
@@ -112,6 +112,10 @@
     -fx-text-fill:#2196f3;
     -fx-border-radius: 30;
     -fx-rotate:1;
+}
+
+.credits-button-refresh:pressed {
+    -fx-rotate:50;
 }
 
 .keyword {
