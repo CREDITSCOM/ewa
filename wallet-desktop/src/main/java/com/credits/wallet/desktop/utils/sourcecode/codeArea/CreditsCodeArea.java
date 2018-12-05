@@ -5,9 +5,13 @@ import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.Autocom
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 
@@ -59,7 +63,16 @@ public class CreditsCodeArea extends CodeArea {
 
         Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.TAB), e -> {
             tabCount++;
-            this.replaceSelection("    ");
+            this.replaceSelection(StringUtils.repeat(" ", 4));
+        }));
+
+        Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.ENTER), e -> {
+            try {
+                calculateNewLinePosition();
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+                this.replaceSelection("\n");
+            }
         }));
 
         Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.BACK_SPACE), e -> {
@@ -78,6 +91,25 @@ public class CreditsCodeArea extends CodeArea {
         } else {
             this.replaceText(AppState.lastSmartContract);
         }
+    }
+
+    private void calculateNewLinePosition() {
+        String substring = this.getText().substring(0, this.getCaretPosition());
+        int lastIndexOfNewLine = substring.lastIndexOf('\n');
+        String currentLine = substring.substring(lastIndexOfNewLine + 1, this.getCaretPosition());
+        Matcher matcher = Pattern.compile("[^ ]").matcher(currentLine);
+        matcher.find();
+        int first = matcher.start();
+
+        String replacement = "\n" + StringUtils.repeat(" ", first);
+        String trimCurrentLine = currentLine.trim();
+        char c = trimCurrentLine.charAt(trimCurrentLine.length() - 1);
+        if(c =='{') {
+            tabCount++;
+            replacement += StringUtils.repeat(" ", 4);
+        }
+        this.replaceSelection(replacement);
+        //this.selectRange(this.getCaretPosition() - 1, this.getCaretPosition() - 1);
     }
 
     public void doAutoComplete(String textToInsert) {
