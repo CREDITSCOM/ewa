@@ -510,3 +510,20 @@
     -fx-text-fill: black;
 }
 /*TRANSACTION INFO LIST*/
+
+/*CODEAREA POPUP TOOLBOX*/
+.credits-popup-toolbox .button{
+    -fx-background-color : ghostwhite;
+}
+
+.credits-popup-toolbox .button:hover{
+    -fx-text-fill:#2196f3;
+}
+
+.credits-popup-toolbox {
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-padding: 1 1 1 1;
+    -fx-background-color : ghostwhite;
+}
+/*CODEAREA POPUP TOOLBOX*/

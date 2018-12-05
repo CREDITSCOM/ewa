@@ -9,9 +9,9 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
-import com.credits.wallet.desktop.utils.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -97,12 +97,12 @@ public class SmartContractController implements Initializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+        VistaNavigator.loadVista(VistaNavigator.WALLET, this);
     }
 
     @FXML
     private void handleCreate() {
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY,this);
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY, this);
     }
 
     @FXML
@@ -143,12 +143,12 @@ public class SmartContractController implements Initializable {
     }
 
     @FXML
-    private void updateSelectedTab(){
-       if(myContractsTab != null && myContractsTab.isSelected()){
-           refreshContractsTab();
-       }else if (favoriteContractsTab != null &&favoriteContractsTab.isSelected()){
-           refreshFavoriteContractsTab();
-       }
+    private void updateSelectedTab() {
+        if (myContractsTab != null && myContractsTab.isSelected()) {
+            refreshContractsTab();
+        } else if (favoriteContractsTab != null && favoriteContractsTab.isSelected()) {
+            refreshFavoriteContractsTab();
+        }
     }
 
     private void initializeTable(TableView<SmartContractTabRow> tableView) {
@@ -186,7 +186,8 @@ public class SmartContractController implements Initializable {
         };
     }
 
-    private EventHandler<ActionEvent> handleFavoriteButtonEvent(ToggleButton pressedButton, SmartContractData smartContractData) {
+    private EventHandler<ActionEvent> handleFavoriteButtonEvent(ToggleButton pressedButton,
+        SmartContractData smartContractData) {
         return event -> switchFavoriteState(pressedButton, smartContractData);
     }
 
@@ -206,7 +207,8 @@ public class SmartContractController implements Initializable {
         refreshFavoriteContractsTab();
     }
 
-    private void changeFavoriteStateIntoTab(TableView<SmartContractTabRow> table, SmartContractData smartContractData, boolean isSelected) {
+    private void changeFavoriteStateIntoTab(TableView<SmartContractTabRow> table, SmartContractData smartContractData,
+        boolean isSelected) {
         table.getItems()
             .stream()
             .filter(row -> row.getSmartContractData().equals(smartContractData))
@@ -216,9 +218,10 @@ public class SmartContractController implements Initializable {
     }
 
     private void setFavoriteCurrentContract(SmartContractData smartContractData, boolean isSelected) {
-        if(currentSmartContract != null && smartContractData.getBase58Address().equals(currentSmartContract.getBase58Address())) {
+        if (currentSmartContract != null &&
+            smartContractData.getBase58Address().equals(currentSmartContract.getBase58Address())) {
             tbFavorite.setSelected(isSelected);
-        }else {
+        } else {
             tbFavorite.setSelected(false);
         }
     }
@@ -264,7 +267,7 @@ public class SmartContractController implements Initializable {
     }
 
     private void refreshFavoriteContractsTab() {
-        if(favoriteContractTableView != null && favoriteContracts != null) {
+        if (favoriteContractTableView != null && favoriteContracts != null) {
             favoriteContractTableView.getItems().clear();
             favoriteContracts.forEach(
                 (contractName, contractData) -> addContractToTable(favoriteContractTableView, contractData));
@@ -347,9 +350,8 @@ public class SmartContractController implements Initializable {
             smartContractData.setMethod(method);
             smartContractData.setParams(params);
 
-            CompletableFuture
-                .supplyAsync(() -> calcTransactionIdSourceTarget(AppState.nodeApiService,account, smartContractData.getBase58Address(),
-                    true), threadPool)
+            CompletableFuture.supplyAsync(() -> calcTransactionIdSourceTarget(AppState.nodeApiService, account,
+                smartContractData.getBase58Address(), true), threadPool)
                 .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                 .whenComplete(handleCallback(handleExecuteResult()));
 
@@ -364,8 +366,10 @@ public class SmartContractController implements Initializable {
         return new Callback<Pair<Long, TransactionFlowResultData>>() {
             @Override
             public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
-                ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(), resultData.getLeft());
-                Variant result = resultData.getRight().getContractResult().orElse(new Variant(Variant._Fields.V_STRING, "void"));
+                ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(),
+                    resultData.getLeft());
+                Variant result =
+                    resultData.getRight().getContractResult().orElse(new Variant(Variant._Fields.V_STRING, "void"));
                 LOGGER.info("Return value is {}", result);
                 FormUtils.showPlatformInfo("Execute smart contract was success: return value is: " + result);
             }
@@ -381,7 +385,8 @@ public class SmartContractController implements Initializable {
     private void addContractToTable(TableView<SmartContractTabRow> table, SmartContractData smartContractData) {
         ToggleButton favoriteButton = new ToggleButton();
         favoriteButton.setOnAction(handleFavoriteButtonEvent(favoriteButton, smartContractData));
-        SmartContractTabRow row = new SmartContractTabRow(smartContractData.getBase58Address(), favoriteButton, smartContractData);
+        SmartContractTabRow row =
+            new SmartContractTabRow(smartContractData.getBase58Address(), favoriteButton, smartContractData);
         row.setFav(favoriteButton);
         findInFavoriteThenSelect(smartContractData, favoriteButton);
         table.getItems().add(row);

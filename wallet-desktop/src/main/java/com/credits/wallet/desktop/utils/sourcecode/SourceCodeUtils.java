@@ -3,9 +3,21 @@ package com.credits.wallet.desktop.utils.sourcecode;
 
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Converter;
+import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.ParameterizedType;
+import org.eclipse.jdt.core.dom.PrimitiveType;
+import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.jface.text.BadLocationException;
@@ -18,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.ValidationException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -363,4 +376,22 @@ public class SourceCodeUtils {
                 String.format("Wrong superclass name %s, superclass name must be %s", superclassName, SUPERCLASS_NAME));
         }
     }
+
+    public static Pair<Map<MethodDeclaration, String>, Map<FieldDeclaration, String>> getMethodsAndFieldsFromSourceCode(
+        String sourceCode) {
+        Map<MethodDeclaration, String> methodDeclarationMap = new HashMap<>();
+        Map<FieldDeclaration, String> fieldDeclarationMap = new HashMap<>();
+
+        List<FieldDeclaration> fields = SourceCodeUtils.parseFields(sourceCode);
+        fields.forEach(field -> fieldDeclarationMap.put(field, field.toString()));
+
+        List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
+        methods.forEach(method -> {
+            method.setBody(null);
+            methodDeclarationMap.put(method, method.toString());
+        });
+
+        return Pair.of(methodDeclarationMap, fieldDeclarationMap);
+    }
+
 }

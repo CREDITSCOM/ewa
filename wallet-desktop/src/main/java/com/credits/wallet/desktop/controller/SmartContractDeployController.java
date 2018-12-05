@@ -10,7 +10,6 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
-import com.credits.wallet.desktop.utils.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractsUtils;
 import com.credits.wallet.desktop.utils.compiler.InMemoryCompiler;
@@ -18,6 +17,8 @@ import com.credits.wallet.desktop.utils.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.utils.compiler.model.CompilationResult;
 import com.credits.wallet.desktop.utils.compiler.model.CompilationUnit;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
+import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,7 +37,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,7 @@ public class SmartContractDeployController implements Initializable {
     public static final int TABLE_LINE_HEIGHT = 25;
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
 
-    private CodeArea codeArea;
+    private CreditsCodeArea codeArea;
 
 
     @FXML
@@ -103,7 +103,6 @@ public class SmartContractDeployController implements Initializable {
 
         codeArea = CodeAreaUtils.initCodeArea(paneCode, false);
 
-        CodeAreaUtils.initCodeAreaLogic(codeArea);
 
         codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (evt) -> {
             compilationPackage = null;
@@ -172,7 +171,7 @@ public class SmartContractDeployController implements Initializable {
     private void handleDeploy() {
         try {
             String javaCode = SourceCodeUtils.normalizeSourceCode(codeArea.getText());
-            if (compilationPackage==null) {
+            if (compilationPackage == null) {
                 buildButton.setDisable(false);
                 deployButton.setDisable(true);
                 throw new CreditsException("Source code is not compiled");
@@ -182,23 +181,23 @@ public class SmartContractDeployController implements Initializable {
                     CompilationUnit compilationUnit = compilationUnits.get(0);
                     byte[] byteCode = compilationUnit.getBytecode();
 
-                    SmartContractDeployData smartContractDeployData = new SmartContractDeployData(
-                            javaCode,
-                            byteCode,
-                            (short)0 // TODO refactor, put real tokenStandart value
-                    );
+                    SmartContractDeployData smartContractDeployData =
+                        new SmartContractDeployData(javaCode, byteCode, (short) 0
+                            // TODO refactor, put real tokenStandart value
+                        );
 
                     SmartContractData smartContractData =
-                        new SmartContractData(SmartContractsUtils.generateSmartContractAddress(), decodeFromBASE58(account),
-                                smartContractDeployData, null);
+                        new SmartContractData(SmartContractsUtils.generateSmartContractAddress(),
+                            decodeFromBASE58(account), smartContractDeployData, null);
 
                     CompletableFuture.supplyAsync(
-                        () -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account, smartContractData.getBase58Address(),
-                            true), threadPool)
-                        .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
+                        () -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,
+                            account, smartContractData.getBase58Address(), true), threadPool)
+                        .thenApply(
+                            (transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                         .whenComplete(handleCallback(handleDeployResult()));
                     AppState.lastSmartContract = codeArea.getText();
-                    VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+                    VistaNavigator.loadVista(VistaNavigator.WALLET, this);
                 }
             }
         } catch (CreditsException e) {
@@ -211,7 +210,8 @@ public class SmartContractDeployController implements Initializable {
         return new Callback<Pair<Long, TransactionFlowResultData>>() {
             @Override
             public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
-                ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(), resultData.getLeft());
+                ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(),
+                    resultData.getLeft());
                 String target = resultData.getRight().getTarget();
                 StringSelection selection = new StringSelection(target);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -230,7 +230,7 @@ public class SmartContractDeployController implements Initializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT,this);
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT, this);
     }
 
     @FXML
@@ -265,7 +265,7 @@ public class SmartContractDeployController implements Initializable {
                 Label label = new Label(classMember.toString());
                 label.setOnMousePressed(event -> {
                     if (event.isPrimaryButtonDown()) {
-                        CodeAreaUtils.positionCursorToLine(codeArea,SourceCodeUtils.getLineNumber(sourceCode, classMember));
+                        codeArea.positionCursorToLine(SourceCodeUtils.getLineNumber(sourceCode, classMember));
                     }
                 });
                 TreeItem<Label> treeItem = new TreeItem<>();
@@ -307,10 +307,9 @@ public class SmartContractDeployController implements Initializable {
             if (event.isPrimaryButtonDown()) {
                 ErrorCodeTabRow tabRow = errorTableView.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
-                    CodeAreaUtils.positionCursorToLine(codeArea,Integer.parseInt(tabRow.getLine()));
+                    codeArea.positionCursorToLine(Integer.parseInt(tabRow.getLine()));
                 }
             }
         });
     }
-
 }

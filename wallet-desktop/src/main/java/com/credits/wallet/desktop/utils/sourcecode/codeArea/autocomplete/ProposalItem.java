@@ -1,4 +1,4 @@
-package com.credits.wallet.desktop.utils.sourcecode.autocomplete;
+package com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete;
 
 import java.util.function.Consumer;
 
