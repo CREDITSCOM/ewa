@@ -41,6 +41,12 @@ public class CreditsToolboxPopup extends Popup {
 
         this.getContent().add(box);
 
+        this.focusedProperty().addListener((observable, old, newPropertyValue) -> {
+            if (!newPropertyValue) {
+                this.hide();
+            }
+        });
+
 
         codeArea.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
