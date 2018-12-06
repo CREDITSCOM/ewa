@@ -1,19 +1,13 @@
 package com.credits.wallet.desktop.utils.sourcecode.codeArea;
 
-import com.credits.wallet.desktop.AppState;
-import javafx.concurrent.Task;
 import javafx.scene.layout.Pane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
 import java.util.Collection;
-import java.util.Optional;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,13 +16,6 @@ import static java.util.Collections.singleton;
 
 public class CodeAreaUtils {
     private final static Logger LOGGER = LoggerFactory.getLogger(CodeAreaUtils.class);
-
-    private static final String[] PARENT_METHODS =
-        new String[] {"double total", "Double getBalance(String address, String currency)",
-            "TransactionData getTransaction(String transactionId)",
-            "List<TransactionData> getTransactions(String address, long offset, long limit)",
-            "List<PoolData> getPoolList(long offset, long limit)", "PoolData getPool(String poolNumber)",
-            "void sendTransaction(String account, String target, Double amount, String currency)"};
 
     private static final String[] KEYWORDS =
         new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
@@ -52,32 +39,8 @@ public class CodeAreaUtils {
 
 
     public static CreditsCodeArea initCodeArea(Pane paneCode, boolean readOnly) {
-        AppState.executor = Executors.newSingleThreadExecutor();
-
         CreditsCodeArea codeArea = new CreditsCodeArea(readOnly, paneCode.getPrefHeight(), paneCode.getPrefWidth());
-
         paneCode.getChildren().add(new VirtualizedScrollPane<>(codeArea));
-        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        codeArea.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
-            .successionEnds(Duration.ofMillis(500)).supplyTask(() -> {
-            String sourceCode = codeArea.getText();
-            Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
-                @Override
-                protected StyleSpans<Collection<String>> call() {
-                    return computeHighlighting(sourceCode);
-                }
-            };
-            AppState.executor.execute(task);
-            return task;
-        }).awaitLatest(codeArea.richChanges()).filterMap(t -> {
-            if (t.isSuccess()) {
-                return Optional.of(t.get());
-            } else {
-                t.getFailure().printStackTrace();
-                return Optional.empty();
-            }
-        }).subscribe(highlighting -> codeArea.setStyleSpans(0, highlighting));
-
         return codeArea;
     }
 
@@ -99,4 +62,6 @@ public class CodeAreaUtils {
         spansBuilder.add(emptyList(), text.length() - lastKwEnd);
         return spansBuilder.create();
     }
+
+
 }

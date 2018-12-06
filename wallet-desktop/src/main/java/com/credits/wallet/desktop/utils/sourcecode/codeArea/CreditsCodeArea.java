@@ -3,16 +3,25 @@ package com.credits.wallet.desktop.utils.sourcecode.codeArea;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.AutocompleteHelper;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup;
+import javafx.concurrent.Task;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
 
+import java.time.Duration;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils.computeHighlighting;
 import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 
 public class CreditsCodeArea extends CodeArea {
@@ -22,6 +31,7 @@ public class CreditsCodeArea extends CodeArea {
 
     private static final String DEFAULT_SOURCE_CODE =
         "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n\n    }" + "\n" + "}";
+    private ExecutorService codeAreaHighlightExecutor = Executors.newSingleThreadExecutor();
 
     public static final String SPACE_SYMBOL = " ";
     public static final String CURLY_BRACKET_SYMBOL = "{";
@@ -51,6 +61,35 @@ public class CreditsCodeArea extends CodeArea {
             }
         });
 
+        initKeyPressedLogic();
+        initRichTextLogic();
+        fillDefaultCodeSource();
+    }
+
+    private void initRichTextLogic() {
+        this.setParagraphGraphicFactory(LineNumberFactory.get(this));
+        this.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
+            .successionEnds(Duration.ofMillis(500)).supplyTask(() -> {
+            String sourceCode = this.getText();
+            Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
+                @Override
+                protected StyleSpans<Collection<String>> call() {
+                    return computeHighlighting(sourceCode);
+                }
+            };
+            codeAreaHighlightExecutor.execute(task);
+            return task;
+        }).awaitLatest(this.richChanges()).filterMap(t -> {
+            if (t.isSuccess()) {
+                return Optional.of(t.get());
+            } else {
+                t.getFailure().printStackTrace();
+                return Optional.empty();
+            }
+        }).subscribe(highlighting -> this.setStyleSpans(0, highlighting));
+    }
+
+    private void initKeyPressedLogic() {
         this.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
             KeyCode code = k.getCode();
             if (code != KeyCode.TAB) {
@@ -85,12 +124,6 @@ public class CreditsCodeArea extends CodeArea {
                 this.deletePreviousChar();
             }
         }));
-
-        if (AppState.lastSmartContract == null) {
-            this.replaceText(0, 0, DEFAULT_SOURCE_CODE);
-        } else {
-            this.replaceText(AppState.lastSmartContract);
-        }
     }
 
     private void calculateNewLinePosition() {
@@ -109,7 +142,6 @@ public class CreditsCodeArea extends CodeArea {
             replacement += StringUtils.repeat(" ", 4);
         }
         this.replaceSelection(replacement);
-        //this.selectRange(this.getCaretPosition() - 1, this.getCaretPosition() - 1);
     }
 
     public void doAutoComplete(String textToInsert) {
@@ -156,13 +188,19 @@ public class CreditsCodeArea extends CodeArea {
         this.requestFocus();
     }
 
+    public void fillDefaultCodeSource() {
+        if (AppState.lastSmartContract == null) {
+            this.replaceText(0, 0, DEFAULT_SOURCE_CODE);
+        } else {
+            this.replaceText(AppState.lastSmartContract);
+        }
+    }
+
     public void cleanAll() {
         popup.hide();
         creditsProposalsPopup.clear();
         creditsProposalsPopup.hide();
-        if (AppState.executor != null) {
-            AppState.executor.shutdown();
-        }
+        codeAreaHighlightExecutor.shutdown();
     }
 
 }
