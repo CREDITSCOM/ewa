@@ -34,7 +34,7 @@
                   <content>
                     <VBox layoutX="20.0" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
                            <children>
-                                  <TableView fx:id="approvedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view">
+                                  <TableView fx:id="approvedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view,credits-history-table-view-transaction">
                                       <columns>
                                           <TableColumn prefWidth="40.0" text="Id" />
                                           <TableColumn prefWidth="420.0" text="Source" />
@@ -52,7 +52,7 @@
                   <content>
                     <VBox minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
                            <children>
-                              <TableView fx:id="unapprovedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view">
+                              <TableView fx:id="unapprovedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view, credits-history-table-view-transaction">
                                  <columns>
                                     <TableColumn prefWidth="40.0" text="Id" />
                                     <TableColumn prefWidth="420.0" text="Source" />

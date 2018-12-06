@@ -5,11 +5,11 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TreeView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController">
     <top>
         <fx:include source="header.fxml" />
@@ -36,7 +36,7 @@
                         <VBox fx:id="paneCode" maxHeight="384.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="384.0" prefWidth="811.0" />
                         <VBox fx:id="debugPane" minHeight="95.0" prefHeight="95.0" prefWidth="811.0" style="-fx-padding:  0 0 15 0; -fx-border-width: 1 0 0 0;-fx-border-color: black;">
                             <children>
-                                <TableView fx:id="errorTableView" styleClass="credits-history-table-view"/>
+                                <TableView fx:id="errorTableView"  styleClass="credits-history-table-view"/>
                             </children>
                         </VBox>
                     </items>
