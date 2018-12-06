@@ -7,7 +7,7 @@ public class MathUtils {
         return Math.round(value * scale) / scale;
     }
 
-    public static double calcActualFee(Double value){
+    public static double calcActualFee(Double value) {
         byte sign; // sign
         int exp;   // exponent
         long frac; // mantissa
@@ -24,8 +24,7 @@ public class MathUtils {
         exp = expi + 18;
         frac = Math.round(value * 1024);
         final double _1_1024 = 1.0 / 1024;
-        double result = (sign != 0 ? -1.0 : 1.0) * frac * _1_1024 * Math.pow(10.0, exp - 18);
-        return MathUtils.round(result, 18);
+        return (sign != 0 ? -1.0 : 1.0) * frac * _1_1024 * Math.pow(10.0, exp - 18);
     }
 
 }
