@@ -8,15 +8,15 @@ import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
-import com.credits.wallet.desktop.struct.ErrorCodeTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractsUtils;
-import com.credits.wallet.desktop.utils.compiler.InMemoryCompiler;
 import com.credits.wallet.desktop.utils.compiler.model.CompilationPackage;
-import com.credits.wallet.desktop.utils.compiler.model.CompilationResult;
 import com.credits.wallet.desktop.utils.compiler.model.CompilationUnit;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.build.BuildSourceCodeError;
+import com.credits.wallet.desktop.utils.sourcecode.build.CompilationResult;
+import com.credits.wallet.desktop.utils.sourcecode.build.SourceCodeBuilder;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
@@ -71,7 +71,7 @@ public class SmartContractDeployController implements Initializable {
 
 
     @FXML
-    private TableView<ErrorCodeTabRow> errorTableView;
+    private TableView<BuildSourceCodeError> errorTableView;
 
     @FXML
     private SplitPane splitPane;
@@ -125,7 +125,7 @@ public class SmartContractDeployController implements Initializable {
         buildButton.setDisable(true);
         errorTableView.setVisible(false);
         codeArea.setDisable(true);
-        CompletableFuture.supplyAsync(() -> InMemoryCompiler.compileSourceCode(codeArea.getText()))
+        CompletableFuture.supplyAsync(() -> SourceCodeBuilder.compileSourceCode(codeArea.getText()))
             .whenComplete(handleCallback(handleBuildResult()));
     }
 
@@ -278,7 +278,7 @@ public class SmartContractDeployController implements Initializable {
         });
     }
 
-    private void refillErrorsTableView(List<ErrorCodeTabRow> listOfError) {
+    private void refillErrorsTableView(List<BuildSourceCodeError> listOfError) {
         errorTableView.getItems().clear();
         errorTableView.getItems().addAll(listOfError);
         errorTableView.setVisible(true);
@@ -286,12 +286,12 @@ public class SmartContractDeployController implements Initializable {
     }
 
     private void initErrorTableView() {
-        TableColumn<ErrorCodeTabRow, String> tabErrorsColLine = new TableColumn<>();
+        TableColumn<BuildSourceCodeError, String> tabErrorsColLine = new TableColumn<>();
         tabErrorsColLine.setText("Line");
         tabErrorsColLine.setCellValueFactory(new PropertyValueFactory<>("line"));
         tabErrorsColLine.setPrefWidth(debugPane.getPrefWidth() * 0.1);
 
-        TableColumn<ErrorCodeTabRow, String> tabErrorsColText = new TableColumn<>();
+        TableColumn<BuildSourceCodeError, String> tabErrorsColText = new TableColumn<>();
         tabErrorsColText.setText("Error");
         tabErrorsColText.setCellValueFactory(new PropertyValueFactory<>("text"));
         tabErrorsColText.setPrefWidth(debugPane.getPrefWidth() * 0.88);
@@ -305,7 +305,7 @@ public class SmartContractDeployController implements Initializable {
 
         errorTableView.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown()) {
-                ErrorCodeTabRow tabRow = errorTableView.getSelectionModel().getSelectedItem();
+                BuildSourceCodeError tabRow = errorTableView.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
                     codeArea.positionCursorToLine(Integer.parseInt(tabRow.getLine()));
                 }
