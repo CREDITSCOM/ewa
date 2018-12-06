@@ -56,6 +56,7 @@ public class CreditsProposalsPopup extends Popup {
         super();
         this.setAutoHide(true);
         defaultProposalsInit();
+        listView.setStyle("-fx-border-color: blue; -fx-background-insets: 1");
         listView.setMaxHeight(110);
 
 
@@ -66,22 +67,15 @@ public class CreditsProposalsPopup extends Popup {
         });
 
         listView.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
+            if (k.getCode().equals(KeyCode.ENTER)) {
+                doProposalItemAction();
+            }
+            if (k.getCode().equals(KeyCode.TAB)) {
+                doFirstItemAction();
+            }
             if (k.getCode().equals(KeyCode.ESCAPE)) {
                 this.clear();
                 this.hide();
-            }
-        });
-
-        listView.addEventHandler(MouseEvent.MOUSE_CLICKED, (k) -> {
-            if (k.equals(KeyCode.ESCAPE)) {
-                this.clear();
-                this.hide();
-            }
-        });
-
-        listView.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
-            if (k.getCode().equals(KeyCode.ENTER)) {
-                doProposalItemAction();
             }
         });
 
@@ -98,6 +92,12 @@ public class CreditsProposalsPopup extends Popup {
         });
 
         this.getContent().add(listView);
+    }
+
+    private void doFirstItemAction() {
+        ProposalItem proposalItem = listView.getItems().get(0);
+        proposalItem.action();
+        this.hide();
     }
 
     private void doProposalItemAction() {
