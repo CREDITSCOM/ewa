@@ -2,8 +2,8 @@ package com.credits.wallet.desktop.utils.sourcecode.building;
 
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Converter;
-import com.credits.wallet.desktop.utils.compiler.InMemoryCompiler;
-import com.credits.wallet.desktop.utils.compiler.model.CompilationPackage;
+import com.credits.general.util.compiler.InMemoryCompiler;
+import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.utils.sourcecode.EclipseJdt;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import org.eclipse.jdt.core.compiler.IProblem;

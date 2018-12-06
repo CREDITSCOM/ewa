@@ -1,10 +1,10 @@
-package com.credits.wallet.desktop.utils.compiler;
+package com.credits.general.util.compiler;
 
 
 import com.credits.general.exception.CompilationException;
-import com.credits.wallet.desktop.utils.compiler.model.CompilationPackage;
-import com.credits.wallet.desktop.utils.compiler.model.CompilationUnit;
-import com.credits.wallet.desktop.utils.compiler.model.JavaSourceFromString;
+import com.credits.general.util.compiler.model.CompilationPackage;
+import com.credits.general.util.compiler.model.CompilationUnit;
+import com.credits.general.util.compiler.model.JavaSourceFromString;
 
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;

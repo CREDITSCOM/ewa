@@ -1,4 +1,4 @@
-package com.credits.wallet.desktop.utils.compiler.model;
+package com.credits.general.util.compiler.model;
 
 import com.google.common.base.Objects;
 

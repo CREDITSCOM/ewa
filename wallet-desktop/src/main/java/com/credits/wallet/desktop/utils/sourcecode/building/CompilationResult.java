@@ -1,6 +1,6 @@
 package com.credits.wallet.desktop.utils.sourcecode.building;
 
-import com.credits.wallet.desktop.utils.compiler.model.CompilationPackage;
+import com.credits.general.util.compiler.model.CompilationPackage;
 
 import java.util.List;
 
