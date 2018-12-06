@@ -54,11 +54,26 @@ public class CreditsProposalsPopup extends Popup {
 
     public CreditsProposalsPopup() {
         super();
+        this.setAutoHide(true);
         defaultProposalsInit();
         listView.setMaxHeight(110);
 
+
+        this.focusedProperty().addListener((observable, old, newPropertyValue) -> {
+            if (!newPropertyValue) {
+                this.hide();
+            }
+        });
+
         listView.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
             if (k.getCode().equals(KeyCode.ESCAPE)) {
+                this.clear();
+                this.hide();
+            }
+        });
+
+        listView.addEventHandler(MouseEvent.MOUSE_CLICKED, (k) -> {
+            if (k.equals(KeyCode.ESCAPE)) {
                 this.clear();
                 this.hide();
             }

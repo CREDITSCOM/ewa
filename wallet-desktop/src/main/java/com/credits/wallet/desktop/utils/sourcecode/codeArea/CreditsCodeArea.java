@@ -90,6 +90,13 @@ public class CreditsCodeArea extends CodeArea {
     }
 
     private void initKeyPressedLogic() {
+
+        this.setOnMousePressed(event -> {
+            if(creditsProposalsPopup.isShowing()) {
+                creditsProposalsPopup.hide();
+            }
+        });
+
         this.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
             KeyCode code = k.getCode();
             if (code != KeyCode.TAB) {

@@ -8,6 +8,7 @@ import javafx.stage.Popup;
 public class CreditsToolboxPopup extends Popup {
     public CreditsToolboxPopup(CreditsCodeArea codeArea, boolean readOnly) {
         super();
+        this.setAutoHide(true);
         Button cut = new Button("Cut");
         cut.setPrefSize(80, 15);
         cut.setDisable(readOnly);
