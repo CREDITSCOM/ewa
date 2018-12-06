@@ -275,6 +275,7 @@ public class SmartContractDeployController implements Initializable {
 
             treeRoot.setExpanded(true);
             classTreeView.setRoot(treeRoot);
+            classTreeView.setShowRoot(false);
         });
     }
 
