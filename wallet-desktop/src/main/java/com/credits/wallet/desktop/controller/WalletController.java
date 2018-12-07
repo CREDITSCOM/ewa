@@ -300,10 +300,6 @@ public class WalletController implements Initializable {
 
         clearLabErr();
 
-        numAmount.textProperty()
-                 .addListener((observable, oldValue, newValue) -> refreshTransactionFeePercent(Converter.toBigDecimal(numFee.getText()),
-                     Converter.toBigDecimal(newValue)));
-
         numFee.textProperty().addListener(
             (observable, oldValue, newValue) -> {
                 if(AppState.decimalSeparator.equals(",")) {
@@ -312,10 +308,6 @@ public class WalletController implements Initializable {
                 if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue)) { // check newValue is number
                     return;
                 }
-                refreshTransactionFeePercent(
-                        Converter.toBigDecimal(newValue),
-                        Converter.toBigDecimal(numAmount.getText())
-                );
                 double actualFee = MathUtils.calcActualFee(Converter.toDouble(newValue));
                 this.actualFeeLabel.setText(Converter.toString(actualFee));
             }
@@ -339,13 +331,4 @@ public class WalletController implements Initializable {
             noClearForm6 = false;
         }
     }
-
-    private void refreshTransactionFeePercent(BigDecimal transactionFeeValue, BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) == 0) {
-            transactionFeePercent = BigDecimal.ZERO;
-        } else {
-            transactionFeePercent = (transactionFeeValue.multiply(new BigDecimal("100"))).divide(amount, 18, RoundingMode.HALF_UP);
-        }
-    }
-
 }
