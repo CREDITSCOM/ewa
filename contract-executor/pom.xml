@@ -37,11 +37,18 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/classes</outputDirectory>
+                            <outputDirectory>${basedir}/target</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
                                     <filtering>true</filtering>
+                                </resource>
+                                <resource>
+                                    <filtering>false</filtering>
+                                    <directory>..</directory>
+                                    <includes>
+                                        <include>**/*.properties</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>
