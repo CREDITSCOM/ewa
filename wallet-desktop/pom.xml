@@ -7,7 +7,7 @@
     <groupId>com.credits.wallet</groupId>
     <artifactId>wallet-desktop</artifactId>
     <packaging>jar</packaging>
-    <version>1.${buildNumber}-${git.commit.id.abbrev}-${git.build.user.name}</version>
+    <version>1.${buildNumber}</version>
 
     <name>Wallet-desktop</name>
 
