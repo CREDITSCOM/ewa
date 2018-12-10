@@ -2,7 +2,9 @@ package com.credits.service.contract;
 
 
 import com.credits.client.executor.pojo.MethodDescriptionData;
+import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.thrift.generated.MethodArgument;
@@ -13,10 +15,12 @@ import com.credits.general.util.Converter;
 import com.credits.service.ServiceTest;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractUtils;
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +30,7 @@ import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 public class ContractExecutorTest extends ServiceTest {
@@ -86,13 +91,13 @@ public class ContractExecutorTest extends ServiceTest {
             {ContractUtils.mapObjectToVariant(10)}
         },500L).getContractState();
         ReturnValue rvTotalAfterSumming = ceService.execute(address, bytecode, contractState, "getTotal", new Variant[][]{},500L);
-        assertEquals(11, rvTotalInitialized.getVariantsList().get(0).getFieldValue());
+        assertEquals(11, rvTotalAfterSumming.getVariantsList().get(0).getFieldValue());
 
         contractState = ceService.execute(address, bytecode, contractState, "addTokens", new Variant[][]{
             {ContractUtils.mapObjectToVariant(-11)}
         },500L).getContractState();
         ReturnValue rvTotalAfterSubtraction = ceService.execute(address, bytecode, contractState, "getTotal", new Variant[][]{},500L);
-        assertEquals(0, rvTotalInitialized.getVariantsList().get(0).getFieldValue());
+        assertEquals(0, rvTotalAfterSubtraction.getVariantsList().get(0).getFieldValue());
     }
 
     @Test
@@ -119,5 +124,38 @@ public class ContractExecutorTest extends ServiceTest {
             new MethodDescriptionData("java.lang.String","getInitiatorAddress", new ArrayList<>()));
 
         assertTrue(ceService.getContractsMethods(bytecode).containsAll(expectedMethods));
+    }
+
+    @Test
+    public void multipleMethodCall() throws Exception {
+        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+        byte[] bytecode = compile(sourceCode, "Contract", "TKN");
+        byte[] contractState = ceService.execute(address, bytecode, null, null, null, 500).getContractState();
+
+        ReturnValue singleCallResult = ceService.execute(address, bytecode, contractState, "addTokens", new Variant[][] {{Variant.v_i32(10)}}, 500);
+        ReturnValue multiplyCallResult = ceService.execute(address, bytecode, contractState, "addTokens", new Variant[][]{
+            {Variant.v_i32(10)},
+            {Variant.v_i32(10)},
+            {Variant.v_i32(10)},
+            {Variant.v_i32(10)}}, 500);
+        assertNotEquals(singleCallResult.getContractState(), multiplyCallResult.getContractState());
+
+        singleCallResult = ceService.execute(address, bytecode, contractState, "getTotal", null, 500);
+        TestCase.assertEquals(0, singleCallResult.getVariantsList().get(0).getV_i32());
+    }
+
+    @Test
+    public void compileClassCall() {
+        String sourceCode = null;
+        try {
+            sourceCode = readSourceCode("/serviceTest/Contract.java");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            ceService.compileClass(sourceCode);
+        } catch (CompilationErrorException | ContractExecutorException | CompilationException e) {
+            e.printStackTrace();
+        }
     }
 }

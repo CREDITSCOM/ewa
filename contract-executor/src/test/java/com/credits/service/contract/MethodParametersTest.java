@@ -9,8 +9,17 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+
+import static com.credits.general.thrift.generated.Variant.v_bool;
+import static com.credits.general.thrift.generated.Variant.v_double;
+import static com.credits.general.thrift.generated.Variant.v_i16;
+import static com.credits.general.thrift.generated.Variant.v_i32;
+import static com.credits.general.thrift.generated.Variant.v_i64;
+import static com.credits.general.thrift.generated.Variant.v_list;
+import static com.credits.general.thrift.generated.Variant.v_string;
+import static java.util.Arrays.asList;
 
 public class MethodParametersTest extends ServiceTest {
     private byte[] contractBytecode;
@@ -20,6 +29,30 @@ public class MethodParametersTest extends ServiceTest {
     public void setUp() throws Exception {
         super.setUp();
         contractBytecode = compileSourceCode("/methodParametersTest/Contract.java");
+    }
+    @Test
+    public void primitiveExecutionTest() throws ContractExecutorException {
+        Variant[][] params = {{v_string("test string"), v_string("200"), v_string("3f")}};
+        ceService.execute(address, contractBytecode, null, "foo", params,300);
+    }
+
+    @Test
+    public void objectExecutionTest() throws ContractExecutorException {
+        Variant[][] params = {{v_string("test string"), v_string("200d"), v_string("3")}};
+        ceService.execute(address, contractBytecode,null, "foo", params,300);
+    }
+
+    @Test
+    public void arrayExecutionTest() throws ContractExecutorException {
+
+        Variant[][] params = {{v_list(asList(v_string("test1"), v_string("test2"), v_string("test3")))}};
+        ceService.execute(address, contractBytecode,null, "main", params,300);
+
+        params = new Variant[][] {{v_list(asList(v_i32(1), v_i32(2), v_i32(3)))}};
+        ceService.execute(address, contractBytecode,null, "main", params,300);
+
+        params = new Variant[][] {{v_list(asList(v_double(1d), v_double(2d), v_double(3d)))}};
+        ceService.execute(address, contractBytecode,null, "main", params,300);
     }
 
     @Test
@@ -115,14 +148,27 @@ public class MethodParametersTest extends ServiceTest {
     @Ignore
     @Test
     public void moreVariousParameters() throws ContractExecutorException {
-
-        String[] stringParams = {
-            "3f", "4f", "1", "2", "200d", "220d",
-            "{\"string01\",\"string02\",\"string03\"},{1,2,3,4},{5,6,7,8},{1d,2d,3d},{4d,5d,6d},{true,true,false},{true,true,false},{(short)1,(short)2},{1l,2l,3l},{4l,5l,6l},{1f,.2f},{3f,.4f}"
-        };
-        List list = new ArrayList<>(Arrays.asList(stringParams));
-        Variant[][] params = {{}};
-        ContractUtils.mapObjectToVariant(list).getV_list().toArray(params);
-        ceService.execute(address,contractBytecode,null,"foo",params, 500L);
+        List<Variant> list = new LinkedList<>();
+        list.add(v_string("string01"));
+        list.add(v_string("string01"));
+        list.add(v_string("string01"));
+        Variant[] params =
+            {v_double(3f), v_double(4f), v_i32(1), v_i32(2), v_double(200d), v_double(220d),
+                v_list(list),
+                v_list(asList(v_i32(1), v_i32(2), v_i32(3), v_i32(4))),
+                v_list(asList(v_i32(5), v_i32(6), v_i32(7), v_i32(8))),
+                v_list(asList(v_double(1d), v_double(2d), v_double(3d))),
+                v_list(asList(v_double(4d), v_double(5d), v_double(6d))),
+                v_list(asList(v_bool(true), v_bool(true), v_bool(false))),
+                v_list(asList(v_bool(true), v_bool(true), v_bool(false))),
+                v_list(asList(v_i16((short) 1), v_i16((short) 2))),
+                v_list(asList(v_i64(1L), v_i64(2L), v_i64(3L))),
+                v_list(asList(v_i64(4L), v_i64(5L), v_i64(6L))),
+                v_list(asList(v_double(1f), v_double(.2f))), v_list(asList(v_double(3f), v_double(.4f)))};
+//        List list = new ArrayList<>(asList(stringParams));
+//        Variant[] params = {};
+//        ContractUtils.mapObjectToVariant(list).getV_list().toArray(params);
+        byte[] state = ceService.execute(address, contractBytecode, null, null, null, 500L).getContractState();
+        ceService.execute(address, contractBytecode, state, "foo", new Variant[][]{params}, 500L);
     }
 }

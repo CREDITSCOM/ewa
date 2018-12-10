@@ -138,45 +138,6 @@ public class Contract extends SmartContract {
         System.out.println("Done");
     }
 
-    public void foo(
-            float param01,
-            Float param02,
-            int param03,
-            Integer param04,
-            double param05,
-            Double param06,
-            String[] param07,
-            int[] param08,
-            Integer[] param09,
-            double[] param10,
-            Double[] param11,
-            boolean[] param12,
-            Boolean[] param13,
-            short[] param14,
-            long[] param15,
-            Long[] param16,
-            float[] param17,
-            Float[] param18
-    ) {
-        System.out.println("param01 = " + param01);
-        System.out.println("param02 = " + param02);
-        System.out.println("param03 = " + param03);
-        System.out.println("param04 = " + param04);
-        System.out.println("param05 = " + param05);
-        System.out.println("param06 = " + param06);
-        System.out.println("param07 = " + param07);
-        System.out.println("param08 = " + param08);
-        System.out.println("param09 = " + param09);
-        System.out.println("param10 = " + param10);
-        System.out.println("param11 = " + param11);
-        System.out.println("param12 = " + param12);
-        System.out.println("param13 = " + param13);
-        System.out.println("param14 = " + param14);
-        System.out.println("param15 = " + param15);
-        System.out.println("param16 = " + param16);
-        System.out.println("param17 = " + param17);
-        System.out.println("param18 = " + param18);
-    }
 
     public void globalVarInstance() {
         System.out.println("intVar value = " + intVar);

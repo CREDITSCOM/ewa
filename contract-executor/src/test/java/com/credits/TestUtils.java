@@ -16,7 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
+
+import static java.util.Collections.singletonList;
 
 public class TestUtils {
     public static String encrypt(byte[] bytes) throws CreditsException {
@@ -59,9 +60,9 @@ public class TestUtils {
             StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(null, null, null);
 
             Iterable<? extends JavaFileObject> compilationUnits =
-                stdFileManager.getJavaFileObjectsFromFiles(Collections.singletonList(source));
+                stdFileManager.getJavaFileObjectsFromFiles(singletonList(source));
 
-            JavaCompiler.CompilationTask task = compiler.getTask(null, null, diagnostics, null, null, compilationUnits);
+            JavaCompiler.CompilationTask task = compiler.getTask(null, null, diagnostics, singletonList("-parameters"), null, compilationUnits);
             Boolean isCompiled = task.call();
 
             if (!isCompiled) {

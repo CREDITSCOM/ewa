@@ -1,6 +1,7 @@
 package com.credits.general.util.compiler;
 
 
+
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.exception.CompilationException;
 import com.credits.general.util.GeneralSourceCodeUtils;
@@ -54,7 +55,7 @@ public class InMemoryCompiler {
 		}
 
 		// add classpath to options
-		List<String> options = Arrays.asList("-classpath", classpath);
+		List<String> options = Arrays.asList("-parameters", "-classpath", classpath);
 
 		// java source from string
 		List<JavaSourceFromString> strFiles = new ArrayList<>();
@@ -90,19 +91,19 @@ public class InMemoryCompiler {
 	String loadJdkPathFromEnvironmentVariables() throws CompilationException {
 		Pattern regexpJdkPath = Pattern.compile("jdk[\\d]\\.[\\d]\\.[\\d]([\\d._])");
 		String jdkBinPath = Arrays.stream(System.getenv("Path").split(";"))
-				.filter(it -> regexpJdkPath.matcher(it).find())
-				.findFirst()
-				.orElseThrow(() -> new CompilationException("Cannot compile the file. The java compiler has not been found, Java Development Kit should be installed."));
+			.filter(it -> regexpJdkPath.matcher(it).find())
+			.findFirst()
+			.orElseThrow(() -> new CompilationException("Cannot compile the file. The java compiler has not been found, Java Development Kit should be installed."));
 		return jdkBinPath.substring(0, jdkBinPath.length() - 4); // remove last 4 symbols "\bin"
 	}
 
 	String loadClasspath() throws UnsupportedEncodingException {
 		StringBuilder sb = new StringBuilder();
 		URLClassLoader urlClassLoader = (URLClassLoader) Thread
-				.currentThread().getContextClassLoader();
+			.currentThread().getContextClassLoader();
 		for (URL url : urlClassLoader.getURLs()) {
 			sb.append(URLDecoder.decode(url.getFile(), "UTF-8")).append(
-					System.getProperty("path.separator"));
+				System.getProperty("path.separator"));
 		}
 		return sb.toString();
 	}
