@@ -37,7 +37,7 @@ public class ContractInteractionService {
     public void getSmartContractBalance(String smartContractAddress, Callback<BigDecimal> callback) {
         CompletableFuture
             .supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress),threadPool)
-            .thenApply((sc) -> new BigDecimal(executeSmartContract(account, sc, BALANCE_OF_METHOD, variantOf(STRING_TYPE, account))))
+            .thenApply((sc) -> new BigDecimal(executeSmartContract(account, sc, BALANCE_OF_METHOD, AppState.DEFAULT_EXECUTION_TIME, variantOf(STRING_TYPE, account))))
             .whenComplete(handleCallback(callback));
     }
 
@@ -56,7 +56,7 @@ public class ContractInteractionService {
     }
 
 
-    private String executeSmartContract(String smartContractAddress, SmartContractData sc, String methodName, Variant... params) {
+    private String executeSmartContract(String smartContractAddress, SmartContractData sc, String methodName, long executionTime, Variant... params) {
         if (sc == null || sc.getObjectState().length == 0) {
             throw new NodeClientException("SmartContract " + smartContractAddress + " not found");
         }
@@ -66,7 +66,7 @@ public class ContractInteractionService {
             sc.getSmartContractDeployData().getByteCode(),
             sc.getObjectState(),
             methodName,
-            asList(params));
+            asList(params),executionTime);
 
         if(response.getCode() != SUCCESS) {
             throw new NodeClientException("Failure. Node response: " + response.getMessage());

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface ContractExecutorThriftApi {
 
-    ExecuteByteCodeResult executeContractMethod(byte[] address, byte[] bytecode, byte[] objectState, String method, List<Variant> params) throws ContractExecutorClientException;
+    ExecuteByteCodeResult executeContractMethod(byte[] address, byte[] bytecode, byte[] objectState, String method, List<Variant> params, long executionTime) throws ContractExecutorClientException;
 
     GetContractMethodsResult getContractMethods(byte[] address) throws ContractExecutorClientException;
 }

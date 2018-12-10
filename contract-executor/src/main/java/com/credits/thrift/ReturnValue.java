@@ -1,18 +1,19 @@
 package com.credits.thrift;
 
+import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 
-import java.util.Map;
+import java.util.List;
 
 public class ReturnValue {
     private byte[] contractState;
-    private Variant variant;
-    private Map<String, Variant> contractVariables;
+    private List<Variant> variants;
+    private List<APIResponse> statuses;
 
-    public ReturnValue(byte[] contractState, Variant variant, Map<String, Variant> contractVariables) {
+    public ReturnValue(byte[] contractState, List<Variant> variant, List<APIResponse> statuses) {
         this.contractState = contractState;
-        this.variant = variant;
-        this.contractVariables = contractVariables;
+        this.variants = variant;
+        this.statuses = statuses;
     }
 
     public byte[] getContractState() {
@@ -23,19 +24,19 @@ public class ReturnValue {
         this.contractState = contractState;
     }
 
-    public Variant getVariant() {
-        return variant;
+    public List<Variant> getVariantsList() {
+        return variants;
     }
 
-    public void setVariant(Variant variant) {
-        this.variant = variant;
+    public void setVariant(List<Variant> variant) {
+        this.variants = variant;
     }
 
-    public Map<String, Variant> getContractVariables() {
-        return contractVariables;
+    public List<APIResponse> getStatusesList() {
+        return statuses;
     }
 
-    public void setContractVariables(Map<String, Variant> contractVariables) {
-        this.contractVariables = contractVariables;
+    public void setStatuses(List<APIResponse> statuses) {
+        this.statuses = statuses;
     }
 }

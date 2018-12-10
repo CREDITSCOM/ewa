@@ -1,4 +1,6 @@
-package com.credits.client.executor.pojo;
+package com.credits.thrift;
+
+import com.credits.client.executor.thrift.generated.MethodArgument;
 
 import java.util.List;
 
@@ -6,15 +8,13 @@ import java.util.List;
  * Created by Igor Goryunov on 08.10.2018
  */
 public class MethodDescriptionData {
-    public String name;
-    public List<String> argTypes;
-    public String returnType;
+    public final String returnType;
+    public final  String name;
+    public final List<MethodArgument> args;
 
-    public MethodDescriptionData(){}
-
-    public MethodDescriptionData(String name, List<String> argTypes, String returnType) {
+    public MethodDescriptionData(String returnType, String name,  List<MethodArgument> args) {
         this.name = name;
-        this.argTypes = argTypes;
+        this.args = args;
         this.returnType = returnType;
     }
 
@@ -32,7 +32,7 @@ public class MethodDescriptionData {
         if (name != null ? !name.equals(that.name) : that.name != null) {
             return false;
         }
-        if (argTypes != null ? !argTypes.equals(that.argTypes) : that.argTypes != null) {
+        if (args != null ? !args.equals(that.args) : that.args != null) {
             return false;
         }
         return returnType != null ? returnType.equals(that.returnType) : that.returnType == null;
@@ -41,14 +41,14 @@ public class MethodDescriptionData {
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (argTypes != null ? argTypes.hashCode() : 0);
+        result = 31 * result + (args != null ? args.hashCode() : 0);
         result = 31 * result + (returnType != null ? returnType.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "MethodDescriptionData{" + "name='" + name + '\'' + ", argTypes=" + argTypes + ", returnType='" + returnType + '\'' + '}';
+        return "MethodDescriptionData{" + "name='" + name + '\'' + ", args=" + args + ", returnType='" + returnType + '\'' + '}';
     }
 
 }

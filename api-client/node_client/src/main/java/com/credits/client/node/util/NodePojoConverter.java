@@ -95,7 +95,7 @@ public class NodePojoConverter {
         data.setSource(transaction.getSource());
         data.setTarget(transaction.getTarget());
         data.setBalance(NodePojoConverter.amountToBigDecimal(transaction.getBalance()));
-        data.setCommentBytes(transaction.getComment());
+        data.setCommentBytes(transaction.getUserFields());
         if (transaction.getSmartContract() != null) {
             data.setMethod(transaction.getSmartContract().getMethod());
             data.setParams(variantListToObjectList(transaction.getSmartContract().getParams()));
@@ -126,7 +126,7 @@ public class NodePojoConverter {
         } else {
             data.setBalance(NodePojoConverter.amountToBigDecimal(transaction.getBalance()));
         }
-        data.setCommentBytes(transaction.getComment());
+        data.setCommentBytes(transaction.getUserFields());
         return data;
     }
 
@@ -250,7 +250,7 @@ public class NodePojoConverter {
         transaction.target = ByteBuffer.wrap(transactionData.getTarget());
         transaction.amount = bigDecimalToAmount(transactionData.getAmount());
         transaction.fee = new AmountCommission(transactionData.getOfferedMaxFee());
-        transaction.comment = ByteBuffer.wrap(transactionData.getCommentBytes());
+        transaction.userFields = ByteBuffer.wrap(transactionData.getCommentBytes());
         transaction.signature = ByteBuffer.wrap(transactionData.getSignature());
         return transaction;
     }

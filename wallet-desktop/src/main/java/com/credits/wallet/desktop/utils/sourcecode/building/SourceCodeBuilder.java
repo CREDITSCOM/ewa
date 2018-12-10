@@ -2,6 +2,7 @@ package com.credits.wallet.desktop.utils.sourcecode.building;
 
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralSourceCodeUtils;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.utils.sourcecode.EclipseJdt;
@@ -16,7 +17,7 @@ import java.util.List;
 public class SourceCodeBuilder {
     public static CompilationResult compileSourceCode(String sourceCode) {
         CompilationPackage compilationPackage = null;
-        String className = SourceCodeUtils.parseClassName(sourceCode, "SmartContract");
+        String className = GeneralSourceCodeUtils.parseClassName(sourceCode, "SmartContract");
         List<BuildSourceCodeError> errorsList = new ArrayList<>();
         try {
             SourceCodeUtils.checkClassAndSuperclassNames(className, sourceCode);

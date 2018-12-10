@@ -47,7 +47,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
         String sourceCode = readSourceCode("/thriftIntegrationTest/Contract.java");
         contractBytecode = compile(sourceCode, "Contract", "TKN");
 
-        contractState = ceService.execute(address, contractBytecode, null, null, null).getContractState();
+        contractState = ceService.execute(address, contractBytecode, null, null, null,500L).getContractState();
     }
 
     @After
@@ -60,7 +60,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     public void execute_contract_using_bytecode_getBalance() throws Exception {
         when(mockNodeApiService.getBalance(any())).thenReturn(new BigDecimal(555));
         String balance = (String) ceService.execute(address, contractBytecode,
-            contractState, "balanceGet", new Variant[0]).getVariant().getFieldValue();
+            contractState, "balanceGet", new Variant[][] {},500L).getVariantsList().get(0).getFieldValue();
         assertEquals("555", balance);
     }
 
@@ -68,7 +68,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     public void execute_contract_method_with_variant_parameters() throws ContractExecutorException {
         Integer newValue =
         ceService.execute(address, contractBytecode,
-            contractState, "addValue", new Variant[]{new Variant(Variant._Fields.V_I32, 112233)}).getVariant().getV_i32();
+            contractState, "addValue", new Variant[][]{{new Variant(Variant._Fields.V_I32, 112233)}},500L).getVariantsList().get(0).getV_i32();
         assertEquals(112233, newValue.intValue());
 
     }

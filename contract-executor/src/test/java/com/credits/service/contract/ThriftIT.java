@@ -2,6 +2,7 @@ package com.credits.service.contract;
 
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.pojo.SmartContractDeployData;
+import com.credits.general.thrift.generated.TokenStandart;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Converter;
 import com.credits.service.ServiceTest;
@@ -35,11 +36,11 @@ public class ThriftIT extends ServiceTest {
             new SmartContractData(
                     address,
                     address,
-                    new SmartContractDeployData(sourceCode, contractBytecode, (short)0),
+                    new SmartContractDeployData(sourceCode, contractBytecode, TokenStandart.CreditsBasic),
                     null
             ));
 
-        contractState = ceService.execute(address, contractBytecode, null, null, null).getContractState();
+        contractState = ceService.execute(address, contractBytecode, null, null, null, 500L).getContractState();
     }
 
     @After
@@ -51,14 +52,14 @@ public class ThriftIT extends ServiceTest {
     @Ignore //No enough permissions
     @Test
     public void execute_contract_using_bytecode_getBalance() throws Exception {
-        ceService.execute(address, contractBytecode, contractState, "balanceGet", new Variant[0]);
+        ceService.execute(address, contractBytecode, contractState, "balanceGet", new Variant[][]{{}},500L);
     }
 
 
     @Ignore
     @Test
     public void execute_contract_using_bytecode_sendTransaction() throws Exception {
-        ceService.execute(address, contractBytecode, contractState, "sendZeroCS", new Variant[0]);
+        ceService.execute(address, contractBytecode, contractState, "sendZeroCS", new Variant[][]{},500L);
     }
 
 }

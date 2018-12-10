@@ -39,9 +39,9 @@ public class ContractExecutorThriftApiClient implements ContractExecutorThriftAp
     }
 
     @Override
-    public ExecuteByteCodeResult executeContractMethod(byte[] address, byte[] bytecode, byte[] objectState, String method, List<Variant> params) throws ContractExecutorClientException {
+    public ExecuteByteCodeResult executeContractMethod(byte[] address, byte[] bytecode, byte[] objectState, String method, List<Variant> params, long executionTime) throws ContractExecutorClientException {
         Client client = pool.getResource();
-        return callThrift(client, () -> client.executeByteCode(ByteBuffer.wrap(address), ByteBuffer.wrap(bytecode), ByteBuffer.wrap(objectState), method, params));
+        return callThrift(client, () -> client.executeByteCode(ByteBuffer.wrap(address), ByteBuffer.wrap(bytecode), ByteBuffer.wrap(objectState), method, params, executionTime));
     }
 
     @Override

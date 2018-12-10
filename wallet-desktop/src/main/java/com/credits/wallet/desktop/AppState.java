@@ -25,6 +25,7 @@ public class AppState {
     public static final int CREDITS_DECIMAL = 18;
     public static final BigDecimal FEE_TRAN_AMOUNT = new BigDecimal("0.1");
     public static final Short OFFERED_MAX_FEE = 0x6648;
+    public static final int DEFAULT_EXECUTION_TIME = 1000;
 
 
     public static ConcurrentHashMap<String, ConcurrentHashMap<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();

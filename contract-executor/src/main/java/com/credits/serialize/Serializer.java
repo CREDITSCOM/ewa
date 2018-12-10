@@ -27,8 +27,7 @@ public class Serializer {
         return instance;
     }
 
-    public static byte[] serialize(String address, Object instance) throws ContractExecutorException {
-        String objFile = SER_SOURCE_FOLDER_PATH + address + separator + serFileName;
+    public static byte[] serialize(Object instance) throws ContractExecutorException {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ObjectOutputStream ous = new ObjectOutputStream(baos)) {

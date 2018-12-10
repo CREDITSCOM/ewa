@@ -5,7 +5,9 @@ import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.pojo.SmartContractDeployData;
+import com.credits.general.thrift.generated.TokenStandart;
 import com.credits.general.util.Callback;
+import com.credits.general.util.GeneralSourceCodeUtils;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.wallet.desktop.AppState;
@@ -170,7 +172,7 @@ public class SmartContractDeployController implements Initializable {
     @FXML
     private void handleDeploy() {
         try {
-            String javaCode = SourceCodeUtils.normalizeSourceCode(codeArea.getText());
+            String javaCode = GeneralSourceCodeUtils.normalizeSourceCode(codeArea.getText());
             if (compilationPackage == null) {
                 buildButton.setDisable(false);
                 deployButton.setDisable(true);
@@ -182,7 +184,7 @@ public class SmartContractDeployController implements Initializable {
                     byte[] byteCode = compilationUnit.getBytecode();
 
                     SmartContractDeployData smartContractDeployData =
-                        new SmartContractDeployData(javaCode, byteCode, (short) 0
+                        new SmartContractDeployData(javaCode, byteCode, TokenStandart.CreditsBasic
                             // TODO refactor, put real tokenStandart value
                         );
 

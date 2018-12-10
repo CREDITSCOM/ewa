@@ -53,7 +53,7 @@ public class ContractUtils {
         try {
             Constructor constructor = clazz.getConstructor(String.class);
             Object instance = constructor.newInstance(address);
-            return new DeployReturnValue(serialize(address, instance),ContractUtils.getContractVariables(instance));
+            return new DeployReturnValue(serialize(instance),ContractUtils.getContractVariables(instance));
         } catch (IllegalAccessException | NoSuchMethodException ignored) {
         } catch (InstantiationException | InvocationTargetException e) {
             throw new ContractExecutorException(
@@ -62,7 +62,7 @@ public class ContractUtils {
 
         try {
             Object instance = clazz.newInstance();
-            return new DeployReturnValue(serialize(address, instance), ContractUtils.getContractVariables(instance));
+            return new DeployReturnValue(serialize(instance), ContractUtils.getContractVariables(instance));
         } catch (InstantiationException | IllegalAccessException e) {
             throw new ContractExecutorException(
                 "Cannot create new instance of the contract: " + address + ". Reason: " + getRootCauseMessage(e), e);

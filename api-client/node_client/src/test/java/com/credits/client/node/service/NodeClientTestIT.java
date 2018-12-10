@@ -12,6 +12,7 @@ import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.thrift.ThriftClientPool;
+import com.credits.general.thrift.generated.TokenStandart;
 import com.credits.general.util.Callback;
 import com.credits.general.util.exception.ConverterException;
 import org.junit.Assert;
@@ -135,7 +136,7 @@ public class NodeClientTestIT {
         long transactionId = 12327;
         String source = "4ESD7KpGzJCfDL8pZKhMfcfekqdoBdjSBUF5FiJdkBAC";
         String target = "transactionTarget";
-        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("sourceCode", address.getBytes(), (short)0);
+        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("sourceCode", address.getBytes(), TokenStandart.CreditsBasic);
         SmartContractInvocationData scData = new SmartContractInvocationData(smartContractDeployData, "method", null, true);
         TransactionFlowData transactionData = new TransactionFlowData(transactionId, decodeFromBASE58(source), decodeFromBASE58(target), new BigDecimal(1), (short) 0x001,null, null);
         SmartContractTransactionFlowData smartContractFlowData = new SmartContractTransactionFlowData(transactionData,scData);

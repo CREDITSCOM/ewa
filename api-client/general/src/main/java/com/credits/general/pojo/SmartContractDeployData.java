@@ -1,5 +1,7 @@
 package com.credits.general.pojo;
 
+import com.credits.general.thrift.generated.TokenStandart;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -12,9 +14,9 @@ public class SmartContractDeployData implements Serializable {
     private final String sourceCode;
     private final byte[] byteCode;
     private final String hashState; //unused
-    private final short tokenStandard;
+    private final TokenStandart tokenStandard;
 
-    public SmartContractDeployData(String sourceCode, byte[] byteCode,  short tokenStandard) {
+    public SmartContractDeployData(String sourceCode, byte[] byteCode,  TokenStandart tokenStandard) {
         this.sourceCode = sourceCode;
         this.byteCode = byteCode;
         this.tokenStandard = tokenStandard;
@@ -33,7 +35,7 @@ public class SmartContractDeployData implements Serializable {
         return hashState;
     }
 
-    public short getTokenStandard() {
+    public TokenStandart getTokenStandard() {
         return tokenStandard;
     }
 
@@ -67,7 +69,7 @@ public class SmartContractDeployData implements Serializable {
         int result = (sourceCode != null ? sourceCode.hashCode() : 0);
         result = 31 * result + Arrays.hashCode(byteCode);
         result = 31 * result + (hashState != null ? hashState.hashCode() : 0);
-        result = 31 * result + tokenStandard;
+        result = 31 * result + tokenStandard.hashCode();
         return result;
     }
 }

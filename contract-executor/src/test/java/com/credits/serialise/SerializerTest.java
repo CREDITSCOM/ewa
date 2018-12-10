@@ -16,7 +16,7 @@ public class SerializerTest {
     public void serialize_deserialize() throws ContractExecutorException {
         Contract smartContract = new Contract();
         smartContract.addTotal(100);
-        byte[] contractState = serialize(address, smartContract);
+        byte[] contractState = serialize(smartContract);
 
 
         Contract desObject = (Contract) deserialize(contractState, getClass().getClassLoader());

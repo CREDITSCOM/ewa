@@ -51,13 +51,13 @@ public class SecurityTest extends ServiceTest {
     public void setUp() throws Exception {
         super.setUp();
         bytecode = compileSourceCode("/securityTest/Contract.java");
-        contractState = ceService.execute(address, bytecode, null, null, null).getContractState();
+        contractState = ceService.execute(address, bytecode, null, null, null,500L).getContractState();
     }
 
     @Test
     public void test() throws Exception {
         try {
-            ceService.execute(address, bytecode, contractState, methodName, arg != null ? new Variant[] {arg} : new Variant[]{});
+            ceService.execute(address, bytecode, contractState, methodName, arg != null ? new Variant[][] {{arg}} : new Variant[][]{{}},500L);
         } catch (ContractExecutorException e) {
             System.out.println(e.getMessage());
             if (!errorExpected || !e.getMessage().contains("AccessControlException")) {

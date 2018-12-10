@@ -1,11 +1,14 @@
 package com.credits.general.util.compiler;
 
 
+import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.exception.CompilationException;
+import com.credits.general.util.GeneralSourceCodeUtils;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.compiler.model.JavaSourceFromString;
 
+import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
@@ -102,6 +105,26 @@ public class InMemoryCompiler {
 					System.getProperty("path.separator"));
 		}
 		return sb.toString();
+	}
+
+	public static CompilationPackage compileSourceCode(String sourceCode) throws CompilationException, CompilationErrorException {
+		String className = GeneralSourceCodeUtils.parseClassName(sourceCode, "SmartContract");
+		CompilationPackage compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
+
+		if (!compilationPackage.isCompilationStatusSuccess()) {
+			DiagnosticCollector collector = compilationPackage.getCollector();
+			List<Diagnostic> diagnostics = collector.getDiagnostics();
+			List<CompilationErrorException.Error> errors = new ArrayList<>();
+			diagnostics.forEach(action -> {
+				CompilationErrorException.Error error = new CompilationErrorException.Error(
+					action.getLineNumber(),
+					action.getMessage(null)
+				);
+				errors.add(error);
+			});
+			throw new CompilationErrorException(errors);
+		}
+		return compilationPackage;
 	}
 
 }
