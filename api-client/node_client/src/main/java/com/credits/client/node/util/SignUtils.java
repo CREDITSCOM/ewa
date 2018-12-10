@@ -3,7 +3,7 @@ package com.credits.client.node.util;
 import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.thrift.generated.Amount;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,24 +80,24 @@ public class SignUtils {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            byte[] idBytes = Converter.toByteArrayLittleEndian(tStruct.getId(), 8);
+            byte[] idBytes = GeneralConverter.toByteArrayLittleEndian(tStruct.getId(), 8);
             idBytes = ArrayUtils.remove(idBytes, 7); // delete two last bytes
             idBytes = ArrayUtils.remove(idBytes, 6);
             os.write(idBytes);
             os.write(tStruct.getSource());
             os.write(tStruct.getTarget());
-            os.write(Converter.toByteArrayLittleEndian(amountInt, 4));
-            os.write(Converter.toByteArrayLittleEndian(amountFrac, 8));
-            os.write(Converter.toByteArrayLittleEndian(tStruct.getOfferedMaxFee(), 2));
-            os.write(Converter.toByteArrayLittleEndian(tStruct.getCurrency(), 1));
-            os.write(Converter.toByteArrayLittleEndian(ufNum, 1));
+            os.write(GeneralConverter.toByteArrayLittleEndian(amountInt, 4));
+            os.write(GeneralConverter.toByteArrayLittleEndian(amountFrac, 8));
+            os.write(GeneralConverter.toByteArrayLittleEndian(tStruct.getOfferedMaxFee(), 2));
+            os.write(GeneralConverter.toByteArrayLittleEndian(tStruct.getCurrency(), 1));
+            os.write(GeneralConverter.toByteArrayLittleEndian(ufNum, 1));
             if (tStruct.getSmartContractBytes()!= null) {
-                os.write(Converter.toByteArrayLittleEndian(smartContractLen, 4));
-                os.write(Converter.toByteArrayLittleEndian(tStruct.getSmartContractBytes(), smartContractLen));
+                os.write(GeneralConverter.toByteArrayLittleEndian(smartContractLen, 4));
+                os.write(GeneralConverter.toByteArrayLittleEndian(tStruct.getSmartContractBytes(), smartContractLen));
             }
             if (isCommentBytesExists) {
-                os.write(Converter.toByteArrayLittleEndian(commentBytes.length, 4));
-                os.write(Converter.toByteArrayLittleEndian(commentBytes, commentBytes.length));
+                os.write(GeneralConverter.toByteArrayLittleEndian(commentBytes.length, 4));
+                os.write(GeneralConverter.toByteArrayLittleEndian(commentBytes, commentBytes.length));
             }
         } catch (IOException e) {
             // do nothing - never happen

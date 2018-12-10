@@ -18,7 +18,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.credits.general.util.Converter.encodeToBASE58;
+import static com.credits.general.util.GeneralConverter.encodeToBASE58;
 import static java.util.stream.Collectors.toList;
 
 public class ContractExecutorHandler implements ContractExecutor.Iface {

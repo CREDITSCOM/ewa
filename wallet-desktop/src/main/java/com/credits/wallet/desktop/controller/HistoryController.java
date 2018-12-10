@@ -7,7 +7,7 @@ import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.Callback;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
@@ -114,9 +114,9 @@ public class HistoryController implements Initializable {
                 List<TransactionTabRow> approvedList = new ArrayList<>();
                 transactionsList.forEach(transactionData -> {
                     TransactionTabRow tableRow = new TransactionTabRow();
-                    tableRow.setAmount(Converter.toString(transactionData.getAmount()));
-                    tableRow.setSource(Converter.encodeToBASE58(transactionData.getSource()));
-                    tableRow.setTarget(Converter.encodeToBASE58(transactionData.getTarget()));
+                    tableRow.setAmount(GeneralConverter.toString(transactionData.getAmount()));
+                    tableRow.setSource(GeneralConverter.encodeToBASE58(transactionData.getSource()));
+                    tableRow.setTarget(GeneralConverter.encodeToBASE58(transactionData.getTarget()));
                     tableRow.setInnerId(transactionData.getId());
                     tableRow.setState(VALID.name());
                     tableRow.setMethod(transactionData.getMethod());

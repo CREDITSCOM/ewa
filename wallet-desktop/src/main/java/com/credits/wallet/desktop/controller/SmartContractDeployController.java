@@ -50,7 +50,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
-import static com.credits.general.util.Converter.decodeFromBASE58;
+import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;

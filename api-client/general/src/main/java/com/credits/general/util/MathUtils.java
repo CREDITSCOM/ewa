@@ -14,7 +14,7 @@ public class MathUtils {
         sign = (byte) (value < 0.0 ? 1 : 0);
         value = Math.abs(value);
         double expf = value == 0.0 ? 0.0 : Math.log10(value);
-        int expi = Converter.toInteger(expf >= 0 ? expf + 0.5 : expf - 0.5);
+        int expi = GeneralConverter.toInteger(expf >= 0 ? expf + 0.5 : expf - 0.5);
         value /= Math.pow(10, expi);
         if (value >= 1.0) {
             value *= 0.1;

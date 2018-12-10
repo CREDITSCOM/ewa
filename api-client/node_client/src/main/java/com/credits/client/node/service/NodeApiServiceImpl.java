@@ -53,8 +53,8 @@ import static com.credits.client.node.util.NodePojoConverter.transactionFlowData
 import static com.credits.client.node.util.NodePojoConverter.transactionFlowResultToTransactionFlowResultData;
 import static com.credits.client.node.util.NodePojoConverter.transactionToTransactionData;
 import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
-import static com.credits.general.util.Converter.byteArrayToByteBuffer;
-import static com.credits.general.util.Converter.decodeFromBASE58;
+import static com.credits.general.util.GeneralConverter.byteArrayToByteBuffer;
+import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.Utils.threadPool;
 
 public class NodeApiServiceImpl implements NodeApiService {

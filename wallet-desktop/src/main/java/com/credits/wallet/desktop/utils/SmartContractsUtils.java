@@ -7,7 +7,7 @@ import com.credits.general.exception.CreditsException;
 import java.security.KeyPair;
 import java.security.PublicKey;
 
-import static com.credits.general.util.Converter.byteArrayToHex;
+import static com.credits.general.util.GeneralConverter.byteArrayToHex;
 
 public class SmartContractsUtils {
     public static byte[] generateSmartContractAddress() {

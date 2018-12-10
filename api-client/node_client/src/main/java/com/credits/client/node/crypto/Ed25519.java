@@ -3,7 +3,7 @@ package com.credits.client.node.crypto;
 import com.credits.client.node.thrift.generated.Amount;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.crypto.exception.CryptoException;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.Utils;
 import com.credits.general.util.exception.ConverterException;
 import net.i2p.crypto.eddsa.EdDSAEngine;
@@ -96,15 +96,15 @@ public class Ed25519 {
         Long balanceFraction = balanceValue.getFraction();
 
         String transaction =
-            String.format("%s|%s|%s|%s:%s|%s:%s|%s", innerId, source, target, Converter.toString(amountIntegral),
-                Converter.toString(amountFraction), Converter.toString(balanceIntegral),
-                Converter.toString(balanceFraction), currency);
+            String.format("%s|%s|%s|%s:%s|%s:%s|%s", innerId, source, target, GeneralConverter.toString(amountIntegral),
+                GeneralConverter.toString(amountFraction), GeneralConverter.toString(balanceIntegral),
+                GeneralConverter.toString(balanceFraction), currency);
 
         LOGGER.debug("Signing the message [{}]", transaction);
         byte[] signature;
         signature = Ed25519.sign(transaction.getBytes(StandardCharsets.US_ASCII), privateKey);
 
-        return Converter.encodeToBASE58(signature);
+        return GeneralConverter.encodeToBASE58(signature);
     }
 
     public static byte[] publicKeyToBytes(PublicKey publicKey) {

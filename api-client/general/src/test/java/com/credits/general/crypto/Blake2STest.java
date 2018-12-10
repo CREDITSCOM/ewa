@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.credits.general.util.Converter.byteArrayToHex;
+import static com.credits.general.util.GeneralConverter.byteArrayToHex;
 
 /**
  * Created by Rustem Saidaliyev on 27-Mar-18.

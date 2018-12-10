@@ -13,10 +13,7 @@ import java.util.concurrent.Executors;
 public class Utils {
     private static final String ALPHA_LOWER_CASE_NUMERIC_STRING = "abcdefghijklmnopqrstuvwxyz0123456789";
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
-    private static final String COLLECTION_VALUES_DELIMITER = "\\|";
     public static ExecutorService threadPool = Executors.newCachedThreadPool();
-
-    public static final String STRING_TYPE = "String";
 
     public static byte[] parseSubArray(byte[] array, int offset, int length) {
         byte[] result = new byte[length];
@@ -81,49 +78,4 @@ public class Utils {
         return index < 0 ? 0 : string.length() - index - 1;
     }
 
-    //todo change String className type to enum type
-    public static Object createVariantObject(String className, String value) {
-
-        int openingBracketPosition = className.indexOf("<");
-        boolean genericExists = (openingBracketPosition > -1);
-
-        String classNameWOGeneric = className; // class name without generic, example: List<Integer> -> List
-        String genericName = null;
-        if (genericExists) {
-            classNameWOGeneric = className.substring(0, openingBracketPosition);
-            int closingBracketPosition = className.indexOf(">ValidationException ", openingBracketPosition);
-            genericName = className.substring(openingBracketPosition + 1, closingBracketPosition);
-        }
-
-        switch (classNameWOGeneric) {
-            case "Object": return value;
-            case STRING_TYPE: return value;
-            case "Byte": return Converter.toByte(value);
-            case "byte": return Converter.toByte(value);
-            case "Short": return Converter.toShort(value);
-            case "short": return Converter.toShort(value);
-            case "Integer": return Converter.toInteger(value);
-            case "int": return Converter.toInteger(value);
-            case "Long": return Converter.toLong(value);
-            case "long": return Converter.toLong(value);
-            case "Double": return Converter.toDouble(value);
-            case "double": return Converter.toDouble(value);
-            case "Boolean": return Converter.toBoolean(value);
-            case "boolean": return Converter.toBoolean(value);
-            case "List":
-                List<Object> variantObjectList = new ArrayList<>();
-                String[] objectArr = value.split(COLLECTION_VALUES_DELIMITER);
-                for (String object : objectArr) {
-                    Object variantObject;
-                    if (genericExists) {
-                        variantObject = createVariantObject(genericName, object.trim());
-                    } else {
-                        variantObject = createVariantObject("Object", object.trim());
-                    }
-                    variantObjectList.add(variantObject);
-                }
-                return variantObjectList;
-            default: throw new IllegalArgumentException(String.format("Unsupported class: %s", className));
-        }
-    }
 }

@@ -28,7 +28,7 @@ import java.util.concurrent.Executors;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
-import static com.credits.general.util.Converter.decodeFromBASE58;
+import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.junit.Assert.fail;
 

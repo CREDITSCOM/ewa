@@ -24,7 +24,8 @@ import com.credits.general.pojo.SmartContractData;
 import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.VariantConverter;
 import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.credits.general.util.Constants.ds;
-import static com.credits.general.util.Converter.byteArrayToByteBuffer;
+import static com.credits.general.util.GeneralConverter.byteArrayToByteBuffer;
 
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
@@ -70,7 +71,7 @@ public class NodePojoConverter {
 
         long fraction;
 
-        String valueAsString = Converter.toString(value);
+        String valueAsString = GeneralConverter.toString(value);
 
         if (valueAsString.contains(ds)) {
             String[] valueDelimited = valueAsString.split("[" + ds + "]");
@@ -105,7 +106,7 @@ public class NodePojoConverter {
 
     private static List<Object> variantListToObjectList(List<Variant> params) {
         ArrayList<Object> objectParams = new ArrayList<>();
-        params.forEach(object -> objectParams.add(Converter.parseObjectFromVariant(object)));
+        params.forEach(object -> objectParams.add(VariantConverter.parseObjectFromVariant(object)));
         return objectParams;
     }
 
@@ -135,8 +136,8 @@ public class NodePojoConverter {
         int integralPart = amount.getIntegral();
         long fractionPart = amount.getFraction();
 
-        String integralPartAsString = Converter.toString(integralPart);
-        String fractionPartAsString = Converter.toString(fractionPart);
+        String integralPartAsString = GeneralConverter.toString(integralPart);
+        String fractionPartAsString = GeneralConverter.toString(fractionPart);
 
         return new BigDecimal(integralPartAsString + "." + fractionPartAsString);
     }
@@ -200,7 +201,7 @@ public class NodePojoConverter {
         List<Variant> params = new ArrayList<>();
 
         smartContractInvocationData.getParams()
-            .forEach(object -> params.add(Converter.objectToVariant(object)));
+            .forEach(object -> params.add(VariantConverter.objectToVariant(object)));
 
         SmartContractInvocation thriftStruct =
             new SmartContractInvocation(smartContractInvocationData.getMethod(), params,

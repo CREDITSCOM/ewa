@@ -2,7 +2,6 @@ package com.credits.wallet.desktop.utils.sourcecode;
 
 
 import com.credits.general.exception.CreditsException;
-import com.credits.general.util.Converter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;

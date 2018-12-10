@@ -1,6 +1,6 @@
 package com.credits.general.pojo;
 
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -120,7 +120,7 @@ public class SmartContractData implements Serializable {
 
     public String getBase58Address() {
         if(base58Address == null) {
-            base58Address = Converter.encodeToBASE58(address);
+            base58Address = GeneralConverter.encodeToBASE58(address);
         }
         return base58Address;
     }

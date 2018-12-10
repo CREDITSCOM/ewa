@@ -2,7 +2,7 @@ package com.credits.client.node.pojo;
 
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.thrift.generated.Variant;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 
 import java.util.Optional;
 
@@ -17,8 +17,8 @@ public class TransactionFlowResultData extends ApiResponseData {
         super(apiResponseData);
         this.contractResult = contractResult;
         this.roundNumber = roundNumber;
-        this.source = Converter.encodeToBASE58(source);
-        this.target = Converter.encodeToBASE58(target);
+        this.source = GeneralConverter.encodeToBASE58(source);
+        this.target = GeneralConverter.encodeToBASE58(target);
     }
 
     public int getRoundNumber() {

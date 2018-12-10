@@ -11,7 +11,7 @@ import com.credits.client.node.util.SignUtils;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.util.Base58;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.ioc.Injector;
 import org.slf4j.Logger;
@@ -75,6 +75,6 @@ public class NodeApiInteractionServiceThriftImpl implements NodeApiInteractionSe
 
     private PrivateKey loadPrivateKey(String privateKeyBase58) {
         if(privateKeyBase58 == null) throw new ContractExecutorException("transaction can't be sign. Private key not found");
-        return Ed25519.bytesToPrivateKey(Converter.decodeFromBASE58(privateKeyBase58));
+        return Ed25519.bytesToPrivateKey(GeneralConverter.decodeFromBASE58(privateKeyBase58));
     }
 }

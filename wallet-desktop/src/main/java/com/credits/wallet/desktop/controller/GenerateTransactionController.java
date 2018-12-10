@@ -5,7 +5,7 @@ import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Callback;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
@@ -119,7 +119,7 @@ public class GenerateTransactionController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         FormUtils.resizeForm(bp);
         this.toAddress.setText(AppState.toAddress);
-        this.amountInCs.setText(Converter.toString(amount) + " " + coin);
+        this.amountInCs.setText(GeneralConverter.toString(amount) + " " + coin);
         this.transactionText.setText(AppState.transactionText);
     }
 

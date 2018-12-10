@@ -3,7 +3,7 @@ package com.credits.client.node.util;
 
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.service.NodeApiService;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.exception.ConverterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +21,14 @@ public class TransactionIdCalculateUtils {
     private static long createTransactionId(boolean senderIndexExists, boolean receiverIndexExists, long transactionId)
         throws ConverterException {
 
-        byte[] transactionIdBytes = Converter.toByteArray(transactionId);
-        BitSet transactionIdBitSet = Converter.toBitSet(transactionIdBytes);
+        byte[] transactionIdBytes = GeneralConverter.toByteArray(transactionId);
+        BitSet transactionIdBitSet = GeneralConverter.toBitSet(transactionIdBytes);
         for (int i = 63; i > 45; i--) {
             transactionIdBitSet.set(i, false);
         }
         transactionIdBitSet.set(47, senderIndexExists);
         transactionIdBitSet.set(46, receiverIndexExists);
-        return Converter.toLong(transactionIdBitSet);
+        return GeneralConverter.toLong(transactionIdBitSet);
     }
 
     public static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(NodeApiService nodeApiService,
@@ -58,12 +58,12 @@ public class TransactionIdCalculateUtils {
         Integer sourceWalletId = nodeApiService.getWalletId(wideSource);
         if (sourceWalletId != 0) {
             sourceIndexExists = true;
-            shortSource = Converter.encodeToBASE58(Converter.toByteArrayLittleEndian(sourceWalletId, 4));
+            shortSource = GeneralConverter.encodeToBASE58(GeneralConverter.toByteArrayLittleEndian(sourceWalletId, 4));
         }
         Integer targetWalletId = nodeApiService.getWalletId(wideTarget);
         if (targetWalletId != 0) {
             targetIndexExists = true;
-            shortTarget = Converter.encodeToBASE58(Converter.toByteArrayLittleEndian(targetWalletId, 4));
+            shortTarget = GeneralConverter.encodeToBASE58(GeneralConverter.toByteArrayLittleEndian(targetWalletId, 4));
         }
 
         return new CalcTransactionIdSourceTargetResult(
@@ -130,11 +130,11 @@ public class TransactionIdCalculateUtils {
         }
 
         public byte[] getByteSource() throws ConverterException {
-            return Converter.decodeFromBASE58(source);
+            return GeneralConverter.decodeFromBASE58(source);
         }
 
         public byte[] getByteTarget() throws ConverterException {
-            return Converter.decodeFromBASE58(target);
+            return GeneralConverter.decodeFromBASE58(target);
         }
     }
 }
