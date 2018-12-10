@@ -17,13 +17,13 @@ import java.util.concurrent.CompletableFuture;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Converter.objectToVariant;
+import static com.credits.general.util.Utils.STRING_TYPE;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.contractExecutorService;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
-import static com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils.STRING_TYPE;
-import static com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils.createVariantObject;
+import static com.credits.general.util.Utils.createVariantObject;
 import static java.util.Arrays.asList;
 
 /**
