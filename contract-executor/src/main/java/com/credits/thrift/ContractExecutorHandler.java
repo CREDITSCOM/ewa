@@ -1,5 +1,6 @@
 package com.credits.thrift;
 
+import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.client.executor.thrift.generated.CompileSourceCodeResult;
 import com.credits.client.executor.thrift.generated.ContractExecutor;
 import com.credits.client.executor.thrift.generated.ExecuteByteCodeMultipleResult;
@@ -119,7 +120,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         logger.debug("<-- getContractMethods(bytecode = {} bytes)", bytecode.array().length);
         GetContractMethodsResult result = new GetContractMethodsResult();
         try {
-            List<com.credits.thrift.MethodDescriptionData> contractsMethods = service.getContractsMethods(bytecode.array());
+            List<MethodDescriptionData> contractsMethods = service.getContractsMethods(bytecode.array());
             result.methods = contractsMethods.stream().map( it -> new MethodDescription(it.returnType, it.name, it.args)).collect(toList());
             result.setStatus(new APIResponse(SUCCESS_CODE, "success"));
         } catch (ContractExecutorException e) {

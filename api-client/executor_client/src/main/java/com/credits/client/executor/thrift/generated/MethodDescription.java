@@ -20,7 +20,7 @@ public class MethodDescription implements org.apache.thrift.TBase<MethodDescript
 
   public java.lang.String returnType; // required
   public java.lang.String name; // required
-  public java.util.List<MethodArgument> arguments; // required
+  public java.util.List<com.credits.general.thrift.generated.MethodArgument> arguments; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -96,7 +96,7 @@ public class MethodDescription implements org.apache.thrift.TBase<MethodDescript
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.ARGUMENTS, new org.apache.thrift.meta_data.FieldMetaData("arguments", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
-            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, MethodArgument.class))));
+            new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, com.credits.general.thrift.generated.MethodArgument.class))));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(MethodDescription.class, metaDataMap);
   }
@@ -107,7 +107,7 @@ public class MethodDescription implements org.apache.thrift.TBase<MethodDescript
   public MethodDescription(
     java.lang.String returnType,
     java.lang.String name,
-    java.util.List<MethodArgument> arguments)
+    java.util.List<com.credits.general.thrift.generated.MethodArgument> arguments)
   {
     this();
     this.returnType = returnType;
@@ -126,9 +126,9 @@ public class MethodDescription implements org.apache.thrift.TBase<MethodDescript
       this.name = other.name;
     }
     if (other.isSetArguments()) {
-      java.util.List<MethodArgument> __this__arguments = new java.util.ArrayList<MethodArgument>(other.arguments.size());
-      for (MethodArgument other_element : other.arguments) {
-        __this__arguments.add(new MethodArgument(other_element));
+      java.util.List<com.credits.general.thrift.generated.MethodArgument> __this__arguments = new java.util.ArrayList<com.credits.general.thrift.generated.MethodArgument>(other.arguments.size());
+      for (com.credits.general.thrift.generated.MethodArgument other_element : other.arguments) {
+        __this__arguments.add(new com.credits.general.thrift.generated.MethodArgument(other_element));
       }
       this.arguments = __this__arguments;
     }
@@ -197,22 +197,22 @@ public class MethodDescription implements org.apache.thrift.TBase<MethodDescript
     return (this.arguments == null) ? 0 : this.arguments.size();
   }
 
-  public java.util.Iterator<MethodArgument> getArgumentsIterator() {
+  public java.util.Iterator<com.credits.general.thrift.generated.MethodArgument> getArgumentsIterator() {
     return (this.arguments == null) ? null : this.arguments.iterator();
   }
 
-  public void addToArguments(MethodArgument elem) {
+  public void addToArguments(com.credits.general.thrift.generated.MethodArgument elem) {
     if (this.arguments == null) {
-      this.arguments = new java.util.ArrayList<MethodArgument>();
+      this.arguments = new java.util.ArrayList<com.credits.general.thrift.generated.MethodArgument>();
     }
     this.arguments.add(elem);
   }
 
-  public java.util.List<MethodArgument> getArguments() {
+  public java.util.List<com.credits.general.thrift.generated.MethodArgument> getArguments() {
     return this.arguments;
   }
 
-  public MethodDescription setArguments(java.util.List<MethodArgument> arguments) {
+  public MethodDescription setArguments(java.util.List<com.credits.general.thrift.generated.MethodArgument> arguments) {
     this.arguments = arguments;
     return this;
   }
@@ -254,7 +254,7 @@ public class MethodDescription implements org.apache.thrift.TBase<MethodDescript
       if (value == null) {
         unsetArguments();
       } else {
-        setArguments((java.util.List<MethodArgument>)value);
+        setArguments((java.util.List<com.credits.general.thrift.generated.MethodArgument>)value);
       }
       break;
 
@@ -501,11 +501,11 @@ public class MethodDescription implements org.apache.thrift.TBase<MethodDescript
             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
               {
                 org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
-                struct.arguments = new java.util.ArrayList<MethodArgument>(_list0.size);
-                MethodArgument _elem1;
+                struct.arguments = new java.util.ArrayList<com.credits.general.thrift.generated.MethodArgument>(_list0.size);
+                com.credits.general.thrift.generated.MethodArgument _elem1;
                 for (int _i2 = 0; _i2 < _list0.size; ++_i2)
                 {
-                  _elem1 = new MethodArgument();
+                  _elem1 = new com.credits.general.thrift.generated.MethodArgument();
                   _elem1.read(iprot);
                   struct.arguments.add(_elem1);
                 }
@@ -545,7 +545,7 @@ public class MethodDescription implements org.apache.thrift.TBase<MethodDescript
         oprot.writeFieldBegin(ARGUMENTS_FIELD_DESC);
         {
           oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.arguments.size()));
-          for (MethodArgument _iter3 : struct.arguments)
+          for (com.credits.general.thrift.generated.MethodArgument _iter3 : struct.arguments)
           {
             _iter3.write(oprot);
           }
@@ -590,7 +590,7 @@ public class MethodDescription implements org.apache.thrift.TBase<MethodDescript
       if (struct.isSetArguments()) {
         {
           oprot.writeI32(struct.arguments.size());
-          for (MethodArgument _iter4 : struct.arguments)
+          for (com.credits.general.thrift.generated.MethodArgument _iter4 : struct.arguments)
           {
             _iter4.write(oprot);
           }
@@ -613,11 +613,11 @@ public class MethodDescription implements org.apache.thrift.TBase<MethodDescript
       if (incoming.get(2)) {
         {
           org.apache.thrift.protocol.TList _list5 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-          struct.arguments = new java.util.ArrayList<MethodArgument>(_list5.size);
-          MethodArgument _elem6;
+          struct.arguments = new java.util.ArrayList<com.credits.general.thrift.generated.MethodArgument>(_list5.size);
+          com.credits.general.thrift.generated.MethodArgument _elem6;
           for (int _i7 = 0; _i7 < _list5.size; ++_i7)
           {
-            _elem6 = new MethodArgument();
+            _elem6 = new com.credits.general.thrift.generated.MethodArgument();
             _elem6.read(iprot);
             struct.arguments.add(_elem6);
           }

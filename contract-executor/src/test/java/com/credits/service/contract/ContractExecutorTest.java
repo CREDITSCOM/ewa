@@ -1,16 +1,16 @@
 package com.credits.service.contract;
 
 
-import com.credits.client.executor.thrift.generated.MethodArgument;
+import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.SmartContractData;
 import com.credits.general.pojo.SmartContractDeployData;
+import com.credits.general.thrift.generated.MethodArgument;
 import com.credits.general.thrift.generated.TokenStandart;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.general.util.Converter;
 import com.credits.service.ServiceTest;
-import com.credits.thrift.MethodDescriptionData;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractUtils;
 import org.junit.Before;

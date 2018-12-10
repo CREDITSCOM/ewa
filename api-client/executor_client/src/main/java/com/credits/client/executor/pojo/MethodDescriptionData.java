@@ -1,6 +1,6 @@
-package com.credits.thrift;
+package com.credits.client.executor.pojo;
 
-import com.credits.client.executor.thrift.generated.MethodArgument;
+import com.credits.general.thrift.generated.MethodArgument;
 
 import java.util.List;
 
