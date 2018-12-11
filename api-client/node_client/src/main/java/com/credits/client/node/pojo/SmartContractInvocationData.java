@@ -1,8 +1,6 @@
 package com.credits.client.node.pojo;
 
 import java.io.Serializable;
-import com.credits.general.pojo.SmartContractDeployData;
-
 import java.util.List;
 
 /**

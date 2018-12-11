@@ -1,4 +1,4 @@
-package com.credits.general.pojo;
+package com.credits.client.node.pojo;
 
 import com.credits.general.util.Converter;
 

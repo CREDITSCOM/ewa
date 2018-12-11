@@ -1,6 +1,6 @@
 package com.credits.wallet.desktop.struct;
 
-import com.credits.general.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractData;
 import javafx.scene.control.ToggleButton;
 
 public class SmartContractTabRow {

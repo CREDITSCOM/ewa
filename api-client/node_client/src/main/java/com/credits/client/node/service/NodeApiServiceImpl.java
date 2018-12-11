@@ -2,6 +2,7 @@ package com.credits.client.node.service;
 
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.PoolData;
+import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
@@ -27,7 +28,6 @@ import com.credits.client.node.thrift.generated.WalletDataGetResult;
 import com.credits.client.node.thrift.generated.WalletIdGetResult;
 import com.credits.client.node.thrift.generated.WalletTransactionsCountGetResult;
 import com.credits.client.node.util.NodePojoConverter;
-import com.credits.general.pojo.SmartContractData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Function;
 import com.credits.general.util.exception.ConverterException;

@@ -3,6 +3,7 @@ package com.credits.client.node.service;
 
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.PoolData;
+import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
@@ -10,8 +11,6 @@ import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.WalletData;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
-import com.credits.general.pojo.ApiResponseData;
-import com.credits.general.pojo.SmartContractData;
 import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;

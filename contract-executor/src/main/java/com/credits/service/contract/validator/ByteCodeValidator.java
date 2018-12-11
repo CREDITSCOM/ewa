@@ -1,13 +1,14 @@
 package com.credits.service.contract.validator;
 
+import com.credits.client.node.pojo.SmartContractData;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CreditsException;
-import com.credits.general.pojo.SmartContractData;
 import org.apache.commons.codec.binary.Hex;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+//todo unused
 public class ByteCodeValidator {
 
     private static final String HASH_ALGO = "MD5";

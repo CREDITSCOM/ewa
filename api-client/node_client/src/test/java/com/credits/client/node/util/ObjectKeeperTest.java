@@ -1,9 +1,10 @@
-package com.credits.general.util;
+package com.credits.client.node.util;
 
-import com.credits.general.pojo.SmartContractData;
-import com.credits.general.pojo.SmartContractDeployData;
-import com.credits.general.thrift.generated.TokenStandart;
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractDeployData;
+import com.credits.client.node.thrift.generated.TokenStandart;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,10 +15,6 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class ObjectKeeperTest {
@@ -43,12 +40,12 @@ public class ObjectKeeperTest {
     @Test
     public void serializeThenDeserialize(){
         objectKeeper.keepObject(someData);
-        assertFalse(objectKeeper.getSerializedObjectPath().toFile().exists());
+        Assert.assertFalse(objectKeeper.getSerializedObjectPath().toFile().exists());
         objectKeeper.flush();
-        assertTrue(objectKeeper.getSerializedObjectPath().toFile().exists());
+        Assert.assertTrue(objectKeeper.getSerializedObjectPath().toFile().exists());
 
         Map restoredObject = objectKeeper.getKeptObject().orElseGet(HashMap::new);
-        assertEquals(someData, restoredObject);
+        Assert.assertEquals(someData, restoredObject);
     }
 
     @Test
@@ -65,7 +62,7 @@ public class ObjectKeeperTest {
                     return keptObject;
                 }
             });
-        assertEquals(2, objectKeeper.getKeptObject().get().size());
+        Assert.assertEquals(2, objectKeeper.getKeptObject().get().size());
     }
 
     @Test
@@ -76,7 +73,7 @@ public class ObjectKeeperTest {
         restoredObject.put("2", new SmartContractData(null, null, smartContractDeployData, null));
         objectKeeper.keepObject(restoredObject);
         restoredObject = objectKeeper.getKeptObject().get();
-        assertEquals(2, restoredObject.size());
+        Assert.assertEquals(2, restoredObject.size());
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

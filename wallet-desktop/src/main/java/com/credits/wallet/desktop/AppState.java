@@ -1,10 +1,10 @@
 package com.credits.wallet.desktop;
 
 import com.credits.client.executor.service.ContractExecutorApiService;
+import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.service.NodeApiService;
-import com.credits.general.pojo.SmartContractData;
+import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.pojo.TransactionRoundData;
-import com.credits.general.util.ObjectKeeper;
 import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 

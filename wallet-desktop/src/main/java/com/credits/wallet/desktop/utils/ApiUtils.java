@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.client.node.exception.NodeClientException;
+import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionFlowData;
@@ -9,7 +10,6 @@ import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.client.node.util.SignUtils;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
-import com.credits.general.pojo.SmartContractData;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.AppState;

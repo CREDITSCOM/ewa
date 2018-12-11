@@ -1,4 +1,4 @@
-package com.credits.general.util;
+package com.credits.client.node.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

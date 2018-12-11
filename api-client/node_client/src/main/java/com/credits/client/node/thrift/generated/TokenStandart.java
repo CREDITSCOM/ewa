@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package com.credits.general.thrift.generated;
+package com.credits.client.node.thrift.generated;
 
 
 public enum TokenStandart implements org.apache.thrift.TEnum {

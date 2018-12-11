@@ -1,6 +1,6 @@
-package com.credits.general.pojo;
+package com.credits.client.node.pojo;
 
-import com.credits.general.thrift.generated.TokenStandart;
+import com.credits.client.node.thrift.generated.TokenStandart;
 
 import java.io.Serializable;
 import java.util.Arrays;

@@ -1,9 +1,9 @@
 package com.credits.client.node.util;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.general.pojo.SmartContractData;
-import com.credits.general.pojo.SmartContractDeployData;
-import com.credits.general.thrift.generated.TokenStandart;
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractDeployData;
+import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.util.Converter;
 import org.junit.Test;
 import org.slf4j.Logger;

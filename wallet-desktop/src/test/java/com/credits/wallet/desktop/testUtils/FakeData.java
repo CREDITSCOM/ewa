@@ -1,13 +1,13 @@
 package com.credits.wallet.desktop.testUtils;
 
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.client.node.thrift.generated.TransactionState;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
-import com.credits.general.pojo.SmartContractData;
-import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.pojo.TransactionRoundData;
-import com.credits.general.thrift.generated.TokenStandart;
 import com.credits.general.util.Converter;
 
 import java.math.BigDecimal;

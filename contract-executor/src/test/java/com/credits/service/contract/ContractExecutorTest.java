@@ -2,13 +2,13 @@ package com.credits.service.contract;
 
 
 import com.credits.client.executor.pojo.MethodDescriptionData;
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractDeployData;
+import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
-import com.credits.general.pojo.SmartContractData;
-import com.credits.general.pojo.SmartContractDeployData;
 import com.credits.general.thrift.generated.MethodArgument;
-import com.credits.general.thrift.generated.TokenStandart;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.general.util.Converter;

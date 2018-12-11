@@ -2,8 +2,8 @@ package com.credits.wallet.desktop.service;
 
 import com.credits.client.executor.pojo.ExecuteResponseData;
 import com.credits.client.node.exception.NodeClientException;
+import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
-import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Converter;

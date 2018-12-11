@@ -1,8 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.exception.CreditsException;
-import com.credits.general.pojo.SmartContractData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.AppState;

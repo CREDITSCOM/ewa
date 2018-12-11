@@ -1,9 +1,9 @@
 package com.credits.service;
 
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.service.NodeApiService;
-import com.credits.general.pojo.SmartContractData;
-import com.credits.general.pojo.SmartContractDeployData;
-import com.credits.general.thrift.generated.TokenStandart;
+import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.util.Converter;
 import com.credits.service.contract.ContractExecutorService;
 import org.apache.commons.io.FileUtils;
