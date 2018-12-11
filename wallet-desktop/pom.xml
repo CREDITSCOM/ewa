@@ -6,7 +6,7 @@
 
     <groupId>com.credits.wallet</groupId>
     <artifactId>wallet-desktop</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>1</version>
 
 
