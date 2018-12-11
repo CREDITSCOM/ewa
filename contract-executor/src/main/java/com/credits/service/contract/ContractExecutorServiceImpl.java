@@ -308,11 +308,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Variant param;
         for (Class<?> type : types) {
             param = params[i];
-//            if (type.isArray()) {
-//                if (types.length > 1) {
-//                    throw new ContractExecutorException("Having array with other parameter types is not supported");
-//                }
-//            }
+            if (type.isArray()) {
+                if (types.length > 1) {
+                    throw new ContractExecutorException("Having array with other parameter types is not supported");
+                }
+            }
 
             retVal[i] = parseObjectFromVariant(param);
             logger.info(String.format("param[%s] = %s", i, retVal[i]));
@@ -334,46 +334,4 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             this.argValues = argValues;
         }
     }
-
-    public void foo(
-        double param01,
-        Double param02,
-        int param03,
-        Integer param04,
-        double param05,
-        Double param06,
-        String[] param07,
-        int[] param08,
-        Integer[] param09,
-        double[] param10,
-        Double[] param11,
-        boolean[] param12,
-        Boolean[] param13,
-        short[] param14,
-        long[] param15,
-        Long[] param16,
-        double[] param17,
-        Double[] param18
-    ) {
-        System.out.println("param01 = " + param01);
-        System.out.println("param02 = " + param02);
-        System.out.println("param03 = " + param03);
-        System.out.println("param04 = " + param04);
-        System.out.println("param05 = " + param05);
-        System.out.println("param06 = " + param06);
-        System.out.println("param07 = " + param07);
-        System.out.println("param08 = " + param08);
-        System.out.println("param09 = " + param09);
-        System.out.println("param10 = " + param10);
-        System.out.println("param11 = " + param11);
-        System.out.println("param12 = " + param12);
-        System.out.println("param13 = " + param13);
-        System.out.println("param14 = " + param14);
-        System.out.println("param15 = " + param15);
-        System.out.println("param16 = " + param16);
-        System.out.println("param17 = " + param17);
-        System.out.println("param18 = " + param18);
-    }
-
-
 }

@@ -67,6 +67,7 @@ public class MethodParametersTest extends ServiceTest {
 
     @Test
     public void collectionExecutionTest() throws ContractExecutorException {
+        Variant[] temp = new Variant[0];
         Variant[][] params = {{
                 ContractUtils.mapObjectToVariant("test1"),
                 ContractUtils.mapObjectToVariant("test2"),
@@ -79,7 +80,9 @@ public class MethodParametersTest extends ServiceTest {
         intList.add(2);
         intList.add(3);
 
-        ContractUtils.mapObjectToVariant(intList).getV_list().toArray(params);
+        ContractUtils.mapObjectToVariant(intList).getV_list().toArray(temp);
+        params = new Variant[][] {temp};
+
 
         ceService.execute(address, contractBytecode,null, "main", params,500L);
 
@@ -88,60 +91,71 @@ public class MethodParametersTest extends ServiceTest {
         doubleList.add(2D);
         doubleList.add(3D);
 
-        ContractUtils.mapObjectToVariant(doubleList).getV_list().toArray(params);
+        ContractUtils.mapObjectToVariant(doubleList).getV_list().toArray(temp);
+        params = new Variant[][] {temp};
 
         ceService.execute(address, contractBytecode,null, "main", params,500L);
     }
 
     @Test
     public void arrayBooleanTest() throws ContractExecutorException {
+        Variant[] temp = new Variant[0];
         Variant[][] params = {{}};
         List<Boolean> boolList = new ArrayList<>();
         boolList.add(true);
         boolList.add(false);
-        ContractUtils.mapObjectToVariant(boolList).getV_list().toArray(params);
+        ContractUtils.mapObjectToVariant(boolList).getV_list().toArray(temp);
+        params = new Variant[][] {temp};
         ceService.execute(address, contractBytecode,null, "foo", params,500L);
     }
 
     @Test
     public void arrayIntTest() throws ContractExecutorException {
+        Variant[] temp = new Variant[0];
         Variant[][] params = {{}};
         List<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(2);
         list.add(3);
-        ContractUtils.mapObjectToVariant(list).getV_list().toArray(params);
+        ContractUtils.mapObjectToVariant(list).getV_list().toArray(temp);
+        params = new Variant[][] {temp};
         ceService.execute(address, contractBytecode,null, "foo", params,500L);
     }
 
     @Test
     public void arrayShortTest() throws ContractExecutorException {
+        Variant[] temp = new Variant[0];
         Variant[][] params = {{}};
         List<Short> list = new ArrayList<>();
         list.add((short)1);
         list.add((short)2);
-        ContractUtils.mapObjectToVariant(list).getV_list().toArray(params);
+        ContractUtils.mapObjectToVariant(list).getV_list().toArray(temp);
+        params = new Variant[][] {temp};
         ceService.execute(address, contractBytecode,null, "foo", params,500L);
     }
 
     @Test
     public void arrayLongTest() throws ContractExecutorException {
+        Variant[] temp = new Variant[0];
         Variant[][] params = {{}};
         List<Long> list = new ArrayList<>();
         list.add(1L);
         list.add(2L);
-        ContractUtils.mapObjectToVariant(list).getV_list().toArray(params);
+        ContractUtils.mapObjectToVariant(list).getV_list().toArray(temp);
+        params = new Variant[][] {temp};
         ceService.execute(address, contractBytecode,null, "foo", params,500L);
     }
 
     @Test
     @Ignore
     public void arrayFloatTest() throws ContractExecutorException {
+        Variant[] temp = new Variant[0];
         Variant[][] params = {{}};
         List<Float> list = new ArrayList<>();
         list.add(1f);
         list.add(.2f);
-        ContractUtils.mapObjectToVariant(list).getV_list().toArray(params);
+        ContractUtils.mapObjectToVariant(list).getV_list().toArray(temp);
+        params = new Variant[][] {temp};
         ceService.execute(address, contractBytecode,null, "foo", params,500L);
     }
 

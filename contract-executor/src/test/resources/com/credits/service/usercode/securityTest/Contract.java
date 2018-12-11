@@ -64,7 +64,7 @@ public class Contract extends SmartContract {
 
     public void getBalance() throws Exception {
         System.out.println("getBalance()");
-        BigDecimal balance = getBalance("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", "CS");
+        BigDecimal balance = getBalance("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2");
         System.out.println("getBalance=" + balance);
     }
 }
