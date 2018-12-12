@@ -42,8 +42,8 @@ public class ContractUtils {
 
                 if (fieldValue != null) {
                     variant = mapObjectToVariant(fieldValue);
+                    contractVariables.put(name, variant);
                 }
-                contractVariables.put(name, variant);
             }
         }
         return contractVariables;
