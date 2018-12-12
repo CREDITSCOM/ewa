@@ -6,12 +6,14 @@ import com.credits.service.node.api.NodeApiInteractionService;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.*;
 
 public abstract class SmartContract implements Serializable {
 
     private static final long serialVersionUID = -7544650022718657167L;
 
     protected static NodeApiInteractionService service;
+    protected static ExecutorService cachedPool;
     public transient String initiator = "";
     private transient String specialProperty = "";
 
@@ -20,10 +22,24 @@ public abstract class SmartContract implements Serializable {
     }
 
     final protected BigDecimal getBalance(String address) {
-        byte currencyByte = (byte) 1;
+
+        Callable<BigDecimal> callable = new Callable<BigDecimal>() {
+            @Override
+            public BigDecimal call() {
+                byte currencyByte = (byte) 1;
+                try {
+                    return service.getBalance(address, currencyByte);
+                } catch (CreditsException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        Future<BigDecimal> future = cachedPool.submit(callable);
         try {
-            return service.getBalance(address, currencyByte);
-        } catch (CreditsException e) {
+            return future.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
     }

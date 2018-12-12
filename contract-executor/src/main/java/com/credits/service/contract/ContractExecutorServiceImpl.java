@@ -14,31 +14,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ReflectPermission;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.net.NetPermission;
 import java.net.SocketPermission;
 import java.security.Permissions;
 import java.security.SecurityPermission;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.PropertyPermission;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialize.Serializer.deserialize;
 import static com.credits.serialize.Serializer.serialize;
-import static com.credits.thrift.utils.ContractUtils.deployAndGetContractVariables;
-import static com.credits.thrift.utils.ContractUtils.getContractVariables;
-import static com.credits.thrift.utils.ContractUtils.mapObjectToVariant;
+import static com.credits.thrift.utils.ContractUtils.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 public class ContractExecutorServiceImpl implements ContractExecutorService {
@@ -58,6 +47,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Field interactionService = contract.getDeclaredField("service");
             interactionService.setAccessible(true);
             interactionService.set(null, dbInteractionService);
+
+            Field cachedPoolField = contract.getDeclaredField("cachedPool");
+            cachedPoolField.setAccessible(true);
+            ExecutorService cachedPool = Executors.newCachedThreadPool();
+            cachedPoolField.set(null, cachedPool);
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             logger.error("Cannot load smart contract's super class", e);
         }
@@ -71,7 +65,19 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
         Class<?> contractClass = classLoader.buildClass(bytecode);
-        Sandbox.confine(contractClass, createPermissions());
+
+        if (methodName != null) {
+            Sandbox.confine(contractClass, createPermissions());
+            Class<?> serviceClass;
+            try {
+                serviceClass = Class.forName("com.credits.service.node.api.NodeApiInteractionServiceThriftImpl");
+            } catch (ClassNotFoundException e) {
+                throw new ContractExecutorException("", e);
+            }
+            Permissions permissions = createPermissions();
+            permissions.add(new SocketPermission(properties.apiHost + ":" + properties.apiPort, "connect,listen,resolve"));
+            Sandbox.confine(serviceClass, permissions);
+        }
 
         String initiator = Base58.encode(initiatorAddress);
 
@@ -164,7 +170,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     private Permissions createPermissions() {
         Permissions permissions = new Permissions();
         permissions.add(new ReflectPermission("suppressAccessChecks"));
-        permissions.add(new SocketPermission(properties.apiHost + ":" + properties.apiPort, "connect,listen,resolve"));
         permissions.add(new NetPermission("getProxySelector"));
         permissions.add(new RuntimePermission("readFileDescriptor"));
         permissions.add(new RuntimePermission("writeFileDescriptor"));

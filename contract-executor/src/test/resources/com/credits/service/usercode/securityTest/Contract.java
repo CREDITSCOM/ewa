@@ -1,3 +1,5 @@
+import com.credits.general.exception.CreditsException;
+
 import javax.sound.midi.Soundbank;
 import java.math.BigDecimal;
 import java.net.*;
@@ -8,6 +10,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.File;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.concurrent.*;
 
 import static java.io.File.*;
 
@@ -64,7 +70,7 @@ public class Contract extends SmartContract {
 
     public void getBalance() throws Exception {
         System.out.println("getBalance()");
-        BigDecimal balance = getBalance("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2", "CS");
+        BigDecimal balance = getBalance("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2");
         System.out.println("getBalance=" + balance);
     }
 }

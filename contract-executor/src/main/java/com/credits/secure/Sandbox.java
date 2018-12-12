@@ -1,14 +1,12 @@
 package com.credits.secure;
 
-import java.security.AccessControlContext;
-import java.security.AccessControlException;
-import java.security.Permission;
-import java.security.Permissions;
-import java.security.ProtectionDomain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.security.*;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class establishes a security manager that confines the permissions for code executed through specific classes,
@@ -51,14 +49,16 @@ public final class Sandbox {
     private Sandbox() {
     }
 
-    private static final Map<Class<?>, AccessControlContext> CHECKED_CLASSES = Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Sandbox.class);
+
+    public static final Map<Class<?>, AccessControlContext> CHECKED_CLASSES = Collections.synchronizedMap(new WeakHashMap<>());
 
     static {
-
         // Install our custom security manager.
         if (System.getSecurityManager() != null) {
             throw new ExceptionInInitializerError("There's already a security manager set");
         }
+
         System.setSecurityManager(new SecurityManager() {
 
             @Override
@@ -66,15 +66,14 @@ public final class Sandbox {
                 assert perm != null;
                 for (Class<?> clasS : this.getClassContext()) {
                     // Check if an ACC was set for the class.
-                    {
-                        AccessControlContext acc = Sandbox.CHECKED_CLASSES.get(clasS);
-                        if (acc != null) {
-                            try {
-                                acc.checkPermission(perm);
-                            } catch (AccessControlException e) {
-                                System.out.println((e.getMessage()));
-                                throw new AccessControlException(e.getMessage());
-                            }
+                    AccessControlContext acc = Sandbox.CHECKED_CLASSES.get(clasS);
+                    if (acc != null) {
+                        try {
+                            acc.checkPermission(perm);
+                        } catch (AccessControlException e) {
+                            LOGGER.error("clasS = {}", clasS);
+                            LOGGER.error(e.getMessage());
+                            throw new AccessControlException(e.getMessage());
                         }
                     }
                 }
@@ -89,11 +88,9 @@ public final class Sandbox {
      * @throws SecurityException Permissions are already confined for the {@code clasS}
      */
     public static void confine(Class<?> clasS, AccessControlContext accessControlContext) {
-
         if (Sandbox.CHECKED_CLASSES.containsKey(clasS)) {
-            throw new SecurityException("Attempt to change the access control context for '" + clasS + "'");
+            LOGGER.warn("Attempt to change the access control context for '" + clasS + "'");
         }
-
         if (!Sandbox.CHECKED_CLASSES.containsKey(clasS)) {
             Sandbox.CHECKED_CLASSES.put(clasS, accessControlContext);
         }
@@ -118,5 +115,4 @@ public final class Sandbox {
     public static void confine(Class<?> clasS, Permissions permissions) {
         Sandbox.confine(clasS, new ProtectionDomain(clasS.getProtectionDomain().getCodeSource(), permissions));
     }
-
 }
