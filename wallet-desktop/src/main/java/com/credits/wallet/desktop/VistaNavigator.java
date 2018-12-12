@@ -82,7 +82,7 @@ public class VistaNavigator {
         try {
             mainController.setVista(
                 FXMLLoader.load(
-                    WalettApp.class.getResource(
+                    WalletApp.class.getResource(
                         fxml
                     )
                 )

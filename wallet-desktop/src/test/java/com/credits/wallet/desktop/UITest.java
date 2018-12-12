@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
  */
 public class UITest {
 
-    WalettApp walettApp;
+    WalletApp walletApp;
     String walletAddress;
     String addressOne;
     String addressTwo;
@@ -70,8 +70,8 @@ public class UITest {
         AppState.favoriteContractsKeeper = new ObjectKeeper<>(AppState.account, "favorite");
         when(mockNodeApiService.getBalance(anyString())).thenReturn(new BigDecimal("1000.123456789012345678"));
 
-        walettApp = new WalettApp();
-        walettApp.appStateInitializer = mockInitializer;
+        walletApp = new WalletApp();
+        walletApp.appStateInitializer = mockInitializer;
         walletAddress = addressBase58;
         addressOne = "11111111111111111111111111111111111111111111";
         addressTwo = "22222222222222222222222222222222222222222222";
@@ -131,7 +131,7 @@ public class UITest {
         new JFXPanel();
         Platform.runLater(() -> {
             try {
-                walettApp.start(new Stage());
+                walletApp.start(new Stage());
             } catch (IOException e) {
                 e.printStackTrace();
             }

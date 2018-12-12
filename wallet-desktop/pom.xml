@@ -80,7 +80,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.credits.wallet.desktop.WalettApp</mainClass>
+                            <mainClass>com.credits.wallet.desktop.WalletApp</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
