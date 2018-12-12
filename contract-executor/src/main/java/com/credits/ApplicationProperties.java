@@ -11,9 +11,7 @@ public class ApplicationProperties {
 
     public ApplicationProperties(){
         Properties properties = new Properties();
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream("settings.properties");
+        try (FileInputStream fis = new FileInputStream("settings.properties")) {
             properties.load(fis);
             String publicKey = properties.getProperty("contract.executor.public.key");
             System.setProperty(publicKey, properties.getProperty("contract.executor.private.key"));
