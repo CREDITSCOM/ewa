@@ -17,11 +17,9 @@ import com.credits.secure.Sandbox;
 import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractUtils;
-import com.sun.istack.internal.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -82,8 +80,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
 
     @Override
-    public ReturnValue execute(@NotNull byte[] initiatorAddress, @NotNull byte[] bytecode, @Nullable byte[] contractState, @Nullable String methodName,
-        @Nullable Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
+    public ReturnValue execute( byte[] initiatorAddress,  byte[] bytecode,  byte[] contractState,  String methodName,
+         Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
 
         String initiator = "unknown address";
         try {
@@ -206,7 +204,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public List<MethodDescriptionData> getContractsMethods(@NotNull byte[] bytecode) {
+    public List<MethodDescriptionData> getContractsMethods( byte[] bytecode) {
         requireNonNull(bytecode, "bytecode of contract class is null");
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
@@ -226,19 +224,21 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public Map<String, Variant> getContractVariables(@NotNull byte[] contractBytecode, @NotNull byte[] contractState) throws ContractExecutorException {
+    public Map<String, Variant> getContractVariables( byte[] contractBytecode,  byte[] contractState) throws ContractExecutorException {
         requireNonNull(contractBytecode, "bytecode of contract class is null");
         requireNonNull(contractState, "contract state is null");
 
         if (contractState.length != 0) {
-            return ContractUtils.getContractVariables(deserialize(contractState, new ByteArrayContractClassLoader()));
+            ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
+            Class<?> contractClass = classLoader.buildClass(contractBytecode);
+            return ContractUtils.getContractVariables(deserialize(contractState, classLoader));
         } else {
             throw new ContractExecutorException("contract state is empty");
         }
     }
 
     @Override
-    public byte[] compileClass(@NotNull String sourceCode) throws ContractExecutorException, CompilationErrorException, CompilationException {
+    public byte[] compileClass( String sourceCode) throws ContractExecutorException, CompilationErrorException, CompilationException {
         requireNonNull(sourceCode, "sourceCode of contract class is null");
         if (sourceCode.isEmpty()) throw new ContractExecutorException("sourceCode of contract class is empty");
 
