@@ -304,6 +304,9 @@ public class SourceCodeUtils {
         boolean genericExists = (openingBracketPosition > -1);
 
         String classNameWOGeneric = className; // class name without generic, example: List<Integer> -> List
+        if(classNameWOGeneric.contains("List")) {
+            classNameWOGeneric = "List";
+        }
         String genericName = null;
         if (genericExists) {
             classNameWOGeneric = className.substring(0, openingBracketPosition);

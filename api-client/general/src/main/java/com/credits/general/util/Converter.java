@@ -400,7 +400,7 @@ public class Converter {
             variant.setV_i64((Long)value);
         } else if (clazz.equals(Boolean.class)) {
             variant.setV_bool((Boolean)value);
-        } else if (clazz.equals(List.class)) {
+        } else if (clazz.getName().contains("List")) {
             List objectList = (List)value;
             List<Variant> variantList = new ArrayList();
             objectList.forEach(obj -> variantList.add(objectToVariant(obj)));
