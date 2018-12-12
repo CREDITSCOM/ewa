@@ -169,8 +169,10 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     private TransactionFlowResultData callTransactionFlow(Transaction transaction) {
-        TransactionFlowResult transactionFlowResult = nodeClient.transactionFlow(transaction);
-        return transactionFlowResultToTransactionFlowResultData(transactionFlowResult, transaction.getSource(), transaction.getTarget());
+        TransactionFlowResult result = nodeClient.transactionFlow(transaction);
+        logApiResponse(result.getStatus());
+        processApiResponse(result.getStatus());
+        return transactionFlowResultToTransactionFlowResultData(result, transaction.getSource(), transaction.getTarget());
     }
 
 
