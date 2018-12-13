@@ -280,8 +280,11 @@ public class SmartContractDeployController implements Initializable {
                 if (event.isPrimaryButtonDown() || event.getButton() == MouseButton.PRIMARY) {
                     BodyDeclaration selected =
                         classMembers.get(classTreeView.getSelectionModel().getSelectedIndices().get(0));
-                    codeArea.positionCursorToLine(SourceCodeUtils.getLineNumber(sourceCode, selected));
-                    codeArea.selectRange(codeArea.getCaretPosition(), codeArea.getCaretPosition());
+                    try {
+                        codeArea.positionCursorToLine(SourceCodeUtils.getLineNumber(sourceCode, selected));
+                        codeArea.selectRange(codeArea.getCaretPosition(), codeArea.getCaretPosition());
+                    } catch (Exception ignored) {
+                    }
                 }
             });
 
@@ -317,8 +320,12 @@ public class SmartContractDeployController implements Initializable {
             if (event.isPrimaryButtonDown()|| event.getButton() == MouseButton.PRIMARY) {
                 BuildSourceCodeError tabRow = errorTableView.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
-                    codeArea.positionCursorToLine(Integer.parseInt(tabRow.getLine()));
-                    codeArea.selectRange(codeArea.getCaretPosition(), codeArea.getCaretPosition());
+                    try {
+                        codeArea.positionCursorToLine(tabRow.getLine());
+                        codeArea.selectRange(codeArea.getCaretPosition() + tabRow.getColumn(),
+                            codeArea.getCaretPosition() + tabRow.getColumn());
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         });
