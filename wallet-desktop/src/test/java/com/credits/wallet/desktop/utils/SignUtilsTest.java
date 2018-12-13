@@ -33,7 +33,7 @@ public class SignUtilsTest {
 
 
         byte[] smartContractBytes = GeneralConverter.decodeFromBASE58(Files.readAllLines(Paths.get(
-            "src" + File.separator + "test" + File.separator + "java" + File.separator + "resources" + File.separator +
+            "src" + File.separator + "test" + File.separator + "resources" + File.separator +
                 "SignUtilsTest")).get(0));
 
         TransactionFlowData transactionFlowData =

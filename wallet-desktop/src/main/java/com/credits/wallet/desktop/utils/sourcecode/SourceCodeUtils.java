@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.ValidationException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -187,9 +188,10 @@ public class SourceCodeUtils {
             public boolean visit(TypeDeclaration typeNote) {
                 MethodDeclaration[] notes = typeNote.getMethods();
                 for (MethodDeclaration note : notes) {
-                    if (!note.isConstructor()) {
-                        list.add(note);
+                    if(Modifier.isStatic(note.getModifiers()) || Modifier.isPrivate(note.getModifiers()) || note.isConstructor()) {
+                        continue;
                     }
+                    list.add(note);
                 }
                 return false;
             }
