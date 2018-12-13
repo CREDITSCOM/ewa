@@ -1,5 +1,6 @@
 package com.credits.general.util;
 
+import com.credits.general.pojo.VariantType;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.exception.ConverterException;
 
@@ -10,7 +11,6 @@ public class VariantConverter {
     public static final String STRING_TYPE = "String";
     private static final String COLLECTION_VALUES_DELIMITER = "\\|";
 
-    //todo change String className type to enum type
     public static Object createVariantObject(String className, String value) {
 
         int openingBracketPosition = className.indexOf("<");
@@ -24,22 +24,22 @@ public class VariantConverter {
             genericName = className.substring(openingBracketPosition + 1, closingBracketPosition);
         }
 
-        switch (classNameWOGeneric) {
-            case "Object": return value;
-            case STRING_TYPE: return value;
-            case "Byte": return GeneralConverter.toByte(value);
-            case "byte": return GeneralConverter.toByte(value);
-            case "Short": return GeneralConverter.toShort(value);
-            case "short": return GeneralConverter.toShort(value);
-            case "Integer": return GeneralConverter.toInteger(value);
-            case "int": return GeneralConverter.toInteger(value);
-            case "Long": return GeneralConverter.toLong(value);
-            case "long": return GeneralConverter.toLong(value);
-            case "Double": return GeneralConverter.toDouble(value);
-            case "double": return GeneralConverter.toDouble(value);
-            case "Boolean": return GeneralConverter.toBoolean(value);
-            case "boolean": return GeneralConverter.toBoolean(value);
-            case "List":
+        switch (VariantType.parseVariant(classNameWOGeneric)) {
+            case OBJECT: return value;
+            case STRING: return value;
+            case BYTE_BOX: return GeneralConverter.toByte(value);
+            case BYTE: return GeneralConverter.toByte(value);
+            case SHORT_BOX: return GeneralConverter.toShort(value);
+            case SHORT: return GeneralConverter.toShort(value);
+            case INT_BOX: return GeneralConverter.toInteger(value);
+            case INT: return GeneralConverter.toInteger(value);
+            case LONG_BOX: return GeneralConverter.toLong(value);
+            case LONG: return GeneralConverter.toLong(value);
+            case DOUBLE_BOX: return GeneralConverter.toDouble(value);
+            case DOUBLE: return GeneralConverter.toDouble(value);
+            case BOOL_BOX: return GeneralConverter.toBoolean(value);
+            case BOOL: return GeneralConverter.toBoolean(value);
+            case LIST:
                 List<Object> variantObjectList = new ArrayList<>();
                 String[] objectArr = value.split(COLLECTION_VALUES_DELIMITER);
                 for (String object : objectArr) {
@@ -58,7 +58,6 @@ public class VariantConverter {
 
     public static Variant objectToVariant(Object object) {
         Class clazz = object.getClass();
-        Object value = object;
         Variant variant = new Variant();
         if (clazz.equals(String.class)) {
             variant.setV_string((String)value);
