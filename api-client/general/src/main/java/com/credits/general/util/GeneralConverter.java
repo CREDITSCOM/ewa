@@ -3,7 +3,6 @@ package com.credits.general.util;
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.thrift.generated.APIResponse;
-import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.exception.ConverterException;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 
@@ -15,23 +14,17 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.BitSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import static java.util.Arrays.stream;
 
 /**
  * Created by Rustem.Saidaliyev on 29.01.2018.
  */
-public class Converter {
+public class GeneralConverter {
 
     public static final String DOUBLE_FORMAT = "#.##################";
 
@@ -207,7 +200,7 @@ public class Converter {
 
         if (value instanceof Double) {
             Double doubleValue = (Double) value;
-            String text = Converter.toString(Math.abs(doubleValue));
+            String text = GeneralConverter.toString(Math.abs(doubleValue));
             int integerPlaces = text.indexOf(symbols.getDecimalSeparator());
             int decimalPlaces = text.length() - integerPlaces - 1;
             return new BigDecimal(doubleValue, new MathContext(decimalPlaces));

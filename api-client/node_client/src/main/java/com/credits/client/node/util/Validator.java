@@ -7,7 +7,7 @@ import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
 
-import static com.credits.general.util.Converter.decodeFromBASE58;
+import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 
 /**
  * Created by Rustem Saidaliyev on 20-Mar-18.

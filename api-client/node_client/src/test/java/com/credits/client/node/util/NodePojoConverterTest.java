@@ -22,7 +22,7 @@ import static com.credits.client.node.util.NodePojoConverter.bigDecimalToAmount;
 import static com.credits.client.node.util.NodePojoConverter.doubleToAmount;
 import static com.credits.client.node.util.NodePojoConverter.transactionToTransactionData;
 import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
-import static com.credits.general.util.Converter.toBigDecimal;
+import static com.credits.general.util.GeneralConverter.toBigDecimal;
 
 /**
  * Created by Rustem.Saidaliyev on 08.02.2018.

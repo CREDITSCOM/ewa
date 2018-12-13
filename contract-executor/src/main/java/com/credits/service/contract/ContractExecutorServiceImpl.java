@@ -3,11 +3,7 @@ package com.credits.service.contract;
 import com.credits.ApplicationProperties;
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.client.executor.pojo.MethodDescriptionData;
-import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
-import com.credits.general.exception.CompilationErrorException;
-import com.credits.general.thrift.generated.APIResponse;
-import com.credits.general.thrift.generated.MethodArgument;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.general.util.compiler.InMemoryCompiler;
@@ -74,6 +70,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Field interactionService = contract.getDeclaredField("service");
             interactionService.setAccessible(true);
             interactionService.set(null, dbInteractionService);
+
+            Field cachedPoolField = contract.getDeclaredField("cachedPool");
+            cachedPoolField.setAccessible(true);
+            ExecutorService cachedPool = Executors.newCachedThreadPool();
+            cachedPoolField.set(null, cachedPool);
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             logger.error("Cannot load smart contract's super class", e);
         }
@@ -93,7 +94,19 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
             Class<?> contractClass = classLoader.buildClass(bytecode);
-            Sandbox.confine(contractClass, createPermissions());
+
+            if (methodName != null) {
+                Sandbox.confine(contractClass, createPermissions());
+                Class<?> serviceClass;
+                try {
+                    serviceClass = Class.forName("com.credits.service.node.api.NodeApiInteractionServiceThriftImpl");
+                } catch (ClassNotFoundException e) {
+                    throw new ContractExecutorException("", e);
+                }
+                Permissions permissions = createPermissions();
+                permissions.add(new SocketPermission(properties.apiHost + ":" + properties.apiPort, "connect,listen,resolve"));
+                Sandbox.confine(serviceClass, permissions);
+            }
 
             Object instance;
             if (contractState != null && contractState.length != 0) {
@@ -247,7 +260,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     private Permissions createPermissions() {
         Permissions permissions = new Permissions();
         permissions.add(new ReflectPermission("suppressAccessChecks"));
-        permissions.add(new SocketPermission(properties.apiHost + ":" + properties.apiPort, "connect,listen,resolve"));
         permissions.add(new NetPermission("getProxySelector"));
         permissions.add(new RuntimePermission("readFileDescriptor"));
         permissions.add(new RuntimePermission("writeFileDescriptor"));

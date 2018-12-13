@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.utils.sourcecode.building;
 
 import com.credits.general.exception.CreditsException;
+import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.Converter;
 import com.credits.general.util.GeneralSourceCodeUtils;
 import com.credits.general.util.compiler.InMemoryCompiler;
@@ -43,7 +44,7 @@ public class SourceCodeBuilder {
                 List<Diagnostic> diagnostics = collector.getDiagnostics();
                 diagnostics.forEach(action -> {
                     BuildSourceCodeError tr = new BuildSourceCodeError();
-                    tr.setLine(Converter.toString(action.getLineNumber()));
+                    tr.setLine(GeneralConverter.toString(action.getLineNumber()));
                     tr.setText(action.getMessage(null));
                     errorsList.add(tr);
                 });

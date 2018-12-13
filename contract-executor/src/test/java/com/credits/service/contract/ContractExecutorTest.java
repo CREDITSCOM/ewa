@@ -11,7 +11,7 @@ import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.thrift.generated.MethodArgument;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import com.credits.service.ServiceTest;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractUtils;
@@ -49,7 +49,7 @@ public class ContractExecutorTest extends ServiceTest {
                         "    }\npublic void foo(){\nSystem.out.println(\"Method foo executed\");\n}\n}";
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
 
-        when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
+        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(
                 new SmartContractData(
                         address,
                         address,
@@ -59,7 +59,7 @@ public class ContractExecutorTest extends ServiceTest {
 
         ceService.execute(address, bytecode, null, "foo", new Variant[][]{{}},500);
 
-        when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
+        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(
                 new SmartContractData(
                         address,
                         address,

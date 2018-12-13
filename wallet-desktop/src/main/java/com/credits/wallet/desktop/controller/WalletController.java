@@ -3,7 +3,7 @@ package com.credits.wallet.desktop.controller;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.MathUtils;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.AppState;
@@ -34,7 +34,6 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ResourceBundle;
@@ -50,7 +49,6 @@ import static com.credits.wallet.desktop.AppState.contractInteractionService;
 import static com.credits.wallet.desktop.AppState.noClearForm6;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.AppState.toAddress;
-import static com.credits.wallet.desktop.AppState.transactionFeePercent;
 import static com.credits.wallet.desktop.AppState.transactionFeeValue;
 import static com.credits.wallet.desktop.AppState.transactionText;
 import static org.apache.commons.lang3.StringUtils.repeat;
@@ -119,7 +117,7 @@ public class WalletController implements Initializable {
 
     @FXML
     private void handleGenerate() {
-        amount = Converter.toBigDecimal(numAmount.getText());
+        amount = GeneralConverter.toBigDecimal(numAmount.getText());
         toAddress = txKey.getText();
         transactionText = transText.getText();
 
@@ -308,8 +306,8 @@ public class WalletController implements Initializable {
                 if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue)) { // check newValue is number
                     return;
                 }
-                double actualFee = MathUtils.calcActualFee(Converter.toDouble(newValue));
-                this.actualFeeLabel.setText(Converter.toString(actualFee));
+                double actualFee = MathUtils.calcActualFee(GeneralConverter.toDouble(newValue));
+                this.actualFeeLabel.setText(GeneralConverter.toString(actualFee));
             }
         );
 
@@ -325,8 +323,8 @@ public class WalletController implements Initializable {
 
         if (noClearForm6) {
             txKey.setText(toAddress);
-            numAmount.setText(Converter.toString(amount));
-            numFee.setText(Converter.toString(transactionFeeValue));
+            numAmount.setText(GeneralConverter.toString(amount));
+            numFee.setText(GeneralConverter.toString(transactionFeeValue));
 
             noClearForm6 = false;
         }

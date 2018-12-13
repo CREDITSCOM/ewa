@@ -4,7 +4,7 @@ import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.thrift.generated.Variant;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import com.credits.service.ServiceTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -32,7 +32,7 @@ public class ThriftIT extends ServiceTest {
 
         contractBytecode = compile(sourceCode, "Contract", "TKN");
 
-        when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(
+        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(
             new SmartContractData(
                     address,
                     address,

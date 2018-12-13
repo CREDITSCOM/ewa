@@ -5,6 +5,9 @@ import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.util.Converter;
+import com.credits.general.pojo.SmartContractData;
+import com.credits.general.pojo.SmartContractDeployData;
+import com.credits.general.util.GeneralConverter;
 import com.credits.service.contract.ContractExecutorService;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -46,7 +49,7 @@ public abstract class ServiceTest {
     protected byte[] compileSourceCode(String sourceCodePath) throws Exception {
         String sourceCode = readSourceCode(sourceCodePath);
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
-        when(mockNodeApiService.getSmartContract(Converter.encodeToBASE58(address))).thenReturn(new SmartContractData(
+        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(new SmartContractData(
                 address,
                 address,
                 new SmartContractDeployData(sourceCode, bytecode, TokenStandart.CreditsBasic),

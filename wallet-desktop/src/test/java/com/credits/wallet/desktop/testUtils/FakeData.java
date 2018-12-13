@@ -8,7 +8,7 @@ import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.client.node.thrift.generated.TransactionState;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
 import com.credits.general.pojo.TransactionRoundData;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.credits.general.util.Converter.decodeFromBASE58;
+import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 
 
 public class FakeData {
@@ -166,19 +166,19 @@ public class FakeData {
 
 
             TransactionRoundData transactionRoundData0 = new TransactionRoundData(String.valueOf(transaction0.getId()),
-                Converter.encodeToBASE58(transaction0.getSource()),Converter.encodeToBASE58(transaction0.getTarget()),transaction0.getAmount().toString(),String.valueOf(transaction0.getCurrency()));
+                GeneralConverter.encodeToBASE58(transaction0.getSource()), GeneralConverter.encodeToBASE58(transaction0.getTarget()),transaction0.getAmount().toString(),String.valueOf(transaction0.getCurrency()));
             transactionRoundData0.setRoundNumber(15);
             TransactionRoundData transactionRoundData1 = new TransactionRoundData(String.valueOf(transaction1.getId()),
-                Converter.encodeToBASE58(transaction1.getSource()),Converter.encodeToBASE58(transaction1.getTarget()),transaction1.getAmount().toString(),String.valueOf(transaction1.getCurrency()));
+                GeneralConverter.encodeToBASE58(transaction1.getSource()), GeneralConverter.encodeToBASE58(transaction1.getTarget()),transaction1.getAmount().toString(),String.valueOf(transaction1.getCurrency()));
             transactionRoundData1.setRoundNumber(15);
             TransactionRoundData transactionRoundData2 = new TransactionRoundData(String.valueOf(transaction2.getId()),
-                Converter.encodeToBASE58(transaction2.getSource()),Converter.encodeToBASE58(transaction2.getTarget()),transaction2.getAmount().toString(),String.valueOf(transaction2.getCurrency()));
+                GeneralConverter.encodeToBASE58(transaction2.getSource()), GeneralConverter.encodeToBASE58(transaction2.getTarget()),transaction2.getAmount().toString(),String.valueOf(transaction2.getCurrency()));
             transactionRoundData2.setRoundNumber(18);
             TransactionRoundData transactionRoundData3 = new TransactionRoundData(String.valueOf(transaction3.getId()),
-                Converter.encodeToBASE58(transaction3.getSource()),Converter.encodeToBASE58(transaction3.getTarget()),transaction3.getAmount().toString(),String.valueOf(transaction3.getCurrency()));
+                GeneralConverter.encodeToBASE58(transaction3.getSource()), GeneralConverter.encodeToBASE58(transaction3.getTarget()),transaction3.getAmount().toString(),String.valueOf(transaction3.getCurrency()));
             transactionRoundData3.setRoundNumber(21);
             TransactionRoundData transactionRoundData4 = new TransactionRoundData(String.valueOf(transaction4.getId()),
-                Converter.encodeToBASE58(transaction4.getSource()),Converter.encodeToBASE58(transaction4.getTarget()),transaction4.getAmount().toString(),String.valueOf(transaction4.getCurrency()));
+                GeneralConverter.encodeToBASE58(transaction4.getSource()), GeneralConverter.encodeToBASE58(transaction4.getTarget()),transaction4.getAmount().toString(),String.valueOf(transaction4.getCurrency()));
             transactionRoundData4.setRoundNumber(25);
 
             ConcurrentHashMap<Long, TransactionRoundData> map = new ConcurrentHashMap<>();

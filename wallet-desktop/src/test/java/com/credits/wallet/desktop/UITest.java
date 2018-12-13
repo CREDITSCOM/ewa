@@ -42,8 +42,8 @@ public class UITest {
     String addressThree;
 
     /*
-    TransactionFlowResultData successResponse = new TransactionFlowResultData(new ApiResponseData(SUCCESS, "Success"),1312, Converter
-        .decodeFromBASE58(addressOne), Converter.decodeFromBASE58(addressTwo), new Variant(V_STRING, "success variant response"));
+    TransactionFlowResultData successResponse = new TransactionFlowResultData(new ApiResponseData(SUCCESS, "Success"),1312, GeneralConverter
+        .decodeFromBASE58(addressOne), GeneralConverter.decodeFromBASE58(addressTwo), new Variant(V_STRING, "success variant response"));
     */
     @Mock
     AppStateInitializer mockInitializer;

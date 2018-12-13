@@ -1,6 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
@@ -61,7 +61,7 @@ public class TransactionCreatedInfoController implements Initializable {
 
         transactionTabRow.setTarget(AppState.toAddress);
         transactionTabRow.setCurrency("1");
-        transactionTabRow.setAmount(Converter.toString(AppState.amount));
+        transactionTabRow.setAmount(GeneralConverter.toString(AppState.amount));
         transactionTabRow.setInnerId(1L);
         AppState.selectedTransactionRow = transactionTabRow;
         AppState.detailFromHistory=false;
@@ -72,7 +72,7 @@ public class TransactionCreatedInfoController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         FormUtils.resizeForm(bp);
         this.toAddress.setText(AppState.toAddress);
-        this.amountInCs.setText(Converter.toString(AppState.amount) + " " + AppState.coin);
+        this.amountInCs.setText(GeneralConverter.toString(AppState.amount) + " " + AppState.coin);
 
     }
 }

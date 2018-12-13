@@ -1,8 +1,7 @@
 package com.credits.client.node.crypto;
 
-import com.credits.client.node.exception.NodeClientException;
 import com.credits.general.crypto.exception.CryptoException;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.exception.ConverterException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,7 +35,7 @@ public class Ed25519Test {
             KeyPair keyPair = Ed25519.generateKeyPair();
             PublicKey publicKey = keyPair.getPublic();
             byte[] publicKeyBytes = Ed25519.publicKeyToBytes(publicKey);
-            String publicKeyBASE58 = Converter.encodeToBASE58(publicKeyBytes);
+            String publicKeyBASE58 = GeneralConverter.encodeToBASE58(publicKeyBytes);
             byte[] bytes = publicKeyBASE58.getBytes(StandardCharsets.US_ASCII);
             if (bytes.length != 44) {
                 count++;
@@ -50,8 +49,8 @@ public class Ed25519Test {
         KeyPair keyPair = Ed25519.generateKeyPair();
         Assert.assertNotNull(keyPair.getPublic());
         Assert.assertNotNull(keyPair.getPrivate());
-        LOGGER.info(Converter.encodeToBASE64(keyPair.getPublic().getEncoded()));
-        LOGGER.info(Converter.encodeToBASE64(keyPair.getPrivate().getEncoded()));
+        LOGGER.info(GeneralConverter.encodeToBASE64(keyPair.getPublic().getEncoded()));
+        LOGGER.info(GeneralConverter.encodeToBASE64(keyPair.getPrivate().getEncoded()));
     }
 
     @Test
@@ -59,12 +58,12 @@ public class Ed25519Test {
         KeyPair keyPair = Ed25519.generateKeyPair();
         byte[] data = "Hello World!!!".getBytes();
 
-        LOGGER.info("Public key: {}", Converter.encodeToBASE58(keyPair.getPublic().getEncoded()));
-        LOGGER.info("Private key: {}", Converter.encodeToBASE58(keyPair.getPrivate().getEncoded()));
+        LOGGER.info("Public key: {}", GeneralConverter.encodeToBASE58(keyPair.getPublic().getEncoded()));
+        LOGGER.info("Private key: {}", GeneralConverter.encodeToBASE58(keyPair.getPrivate().getEncoded()));
 
         byte[] signature = Ed25519.sign(data, keyPair.getPrivate());
         Assert.assertEquals(64, signature.length);
-        LOGGER.info("Signature: {}", Converter.encodeToBASE58(signature));
+        LOGGER.info("Signature: {}", GeneralConverter.encodeToBASE58(signature));
         Boolean verified = Ed25519.verify(data, signature, keyPair.getPublic());
         Assert.assertTrue(verified);
         LOGGER.info("Verified: {}", verified);
@@ -75,8 +74,8 @@ public class Ed25519Test {
         byte[] data = "Hello World!!!".getBytes();
 
         PrivateKey privateKey = Ed25519.bytesToPrivateKey(
-            Converter.decodeFromBASE58("4a1nut9D6v5AxKQMonKcttnDD2x1x9DmZikpfbxJh1S6R97NsXkSkZCQtGLm95TJ5V4emWAiN2BF2V4pn2zc7Jum"));
-        PublicKey publicKey = Ed25519.bytesToPublicKey(Converter.decodeFromBASE58("6cZJCGMzDF1RzqzSu1fnwTNA9EYwnvzphyNzRTHLYcFy"));
+            GeneralConverter.decodeFromBASE58("4a1nut9D6v5AxKQMonKcttnDD2x1x9DmZikpfbxJh1S6R97NsXkSkZCQtGLm95TJ5V4emWAiN2BF2V4pn2zc7Jum"));
+        PublicKey publicKey = Ed25519.bytesToPublicKey(GeneralConverter.decodeFromBASE58("6cZJCGMzDF1RzqzSu1fnwTNA9EYwnvzphyNzRTHLYcFy"));
         byte[] signature = Ed25519.sign(data, privateKey);
         Boolean verified = Ed25519.verify(data, signature, publicKey);
         LOGGER.info("Verified: {}", verified);
@@ -93,11 +92,11 @@ public class Ed25519Test {
                         KeyPair keyPair = Ed25519.generateKeyPair();
                         byte[] data = "Hello World!!!".getBytes();
 
-                        LOGGER.info("Public key: {}", Converter.encodeToBASE64(keyPair.getPublic().getEncoded()));
-                        LOGGER.info("Private key: {}", Converter.encodeToBASE64(keyPair.getPrivate().getEncoded()));
+                        LOGGER.info("Public key: {}", GeneralConverter.encodeToBASE64(keyPair.getPublic().getEncoded()));
+                        LOGGER.info("Private key: {}", GeneralConverter.encodeToBASE64(keyPair.getPrivate().getEncoded()));
                         try {
                             byte[] signature = Ed25519.sign(data, keyPair.getPrivate());
-                            LOGGER.info("Signature: {}", Converter.encodeToBASE64(signature));
+                            LOGGER.info("Signature: {}", GeneralConverter.encodeToBASE64(signature));
 
                             Boolean verified = Ed25519.verify(data, signature, keyPair.getPublic());
                             LOGGER.info("Verified: {}", verified);
@@ -138,9 +137,9 @@ public class Ed25519Test {
 
     @Test
     public void bytesToPrivateKeyTest() {
-        byte[] publicKeyByteArr = Converter.decodeFromBASE64("f0j9xmzh1x8m5RvY4O8B6WGNigb2xVGQfPr7JGhgjDM=");
+        byte[] publicKeyByteArr = GeneralConverter.decodeFromBASE64("f0j9xmzh1x8m5RvY4O8B6WGNigb2xVGQfPr7JGhgjDM=");
         byte[] privateKeyByteArr =
-            Converter.decodeFromBASE64("6IOC+cSsndeFjx6eqEUoC1BVlo1gwGgdfK8f1O7IKYR/SP3GbOHXHyblG9jg7wHpYY2KBvbFUZB8+vskaGCMMw==");
+            GeneralConverter.decodeFromBASE64("6IOC+cSsndeFjx6eqEUoC1BVlo1gwGgdfK8f1O7IKYR/SP3GbOHXHyblG9jg7wHpYY2KBvbFUZB8+vskaGCMMw==");
 
         LOGGER.info("publicKeyByteArr  = {}", Arrays.toString(publicKeyByteArr));
         LOGGER.info("privateKeyByteArr = {}", Arrays.toString(privateKeyByteArr));
@@ -154,10 +153,10 @@ public class Ed25519Test {
     @Test
     public void publicKeyToBytesTest() {
         String key1 = "f0j9xmzh1x8m5RvY4O8B6WGNigb2xVGQfPr7JGhgjDM=";
-        byte[] bytes1 = Converter.decodeFromBASE64(key1);
+        byte[] bytes1 = GeneralConverter.decodeFromBASE64(key1);
         PublicKey publicKey = Ed25519.bytesToPublicKey(bytes1);
         byte[] bytes2 = Ed25519.publicKeyToBytes(publicKey);
-        String key2 = Converter.encodeToBASE64(bytes2);
+        String key2 = GeneralConverter.encodeToBASE64(bytes2);
         LOGGER.info("bytes1 = {}", Arrays.toString(bytes1));
         LOGGER.info("bytes2 = {}", Arrays.toString(bytes2));
         LOGGER.info("key1 = {}", key1);
@@ -168,10 +167,10 @@ public class Ed25519Test {
     @Test
     public void privateKeyToBytesTest() {
         String key1 = "6IOC+cSsndeFjx6eqEUoC1BVlo1gwGgdfK8f1O7IKYR/SP3GbOHXHyblG9jg7wHpYY2KBvbFUZB8+vskaGCMMw==";
-        byte[] bytes1 = Converter.decodeFromBASE64(key1);
+        byte[] bytes1 = GeneralConverter.decodeFromBASE64(key1);
         PrivateKey privateKey = Ed25519.bytesToPrivateKey(bytes1);
         byte[] bytes2 = Ed25519.privateKeyToBytes(privateKey);
-        String key2 = Converter.encodeToBASE64(bytes2);
+        String key2 = GeneralConverter.encodeToBASE64(bytes2);
         LOGGER.info("bytes1 = {}", Arrays.toString(bytes1));
         LOGGER.info("bytes2 = {}", Arrays.toString(bytes2));
         LOGGER.info("key1 = {}", key1);

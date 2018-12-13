@@ -6,7 +6,7 @@ import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
 import com.credits.wallet.desktop.AppState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +16,14 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
-import static com.credits.general.util.Converter.objectToVariant;
+import static com.credits.general.util.VariantConverter.objectToVariant;
+import static com.credits.general.util.VariantConverter.STRING_TYPE;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.contractExecutorService;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
-import static com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils.STRING_TYPE;
-import static com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils.createVariantObject;
+import static com.credits.general.util.VariantConverter.createVariantObject;
 import static java.util.Arrays.asList;
 
 /**
@@ -62,7 +62,7 @@ public class ContractInteractionService {
         }
 
         ExecuteResponseData response = contractExecutorService.executeContractMethod(
-            Converter.decodeFromBASE58(smartContractAddress),
+            GeneralConverter.decodeFromBASE58(smartContractAddress),
             sc.getSmartContractDeployData().getByteCode(),
             sc.getObjectState(),
             methodName,

@@ -2,7 +2,6 @@ package com.credits.wallet.desktop.utils.sourcecode;
 
 
 import com.credits.general.exception.CreditsException;
-import com.credits.general.util.Converter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
@@ -61,7 +60,6 @@ public class SourceCodeUtils {
             ")" + "|(?<BRACKET>" + BRACKET_PATTERN + ")" + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")" + "|(?<STRING>" +
             STRING_PATTERN + ")" + "|(?<COMMENT>" + COMMENT_PATTERN + ")");
 
-    private static final String COLLECTION_VALUES_DELIMITER = "\\|";
 
     private static final String CLASS_NAME = "Contract";
     private static final String SUPERCLASS_NAME = "SmartContract";
@@ -75,8 +73,29 @@ public class SourceCodeUtils {
             this.type = type;
         }
     }
-
     public static final String STRING_TYPE = "String";
+
+    public static String normalizeSourceCode(String sourceCode) {
+        String normalizedSourceCode =
+            sourceCode.replace("\r", " ").replace("\t", " ").replace("{", " {");
+
+        while (normalizedSourceCode.contains("  ")) {
+            normalizedSourceCode = normalizedSourceCode.replace("  ", " ");
+        }
+        return normalizedSourceCode;
+    }
+
+    public static String parseClassName(String sourceCode, String defaultClassName) {
+        String normalizedSourceCode = normalizeSourceCode(sourceCode);
+        String className = defaultClassName;
+        List<String> javaCodeWords = Arrays.asList(normalizedSourceCode.split(" "));
+        int ind = javaCodeWords.indexOf("class");
+        if (ind >= 0 && ind < javaCodeWords.size() - 1) {
+            className = javaCodeWords.get(ind + 1);
+        }
+        return className;
+    }
+
 
     // TODO unused, candidate to removing
     public static String normalizeMethodName(String methodSignature) {

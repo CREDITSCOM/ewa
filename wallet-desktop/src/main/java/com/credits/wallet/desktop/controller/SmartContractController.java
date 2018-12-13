@@ -5,6 +5,7 @@ import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
+import com.credits.general.util.VariantConverter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
@@ -340,7 +341,7 @@ public class SmartContractController implements Initializable {
                     String paramValue = ((TextField) node).getText();
                     SingleVariableDeclaration variableDeclaration = currentMethodParams.get(i);
                     String className = SourceCodeUtils.parseClassName(variableDeclaration);
-                    params.add(SourceCodeUtils.createVariantObject(className, paramValue));
+                    params.add(VariantConverter.createVariantObject(className, paramValue));
                     ++i;
                 }
 

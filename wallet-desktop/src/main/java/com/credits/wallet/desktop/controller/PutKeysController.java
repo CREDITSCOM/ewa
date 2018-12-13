@@ -4,7 +4,8 @@ import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.exception.CreditsException;
-import com.credits.general.util.Converter;
+import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.ObjectKeeper;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -92,8 +93,8 @@ public class PutKeysController implements Initializable {
             try {
                 writer = new PrintWriter(file.getAbsolutePath(), "UTF-8");
                 String json = String.format("{\"key\":{\"public\":\"%s\",\"private\":\"%s\"}}",
-                    Converter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)),
-                    Converter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
+                    GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)),
+                    GeneralConverter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
                 writer.println(json);
                 writer.close();
                 FormUtils.showInfo(String.format("Keys successfully saved in %n%n%s", file.getAbsolutePath()));
@@ -144,8 +145,8 @@ public class PutKeysController implements Initializable {
         txKey.setEditable(!newAccount);
 
         if (newAccount) {
-            txKey.setText(Converter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
-            txPublic.setText(Converter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)));
+            txKey.setText(GeneralConverter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
+            txPublic.setText(GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)));
             try {
                 handleSaveKeys();
             } catch (WalletDesktopException e) {
@@ -178,7 +179,7 @@ public class PutKeysController implements Initializable {
 
         initStaticData(pubKey);
         try {
-            byte[] privateKeyByteArr = Converter.decodeFromBASE58(privKey);
+            byte[] privateKeyByteArr = GeneralConverter.decodeFromBASE58(privKey);
             privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
         } catch ( Exception e) {
             if (e.getMessage() != null) {
@@ -190,7 +191,7 @@ public class PutKeysController implements Initializable {
             //return;
         }
         try {
-            byte[] publicKeyByteArr = Converter.decodeFromBASE58(pubKey);
+            byte[] publicKeyByteArr = GeneralConverter.decodeFromBASE58(pubKey);
             publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
         } catch ( Exception e) {
             if (e.getMessage() != null) {
@@ -220,8 +221,8 @@ public class PutKeysController implements Initializable {
         byte[] publicKeyByteArr;
         byte[] privateKeyByteArr;
         try {
-            publicKeyByteArr = Converter.decodeFromBASE58(publicKey);
-            privateKeyByteArr = Converter.decodeFromBASE58(privateKey);
+            publicKeyByteArr = GeneralConverter.decodeFromBASE58(publicKey);
+            privateKeyByteArr = GeneralConverter.decodeFromBASE58(privateKey);
         } catch (CreditsException e) {
             LOGGER.error("failed!", e);
             return false;
