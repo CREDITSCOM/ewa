@@ -6,7 +6,10 @@ import com.credits.service.node.api.NodeApiInteractionService;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public abstract class SmartContract implements Serializable {
 
@@ -22,65 +25,65 @@ public abstract class SmartContract implements Serializable {
     }
 
     final protected BigDecimal getBalance(String address) {
+        return callService(() -> {
+            byte currencyByte = (byte) 1;
+            return service.getBalance(address, currencyByte);
+        });
+    }
 
-        Callable<BigDecimal> callable = new Callable<BigDecimal>() {
+    final protected TransactionData getTransaction(String transactionId) {
+        return callService(() -> {
+            return service.getTransaction(transactionId);
+        });
+    }
+
+    final protected List<TransactionData> getTransactions(String address, long offset, long limit) {
+        return callService(() -> {
+            return service.getTransactions(address, offset, limit);
+        });
+    }
+
+    final protected List<PoolData> getPoolList(long offset, long limit) {
+        return callService(() -> {
+            return service.getPoolList(offset, limit);
+        });
+    }
+
+    final protected PoolData getPoolInfo(byte[] hash, long index) {
+        return callService(() -> {
+            return service.getPoolInfo(hash, index);
+        });
+    }
+
+    final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {
+        callService(() -> {
+            service.transactionFlow(initiator, target, amount, fee, userData, specialProperty);
+            return null;
+        });
+    }
+
+    private interface Function<R> {
+        R apply();
+    }
+
+    private <R> R callService(SmartContract.Function<R> method) {
+
+        Callable<R> callable = new Callable<R>() {
             @Override
-            public BigDecimal call() {
-                byte currencyByte = (byte) 1;
+            public R call() {
                 try {
-                    return service.getBalance(address, currencyByte);
+                    R res = method.apply();
+                    return res;
                 } catch (CreditsException e) {
                     throw new RuntimeException(e);
                 }
             }
         };
-        Future<BigDecimal> future = cachedPool.submit(callable);
+        Future<R> future = cachedPool.submit(callable);
         try {
             return future.get();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    final protected TransactionData getTransaction(String transactionId) {
-        try {
-            return service.getTransaction(transactionId);
-        } catch (CreditsException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    final protected List<TransactionData> getTransactions(String address, long offset, long limit) {
-        try {
-            return service.getTransactions(address, offset, limit);
-        } catch (CreditsException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    final protected List<PoolData> getPoolList(long offset, long limit) {
-        try {
-            return service.getPoolList(offset, limit);
-        } catch (CreditsException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    final protected PoolData getPoolInfo(byte[] hash, long index) {
-        try {
-            return service.getPoolInfo(hash, index);
-        } catch (CreditsException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {
-        try {
-            service.transactionFlow(initiator, target, amount, fee, userData, specialProperty);
-        } catch (CreditsException e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

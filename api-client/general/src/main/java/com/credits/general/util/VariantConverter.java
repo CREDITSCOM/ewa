@@ -58,23 +58,24 @@ public class VariantConverter {
 
     public static Variant objectToVariant(Object object) {
         Class clazz = object.getClass();
+        Object value = object;
         Variant variant = new Variant();
         if (clazz.equals(String.class)) {
-            variant.setV_string((String)value);
+            variant.setV_string((String) value);
         } else if (clazz.equals(Integer.class)) {
-            variant.setV_i32((Integer)value);
+            variant.setV_i32((Integer) value);
         } else if (clazz.equals(Double.class)) {
-            variant.setV_double((Double)value);
+            variant.setV_double((Double) value);
         } else if (clazz.equals(Byte.class)) {
-            variant.setV_i8((Byte)value);
+            variant.setV_i8((Byte) value);
         } else if (clazz.equals(Short.class)) {
-            variant.setV_i16((Short)value);
+            variant.setV_i16((Short) value);
         } else if (clazz.equals(Long.class)) {
-            variant.setV_i64((Long)value);
+            variant.setV_i64((Long) value);
         } else if (clazz.equals(Boolean.class)) {
-            variant.setV_bool((Boolean)value);
+            variant.setV_bool((Boolean) value);
         } else if (clazz.equals(List.class)) {
-            List objectList = (List)value;
+            List objectList = (List) value;
             List<Variant> variantList = new ArrayList();
             objectList.forEach(obj -> variantList.add(objectToVariant(obj)));
             variant.setV_list(variantList);
