@@ -33,6 +33,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.tuple.Pair;
@@ -263,12 +264,8 @@ public class SmartContractDeployController implements Initializable {
                 if (classMember instanceof MethodDeclaration) {
                     ((MethodDeclaration) classMember).setBody(null);
                 }
-
                 Label label = new Label(classMember.toString());
                 label.setOnMousePressed(event -> {
-                    if (event.isPrimaryButtonDown()) {
-                        codeArea.positionCursorToLine(SourceCodeUtils.getLineNumber(sourceCode, classMember));
-                    }
                 });
                 TreeItem<Label> treeItem = new TreeItem<>();
                 treeItem.setValue(label);
@@ -278,6 +275,16 @@ public class SmartContractDeployController implements Initializable {
             treeRoot.setExpanded(true);
             classTreeView.setRoot(treeRoot);
             classTreeView.setShowRoot(false);
+
+            classTreeView.setOnMouseClicked(event -> {
+                if (event.isPrimaryButtonDown() || event.getButton() == MouseButton.PRIMARY) {
+                    BodyDeclaration selected =
+                        classMembers.get(classTreeView.getSelectionModel().getSelectedIndices().get(0));
+                    codeArea.positionCursorToLine(SourceCodeUtils.getLineNumber(sourceCode, selected));
+                    codeArea.selectRange(codeArea.getCaretPosition(), codeArea.getCaretPosition());
+                }
+            });
+
         });
     }
 
@@ -307,10 +314,11 @@ public class SmartContractDeployController implements Initializable {
         errorTableView.getColumns().add(tabErrorsColText);
 
         errorTableView.setOnMousePressed(event -> {
-            if (event.isPrimaryButtonDown()) {
+            if (event.isPrimaryButtonDown()|| event.getButton() == MouseButton.PRIMARY) {
                 BuildSourceCodeError tabRow = errorTableView.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
                     codeArea.positionCursorToLine(Integer.parseInt(tabRow.getLine()));
+                    codeArea.selectRange(codeArea.getCaretPosition(), codeArea.getCaretPosition());
                 }
             }
         });

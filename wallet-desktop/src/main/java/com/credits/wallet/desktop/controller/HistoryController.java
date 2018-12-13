@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,7 @@ public class HistoryController implements Initializable {
         tableView.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("amount"));
         tableView.getColumns().get(4).setCellValueFactory(new PropertyValueFactory<>("state"));
         tableView.setOnMousePressed(event -> {
-            if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+            if ((event.isPrimaryButtonDown()|| event.getButton() == MouseButton.PRIMARY) && event.getClickCount() == 2) {
                 TransactionTabRow tabRow = tableView.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
                     selectedTransactionRow = tabRow;
