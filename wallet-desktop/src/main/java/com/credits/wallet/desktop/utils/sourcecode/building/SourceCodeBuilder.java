@@ -2,7 +2,6 @@ package com.credits.wallet.desktop.utils.sourcecode.building;
 
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.Converter;
 import com.credits.general.util.GeneralSourceCodeUtils;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;

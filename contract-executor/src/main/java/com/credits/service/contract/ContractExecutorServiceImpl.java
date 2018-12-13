@@ -4,6 +4,10 @@ import com.credits.ApplicationProperties;
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.exception.CompilationErrorException;
+import com.credits.general.exception.CompilationException;
+import com.credits.general.thrift.generated.APIResponse;
+import com.credits.general.thrift.generated.MethodArgument;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.general.util.compiler.InMemoryCompiler;
@@ -117,11 +121,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             }
 
             int amountParamRows = 1;
-            int amountParams = 0;
             Variant[] params = null;
             if (paramsTable != null && paramsTable.length > 0) {
                 amountParamRows = paramsTable.length;
-                amountParams = paramsTable[0].length;
                 params = paramsTable[0];
             }
 
@@ -192,6 +194,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     static MethodArgumentsValuesData getMethodArgumentsValuesByNameAndParams(Class<?> contractClass,
         String methodName, Variant[] params) {
+        if (params==null) {
+            throw new ContractExecutorException("Cannot find method params == null");
+        }
+
         Class[] argTypes = ContractExecutorServiceUtils.getArgTypes(params);
         Method method = MethodUtils.getMatchingAccessibleMethod(contractClass, methodName, argTypes);
         if (method!=null) {

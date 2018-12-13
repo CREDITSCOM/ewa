@@ -7,7 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 
-import static com.credits.general.util.Converter.parseObjectFromVariant;
+import static com.credits.general.util.VariantConverter.parseObjectFromVariant;
+
 
 public class ContractExecutorServiceUtils {
 

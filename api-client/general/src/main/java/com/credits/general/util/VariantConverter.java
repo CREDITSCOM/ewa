@@ -5,7 +5,12 @@ import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class VariantConverter {
     public static final String STRING_TYPE = "String";
@@ -17,6 +22,9 @@ public class VariantConverter {
         boolean genericExists = (openingBracketPosition > -1);
 
         String classNameWOGeneric = className; // class name without generic, example: List<Integer> -> List
+        if(classNameWOGeneric.contains("List")) {
+            classNameWOGeneric = "List";
+        }
         String genericName = null;
         if (genericExists) {
             classNameWOGeneric = className.substring(0, openingBracketPosition);
@@ -74,7 +82,7 @@ public class VariantConverter {
             variant.setV_i64((Long) value);
         } else if (clazz.equals(Boolean.class)) {
             variant.setV_bool((Boolean) value);
-        } else if (clazz.equals(List.class)) {
+        } else if (clazz.getName().contains("List")) {
             List objectList = (List) value;
             List<Variant> variantList = new ArrayList();
             objectList.forEach(obj -> variantList.add(objectToVariant(obj)));
