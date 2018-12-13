@@ -32,20 +32,8 @@ import java.net.NetPermission;
 import java.net.SocketPermission;
 import java.security.Permissions;
 import java.security.SecurityPermission;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.PropertyPermission;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.*;
+import java.util.concurrent.*;
 
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialize.Serializer.deserialize;
@@ -99,18 +87,17 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
             Class<?> contractClass = classLoader.buildClass(bytecode);
 
-            if (methodName != null) {
-                Sandbox.confine(contractClass, createPermissions());
-                Class<?> serviceClass;
-                try {
-                    serviceClass = Class.forName("com.credits.service.node.api.NodeApiInteractionServiceThriftImpl");
-                } catch (ClassNotFoundException e) {
-                    throw new ContractExecutorException("", e);
-                }
-                Permissions permissions = createPermissions();
-                permissions.add(new SocketPermission(properties.apiHost + ":" + properties.apiPort, "connect,listen,resolve"));
-                Sandbox.confine(serviceClass, permissions);
+            // add classes to Sandbox
+            Sandbox.confine(contractClass, createPermissions());
+            Class<?> serviceClass;
+            try {
+                serviceClass = Class.forName("com.credits.service.node.api.NodeApiInteractionServiceThriftImpl");
+            } catch (ClassNotFoundException e) {
+                throw new ContractExecutorException("", e);
             }
+            Permissions permissions = createPermissions();
+            permissions.add(new SocketPermission(properties.apiHost + ":" + properties.apiPort, "connect,listen,resolve"));
+            Sandbox.confine(serviceClass, permissions);
 
             Object instance;
             if (contractState != null && contractState.length != 0) {
@@ -286,6 +273,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new PropertyPermission("com.sun.security.preserveOldDCEncoding", "read"));
         permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
         permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
+//        permissions.add(new FilePermission("<<ALL FILES>>", "read"));
         return permissions;
     }
 

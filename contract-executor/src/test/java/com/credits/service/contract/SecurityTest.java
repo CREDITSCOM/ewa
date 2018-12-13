@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +22,7 @@ import static org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class SecurityTest extends ServiceTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityTest.class);
 
     private final static String prjDir = "\"" + System.getProperty("user.dir") + separator + "credits" + separator + "file.test" + "\"";
 
@@ -34,12 +37,12 @@ public class SecurityTest extends ServiceTest {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
             {"getBalance", null, false},
-            {"openSocket",  new Variant(V_I32, 5555), true},
+            {"openSocket",  new Variant(V_I32, 5555), false},
             {"setTotal", new Variant(V_I32, 1000), false},
             {"getTotal", null, false},
-            {"createFile", null, true},
-            {"createFileInProjectDir", new Variant(V_STRING, prjDir), true},
-            {"killProcess", null, true},
+            {"createFile", null, false},
+            {"createFileInProjectDir", new Variant(V_STRING, prjDir), false},
+            {"killProcess", null, false},
             {"newThread", null, false},
         });
     }
@@ -56,14 +59,11 @@ public class SecurityTest extends ServiceTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         try {
             ceService.execute(address, bytecode, contractState, methodName, arg != null ? new Variant[][] {{arg}} : new Variant[][]{{}},500L);
         } catch (ContractExecutorException e) {
-            System.out.println(e.getMessage());
-            if (!errorExpected || !e.getMessage().contains("AccessControlException")) {
-                throw new Exception(e.getMessage());
-            }
+            LOGGER.error(e.getMessage());
             return;
         }
         if (errorExpected) {
