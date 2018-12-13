@@ -1,3 +1,6 @@
+import java.util.List;
+import java.util.ArrayList;
+
 public class Contract extends SmartContract {
 
     private static int statIntVar = 2;
@@ -6,8 +9,8 @@ public class Contract extends SmartContract {
 
     public void initialize() {}
 
-    public static void main(String[] args) {
-        System.out.println("Method main(String[] args) has been invoked");
+    public static Integer mainString(List<String> args) {
+        System.out.println("Method main(List<String> args) has been invoked");
         
         for (String arg : args) {
             System.out.println(arg);
@@ -17,8 +20,8 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public static void main(Integer[] args) {
-        System.out.println("Method main(Integer[] args) has been invoked");
+    public static Integer mainInteger(List<Integer> args) {
+        System.out.println("Method main(List<Integer> args) has been invoked");
 
         for (Integer arg : args) {
             System.out.println(arg);
@@ -28,8 +31,8 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public static void main(double[] args) {
-        System.out.println("Method main(double[] args) has been invoked");
+    public static Integer main(List<Double> args) {
+        System.out.println("Method main(List<Double> args) has been invoked");
 
         for (double arg : args) {
             System.out.println(arg);
@@ -39,7 +42,7 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public void foo(String str, Double d, Integer i) {
+    public Integer foo(String str, Double d, Integer i) {
         System.out.println("Method foo(String str, Double d, Integer i) has been invoked");
 
         System.out.println("String: " + str);
@@ -50,7 +53,7 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public void foo(String str, Long l, Float f) {
+    public Integer foo(String str, Long l, Float f) {
         System.out.println("Method foo(String str, Long l, Float f) has been invoked");
 
         System.out.println("String: " + str);
@@ -61,7 +64,7 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public void foo(String str, int i, float f) {
+    public Integer foo(String str, int i, float f) {
         System.out.println("Method foo(String str, int i, float f) has been invoked");
 
         System.out.println("String: " + str);
@@ -72,7 +75,7 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public void foo(String str, Byte b, Float f) {
+    public Integer foo(String str, Byte b, Float f) {
         System.out.println("Method foo(String str, Byte b, Float f) has been invoked");
 
         System.out.println("String: " + str);
@@ -83,7 +86,7 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public void foo(String str, short s, float f) {
+    public Integer foo(String str, short s, float f) {
         System.out.println("Method foo(String str, short s, float f) has been invoked");
 
         System.out.println("String: " + str);
@@ -99,7 +102,7 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    static public void foo(String str, Short s, Integer i) {
+    static public Integer foo(String str, Short s, Integer i) {
         System.out.println("Static method foo(String str, Short s, Integer i) has been invoked");
         System.out.println("String: " + str);
         System.out.println("Short: " + s);
@@ -108,8 +111,8 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public void foo(boolean[] args) {
-        System.out.println("Method foo(boolean[] args) has been invoked");
+    public Integer fooBoolean(List<Boolean> args) {
+        System.out.println("Method foo(List<Boolean> args) has been invoked");
         for (boolean arg : args) {
             System.out.println(arg);
         }
@@ -117,8 +120,8 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public void foo(int[] args) {
-        System.out.println("Method foo(int[] args) has been invoked");
+    public Integer foo(List<Integer> args) {
+        System.out.println("Method foo(List<Integer> args) has been invoked");
         for (int arg : args) {
             System.out.println(arg);
         }
@@ -126,8 +129,8 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public void foo(short[] args) {
-        System.out.println("Method foo(short[] args) has been invoked");
+    public Integer fooShort(List<Short> args) {
+        System.out.println("Method foo(List<Short> args) has been invoked");
         for (short arg : args) {
             System.out.println(arg);
         }
@@ -135,43 +138,43 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public void foo(Long[] args) {
-        System.out.println("Method foo(Long[] args) has been invoked");
-        for (Long arg : args) {
+    public Integer fooInteger(List<Integer> args) {
+        System.out.println("Method foo(List<Long> args) has been invoked");
+        for (Integer arg : args) {
             System.out.println(arg);
         }
         System.out.println("Done");
         return 1;
     }
 
-    public void foo(Float[] args) {
-        System.out.println("Method foo(Float[] args) has been invoked");
-        for (Float arg : args) {
+    public Integer fooDouble(List<Double> args) {
+        System.out.println("Method foo(List<Double> args) has been invoked");
+        for (Double arg : args) {
             System.out.println(arg);
         }
         System.out.println("Done");
         return 1;
     }
 
-    public void foo(
-        float param01,
-        Float param02,
+    public Integer foo(
+        double param01,
+        Double param02,
         int param03,
         Integer param04,
         double param05,
         Double param06,
-        String[] param07,
-        int[] param08,
-        Integer[] param09,
-        double[] param10,
-        Double[] param11,
-        boolean[] param12,
-        Boolean[] param13,
-        short[] param14,
-        long[] param15,
-        Long[] param16,
-        float[] param17,
-        Float[] param18
+        List<String> param07,
+        List<Integer> param08,
+        List<Integer> param09,
+        List<Double> param10,
+        List<Double> param11,
+        List<Boolean> param12,
+        List<Boolean> param13,
+        List<Short> param14,
+        List<Long> param15,
+        List<Long> param16,
+        List<Double> param17,
+        List<Double> param18
     ) {
         System.out.println("param01 = " + param01);
         System.out.println("param02 = " + param02);
@@ -194,13 +197,83 @@ public class Contract extends SmartContract {
         return 1;
     }
 
-    public void globalVarInstance() {
+    public Integer food(
+        double param01
+    ) {
+        System.out.println("param01 = " + param01);
+        return 1;
+    }
+
+    public Integer food(
+        Double param01
+    ) {
+        System.out.println("param01 = " + param01);
+        return 1;
+    }
+
+    public Integer foo(
+        double param01,
+        Double param02,
+        int param03,
+        Integer param04,
+        double param05,
+        Double param06
+    ) {
+        System.out.println("param01 = " + param01);
+        System.out.println("param02 = " + param02);
+        System.out.println("param03 = " + param03);
+        System.out.println("param04 = " + param04);
+        System.out.println("param05 = " + param05);
+        System.out.println("param06 = " + param06);
+        return 1;
+    }
+
+    public Integer foo(
+        double param01,
+        Double param02,
+        int param03,
+        Integer param04,
+        double param05,
+        Double param06,
+        ArrayList<String> param07
+    ) {
+        System.out.println("param01 = " + param01);
+        System.out.println("param02 = " + param02);
+        System.out.println("param03 = " + param03);
+        System.out.println("param04 = " + param04);
+        System.out.println("param05 = " + param05);
+        System.out.println("param06 = " + param06);
+        System.out.println("param07 = " + param07);
+        return 1;
+    }
+
+    public Integer foo(
+        double param01,
+        Double param02,
+        int param03,
+        Integer param04,
+        double param05,
+        Double param06,
+        List<Integer> param08
+    ) {
+        System.out.println("param01 = " + param01);
+        System.out.println("param02 = " + param02);
+        System.out.println("param03 = " + param03);
+        System.out.println("param04 = " + param04);
+        System.out.println("param05 = " + param05);
+        System.out.println("param06 = " + param06);
+        System.out.println("param08 = " + param08);
+        return 1;
+    }
+
+
+    public Integer globalVarInstance() {
         System.out.println("intVar value = " + intVar);
         intVar++;
         return 1;
     }
 
-    public static void globalVarStatic() {
+    public static Integer globalVarStatic() {
         System.out.println("statIntVar value = " + statIntVar);
         statIntVar++;
         return 1;
