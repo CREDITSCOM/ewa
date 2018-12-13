@@ -92,7 +92,7 @@ public class CreditsCodeArea extends CodeArea {
     private void initKeyPressedLogic() {
 
         this.setOnMousePressed(event -> {
-            if(creditsProposalsPopup.isShowing()) {
+            if (creditsProposalsPopup.isShowing()) {
                 creditsProposalsPopup.hide();
             }
         });
@@ -121,16 +121,17 @@ public class CreditsCodeArea extends CodeArea {
             }
         }));
 
-        Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.BACK_SPACE), e -> {
-            if (tabCount > 0) {
-                for (int i = 0; i < 4; i++) {
+        Nodes.addInputMap(this,
+            InputMap.consumeWhen(keyPressed(KeyCode.BACK_SPACE), () -> this.getSelectedText().equals(""), e -> {
+                if (tabCount > 0) {
+                    for (int i = 0; i < 4; i++) {
+                        this.deletePreviousChar();
+                    }
+                    tabCount--;
+                } else {
                     this.deletePreviousChar();
                 }
-                tabCount--;
-            } else {
-                this.deletePreviousChar();
-            }
-        }));
+            }));
     }
 
     private void calculateNewLinePosition() {
@@ -144,7 +145,7 @@ public class CreditsCodeArea extends CodeArea {
         String replacement = "\n" + StringUtils.repeat(" ", first);
         String trimCurrentLine = currentLine.trim();
         char c = trimCurrentLine.charAt(trimCurrentLine.length() - 1);
-        if(c =='{') {
+        if (c == '{') {
             tabCount++;
             replacement += StringUtils.repeat(" ", 4);
         }
