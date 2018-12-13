@@ -60,7 +60,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     public void execute_contract_using_bytecode_getBalance() throws Exception {
         when(mockNodeApiService.getBalance(any())).thenReturn(new BigDecimal(555));
         String balance = (String) ceService.execute(address, contractBytecode,
-            contractState, "balanceGet", new Variant[][] {},500L).getVariantsList().get(0).getFieldValue();
+            contractState, "balanceGet", new Variant[][] {{}},500L).getVariantsList().get(0).getFieldValue();
         assertEquals("555", balance);
     }
 

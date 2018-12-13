@@ -14,6 +14,7 @@ public class Contract extends SmartContract {
         }
         
         System.out.println("Done");
+        return 1;
     }
 
     public static void main(Integer[] args) {
@@ -24,6 +25,7 @@ public class Contract extends SmartContract {
         }
 
         System.out.println("Done");
+        return 1;
     }
 
     public static void main(double[] args) {
@@ -34,6 +36,7 @@ public class Contract extends SmartContract {
         }
 
         System.out.println("Done");
+        return 1;
     }
 
     public void foo(String str, Double d, Integer i) {
@@ -44,6 +47,7 @@ public class Contract extends SmartContract {
         System.out.println("Integer: " + i);
         
         System.out.println("Done");
+        return 1;
     }
 
     public void foo(String str, Long l, Float f) {
@@ -54,6 +58,7 @@ public class Contract extends SmartContract {
         System.out.println("Float: " + f);
 
         System.out.println("Done");
+        return 1;
     }
 
     public void foo(String str, int i, float f) {
@@ -64,6 +69,7 @@ public class Contract extends SmartContract {
         System.out.println("float: " + f);
         
         System.out.println("Done");
+        return 1;
     }
 
     public void foo(String str, Byte b, Float f) {
@@ -74,6 +80,7 @@ public class Contract extends SmartContract {
         System.out.println("Float: " + f);
 
         System.out.println("Done");
+        return 1;
     }
 
     public void foo(String str, short s, float f) {
@@ -84,10 +91,12 @@ public class Contract extends SmartContract {
         System.out.println("float: " + f);
 
         System.out.println("Done");
+        return 1;
     }
 
-    static public void foo() {
+    static public Integer foo() {
         System.out.println("Static method without params has been invoked");
+        return 1;
     }
 
     static public void foo(String str, Short s, Integer i) {
@@ -96,6 +105,7 @@ public class Contract extends SmartContract {
         System.out.println("Short: " + s);
         System.out.println("Integer: " + i);
         System.out.println("Done");
+        return 1;
     }
 
     public void foo(boolean[] args) {
@@ -104,6 +114,7 @@ public class Contract extends SmartContract {
             System.out.println(arg);
         }
         System.out.println("Done");
+        return 1;
     }
 
     public void foo(int[] args) {
@@ -112,6 +123,7 @@ public class Contract extends SmartContract {
             System.out.println(arg);
         }
         System.out.println("Done");
+        return 1;
     }
 
     public void foo(short[] args) {
@@ -120,6 +132,7 @@ public class Contract extends SmartContract {
             System.out.println(arg);
         }
         System.out.println("Done");
+        return 1;
     }
 
     public void foo(Long[] args) {
@@ -128,6 +141,7 @@ public class Contract extends SmartContract {
             System.out.println(arg);
         }
         System.out.println("Done");
+        return 1;
     }
 
     public void foo(Float[] args) {
@@ -136,6 +150,7 @@ public class Contract extends SmartContract {
             System.out.println(arg);
         }
         System.out.println("Done");
+        return 1;
     }
 
     public void foo(
@@ -176,16 +191,19 @@ public class Contract extends SmartContract {
         System.out.println("param16 = " + param16);
         System.out.println("param17 = " + param17);
         System.out.println("param18 = " + param18);
+        return 1;
     }
 
     public void globalVarInstance() {
         System.out.println("intVar value = " + intVar);
         intVar++;
+        return 1;
     }
 
     public static void globalVarStatic() {
         System.out.println("statIntVar value = " + statIntVar);
         statIntVar++;
+        return 1;
     }
 
 }

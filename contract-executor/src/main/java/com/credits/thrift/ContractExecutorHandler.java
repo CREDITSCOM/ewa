@@ -63,7 +63,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 result.ret_val = returnValue.getVariantsList().get(0);
             }
             logger.info("executeByteCode -->\ncontractState length= {}\ncontractState hash= {}\nresponse= {}",
-                result.contractState.array().length, contractState.hashCode(), result);
+                result.contractState.array().length, result.contractState.hashCode(), result);
         } catch (ContractExecutorException e) {
             result.setStatus(new APIResponse(ERROR_CODE, e.getMessage()));
             logger.info("executeByteCode --> {}", result);

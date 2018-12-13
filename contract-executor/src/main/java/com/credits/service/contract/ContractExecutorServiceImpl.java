@@ -13,10 +13,13 @@ import com.credits.general.util.Base58;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
+import com.credits.pojo.MethodArgumentsValuesData;
 import com.credits.secure.Sandbox;
 import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractUtils;
+import com.credits.utils.ContractExecutorServiceUtils;
+import org.apache.commons.beanutils.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +46,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
-import static com.credits.general.util.Converter.parseObjectFromVariant;
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialize.Serializer.deserialize;
 import static com.credits.serialize.Serializer.serialize;
@@ -104,31 +105,30 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             int amountParamRows = 1;
             int amountParams = 0;
-            Variant[] firstRowParams = null;
+            Variant[] params = null;
             if (paramsTable != null && paramsTable.length > 0) {
                 amountParamRows = paramsTable.length;
                 amountParams = paramsTable[0].length;
-                firstRowParams = paramsTable[0];
+                params = paramsTable[0];
             }
 
-            List<Method> methods = findMethodsByNameAndAmountParams(contractClass, methodName, amountParams);
-            MethodArgumentsValuesData targetMethodData = findMethodByArgumentsTypes(methods, firstRowParams);
+            MethodArgumentsValuesData targetMethodData = getMethodArgumentsValuesByNameAndParams(contractClass, methodName, params);
 
             Object[] returnObjects = new Object[amountParamRows];
             APIResponse[] returnStatuses = new APIResponse[amountParamRows];
 
-            Class<?> returnType = targetMethodData.method.getReturnType();
+            Class<?> returnType = targetMethodData.getMethod().getReturnType();
 
-            initializeField("initiator", initiator, contractClass, instance);
-            initializeField("specialProperty", System.getProperty(initiator), contractClass, instance);
+            ContractExecutorServiceUtils.initializeField("initiator", initiator, contractClass, instance);
+            ContractExecutorServiceUtils.initializeField("specialProperty", System.getProperty(initiator), contractClass, instance);
 
             for (int i = 0; i < amountParamRows; i++) {
                 Object[] parameter = null;
                 Thread invokeFunctionThread = null;
                 try {
-                    if (targetMethodData.argTypes != null) {
+                    if (targetMethodData.getArgTypes() != null) {
                         if (paramsTable != null && paramsTable[i] != null) {
-                            parameter = castValues(targetMethodData.argTypes, paramsTable[i]);
+                            parameter = ContractExecutorServiceUtils.castValues(targetMethodData.getArgTypes(), paramsTable[i]);
                         }
                     }
 
@@ -177,31 +177,22 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
     }
 
-    private Callable<Object> invokeFunction(Object instance, MethodArgumentsValuesData targetMethodData,
-        Object[] parameter) {
-        return () -> targetMethodData.method.invoke(instance, parameter);
+    static MethodArgumentsValuesData getMethodArgumentsValuesByNameAndParams(Class<?> contractClass,
+        String methodName, Variant[] params) {
+        Class[] argTypes = ContractExecutorServiceUtils.getArgTypes(params);
+        Method method = MethodUtils.getMatchingAccessibleMethod(contractClass, methodName, argTypes);
+        if (method!=null) {
+            return  new MethodArgumentsValuesData(method, argTypes, params);
+        } else {
+            throw new ContractExecutorException("Cannot find a method by name and parameters specified");
+        }
     }
 
-    private MethodArgumentsValuesData findMethodByArgumentsTypes(List<Method> methods, Variant[] argValues)
-        throws ContractExecutorException {
-        Class<?>[] argTypes;
-        for (Method method : methods) {
-            try {
-                argTypes = method.getParameterTypes();
-                if (argTypes.length > 0 || argValues != null) {
-                    Object[] castedValues = castValues(argTypes, argValues);
-                    return new MethodArgumentsValuesData(method, argTypes, castedValues);
-                } else {
-                    return new MethodArgumentsValuesData(method, null, null);
-                }
-            } catch (ClassCastException ignored) {
-            } catch (ContractExecutorException e) {
-                throw new ContractExecutorException(getRootCauseMessage(e), e);
-            }
-        }
-        throw new ContractExecutorException(
-            "Cannot cast parameters to the method found by name: " + methods.get(0).getName());
+    private Callable<Object> invokeFunction(Object instance, MethodArgumentsValuesData targetMethodData,
+        Object[] parameter) {
+        return () -> targetMethodData.getMethod().invoke(instance, parameter);
     }
+
 
     @Override
     public List<MethodDescriptionData> getContractsMethods( byte[] bytecode) {
@@ -251,26 +242,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         return compilationUnit.getBytecode();
     }
 
-    private List<Method> findMethodsByNameAndAmountParams(Class<?> contractClass, String methodName, int amountParams)
-        throws ContractExecutorException {
-        List<Method> methods = Arrays.stream(contractClass.getMethods())
-            .filter(method -> method.getName().equals(methodName) && method.getParameterCount() == amountParams)
-            .collect(Collectors.toList());
-        if (methods.isEmpty()) {
-            throw new ContractExecutorException("Cannot find a method by name and parameters specified");
-        }
-        return methods;
-    }
 
-    private void initializeField(String fieldName, Object value, Class<?> clazz, Object instance) {
-        try {
-            Field field = clazz.getSuperclass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(instance, value);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Cannot initialize \"{}\" field. Reason:{}", fieldName, e.getMessage());
-        }
-    }
 
     private Permissions createPermissions() {
         Permissions permissions = new Permissions();
@@ -299,39 +271,5 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         return permissions;
     }
 
-    private Object[] castValues(Class<?>[] types, Variant[] params) throws ContractExecutorException {
-        if (params == null || params.length != types.length) {
-            throw new ContractExecutorException("Not enough arguments passed");
-        }
-        Object[] retVal = new Object[types.length];
-        int i = 0;
-        Variant param;
-        for (Class<?> type : types) {
-            param = params[i];
-            if (type.isArray()) {
-                if (types.length > 1) {
-                    throw new ContractExecutorException("Having array with other parameter types is not supported");
-                }
-            }
 
-            retVal[i] = parseObjectFromVariant(param);
-            logger.info(String.format("param[%s] = %s", i, retVal[i]));
-            i++;
-        }
-        return retVal;
-    }
-
-
-    private static class MethodArgumentsValuesData {
-        final Method method;
-        final Class<?>[] argTypes;
-        final Object[] argValues;
-
-
-        MethodArgumentsValuesData(Method methodName, Class<?>[] argTypes, Object[] argValues) {
-            this.method = methodName;
-            this.argTypes = argTypes;
-            this.argValues = argValues;
-        }
-    }
 }

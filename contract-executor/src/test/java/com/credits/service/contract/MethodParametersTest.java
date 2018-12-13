@@ -1,13 +1,16 @@
 package com.credits.service.contract;
 
+import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
+import com.credits.pojo.MethodArgumentsValuesData;
 import com.credits.service.ServiceTest;
-import com.credits.thrift.utils.ContractUtils;
+import com.credits.utils.ContractExecutorServiceUtils;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,170 +22,141 @@ import static com.credits.general.thrift.generated.Variant.v_i32;
 import static com.credits.general.thrift.generated.Variant.v_i64;
 import static com.credits.general.thrift.generated.Variant.v_list;
 import static com.credits.general.thrift.generated.Variant.v_string;
+import static com.credits.serialize.Serializer.deserialize;
 import static java.util.Arrays.asList;
 
 public class MethodParametersTest extends ServiceTest {
+
+    private ByteArrayContractClassLoader classLoader;
+    private Class<?> contractClass;
     private byte[] contractBytecode;
+    private byte[] contractState;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         contractBytecode = compileSourceCode("/methodParametersTest/Contract.java");
-    }
-    @Test
-    public void primitiveExecutionTest() throws ContractExecutorException {
-        Variant[][] params = {{v_string("test string"), v_string("200"), v_string("3f")}};
-        ceService.execute(address, contractBytecode, null, "foo", params,300);
+        classLoader = new ByteArrayContractClassLoader();
+        contractClass = classLoader.buildClass(contractBytecode);
+        contractState = ceService.execute(address, contractBytecode, null, null, null, 500L).getContractState();
     }
 
-    @Test
-    public void objectExecutionTest() throws ContractExecutorException {
-        Variant[][] params = {{v_string("test string"), v_string("200d"), v_string("3")}};
-        ceService.execute(address, contractBytecode,null, "foo", params,300);
-    }
 
     @Test
-    public void arrayExecutionTest() throws ContractExecutorException {
-
-        Variant[][] params = {{v_list(asList(v_string("test1"), v_string("test2"), v_string("test3")))}};
-        ceService.execute(address, contractBytecode,null, "main", params,300);
-
-        params = new Variant[][] {{v_list(asList(v_i32(1), v_i32(2), v_i32(3)))}};
-        ceService.execute(address, contractBytecode,null, "main", params,300);
-
-        params = new Variant[][] {{v_list(asList(v_double(1d), v_double(2d), v_double(3d)))}};
-        ceService.execute(address, contractBytecode,null, "main", params,300);
+    public void findVoidMethod() throws InvocationTargetException, IllegalAccessException {
+        Variant[] voidParams = {};
+        MethodArgumentsValuesData voidMethod =
+            ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo", voidParams);
+        Assert.assertEquals(voidMethod.getMethod().toString(), "public static java.lang.Integer Contract.foo()");
+        Object invoke =
+            voidMethod.getMethod().invoke(deserialize(contractState, classLoader), ContractExecutorServiceUtils.castValues(voidMethod.getArgTypes(),voidMethod.getArgValues()));
+        Integer invokeResult = (Integer) invoke;
+        Assert.assertEquals(new Integer(1), invokeResult);
     }
 
     @Test
-    public void executionTest() throws ContractExecutorException {
-        Variant[][] params = {{
-                ContractUtils.mapObjectToVariant("test string"),
-                ContractUtils.mapObjectToVariant(200),
-                ContractUtils.mapObjectToVariant(3D),
-        }};
-        ceService.execute(address, contractBytecode,null, "foo", params,500L);
+    public void findSimpleMethod() throws InvocationTargetException, IllegalAccessException {
+
+        Variant[] simpleParams = {v_double(3f), v_double(4f), v_i32(1), v_i32(2), v_double(200d), v_double(220d)};
+        MethodArgumentsValuesData simpleMethod =
+            ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo", simpleParams);
+        Assert.assertEquals(simpleMethod.getMethod().toString(),
+            "public java.lang.Integer Contract.foo(double,java.lang.Double,int,java.lang.Integer,double,java.lang.Double)");
+        Object invoke = simpleMethod.getMethod()
+            .invoke(deserialize(contractState, classLoader), ContractExecutorServiceUtils.castValues(simpleMethod.getArgTypes(),simpleMethod.getArgValues()));
+        Integer invokeResult = (Integer) invoke;
+        Assert.assertEquals(new Integer(1), invokeResult);
+
     }
 
     @Test
-    public void collectionExecutionTest() throws ContractExecutorException {
-        Variant[] temp = new Variant[0];
-        Variant[][] params = {{
-                ContractUtils.mapObjectToVariant("test1"),
-                ContractUtils.mapObjectToVariant("test2"),
-                ContractUtils.mapObjectToVariant("test3")
-        }};
-        ceService.execute(address, contractBytecode,null, "main", params,500L);
+    public void findMethodWithArrayList() throws InvocationTargetException, IllegalAccessException {
 
-        List<Integer> intList = new ArrayList<>();
-        intList.add(1);
-        intList.add(2);
-        intList.add(3);
-
-        ContractUtils.mapObjectToVariant(intList).getV_list().toArray(temp);
-        params = new Variant[][] {temp};
+        Variant[] arrayList = {v_list(new ArrayList<>(asList(v_i32(1), v_i32(2), v_i32(3))))};
 
 
-        ceService.execute(address, contractBytecode,null, "main", params,500L);
+        MethodArgumentsValuesData arrayListMethod =
+            ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo", arrayList);
+        Assert.assertEquals(arrayListMethod.getMethod().toString(),
+            "public java.lang.Integer Contract.foo(java.util.List)");
+        Object invoke = arrayListMethod.getMethod()
+            .invoke(deserialize(contractState, classLoader), ContractExecutorServiceUtils.castValues(arrayListMethod.getArgTypes(),arrayListMethod.getArgValues()));
+        Integer invokeResult = (Integer) invoke;
+        Assert.assertEquals(new Integer(1), invokeResult);
 
-        List<Double> doubleList = new ArrayList<>();
-        doubleList.add(1D);
-        doubleList.add(2D);
-        doubleList.add(3D);
-
-        ContractUtils.mapObjectToVariant(doubleList).getV_list().toArray(temp);
-        params = new Variant[][] {temp};
-
-        ceService.execute(address, contractBytecode,null, "main", params,500L);
     }
 
     @Test
-    public void arrayBooleanTest() throws ContractExecutorException {
-        Variant[] temp = new Variant[0];
-        Variant[][] params = {{}};
-        List<Boolean> boolList = new ArrayList<>();
-        boolList.add(true);
-        boolList.add(false);
-        ContractUtils.mapObjectToVariant(boolList).getV_list().toArray(temp);
-        params = new Variant[][] {temp};
-        ceService.execute(address, contractBytecode,null, "foo", params,500L);
+    public void findAnotherMethodWithArrayList() throws InvocationTargetException, IllegalAccessException {
+
+        Variant[] arrayList = {v_list(new ArrayList<>(asList(v_i32(1), v_i32(2), v_i32(3))))};
+        MethodArgumentsValuesData arrayListMethod =
+            ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "fooInteger",
+                arrayList);
+        Assert.assertEquals(arrayListMethod.getMethod().toString(),
+            "public java.lang.Integer Contract.fooInteger(java.util.List)");
+        Object invoke = arrayListMethod.getMethod()
+            .invoke(deserialize(contractState, classLoader), ContractExecutorServiceUtils.castValues(arrayListMethod.getArgTypes(),arrayListMethod.getArgValues()));
+        Integer invokeResult = (Integer) invoke;
+        Assert.assertEquals(new Integer(1), invokeResult);
+
+    }
+
+
+    @Test
+    public void findMethodWithSimpleParamsAndArrayList() throws InvocationTargetException, IllegalAccessException {
+
+        List<Variant> list = new ArrayList<>();
+        list.add(v_string("string01"));
+        list.add(v_string("string01"));
+        list.add(v_string("string01"));
+
+        Variant[] simpleParamsWithList =
+            {v_double(3f), v_double(4f), v_i32(1), v_i32(2), v_double(200d), v_double(220d), v_list(list)};
+
+        MethodArgumentsValuesData simpleAndArrayListMethod =
+            ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo",
+                simpleParamsWithList);
+
+        Assert.assertEquals(simpleAndArrayListMethod.getMethod().toString(),
+            "public java.lang.Integer Contract.foo(double,java.lang.Double,int,java.lang.Integer,double,java.lang.Double,java.util.ArrayList)");
+        Object invoke = simpleAndArrayListMethod.getMethod()
+            .invoke(deserialize(contractState, classLoader), ContractExecutorServiceUtils.castValues(simpleAndArrayListMethod.getArgTypes(),simpleAndArrayListMethod.getArgValues()));
+        Integer invokeResult = (Integer) invoke;
+        Assert.assertEquals(new Integer(1), invokeResult);
     }
 
     @Test
-    public void arrayIntTest() throws ContractExecutorException {
-        Variant[] temp = new Variant[0];
-        Variant[][] params = {{}};
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        ContractUtils.mapObjectToVariant(list).getV_list().toArray(temp);
-        params = new Variant[][] {temp};
-        ceService.execute(address, contractBytecode,null, "foo", params,500L);
-    }
-
-    @Test
-    public void arrayShortTest() throws ContractExecutorException {
-        Variant[] temp = new Variant[0];
-        Variant[][] params = {{}};
-        List<Short> list = new ArrayList<>();
-        list.add((short)1);
-        list.add((short)2);
-        ContractUtils.mapObjectToVariant(list).getV_list().toArray(temp);
-        params = new Variant[][] {temp};
-        ceService.execute(address, contractBytecode,null, "foo", params,500L);
-    }
-
-    @Test
-    public void arrayLongTest() throws ContractExecutorException {
-        Variant[] temp = new Variant[0];
-        Variant[][] params = {{}};
-        List<Long> list = new ArrayList<>();
-        list.add(1L);
-        list.add(2L);
-        ContractUtils.mapObjectToVariant(list).getV_list().toArray(temp);
-        params = new Variant[][] {temp};
-        ceService.execute(address, contractBytecode,null, "foo", params,500L);
-    }
-
-    @Test
-    @Ignore
-    public void arrayFloatTest() throws ContractExecutorException {
-        Variant[] temp = new Variant[0];
-        Variant[][] params = {{}};
-        List<Float> list = new ArrayList<>();
-        list.add(1f);
-        list.add(.2f);
-        ContractUtils.mapObjectToVariant(list).getV_list().toArray(temp);
-        params = new Variant[][] {temp};
-        ceService.execute(address, contractBytecode,null, "foo", params,500L);
-    }
-
-    @Ignore
-    @Test
-    public void moreVariousParameters() throws ContractExecutorException {
+    public void moreVariousParameters()
+        throws ContractExecutorException, InvocationTargetException, IllegalAccessException {
         List<Variant> list = new LinkedList<>();
         list.add(v_string("string01"));
         list.add(v_string("string01"));
         list.add(v_string("string01"));
         Variant[] params =
-            {v_double(3f), v_double(4f), v_i32(1), v_i32(2), v_double(200d), v_double(220d),
-                v_list(list),
-                v_list(asList(v_i32(1), v_i32(2), v_i32(3), v_i32(4))),
-                v_list(asList(v_i32(5), v_i32(6), v_i32(7), v_i32(8))),
-                v_list(asList(v_double(1d), v_double(2d), v_double(3d))),
-                v_list(asList(v_double(4d), v_double(5d), v_double(6d))),
-                v_list(asList(v_bool(true), v_bool(true), v_bool(false))),
-                v_list(asList(v_bool(true), v_bool(true), v_bool(false))),
-                v_list(asList(v_i16((short) 1), v_i16((short) 2))),
-                v_list(asList(v_i64(1L), v_i64(2L), v_i64(3L))),
-                v_list(asList(v_i64(4L), v_i64(5L), v_i64(6L))),
-                v_list(asList(v_double(1f), v_double(.2f))), v_list(asList(v_double(3f), v_double(.4f)))};
-//        List list = new ArrayList<>(asList(stringParams));
-//        Variant[] params = {};
-//        ContractUtils.mapObjectToVariant(list).getV_list().toArray(params);
-        byte[] state = ceService.execute(address, contractBytecode, null, null, null, 500L).getContractState();
-        ceService.execute(address, contractBytecode, state, "foo", new Variant[][]{params}, 500L);
+            {v_double(3f), v_double(4f), v_i32(1), v_i32(2), v_double(200d), v_double(220d), v_list(list),
+                v_list(new ArrayList<>(asList(v_i32(1), v_i32(2), v_i32(3), v_i32(4)))),
+                v_list(new ArrayList<>(asList(v_i32(5), v_i32(6), v_i32(7), v_i32(8)))),
+                v_list(new ArrayList<>(asList(v_double(1d), v_double(2d), v_double(3d)))),
+                v_list(new ArrayList<>(asList(v_double(4d), v_double(5d), v_double(6d)))),
+                v_list(new ArrayList<>(asList(v_bool(true), v_bool(true), v_bool(false)))),
+                v_list(new ArrayList<>(asList(v_bool(true), v_bool(true), v_bool(false)))),
+                v_list(new ArrayList<>(asList(v_i16((short) 1), v_i16((short) 2)))),
+                v_list(new ArrayList<>(asList(v_i64(1L), v_i64(2L), v_i64(3L)))),
+                v_list(new ArrayList<>(asList(v_i64(4L), v_i64(5L), v_i64(6L)))),
+                v_list(new ArrayList<>(asList(v_double(1f), v_double(.2f)))),
+                v_list(new ArrayList<>(asList(v_double(3f), v_double(.4f))))};
+
+        MethodArgumentsValuesData moreVariousParametersMethod =
+            ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo", params);
+        Assert.assertEquals(moreVariousParametersMethod.getMethod().toString(),
+            "public java.lang.Integer Contract.foo(double,java.lang.Double,int,java.lang.Integer,double,java.lang.Double,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List)");
+        Object invoke = moreVariousParametersMethod.getMethod()
+            .invoke(deserialize(contractState, classLoader), ContractExecutorServiceUtils.castValues(moreVariousParametersMethod.getArgTypes(), moreVariousParametersMethod.getArgValues()));
+        Integer invokeResult = (Integer) invoke;
+        Assert.assertEquals(new Integer(1), invokeResult);
+
     }
+
 }
