@@ -37,7 +37,7 @@ public class ContractExecutorApiServiceImpl implements ContractExecutorApiServic
     public ExecuteResponseData executeContractMethod(byte[] address, byte[] bytecode, byte[] objectState, String methodName, List<Variant> params, long executionTime)
         throws ContractExecutorClientException {
         ExecuteByteCodeResult
-            result = apiClient.executeContractMethod(address, bytecode, objectState, methodName, params, executionTime);
+            result = apiClient.executeByteCode(address, bytecode, objectState, methodName, params, executionTime);
         return ContractExecutorPojoConverter.executeByteCodeResultToExecuteResponseData(result);
     }
 }
