@@ -120,19 +120,11 @@ public class CreditsCodeArea extends CodeArea {
             this.replaceSelection(StringUtils.repeat(" ", 4));
         }));
 
-        Nodes.addInputMap(this,InputMap.consume(anyOf(keyPressed(PASTE), keyPressed(V, SHORTCUT_DOWN), keyPressed(INSERT, SHIFT_DOWN)),
-            e -> {
-            Clipboard clipboard = Clipboard.getSystemClipboard();
-                if (clipboard.hasString()) {
-                    String oldStringFromClipboard = clipboard.getString();
-                    ClipboardContent content = new ClipboardContent();
-                    content.putString(oldStringFromClipboard.replaceAll("\t", StringUtils.repeat(" ", 4)));
-                    clipboard.setContent(content);
-                    this.paste();
-                    content.putString(oldStringFromClipboard);
-                    clipboard.setContent(content);
-                }
-            }));
+        Nodes.addInputMap(this,
+            InputMap.consume(anyOf(keyPressed(PASTE), keyPressed(V, SHORTCUT_DOWN), keyPressed(INSERT, SHIFT_DOWN)),
+                e -> {
+                    replaceTabSymbolInClipboard();
+                }));
 
         Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.ENTER), e -> {
             try {
@@ -154,6 +146,19 @@ public class CreditsCodeArea extends CodeArea {
                     this.deletePreviousChar();
                 }
             }));
+    }
+
+    public void replaceTabSymbolInClipboard() {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        if (clipboard.hasString()) {
+            String oldStringFromClipboard = clipboard.getString();
+            ClipboardContent content = new ClipboardContent();
+            content.putString(oldStringFromClipboard.replaceAll("\t", StringUtils.repeat(" ", 4)));
+            clipboard.setContent(content);
+            this.paste();
+            content.putString(oldStringFromClipboard);
+            clipboard.setContent(content);
+        }
     }
 
 

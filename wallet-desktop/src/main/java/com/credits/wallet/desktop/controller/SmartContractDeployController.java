@@ -282,7 +282,9 @@ public class SmartContractDeployController implements Initializable {
                         classMembers.get(classTreeView.getSelectionModel().getSelectedIndices().get(0));
                     try {
                         codeArea.positionCursorToLine(SourceCodeUtils.getLineNumber(sourceCode, selected));
-                        codeArea.selectRange(codeArea.getCaretPosition(), codeArea.getCaretPosition());
+                        int caretPosition = codeArea.getCaretPosition() + codeArea.getPositionFirstNotSpecialCharacter(codeArea.getCurentLine(codeArea));
+                        codeArea.selectRange(caretPosition,caretPosition);
+
                     } catch (Exception ignored) {
                     }
                 }

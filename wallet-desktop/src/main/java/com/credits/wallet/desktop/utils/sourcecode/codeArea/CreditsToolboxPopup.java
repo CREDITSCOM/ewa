@@ -26,7 +26,7 @@ public class CreditsToolboxPopup extends Popup {
         paste.setPrefSize(80, 15);
         paste.setDisable(readOnly);
         paste.setOnAction(e -> {
-            codeArea.paste();
+            codeArea.replaceTabSymbolInClipboard();
             this.hide();
         });
         Button select = new Button("Select All");
