@@ -1,15 +1,10 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.SmartContractData;
-import com.credits.client.node.pojo.SmartContractInvocationData;
-import com.credits.client.node.pojo.SmartContractTransactionFlowData;
-import com.credits.client.node.pojo.TransactionFlowData;
-import com.credits.client.node.pojo.TransactionFlowResultData;
+import com.credits.client.node.pojo.*;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.client.node.util.SignUtils;
-import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.AppState;
@@ -23,8 +18,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
+import static com.credits.client.node.util.TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.AppState.transactionOfferedMaxFeeValue;
+import static com.credits.wallet.desktop.utils.SmartContractsUtils.*;
 import static java.math.BigDecimal.ZERO;
 
 /**
@@ -35,14 +32,20 @@ public class ApiUtils {
     private final static Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
     public static Pair<Long, TransactionFlowResultData> createTransaction(
-        TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData, BigDecimal amount, String text
+        CalcTransactionIdSourceTargetResult transactionData, BigDecimal amount, String text
     ) throws NodeClientException, ConverterException {
         return Pair.of(transactionData.getTransactionId(), nodeApiService.transactionFlow(getTransactionFlowData(transactionData, amount, null, text)));
     }
 
     public static Pair<Long, TransactionFlowResultData> createSmartContractTransaction(
-        TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData,
+        CalcTransactionIdSourceTargetResult transactionData,
         SmartContractData smartContractData) throws NodeClientException, ConverterException {
+
+        smartContractData.setAddress(
+                generateSmartContractAddress(
+                        transactionData.getByteSource(),
+                        transactionData.getTransactionId(),
+                        smartContractData.getSmartContractDeployData().getByteCode()));
 
         SmartContractInvocationData smartContractInvocationData =
             new SmartContractInvocationData(smartContractData.getSmartContractDeployData(),
@@ -56,7 +59,7 @@ public class ApiUtils {
     }
 
     private static TransactionFlowData getTransactionFlowData(
-        TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData,
+        CalcTransactionIdSourceTargetResult transactionData,
         BigDecimal amount,
         byte[] smartContractBytes,
         String text
@@ -81,7 +84,7 @@ public class ApiUtils {
 
 
     private static void saveTransactionIntoMap(
-        TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData, String amount,
+        CalcTransactionIdSourceTargetResult transactionData, String amount,
         String currency) {
         AppState.sourceMap.computeIfAbsent(AppState.account, key -> new ConcurrentHashMap<>());
         Map<Long, TransactionRoundData> sourceMap = AppState.sourceMap.get(AppState.account);

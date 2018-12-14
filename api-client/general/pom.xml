@@ -15,4 +15,18 @@
 	<build>
         <defaultGoal>install</defaultGoal>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.kocakosm</groupId>
+            <artifactId>jblake2</artifactId>
+            <version>0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kocakosm</groupId>
+            <artifactId>jblake2</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 </project>
