@@ -4,6 +4,8 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.AutocompleteHelper;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup;
 import javafx.concurrent.Task;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +24,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils.computeHighlighting;
+import static javafx.scene.input.KeyCode.INSERT;
+import static javafx.scene.input.KeyCode.PASTE;
+import static javafx.scene.input.KeyCode.V;
+import static javafx.scene.input.KeyCombination.SHIFT_DOWN;
+import static javafx.scene.input.KeyCombination.SHORTCUT_DOWN;
+import static org.fxmisc.wellbehaved.event.EventPattern.anyOf;
 import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 
 public class CreditsCodeArea extends CodeArea {
@@ -112,6 +120,20 @@ public class CreditsCodeArea extends CodeArea {
             this.replaceSelection(StringUtils.repeat(" ", 4));
         }));
 
+        Nodes.addInputMap(this,InputMap.consume(anyOf(keyPressed(PASTE), keyPressed(V, SHORTCUT_DOWN), keyPressed(INSERT, SHIFT_DOWN)),
+            e -> {
+            Clipboard clipboard = Clipboard.getSystemClipboard();
+                if (clipboard.hasString()) {
+                    String oldStringFromClipboard = clipboard.getString();
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString(oldStringFromClipboard.replaceAll("\t", StringUtils.repeat(" ", 4)));
+                    clipboard.setContent(content);
+                    this.paste();
+                    content.putString(oldStringFromClipboard);
+                    clipboard.setContent(content);
+                }
+            }));
+
         Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.ENTER), e -> {
             try {
                 calculateNewLinePosition();
@@ -134,13 +156,10 @@ public class CreditsCodeArea extends CodeArea {
             }));
     }
 
+
     private void calculateNewLinePosition() {
-        String substring = this.getText().substring(0, this.getCaretPosition());
-        int lastIndexOfNewLine = substring.lastIndexOf('\n');
-        String currentLine = substring.substring(lastIndexOfNewLine + 1, this.getCaretPosition());
-        Matcher matcher = Pattern.compile("[^ ]").matcher(currentLine);
-        matcher.find();
-        int first = matcher.start();
+        String currentLine = getCurentLine(this);
+        int first = getPositionFirstNotSpecialCharacter(currentLine);
 
         String replacement = "\n" + StringUtils.repeat(" ", first);
         String trimCurrentLine = currentLine.trim();
@@ -150,6 +169,21 @@ public class CreditsCodeArea extends CodeArea {
             replacement += StringUtils.repeat(" ", 4);
         }
         this.replaceSelection(replacement);
+    }
+
+    public int getPositionFirstNotSpecialCharacter(String currentLine) {
+        Matcher matcher = Pattern.compile("[^ ^\t]").matcher(currentLine);
+        matcher.find();
+        return matcher.start();
+    }
+
+    public String getCurentLine(CreditsCodeArea creditsCodeArea) {
+        String substring = this.getText().substring(0, creditsCodeArea.getCaretPosition());
+        /*if(substring.charAt(substring.length()-1) == '\n') {
+            substring = substring.substring(0,substring.length()-2);
+        }*/
+        int lastIndexOfNewLine = substring.lastIndexOf('\n');
+        return substring.substring(lastIndexOfNewLine + 1, creditsCodeArea.getCaretPosition());
     }
 
     public void doAutoComplete(String textToInsert) {
