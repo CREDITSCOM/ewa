@@ -14,6 +14,7 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
+import com.credits.wallet.desktop.utils.SmartContractsUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
@@ -25,7 +26,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -50,8 +55,8 @@ import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
-import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -183,13 +188,19 @@ public class SmartContractDeployController implements Initializable {
                         new SmartContractDeployData(javaCode, byteCode, TokenStandart.CreditsBasic
                             // TODO refactor, put real tokenStandart value
                         );
-                    byte[] deployerAddress = decodeFromBASE58(account);
-                    SmartContractData smartContractData =
-                            new SmartContractData(null, deployerAddress, smartContractDeployData, null);
+
+                    long idWithoutFirstTwoBits =
+                        TransactionIdCalculateUtils.getIdWithoutFirstTwoBits(nodeApiService, account, true);
+
+                    SmartContractData smartContractData = new SmartContractData(
+                        SmartContractsUtils.generateSmartContractAddress(decodeFromBASE58(account),
+                            idWithoutFirstTwoBits,
+                            byteCode), decodeFromBASE58(account), smartContractDeployData, null);
+
 
                     CompletableFuture.supplyAsync(
-                        () -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,
-                            account, smartContractData.getBase58Address(), true), threadPool)
+                        () -> TransactionIdCalculateUtils.getCalcTransactionIdSourceTargetResult(AppState.nodeApiService,
+                            account, smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool)
                         .thenApply(
                             (transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
                         .whenComplete(handleCallback(handleDeployResult()));

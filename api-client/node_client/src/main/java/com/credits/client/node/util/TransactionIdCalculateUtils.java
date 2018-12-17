@@ -33,23 +33,12 @@ public class TransactionIdCalculateUtils {
 
     public static CalcTransactionIdSourceTargetResult calcTransactionIdSourceTarget(NodeApiService nodeApiService,
         String wideSource, String wideTarget, boolean isWalletCall) throws NodeClientException, ConverterException {
+        long transactionId = getIdWithoutFirstTwoBits(nodeApiService, wideSource, isWalletCall);
+        return getCalcTransactionIdSourceTargetResult(nodeApiService, wideSource, wideTarget, transactionId);
+    }
 
-        // get transactions count from Node and increment it
-        long transactionId = nodeApiService.getWalletTransactionsCount(wideSource) + 1;
-        LOGGER.debug("<---  Transaction ID from node = {}", transactionId);
-
-        // get last transaction id from cache
-        AtomicLong lastTransactionId = walletLastTransactionIdCache.get(wideSource);
-
-        if (lastTransactionId == null || transactionId > lastTransactionId.get()) {
-            walletLastTransactionIdCache.put(wideSource, new AtomicLong(transactionId));
-        } else {
-            transactionId = lastTransactionId.incrementAndGet();
-        }
-        if(!isWalletCall) {transactionId = transactionId + 1;}
-
-        LOGGER.info("Result transaction ID = {}", transactionId);
-
+    public static CalcTransactionIdSourceTargetResult getCalcTransactionIdSourceTargetResult(
+        NodeApiService nodeApiService, String wideSource, String wideTarget, long transactionId) {
         boolean sourceIndexExists = false;
         String shortSource = wideSource;
         boolean targetIndexExists = false;
@@ -69,6 +58,26 @@ public class TransactionIdCalculateUtils {
         return new CalcTransactionIdSourceTargetResult(
             createTransactionId(sourceIndexExists, targetIndexExists, transactionId), wideSource, wideTarget,
             shortSource, shortTarget);
+    }
+
+    public static long getIdWithoutFirstTwoBits(NodeApiService nodeApiService, String wideSource,
+        boolean isWalletCall) {
+        // get transactions count from Node and increment it
+        long transactionId = nodeApiService.getWalletTransactionsCount(wideSource) + 1;
+        LOGGER.debug("<---  Transaction ID from node = {}", transactionId);
+
+        // get last transaction id from cache
+        AtomicLong lastTransactionId = walletLastTransactionIdCache.get(wideSource);
+
+        if (lastTransactionId == null || transactionId > lastTransactionId.get()) {
+            walletLastTransactionIdCache.put(wideSource, new AtomicLong(transactionId));
+        } else {
+            transactionId = lastTransactionId.incrementAndGet();
+        }
+        if(!isWalletCall) {transactionId = transactionId + 1;}
+
+        LOGGER.info("Result transaction ID = {}", transactionId);
+        return transactionId;
     }
 
 
