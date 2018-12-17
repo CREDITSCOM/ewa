@@ -41,17 +41,17 @@ public class CreditsCodeArea extends CodeArea {
         "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n\n    }" + "\n" + "}";
     private ExecutorService codeAreaHighlightExecutor = Executors.newSingleThreadExecutor();
 
-    public static final String SPACE_SYMBOL = " ";
-    public static final String CURLY_BRACKET_SYMBOL = "{";
-    public static final String ROUND_BRACKET_SYMBOL = "(";
-    public static final String NEW_LINE_SYMBOL = "\n";
+    private static final String SPACE_SYMBOL = " ";
+    private static final String CURLY_BRACKET_SYMBOL = "{";
+    private static final String ROUND_BRACKET_SYMBOL = "(";
+    private static final String NEW_LINE_SYMBOL = "\n";
 
 
-    public CreditsToolboxPopup popup;
-    public AutocompleteHelper autocompleteHelper;
-    public CreditsProposalsPopup creditsProposalsPopup;
+    private CreditsToolboxPopup popup;
+    private AutocompleteHelper autocompleteHelper;
+    private CreditsProposalsPopup creditsProposalsPopup;
 
-    public CreditsCodeArea(boolean readOnly, double prefHeight, double prefWidth) {
+    CreditsCodeArea(boolean readOnly, double prefHeight, double prefWidth) {
         super();
         this.setPrefHeight(prefHeight);
         this.setPrefWidth(prefWidth);
@@ -61,7 +61,7 @@ public class CreditsCodeArea extends CodeArea {
         autocompleteHelper = new AutocompleteHelper(this, creditsProposalsPopup);
     }
 
-    public void initCodeAreaLogic() {
+    private void initCodeAreaLogic() {
 
         this.sceneProperty().addListener((observable, old, newPropertyValue) -> {
             if (newPropertyValue == null) {
@@ -126,29 +126,18 @@ public class CreditsCodeArea extends CodeArea {
                     replaceTabSymbolInClipboard();
                 }));
 
-        Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.ENTER), e -> {
-            try {
-                calculateNewLinePosition();
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-                this.replaceSelection("\n");
-            }
-        }));
-
-        Nodes.addInputMap(this,
-            InputMap.consumeWhen(keyPressed(KeyCode.BACK_SPACE), () -> this.getSelectedText().equals(""), e -> {
-                if (tabCount > 0) {
-                    for (int i = 0; i < 4; i++) {
-                        this.deletePreviousChar();
-                    }
-                    tabCount--;
-                } else {
+        Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.BACK_SPACE), e -> {
+            if (tabCount > 0) {
+                for (int i = 0; i < 4; i++) {
                     this.deletePreviousChar();
                 }
-            }));
+                tabCount--;
+            } else {
+                this.deletePreviousChar();
+            }
+        }));
     }
-
-    public void replaceTabSymbolInClipboard() {
+    void replaceTabSymbolInClipboard() {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         if (clipboard.hasString()) {
             String oldStringFromClipboard = clipboard.getString();
@@ -162,33 +151,30 @@ public class CreditsCodeArea extends CodeArea {
     }
 
 
-    private void calculateNewLinePosition() {
-        String currentLine = getCurentLine(this);
-        int first = getPositionFirstNotSpecialCharacter(currentLine);
-
-        String replacement = "\n" + StringUtils.repeat(" ", first);
-        String trimCurrentLine = currentLine.trim();
-        char c = trimCurrentLine.charAt(trimCurrentLine.length() - 1);
-        if (c == '{') {
-            tabCount++;
-            replacement += StringUtils.repeat(" ", 4);
-        }
-        this.replaceSelection(replacement);
-    }
-
     public int getPositionFirstNotSpecialCharacter(String currentLine) {
-        Matcher matcher = Pattern.compile("[^ ^\t]").matcher(currentLine);
-        matcher.find();
-        return matcher.start();
+        try {
+            Matcher matcher = Pattern.compile("[^ ^\t]").matcher(currentLine);
+            matcher.find();
+            return matcher.start();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
-    public String getCurentLine(CreditsCodeArea creditsCodeArea) {
-        String substring = this.getText().substring(0, creditsCodeArea.getCaretPosition());
-        /*if(substring.charAt(substring.length()-1) == '\n') {
-            substring = substring.substring(0,substring.length()-2);
-        }*/
-        int lastIndexOfNewLine = substring.lastIndexOf('\n');
-        return substring.substring(lastIndexOfNewLine + 1, creditsCodeArea.getCaretPosition());
+    public CaretLinePosition getLineAndLineNumberByCaretPosition() {
+        int caretPosition = this.getCaretPosition();
+        int length = 0;
+        int i=0;
+        String[] lines = this.getText().split("\n");
+        for (String line : lines) {
+            length += line.length();
+            if(caretPosition<=length) {
+                new CaretLinePosition(i,lines,i==0?caretPosition:line.length()-(length-caretPosition));
+            }
+            length = length+1;
+            i++;
+        }
+        return new CaretLinePosition(0,lines,caretPosition);
     }
 
     public void doAutoComplete(String textToInsert) {
@@ -248,6 +234,18 @@ public class CreditsCodeArea extends CodeArea {
         creditsProposalsPopup.clear();
         creditsProposalsPopup.hide();
         codeAreaHighlightExecutor.shutdown();
+    }
+
+    public class CaretLinePosition {
+        public int lineNumber;
+        public String[] lines;
+        public int position;
+
+        public CaretLinePosition(int lineNumber, String[] lines, int position) {
+            this.lineNumber = lineNumber;
+            this.lines = lines;
+            this.position = position;
+        }
     }
 
 }
