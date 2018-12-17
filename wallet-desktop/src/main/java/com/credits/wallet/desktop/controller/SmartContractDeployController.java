@@ -15,7 +15,7 @@ import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractsUtils;
-import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.ParseSourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
 import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
@@ -247,13 +247,13 @@ public class SmartContractDeployController implements Initializable {
         Platform.runLater(() -> {
             classTreeView.setRoot(null);
             String sourceCode = codeArea.getText();
-            String className = SourceCodeUtils.parseClassName(sourceCode);
+            String className = ParseSourceCodeUtils.parseClassName(sourceCode);
             Label labelRoot = new Label(className);
             TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
 
-            List<FieldDeclaration> fields = SourceCodeUtils.parseFields(sourceCode);
-            List<MethodDeclaration> constructors = SourceCodeUtils.parseConstructors(sourceCode);
-            List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
+            List<FieldDeclaration> fields = ParseSourceCodeUtils.parseFields(sourceCode);
+            List<MethodDeclaration> constructors = ParseSourceCodeUtils.parseConstructors(sourceCode);
+            List<MethodDeclaration> methods = ParseSourceCodeUtils.parseMethods(sourceCode);
 
             List<BodyDeclaration> classMembers = new ArrayList<>();
             classMembers.addAll(fields);
@@ -281,7 +281,7 @@ public class SmartContractDeployController implements Initializable {
                     BodyDeclaration selected =
                         classMembers.get(classTreeView.getSelectionModel().getSelectedIndices().get(0));
                     try {
-                        int lineNumber = SourceCodeUtils.getLineNumber(sourceCode, selected);
+                        int lineNumber = ParseSourceCodeUtils.getLineNumber(sourceCode, selected);
                         codeArea.positionCursorToLine(lineNumber);
                         codeArea.selectRange(codeArea.getCaretPosition(),codeArea.getCaretPosition());
                         CreditsCodeArea.CaretLinePosition caretLinePosition =

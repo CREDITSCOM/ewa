@@ -13,7 +13,7 @@ public class SourceCodeUtilsTest {
     @Test
     public void methodParserTest() throws IOException {
         String sourceCode = WalletTestUtils.readSourceCode("/methodParserTest/Contract.java");
-        List<MethodDeclaration> methodDeclarations = SourceCodeUtils.parseMethods(sourceCode);
+        List<MethodDeclaration> methodDeclarations = ParseSourceCodeUtils.parseMethods(sourceCode);
         Assert.assertEquals(methodDeclarations.size(),2);
         Assert.assertEquals(methodDeclarations.get(0).getName().getIdentifier(),"initialize");
         Assert.assertEquals(methodDeclarations.get(1).getName().getIdentifier(),"balanceGet");

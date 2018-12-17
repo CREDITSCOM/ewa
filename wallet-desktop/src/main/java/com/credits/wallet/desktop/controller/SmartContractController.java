@@ -11,6 +11,7 @@ import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
+import com.credits.wallet.desktop.utils.sourcecode.ParseSourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
 import javafx.application.Platform;
@@ -244,7 +245,7 @@ public class SmartContractController implements Initializable {
 
             String sourceCode = smartContractData.getSmartContractDeployData().getSourceCode();
             tfAddress.setText(smartContractData.getBase58Address());
-            List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
+            List<MethodDeclaration> methods = ParseSourceCodeUtils.parseMethods(sourceCode);
             cbMethods.getItems().clear();
             methods.forEach(method -> {
                 method.setBody(null);
@@ -301,7 +302,7 @@ public class SmartContractController implements Initializable {
         if (this.currentMethod == null) {
             return;
         }
-        List<SingleVariableDeclaration> params = SourceCodeUtils.getMethodParameters(this.currentMethod);
+        List<SingleVariableDeclaration> params = this.currentMethod.parameters();
         this.pParamsContainer.getChildren().clear();
         if (params.size() > 0) {
             this.pParams.setVisible(true);
@@ -330,8 +331,7 @@ public class SmartContractController implements Initializable {
         try {
             String method = cbMethods.getSelectionModel().getSelectedItem().getName().getIdentifier();
             List<Object> params = new ArrayList<>();
-            List<SingleVariableDeclaration> currentMethodParams =
-                SourceCodeUtils.getMethodParameters(this.currentMethod);
+            List<SingleVariableDeclaration> currentMethodParams = this.currentMethod.parameters();
 
             ObservableList<Node> paramsContainerChildren = this.pParamsContainer.getChildren();
 
@@ -340,7 +340,7 @@ public class SmartContractController implements Initializable {
                 if (node instanceof TextField) {
                     String paramValue = ((TextField) node).getText();
                     SingleVariableDeclaration variableDeclaration = currentMethodParams.get(i);
-                    String className = SourceCodeUtils.parseClassName(variableDeclaration);
+                    String className = ParseSourceCodeUtils.parseClassName(variableDeclaration);
                     params.add(VariantConverter.createVariantObject(className, paramValue));
                     ++i;
                 }

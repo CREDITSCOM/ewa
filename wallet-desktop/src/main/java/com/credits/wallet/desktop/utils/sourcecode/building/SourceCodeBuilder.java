@@ -5,7 +5,7 @@ import com.credits.general.util.GeneralSourceCodeUtils;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.utils.sourcecode.EclipseJdt;
-import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.ParseSourceCodeUtils;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
@@ -20,7 +20,7 @@ public class SourceCodeBuilder {
         String className = GeneralSourceCodeUtils.parseClassName(sourceCode, "SmartContract");
         List<BuildSourceCodeError> errorsList = new ArrayList<>();
         try {
-            SourceCodeUtils.checkClassAndSuperclassNames(className, sourceCode);
+            ParseSourceCodeUtils.checkClassAndSuperclassNames(className, sourceCode);
         } catch (CreditsException e) {
             BuildSourceCodeError tr = new BuildSourceCodeError();
             tr.setLine(1);
