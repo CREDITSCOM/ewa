@@ -1,9 +1,5 @@
-package com.credits.wallet.desktop.utils.sourcecode;
+package com.credits.general.util.sourceCode;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.junit.Test;
 
