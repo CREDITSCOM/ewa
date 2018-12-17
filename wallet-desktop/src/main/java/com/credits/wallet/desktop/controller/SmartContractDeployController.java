@@ -3,7 +3,6 @@ package com.credits.wallet.desktop.controller;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
-import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Callback;
@@ -185,9 +184,7 @@ public class SmartContractDeployController implements Initializable {
                     byte[] byteCode = compilationUnit.getBytecode();
 
                     SmartContractDeployData smartContractDeployData =
-                        new SmartContractDeployData(javaCode, byteCode, TokenStandart.CreditsBasic
-                            // TODO refactor, put real tokenStandart value
-                        );
+                        new SmartContractDeployData(javaCode, byteCode, ParseSourceCodeUtils.parseTokenStandard(javaCode));
 
                     SmartContractData smartContractData =
                         new SmartContractData(SmartContractsUtils.generateSmartContractAddress(),
