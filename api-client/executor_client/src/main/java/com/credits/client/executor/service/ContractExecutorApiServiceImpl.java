@@ -23,7 +23,7 @@ public class ContractExecutorApiServiceImpl implements ContractExecutorApiServic
     public static ContractExecutorApiServiceImpl getInstance(String host, Integer port) {
         ContractExecutorApiServiceImpl localInstance = instance;
         if (localInstance == null) {
-            synchronized (ContractExecutorThriftApiClient.class) {
+            synchronized (ContractExecutorApiServiceImpl.class) {
                 localInstance = instance;
                 if (localInstance == null) {
                     instance = localInstance = new ContractExecutorApiServiceImpl(host, port);
