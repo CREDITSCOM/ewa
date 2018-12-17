@@ -18,30 +18,15 @@ import java.util.Map;
 public class SourceCodeUtils {
     private final static Logger LOGGER = LoggerFactory.getLogger(SourceCodeUtils.class);
 
-    // TODO unused, candidate to removing
-    public static String normalizeMethodName(String methodSignature) {
-        int ind1 = methodSignature.indexOf(" ");
-        String result = methodSignature.substring(ind1 + 1);
+    public static String normalizeSourceCode(String sourceCode) {
+        String normalizedSourceCode =
+            sourceCode.replace("\r", " ").replace("\t", " ").replace("{", " {");
 
-        ind1 = result.indexOf("(");
-        int ind2 = result.indexOf(")");
-        StringBuilder parametersStr = new StringBuilder();
-        String[] parameters = result.substring(ind1, ind2).trim().split(",");
-        boolean first = true;
-        for (String parameter : parameters) {
-            String[] parameterAsArr = parameter.trim().split(" ");
-            if (first) {
-                parametersStr.append(parameterAsArr[1].trim());
-            } else {
-                parametersStr.append(", ").append(parameterAsArr[1].trim());
-            }
-            first = false;
+        while (normalizedSourceCode.contains("  ")) {
+            normalizedSourceCode = normalizedSourceCode.replace("  ", " ");
         }
-
-        return result.substring(0, ind1 + 1) + parametersStr + ")";
+        return normalizedSourceCode;
     }
-
-
 
     public static String formatSourceCode(String source) {
         // take default Eclipse formatting options

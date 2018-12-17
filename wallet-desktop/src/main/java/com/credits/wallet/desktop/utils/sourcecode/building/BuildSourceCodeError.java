@@ -6,7 +6,6 @@ package com.credits.wallet.desktop.utils.sourcecode.building;
 public class BuildSourceCodeError {
     private String text;
     private Integer line;
-    private Integer column;
     public Integer getLine() {
         return line;
     }
@@ -23,11 +22,4 @@ public class BuildSourceCodeError {
         this.text = text;
     }
 
-    public Integer getColumn() {
-        return column;
-    }
-
-    public void setColumn(Integer column) {
-        this.column = column;
-    }
 }

@@ -174,7 +174,7 @@ public class CreditsCodeArea extends CodeArea {
         }
     }
 
-    public CaretLinePosition getLineAndLineNumberByCaretPosition() {
+    public CaretLinePosition getCaretPositionOnLines() {
         int caretPosition = this.getCaretPosition();
         int length = 0;
         int i=0;
@@ -182,13 +182,22 @@ public class CreditsCodeArea extends CodeArea {
         for (String line : lines) {
             length += line.length();
             if(caretPosition<=length) {
-                new CaretLinePosition(i,lines,i==0?caretPosition:line.length()-(length-caretPosition));
+               return new CaretLinePosition(i,lines,i==0?caretPosition:line.length()-(length-caretPosition));
             }
             length = length+1;
             i++;
         }
         return new CaretLinePosition(0,lines,caretPosition);
     }
+
+    public void setCaretPositionOnLine(int lineNumber) {
+        this.positionCursorToLine(lineNumber);
+        CreditsCodeArea.CaretLinePosition caretLinePosition = this.getCaretPositionOnLines();
+        String currentLine = caretLinePosition.lines[caretLinePosition.lineNumber];
+        this.fixCaretPosition(this.getCaretPosition() + this.getPositionFirstNotSpecialCharacter(
+            currentLine));
+    }
+
 
     public void doAutoComplete(String textToInsert) {
         String token = "%";

@@ -1,6 +1,6 @@
 package com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete;
 
-import com.credits.wallet.desktop.utils.sourcecode.ParseSourceCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -29,7 +29,7 @@ public class AutocompleteHelper {
 
     private void updateDynamicProposals() {
         Pair<Map<MethodDeclaration, String>, Map<FieldDeclaration, String>> MethodsFieldsPair =
-            ParseSourceCodeUtils.getMethodsAndFieldsFromSourceCode(codeArea.getText());
+            ParseCodeUtils.getMethodsAndFieldsFromSourceCode(codeArea.getText());
         classMethods = MethodsFieldsPair.getKey();
         classFields = MethodsFieldsPair.getValue();
     }

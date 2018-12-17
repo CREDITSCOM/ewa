@@ -11,7 +11,7 @@ import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.sourcecode.ParseSourceCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
 import javafx.application.Platform;
@@ -245,7 +245,7 @@ public class SmartContractController implements Initializable {
 
             String sourceCode = smartContractData.getSmartContractDeployData().getSourceCode();
             tfAddress.setText(smartContractData.getBase58Address());
-            List<MethodDeclaration> methods = ParseSourceCodeUtils.parseMethods(sourceCode);
+            List<MethodDeclaration> methods = ParseCodeUtils.parseMethods(sourceCode);
             cbMethods.getItems().clear();
             methods.forEach(method -> {
                 method.setBody(null);
@@ -340,7 +340,7 @@ public class SmartContractController implements Initializable {
                 if (node instanceof TextField) {
                     String paramValue = ((TextField) node).getText();
                     SingleVariableDeclaration variableDeclaration = currentMethodParams.get(i);
-                    String className = ParseSourceCodeUtils.parseClassName(variableDeclaration);
+                    String className = ParseCodeUtils.parseClassName(variableDeclaration);
                     params.add(VariantConverter.createVariantObject(className, paramValue));
                     ++i;
                 }

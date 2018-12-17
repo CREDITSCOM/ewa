@@ -6,15 +6,16 @@ import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Callback;
-import com.credits.general.util.GeneralSourceCodeUtils;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
+import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractsUtils;
-import com.credits.wallet.desktop.utils.sourcecode.ParseSourceCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
 import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
@@ -172,7 +173,7 @@ public class SmartContractDeployController implements Initializable {
     @FXML
     private void handleDeploy() {
         try {
-            String javaCode = GeneralSourceCodeUtils.normalizeSourceCode(codeArea.getText());
+            String javaCode = SourceCodeUtils.normalizeSourceCode(codeArea.getText());
             if (compilationPackage == null) {
                 buildButton.setDisable(false);
                 deployButton.setDisable(true);
@@ -184,7 +185,7 @@ public class SmartContractDeployController implements Initializable {
                     byte[] byteCode = compilationUnit.getBytecode();
 
                     SmartContractDeployData smartContractDeployData =
-                        new SmartContractDeployData(javaCode, byteCode, ParseSourceCodeUtils.parseTokenStandard(javaCode));
+                        new SmartContractDeployData(javaCode, byteCode, ParseCodeUtils.parseTokenStandard(javaCode));
 
                     SmartContractData smartContractData =
                         new SmartContractData(SmartContractsUtils.generateSmartContractAddress(),
@@ -244,13 +245,13 @@ public class SmartContractDeployController implements Initializable {
         Platform.runLater(() -> {
             classTreeView.setRoot(null);
             String sourceCode = codeArea.getText();
-            String className = ParseSourceCodeUtils.parseClassName(sourceCode);
+            String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
             Label labelRoot = new Label(className);
             TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
 
-            List<FieldDeclaration> fields = ParseSourceCodeUtils.parseFields(sourceCode);
-            List<MethodDeclaration> constructors = ParseSourceCodeUtils.parseConstructors(sourceCode);
-            List<MethodDeclaration> methods = ParseSourceCodeUtils.parseMethods(sourceCode);
+            List<FieldDeclaration> fields = ParseCodeUtils.parseFields(sourceCode);
+            List<MethodDeclaration> constructors = ParseCodeUtils.parseConstructors(sourceCode);
+            List<MethodDeclaration> methods = ParseCodeUtils.parseMethods(sourceCode);
 
             List<BodyDeclaration> classMembers = new ArrayList<>();
             classMembers.addAll(fields);
@@ -262,8 +263,6 @@ public class SmartContractDeployController implements Initializable {
                     ((MethodDeclaration) classMember).setBody(null);
                 }
                 Label label = new Label(classMember.toString());
-                label.setOnMousePressed(event -> {
-                });
                 TreeItem<Label> treeItem = new TreeItem<>();
                 treeItem.setValue(label);
                 treeRoot.getChildren().add(treeItem);
@@ -278,14 +277,8 @@ public class SmartContractDeployController implements Initializable {
                     BodyDeclaration selected =
                         classMembers.get(classTreeView.getSelectionModel().getSelectedIndices().get(0));
                     try {
-                        int lineNumber = ParseSourceCodeUtils.getLineNumber(sourceCode, selected);
-                        codeArea.positionCursorToLine(lineNumber);
-                        codeArea.selectRange(codeArea.getCaretPosition(),codeArea.getCaretPosition());
-                        CreditsCodeArea.CaretLinePosition caretLinePosition =
-                            codeArea.getLineAndLineNumberByCaretPosition();
-                        String currentLine = caretLinePosition.lines[caretLinePosition.lineNumber];
-                        codeArea.fixCaretPosition(codeArea.getCaretPosition() + codeArea.getPositionFirstNotSpecialCharacter(
-                            currentLine));
+                        int lineNumber = ParseCodeUtils.getLineNumber(sourceCode, selected);
+                        codeArea.setCaretPositionOnLine(lineNumber);
                     } catch (Exception ignored) {
                     }
                 }
@@ -322,12 +315,9 @@ public class SmartContractDeployController implements Initializable {
         errorTableView.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown()|| event.getButton() == MouseButton.PRIMARY) {
                 BuildSourceCodeError tabRow = errorTableView.getSelectionModel().getSelectedItem();
-                if (tabRow != null) {
-                    try {
-                        codeArea.positionCursorToLine(tabRow.getLine());
-                        codeArea.fixCaretPosition(codeArea.getCaretPosition() + tabRow.getColumn());
-                    } catch (Exception ignored) {
-                    }
+                try {
+                    codeArea.setCaretPositionOnLine(tabRow.getLine());
+                } catch (Exception ignored) {
                 }
             }
         });

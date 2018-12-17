@@ -2,6 +2,7 @@ package com.credits.wallet.desktop.utils.sourcecode;
 
 import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.util.sourceCode.EclipseJdt;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -23,42 +24,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ParseSourceCodeUtils {
+public class ParseCodeUtils {
 
     private static final String CLASS_NAME = "Contract";
     private static final String SUPERCLASS_NAME = "SmartContract";
 
-    public static String parseClassName(String sourceCode) {
-        CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
-
-        List typeList = compilationUnit.types();
-
-        if (typeList.size() != 1) {
-            return null;
-        }
-
-        TypeDeclaration typeDeclaration = (TypeDeclaration) typeList.get(0);
-
-        return (typeDeclaration).getName().getFullyQualifiedName();
-    }
 
     public static String parseSuperclassName(String sourceCode) {
         CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
-
         List typeList = compilationUnit.types();
-
         if (typeList.size() != 1) {
             return null;
         }
-
         TypeDeclaration typeDeclaration = (TypeDeclaration) typeList.get(0);
-
         Type superclassType = typeDeclaration.getSuperclassType();
-
         if (superclassType == null) {
             throw new CreditsException("Superclass is not exists");
         }
-
         return ((SimpleType)superclassType).getName().getFullyQualifiedName();
     }
 
