@@ -27,6 +27,8 @@ import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils
 import static javafx.scene.input.KeyCode.INSERT;
 import static javafx.scene.input.KeyCode.PASTE;
 import static javafx.scene.input.KeyCode.V;
+import static javafx.scene.input.KeyCode.Y;
+import static javafx.scene.input.KeyCode.Z;
 import static javafx.scene.input.KeyCombination.SHIFT_DOWN;
 import static javafx.scene.input.KeyCombination.SHORTCUT_DOWN;
 import static org.fxmisc.wellbehaved.event.EventPattern.anyOf;
@@ -114,6 +116,17 @@ public class CreditsCodeArea extends CodeArea {
             }
             this.autocompleteHelper.handleKeyPressEvent(k);
         });
+
+        Nodes.addInputMap(this, InputMap.consume(keyPressed(Z, SHORTCUT_DOWN), e -> {
+            this.undo();
+            this.fixCaretPosition(this.getCaretPosition());
+        }));
+
+
+        Nodes.addInputMap(this, InputMap.consume(keyPressed(Y, SHORTCUT_DOWN), e -> {
+            this.redo();
+            this.fixCaretPosition(this.getCaretPosition());
+        }));
 
         Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.TAB), e -> {
             tabCount++;
@@ -219,6 +232,10 @@ public class CreditsCodeArea extends CodeArea {
         this.displaceCaret(pos);
         this.showParagraphAtTop(Math.max(0, line - 5));
         this.requestFocus();
+    }
+
+    public void fixCaretPosition(int caretPosition) {
+        this.selectRange(caretPosition,caretPosition);
     }
 
     public void fillDefaultCodeSource() {

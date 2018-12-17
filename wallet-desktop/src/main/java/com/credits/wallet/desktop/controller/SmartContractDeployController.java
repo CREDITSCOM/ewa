@@ -287,9 +287,8 @@ public class SmartContractDeployController implements Initializable {
                         CreditsCodeArea.CaretLinePosition caretLinePosition =
                             codeArea.getLineAndLineNumberByCaretPosition();
                         String currentLine = caretLinePosition.lines[caretLinePosition.lineNumber];
-                        int caretPosition = codeArea.getCaretPosition() + codeArea.getPositionFirstNotSpecialCharacter(
-                            currentLine);
-                        codeArea.selectRange(caretPosition,caretPosition);
+                        codeArea.fixCaretPosition(codeArea.getCaretPosition() + codeArea.getPositionFirstNotSpecialCharacter(
+                            currentLine));
                     } catch (Exception ignored) {
                     }
                 }
@@ -329,8 +328,7 @@ public class SmartContractDeployController implements Initializable {
                 if (tabRow != null) {
                     try {
                         codeArea.positionCursorToLine(tabRow.getLine());
-                        codeArea.selectRange(codeArea.getCaretPosition() + tabRow.getColumn(),
-                            codeArea.getCaretPosition() + tabRow.getColumn());
+                        codeArea.fixCaretPosition(codeArea.getCaretPosition() + tabRow.getColumn());
                     } catch (Exception ignored) {
                     }
                 }
