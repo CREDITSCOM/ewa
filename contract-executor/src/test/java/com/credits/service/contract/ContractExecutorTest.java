@@ -135,7 +135,7 @@ public class ContractExecutorTest extends ServiceTest {
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
         byte[] contractState = ceService.execute(address, bytecode, null, null, null, 500).getContractState();
         Map<String, Variant> contractVariables = ceService.getContractVariables(bytecode, contractState);
-        Assert.assertTrue(ceService.getContractVariables(bytecode, contractState).containsKey("total"));
+        Assert.assertTrue(contractVariables.containsKey("total"));
     }
 
 
