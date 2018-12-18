@@ -188,7 +188,12 @@ public class HistoryController implements Initializable {
 
             @Override
             public void onError(Throwable e) {
-                Platform.runLater(()->approvedTableView.getItems().clear());
+                LOGGER.error(e.getMessage());
+                if (e instanceof NodeClientException) {
+                    FormUtils.showError(NODE_ERROR);
+                } else {
+                    FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
+                }
             }
         };
     }
