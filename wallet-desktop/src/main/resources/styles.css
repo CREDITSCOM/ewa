@@ -1,40 +1,38 @@
-
-
-.credits-topLabelText {
-    -fx-font-size: 28px
-}
-
-.credits-topLabelGrayText {
-    -fx-font-size: 16px;
-    -fx-text-fill: #818181
-}
-
+/*******************************************************************************
+ *                                                                             *
+ * FONTS                                                                       *
+ *                                                                             *
+ ******************************************************************************/
 .root{
     -fx-font-family: "Montserrat";
 }
+/*******************************************************************************
+ *                                                                             *
+ * FONTS                                                                       *
+ *                                                                             *
+ ******************************************************************************/
 
-.credits-label {
-    -fx-padding:  5 0 0 15;
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * STANDARD ELEMENTS                                                           *
+ *                                                                             *
+ ******************************************************************************/
+.credits-textFieldGray {
+    /*-fx-padding:  5 0 0 15;*/
+    -fx-background-color: #fff;
+    -fx-border-width: 1;
+    -fx-border-color: black;
     -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-text-fill:black;
+    -fx-border-radius: 15;
+    -fx-wrap-text: true;
+    /*-fx-alignment: top-left;*/
 }
-
-.credits-not-padding-label {
-    -fx-font-size: 16px;
-}
-
-
-.credits-labelError {
-    -fx-padding:  5 0 0 15;
-    -fx-font-size: 16px;
-    -fx-text-fill: red
-}
-
-.credits--not-padding-labelError {
-    -fx-font-size: 16px;
-    -fx-text-fill: red
-}
-
-
 
 .credits-textField {
     /*-fx-padding:  5 0 0 15;*/
@@ -50,24 +48,57 @@
 
 }
 
-.credits-borderWhitePane {
-    -fx-background-color: #fff;
+
+.credits-topLabelText {
+    -fx-font-size: 28px
 }
 
-
-.credits-textFieldGray {
-    /*-fx-padding:  5 0 0 15;*/
-    -fx-background-color: #fff;
-    -fx-border-width: 1;
-    -fx-border-color: black;
+.credits-topLabelGrayText {
     -fx-font-size: 16px;
-    -fx-background-radius: 10;
-    -fx-text-fill:black;
-    -fx-border-radius: 15;
-    -fx-wrap-text: true;
-    /*-fx-alignment: top-left;*/
+    -fx-text-fill: #818181
 }
 
+
+.credits-label {
+    -fx-padding:  5 0 0 15;
+    -fx-font-size: 16px;
+}
+
+
+.credits-labelError {
+    -fx-padding:  5 0 0 15;
+    -fx-font-size: 16px;
+    -fx-text-fill: red
+}
+
+.credits-not-padding-label {
+    -fx-font-size: 16px;
+}
+
+.credits--not-padding-labelError {
+    -fx-font-size: 16px;
+    -fx-text-fill: red
+}
+
+/** Size the combo-box drop down list. */
+.combo-box-popup > .list-view {
+    -fx-pref-width: 1000;
+}
+/*******************************************************************************
+ *                                                                             *
+ * STANDARD ELEMENTS                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * STANDARD BUTTONS                                                            *
+ *                                                                             *
+ ******************************************************************************/
 .credits-button, .credits-button-refresh {
     -fx-font-weight: bold;
     -fx-background-color: #fff;
@@ -104,65 +135,16 @@
 .credits-button-refresh:pressed {
     -fx-rotate:50;
 }
+/*******************************************************************************
+ *                                                                             *
+ * STANDARD BUTTONS                                                            *
+ *                                                                             *
+ ******************************************************************************/
 
-.keyword {
-    -fx-fill: purple;
-    -fx-font-weight: bold;
-}
-.semicolon {
-    -fx-font-weight: bold;
-}
-.paren {
-    -fx-fill: firebrick;
-    -fx-font-weight: bold;
-}
-.bracket {
-    -fx-fill: darkgreen;
-    -fx-font-weight: bold;
-}
-.brace {
-    -fx-fill: teal;
-    -fx-font-weight: bold;
-}
-.string {
-    -fx-fill: blue;
-}
 
-.comment {
-    -fx-fill: cadetblue;
-}
 
-/** Size the combo-box drop down list. */
-.combo-box-popup > .list-view {
-    -fx-pref-width: 1000;
-}
 
-.tree-cell  {
-    -fx-font-size: 14px;
-}
 
-.styled-text-area .paragraph-box .label {
-    -fx-background-color: white;
-    -fx-font-weight: bold;
-}
-
-.credits-welcome-column-top-label {
-    -fx-font-size:16px;
-    -fx-font-weight: bold;
-}
-
-.credits-welcome-column-label {
-    -fx-font-size: 14px;
-    -fx-text-fill: #808080;
-}
-
-.credits-border-red {
-    -fx-border-color: red;
-}
-
-.credits-border-black {
-    -fx-border-color: black;
-}
 
 
 /*******************************************************************************
@@ -179,33 +161,28 @@
     -fx-border-radius: 15;
 }
 
-
-
-.credits-combobox .combo-box-popup>.list-view
-{
+.credits-combobox .combo-box-popup>.list-view {
     -fx-padding: -35 0 0 0;
     -fx-border-color: black;
-}
-
-
-#cbMethods .combo-box-popup>.list-view {
     -fx-pref-width: 770;
     -fx-pref-height: 200;
 }
 
-
-#cbMethods:showing
+.credits-combobox:showing
 {
     -fx-background-radius: 15 15 0 0;
     -fx-border-radius: 15 15 0 0;
 }
-
 
 /*******************************************************************************
  *                                                                             *
  * SMART COMBOBOX                                                              *
  *                                                                             *
  ******************************************************************************/
+
+
+
+
 
 
 
@@ -404,6 +381,9 @@
 
 
 
+
+
+
 /*******************************************************************************
  *                                                                             *
  * SMART TABLE VIEW                                                            *
@@ -509,6 +489,8 @@
 
 
 
+
+
 /*******************************************************************************
  *                                                                             *
  * COPYABLE LABEL                                                              *
@@ -570,6 +552,7 @@
 
 
 
+
 /*******************************************************************************
  *                                                                             *
  * TRANSACTION INFO LIST                                                       *
@@ -597,6 +580,10 @@
 
 
 
+
+
+
+
 /*******************************************************************************
  *                                                                             *
  * CODEAREA POPUP TOOLBOX                                                      *
@@ -619,5 +606,117 @@
 /*******************************************************************************
  *                                                                             *
  * CODEAREA POPUP TOOLBOX                                                      *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * WELCOME  ELEMENTS                                                           *
+ *                                                                             *
+ ******************************************************************************/
+.credits-welcome-column-top-label {
+    -fx-font-size:16px;
+    -fx-font-weight: bold;
+}
+
+.credits-welcome-column-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #808080;
+}
+/*******************************************************************************
+ *                                                                             *
+ * WELCOME  ELEMENTS                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * BORDERS                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+
+
+.credits-borderWhitePane {
+    -fx-background-color: #fff;
+}
+
+.credits-border-red {
+    -fx-border-color: red;
+}
+
+.credits-border-black {
+    -fx-border-color: black;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * BORDERS                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * TEXT AREA                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+.keyword {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
+}
+.semicolon {
+    -fx-font-weight: bold;
+}
+.paren {
+    -fx-fill: firebrick;
+    -fx-font-weight: bold;
+}
+.bracket {
+    -fx-fill: darkgreen;
+    -fx-font-weight: bold;
+}
+.brace {
+    -fx-fill: teal;
+    -fx-font-weight: bold;
+}
+.string {
+    -fx-fill: blue;
+}
+
+.comment {
+    -fx-fill: cadetblue;
+}
+
+.tree-cell  {
+    -fx-font-size: 14px;
+}
+
+.styled-text-area .paragraph-box .label {
+    -fx-background-color: white;
+    -fx-font-weight: bold;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TEXT AREA                                                                   *
  *                                                                             *
  ******************************************************************************/
