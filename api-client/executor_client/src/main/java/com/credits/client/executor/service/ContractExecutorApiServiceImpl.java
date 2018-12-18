@@ -23,7 +23,7 @@ public class ContractExecutorApiServiceImpl implements ContractExecutorApiServic
     public static ContractExecutorApiServiceImpl getInstance(String host, Integer port) {
         ContractExecutorApiServiceImpl localInstance = instance;
         if (localInstance == null) {
-            synchronized (ContractExecutorThriftApiClient.class) {
+            synchronized (ContractExecutorApiServiceImpl.class) {
                 localInstance = instance;
                 if (localInstance == null) {
                     instance = localInstance = new ContractExecutorApiServiceImpl(host, port);
@@ -37,7 +37,7 @@ public class ContractExecutorApiServiceImpl implements ContractExecutorApiServic
     public ExecuteResponseData executeContractMethod(byte[] address, byte[] bytecode, byte[] objectState, String methodName, List<Variant> params, long executionTime)
         throws ContractExecutorClientException {
         ExecuteByteCodeResult
-            result = apiClient.executeContractMethod(address, bytecode, objectState, methodName, params, executionTime);
+            result = apiClient.executeByteCode(address, bytecode, objectState, methodName, params, executionTime);
         return ContractExecutorPojoConverter.executeByteCodeResultToExecuteResponseData(result);
     }
 }

@@ -12,23 +12,13 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CreditsProposalsPopup extends Popup {
     private ListView<ProposalItem> listView = new ListView();
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CreditsProposalsPopup.class);
-
-    public static final List<String> javaKeywords =
-        Arrays.asList("abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
-            "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for",
-            "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package",
-            "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch",
-            "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while", "String",
-            "Boolean", "Integer", "Float", "Byte", "Short", "Long", "Character", "Double");
 
     public static Map<Method, String> parentsMethods = new HashMap<>();
     public static Map<Field, String> parentsFields = new HashMap<>();

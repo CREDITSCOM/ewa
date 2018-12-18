@@ -1,19 +1,25 @@
 package com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete;
 
-import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AutocompleteHelper {
 
+    private static final List<String> JAVA_KEYWORDS_FOR_AUTOCOMPLETE =
+        Arrays.asList(ArrayUtils.addAll(CodeAreaUtils.KEYWORDS, CodeAreaUtils.DATA_TYPES_KEYWORDS));
 
     private CreditsCodeArea codeArea;
 
@@ -29,7 +35,7 @@ public class AutocompleteHelper {
 
     private void updateDynamicProposals() {
         Pair<Map<MethodDeclaration, String>, Map<FieldDeclaration, String>> MethodsFieldsPair =
-            SourceCodeUtils.getMethodsAndFieldsFromSourceCode(codeArea.getText());
+            ParseCodeUtils.getMethodsAndFieldsFromSourceCode(codeArea.getText());
         classMethods = MethodsFieldsPair.getKey();
         classFields = MethodsFieldsPair.getValue();
     }
@@ -60,7 +66,7 @@ public class AutocompleteHelper {
 
             String finalWord = word.toString();
 
-            CreditsProposalsPopup.javaKeywords.forEach(keyword -> {
+            JAVA_KEYWORDS_FOR_AUTOCOMPLETE.forEach(keyword -> {
                 if (finalWord.trim().isEmpty() || keyword.toUpperCase().contains(finalWord.trim().toUpperCase())) {
                     ProposalItem item = new ProposalItem(keyword, keyword);
                     item.setActionHandler(actionHandler -> handleActionJavaKeywords(keyword));

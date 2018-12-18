@@ -1,13 +1,12 @@
 package com.credits.general.util.compiler;
 
 
-
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.exception.CompilationException;
-import com.credits.general.util.GeneralSourceCodeUtils;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.compiler.model.JavaSourceFromString;
+import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -109,7 +108,7 @@ public class InMemoryCompiler {
 	}
 
 	public static CompilationPackage compileSourceCode(String sourceCode) throws CompilationException, CompilationErrorException {
-		String className = GeneralSourceCodeUtils.parseClassName(sourceCode, "SmartContract");
+		String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
 		CompilationPackage compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
 
 		if (!compilationPackage.isCompilationStatusSuccess()) {

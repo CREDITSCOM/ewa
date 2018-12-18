@@ -17,12 +17,16 @@ import static java.util.Collections.singleton;
 public class CodeAreaUtils {
     private final static Logger LOGGER = LoggerFactory.getLogger(CodeAreaUtils.class);
 
-    private static final String[] KEYWORDS =
+    public static final String[] KEYWORDS =
         new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
             "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for",
             "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package",
             "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch",
             "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while"};
+
+    public static final String[] DATA_TYPES_KEYWORDS =
+        new String[] {"String", "Boolean", "Integer", "Float", "Byte", "Short", "Long", "Character", "Double"};
+
 
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
     private static final String PAREN_PATTERN = "[()]";

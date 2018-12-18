@@ -1,4 +1,4 @@
-package com.credits.wallet.desktop.utils.sourcecode;
+package com.credits.general.util.sourceCode;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;

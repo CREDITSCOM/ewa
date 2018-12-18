@@ -3,18 +3,18 @@ package com.credits.wallet.desktop.controller;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
-import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Callback;
-import com.credits.general.util.GeneralSourceCodeUtils;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
+import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractsUtils;
+import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
@@ -33,6 +33,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.tuple.Pair;
@@ -173,7 +174,7 @@ public class SmartContractDeployController implements Initializable {
     @FXML
     private void handleDeploy() {
         try {
-            String javaCode = GeneralSourceCodeUtils.normalizeSourceCode(codeArea.getText());
+            String javaCode = SourceCodeUtils.normalizeSourceCode(codeArea.getText());
             if (compilationPackage == null) {
                 buildButton.setDisable(false);
                 deployButton.setDisable(true);
@@ -185,9 +186,7 @@ public class SmartContractDeployController implements Initializable {
                     byte[] byteCode = compilationUnit.getBytecode();
 
                     SmartContractDeployData smartContractDeployData =
-                        new SmartContractDeployData(javaCode, byteCode, TokenStandart.CreditsBasic
-                            // TODO refactor, put real tokenStandart value
-                        );
+                        new SmartContractDeployData(javaCode, byteCode, ParseCodeUtils.parseTokenStandard(javaCode));
 
                     long idWithoutFirstTwoBits =
                         TransactionIdCalculateUtils.getIdWithoutFirstTwoBits(nodeApiService, account, true);
@@ -252,13 +251,13 @@ public class SmartContractDeployController implements Initializable {
         Platform.runLater(() -> {
             classTreeView.setRoot(null);
             String sourceCode = codeArea.getText();
-            String className = SourceCodeUtils.parseClassName(sourceCode);
+            String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
             Label labelRoot = new Label(className);
             TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
 
-            List<FieldDeclaration> fields = SourceCodeUtils.parseFields(sourceCode);
-            List<MethodDeclaration> constructors = SourceCodeUtils.parseConstructors(sourceCode);
-            List<MethodDeclaration> methods = SourceCodeUtils.parseMethods(sourceCode);
+            List<FieldDeclaration> fields = ParseCodeUtils.parseFields(sourceCode);
+            List<MethodDeclaration> constructors = ParseCodeUtils.parseConstructors(sourceCode);
+            List<MethodDeclaration> methods = ParseCodeUtils.parseMethods(sourceCode);
 
             List<BodyDeclaration> classMembers = new ArrayList<>();
             classMembers.addAll(fields);
@@ -269,13 +268,7 @@ public class SmartContractDeployController implements Initializable {
                 if (classMember instanceof MethodDeclaration) {
                     ((MethodDeclaration) classMember).setBody(null);
                 }
-
                 Label label = new Label(classMember.toString());
-                label.setOnMousePressed(event -> {
-                    if (event.isPrimaryButtonDown()) {
-                        codeArea.positionCursorToLine(SourceCodeUtils.getLineNumber(sourceCode, classMember));
-                    }
-                });
                 TreeItem<Label> treeItem = new TreeItem<>();
                 treeItem.setValue(label);
                 treeRoot.getChildren().add(treeItem);
@@ -284,6 +277,19 @@ public class SmartContractDeployController implements Initializable {
             treeRoot.setExpanded(true);
             classTreeView.setRoot(treeRoot);
             classTreeView.setShowRoot(false);
+
+            classTreeView.setOnMouseClicked(event -> {
+                if (event.isPrimaryButtonDown() || event.getButton() == MouseButton.PRIMARY) {
+                    BodyDeclaration selected =
+                        classMembers.get(classTreeView.getSelectionModel().getSelectedIndices().get(0));
+                    try {
+                        int lineNumber = ParseCodeUtils.getLineNumber(sourceCode, selected);
+                        codeArea.setCaretPositionOnLine(lineNumber);
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
+
         });
     }
 
@@ -313,10 +319,11 @@ public class SmartContractDeployController implements Initializable {
         errorTableView.getColumns().add(tabErrorsColText);
 
         errorTableView.setOnMousePressed(event -> {
-            if (event.isPrimaryButtonDown()) {
+            if (event.isPrimaryButtonDown()|| event.getButton() == MouseButton.PRIMARY) {
                 BuildSourceCodeError tabRow = errorTableView.getSelectionModel().getSelectedItem();
-                if (tabRow != null) {
-                    codeArea.positionCursorToLine(Integer.parseInt(tabRow.getLine()));
+                try {
+                    codeArea.setCaretPositionOnLine(tabRow.getLine());
+                } catch (Exception ignored) {
                 }
             }
         });
