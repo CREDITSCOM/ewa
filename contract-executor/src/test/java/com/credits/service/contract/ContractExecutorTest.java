@@ -16,6 +16,7 @@ import com.credits.service.ServiceTest;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractUtils;
 import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static java.util.Collections.singletonList;
@@ -123,8 +125,20 @@ public class ContractExecutorTest extends ServiceTest {
             new MethodDescriptionData("int", "getTotal", new ArrayList<>()),
             new MethodDescriptionData("java.lang.String","getInitiatorAddress", new ArrayList<>()));
 
-        assertTrue(ceService.getContractsMethods(bytecode).containsAll(expectedMethods));
+        List<MethodDescriptionData> contractsMethods = ceService.getContractsMethods(bytecode);
+        assertTrue(contractsMethods.containsAll(expectedMethods));
     }
+
+    @Test
+    public void get_contract_variables() throws Exception{
+        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+        byte[] bytecode = compile(sourceCode, "Contract", "TKN");
+        byte[] contractState = ceService.execute(address, bytecode, null, null, null, 500).getContractState();
+        Map<String, Variant> contractVariables = ceService.getContractVariables(bytecode, contractState);
+        Assert.assertTrue(ceService.getContractVariables(bytecode, contractState).containsKey("total"));
+    }
+
+
 
     @Test
     public void multipleMethodCall() throws Exception {

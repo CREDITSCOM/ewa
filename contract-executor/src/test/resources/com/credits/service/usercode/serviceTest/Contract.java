@@ -1,6 +1,6 @@
 public class Contract extends SmartContract {
 
-    private int total;
+    public int total;
 
     public void initialize() {
         String name = Thread.currentThread().getName();
