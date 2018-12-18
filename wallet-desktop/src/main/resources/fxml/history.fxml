@@ -36,7 +36,7 @@
                            <children>
                                   <TableView fx:id="approvedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view,credits-history-table-view-transaction">
                                       <columns>
-                                          <TableColumn prefWidth="80.0" text="Id" />
+                                          <TableColumn prefWidth="95.0" text="Id" />
                                           <TableColumn prefWidth="400.0" text="Source" />
                                           <TableColumn prefWidth="400.0" text="Target" />
                                           <TableColumn prefWidth="210.0" text="Amount" />
