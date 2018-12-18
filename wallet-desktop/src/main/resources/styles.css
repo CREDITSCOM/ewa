@@ -243,18 +243,17 @@
     -fx-background-color: transparent;
 }
 
-.credits-history-table-view-transaction .column-header,
-.credits-history-table-view-transaction .column-header-background {
-    -fx-background-radius: 15 15 0 0;
-    -fx-border-radius: 15;
-
+.credits-history-table-view .column-header {
+    -fx-background-color: transparent;    /* made transparent */
+    -fx-cursor: hand;
 }
 
-
-.credits-history-table-view .column-header,
 .credits-history-table-view .column-header-background {
+    -fx-background-radius: 15 15 0 0;
     -fx-background-color: #E9ECEF;
 }
+
+
 .credits-history-table-view .filler {
     -fx-background-color: transparent;
 }
@@ -265,7 +264,6 @@
 
 .credits-history-table-view .table-row-cell{
     -fx-background-color: #F2F2F2;
-    -fx-table-cell-border-color:transparent;
 }
 
 .credits-history-table-view .table-row-cell:odd{
