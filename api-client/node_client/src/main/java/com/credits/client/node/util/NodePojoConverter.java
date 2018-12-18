@@ -87,9 +87,12 @@ public class NodePojoConverter {
 
     public static TransactionData transactionToTransactionData(SealedTransaction sealedTransaction) {
 
+        TransactionId blockTransactionId = sealedTransaction.getId();
         Transaction transaction = sealedTransaction.getTrxn();
+
         TransactionData data = new TransactionData();
         Long innerId = transaction.getId();
+        data.setBlockId(GeneralConverter.encodeToBASE58(blockTransactionId.getPoolHash()) +"."+ blockTransactionId.getIndex());
         data.setAmount(NodePojoConverter.amountToBigDecimal(transaction.getAmount()));
         data.setCurrency(transaction.getCurrency());
         data.setId(innerId);

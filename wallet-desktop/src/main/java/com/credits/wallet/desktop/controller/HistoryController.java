@@ -72,7 +72,7 @@ public class HistoryController implements Initializable {
     }
 
     private void initTable(TableView<TransactionTabRow> tableView) {
-        tableView.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("innerId"));
+        tableView.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("blockId"));
         tableView.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("source"));
         tableView.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("target"));
         tableView.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("amount"));
@@ -118,7 +118,7 @@ public class HistoryController implements Initializable {
                     tableRow.setAmount(GeneralConverter.toString(transactionData.getAmount()));
                     tableRow.setSource(GeneralConverter.encodeToBASE58(transactionData.getSource()));
                     tableRow.setTarget(GeneralConverter.encodeToBASE58(transactionData.getTarget()));
-                    tableRow.setInnerId(transactionData.getId());
+                    tableRow.setBlockId(transactionData.getBlockId());
                     tableRow.setState(VALID.name());
                     tableRow.setMethod(transactionData.getMethod());
                     tableRow.setParams(transactionData.getParams());
@@ -167,7 +167,9 @@ public class HistoryController implements Initializable {
 
                 transactionMap.forEach((id, value) -> {
                     TransactionTabRow tableRow = new TransactionTabRow();
+/*
                     tableRow.setInnerId(id);
+*/
                     tableRow.setAmount(value.getAmount());
                     tableRow.setCurrency(value.getCurrency());
                     tableRow.setSource(value.getSource());

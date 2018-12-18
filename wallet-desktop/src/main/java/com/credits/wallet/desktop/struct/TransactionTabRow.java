@@ -7,6 +7,7 @@ import java.util.List;
  */
 public class TransactionTabRow {
     private Long innerId;
+    private String blockId;
     private String source;
     private String target;
     private String currency;
@@ -37,6 +38,14 @@ public class TransactionTabRow {
 
     public void setInnerId(Long innerId) {
         this.innerId = innerId;
+    }
+
+    public void setBlockId(String blockTransactionId) {
+        this.blockId = blockTransactionId;
+    }
+
+    public String getBlockId() {
+        return blockId;
     }
 
     public String getTarget() {

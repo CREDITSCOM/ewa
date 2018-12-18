@@ -56,7 +56,7 @@ public class TransactionController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         FormUtils.resizeForm(bp);
-        labInnerId.setText(String.valueOf(AppState.selectedTransactionRow.getInnerId()));
+        labInnerId.setText(AppState.selectedTransactionRow.getBlockId());
         labSource.setText(AppState.selectedTransactionRow.getSource());
         //labTarget.setText(AppState.selectedTransactionRow.getCurrency());
         labTarget.setText(AppState.selectedTransactionRow.getTarget());

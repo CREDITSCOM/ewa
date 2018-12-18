@@ -12,6 +12,7 @@ import java.util.Objects;
 public class TransactionData implements Serializable {
     private static final long serialVersionUID = 4544650022718657167L;
     protected long id;
+    protected String blockId;
     protected byte[] source;
     protected byte[] target;
     protected BigDecimal amount;
@@ -29,6 +30,14 @@ public class TransactionData implements Serializable {
         this.source = source;
         this.target = target;
         this.amount = amount;
+    }
+
+    public String getBlockId() {
+        return blockId;
+    }
+
+    public void setBlockId(String blockId) {
+        this.blockId = blockId;
     }
 
     public long getId() {
