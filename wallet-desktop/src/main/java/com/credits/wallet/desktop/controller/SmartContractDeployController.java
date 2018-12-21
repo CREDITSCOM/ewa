@@ -56,6 +56,7 @@ import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.contractInteractionService;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 
@@ -225,6 +226,7 @@ public class SmartContractDeployController implements Initializable {
                 clipboard.setContents(selection, selection);
                 FormUtils.showPlatformInfo(
                     String.format("Smart-contract address%n%n%s%n%nhas generated and copied to clipboard", target));
+                contractInteractionService.getSmartContractBalanceAndName(target);
             }
 
             @Override

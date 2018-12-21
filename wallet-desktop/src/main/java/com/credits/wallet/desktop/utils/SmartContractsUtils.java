@@ -6,12 +6,15 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.general.crypto.Blake2S.generateHash;
 import static com.credits.general.util.GeneralConverter.byteArrayToHex;
 import static com.credits.general.util.GeneralConverter.toByteArray;
 import static com.credits.general.util.GeneralConverter.toByteArrayLittleEndian;
+import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static org.apache.commons.lang3.ArrayUtils.addAll;
 
 public class SmartContractsUtils {
@@ -38,6 +41,25 @@ public class SmartContractsUtils {
         byte[] bytes = generateHash(seed);
         return bytes;
     }
+
+    public static void saveSmartInTokenList(String coinName, BigDecimal balance, String smartContractAddress) {
+        if(balance != null) {
+            ConcurrentHashMap<String, String> coins = coinsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new);
+            coinName = checkCoinNameExist(coinName, coins);
+            coins.put(coinName, smartContractAddress);
+            coinsKeeper.keepObject(coins);
+            coinsKeeper.flush();
+        }
+    }
+
+    private static String checkCoinNameExist(String coinName, ConcurrentHashMap<String, String> coins) {
+        if(coins.get(coinName)!=null) {
+            coinName += ".";
+            coinName = checkCoinNameExist(coinName,coins);
+        }
+        return coinName;
+    }
+
 
     public static String generateSmartContractHashState(byte[] byteCode) throws CreditsException {
         byte[] hashBytes = Md5.encrypt(byteCode);

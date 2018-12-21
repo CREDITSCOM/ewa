@@ -4,6 +4,7 @@ import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.FormUtils;
+import com.credits.wallet.desktop.utils.SmartContractsUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
@@ -84,13 +84,16 @@ public class NewCoinController implements Initializable {
                 return;
         }
 
+        addSmartContractTockenBalance(coinName, smartContractAddress);
+        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+    }
+
+    public static void addSmartContractTockenBalance(String coinName, String smartContractAddress) {
         contractInteractionService.getSmartContractBalance(smartContractAddress, new Callback<BigDecimal>() {
             @Override
             public void onSuccess(BigDecimal balance) throws CreditsException {
+                    SmartContractsUtils.saveSmartInTokenList(coinName, balance, smartContractAddress);
                 if(balance != null){
-                    ConcurrentHashMap<String, String> coins = coinsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new);
-                    coins.put(coinName, smartContractAddress);
-                    coinsKeeper.keepObject(coins);
                     FormUtils.showPlatformInfo("Coin \"" + coinName + "\" was created successfully");
                 }
             }
@@ -100,7 +103,6 @@ public class NewCoinController implements Initializable {
                 FormUtils.showError("Coin can't created. Reason: " + e.getMessage());
             }
         });
-        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
     }
 
     @Override
