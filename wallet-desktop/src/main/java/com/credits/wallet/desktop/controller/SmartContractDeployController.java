@@ -3,17 +3,13 @@ package com.credits.wallet.desktop.controller;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
-import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Callback;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
-import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.SmartContractsUtils;
 import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
@@ -50,15 +46,24 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
+import static com.credits.client.node.thrift.generated.TokenStandart.NotAToken;
+import static com.credits.client.node.util.TransactionIdCalculateUtils.getCalcTransactionIdSourceTargetResult;
+import static com.credits.client.node.util.TransactionIdCalculateUtils.getIdWithoutFirstTwoBits;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.Utils.threadPool;
+import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.contractInteractionService;
+import static com.credits.wallet.desktop.AppState.lastSmartContract;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
+import static com.credits.wallet.desktop.VistaNavigator.SMART_CONTRACT;
+import static com.credits.wallet.desktop.VistaNavigator.WALLET;
+import static com.credits.wallet.desktop.VistaNavigator.loadVista;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
+import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -130,7 +135,7 @@ public class SmartContractDeployController implements Initializable {
         buildButton.setDisable(true);
         errorTableView.setVisible(false);
         codeArea.setDisable(true);
-        CompletableFuture.supplyAsync(() -> SourceCodeBuilder.compileSourceCode(codeArea.getText()))
+        supplyAsync(() -> SourceCodeBuilder.compileSourceCode(codeArea.getText()))
             .whenComplete(handleCallback(handleBuildResult()));
     }
 
@@ -189,32 +194,28 @@ public class SmartContractDeployController implements Initializable {
                     SmartContractDeployData smartContractDeployData =
                         new SmartContractDeployData(javaCode, byteCode, ParseCodeUtils.parseTokenStandard(javaCode));
 
-                    long idWithoutFirstTwoBits =
-                        TransactionIdCalculateUtils.getIdWithoutFirstTwoBits(nodeApiService, account, true);
+                    long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, account, true);
 
                     SmartContractData smartContractData = new SmartContractData(
-                        SmartContractsUtils.generateSmartContractAddress(decodeFromBASE58(account),
-                            idWithoutFirstTwoBits,
-                            byteCode), decodeFromBASE58(account), smartContractDeployData, null);
+                        generateSmartContractAddress(decodeFromBASE58(account), idWithoutFirstTwoBits, byteCode),
+                        decodeFromBASE58(account), smartContractDeployData, null);
 
-
-                    CompletableFuture.supplyAsync(
-                        () -> TransactionIdCalculateUtils.getCalcTransactionIdSourceTargetResult(AppState.nodeApiService,
+                    supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService,
                             account, smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool)
-                        .thenApply(
-                            (transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
-                        .whenComplete(handleCallback(handleDeployResult()));
-                    AppState.lastSmartContract = codeArea.getText();
-                    VistaNavigator.loadVista(VistaNavigator.WALLET, this);
+                        .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
+                        .whenComplete(handleCallback(handleDeployResult(smartContractDeployData)));
+                    lastSmartContract = codeArea.getText();
+
+                    loadVista(WALLET, this);
                 }
             }
         } catch (CreditsException e) {
             LOGGER.error("failed!", e);
-            FormUtils.showError(AppState.NODE_ERROR + ": " + e.getMessage());
+            FormUtils.showError(NODE_ERROR + ": " + e.getMessage());
         }
     }
 
-    private Callback<Pair<Long, TransactionFlowResultData>> handleDeployResult() {
+    private Callback<Pair<Long, TransactionFlowResultData>> handleDeployResult(SmartContractDeployData smartContractData) {
         return new Callback<Pair<Long, TransactionFlowResultData>>() {
             @Override
             public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
@@ -226,7 +227,9 @@ public class SmartContractDeployController implements Initializable {
                 clipboard.setContents(selection, selection);
                 FormUtils.showPlatformInfo(
                     String.format("Smart-contract address%n%n%s%n%nhas generated and copied to clipboard", target));
-                contractInteractionService.getSmartContractBalanceAndName(target);
+                if(smartContractData.getTokenStandard() != NotAToken) {
+                    contractInteractionService.getSmartContractBalanceAndName(target);
+                }
             }
 
             @Override
@@ -239,7 +242,7 @@ public class SmartContractDeployController implements Initializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT, this);
+        loadVista(SMART_CONTRACT, this);
     }
 
     @FXML
