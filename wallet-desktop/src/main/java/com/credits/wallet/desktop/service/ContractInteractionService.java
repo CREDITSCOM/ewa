@@ -26,6 +26,7 @@ import static com.credits.wallet.desktop.AppState.contractExecutorService;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static java.util.Arrays.asList;
+import static java.util.concurrent.CompletableFuture.*;
 
 /**
  * Created by Igor Goryunov on 28.10.2018
@@ -37,7 +38,7 @@ public class ContractInteractionService {
     public static final String GET_NAME_METHOD = "getName";
 
     public void getSmartContractBalance(String smartContractAddress, Callback<BigDecimal> callback) {
-        CompletableFuture.supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
+        supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
             .thenApply(this::getBalance)
             .whenComplete(handleCallback(callback));
     }
@@ -53,15 +54,15 @@ public class ContractInteractionService {
 
 
     public void getSmartContractBalanceAndName(String smartContractAddress) {
-        CompletableFuture.supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
-            .thenAccept((sc) -> CompletableFuture.supplyAsync(() -> getName(sc))
-                .thenAcceptBoth(CompletableFuture.supplyAsync(() -> getBalance(sc)), (name, balance) -> {
-                    SmartContractsUtils.saveSmartInTokenList(name, balance, smartContractAddress);
-                }));
+        supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
+            .thenAccept(sc -> supplyAsync(() -> getName(sc))
+                .thenAcceptBoth(supplyAsync(() -> getBalance(sc)),
+                (name, balance) -> SmartContractsUtils.saveSmartInTokenList(name, balance, smartContractAddress))
+                    .whenComplete((aVoid, throwable) -> LOGGER.info("cannot add balance of contract to tokens balances list. Reason: {}", throwable.getMessage())));
     }
 
     public void transferTo(String smartContractAddress, String target, BigDecimal amount, Callback<String> callback) {
-        CompletableFuture.supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
+        supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
             .thenApply((sc) -> {
                 sc.setMethod(TRANSFER_METHOD);
                 sc.setParams(asList(createVariantObject(STRING_TYPE, target),
