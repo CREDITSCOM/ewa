@@ -3,7 +3,9 @@ package com.credits.wallet.desktop.controller;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
+import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.util.ByteArrayContractClassLoader;
 import com.credits.general.util.Callback;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
@@ -42,12 +44,17 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
+import static com.credits.client.node.thrift.generated.TokenStandart.CreditsBasic;
+import static com.credits.client.node.thrift.generated.TokenStandart.CreditsExtended;
 import static com.credits.client.node.thrift.generated.TokenStandart.NotAToken;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getCalcTransactionIdSourceTargetResult;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getIdWithoutFirstTwoBits;
@@ -55,13 +62,14 @@ import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.contractInteractionService;
 import static com.credits.wallet.desktop.AppState.lastSmartContract;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.VistaNavigator.SMART_CONTRACT;
 import static com.credits.wallet.desktop.VistaNavigator.WALLET;
 import static com.credits.wallet.desktop.VistaNavigator.loadVista;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
+import static com.credits.wallet.desktop.utils.ApiUtils.saveTransactionRoundNumberIntoMap;
+import static com.credits.wallet.desktop.utils.SmartContractsUtils.*;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -104,6 +112,7 @@ public class SmartContractDeployController implements Initializable {
     @FXML
     private Button buildButton;
 
+
     public CompilationPackage compilationPackage;
 
     @Override
@@ -112,7 +121,6 @@ public class SmartContractDeployController implements Initializable {
         FormUtils.resizeForm(bp);
 
         codeArea = CodeAreaUtils.initCodeArea(paneCode, false);
-
 
         codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (evt) -> {
             compilationPackage = null;
@@ -191,8 +199,25 @@ public class SmartContractDeployController implements Initializable {
                     CompilationUnit compilationUnit = compilationUnits.get(0);
                     byte[] byteCode = compilationUnit.getBytecode();
 
+                    ByteArrayContractClassLoader contractClassLoader = new ByteArrayContractClassLoader();
+                    Class<?> contractClass = contractClassLoader.buildClass(compilationUnit.getName(), compilationUnit.getBytecode());
+                    TokenStandart tokenStandart = NotAToken;
+                    try {
+                        Class<?>[] interfaces = contractClass.getInterfaces();
+                        if(interfaces.length > 0) {
+                            Class<?> basicStandard = Class.forName("BasicStandard");
+                            Class<?> extendedStandard = Class.forName("ExtensionStandard");
+                            for (Class<?> _interface : interfaces) {
+                                if (_interface.equals(basicStandard)) tokenStandart = CreditsBasic;
+                                if (_interface.equals(extendedStandard)) tokenStandart = CreditsExtended;
+                            }
+                        }
+                    } catch (ClassNotFoundException e) {
+                        LOGGER.debug("can't find standard classes. Reason {}", e.getMessage());
+                    }
+
                     SmartContractDeployData smartContractDeployData =
-                        new SmartContractDeployData(javaCode, byteCode, ParseCodeUtils.parseTokenStandard(javaCode));
+                        new SmartContractDeployData(javaCode, byteCode, tokenStandart);
 
                     long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, account, true);
 
@@ -200,10 +225,25 @@ public class SmartContractDeployController implements Initializable {
                         generateSmartContractAddress(decodeFromBASE58(account), idWithoutFirstTwoBits, byteCode),
                         decodeFromBASE58(account), smartContractDeployData, null);
 
+                    TokenInfo tokenInfo = null;
+                    if(smartContractDeployData.getTokenStandard() != NotAToken){
+                        try {
+                            Object contractInstance = contractClass.newInstance();
+                            Field initiator = contractClass.getSuperclass().getDeclaredField("initiator");
+                            initiator.setAccessible(true);
+                            initiator.set(contractInstance, account);
+                            String tokenName = (String) contractClass.getMethod("getName").invoke(contractInstance);
+                            String balance = (String) contractClass.getMethod("balanceOf", String.class).invoke(contractInstance, account);
+                            tokenInfo = new TokenInfo(smartContractData.getBase58Address(), tokenName, new BigDecimal(balance));
+                        } catch (Exception e) {
+                            LOGGER.warn("token \"{}\" can't be add to the balances list. Reason: {}", smartContractData.getBase58Address(), e.getMessage());
+                        }
+                    }
+
                     supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService,
                             account, smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool)
                         .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
-                        .whenComplete(handleCallback(handleDeployResult(smartContractDeployData)));
+                        .whenComplete(handleCallback(handleDeployResult(tokenInfo)));
                     lastSmartContract = codeArea.getText();
 
                     loadVista(WALLET, this);
@@ -215,7 +255,18 @@ public class SmartContractDeployController implements Initializable {
         }
     }
 
-    private Callback<Pair<Long, TransactionFlowResultData>> handleDeployResult(SmartContractDeployData smartContractData) {
+    private static class TokenInfo{
+        final String address;
+        final String name;
+        final BigDecimal balance;
+
+        private TokenInfo(String smartContractAddress, String tokenName, BigDecimal balance) {
+            this.address = smartContractAddress;
+            this.name = tokenName;
+            this.balance = balance;
+        }
+    }
+    private Callback<Pair<Long, TransactionFlowResultData>> handleDeployResult(TokenInfo tokenInfo) {
         return new Callback<Pair<Long, TransactionFlowResultData>>() {
             @Override
             public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
@@ -227,8 +278,8 @@ public class SmartContractDeployController implements Initializable {
                 clipboard.setContents(selection, selection);
                 FormUtils.showPlatformInfo(
                     String.format("Smart-contract address%n%n%s%n%nhas generated and copied to clipboard", target));
-                if(smartContractData.getTokenStandard() != NotAToken) {
-                    contractInteractionService.getSmartContractBalanceAndName(target);
+                if(tokenInfo != null){
+                    saveSmartInTokenList(tokenInfo.name, tokenInfo.balance, tokenInfo.address);
                 }
             }
 
