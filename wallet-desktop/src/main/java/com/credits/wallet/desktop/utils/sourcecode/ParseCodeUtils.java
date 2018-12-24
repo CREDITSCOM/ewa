@@ -169,32 +169,4 @@ public class ParseCodeUtils {
                 String.format("Wrong superclass name %s, superclass name must be %s", superclassName, SUPERCLASS_NAME));
         }
     }
-
-    public static TokenStandart parseTokenStandard(String sourceCode) {
-        try {
-            CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
-            List typeList = compilationUnit.types();
-            TypeDeclaration typeDeclaration = (TypeDeclaration) typeList.get(0);
-            boolean basicStandard = false, extensionStandard=false;
-            List interfaces = typeDeclaration.superInterfaceTypes();
-
-            for (Object currentInterface : interfaces) {
-                switch (((SimpleType) currentInterface).getName().getFullyQualifiedName()){
-                    case "BasicStandard":
-                        basicStandard = true;
-                        break;
-                    case "ExtensionStandard":
-                        extensionStandard = true;
-                        break;
-                }
-            }
-            if(extensionStandard) return TokenStandart.CreditsExtended;
-            if(basicStandard) return TokenStandart.CreditsBasic;
-            return TokenStandart.NotAToken;
-
-        } catch (Exception e) {
-            return TokenStandart.NotAToken;
-        }
-    }
-
 }

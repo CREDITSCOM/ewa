@@ -45,7 +45,6 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
@@ -68,7 +67,6 @@ import static com.credits.wallet.desktop.VistaNavigator.SMART_CONTRACT;
 import static com.credits.wallet.desktop.VistaNavigator.WALLET;
 import static com.credits.wallet.desktop.VistaNavigator.loadVista;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
-import static com.credits.wallet.desktop.utils.ApiUtils.saveTransactionRoundNumberIntoMap;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.*;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -76,7 +74,6 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 /**
  * Created by goncharov-eg on 30.01.2018.
  */
-//TODO: This class is a GODZILLA please refactor it ASAP!
 public class SmartContractDeployController implements Initializable {
 
     public static final String BUILD = "Build";
@@ -199,22 +196,8 @@ public class SmartContractDeployController implements Initializable {
                     CompilationUnit compilationUnit = compilationUnits.get(0);
                     byte[] byteCode = compilationUnit.getBytecode();
 
-                    ByteArrayContractClassLoader contractClassLoader = new ByteArrayContractClassLoader();
-                    Class<?> contractClass = contractClassLoader.buildClass(compilationUnit.getName(), compilationUnit.getBytecode());
-                    TokenStandart tokenStandart = NotAToken;
-                    try {
-                        Class<?>[] interfaces = contractClass.getInterfaces();
-                        if(interfaces.length > 0) {
-                            Class<?> basicStandard = Class.forName("BasicStandard");
-                            Class<?> extendedStandard = Class.forName("ExtensionStandard");
-                            for (Class<?> _interface : interfaces) {
-                                if (_interface.equals(basicStandard)) tokenStandart = CreditsBasic;
-                                if (_interface.equals(extendedStandard)) tokenStandart = CreditsExtended;
-                            }
-                        }
-                    } catch (ClassNotFoundException e) {
-                        LOGGER.debug("can't find standard classes. Reason {}", e.getMessage());
-                    }
+                    Class<?> contractClass = getContractClass(compilationUnit);
+                    TokenStandart tokenStandart = getTokenStandard(contractClass);
 
                     SmartContractDeployData smartContractDeployData =
                         new SmartContractDeployData(javaCode, byteCode, tokenStandart);
@@ -225,25 +208,10 @@ public class SmartContractDeployController implements Initializable {
                         generateSmartContractAddress(decodeFromBASE58(account), idWithoutFirstTwoBits, byteCode),
                         decodeFromBASE58(account), smartContractDeployData, null);
 
-                    TokenInfo tokenInfo = null;
-                    if(smartContractDeployData.getTokenStandard() != NotAToken){
-                        try {
-                            Object contractInstance = contractClass.newInstance();
-                            Field initiator = contractClass.getSuperclass().getDeclaredField("initiator");
-                            initiator.setAccessible(true);
-                            initiator.set(contractInstance, account);
-                            String tokenName = (String) contractClass.getMethod("getName").invoke(contractInstance);
-                            String balance = (String) contractClass.getMethod("balanceOf", String.class).invoke(contractInstance, account);
-                            tokenInfo = new TokenInfo(smartContractData.getBase58Address(), tokenName, new BigDecimal(balance));
-                        } catch (Exception e) {
-                            LOGGER.warn("token \"{}\" can't be add to the balances list. Reason: {}", smartContractData.getBase58Address(), e.getMessage());
-                        }
-                    }
-
                     supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService,
                             account, smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool)
                         .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
-                        .whenComplete(handleCallback(handleDeployResult(tokenInfo)));
+                        .whenComplete(handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
                     lastSmartContract = codeArea.getText();
 
                     loadVista(WALLET, this);
@@ -255,17 +223,47 @@ public class SmartContractDeployController implements Initializable {
         }
     }
 
-    private static class TokenInfo{
-        final String address;
-        final String name;
-        final BigDecimal balance;
-
-        private TokenInfo(String smartContractAddress, String tokenName, BigDecimal balance) {
-            this.address = smartContractAddress;
-            this.name = tokenName;
-            this.balance = balance;
+    private TokenInfo getTokenInfo(Class<?> contractClass, SmartContractData smartContractData) {
+        if(smartContractData.getSmartContractDeployData().getTokenStandard() != NotAToken) {
+            try {
+                Object contractInstance = contractClass.newInstance();
+                Field initiator = contractClass.getSuperclass().getDeclaredField("initiator");
+                initiator.setAccessible(true);
+                initiator.set(contractInstance, account);
+                String tokenName = (String) contractClass.getMethod("getName").invoke(contractInstance);
+                String balance =
+                    (String) contractClass.getMethod("balanceOf", String.class).invoke(contractInstance, account);
+                return new TokenInfo(smartContractData.getBase58Address(), tokenName, new BigDecimal(balance));
+            } catch (Exception e) {
+                LOGGER.warn("token \"{}\" can't be add to the balances list. Reason: {}", smartContractData.getBase58Address(), e.getMessage());
+            }
         }
+        return null;
     }
+
+    private Class<?> getContractClass(CompilationUnit compilationUnit) {
+        ByteArrayContractClassLoader contractClassLoader = new ByteArrayContractClassLoader();
+        return contractClassLoader.buildClass(compilationUnit.getName(), compilationUnit.getBytecode());
+    }
+
+    private TokenStandart getTokenStandard(Class<?> contractClass) {
+        TokenStandart tokenStandart = NotAToken;
+        try {
+            Class<?>[] interfaces = contractClass.getInterfaces();
+            if(interfaces.length > 0) {
+                Class<?> basicStandard = Class.forName("BasicStandard");
+                Class<?> extendedStandard = Class.forName("ExtensionStandard");
+                for (Class<?> _interface : interfaces) {
+                    if (_interface.equals(basicStandard)) tokenStandart = CreditsBasic;
+                    if (_interface.equals(extendedStandard)) tokenStandart = CreditsExtended;
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            LOGGER.debug("can't find standard classes. Reason {}", e.getMessage());
+        }
+        return tokenStandart;
+    }
+
     private Callback<Pair<Long, TransactionFlowResultData>> handleDeployResult(TokenInfo tokenInfo) {
         return new Callback<Pair<Long, TransactionFlowResultData>>() {
             @Override
@@ -383,5 +381,17 @@ public class SmartContractDeployController implements Initializable {
                 }
             }
         });
+    }
+
+    private static class TokenInfo {
+        final String address;
+        final String name;
+        final BigDecimal balance;
+
+        private TokenInfo(String smartContractAddress, String tokenName, BigDecimal balance) {
+            this.address = smartContractAddress;
+            this.name = tokenName;
+            this.balance = balance;
+        }
     }
 }
