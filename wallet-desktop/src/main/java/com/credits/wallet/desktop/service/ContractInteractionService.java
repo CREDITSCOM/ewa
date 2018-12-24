@@ -58,7 +58,7 @@ public class ContractInteractionService {
             .thenAccept(sc -> supplyAsync(() -> getName(sc))
                 .thenAcceptBoth(supplyAsync(() -> getBalance(sc)),
                 (name, balance) -> SmartContractsUtils.saveSmartInTokenList(name, balance, smartContractAddress))
-                    .whenComplete((aVoid, throwable) -> LOGGER.info("cannot add balance of contract to tokens balances list. Reason: {}", throwable.getMessage())));
+                    .whenComplete((aVoid, throwable) -> LOGGER.warn("cannot add balance of contract to tokens balances list. Reason: {}", throwable.getMessage())));
     }
 
     public void transferTo(String smartContractAddress, String target, BigDecimal amount, Callback<String> callback) {
