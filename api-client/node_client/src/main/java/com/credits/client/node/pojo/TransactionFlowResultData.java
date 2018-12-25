@@ -72,4 +72,15 @@ public class TransactionFlowResultData extends ApiResponseData {
         result = 31 * result + roundNumber;
         return result;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("TransactionFlowResultData{");
+        sb.append("source='").append(source).append('\'');
+        sb.append(", target='").append(target).append('\'');
+        sb.append(", contractResult=").append(contractResult);
+        sb.append(", roundNumber=").append(roundNumber);
+        sb.append('}');
+        return sb.toString();
+    }
 }
