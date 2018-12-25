@@ -242,8 +242,7 @@ public class SmartContractDeployController implements Initializable {
     }
 
     private Class<?> getContractClass(CompilationUnit compilationUnit) {
-        ByteArrayContractClassLoader contractClassLoader = new ByteArrayContractClassLoader();
-        return contractClassLoader.buildClass(compilationUnit.getName(), compilationUnit.getBytecode());
+        return new ByteArrayContractClassLoader().buildClass(compilationUnit.getName(), compilationUnit.getBytecode());
     }
 
     private TokenStandart getTokenStandard(Class<?> contractClass) {
