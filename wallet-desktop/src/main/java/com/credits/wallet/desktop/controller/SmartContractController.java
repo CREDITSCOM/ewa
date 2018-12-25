@@ -3,9 +3,10 @@ package com.credits.wallet.desktop.controller;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
-import com.credits.general.util.VariantConverter;
+import com.credits.general.util.variant.VariantUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
@@ -21,14 +22,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -53,9 +47,7 @@ import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 import static com.credits.general.util.Utils.threadPool;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
-import static com.credits.wallet.desktop.AppState.nodeApiService;
+import static com.credits.wallet.desktop.AppState.*;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 
 /**
@@ -330,23 +322,19 @@ public class SmartContractController implements Initializable {
     private void handleExecute() {
         try {
             String method = cbMethods.getSelectionModel().getSelectedItem().getName().getIdentifier();
-            List<Object> params = new ArrayList<>();
+            List<VariantData> params = new ArrayList<>();
             List<SingleVariableDeclaration> currentMethodParams = this.currentMethod.parameters();
-
             ObservableList<Node> paramsContainerChildren = this.pParamsContainer.getChildren();
-
             int i = 0;
             for (Node node : paramsContainerChildren) {
                 if (node instanceof TextField) {
                     String paramValue = ((TextField) node).getText();
                     SingleVariableDeclaration variableDeclaration = currentMethodParams.get(i);
                     String className = ParseCodeUtils.parseClassName(variableDeclaration);
-                    params.add(VariantConverter.createVariantObject(className, paramValue));
+                    params.add(VariantUtils.createVariantData(className, paramValue));
                     ++i;
                 }
-
             }
-
             SmartContractData smartContractData = this.currentSmartContract;
             smartContractData.setMethod(method);
             smartContractData.setParams(params);

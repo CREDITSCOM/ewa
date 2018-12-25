@@ -15,13 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.credits.general.thrift.generated.Variant.v_bool;
-import static com.credits.general.thrift.generated.Variant.v_double;
-import static com.credits.general.thrift.generated.Variant.v_i16;
-import static com.credits.general.thrift.generated.Variant.v_i32;
-import static com.credits.general.thrift.generated.Variant.v_i64;
-import static com.credits.general.thrift.generated.Variant.v_list;
-import static com.credits.general.thrift.generated.Variant.v_string;
+import static com.credits.general.thrift.generated.Variant.*;
 import static com.credits.serialize.Serializer.deserialize;
 import static java.util.Arrays.asList;
 
@@ -58,7 +52,7 @@ public class MethodParametersTest extends ServiceTest {
     @Test
     public void findSimpleMethod() throws InvocationTargetException, IllegalAccessException {
 
-        Variant[] simpleParams = {v_double(3f), v_double(4f), v_i32(1), v_i32(2), v_double(200d), v_double(220d)};
+        Variant[] simpleParams = {v_double(3f), v_double(4f), v_int(1), v_int(2), v_double(200d), v_double(220d)};
         MethodArgumentsValuesData simpleMethod =
             ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo", simpleParams);
         Assert.assertEquals(simpleMethod.getMethod().toString(),
@@ -73,7 +67,7 @@ public class MethodParametersTest extends ServiceTest {
     @Test
     public void findMethodWithArrayList() throws InvocationTargetException, IllegalAccessException {
 
-        Variant[] arrayList = {v_list(new ArrayList<>(asList(v_i32(1), v_i32(2), v_i32(3))))};
+        Variant[] arrayList = {v_list(new ArrayList<>(asList(v_int(1), v_int(2), v_int(3))))};
 
 
         MethodArgumentsValuesData arrayListMethod =
@@ -90,7 +84,7 @@ public class MethodParametersTest extends ServiceTest {
     @Test
     public void findAnotherMethodWithArrayList() throws InvocationTargetException, IllegalAccessException {
 
-        Variant[] arrayList = {v_list(new ArrayList<>(asList(v_i32(1), v_i32(2), v_i32(3))))};
+        Variant[] arrayList = {v_list(new ArrayList<>(asList(v_int(1), v_int(2), v_int(3))))};
         MethodArgumentsValuesData arrayListMethod =
             ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "fooInteger",
                 arrayList);
@@ -113,7 +107,7 @@ public class MethodParametersTest extends ServiceTest {
         list.add(v_string("string01"));
 
         Variant[] simpleParamsWithList =
-            {v_double(3f), v_double(4f), v_i32(1), v_i32(2), v_double(200d), v_double(220d), v_list(list)};
+            {v_double(3f), v_double(4f), v_int(1), v_int(2), v_double(200d), v_double(220d), v_list(list)};
 
         MethodArgumentsValuesData simpleAndArrayListMethod =
             ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo",
@@ -135,16 +129,16 @@ public class MethodParametersTest extends ServiceTest {
         list.add(v_string("string01"));
         list.add(v_string("string01"));
         Variant[] params =
-            {v_double(3f), v_double(4f), v_i32(1), v_i32(2), v_double(200d), v_double(220d), v_list(list),
-                v_list(new ArrayList<>(asList(v_i32(1), v_i32(2), v_i32(3), v_i32(4)))),
-                v_list(new ArrayList<>(asList(v_i32(5), v_i32(6), v_i32(7), v_i32(8)))),
+            {v_double(3f), v_double(4f), v_int(1), v_int(2), v_double(200d), v_double(220d), v_list(list),
+                v_list(new ArrayList<>(asList(v_int(1), v_int(2), v_int(3), v_int(4)))),
+                v_list(new ArrayList<>(asList(v_int(5), v_int(6), v_int(7), v_int(8)))),
                 v_list(new ArrayList<>(asList(v_double(1d), v_double(2d), v_double(3d)))),
                 v_list(new ArrayList<>(asList(v_double(4d), v_double(5d), v_double(6d)))),
-                v_list(new ArrayList<>(asList(v_bool(true), v_bool(true), v_bool(false)))),
-                v_list(new ArrayList<>(asList(v_bool(true), v_bool(true), v_bool(false)))),
-                v_list(new ArrayList<>(asList(v_i16((short) 1), v_i16((short) 2)))),
-                v_list(new ArrayList<>(asList(v_i64(1L), v_i64(2L), v_i64(3L)))),
-                v_list(new ArrayList<>(asList(v_i64(4L), v_i64(5L), v_i64(6L)))),
+                v_list(new ArrayList<>(asList(v_boolean(true), v_boolean(true), v_boolean(false)))),
+                v_list(new ArrayList<>(asList(v_boolean(true), v_boolean(true), v_boolean(false)))),
+                v_list(new ArrayList<>(asList(v_int((short) 1), v_int((short) 2)))),
+                v_list(new ArrayList<>(asList(v_long(1L), v_long(2L), v_long(3L)))),
+                v_list(new ArrayList<>(asList(v_long(4L), v_long(5L), v_long(6L)))),
                 v_list(new ArrayList<>(asList(v_double(1f), v_double(.2f)))),
                 v_list(new ArrayList<>(asList(v_double(3f), v_double(.4f))))};
 

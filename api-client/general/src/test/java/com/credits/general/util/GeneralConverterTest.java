@@ -27,6 +27,7 @@ public class GeneralConverterTest {
         Assert.assertEquals("1000000001", GeneralConverter.toString(1000000001));
         Assert.assertEquals("111111111111111111", GeneralConverter.toString(111111111111111111L));
         Assert.assertEquals("2222222222222222222", GeneralConverter.toString(new BigDecimal(2222222222222222222L)));
+        Assert.assertEquals("1", GeneralConverter.toString((byte)1));
     }
 
     @Test
@@ -204,4 +205,10 @@ public class GeneralConverterTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void toDoubleTest03() {
+        Float value = 1.2F;
+        LOGGER.info(GeneralConverter.toDouble(value) + "");
+    }
+
 }

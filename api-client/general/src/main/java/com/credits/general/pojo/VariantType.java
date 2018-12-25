@@ -1,8 +1,11 @@
 package com.credits.general.pojo;
 
+import com.credits.general.util.variant.VariantUtils;
+
 public enum VariantType {
     OBJECT("Object"),
-    STRING("String"),
+    NULL(VariantUtils.NULL_TYPE),
+    STRING(VariantUtils.STRING_TYPE),
     BYTE("byte"),
     BYTE_BOX("Byte"),
     SHORT("short"),
@@ -11,13 +14,16 @@ public enum VariantType {
     INT_BOX("Integer"),
     LONG("long"),
     LONG_BOX("Long"),
+    FLOAT("float"),
+    FLOAT_BOX("Float"),
     DOUBLE("double"),
     DOUBLE_BOX("Double"),
-    BOOL("bool"),
-    BOOL_BOX("Bool"),
+    BOOL("boolean"),
+    BOOL_BOX("Boolean"),
     LIST("List"),
     SET("Set"),
-    MAP("Map");
+    MAP("Map"),
+    ARRAY(VariantUtils.ARRAY_TYPE);
 
     public final String name;
 
@@ -32,6 +38,15 @@ public enum VariantType {
             }
         }
         throw new IllegalArgumentException("Incorrect variant type \"" + variant + "\"");
+    }
+
+    public boolean isCollection() {
+        return (
+                this.equals(VariantType.LIST)
+                || this.equals(VariantType.MAP)
+                || this.equals(VariantType.SET)
+                || this.equals(VariantType.ARRAY)
+        );
     }
 }
 
