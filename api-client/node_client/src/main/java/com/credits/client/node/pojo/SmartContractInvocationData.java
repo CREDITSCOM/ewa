@@ -1,5 +1,7 @@
 package com.credits.client.node.pojo;
 
+import com.credits.general.pojo.VariantData;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -10,10 +12,10 @@ public class SmartContractInvocationData implements Serializable {
     private static final long serialVersionUID = 4544650022718657168L;
     private SmartContractDeployData smartContractDeployData;
     private String method;
-    private List<Object> params;
+    private List<VariantData> params;
     private boolean forgetNewState;
 
-    public SmartContractInvocationData(SmartContractDeployData smartContractDeployData, String method, List<Object> params, boolean forgetNewState) {
+    public SmartContractInvocationData(SmartContractDeployData smartContractDeployData, String method, List<VariantData> params, boolean forgetNewState) {
         this.smartContractDeployData = smartContractDeployData;
         this.method = method;
         this.params = params;
@@ -36,11 +38,11 @@ public class SmartContractInvocationData implements Serializable {
         this.method = method;
     }
 
-    public List<Object> getParams() {
+    public List<VariantData> getParams() {
         return params;
     }
 
-    public void setParams(List<Object> params) {
+    public void setParams(List<VariantData> params) {
         this.params = params;
     }
 

@@ -6,6 +6,7 @@ import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.exception.CompilationException;
+import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.MethodArgument;
 import com.credits.general.thrift.generated.Variant;
@@ -116,7 +117,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             MethodArgumentsValuesData targetMethodData = getMethodArgumentsValuesByNameAndParams(contractClass, methodName, params);
 
-            Object[] returnObjects = new Object[amountParamRows];
+            VariantData[] returnVariantDataList = new VariantData[amountParamRows];
             APIResponse[] returnStatuses = new APIResponse[amountParamRows];
 
             Class<?> returnType = targetMethodData.getMethod().getReturnType();
@@ -134,17 +135,17 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                         }
                     }
 
-                    Callable<Object> invokeFunction = invokeFunction(instance, targetMethodData, parameter);
-                    FutureTask<Object> invokeFunctionTask = new FutureTask<>(invokeFunction);
+                    Callable<VariantData> invokeFunction = invokeFunction(instance, targetMethodData, parameter);
+                    FutureTask<VariantData> invokeFunctionTask = new FutureTask<>(invokeFunction);
                     invokeFunctionThread = new Thread(invokeFunctionTask);
 
                     executorService.submit(invokeFunctionThread);
 
-                    returnObjects[i] = invokeFunctionTask.get(executionTime, TimeUnit.MILLISECONDS); // will wait for the async completion
+                    returnVariantDataList[i] = invokeFunctionTask.get(executionTime, TimeUnit.MILLISECONDS); // will wait for the async completion
                     logger.info("is ok");
                     returnStatuses[i] = new APIResponse(SUCCESS_CODE, "success");
                 } catch (TimeoutException ex) {
-                    returnObjects[i] = null;
+                    returnVariantDataList[i] = null;
                     logger.info("timeout exception");
                     invokeFunctionThread.stop();
                     returnStatuses[i] = new APIResponse(ERROR_CODE, "timeout exception");
@@ -152,7 +153,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                         throw new ContractExecutorException("timeout exception. " + executorService);
                     }
                 } catch (Throwable e) {
-                    returnObjects[i] = null;
+                    returnVariantDataList[i] = null;
                     returnStatuses[i] = new APIResponse(ERROR_CODE, e.getMessage());
                     if (amountParamRows == 1) {
                         throw e;
@@ -162,11 +163,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             List<Variant> returnValues = null;
             if (returnType != void.class) {
                 returnValues = new ArrayList<>(amountParamRows);
-                for (Object returnObject : returnObjects) {
-                    if (returnObject == null) {
+                for (VariantData returnVariantData : returnVariantDataList) {
+                    if (returnVariantData == null) {
                         returnValues.add(null);
                     } else {
-                        returnValues.add(ContractUtils.mapObjectToVariant(returnObject));
+                        returnValues.add(ContractUtils.mapVariantDataToVariant(returnVariantData));
                     }
                 }
             }
@@ -194,9 +195,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
     }
 
-    private Callable<Object> invokeFunction(Object instance, MethodArgumentsValuesData targetMethodData,
+    private Callable<VariantData> invokeFunction(Object instance, MethodArgumentsValuesData targetMethodData,
         Object[] parameter) {
-        return () -> targetMethodData.getMethod().invoke(instance, parameter);
+        // TODO check cast to VariantData
+        return () -> (VariantData) targetMethodData.getMethod().invoke(instance, parameter);
     }
 
 

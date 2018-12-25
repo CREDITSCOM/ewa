@@ -1,8 +1,11 @@
 package com.credits.thrift.utils;
 
 import com.credits.exception.ContractExecutorException;
-import com.credits.exception.UnsupportedTypeException;
+import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.Variant;
+import com.credits.general.util.exception.UnsupportedTypeException;
+import com.credits.general.util.variant.ObjectMapper;
+import com.credits.general.util.variant.VariantDataMapper;
 import com.credits.thrift.DeployReturnValue;
 
 import java.lang.reflect.Constructor;
@@ -40,10 +43,8 @@ public class ContractUtils {
                         "Cannot getObject access to field: " + name + ". Reason: " + getRootCauseMessage(e), e);
                 }
 
-                if (fieldValue != null) {
-                    variant = mapObjectToVariant(fieldValue);
-                    contractVariables.put(name, variant);
-                }
+                variant = mapObjectToVariant(fieldValue);
+                contractVariables.put(name, variant);
             }
         }
         return contractVariables;
@@ -69,13 +70,23 @@ public class ContractUtils {
         }
     }
 
-    public static Variant mapObjectToVariant(Object object) throws ContractExecutorException {
-        return new VariantMapper().apply(object)
+    public static Variant mapVariantDataToVariant(VariantData variantData) throws ContractExecutorException {
+        return new VariantDataMapper().apply(variantData)
             .orElseThrow(() -> {
                 UnsupportedTypeException e = new UnsupportedTypeException(
-                    "Unsupported type of the value {" + object.toString() + "}: " + object.getClass());
+                    "Unsupported type of the value {" + variantData.getBoxedValue().toString() + "}: " + variantData.getVariantType().name);
                 return new ContractExecutorException(
                     "Cannot execute the contract: " + ". Reason: " + getRootCauseMessage(e), e);
             });
+    }
+
+    public static Variant mapObjectToVariant(Object object) throws ContractExecutorException {
+        return new ObjectMapper().apply(object)
+                .orElseThrow(() -> {
+                    UnsupportedTypeException e = new UnsupportedTypeException(
+                            "Unsupported type of the value {" + object.toString() + "}: " + object.getClass());
+                    return new ContractExecutorException(
+                            "Cannot execute the contract: " + ". Reason: " + getRootCauseMessage(e), e);
+                });
     }
 }

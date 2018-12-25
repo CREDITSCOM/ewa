@@ -1,5 +1,7 @@
 package com.credits.wallet.desktop.struct;
 
+import com.credits.general.pojo.VariantData;
+
 import java.util.List;
 
 /**
@@ -14,7 +16,7 @@ public class TransactionTabRow {
     private String amount;
     private String state;
     private String method;
-    private List<Object> params;
+    private List<VariantData> params;
 
     public String getSource() {
         return source;
@@ -80,11 +82,11 @@ public class TransactionTabRow {
         this.method = method;
     }
 
-    public List<Object> getParams() {
+    public List<VariantData> getParams() {
         return params;
     }
 
-    public void setParams(List<Object> params) {
+    public void setParams(List<VariantData> params) {
         this.params = params;
     }
 }

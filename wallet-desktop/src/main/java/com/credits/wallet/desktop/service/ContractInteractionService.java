@@ -7,26 +7,23 @@ import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.variant.VariantUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.SmartContractsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Utils.threadPool;
-import static com.credits.general.util.VariantConverter.STRING_TYPE;
-import static com.credits.general.util.VariantConverter.createVariantObject;
-import static com.credits.general.util.VariantConverter.objectToVariant;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.contractExecutorService;
-import static com.credits.wallet.desktop.AppState.nodeApiService;
+import static com.credits.general.util.variant.VariantConverter.variantDataToVariant;
+import static com.credits.general.util.variant.VariantUtils.STRING_TYPE;
+import static com.credits.wallet.desktop.AppState.*;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static java.util.Arrays.asList;
-import static java.util.concurrent.CompletableFuture.*;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
  * Created by Igor Goryunov on 28.10.2018
@@ -65,8 +62,7 @@ public class ContractInteractionService {
         supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
             .thenApply((sc) -> {
                 sc.setMethod(TRANSFER_METHOD);
-                sc.setParams(asList(createVariantObject(STRING_TYPE, target),
-                    createVariantObject(STRING_TYPE, amount.toString())));
+                sc.setParams(asList(VariantUtils.createVariantData(STRING_TYPE, target), VariantUtils.createVariantData(STRING_TYPE, amount.toString())));
                 TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData =
                     TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService, account,
                         sc.getBase58Address(), true);
@@ -94,8 +90,8 @@ public class ContractInteractionService {
         return response.getExecuteBytecodeResult().getV_string();
     }
 
-    private Variant variantOf(String type, String value) {
-        return objectToVariant(createVariantObject(type, value));
+    private Variant variantOf(String type, String value){
+        return variantDataToVariant(VariantUtils.createVariantData(type, value));
     }
 
 }
