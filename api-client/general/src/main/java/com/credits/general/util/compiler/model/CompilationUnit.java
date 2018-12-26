@@ -37,7 +37,7 @@ public class CompilationUnit {
 	 * 
 	 * @return Bytecode
 	 */
-	public byte[] getBytecode() {
+	public byte[] getByteCode() {
 		return memoryObject != null ? memoryObject.getClassBytes() : null;
 	}
 

@@ -33,7 +33,7 @@ public class InMemoryCompilerTest {
         if (compilationPackage.isCompilationStatusSuccess()) {
             List<CompilationUnit>  compilationUnits = compilationPackage.getUnits();
             CompilationUnit compilationUnit = compilationUnits.get(0);
-            byte[] byteCode = compilationUnit.getBytecode();
+            byte[] byteCode = compilationUnit.getByteCode();
             PrintOut.printBytes(byteCode);
         } else {
             DiagnosticCollector collector = compilationPackage.getCollector();

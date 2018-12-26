@@ -20,7 +20,9 @@ import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.general.util.variant.VariantConverter.variantDataToVariant;
 import static com.credits.general.util.variant.VariantUtils.STRING_TYPE;
-import static com.credits.wallet.desktop.AppState.*;
+import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.contractExecutorService;
+import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -80,8 +82,9 @@ public class ContractInteractionService {
 
         ExecuteResponseData response =
             contractExecutorService.executeContractMethod(GeneralConverter.decodeFromBASE58(smartContractAddress),
-                sc.getSmartContractDeployData().getByteCode(), sc.getObjectState(), methodName, asList(params),
-                executionTime);
+                GeneralConverter.byteCodeObjectsDataToByteCodeObjects(
+                    sc.getSmartContractDeployData().getByteCodeObjects()), sc.getObjectState(), methodName,
+                asList(params), executionTime);
 
         if (response.getCode() != SUCCESS) {
             throw new NodeClientException("Failure. Node response: " + response.getMessage());

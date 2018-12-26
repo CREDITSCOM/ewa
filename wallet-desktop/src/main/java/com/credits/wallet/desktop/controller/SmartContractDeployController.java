@@ -5,10 +5,11 @@ import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.ByteArrayContractClassLoader;
 import com.credits.general.util.Callback;
+import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.model.CompilationPackage;
-import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -67,8 +68,8 @@ import static com.credits.wallet.desktop.VistaNavigator.SMART_CONTRACT;
 import static com.credits.wallet.desktop.VistaNavigator.WALLET;
 import static com.credits.wallet.desktop.VistaNavigator.loadVista;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
-import static com.credits.wallet.desktop.utils.SmartContractsUtils.*;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
+import static com.credits.wallet.desktop.utils.SmartContractsUtils.saveSmartInTokenList;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
@@ -192,20 +193,18 @@ public class SmartContractDeployController implements Initializable {
                 throw new CreditsException("Source code is not compiled");
             } else {
                 if (compilationPackage.isCompilationStatusSuccess()) {
-                    List<CompilationUnit> compilationUnits = compilationPackage.getUnits();
-                    CompilationUnit compilationUnit = compilationUnits.get(0);
-                    byte[] byteCode = compilationUnit.getBytecode();
+                    List<ByteCodeObjectData> byteCodeObjectDataList = GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
 
-                    Class<?> contractClass = getContractClass(compilationUnit);
+                    Class<?> contractClass = compileSmartContractByteCode(byteCodeObjectDataList);
                     TokenStandart tokenStandart = getTokenStandard(contractClass);
 
                     SmartContractDeployData smartContractDeployData =
-                        new SmartContractDeployData(javaCode, byteCode, tokenStandart);
+                        new SmartContractDeployData(javaCode, byteCodeObjectDataList, tokenStandart);
 
                     long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, account, true);
 
                     SmartContractData smartContractData = new SmartContractData(
-                        generateSmartContractAddress(decodeFromBASE58(account), idWithoutFirstTwoBits, byteCode),
+                        generateSmartContractAddress(decodeFromBASE58(account), idWithoutFirstTwoBits, byteCodeObjectDataList),
                         decodeFromBASE58(account), smartContractDeployData, null);
 
                     supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService,
@@ -241,8 +240,16 @@ public class SmartContractDeployController implements Initializable {
         return null;
     }
 
-    private Class<?> getContractClass(CompilationUnit compilationUnit) {
-        return new ByteArrayContractClassLoader().buildClass(compilationUnit.getName(), compilationUnit.getBytecode());
+    private static Class<?> compileSmartContractByteCode(List<ByteCodeObjectData> smartContractByteCodeData) {
+        ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
+        Class<?> contractClass = null;
+        for (ByteCodeObjectData compilationUnit : smartContractByteCodeData) {
+            Class<?> tempContractClass = classLoader.buildClass(compilationUnit.getName(), compilationUnit.getByteCode());
+            if(!compilationUnit.getName().contains("$")) {
+                contractClass = tempContractClass;
+            }
+        }
+        return contractClass;
     }
 
     private TokenStandart getTokenStandard(Class<?> contractClass) {

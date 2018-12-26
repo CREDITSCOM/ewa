@@ -1,16 +1,33 @@
 package com.credits.client.node.util;
 
-import com.credits.client.node.pojo.*;
+import com.credits.client.node.pojo.PoolData;
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractDeployData;
+import com.credits.client.node.pojo.SmartContractInvocationData;
+import com.credits.client.node.pojo.SmartContractTransactionFlowData;
+import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
+import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.generated.*;
+import com.credits.client.node.thrift.generated.Amount;
+import com.credits.client.node.thrift.generated.AmountCommission;
+import com.credits.client.node.thrift.generated.Pool;
+import com.credits.client.node.thrift.generated.SealedTransaction;
+import com.credits.client.node.thrift.generated.SmartContract;
+import com.credits.client.node.thrift.generated.SmartContractDeploy;
+import com.credits.client.node.thrift.generated.SmartContractInvocation;
+import com.credits.client.node.thrift.generated.Transaction;
+import com.credits.client.node.thrift.generated.TransactionFlowResult;
+import com.credits.client.node.thrift.generated.TransactionId;
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.variant.VariantConverter;
 import com.credits.general.util.exception.ConverterException;
+import com.credits.general.util.variant.VariantConverter;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -161,7 +178,7 @@ public class NodePojoConverter {
 
         SmartContractDeploy thriftStruct = new SmartContractDeploy();
         thriftStruct.setSourceCode(data.getSourceCode());
-        thriftStruct.setByteCode(data.getByteCode());
+        thriftStruct.setByteCodeObjects(GeneralConverter.byteCodeObjectsDataToByteCodeObjects(data.getByteCodeObjects()));
         thriftStruct.setHashState(data.getHashState());
         thriftStruct.setTokenStandart(data.getTokenStandard());
         return thriftStruct;
@@ -177,7 +194,7 @@ public class NodePojoConverter {
     public static SmartContractDeployData smartContractDeployToSmartContractDeployData(
         SmartContractDeploy thriftStruct) {
 
-        return new SmartContractDeployData(thriftStruct.getSourceCode(), thriftStruct.getByteCode(),
+        return new SmartContractDeployData(thriftStruct.getSourceCode(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(thriftStruct.getByteCodeObjects()),
             thriftStruct.getTokenStandart());
     }
 

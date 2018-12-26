@@ -4,8 +4,10 @@ import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.thrift.generated.TokenStandart;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.contract.ContractExecutorService;
+import com.credits.thrift.utils.ContractExecutorUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -19,8 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
-import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static java.io.File.separator;
 import static org.mockito.Mockito.when;
 
@@ -43,18 +45,19 @@ public abstract class ServiceTest {
         testComponent.inject(this);
     }
 
-    protected byte[] compileSourceCode(String sourceCodePath) throws Exception {
+    protected List<ByteCodeObjectData> compileSourceCode(String sourceCodePath) throws Exception {
         String sourceCode = readSourceCode(sourceCodePath);
-        byte[] bytecode = compile(sourceCode, "Contract", "TKN");
+        List<ByteCodeObjectData> byteCodeObjects = ContractExecutorUtils.compileSourceCode(sourceCode);
         when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(new SmartContractData(
                 address,
                 address,
-                new SmartContractDeployData(sourceCode, bytecode, TokenStandart.CreditsBasic),
+                new SmartContractDeployData(sourceCode, byteCodeObjects, TokenStandart.CreditsBasic),
                 null
                 )
         );
-        return bytecode;
+        return byteCodeObjects;
     }
+
 
     protected String readSourceCode(String resourcePath) throws IOException {
         String sourceCodePath = String.format("%s/src/test/resources/com/credits/service/usercode/%s", Paths.get("").toAbsolutePath(), resourcePath);
