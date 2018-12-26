@@ -31,7 +31,7 @@ public class ContractExecutorServiceUtils {
                 }
             }
 
-            retVal[i] = variantToVariantData(param);
+            retVal[i] = variantToVariantData(param).getBoxedValue();
             logger.info(String.format("param[%s] = %s", i, retVal[i]));
             i++;
         }
