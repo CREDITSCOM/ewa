@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.GenerateKeysController">
+    <top>
+        <fx:include source="header_empty.fxml" />
+    </top>
+    <center>
+        <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
+            <children>
+                <Label layoutX="20.0" styleClass="credits-topLabelText" text="Password to file key">
+                </Label>
+                <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can open the wallet and make payments in the Credits platform" />
+                <Label fx:id="labPassword" layoutX="405.0" layoutY="138.0" maxHeight="45.0" prefHeight="45.0" prefWidth="500.0" style="-fx-font-size: 16px; -fx-padding: 0 0 0 15;" styleClass="credits-textFieldGray" />
+                <Button layoutX="20.0" layoutY="360.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" textAlignment="CENTER" wrapText="true">
+                    <graphic>
+                        <ImageView fitHeight="26.0" fitWidth="26.0">
+                            <Image url="@../img/arrow_down.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+                <Button layoutX="550.0" layoutY="360.0" onAction="#handleGenerate" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Generate" textAlignment="CENTER" wrapText="true" />
+                <Button fx:id="btnShowPassword" layoutX="926.0" layoutY="137.0" prefHeight="45.0" prefWidth="140.0" style="-fx-font-weight: normal; -fx-background-color: #808080; -fx-text-fill: white; -fx-line-spacing: -8; -fx-font-size: 12;" styleClass="credits-button" text="Show password" textAlignment="CENTER" wrapText="true">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Button>
+                    <Label layoutX="405.0" layoutY="107.0" styleClass="credits-label" text="Put and safe password of your file key">
+                                </Label>
+                    <PasswordField fx:id="txPassword" layoutX="405.0" layoutY="138.0" maxHeight="45.0" prefHeight="45.0" prefWidth="500.0" promptText="Password to file key" styleClass="credits-textFieldGray" />
+            </children>
+        </Pane>
+    </center>
+</BorderPane>

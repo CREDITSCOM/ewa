@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.HistoryController">
+    <top>
+        <fx:include source="header.fxml" />
+    </top>
+    <center>
+        <Pane styleClass="credits-borderWhitePane, credits-history-pane" BorderPane.alignment="TOP_CENTER">
+            <children>
+                <Label layoutX="20.0" styleClass="credits-topLabelText" text="Transaction history" />
+                <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can see transaction history" />
+                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22px;" styleClass="credits-button" >
+                    <graphic>
+                        <ImageView fitHeight="26.0" fitWidth="26.0">
+                            <Image url="@../img/arrow_down.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+                <TabPane layoutX="20.0" layoutY="80.0" prefHeight="470.0" prefWidth="1250.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Approved transactions">
+                  <content>
+                    <VBox layoutX="20.0" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
+                           <children>
+                                  <TableView fx:id="approvedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view,credits-history-table-view-transaction">
+                                      <columns>
+                                          <TableColumn prefWidth="95.0" text="Id" />
+                                          <TableColumn prefWidth="400.0" text="Source" />
+                                          <TableColumn prefWidth="400.0" text="Target" />
+                                          <TableColumn prefWidth="210.0" text="Amount" />
+                                          <TableColumn prefWidth="140.0" text="State" />
+                                      </columns>
+                                  </TableView>
+
+                           </children>
+                        </VBox>
+                  </content>
+                </Tab>
+                <Tab text="Unapproved transactions">
+                  <content>
+                    <VBox minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
+                           <children>
+                              <TableView fx:id="unapprovedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view, credits-history-table-view-transaction">
+                                 <columns>
+                                    <TableColumn prefWidth="40.0" text="Id" />
+                                    <TableColumn prefWidth="420.0" text="Source" />
+                                    <TableColumn prefWidth="420.0" text="Target" />
+                                    <TableColumn prefWidth="210.0" text="Amount" />
+                                    <TableColumn prefWidth="140.0" text="State" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </VBox>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+                <Button layoutX="1220.0" layoutY="68.0" onAction="#handleRefresh" prefHeight="27.0" prefWidth="30.0" style="-fx-border-color: transparent; -fx-background-color: transparent;" styleClass="credits-button-refresh">
+                    <graphic>
+                        <ImageView fitHeight="32.0" fitWidth="32.0" style="-fx-background-color: transparent;">
+                            <Image url="@../img/reload.png" />
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+            </children>
+        </Pane>
+    </center>
+</BorderPane>

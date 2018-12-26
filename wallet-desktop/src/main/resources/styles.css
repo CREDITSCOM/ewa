@@ -1,0 +1,722 @@
+/*******************************************************************************
+ *                                                                             *
+ * FONTS                                                                       *
+ *                                                                             *
+ ******************************************************************************/
+.root{
+    -fx-font-family: "Montserrat";
+}
+/*******************************************************************************
+ *                                                                             *
+ * FONTS                                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * STANDARD ELEMENTS                                                           *
+ *                                                                             *
+ ******************************************************************************/
+.credits-textFieldGray {
+    /*-fx-padding:  5 0 0 15;*/
+    -fx-background-color: #fff;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-text-fill:black;
+    -fx-border-radius: 15;
+    -fx-wrap-text: true;
+    /*-fx-alignment: top-left;*/
+}
+
+.credits-textField {
+    /*-fx-padding:  5 0 0 15;*/
+    -fx-background-color: #fff;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-text-fill:black;
+    -fx-border-radius: 15;
+    -fx-wrap-text: true;
+    /*-fx-alignment: top-left;*/
+
+}
+
+
+.credits-topLabelText {
+    -fx-font-size: 28px
+}
+
+.credits-topLabelGrayText {
+    -fx-font-size: 16px;
+    -fx-text-fill: #818181
+}
+
+
+.credits-label {
+    -fx-padding:  5 0 0 15;
+    -fx-font-size: 16px;
+}
+
+
+.credits-labelError {
+    -fx-padding:  5 0 0 15;
+    -fx-font-size: 16px;
+    -fx-text-fill: red
+}
+
+.credits-not-padding-label {
+    -fx-font-size: 16px;
+}
+
+.credits--not-padding-labelError {
+    -fx-font-size: 16px;
+    -fx-text-fill: red
+}
+
+/** Size the combo-box drop down list. */
+.combo-box-popup > .list-view {
+    -fx-pref-width: 1000;
+}
+/*******************************************************************************
+ *                                                                             *
+ * STANDARD ELEMENTS                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * STANDARD BUTTONS                                                            *
+ *                                                                             *
+ ******************************************************************************/
+.credits-button, .credits-button-refresh {
+    -fx-font-weight: bold;
+    -fx-background-color: #fff;
+    -fx-background-radius: 22;
+    -fx-border-color: #000;
+    -fx-border-width: 2;
+    -fx-font-size: 16;
+    -fx-text-fill:black;
+    -fx-border-radius: 30;
+    -fx-wrap-text: true;
+    -fx-alignment: center;
+}
+
+
+.credits-button:hover{
+    -fx-font-weight: bold;
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-font-size: 16;
+    -fx-text-fill:#2196f3;
+    -fx-border-radius: 30;
+}
+
+.credits-button:pressed {
+    -fx-scale-y: 0.98;
+    -fx-scale-x: 0.98;
+    -fx-font-weight: bold;
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-text-fill:#2196f3;
+    -fx-border-radius: 30;
+}
+
+.credits-button-refresh:pressed {
+    -fx-rotate:50;
+}
+/*******************************************************************************
+ *                                                                             *
+ * STANDARD BUTTONS                                                            *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * SMART COMBOBOX                                                              *
+ *                                                                             *
+ ******************************************************************************/
+
+.credits-combobox {
+    -fx-background-color: #fff;
+    -fx-border-width: 1;
+    -fx-border-color: #000;
+    -fx-font-size: 16px;
+    -fx-border-radius: 15;
+}
+
+.credits-combobox .combo-box-popup>.list-view {
+    -fx-padding: -35 0 0 0;
+    -fx-border-color: black;
+    -fx-pref-width: 770;
+    -fx-pref-height: 200;
+}
+
+.credits-combobox:showing
+{
+    -fx-background-radius: 15 15 0 0;
+    -fx-border-radius: 15 15 0 0;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * SMART COMBOBOX                                                              *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * CREDITS HISTORY                                                              *
+ *                                                                             *
+ ******************************************************************************/
+
+.credits-hist-combobox .arrow-button .arrow{
+    -fx-background-color: white;
+}
+
+.credits-history-pane .combo-box-base .cell {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.credits-history-pane .combo-box-popup .list-view {
+    -fx-pref-width: 80;
+    -fx-pref-height: 300;
+    -fx-background-color: transparent;
+}
+
+
+.credits-history-pane .combo-box-popup .cell{
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-text-fill: white;
+    -fx-background-color: #808080;
+    -fx-alignment: left;
+}
+
+.credits-history-pane .combo-box-popup .cell:hover{
+    -fx-text-fill: black;
+    -fx-background-color: #00FF90;
+}
+
+.credits-hist-combobox .arrow-button {
+    -fx-alignment: left;
+}
+
+
+.credits-history-pane .combo-box-base {
+    -fx-alignment: center;
+    -fx-background-color: #808080;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-text-fill: white;
+}
+
+.credits-history-tab-pane {
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-border-radius: 15;
+
+}
+
+.credits-history-table-view {
+    -fx-padding: 0 1 0 0;
+    -fx-background-insets: 0;
+
+    -fx-background-color: transparent;
+}
+
+.credits-history-table-view .column-header {
+    -fx-background-color: transparent;    /* made transparent */
+    -fx-cursor: hand;
+}
+
+.credits-history-table-view .column-header-background {
+    -fx-background-radius: 15 15 0 0;
+    -fx-background-color: #E9ECEF;
+}
+
+
+.credits-history-table-view .filler {
+    -fx-background-color: transparent;
+}
+
+.credits-history-table-view .virtual-flow .scroll-bar .thumb {
+    /*-fx-background-color: #424141;*/
+}
+
+.credits-history-table-view .table-row-cell{
+    -fx-background-color: #F2F2F2;
+}
+
+.credits-history-table-view .table-row-cell:odd{
+    -fx-background-color: #FFFFFF;
+}
+
+.credits-history-table-view .table-row-cell:selected {
+    -fx-background-color: #007BFF;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+
+.credits-history-table-view .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+}
+
+.credits-history-table-view .virtual-flow .scroll-bar .increment-button,
+.credits-history-table-view .virtual-flow .scroll-bar .decrement-button,
+.credits-history-table-view .virtual-flow .scroll-bar .track
+{
+    -fx-background-color: white;
+}
+/*******************************************************************************
+ *                                                                             *
+ * CREDITS HISTORY                                                              *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * SMART TAB PANE                                                              *
+ *                                                                             *
+ ******************************************************************************/
+.credits-tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-radius: 10 10 0 0;
+}
+
+.credits-tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.credits-tab-pane
+{
+    -fx-tab-min-width:90px;
+}
+
+.credits-tab-pane .tab{
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-radius: 10 10 0 0;
+    -fx-background-insets: 0 1 0 1,0,0;
+}
+.credits-tab-pane .tab
+{
+    -fx-background-color: #808080;
+
+}
+
+.credits-tab-pane .tab:selected
+{
+    -fx-background-color: #3c3c3c;
+}
+
+.credits-tab-pane .tab .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.credits-tab-pane .tab:selected .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: white;
+}
+
+.credits-PaneInTab {
+    -fx-border-color: black;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+}
+
+.tab-pane:top *.tab-header-area {
+    -fx-padding: 0 0 0 15; /* overridden as 5 2 0 0 */
+}
+
+.toggle-button {
+    -fx-background-color: transparent;
+    -fx-graphic: url('img/star.png');
+}
+
+.toggle-button:selected {
+    -fx-graphic: url('img/star1.png');
+}
+/*******************************************************************************
+ *                                                                             *
+ * SMART TAB PANE                                                              *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * SMART TABLE VIEW                                                            *
+ *                                                                             *
+ ******************************************************************************/
+.credits-smart-table-view {
+    -fx-padding: 8px 3px;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-font-size: 11px;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.credits-smart-table-view .column-header,
+.credits-smart-table-view .column-header-background,
+.credits-smart-table-view .filler {
+    -fx-background-color: transparent;
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+
+}
+.credits-smart-table-view table-row-cell:odd{
+    -fx-background-color: white;
+}
+
+
+.credits-smart-table-view .table-row-cell{
+    -fx-border-color: transparent;
+    -fx-background-color: white;
+    -fx-table-cell-border-color:transparent;
+}
+
+.credits-smart-table-view .table-row-cell .cell {
+    -fx-alignment: CENTER-LEFT;
+}
+
+.credits-smart-table-view .table-row-cell:selected {
+    -fx-background-color: #0A85C8;
+    -fx-font-weight: bold;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+    -fx-text-background-color: white;
+
+}
+
+.credits-smart-table-view .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: transparent;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * SMART TABLE VIEW                                                            *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * SCROLL-BAR                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+.scroll-bar .increment-button {
+    -fx-background-color: transparent;}
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;}
+.scroll-bar {
+    -fx-background-color: white;
+}
+.scroll-bar .track-background {
+    -fx-background-color: transparent;
+}
+.scroll-bar .track {
+    -fx-background-color: transparent;
+}
+.hide-thumb .scroll-bar .thumb {
+    -fx-background-color: transparent;
+}
+.corner {
+    -fx-background-color: transparent;
+}
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: transparent;
+}
+/*******************************************************************************
+ *                                                                             *
+ * SCROLL-BAR                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * COPYABLE LABEL                                                              *
+ *                                                                             *
+ ******************************************************************************/
+.copyable-label, .copyable-label:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+}
+/*******************************************************************************
+ *                                                                             *
+ * COPYABLE LABEL                                                              *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * HEADER                                                                      *
+ *                                                                             *
+ ******************************************************************************/
+.credits-headerPane,
+.credits-headerButton .menu-item,
+.credits-headerButton .context-menu {
+    -fx-background-color: #0A85C8;
+}
+
+.credits-headerButton,
+.menu-button .label,
+.credits-menuitemButton{
+    -fx-font-weight: bold;
+    -fx-background-color:  transparent;
+    -fx-font-size: 16px;
+    -fx-alignment: center;
+    -fx-text-fill: white;
+}
+
+.credits-headerButton .arrow-button .arrow {
+    -fx-background-color: white;
+}
+
+.credits-headerButton:hover,
+.menu-button:hover .label,
+.credits-menuitemButton:hover {
+    -fx-text-fill:black;
+}
+/*******************************************************************************
+ *                                                                             *
+ * HEADER                                                                      *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * TRANSACTION INFO LIST                                                       *
+ *                                                                             *
+ ******************************************************************************/
+.credits-transaction-params-list { -fx-background-insets: 0; -fx-padding: 0; }
+
+.credits-transaction-params-list .list-cell:odd {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-border-color: transparent;
+
+}
+
+.credits-transaction-params-list .list-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-text-fill: black;
+}
+/*******************************************************************************
+ *                                                                             *
+ * TRANSACTION INFO LIST                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * CODEAREA POPUP TOOLBOX                                                      *
+ *                                                                             *
+ ******************************************************************************/
+.credits-popup-toolbox .button{
+    -fx-background-color : ghostwhite;
+}
+
+.credits-popup-toolbox .button:hover{
+    -fx-text-fill:#2196f3;
+}
+
+.credits-popup-toolbox {
+    -fx-border-width: 1;
+    -fx-border-color: black;
+    -fx-padding: 1 1 1 1;
+    -fx-background-color : ghostwhite;
+}
+/*******************************************************************************
+ *                                                                             *
+ * CODEAREA POPUP TOOLBOX                                                      *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * WELCOME  ELEMENTS                                                           *
+ *                                                                             *
+ ******************************************************************************/
+.credits-welcome-column-top-label {
+    -fx-font-size:16px;
+    -fx-font-weight: bold;
+}
+
+.credits-welcome-column-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #808080;
+}
+/*******************************************************************************
+ *                                                                             *
+ * WELCOME  ELEMENTS                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * BORDERS                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+
+
+.credits-borderWhitePane {
+    -fx-background-color: #fff;
+}
+
+.credits-border-red {
+    -fx-border-color: red;
+}
+
+.credits-border-black {
+    -fx-border-color: black;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * BORDERS                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * TEXT AREA                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+.keyword {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
+}
+.semicolon {
+    -fx-font-weight: bold;
+}
+.paren {
+    -fx-fill: firebrick;
+    -fx-font-weight: bold;
+}
+.bracket {
+    -fx-fill: darkgreen;
+    -fx-font-weight: bold;
+}
+.brace {
+    -fx-fill: teal;
+    -fx-font-weight: bold;
+}
+.string {
+    -fx-fill: blue;
+}
+
+.comment {
+    -fx-fill: cadetblue;
+}
+
+.tree-cell  {
+    -fx-font-size: 14px;
+}
+
+.styled-text-area .paragraph-box .label {
+    -fx-background-color: white;
+    -fx-font-weight: bold;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TEXT AREA                                                                   *
+ *                                                                             *
+ ******************************************************************************/
