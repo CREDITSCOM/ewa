@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.credits.general.thrift.generated.Variant._Fields.V_I32;
+import static com.credits.general.thrift.generated.Variant._Fields.V_INT;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static java.io.File.separator;
 import static org.junit.Assert.fail;
@@ -37,8 +37,8 @@ public class SecurityTest extends ServiceTest {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
             {"getBalance", null, false},
-            {"openSocket",  new Variant(V_I32, 5555), false},
-            {"setTotal", new Variant(V_I32, 1000), false},
+            {"openSocket",  new Variant(V_INT, 5555), false},
+            {"setTotal", new Variant(V_INT, 1000), false},
             {"getTotal", null, false},
             {"createFile", null, false},
             {"createFileInProjectDir", new Variant(V_STRING, prjDir), false},

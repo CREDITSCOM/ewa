@@ -64,7 +64,7 @@ public class TransactionController implements Initializable {
         labState.setText(AppState.selectedTransactionRow.getState());
         labMethod.setText(AppState.selectedTransactionRow.getMethod());
         ObservableList<String> items = FXCollections.observableArrayList();
-        AppState.selectedTransactionRow.getParams().forEach(item -> items.add(item.toString()));
+        AppState.selectedTransactionRow.getParams().forEach(item -> items.add(item.getBoxedValue().toString()));
         listParams.setItems(items);
         int value = items.size() * ROW_HEIGHT + 2 > MAX_HEIGHT ? MAX_HEIGHT : items.size() * ROW_HEIGHT + 2;
         listContainer.setPrefHeight(value);

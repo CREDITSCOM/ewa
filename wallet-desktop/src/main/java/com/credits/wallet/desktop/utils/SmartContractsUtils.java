@@ -14,6 +14,7 @@ import static com.credits.general.crypto.Blake2S.generateHash;
 import static com.credits.general.util.GeneralConverter.byteArrayToHex;
 import static com.credits.general.util.GeneralConverter.toByteArray;
 import static com.credits.general.util.GeneralConverter.toByteArrayLittleEndian;
+import static com.credits.wallet.desktop.AppState.coin;
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static org.apache.commons.lang3.ArrayUtils.addAll;
 
@@ -53,11 +54,28 @@ public class SmartContractsUtils {
     }
 
     private static String checkCoinNameExist(String coinName, ConcurrentHashMap<String, String> coins) {
-        if(coins.get(coinName)!=null) {
-            coinName += ".";
-            coinName = checkCoinNameExist(coinName,coins);
+        if(coins.containsKey(coinName)) {
+            String nameWithBrace = coinName + "(";
+            for (String existingName : coins.keySet()){
+               if(existingName.contains(nameWithBrace)){
+                   int number = parseNumberOfDuplicateName(nameWithBrace.length(), existingName);
+                   if (number != 0) return coinName + "(" + ++number + ")";
+               }
+            }
+            return coinName + "(1)";
         }
         return coinName;
+    }
+
+    private static int parseNumberOfDuplicateName(int identityPieceIndex, String coinName) {
+        StringBuilder sb = new StringBuilder(coinName);
+        sb.replace(0, identityPieceIndex, "");
+        sb.deleteCharAt(sb.length() - 1);
+        try {
+            return Integer.parseInt(sb.toString());
+        }catch (NumberFormatException ignored){
+        }
+        return 0;
     }
 
 

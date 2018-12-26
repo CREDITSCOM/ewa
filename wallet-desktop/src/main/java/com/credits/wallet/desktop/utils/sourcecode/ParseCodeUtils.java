@@ -1,28 +1,12 @@
 package com.credits.wallet.desktop.utils.sourcecode;
 
-import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.sourceCode.EclipseJdt;
 import org.apache.commons.lang3.tuple.Pair;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.BodyDeclaration;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.ParameterizedType;
-import org.eclipse.jdt.core.dom.PrimitiveType;
-import org.eclipse.jdt.core.dom.SimpleType;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.*;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ParseCodeUtils {
 
@@ -90,6 +74,10 @@ public class ParseCodeUtils {
 
     public static String parseClassName(SingleVariableDeclaration singleVariableDeclaration) {
         Type type = singleVariableDeclaration.getType();
+        return ParseCodeUtils.parseClassName(type);
+    }
+
+    private static String parseClassName(Type type) {
         if (type.isSimpleType()) {
             SimpleType simpleType = (SimpleType)type;
             return simpleType.getName().getFullyQualifiedName();
@@ -107,6 +95,10 @@ public class ParseCodeUtils {
             } else {
                 return simpleTypeName;
             }
+        } else if (type.isArrayType()) {
+            ArrayType arrayType = (ArrayType)type;
+            Type elementType = arrayType.getElementType();
+            return ParseCodeUtils.parseClassName(elementType) + "[]";
         }
         throw new IllegalArgumentException(String.format("Unsupported org.eclipse.jdt.core.dom.Type class: %s", type.getClass().getName()));
     }
@@ -169,32 +161,4 @@ public class ParseCodeUtils {
                 String.format("Wrong superclass name %s, superclass name must be %s", superclassName, SUPERCLASS_NAME));
         }
     }
-
-    public static TokenStandart parseTokenStandard(String sourceCode) {
-        try {
-            CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
-            List typeList = compilationUnit.types();
-            TypeDeclaration typeDeclaration = (TypeDeclaration) typeList.get(0);
-            boolean basicStandard = false, extensionStandard=false;
-            List interfaces = typeDeclaration.superInterfaceTypes();
-
-            for (Object currentInterface : interfaces) {
-                switch (((SimpleType) currentInterface).getName().getFullyQualifiedName()){
-                    case "BasicStandard":
-                        basicStandard = true;
-                        break;
-                    case "ExtensionStandard":
-                        extensionStandard = true;
-                        break;
-                }
-            }
-            if(extensionStandard) return TokenStandart.CreditsExtended;
-            if(basicStandard) return TokenStandart.CreditsBasic;
-            return TokenStandart.NotAToken;
-
-        } catch (Exception e) {
-            return TokenStandart.NotAToken;
-        }
-    }
-
 }

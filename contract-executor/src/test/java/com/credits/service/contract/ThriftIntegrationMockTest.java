@@ -68,7 +68,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     public void execute_contract_method_with_variant_parameters() throws ContractExecutorException {
         Integer newValue =
         ceService.execute(address, contractBytecode,
-            contractState, "addValue", new Variant[][]{{new Variant(Variant._Fields.V_I32, 112233)}},500L).getVariantsList().get(0).getV_i32();
+            contractState, "addValue", new Variant[][]{{new Variant(Variant._Fields.V_INT_BOX, 112233)}},500L).getVariantsList().get(0).getV_int_box();
         assertEquals(112233, newValue.intValue());
 
     }

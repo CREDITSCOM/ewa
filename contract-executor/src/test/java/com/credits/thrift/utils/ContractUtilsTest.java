@@ -4,6 +4,7 @@ import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
+import com.credits.general.util.variant.VariantUtils;
 import com.credits.service.ServiceTest;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,6 +26,7 @@ public class ContractUtilsTest extends ServiceTest {
         "import java.util.Set;\n" +
         "\n" +
         "public class Contract extends SmartContract {\n" +
+        "    public String nullField;\n" +
         "    public int intField;\n" +
         "    public Integer integerField;\n" +
         "    public Double doubleField;\n" +
@@ -34,6 +36,7 @@ public class ContractUtilsTest extends ServiceTest {
         "    public Map<String, Integer> mapStringIntegerField;\n" +
         "\n" +
         "    public Contract() {\n" +
+        "        this.nullField = null;\n" +
         "        this.intField = 5;\n" +
         "        this.integerField = 55;\n" +
         "        this.doubleField = 5.55;\n" +
@@ -66,13 +69,14 @@ public class ContractUtilsTest extends ServiceTest {
     public void getContractVariablesTest() throws ContractExecutorException {
         Map<String, Variant> map = ContractUtils.getContractVariables(instanceWithVariables);
         Assert.assertNotNull(map);
+        Assert.assertEquals(VariantUtils.NULL_TYPE_VALUE, map.get("nullField").getFieldValue());
         Assert.assertEquals(5, map.get("intField").getFieldValue());
         Assert.assertEquals(55, map.get("integerField").getFieldValue());
         Assert.assertEquals(5.55, map.get("doubleField").getFieldValue());
         Assert.assertEquals("some string value", map.get("stringField").getFieldValue());
         Assert.assertEquals(5, ((Variant)((List)map.get("listIntegerField").getFieldValue()).get(0)).getFieldValue());
-        Assert.assertTrue(((Set)map.get("setIntegerField").getFieldValue()).contains(new Variant(Variant._Fields.V_I32, 5)));
-        Assert.assertEquals(new Variant(Variant._Fields.V_I32, 5),
+        Assert.assertTrue(((Set)map.get("setIntegerField").getFieldValue()).contains(new Variant(Variant._Fields.V_INT_BOX, 5)));
+        Assert.assertEquals(new Variant(Variant._Fields.V_INT, 5),
             ((Map)map.get("mapStringIntegerField").getFieldValue()).get(new Variant(Variant._Fields.V_STRING, "string key")));
 
         //Checks returning null if no public variables exist in the contract

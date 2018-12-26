@@ -1,4 +1,4 @@
-package com.credits.exception;
+package com.credits.general.util.exception;
 
 public class UnsupportedTypeException extends Exception {
     public UnsupportedTypeException() {

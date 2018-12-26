@@ -8,6 +8,8 @@ import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
+import com.credits.general.pojo.VariantData;
+import com.credits.general.pojo.VariantType;
 import com.credits.general.thrift.generated.MethodArgument;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
@@ -90,13 +92,13 @@ public class ContractExecutorTest extends ServiceTest {
         assertEquals(1, rvTotalInitialized.getVariantsList().get(0).getFieldValue());
 
         contractState = ceService.execute(address, bytecode, contractState, "addTokens", new Variant[][]{
-            {ContractUtils.mapObjectToVariant(10)}
+            {ContractUtils.mapVariantDataToVariant(new VariantData(VariantType.INT, 10))}
         },500L).getContractState();
         ReturnValue rvTotalAfterSumming = ceService.execute(address, bytecode, contractState, "getTotal", new Variant[][]{{}},500L);
         assertEquals(11, rvTotalAfterSumming.getVariantsList().get(0).getFieldValue());
 
         contractState = ceService.execute(address, bytecode, contractState, "addTokens", new Variant[][]{
-            {ContractUtils.mapObjectToVariant(-11)}
+            {ContractUtils.mapVariantDataToVariant(new VariantData(VariantType.INT, -11))}
         },500L).getContractState();
         ReturnValue rvTotalAfterSubtraction = ceService.execute(address, bytecode, contractState, "getTotal", new Variant[][]{{}},500L);
         assertEquals(0, rvTotalAfterSubtraction.getVariantsList().get(0).getFieldValue());
@@ -146,16 +148,16 @@ public class ContractExecutorTest extends ServiceTest {
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");
         byte[] contractState = ceService.execute(address, bytecode, null, null, null, 500).getContractState();
 
-        ReturnValue singleCallResult = ceService.execute(address, bytecode, contractState, "addTokens", new Variant[][] {{Variant.v_i32(10)}}, 500);
+        ReturnValue singleCallResult = ceService.execute(address, bytecode, contractState, "addTokens", new Variant[][] {{Variant.v_int(10)}}, 500);
         ReturnValue multiplyCallResult = ceService.execute(address, bytecode, contractState, "addTokens", new Variant[][]{
-            {Variant.v_i32(10)},
-            {Variant.v_i32(10)},
-            {Variant.v_i32(10)},
-            {Variant.v_i32(10)}}, 500);
+            {Variant.v_int(10)},
+            {Variant.v_int(10)},
+            {Variant.v_int(10)},
+            {Variant.v_int(10)}}, 500);
         assertNotEquals(singleCallResult.getContractState(), multiplyCallResult.getContractState());
 
         singleCallResult = ceService.execute(address, bytecode, contractState, "getTotal", new Variant[][]{{}}, 500);
-        TestCase.assertEquals(0, singleCallResult.getVariantsList().get(0).getV_i32());
+        TestCase.assertEquals(0, singleCallResult.getVariantsList().get(0).getV_int());
     }
 
     @Test
