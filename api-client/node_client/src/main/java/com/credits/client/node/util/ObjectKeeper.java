@@ -63,12 +63,10 @@ public class ObjectKeeper<T extends Serializable> {
     }
 
     Path getSerializedObjectPath() {
-        Path path = Paths.get(getAccountDirectory() + separator + objectFileName);
-        LOGGER.info("Current path is = {}",path.toString());
-        return path;
+        return Paths.get(getAccountDirectory() + separator + objectFileName);
     }
 
-    Path getAccountDirectory() {
+    private Path getAccountDirectory() {
         return Paths.get(cacheDirectory + separator + account);
     }
 
