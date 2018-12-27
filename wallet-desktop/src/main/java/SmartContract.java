@@ -9,7 +9,11 @@ public abstract class SmartContract implements Serializable {
 
     private static final long serialVersionUID = -7544650022718657167L;
 
-    protected transient String initiator;
+    protected final transient String initiator;
+
+    protected SmartContract(String initiator) {
+        this.initiator = initiator;
+    }
 
     final protected BigDecimal getBalance(String address) {
         return null;

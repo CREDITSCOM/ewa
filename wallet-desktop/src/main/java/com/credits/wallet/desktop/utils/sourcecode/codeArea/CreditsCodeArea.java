@@ -40,7 +40,7 @@ public class CreditsCodeArea extends CodeArea {
     private static int tabCount;
 
     private static final String DEFAULT_SOURCE_CODE =
-        "public class Contract extends SmartContract {\n" + "\n" + "    public Contract() {\n\n    }" + "\n" + "}";
+        "public class Contract extends SmartContract {\n" + "\n" + "    public Contract(String initiator) {\n\tsuper(initiator);\n    }" + "\n" + "}";
     private ExecutorService codeAreaHighlightExecutor = Executors.newSingleThreadExecutor();
 
     private static final String SPACE_SYMBOL = " ";

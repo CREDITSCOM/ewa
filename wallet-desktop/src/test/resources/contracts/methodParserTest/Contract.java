@@ -1,5 +1,6 @@
 public class Contract extends SmartContract {
     public Contract() {
+        super(initiator);
         System.out.println("Constructor");
     }
 

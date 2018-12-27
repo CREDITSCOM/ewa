@@ -58,6 +58,7 @@ import static com.credits.client.node.thrift.generated.TokenStandart.NotAToken;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getCalcTransactionIdSourceTargetResult;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getIdWithoutFirstTwoBits;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
+import static com.credits.general.util.GeneralConverter.encodeToBASE58;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.AppState.account;
@@ -226,7 +227,7 @@ public class SmartContractDeployController implements Initializable {
     private TokenInfo getTokenInfo(Class<?> contractClass, SmartContractData smartContractData) {
         if(smartContractData.getSmartContractDeployData().getTokenStandard() != NotAToken) {
             try {
-                Object contractInstance = contractClass.newInstance();
+                Object contractInstance = contractClass.getDeclaredConstructor(String.class).newInstance(encodeToBASE58(smartContractData.getDeployer()));
                 Field initiator = contractClass.getSuperclass().getDeclaredField("initiator");
                 initiator.setAccessible(true);
                 initiator.set(contractInstance, account);

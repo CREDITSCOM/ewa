@@ -35,7 +35,8 @@ public class ContractUtilsTest extends ServiceTest {
         "    public Set<Integer> setIntegerField;\n" +
         "    public Map<String, Integer> mapStringIntegerField;\n" +
         "\n" +
-        "    public Contract() {\n" +
+        "    public Contract(String initiator) {\n" +
+        "        super(initiator);\n" +
         "        this.nullField = null;\n" +
         "        this.intField = 5;\n" +
         "        this.integerField = 55;\n" +
@@ -51,7 +52,8 @@ public class ContractUtilsTest extends ServiceTest {
         "}";
 
     private String sourceCodeWithoutVariables = "public class Contract extends SmartContract {\n" +
-        "    public Contract() {\n" +
+        "    public Contract(String initiator) {\n" +
+        "        super(initiator);" +
         "    }\n" +
         "}";
 
@@ -80,12 +82,12 @@ public class ContractUtilsTest extends ServiceTest {
             ((Map)map.get("mapStringIntegerField").getFieldValue()).get(new Variant(Variant._Fields.V_STRING, "string key")));
 
         //Checks returning null if no public variables exist in the contract
-        Assert.assertEquals(new Variant(Variant._Fields.V_STRING,""),ContractUtils.getContractVariables(instanceWithoutVariables).get("initiator"));
+        Assert.assertNull(ContractUtils.getContractVariables(instanceWithoutVariables));
     }
 
-    private Object getInstance(String source) throws CompilationException, IllegalAccessException, InstantiationException {
+    private Object getInstance(String source) throws Exception{
         byte[] byteCode = compile(source, "Contract", "TKN");
         Class<?> clazz = new ByteArrayContractClassLoader().buildClass(byteCode);
-        return clazz.newInstance();
+        return clazz.getDeclaredConstructor(String.class).newInstance("12345ABCDEF");
     }
 }

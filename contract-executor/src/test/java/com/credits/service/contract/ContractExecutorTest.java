@@ -48,7 +48,7 @@ public class ContractExecutorTest extends ServiceTest {
     @Test
     public void execute_bytecode() throws Exception {
         String sourceCode =
-                "public class Contract implements java.io.Serializable {\n" + "\n" + "    public Contract() {\n" +
+                "public class Contract implements java.io.Serializable {\n" + "\n" + "    public Contract(String initiator) {\n" +
                         "        System.out.println(\"Hello World!!\"); \n" +
                         "    }\npublic void foo(){\nSystem.out.println(\"Method foo executed\");\n}\n}";
         byte[] bytecode = compile(sourceCode, "Contract", "TKN");

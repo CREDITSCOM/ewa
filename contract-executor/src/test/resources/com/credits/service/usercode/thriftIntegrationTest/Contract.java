@@ -1,9 +1,10 @@
 public class Contract extends SmartContract {
-    public Contract() {
+    Integer value = new Integer(0);
+
+    public Contract(String initiator){
+        super(initiator);
         System.out.println("Constructor");
     }
-
-    Integer value = new Integer(0);
 
     public void initialize() {
     }
