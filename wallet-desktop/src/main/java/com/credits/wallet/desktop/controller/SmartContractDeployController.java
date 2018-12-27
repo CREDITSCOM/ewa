@@ -344,7 +344,7 @@ public class SmartContractDeployController implements Initializable {
         errorTableView.getItems().clear();
         errorTableView.getItems().addAll(listOfError);
         errorTableView.setVisible(true);
-        errorTableView.setPrefHeight(HEADER_HEIGHT + errorTableView.getItems().size() * TABLE_LINE_HEIGHT);
+        errorTableView.setPrefHeight(debugPane.getPrefHeight());
     }
 
     private void initErrorTableView() {

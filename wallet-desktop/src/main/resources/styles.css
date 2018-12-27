@@ -255,8 +255,11 @@
     -fx-cursor: hand;
 }
 
-.credits-history-table-view .column-header-background {
+.credits-transaction-table-view .column-header-background {
     -fx-background-radius: 15 15 0 0;
+}
+
+.credits-history-table-view .column-header-background {
     -fx-background-color: #E9ECEF;
 }
 
