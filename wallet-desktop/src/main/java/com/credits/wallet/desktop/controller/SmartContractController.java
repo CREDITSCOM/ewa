@@ -249,7 +249,6 @@ public class SmartContractController implements Initializable {
             List<MethodDeclaration> methods = ParseCodeUtils.parseMethods(sourceCode);
             cbMethods.getItems().clear();
             methods.forEach(method -> {
-                method.setBody(null);
                 cbMethods.getItems().add(method);
             });
             codeArea.clear();

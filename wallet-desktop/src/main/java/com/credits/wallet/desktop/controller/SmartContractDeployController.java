@@ -37,8 +37,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +46,6 @@ import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -315,19 +312,9 @@ public class SmartContractDeployController implements Initializable {
             Label labelRoot = new Label(className);
             TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
 
-            List<FieldDeclaration> fields = ParseCodeUtils.parseFields(sourceCode);
-            List<MethodDeclaration> constructors = ParseCodeUtils.parseConstructors(sourceCode);
-            List<MethodDeclaration> methods = ParseCodeUtils.parseMethods(sourceCode);
+            List<BodyDeclaration> bodyDeclarations = ParseCodeUtils.parseFieldsConstructorsMethods(sourceCode);
 
-            List<BodyDeclaration> classMembers = new ArrayList<>();
-            classMembers.addAll(fields);
-            classMembers.addAll(constructors);
-            classMembers.addAll(methods);
-
-            classMembers.forEach(classMember -> {
-                if (classMember instanceof MethodDeclaration) {
-                    ((MethodDeclaration) classMember).setBody(null);
-                }
+            bodyDeclarations.forEach(classMember -> {
                 Label label = new Label(classMember.toString());
                 TreeItem<Label> treeItem = new TreeItem<>();
                 treeItem.setValue(label);
@@ -341,7 +328,7 @@ public class SmartContractDeployController implements Initializable {
             classTreeView.setOnMouseClicked(event -> {
                 if (event.isPrimaryButtonDown() || event.getButton() == MouseButton.PRIMARY) {
                     BodyDeclaration selected =
-                        classMembers.get(classTreeView.getSelectionModel().getSelectedIndices().get(0));
+                        bodyDeclarations.get(classTreeView.getSelectionModel().getSelectedIndices().get(0));
                     try {
                         int lineNumber = ParseCodeUtils.getLineNumber(sourceCode, selected);
                         codeArea.setCaretPositionOnLine(lineNumber);
