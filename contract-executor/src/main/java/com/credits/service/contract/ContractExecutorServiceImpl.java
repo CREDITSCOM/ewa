@@ -14,6 +14,7 @@ import com.credits.general.util.Base58;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
+import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodArgumentsValuesData;
 import com.credits.secure.Sandbox;
 import com.credits.service.node.api.NodeApiInteractionService;
@@ -197,8 +198,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private Callable<VariantData> invokeFunction(Object instance, MethodArgumentsValuesData targetMethodData,
         Object[] parameter) {
-        // TODO check cast to VariantData
-        return () -> (VariantData) targetMethodData.getMethod().invoke(instance, parameter);
+        return () -> VariantConverter.objectToVariantData(targetMethodData.getMethod().invoke(instance, parameter));
     }
 
 
