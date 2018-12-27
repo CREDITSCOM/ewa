@@ -4,6 +4,7 @@ import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.thrift.ReturnValue;
 
@@ -20,11 +21,11 @@ public interface ContractExecutorService {
      * @param methodName A name of a method
      * @param params     Parameters of a method
      */
-    ReturnValue execute(byte[] initiatorAddress, byte[] bytecode, byte[] contractState, String methodName, Variant[][] params, long executionTime) throws ContractExecutorException;
+    ReturnValue execute(byte[] initiatorAddress, List<ByteCodeObjectData> byteCodeObjectDataList, byte[] contractState, String methodName, Variant[][] params, long executionTime) throws ContractExecutorException;
 
-    List<MethodDescriptionData> getContractsMethods(byte[] contractBytecode) throws ContractExecutorException;
+    List<MethodDescriptionData> getContractsMethods(List<ByteCodeObjectData> byteCodeObjectDataList) throws ContractExecutorException;
 
-    Map<String, Variant> getContractVariables(byte[] contractBytecode, byte[] contractState) throws ContractExecutorException;
+    Map<String, Variant> getContractVariables(List<ByteCodeObjectData> contractBytecode, byte[] contractState) throws ContractExecutorException;
 
-    byte[] compileClass(String sourceCode) throws CompilationErrorException, CompilationException, ContractExecutorException, CompilationErrorException;
+    List<ByteCodeObjectData> compileClass(String sourceCode) throws CompilationErrorException, CompilationException, ContractExecutorException, CompilationErrorException;
 }

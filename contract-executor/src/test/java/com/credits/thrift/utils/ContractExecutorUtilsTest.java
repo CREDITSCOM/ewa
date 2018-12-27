@@ -16,7 +16,7 @@ import java.util.Set;
 
 import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 
-public class ContractUtilsTest extends ServiceTest {
+public class ContractExecutorUtilsTest extends ServiceTest {
 
     private String sourceCodeWithVariables = "import java.util.ArrayList;\n" +
         "import java.util.HashMap;\n" +
@@ -69,7 +69,7 @@ public class ContractUtilsTest extends ServiceTest {
 
     @Test
     public void getContractVariablesTest() throws ContractExecutorException {
-        Map<String, Variant> map = ContractUtils.getContractVariables(instanceWithVariables);
+        Map<String, Variant> map = ContractExecutorUtils.getContractVariables(instanceWithVariables);
         Assert.assertNotNull(map);
         Assert.assertEquals(VariantUtils.NULL_TYPE_VALUE, map.get("nullField").getFieldValue());
         Assert.assertEquals(5, map.get("intField").getFieldValue());
@@ -82,7 +82,9 @@ public class ContractUtilsTest extends ServiceTest {
             ((Map)map.get("mapStringIntegerField").getFieldValue()).get(new Variant(Variant._Fields.V_STRING, "string key")));
 
         //Checks returning null if no public variables exist in the contract
-        Assert.assertNull(ContractUtils.getContractVariables(instanceWithoutVariables));
+        Assert.assertNull(ContractExecutorUtils.getContractVariables(instanceWithoutVariables));
+        Assert.assertEquals(new Variant(Variant._Fields.V_STRING,""),
+            ContractExecutorUtils.getContractVariables(instanceWithoutVariables).get("initiator"));
     }
 
     private Object getInstance(String source) throws Exception{

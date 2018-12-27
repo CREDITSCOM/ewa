@@ -2,7 +2,10 @@ package com.credits.general.util;
 
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.APIResponse;
+import com.credits.general.thrift.generated.ByteCodeObject;
+import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.exception.ConverterException;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 
@@ -14,8 +17,10 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.BitSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -174,6 +179,35 @@ public class GeneralConverter {
         // TODO Добавить Byte, Short, Integer, Float, Double, Character, BigDecimal, Boolean, Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
+
+    public static List<ByteCodeObjectData> compilationPackageToByteCodeObjects(
+        CompilationPackage compilationPackage) {
+        List<ByteCodeObjectData> compilationUnits = new ArrayList<>();
+        compilationPackage.getUnits().forEach(unit->compilationUnits.add(new ByteCodeObjectData(unit.getName(),unit.getByteCode())));
+        return compilationUnits;
+    }
+
+    public static  List<ByteCodeObject> byteCodeObjectsDataToByteCodeObjects(List<ByteCodeObjectData> byteCodeObjects) {
+        List<ByteCodeObject> compilationUnits = new ArrayList<>();
+        byteCodeObjects.forEach(unit->compilationUnits.add(new ByteCodeObject(unit.getName(),ByteBuffer.wrap(unit.getByteCode()))));
+        return compilationUnits;
+    }
+
+
+    public static List<ByteCodeObjectData> byteCodeObjectsToByteCodeObjectsData(
+        List<ByteCodeObject> thriftByteCodeObjects) {
+        List<ByteCodeObjectData> compilationUnits = new ArrayList<>();
+        thriftByteCodeObjects.forEach(unit->compilationUnits.add(new ByteCodeObjectData(unit.getName(),unit.getByteCode())));
+        return compilationUnits;
+    }
+
+    public static List<ByteCodeObjectData> byteCodeObjectTobyteCodeObjectData(List<ByteCodeObject> thriftByteCodeObjects) {
+        List<ByteCodeObjectData> compilationUnits = new ArrayList<>();
+        thriftByteCodeObjects.forEach(unit->compilationUnits.add(new ByteCodeObjectData(unit.getName(),unit.getByteCode())));
+        return compilationUnits;
+    }
+
+
 
     public static Character toCharacter(Object value) {
         if (value == null) {

@@ -1,6 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.service.ServiceTest;
 import org.junit.Before;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static com.credits.general.thrift.generated.Variant._Fields.V_INT;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
@@ -47,21 +49,25 @@ public class SecurityTest extends ServiceTest {
         });
     }
 
-    byte[] bytecode;
+    List<ByteCodeObjectData> byteCodeObjectData;
     byte[] contractState;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        bytecode = compileSourceCode("/securityTest/Contract.java");
-        contractState = ceService.execute(address, bytecode, null, null, null,500L).getContractState();
+
+        String sourceCode = "/securityTest/Contract.java";
+        byteCodeObjectData = compileSourceCode(sourceCode);
+
+        contractState = ceService.execute(address, byteCodeObjectData, null, null, null,500L).getContractState();
     }
 
     @Test
     public void test() {
         try {
-            ceService.execute(address, bytecode, contractState, methodName, arg != null ? new Variant[][] {{arg}} : new Variant[][]{{}},500L);
+            ceService.execute(address,
+                byteCodeObjectData, contractState, methodName, arg != null ? new Variant[][] {{arg}} : new Variant[][]{{}},500L);
         } catch (ContractExecutorException e) {
             LOGGER.error(e.getMessage());
             return;

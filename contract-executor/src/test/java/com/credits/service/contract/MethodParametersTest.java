@@ -2,9 +2,11 @@ package com.credits.service.contract;
 
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.pojo.MethodArgumentsValuesData;
 import com.credits.service.ServiceTest;
+import com.credits.thrift.utils.ContractExecutorUtils;
 import com.credits.utils.ContractExecutorServiceUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,7 +17,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.credits.general.thrift.generated.Variant.*;
+import static com.credits.general.thrift.generated.Variant.v_boolean;
+import static com.credits.general.thrift.generated.Variant.v_double;
+import static com.credits.general.thrift.generated.Variant.v_int;
+import static com.credits.general.thrift.generated.Variant.v_list;
+import static com.credits.general.thrift.generated.Variant.v_long;
+import static com.credits.general.thrift.generated.Variant.v_string;
 import static com.credits.serialize.Serializer.deserialize;
 import static java.util.Arrays.asList;
 
@@ -23,17 +30,18 @@ public class MethodParametersTest extends ServiceTest {
 
     private ByteArrayContractClassLoader classLoader;
     private Class<?> contractClass;
-    private byte[] contractBytecode;
+    List<ByteCodeObjectData> byteCodeObjects;
     private byte[] contractState;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        contractBytecode = compileSourceCode("/methodParametersTest/Contract.java");
+        String sourceCodePath = "/methodParametersTest/Contract.java";
+        byteCodeObjects = compileSourceCode(sourceCodePath);
         classLoader = new ByteArrayContractClassLoader();
-        contractClass = classLoader.buildClass(contractBytecode);
-        contractState = ceService.execute(address, contractBytecode, null, null, null, 500L).getContractState();
+        contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjects, classLoader);
+        contractState = ceService.execute(address, byteCodeObjects, null, null, null, 500L).getContractState();
     }
 
 
