@@ -132,48 +132,75 @@ public class VariantConverter {
         return new VariantData(variantType, boxedValue);
     }
 
-    public static String variantToString(Variant variant) {
-        String valueAsString;
-        if (variant.isSetV_string()) {
-            valueAsString = variant.getV_string();
+    public static Object variantToObject(Variant variant) {
+        Object object;
+        if (variant.isSetV_null()) {
+            object = null;
+        } else if (variant.isSetV_string()) {
+            object = variant.getV_string();
         } else if (variant.isSetV_boolean()) {
-            valueAsString = GeneralConverter.toString(variant.getV_boolean());
+            object = variant.getV_boolean();
         } else if (variant.isSetV_boolean_box()) {
-            valueAsString = GeneralConverter.toString(variant.getV_boolean_box());
+            object = variant.getV_boolean_box();
         } else if (variant.isSetV_double()) {
-            valueAsString = GeneralConverter.toString(variant.getV_double());
+            object = variant.getV_double();
         } else if (variant.isSetV_double_box()) {
-            valueAsString = GeneralConverter.toString(variant.getV_double_box());
+            object = variant.getV_double_box();
         } else if (variant.isSetV_float()) {
-            valueAsString = GeneralConverter.toString(variant.getV_float());
+            object = GeneralConverter.toFloat(variant.getV_float());
         } else if (variant.isSetV_float_box()) {
-            valueAsString = GeneralConverter.toString(variant.getV_float_box());
+            object = GeneralConverter.toFloat(variant.getV_float_box());
         } else if (variant.isSetV_byte()) {
-            valueAsString = GeneralConverter.toString(variant.getV_byte());
+            object = variant.getV_byte();
         } else if (variant.isSetV_byte_box()) {
-            valueAsString = GeneralConverter.toString(variant.getV_byte_box());
+            object = variant.getV_byte_box();
         } else if (variant.isSetV_short()) {
-            valueAsString = GeneralConverter.toString(variant.getV_short());
+            object = variant.getV_short();
         } else if (variant.isSetV_short_box()) {
-            valueAsString = GeneralConverter.toString(variant.getV_short_box());
+            object = variant.getV_short_box();
         } else if (variant.isSetV_int()) {
-            valueAsString = GeneralConverter.toString(variant.getV_int());
+            object = variant.getV_int();
         } else if (variant.isSetV_int_box()) {
-            valueAsString = GeneralConverter.toString(variant.getV_int_box());
+            object = variant.getV_int_box();
         } else if (variant.isSetV_long()) {
-            valueAsString = GeneralConverter.toString(variant.getV_long());
+            object = variant.getV_long();
         } else if (variant.isSetV_long_box()) {
-            valueAsString = GeneralConverter.toString(variant.getV_long_box());
+            object = variant.getV_long_box();
+        } else if (variant.isSetV_array()) {
+            List<Variant> variantList = variant.getV_array();
+            object = variantList.stream().map(
+                    VariantConverter::variantToObject
+            ).toArray();
+        } else if (variant.isSetV_list()) {
+            object = variant.getV_list().stream().map(
+                    VariantConverter::variantToObject
+            ).collect(Collectors.toList());
+        } else if (variant.isSetV_set()) {
+            object = variant.getV_set().stream().map(
+                    VariantConverter::variantToObject
+            ).collect(Collectors.toSet());
+        } else if (variant.isSetV_map()) {
+            Map<Object, Object> objectMap = new HashMap<>();
+            variant.getV_map().entrySet().forEach(entry -> {
+                Object key = VariantConverter.variantToObject(entry.getKey());
+                Object value = VariantConverter.variantToObject(entry.getValue());
+                objectMap.put(key, value);
+            });
+            object = objectMap;
         } else {
             throw new ConverterException("Unsupported variant type");
         }
-        return valueAsString;
-   }
+        return object;
+    }
 
    public static VariantData objectToVariantData(Object object) {
        VariantData variantData;
        if (object == null) {
            variantData = new VariantData(VariantType.NULL, null);
+       } else if (object.getClass().isArray()) {
+           List<VariantData> variantDataCollection =
+                   Arrays.stream((Object[]) object).map(VariantConverter::objectToVariantData).collect(Collectors.toList());
+           variantData = new VariantData(VariantType.ARRAY, variantDataCollection.toArray(new VariantData[]{}));
        } else if (object instanceof List) {
            List<VariantData> variantDataCollection =
                    ((List<Object>) object).stream().map(VariantConverter::objectToVariantData).collect(Collectors.toList());
@@ -212,5 +239,38 @@ public class VariantConverter {
            throw new ConverterException(String.format("Unsupported object type: %s", object.getClass().getSimpleName()));
        }
        return variantData;
+   }
+
+   public static Object variantDataToObject(VariantData variantData) {
+       VariantType variantType = variantData.getVariantType();
+       Object boxedValue = variantData.getBoxedValue();
+       switch(variantType) {
+           case ARRAY:
+               VariantData[] variantDataArr = (VariantData[]) boxedValue;
+               List<Object> objectArrAsList =
+                       Arrays.stream(variantDataArr).map(
+                               VariantConverter::variantDataToObject
+                       ).collect(Collectors.toList());
+               return objectArrAsList.toArray();
+           case LIST:
+               List<VariantData> variantDataList = (List<VariantData>) boxedValue;
+               return variantDataList.stream().map(
+                       VariantConverter::variantDataToObject
+               ).collect(Collectors.toList());
+           case SET:
+               Set<VariantData> variantDataSet = (Set<VariantData>) boxedValue;
+               return variantDataSet.stream().map(
+                       VariantConverter::variantDataToObject
+                       ).collect(Collectors.toSet());
+           case MAP:
+               Map<VariantData, VariantData> variantDataMap = (Map<VariantData, VariantData>) boxedValue;
+               return variantDataMap.entrySet().stream()
+                       .collect(Collectors.toMap(
+                           e -> VariantConverter.variantDataToObject(e.getKey()),
+                           e -> VariantConverter.variantDataToObject(e.getValue())
+                       ));
+           default:
+               return boxedValue;
+       }
    }
 }
