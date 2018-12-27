@@ -8,6 +8,7 @@ import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class VariantConverter {
 
@@ -167,5 +168,49 @@ public class VariantConverter {
             throw new ConverterException("Unsupported variant type");
         }
         return valueAsString;
+   }
+
+   public static VariantData objectToVariantData(Object object) {
+       VariantData variantData;
+       if (object == null) {
+           variantData = new VariantData(VariantType.NULL, null);
+       } else if (object instanceof List) {
+           List<VariantData> variantDataCollection =
+                   ((List<Object>) object).stream().map(VariantConverter::objectToVariantData).collect(Collectors.toList());
+           variantData = new VariantData(VariantType.LIST, variantDataCollection);
+       } else if (object instanceof Set) {
+           Set<VariantData> variantDataCollection =
+                   ((Set<Object>) object).stream().map(VariantConverter::objectToVariantData).collect(Collectors.toSet());
+           variantData = new VariantData(VariantType.SET, variantDataCollection);
+       } else if (object instanceof Map) {
+           Map<VariantData, VariantData> variantDataMap = ((Map<Object, Object>) object).entrySet()
+                   .stream()
+                   .collect(
+                       Collectors.toMap(entry ->
+                       VariantConverter.objectToVariantData(entry.getKey()),
+                       entry -> VariantConverter.objectToVariantData((entry.getValue())
+                       )
+                   ));
+           variantData = new VariantData(VariantType.MAP, variantDataMap);
+       } else if (object instanceof Boolean) {
+           variantData = new VariantData(VariantType.BOOL_BOX, object);
+       } else if (object instanceof Byte) {
+           variantData = new VariantData(VariantType.BYTE_BOX, object);
+       } else if (object instanceof Short) {
+           variantData = new VariantData(VariantType.SHORT_BOX, object);
+       } else if (object instanceof Integer) {
+           variantData = new VariantData(VariantType.INT_BOX, object);
+       } else if (object instanceof Long) {
+           variantData = new VariantData(VariantType.LONG_BOX, object);
+       } else if (object instanceof Float) {
+           variantData = new VariantData(VariantType.FLOAT_BOX, object);
+       } else if (object instanceof Double) {
+           variantData = new VariantData(VariantType.DOUBLE_BOX, object);
+       } else if (object instanceof String) {
+           variantData = new VariantData(VariantType.STRING, object);
+       } else {
+           throw new ConverterException(String.format("Unsupported object type: %s", object.getClass().getSimpleName()));
+       }
+       return variantData;
    }
 }
