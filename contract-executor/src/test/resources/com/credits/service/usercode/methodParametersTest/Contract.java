@@ -9,6 +9,10 @@ public class Contract extends SmartContract {
 
     public void initialize() {}
 
+    public Contract(String initiator){
+        super(initiator);
+    }
+
     public static Integer mainString(List<String> args) {
         System.out.println("Method main(List<String> args) has been invoked");
         

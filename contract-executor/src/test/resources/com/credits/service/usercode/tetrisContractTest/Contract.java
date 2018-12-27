@@ -6,7 +6,8 @@ public class Contract extends SmartContract {
     private Map<String, Integer> balances;
     private String publicKey;
 
-    public Contract() {
+    public Contract(String initiator) {
+        super(initiator);
         publicKey = "userPublicKey";
         actions = new HashMap<>();
         actions.put(publicKey, 1);

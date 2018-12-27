@@ -74,7 +74,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
 
     @Override
-    public ReturnValue execute( byte[] initiatorAddress,  byte[] bytecode,  byte[] contractState,  String methodName,
+    public ReturnValue execute(byte[] initiatorAddress,  byte[] bytecode,  byte[] contractState,  String methodName,
          Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
 
         String initiator = "unknown address";
@@ -102,8 +102,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Object instance;
             if (contractState != null && contractState.length != 0) {
                 instance = deserialize(contractState, classLoader);
+                ContractExecutorServiceUtils.initializeField("initiator", initiator, contractClass, instance);
             } else {
-                instance = contractClass.newInstance();
+                instance = contractClass.getDeclaredConstructor(String.class).newInstance(initiator);
                 return new ReturnValue(serialize(instance), null, Collections.singletonList(new APIResponse(SUCCESS_CODE, "success")));
             }
 
@@ -121,7 +122,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             Class<?> returnType = targetMethodData.getMethod().getReturnType();
 
-            ContractExecutorServiceUtils.initializeField("initiator", initiator, contractClass, instance);
             ContractExecutorServiceUtils.initializeField("specialProperty", System.getProperty(initiator), contractClass, instance);
 
             for (int i = 0; i < amountParamRows; i++) {
