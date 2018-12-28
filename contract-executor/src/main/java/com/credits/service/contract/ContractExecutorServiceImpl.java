@@ -95,8 +95,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         String initiator = "unknown address";
         try {
             requireNonNull(initiatorAddress, "contractAddress is null");
-            requireNonNull(byteCodeObjectDataList, "bytecode of contract class is null");
-
+            if(byteCodeObjectDataList.size()==0) {
+                throw new ContractExecutorException("ByteCode is null");
+            }
             initiator = Base58.encode(initiatorAddress);
 
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
