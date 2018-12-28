@@ -1,9 +1,12 @@
 package com.credits.general.util.variant;
 
 import com.credits.general.thrift.generated.Variant;
-import com.credits.general.util.exception.UnsupportedTypeException;
+import com.credits.general.util.GeneralConverter;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -11,53 +14,30 @@ public class ObjectMapper implements Function<Object, Optional<Variant>> {
 
     @Override
     public Optional<Variant> apply(Object o) {
-        try {
-            return Optional.of(map(o));
-        } catch (UnsupportedTypeException e) {
-            return Optional.empty();
-        }
+        return Optional.of(map(o));
     }
 
     @SuppressWarnings("unchecked")
-    private Variant map(Object object) throws UnsupportedTypeException {
+    private Variant map(Object object) {
         Variant variant;
         if (object == null) {
             return new Variant(Variant._Fields.V_NULL, VariantUtils.NULL_TYPE_VALUE);
         } else if (object instanceof List) {
             List<Variant> variantCollection =
-                    ((List<Object>) object).stream().map(this::mapSimpleType).collect(Collectors.toList());
-
-            if (variantCollection.stream().anyMatch(Objects::isNull)) {
-                throw new UnsupportedTypeException();
-            }
-
+                    ((List<Object>) object).stream().map(this::map).collect(Collectors.toList());
             variant = new Variant(Variant._Fields.V_LIST, variantCollection);
         } else if (object instanceof Set) {
             Set<Variant> variantCollection =
                     ((Set<Object>) object).stream().map(this::mapSimpleType).collect(Collectors.toSet());
-
-            if (variantCollection.stream().anyMatch(Objects::isNull)) {
-                throw new UnsupportedTypeException();
-            }
-
             variant = new Variant(Variant._Fields.V_SET, variantCollection);
         } else if (object instanceof Map) {
             Map<Variant, Variant> variantMap = ((Map<Object, Object>) object).entrySet()
                     .stream()
                     .collect(Collectors.toMap(entry -> mapSimpleType(entry.getKey()), entry -> mapSimpleType(entry.getValue())));
-
-            boolean match = variantMap.entrySet()
-                    .stream()
-                    .anyMatch(vEntry -> Objects.isNull(vEntry.getKey()) || Objects.isNull(vEntry.getValue()));
-            if (match) {
-                throw new UnsupportedTypeException();
-            }
-
             variant = new Variant(Variant._Fields.V_MAP, variantMap);
         } else {
             variant = mapSimpleType(object);
         }
-
         return variant;
     }
 
@@ -80,7 +60,7 @@ public class ObjectMapper implements Function<Object, Optional<Variant>> {
         } else if (object instanceof Long) {
             variant = new Variant(Variant._Fields.V_LONG_BOX, object);
         } else if (object instanceof Float) {
-            variant = new Variant(Variant._Fields.V_FLOAT_BOX, object);
+            variant = new Variant(Variant._Fields.V_FLOAT_BOX, GeneralConverter.toDouble(object));
         } else if (object instanceof Double) {
             variant = new Variant(Variant._Fields.V_DOUBLE_BOX, object);
         } else if (object instanceof String) {

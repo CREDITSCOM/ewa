@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 
-import static com.credits.general.util.variant.VariantConverter.variantToVariantData;
+import static com.credits.general.util.variant.VariantConverter.variantToObject;
 
 
 public class ContractExecutorServiceUtils {
@@ -31,7 +31,7 @@ public class ContractExecutorServiceUtils {
                 }
             }
 
-            retVal[i] = variantToVariantData(param).getBoxedValue();
+            retVal[i] = variantToObject(param);
             logger.info(String.format("param[%s] = %s", i, retVal[i]));
             i++;
         }
