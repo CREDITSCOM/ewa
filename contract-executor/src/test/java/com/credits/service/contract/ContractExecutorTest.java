@@ -52,7 +52,7 @@ public class ContractExecutorTest extends ServiceTest {
                         "        System.out.println(\"Hello World!!\"); \n" +
                         "    }\npublic void foo(){\nSystem.out.println(\"Method foo executed\");\n}\n}";
         List<ByteCodeObjectData> byteCodeObjectDataList =
-            ContractExecutorUtils.compileSourceCode(sourceCode);
+            compileSourceCode(sourceCode);
 
         when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(
                 new SmartContractData(
@@ -85,7 +85,7 @@ public class ContractExecutorTest extends ServiceTest {
     public void save_state_smart_contract() throws Exception {
         String sourceCode = readSourceCode("/serviceTest/Contract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
-            ContractExecutorUtils.compileSourceCode(sourceCode);
+            compileSourceCode(sourceCode);
 
         byte[] contractState = ceService.execute(address, byteCodeObjectDataList, null, null, null, 500L).getContractState();
 
@@ -110,7 +110,7 @@ public class ContractExecutorTest extends ServiceTest {
     public void initiator_init() throws Exception {
         String sourceCode = readSourceCode("/serviceTest/Contract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
-            ContractExecutorUtils.compileSourceCode(sourceCode);
+            compileSourceCode(sourceCode);
 
         byte[] contractState = ceService.execute(address, byteCodeObjectDataList, null, null, null, 500L).getContractState();
 
@@ -122,7 +122,7 @@ public class ContractExecutorTest extends ServiceTest {
     public void get_methods_of_contract() throws Exception{
         String sourceCode = readSourceCode("/serviceTest/Contract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
-            ContractExecutorUtils.compileSourceCode(sourceCode);
+            compileSourceCode(sourceCode);
 
         List<MethodDescriptionData> expectedMethods = Arrays.asList(
             new MethodDescriptionData("void","initialize", new ArrayList<>()),
@@ -139,7 +139,7 @@ public class ContractExecutorTest extends ServiceTest {
     public void get_contract_variables() throws Exception{
         String sourceCode = readSourceCode("/serviceTest/Contract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
-            ContractExecutorUtils.compileSourceCode(sourceCode);
+            compileSourceCode(sourceCode);
         byte[] contractState = ceService.execute(address, byteCodeObjectDataList, null, null, null, 500).getContractState();
         Map<String, Variant> contractVariables = ceService.getContractVariables(byteCodeObjectDataList, contractState);
         Assert.assertTrue(contractVariables.containsKey("total"));
@@ -151,7 +151,7 @@ public class ContractExecutorTest extends ServiceTest {
     public void multipleMethodCall() throws Exception {
         String sourceCode = readSourceCode("/serviceTest/Contract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
-            ContractExecutorUtils.compileSourceCode(sourceCode);
+            compileSourceCode(sourceCode);
         byte[] contractState = ceService.execute(address, byteCodeObjectDataList, null, null, null, 500).getContractState();
 
         ReturnValue singleCallResult = ceService.execute(address, byteCodeObjectDataList, contractState, "addTokens", new Variant[][] {{Variant.v_int(10)}}, 500);

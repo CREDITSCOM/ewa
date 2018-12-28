@@ -4,7 +4,6 @@ import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.service.ServiceTest;
 import com.credits.thrift.ReturnValue;
-import com.credits.thrift.utils.ContractExecutorUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,7 +23,7 @@ public class CompilationTest extends ServiceTest {
     public void initiator_init() throws Exception {
         String sourceCode = readSourceCode("/compilationTest/Contract.java");
         List<ByteCodeObjectData> byteCodeObjects =
-            ContractExecutorUtils.compileSourceCode(sourceCode);
+            compileSourceCode(sourceCode);
 
         byte[] contractState =
             ceService.execute(address, byteCodeObjects, null, null, null, 500L).getContractState();

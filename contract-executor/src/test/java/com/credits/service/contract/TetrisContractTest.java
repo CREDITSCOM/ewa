@@ -22,7 +22,7 @@ public class TetrisContractTest extends ServiceTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        byteCodeObjectDataList = compileSourceCode("/tetrisContractTest/Contract.java");
+        byteCodeObjectDataList = compileSourceCodeFromFile("/tetrisContractTest/Contract.java");
     }
 
     @Test
@@ -46,10 +46,10 @@ public class TetrisContractTest extends ServiceTest {
         Assert.assertTrue(((Set<Variant>) executeGetSetOfString.getVariantsList().get(0).getFieldValue()).contains(new Variant(Variant._Fields.V_STRING, "Hello")));
 
         ReturnValue executeGetSetOfInteger = ceService.execute(address, byteCodeObjectDataList, deployValue.getContractState(), "getSetOfInteger", new Variant[][]{{}},500L);
-        Assert.assertTrue(((Set<Variant>) executeGetSetOfInteger.getVariantsList().get(0).getFieldValue()).contains(new Variant(Variant._Fields.V_INT, 555)));
+        Assert.assertTrue(((Set<Variant>) executeGetSetOfInteger.getVariantsList().get(0).getFieldValue()).contains(new Variant(Variant._Fields.V_INT_BOX, 555)));
 
         ReturnValue executeGetListOfDouble = ceService.execute(address, byteCodeObjectDataList, deployValue.getContractState(), "getListOfDouble", new Variant[][]{{}},500L);
-        Assert.assertTrue(((List<Variant>) executeGetListOfDouble.getVariantsList().get(0).getFieldValue()).contains(new Variant(Variant._Fields.V_DOUBLE, 5.55)));
+        Assert.assertTrue(((List<Variant>) executeGetListOfDouble.getVariantsList().get(0).getFieldValue()).contains(new Variant(Variant._Fields.V_DOUBLE_BOX, 5.55)));
 
         ReturnValue executeGetListOfString = ceService.execute(address, byteCodeObjectDataList, deployValue.getContractState(), "getListOfString", new Variant[][]{{}},500L);
         Assert.assertTrue(((List<Variant>) executeGetListOfString.getVariantsList().get(0).getFieldValue()).contains(new Variant(Variant._Fields.V_STRING, "Hello")));

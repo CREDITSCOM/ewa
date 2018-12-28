@@ -35,11 +35,11 @@ public class InMemoryCompiler {
 	/**
 	 * Compiles a single class.
 	 *
-	 * @param className class name
 	 * @param code class code
 	 * @return Compilation package
 	 */
-	public CompilationPackage compile(String className, String code) throws CompilationException {
+	public CompilationPackage compile(String code) throws CompilationException {
+		String className = GeneralSourceCodeUtils.parseClassName(code);
 		JavaCompiler compiler = getSystemJavaCompiler();
 
 		DiagnosticCollector<JavaFileObject> collector = getDiagnosticCollector();
@@ -108,8 +108,7 @@ public class InMemoryCompiler {
 	}
 
 	public static CompilationPackage compileSourceCode(String sourceCode) throws CompilationException, CompilationErrorException {
-		String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
-		CompilationPackage compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
+		CompilationPackage compilationPackage = new InMemoryCompiler().compile(sourceCode);
 
 		if (!compilationPackage.isCompilationStatusSuccess()) {
 			DiagnosticCollector collector = compilationPackage.getCollector();

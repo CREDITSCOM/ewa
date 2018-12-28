@@ -7,7 +7,6 @@ import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.ServiceTest;
-import com.credits.thrift.utils.ContractExecutorUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -32,7 +31,7 @@ public class ThriftIT extends ServiceTest {
         super.setUp();
         String sourceCode = readSourceCode("/thriftIntegrationTest/Contract.java");
 
-        byteCodeObjects = ContractExecutorUtils.compileSourceCode(sourceCode);
+        byteCodeObjects = compileSourceCode(sourceCode);
 
         when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(
             new SmartContractData(

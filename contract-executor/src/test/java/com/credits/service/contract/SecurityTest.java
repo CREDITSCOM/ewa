@@ -58,7 +58,7 @@ public class SecurityTest extends ServiceTest {
         super.setUp();
 
         String sourceCode = "/securityTest/Contract.java";
-        byteCodeObjectData = compileSourceCode(sourceCode);
+        byteCodeObjectData = compileSourceCodeFromFile(sourceCode);
 
         contractState = ceService.execute(address, byteCodeObjectData, null, null, null,500L).getContractState();
     }

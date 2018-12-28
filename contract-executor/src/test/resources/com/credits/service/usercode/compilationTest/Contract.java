@@ -14,7 +14,8 @@ public class Contract extends SmartContract {
     private Map<String, User> users;
 
 
-    public Contract() {
+    public Contract(String initiator) {
+        super(initiator);
         counterTaskId = 0;
         smartOwner = "5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe";
         tasks = new HashMap<>();
