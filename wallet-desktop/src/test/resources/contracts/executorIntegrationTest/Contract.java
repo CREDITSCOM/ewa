@@ -1,5 +1,5 @@
-public class Contract extends SmartContract {
-    public Contract(String initiator) {
+public class ExecutorIntegrationTest extends SmartContract {
+    public ExecutorIntegrationTest(String initiator) {
         super(initiator);
         System.out.println("Constructor");
     }
