@@ -3,10 +3,7 @@ package com.credits.general.util.variant;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,6 +19,10 @@ public class ObjectMapper implements Function<Object, Optional<Variant>> {
         Variant variant;
         if (object == null) {
             return new Variant(Variant._Fields.V_NULL, VariantUtils.NULL_TYPE_VALUE);
+        } else if (object.getClass().isArray()) {
+            List<Variant> variantCollection =
+                    Arrays.stream((Object[]) object).map(this::map).collect(Collectors.toList());
+            variant = new Variant(Variant._Fields.V_ARRAY, variantCollection);
         } else if (object instanceof List) {
             List<Variant> variantCollection =
                     ((List<Object>) object).stream().map(this::map).collect(Collectors.toList());
