@@ -3,6 +3,7 @@ package com.credits.wallet.desktop;
 
 import com.credits.wallet.desktop.controller.MainController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -18,9 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
-import static com.credits.wallet.desktop.AppState.executor;
-import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
+import static com.credits.wallet.desktop.AppState.*;
 
 /**
  * Created by goncharov-eg on 23.11.2017.
@@ -74,6 +73,10 @@ public class WalletApp extends Application {
             )
         );
         //ScenicView.show(stage.getScene());
+        stage.setOnCloseRequest(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
         stage.show();
     }
 
