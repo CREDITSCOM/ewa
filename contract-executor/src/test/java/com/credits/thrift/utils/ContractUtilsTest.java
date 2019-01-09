@@ -78,7 +78,7 @@ public class ContractUtilsTest extends ServiceTest {
         Assert.assertEquals("some string value", map.get("stringField").getFieldValue());
         Assert.assertEquals(5, ((Variant)((List)map.get("listIntegerField").getFieldValue()).get(0)).getFieldValue());
         Assert.assertTrue(((Set)map.get("setIntegerField").getFieldValue()).contains(new Variant(Variant._Fields.V_INT_BOX, 5)));
-        Assert.assertEquals(new Variant(Variant._Fields.V_INT, 5),
+        Assert.assertEquals(new Variant(Variant._Fields.V_INT_BOX, 5),
             ((Map)map.get("mapStringIntegerField").getFieldValue()).get(new Variant(Variant._Fields.V_STRING, "string key")));
 
         //Checks returning null if no public variables exist in the contract

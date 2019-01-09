@@ -157,7 +157,7 @@ public class ContractExecutorTest extends ServiceTest {
         assertNotEquals(singleCallResult.getContractState(), multiplyCallResult.getContractState());
 
         singleCallResult = ceService.execute(address, bytecode, contractState, "getTotal", new Variant[][]{{}}, 500);
-        TestCase.assertEquals(0, singleCallResult.getVariantsList().get(0).getV_int());
+        TestCase.assertEquals(0, singleCallResult.getVariantsList().get(0).getV_int_box());
     }
 
     @Test
