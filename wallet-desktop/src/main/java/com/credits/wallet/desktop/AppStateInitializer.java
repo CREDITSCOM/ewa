@@ -36,7 +36,7 @@ public class AppStateInitializer {
         AppState.contractInteractionService = initializeContractInteractionService();
     }
 
-    Properties loadProperties() {
+    public Properties loadProperties() {
         Properties properties = new Properties();
         try (FileInputStream fis = new FileInputStream("settings.properties")){
             properties.load(fis);
@@ -48,11 +48,11 @@ public class AppStateInitializer {
         return properties;
     }
 
-    ContractInteractionService initializeContractInteractionService() {
+    public ContractInteractionService initializeContractInteractionService() {
         return new ContractInteractionService();
     }
 
-    NodeApiService initializeNodeApiService() {
+    public NodeApiService initializeNodeApiService() {
         String apiAddress = properties.getProperty("node.api.host");
         String apiPort = properties.getProperty("node.api.port");
 
@@ -62,7 +62,7 @@ public class AppStateInitializer {
         return NodeApiServiceImpl.getInstance(apiAddress, apiPort == null ? DEFAULT_NODE_API_PORT : Integer.parseInt(apiPort));
     }
 
-    ContractExecutorApiService initializeContractExecutorApiService() {
+    public ContractExecutorApiService initializeContractExecutorApiService() {
         String executorHost = properties.getProperty("contract.executor.host");
         String executorPort = properties.getProperty("contract.executor.port");
 

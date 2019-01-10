@@ -2,19 +2,20 @@ package com.credits.wallet.desktop.utils;
 
 import com.credits.general.crypto.Md5;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.pojo.ByteCodeObjectData;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.general.crypto.Blake2S.generateHash;
 import static com.credits.general.util.GeneralConverter.byteArrayToHex;
 import static com.credits.general.util.GeneralConverter.toByteArray;
 import static com.credits.general.util.GeneralConverter.toByteArrayLittleEndian;
-import static com.credits.wallet.desktop.AppState.coin;
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static org.apache.commons.lang3.ArrayUtils.addAll;
 
@@ -24,7 +25,7 @@ public class SmartContractsUtils {
     private static byte[] bytes;
 
 
-    public static byte[] generateSmartContractAddress(byte[] deployerAddress, long transactionId, byte[] bytecode) {
+    public static byte[] generateSmartContractAddress(byte[] deployerAddress, long transactionId, List<ByteCodeObjectData> byteCodeObjects) {
 
         bytes = toByteArray(transactionId);
 
@@ -32,7 +33,9 @@ public class SmartContractsUtils {
         ArrayUtils.reverse(sliceId);
 
         byte[] seed = addAll(deployerAddress, toByteArrayLittleEndian(sliceId,sliceId.length));
-        seed = addAll(seed, bytecode);
+        for (ByteCodeObjectData unit: byteCodeObjects) {
+            seed = addAll(seed, unit.getByteCode());
+        }
         seed = toByteArrayLittleEndian(seed, seed.length);
         LOGGER.info("Generate smart contract address:\n");
 

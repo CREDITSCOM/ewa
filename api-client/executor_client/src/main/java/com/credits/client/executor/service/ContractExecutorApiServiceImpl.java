@@ -1,9 +1,8 @@
 package com.credits.client.executor.service;
 
 import com.credits.client.executor.exception.ContractExecutorClientException;
-import com.credits.client.executor.pojo.ExecuteResponseData;
 import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
-import com.credits.client.executor.util.ContractExecutorPojoConverter;
+import com.credits.general.thrift.generated.ByteCodeObject;
 import com.credits.general.thrift.generated.Variant;
 
 import java.util.List;
@@ -34,10 +33,10 @@ public class ContractExecutorApiServiceImpl implements ContractExecutorApiServic
     }
 
     @Override
-    public ExecuteResponseData executeContractMethod(byte[] address, byte[] bytecode, byte[] objectState, String methodName, List<Variant> params, long executionTime)
+    public ExecuteByteCodeResult executeContractMethod(byte[] address, List<ByteCodeObject> byteCodeObjects, byte[] objectState, String methodName, List<Variant> params, long executionTime)
         throws ContractExecutorClientException {
         ExecuteByteCodeResult
-            result = apiClient.executeByteCode(address, bytecode, objectState, methodName, params, executionTime);
-        return ContractExecutorPojoConverter.executeByteCodeResultToExecuteResponseData(result);
+            result = apiClient.executeByteCode(address, byteCodeObjects, objectState, methodName, params, executionTime);
+        return result;
     }
 }

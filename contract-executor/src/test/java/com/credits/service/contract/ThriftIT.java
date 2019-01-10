@@ -3,6 +3,7 @@ package com.credits.service.contract;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.thrift.generated.TokenStandart;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.ServiceTest;
@@ -14,14 +15,14 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
-import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static java.io.File.separator;
 import static org.mockito.Mockito.when;
 
 public class ThriftIT extends ServiceTest {
 
-    private byte[] contractBytecode;
+    private List<ByteCodeObjectData> byteCodeObjects;
     private byte[] contractState;
 
     @Before
@@ -30,17 +31,17 @@ public class ThriftIT extends ServiceTest {
         super.setUp();
         String sourceCode = readSourceCode("/thriftIntegrationTest/Contract.java");
 
-        contractBytecode = compile(sourceCode, "Contract", "TKN");
+        byteCodeObjects = compileSourceCode(sourceCode);
 
         when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(
             new SmartContractData(
                     address,
                     address,
-                    new SmartContractDeployData(sourceCode, contractBytecode, TokenStandart.CreditsBasic),
+                    new SmartContractDeployData(sourceCode, byteCodeObjects, TokenStandart.CreditsBasic),
                     null
             ));
 
-        contractState = ceService.execute(address, contractBytecode, null, null, null, 500L).getContractState();
+        contractState = ceService.execute(address, byteCodeObjects, null, null, null, 500L).getContractState();
     }
 
     @After
@@ -52,14 +53,14 @@ public class ThriftIT extends ServiceTest {
     @Ignore //No enough permissions
     @Test
     public void execute_contract_using_bytecode_getBalance() throws Exception {
-        ceService.execute(address, contractBytecode, contractState, "balanceGet", new Variant[][]{{}},500L);
+        ceService.execute(address, byteCodeObjects, contractState, "balanceGet", new Variant[][]{{}},500L);
     }
 
 
     @Ignore
     @Test
     public void execute_contract_using_bytecode_sendTransaction() throws Exception {
-        ceService.execute(address, contractBytecode, contractState, "sendZeroCS", new Variant[][]{},500L);
+        ceService.execute(address, byteCodeObjects, contractState, "sendZeroCS", new Variant[][]{},500L);
     }
 
 }

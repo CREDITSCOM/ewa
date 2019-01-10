@@ -6,6 +6,7 @@ import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.exception.CompilationException;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.MethodArgument;
@@ -19,7 +20,7 @@ import com.credits.pojo.MethodArgumentsValuesData;
 import com.credits.secure.Sandbox;
 import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.thrift.ReturnValue;
-import com.credits.thrift.utils.ContractUtils;
+import com.credits.thrift.utils.ContractExecutorUtils;
 import com.credits.utils.ContractExecutorServiceUtils;
 import org.apache.commons.beanutils.MethodUtils;
 import org.slf4j.Logger;
@@ -34,8 +35,20 @@ import java.net.NetPermission;
 import java.net.SocketPermission;
 import java.security.Permissions;
 import java.security.SecurityPermission;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.PropertyPermission;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialize.Serializer.deserialize;
@@ -76,18 +89,22 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
 
     @Override
-    public ReturnValue execute(byte[] initiatorAddress,  byte[] bytecode,  byte[] contractState,  String methodName,
+    public ReturnValue execute( byte[] initiatorAddress,  List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState,  String methodName,
          Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
 
         String initiator = "unknown address";
         try {
+            if(byteCodeObjectDataList.size()==0) {
+                throw new ContractExecutorException("Bytecode size is 0");
+            }
             requireNonNull(initiatorAddress, "contractAddress is null");
-            requireNonNull(bytecode, "bytecode of contract class is null");
-
+            if(byteCodeObjectDataList.size()==0) {
+                throw new ContractExecutorException("ByteCode is null");
+            }
             initiator = Base58.encode(initiatorAddress);
 
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
-            Class<?> contractClass = classLoader.buildClass(bytecode);
+            Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
 
             // add classes to Sandbox
             Sandbox.confine(contractClass, createPermissions());
@@ -168,7 +185,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     if (returnVariantData == null) {
                         returnValues.add(null);
                     } else {
-                        returnValues.add(ContractUtils.mapVariantDataToVariant(returnVariantData));
+                        returnValues.add(ContractExecutorUtils.mapVariantDataToVariant(returnVariantData));
                     }
                 }
             }
@@ -203,11 +220,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
 
     @Override
-    public List<MethodDescriptionData> getContractsMethods( byte[] bytecode) {
-        requireNonNull(bytecode, "bytecode of contract class is null");
+    public List<MethodDescriptionData> getContractsMethods(List<ByteCodeObjectData> byteCodeObjectDataList) {
+        requireNonNull(byteCodeObjectDataList, "bytecode of contract class is null");
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
-        Class<?> contractClass = classLoader.buildClass(bytecode);
+        Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
         Set<String> objectMethods = new HashSet<>(Arrays.asList("getClass", "hashCode", "equals", "toString", "notify", "notifyAll", "wait", "finalize"));
         List<MethodDescriptionData> result = new ArrayList<>();
         for (Method method : contractClass.getMethods()) {
@@ -223,21 +240,21 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public Map<String, Variant> getContractVariables( byte[] contractBytecode,  byte[] contractState) throws ContractExecutorException {
-        requireNonNull(contractBytecode, "bytecode of contract class is null");
+    public Map<String, Variant> getContractVariables(List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState) throws ContractExecutorException {
+        requireNonNull(byteCodeObjectDataList, "bytecode of contract class is null");
         requireNonNull(contractState, "contract state is null");
 
         if (contractState.length != 0) {
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
-            Class<?> contractClass = classLoader.buildClass(contractBytecode);
-            return ContractUtils.getContractVariables(deserialize(contractState, classLoader));
+            Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
+            return ContractExecutorUtils.getContractVariables(deserialize(contractState, classLoader));
         } else {
             throw new ContractExecutorException("contract state is empty");
         }
     }
 
     @Override
-    public byte[] compileClass( String sourceCode) throws ContractExecutorException, CompilationErrorException, CompilationException {
+    public List<ByteCodeObjectData> compileClass( String sourceCode) throws ContractExecutorException, CompilationErrorException, CompilationException {
         requireNonNull(sourceCode, "sourceCode of contract class is null");
         if (sourceCode.isEmpty()) throw new ContractExecutorException("sourceCode of contract class is empty");
 
@@ -247,7 +264,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             throw new IllegalArgumentException("Only one class (and class without inner class) can be compiled.");
         }
         CompilationUnit compilationUnit = compilationUnits.get(0);
-        return compilationUnit.getBytecode();
+        return Collections.singletonList(
+            new ByteCodeObjectData(compilationUnit.getName(), compilationUnit.getByteCode()));
     }
 
 

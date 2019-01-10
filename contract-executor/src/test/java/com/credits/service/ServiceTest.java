@@ -4,7 +4,11 @@ import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.thrift.generated.TokenStandart;
+import com.credits.exception.ContractExecutorException;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.compiler.InMemoryCompiler;
+import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.service.contract.ContractExecutorService;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -13,18 +17,24 @@ import org.junit.Rule;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
-import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 import static java.io.File.separator;
 import static org.mockito.Mockito.when;
 
 public abstract class ServiceTest {
+
+    private final static Logger logger = LoggerFactory.getLogger(ServiceTest.class);
 
     protected final byte[] address = "1a2b3c".getBytes();
     protected TestComponent testComponent;
@@ -43,18 +53,33 @@ public abstract class ServiceTest {
         testComponent.inject(this);
     }
 
-    protected byte[] compileSourceCode(String sourceCodePath) throws Exception {
+    public static List<ByteCodeObjectData> compileSourceCode(String sourceCode) {
+        CompilationPackage compilationPackage = new InMemoryCompiler().compile(sourceCode);
+        if (compilationPackage.isCompilationStatusSuccess()) {
+            return GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
+        } else {
+            List<Diagnostic<? extends JavaFileObject>> diagnostics = compilationPackage.getCollector().getDiagnostics();
+            diagnostics.forEach(action -> {
+                logger.info(String.format("\nLine number: %s; Error message: %s", action.getLineNumber(), action.getMessage(null)));
+            });
+            throw new ContractExecutorException("Cannot compile sourceCode");
+        }
+    }
+
+
+    protected List<ByteCodeObjectData> compileSourceCodeFromFile(String sourceCodePath) throws Exception {
         String sourceCode = readSourceCode(sourceCodePath);
-        byte[] bytecode = compile(sourceCode, "Contract", "TKN");
+        List<ByteCodeObjectData> byteCodeObjects = compileSourceCode(sourceCode);
         when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(new SmartContractData(
                 address,
                 address,
-                new SmartContractDeployData(sourceCode, bytecode, TokenStandart.CreditsBasic),
+                new SmartContractDeployData(sourceCode, byteCodeObjects, TokenStandart.CreditsBasic),
                 null
                 )
         );
-        return bytecode;
+        return byteCodeObjects;
     }
+
 
     protected String readSourceCode(String resourcePath) throws IOException {
         String sourceCodePath = String.format("%s/src/test/resources/com/credits/service/usercode/%s", Paths.get("").toAbsolutePath(), resourcePath);

@@ -1,7 +1,11 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.*;
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractInvocationData;
+import com.credits.client.node.pojo.SmartContractTransactionFlowData;
+import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.client.node.util.SignUtils;
@@ -21,7 +25,7 @@ import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.AppState.transactionOfferedMaxFeeValue;
-import static com.credits.wallet.desktop.utils.SmartContractsUtils.*;
+import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static java.math.BigDecimal.ZERO;
 
 /**
@@ -45,7 +49,7 @@ public class ApiUtils {
                 generateSmartContractAddress(
                         transactionData.getByteSource(),
                         transactionData.getTransactionId(),
-                        smartContractData.getSmartContractDeployData().getByteCode()));
+                        smartContractData.getSmartContractDeployData().getByteCodeObjects()));
 
         SmartContractInvocationData smartContractInvocationData =
             new SmartContractInvocationData(smartContractData.getSmartContractDeployData(),

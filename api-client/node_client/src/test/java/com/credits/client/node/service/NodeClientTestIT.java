@@ -136,7 +136,7 @@ public class NodeClientTestIT {
         long transactionId = 12327;
         String source = "4ESD7KpGzJCfDL8pZKhMfcfekqdoBdjSBUF5FiJdkBAC";
         String target = "transactionTarget";
-        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("sourceCode", address.getBytes(), TokenStandart.CreditsBasic);
+        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("sourceCode", null, TokenStandart.CreditsBasic);
         SmartContractInvocationData scData = new SmartContractInvocationData(smartContractDeployData, "method", null, true);
         TransactionFlowData transactionData = new TransactionFlowData(transactionId, decodeFromBASE58(source), decodeFromBASE58(target), new BigDecimal(1), (short) 0x001,null, null);
         SmartContractTransactionFlowData smartContractFlowData = new SmartContractTransactionFlowData(transactionData,scData);

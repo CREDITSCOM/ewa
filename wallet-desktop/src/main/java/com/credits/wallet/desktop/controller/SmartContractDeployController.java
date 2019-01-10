@@ -5,10 +5,11 @@ import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.ByteArrayContractClassLoader;
 import com.credits.general.util.Callback;
+import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.model.CompilationPackage;
-import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -36,8 +37,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,6 @@ import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -68,8 +66,8 @@ import static com.credits.wallet.desktop.VistaNavigator.SMART_CONTRACT;
 import static com.credits.wallet.desktop.VistaNavigator.WALLET;
 import static com.credits.wallet.desktop.VistaNavigator.loadVista;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
-import static com.credits.wallet.desktop.utils.SmartContractsUtils.*;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
+import static com.credits.wallet.desktop.utils.SmartContractsUtils.saveSmartInTokenList;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
@@ -193,20 +191,18 @@ public class SmartContractDeployController implements Initializable {
                 throw new CreditsException("Source code is not compiled");
             } else {
                 if (compilationPackage.isCompilationStatusSuccess()) {
-                    List<CompilationUnit> compilationUnits = compilationPackage.getUnits();
-                    CompilationUnit compilationUnit = compilationUnits.get(0);
-                    byte[] byteCode = compilationUnit.getBytecode();
+                    List<ByteCodeObjectData> byteCodeObjectDataList = GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
 
-                    Class<?> contractClass = getContractClass(compilationUnit);
+                    Class<?> contractClass = compileSmartContractByteCode(byteCodeObjectDataList);
                     TokenStandart tokenStandart = getTokenStandard(contractClass);
 
                     SmartContractDeployData smartContractDeployData =
-                        new SmartContractDeployData(javaCode, byteCode, tokenStandart);
+                        new SmartContractDeployData(javaCode, byteCodeObjectDataList, tokenStandart);
 
                     long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, account, true);
 
                     SmartContractData smartContractData = new SmartContractData(
-                        generateSmartContractAddress(decodeFromBASE58(account), idWithoutFirstTwoBits, byteCode),
+                        generateSmartContractAddress(decodeFromBASE58(account), idWithoutFirstTwoBits, byteCodeObjectDataList),
                         decodeFromBASE58(account), smartContractDeployData, null);
 
                     supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService,
@@ -242,8 +238,16 @@ public class SmartContractDeployController implements Initializable {
         return null;
     }
 
-    private Class<?> getContractClass(CompilationUnit compilationUnit) {
-        return new ByteArrayContractClassLoader().buildClass(compilationUnit.getName(), compilationUnit.getBytecode());
+    private static Class<?> compileSmartContractByteCode(List<ByteCodeObjectData> smartContractByteCodeData) {
+        ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
+        Class<?> contractClass = null;
+        for (ByteCodeObjectData compilationUnit : smartContractByteCodeData) {
+            Class<?> tempContractClass = classLoader.buildClass(compilationUnit.getName(), compilationUnit.getByteCode());
+            if(!compilationUnit.getName().contains("$")) {
+                contractClass = tempContractClass;
+            }
+        }
+        return contractClass;
     }
 
     private TokenStandart getTokenStandard(Class<?> contractClass) {
@@ -309,19 +313,9 @@ public class SmartContractDeployController implements Initializable {
             Label labelRoot = new Label(className);
             TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
 
-            List<FieldDeclaration> fields = ParseCodeUtils.parseFields(sourceCode);
-            List<MethodDeclaration> constructors = ParseCodeUtils.parseConstructors(sourceCode);
-            List<MethodDeclaration> methods = ParseCodeUtils.parseMethods(sourceCode);
+            List<BodyDeclaration> bodyDeclarations = ParseCodeUtils.parseFieldsConstructorsMethods(sourceCode);
 
-            List<BodyDeclaration> classMembers = new ArrayList<>();
-            classMembers.addAll(fields);
-            classMembers.addAll(constructors);
-            classMembers.addAll(methods);
-
-            classMembers.forEach(classMember -> {
-                if (classMember instanceof MethodDeclaration) {
-                    ((MethodDeclaration) classMember).setBody(null);
-                }
+            bodyDeclarations.forEach(classMember -> {
                 Label label = new Label(classMember.toString());
                 TreeItem<Label> treeItem = new TreeItem<>();
                 treeItem.setValue(label);
@@ -335,7 +329,7 @@ public class SmartContractDeployController implements Initializable {
             classTreeView.setOnMouseClicked(event -> {
                 if (event.isPrimaryButtonDown() || event.getButton() == MouseButton.PRIMARY) {
                     BodyDeclaration selected =
-                        classMembers.get(classTreeView.getSelectionModel().getSelectedIndices().get(0));
+                        bodyDeclarations.get(classTreeView.getSelectionModel().getSelectedIndices().get(0));
                     try {
                         int lineNumber = ParseCodeUtils.getLineNumber(sourceCode, selected);
                         codeArea.setCaretPositionOnLine(lineNumber);
@@ -351,7 +345,7 @@ public class SmartContractDeployController implements Initializable {
         errorTableView.getItems().clear();
         errorTableView.getItems().addAll(listOfError);
         errorTableView.setVisible(true);
-        errorTableView.setPrefHeight(HEADER_HEIGHT + errorTableView.getItems().size() * TABLE_LINE_HEIGHT);
+        errorTableView.setPrefHeight(debugPane.getPrefHeight());
     }
 
     private void initErrorTableView() {

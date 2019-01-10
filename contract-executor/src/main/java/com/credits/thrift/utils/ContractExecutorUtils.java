@@ -1,6 +1,8 @@
 package com.credits.thrift.utils;
 
+import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.exception.UnsupportedTypeException;
@@ -12,12 +14,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.credits.serialize.Serializer.serialize;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
-public class ContractUtils {
+public class ContractExecutorUtils {
+
 
     /**
      * Returns null if class instance has no public variables.
@@ -54,7 +58,7 @@ public class ContractUtils {
         try {
             Constructor constructor = clazz.getConstructor(String.class);
             Object instance = constructor.newInstance(address);
-            return new DeployReturnValue(serialize(instance),ContractUtils.getContractVariables(instance));
+            return new DeployReturnValue(serialize(instance), ContractExecutorUtils.getContractVariables(instance));
         } catch (IllegalAccessException | NoSuchMethodException ignored) {
         } catch (InstantiationException | InvocationTargetException e) {
             throw new ContractExecutorException(
@@ -63,7 +67,7 @@ public class ContractUtils {
 
         try {
             Object instance = clazz.newInstance();
-            return new DeployReturnValue(serialize(instance), ContractUtils.getContractVariables(instance));
+            return new DeployReturnValue(serialize(instance), ContractExecutorUtils.getContractVariables(instance));
         } catch (InstantiationException | IllegalAccessException e) {
             throw new ContractExecutorException(
                 "Cannot create new instance of the contract: " + address + ". Reason: " + getRootCauseMessage(e), e);
@@ -88,5 +92,17 @@ public class ContractUtils {
                     return new ContractExecutorException(
                             "Cannot execute the contract: " + ". Reason: " + getRootCauseMessage(e), e);
                 });
+    }
+
+    public static Class<?> compileSmartContractByteCode(List<ByteCodeObjectData> smartContractByteCodeData,
+        ByteArrayContractClassLoader classLoader) {
+        Class<?> contractClass = null;
+        for (ByteCodeObjectData compilationUnit : smartContractByteCodeData) {
+            Class<?> tempContractClass = classLoader.buildClass(compilationUnit.getName(), compilationUnit.getByteCode());
+            if(!compilationUnit.getName().contains("$")) {
+                contractClass = tempContractClass;
+            }
+        }
+        return contractClass;
     }
 }

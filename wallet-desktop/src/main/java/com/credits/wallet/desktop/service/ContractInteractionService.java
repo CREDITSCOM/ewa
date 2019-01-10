@@ -1,6 +1,8 @@
 package com.credits.wallet.desktop.service;
 
 import com.credits.client.executor.pojo.ExecuteResponseData;
+import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
+import com.credits.client.executor.util.ContractExecutorPojoConverter;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
@@ -20,7 +22,9 @@ import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.general.util.variant.VariantConverter.variantDataToVariant;
 import static com.credits.general.util.variant.VariantUtils.STRING_TYPE;
-import static com.credits.wallet.desktop.AppState.*;
+import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.contractExecutorService;
+import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -78,10 +82,12 @@ public class ContractInteractionService {
             throw new NodeClientException("SmartContract " + smartContractAddress + " not found");
         }
 
-        ExecuteResponseData response =
+        ExecuteByteCodeResult executeResponseData =
             contractExecutorService.executeContractMethod(GeneralConverter.decodeFromBASE58(smartContractAddress),
-                sc.getSmartContractDeployData().getByteCode(), sc.getObjectState(), methodName, asList(params),
-                executionTime);
+                GeneralConverter.byteCodeObjectsDataToByteCodeObjects(
+                    sc.getSmartContractDeployData().getByteCodeObjects()), sc.getObjectState(), methodName,
+                asList(params), executionTime);
+        ExecuteResponseData response = ContractExecutorPojoConverter.executeByteCodeResultToExecuteResponseData(executeResponseData);
 
         if (response.getCode() != SUCCESS) {
             throw new NodeClientException("Failure. Node response: " + response.getMessage());
