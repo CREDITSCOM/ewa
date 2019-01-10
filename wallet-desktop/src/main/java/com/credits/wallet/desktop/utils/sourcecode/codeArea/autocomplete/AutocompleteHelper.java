@@ -85,8 +85,8 @@ public class AutocompleteHelper {
 
             CreditsProposalsPopup.parentsFields.forEach((k, fieldName) -> {
                 if (finalWord.trim().isEmpty() || k.getName().toUpperCase().contains(finalWord.trim().toUpperCase())) {
-                    ProposalItem item = new ProposalItem(fieldName, fieldName);
-                    item.setActionHandler(actionHandler -> handleActionFields(fieldName));
+                    ProposalItem item = new ProposalItem(k.getName(), fieldName);
+                    item.setActionHandler(actionHandler -> handleActionFields(k.getName()));
                     creditsProposalsPopup.addItem(item);
                 }
             });
