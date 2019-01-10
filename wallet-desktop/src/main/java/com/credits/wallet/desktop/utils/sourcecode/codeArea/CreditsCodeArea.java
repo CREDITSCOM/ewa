@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils.computeHighlighting;
 import static javafx.scene.input.KeyCode.INSERT;
 import static javafx.scene.input.KeyCode.PASTE;
+import static javafx.scene.input.KeyCode.SHIFT;
 import static javafx.scene.input.KeyCode.V;
 import static javafx.scene.input.KeyCode.Y;
 import static javafx.scene.input.KeyCode.Z;
@@ -108,13 +109,15 @@ public class CreditsCodeArea extends CodeArea {
         });
 
         this.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
-            KeyCode code = k.getCode();
-            if (code != KeyCode.TAB) {
-                if (code.isLetterKey() || code.isDigitKey() || code.isNavigationKey() || code.isWhitespaceKey()) {
-                    tabCount = 0;
+            if(k.getCode() != SHIFT) {
+                KeyCode code = k.getCode();
+                if (code != KeyCode.TAB) {
+                    if (code.isLetterKey() || code.isDigitKey() || code.isNavigationKey() || code.isWhitespaceKey()) {
+                        tabCount = 0;
+                    }
                 }
+                this.autocompleteHelper.handleKeyPressEvent(k);
             }
-            this.autocompleteHelper.handleKeyPressEvent(k);
         });
 
         Nodes.addInputMap(this, InputMap.consume(keyPressed(Z, SHORTCUT_DOWN), e -> {

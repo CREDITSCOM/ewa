@@ -43,7 +43,7 @@ public class AutocompleteHelper {
     public void handleKeyPressEvent(KeyEvent keyEvent) {
         creditsProposalsPopup.clearAndHide();
         boolean isCtrlSpacePressed = (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.SPACE));
-        if ((!keyEvent.isShiftDown() && !keyEvent.isAltDown()) &&
+        if ((!keyEvent.isAltDown()) &&
             ((keyEvent.getText().trim().length() == 1 && !keyEvent.isControlDown()) || isCtrlSpacePressed)) {
 
             updateDynamicProposals();
@@ -67,7 +67,7 @@ public class AutocompleteHelper {
             String finalWord = word.toString();
 
             JAVA_KEYWORDS_FOR_AUTOCOMPLETE.forEach(keyword -> {
-                if (finalWord.trim().isEmpty() || keyword.toUpperCase().contains(finalWord.trim().toUpperCase())) {
+                if (finalWord.trim().isEmpty() || keyword.toUpperCase().startsWith(finalWord.trim().toUpperCase())) {
                     ProposalItem item = new ProposalItem(keyword, keyword);
                     item.setActionHandler(actionHandler -> handleActionJavaKeywords(keyword));
                     creditsProposalsPopup.addItem(item);
@@ -76,7 +76,7 @@ public class AutocompleteHelper {
 
             classFields.forEach((k, v) -> {
                 String fieldName = ((VariableDeclarationFragment) k.fragments().get(0)).getName().toString();
-                if (finalWord.trim().isEmpty() || fieldName.toUpperCase().contains(finalWord.trim().toUpperCase())) {
+                if (finalWord.trim().isEmpty() || fieldName.toUpperCase().startsWith(finalWord.trim().toUpperCase())) {
                     ProposalItem item = new ProposalItem(fieldName, v);
                     item.setActionHandler(actionHandler -> handleActionFields(fieldName));
                     creditsProposalsPopup.addItem(item);
@@ -84,7 +84,7 @@ public class AutocompleteHelper {
             });
 
             CreditsProposalsPopup.parentsFields.forEach((k, fieldName) -> {
-                if (finalWord.trim().isEmpty() || k.getName().toUpperCase().contains(finalWord.trim().toUpperCase())) {
+                if (finalWord.trim().isEmpty() || k.getName().toUpperCase().startsWith(finalWord.trim().toUpperCase())) {
                     ProposalItem item = new ProposalItem(k.getName(), fieldName);
                     item.setActionHandler(actionHandler -> handleActionFields(k.getName()));
                     creditsProposalsPopup.addItem(item);
@@ -93,7 +93,7 @@ public class AutocompleteHelper {
 
             classMethods.forEach((method, v) -> {
                 if (finalWord.trim().isEmpty() ||
-                    method.getName().getIdentifier().toUpperCase().contains(finalWord.trim().toUpperCase())) {
+                    method.getName().getIdentifier().toUpperCase().startsWith(finalWord.trim().toUpperCase())) {
                     ProposalItem item = new ProposalItem(method.getName().getIdentifier(), v);
                     item.setActionHandler(actionHandler -> handleActionMethods(method.getName().getIdentifier()));
                     creditsProposalsPopup.addItem(item);
@@ -101,7 +101,7 @@ public class AutocompleteHelper {
             });
 
             CreditsProposalsPopup.parentsMethods.forEach((method, v) -> {
-                if (finalWord.trim().isEmpty() || method.getName().toUpperCase().contains(finalWord.trim().toUpperCase())) {
+                if (finalWord.trim().isEmpty() || method.getName().toUpperCase().startsWith(finalWord.trim().toUpperCase())) {
                     ProposalItem item = new ProposalItem(method.getName(), v);
                     item.setActionHandler(actionHandler -> handleActionMethods(method.getName()));
                     creditsProposalsPopup.addItem(item);
