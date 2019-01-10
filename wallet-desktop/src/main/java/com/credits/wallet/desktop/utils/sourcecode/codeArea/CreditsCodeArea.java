@@ -70,6 +70,7 @@ public class CreditsCodeArea extends CodeArea {
             if (newPropertyValue == null) {
                 this.cleanAll();
             }
+            
         });
 
         initKeyPressedLogic();

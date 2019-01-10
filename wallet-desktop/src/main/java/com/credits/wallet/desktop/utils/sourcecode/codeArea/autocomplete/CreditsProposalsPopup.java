@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete;
 
 import com.credits.wallet.desktop.utils.sourcecode.JavaReflect;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -57,11 +58,8 @@ public class CreditsProposalsPopup extends Popup {
         });
 
         listView.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
-            if (k.getCode().equals(KeyCode.ENTER)) {
+            if (k.getCode().equals(KeyCode.TAB) || k.getCode().equals(KeyCode.ENTER)) {
                 doProposalItemAction();
-            }
-            if (k.getCode().equals(KeyCode.TAB)) {
-                doFirstItemAction();
             }
             if (k.getCode().equals(KeyCode.ESCAPE)) {
                 this.clear();
@@ -84,12 +82,6 @@ public class CreditsProposalsPopup extends Popup {
         this.getContent().add(listView);
     }
 
-    private void doFirstItemAction() {
-        ProposalItem proposalItem = listView.getItems().get(0);
-        proposalItem.action();
-        this.hide();
-    }
-
     private void doProposalItemAction() {
         ProposalItem proposalItem = listView.getSelectionModel().getSelectedItem();
         proposalItem.action();
@@ -102,7 +94,12 @@ public class CreditsProposalsPopup extends Popup {
     }
 
     public void addItem(ProposalItem element) {
-        listView.getItems().add(element);
+        ObservableList<ProposalItem> items = listView.getItems();
+        items.add(element);
+        if(items.size() == 1){
+            listView.getSelectionModel().selectFirst();
+        }
+
     }
 
     public void clear() {
