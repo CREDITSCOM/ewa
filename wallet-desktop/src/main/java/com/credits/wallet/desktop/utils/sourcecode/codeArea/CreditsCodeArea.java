@@ -4,6 +4,7 @@ import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.AutocompleteHelper;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup;
 import javafx.concurrent.Task;
+import javafx.scene.control.IndexRange;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
@@ -155,12 +156,17 @@ public class CreditsCodeArea extends CodeArea {
 
         Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.BACK_SPACE), e -> {
             if (tabCount > 0) {
-                for (int i = 0; i < 4; i++) {
-                    this.deletePreviousChar();
+                for (int i = 0; i < TAB_SIZE; i++) {
+                    deletePreviousChar();
                 }
                 tabCount--;
             } else {
-                this.deletePreviousChar();
+                IndexRange selectedTextRange = getSelection();
+                if(selectedTextRange.getLength() > 0){
+                    deleteText(selectedTextRange);
+                }else {
+                    deletePreviousChar();
+                }
             }
         }));
     }
