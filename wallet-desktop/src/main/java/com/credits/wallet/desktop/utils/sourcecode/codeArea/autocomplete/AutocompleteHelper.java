@@ -1,11 +1,9 @@
 package com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete;
 
 import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
-import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -15,11 +13,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class AutocompleteHelper {
 
-    private static final List<String> JAVA_KEYWORDS_FOR_AUTOCOMPLETE =
-        Arrays.asList(ArrayUtils.addAll(CodeAreaUtils.KEYWORDS, CodeAreaUtils.DATA_TYPES_KEYWORDS));
+    public static final List<String> TYPE_KEYWORDS =
+        Arrays.asList("void", "String", "int", "Integer", "boolean", "Boolean", "byte", "Byte", "float", "long", "Long",
+            "Float", "double", "Double", "char", "Character", "short", "Short", "enum");
+
+    public static final List<String> LANGUAGE_KEYWORDS =
+        Arrays.asList("public", "private", "if", "else", "this", "new", "for", "while", "break", "final", "static",
+            "return", "switch", "case", "super", "throws", "throw", "true", "false", "try", "catch", "class", "implements", "extends",
+            "protected", "abstract", "assert", "const", "interface", "continue", "default", "do", "finally", "goto",
+            "import", "instanceof", "native", "package", "strictfp", "synchronized", "transient", "volatile");
 
     private CreditsCodeArea codeArea;
 
@@ -43,7 +49,7 @@ public class AutocompleteHelper {
     public void handleKeyPressEvent(KeyEvent keyEvent) {
         creditsProposalsPopup.clearAndHide();
         boolean isCtrlSpacePressed = (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.SPACE));
-        if ((!keyEvent.isShiftDown() && !keyEvent.isAltDown()) &&
+        if ((!keyEvent.isAltDown()) &&
             ((keyEvent.getText().trim().length() == 1 && !keyEvent.isControlDown()) || isCtrlSpacePressed)) {
 
             updateDynamicProposals();
@@ -64,75 +70,75 @@ public class AutocompleteHelper {
                 currentSymbol = text.substring(pos, pos + 1);
             }
 
-            String finalWord = word.toString();
+            String autoCompletedWord = word.toString().trim().toUpperCase();
 
-            JAVA_KEYWORDS_FOR_AUTOCOMPLETE.forEach(keyword -> {
-                if (finalWord.trim().isEmpty() || keyword.toUpperCase().contains(finalWord.trim().toUpperCase())) {
-                    ProposalItem item = new ProposalItem(keyword, keyword);
-                    item.setActionHandler(actionHandler -> handleActionJavaKeywords(keyword));
-                    creditsProposalsPopup.addItem(item);
-                }
-            });
+            if(!autoCompletedWord.isEmpty()) {
+                TYPE_KEYWORDS.forEach(keyword -> {
+                    if (keyword.toUpperCase().startsWith(autoCompletedWord)) {
+                        addProposal(keyword, keyword, this::handleAutoCompleteWord);
+                    }
+                });
 
-            classFields.forEach((k, v) -> {
-                String fieldName = ((VariableDeclarationFragment) k.fragments().get(0)).getName().toString();
-                if (finalWord.trim().isEmpty() || fieldName.toUpperCase().contains(finalWord.trim().toUpperCase())) {
-                    ProposalItem item = new ProposalItem(fieldName, v);
-                    item.setActionHandler(actionHandler -> handleActionFields(fieldName));
-                    creditsProposalsPopup.addItem(item);
-                }
-            });
+                LANGUAGE_KEYWORDS.forEach(keyword -> {
+                    if (keyword.toUpperCase().startsWith(autoCompletedWord)) {
+                        addProposal(keyword, keyword, this::handleAutoCompleteWord);
+                    }
+                });
 
-            CreditsProposalsPopup.parentsFields.forEach((k, fieldName) -> {
-                if (finalWord.trim().isEmpty() || k.getName().toUpperCase().contains(finalWord.trim().toUpperCase())) {
-                    ProposalItem item = new ProposalItem(fieldName, fieldName);
-                    item.setActionHandler(actionHandler -> handleActionFields(fieldName));
-                    creditsProposalsPopup.addItem(item);
-                }
-            });
+                classFields.forEach((k, v) -> {
+                    String fieldName = ((VariableDeclarationFragment) k.fragments().get(0)).getName().toString();
+                    if (fieldName.toUpperCase().startsWith(autoCompletedWord)) {
+                        addProposal(fieldName, v, this::handleAutoCompleteWord);
+                    }
+                });
 
-            classMethods.forEach((method, v) -> {
-                if (finalWord.trim().isEmpty() ||
-                    method.getName().getIdentifier().toUpperCase().contains(finalWord.trim().toUpperCase())) {
-                    ProposalItem item = new ProposalItem(method.getName().getIdentifier(), v);
-                    item.setActionHandler(actionHandler -> handleActionMethods(method.getName().getIdentifier()));
-                    creditsProposalsPopup.addItem(item);
-                }
-            });
+                CreditsProposalsPopup.parentsFields.forEach((k, fieldName) -> {
+                    if (k.getName().toUpperCase().startsWith(autoCompletedWord)) {
+                        addProposal(k.getName(), fieldName, this::handleAutoCompleteWord);
+                    }
+                });
 
-            CreditsProposalsPopup.parentsMethods.forEach((method, v) -> {
-                if (finalWord.trim().isEmpty() || method.getName().toUpperCase().contains(finalWord.trim().toUpperCase())) {
-                    ProposalItem item = new ProposalItem(method.getName(), v);
-                    item.setActionHandler(actionHandler -> handleActionMethods(method.getName()));
-                    creditsProposalsPopup.addItem(item);
-                }
-            });
+                classMethods.forEach((method, v) -> {
+                    String methodName = method.getName().getIdentifier();
+                    if (methodName.toUpperCase().startsWith(autoCompletedWord)) {
+                        addProposal(method.getName().getIdentifier(), v, this::handleAutoCompleteMethod);
+                    }
+                });
 
-            if (creditsProposalsPopup.isEmpty() && isCtrlSpacePressed) {
-                creditsProposalsPopup.addItem(new ProposalItem(null, "No suggestions"));
-
+                CreditsProposalsPopup.parentsMethods.forEach((method, v) -> {
+                    String methodName = method.getName();
+                    if (methodName.toUpperCase().startsWith(autoCompletedWord)) {
+                        addProposal(method.getName(), v, this::handleAutoCompleteMethod);
+                    }
+                });
             }
 
-            if (!creditsProposalsPopup.isEmpty()) {
-                creditsProposalsPopup.show(codeArea, codeArea.getCaretBounds().get().getMaxX(),
-                    codeArea.getCaretBounds().get().getMaxY());
+            if (creditsProposalsPopup.isEmpty()) {
+                if (isCtrlSpacePressed) {
+                    creditsProposalsPopup.addItem(new ProposalItem(null, "No suggestions"));
+
+                }
+            } else {
+                codeArea.getCaretBounds()
+                    .ifPresent(bounds -> creditsProposalsPopup.show(codeArea, bounds.getMaxX(), bounds.getMaxY()));
             }
         }
     }
 
-    private void handleActionFields(String fieldName) {
-        codeArea.doAutoComplete(fieldName);
+    private void addProposal(String autoCompleteText, String displayText, Consumer<String> actionHandler) {
+        ProposalItem item = new ProposalItem(autoCompleteText, displayText);
+        item.setActionHandler(actionHandler);
+        creditsProposalsPopup.addItem(item);
     }
 
-    private void handleActionMethods(String methodName) {
+    private void handleAutoCompleteMethod(String methodName) {
         String textToInsert = methodName + "()";
         codeArea.doAutoComplete(textToInsert);
         codeArea.selectRange(this.codeArea.getCaretPosition() - 1, this.codeArea.getCaretPosition() - 1);
     }
 
-    private void handleActionJavaKeywords(String keyword) {
+    private void handleAutoCompleteWord(String keyword) {
         codeArea.doAutoComplete(keyword);
     }
-
 
 }

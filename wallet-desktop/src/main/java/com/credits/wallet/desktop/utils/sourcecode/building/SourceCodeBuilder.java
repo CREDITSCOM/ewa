@@ -36,7 +36,7 @@ public class SourceCodeBuilder {
                 errorsList.add(tr);
             }
         } else {
-            compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
+            compilationPackage = new InMemoryCompiler().compile(sourceCode);
             if (!compilationPackage.isCompilationStatusSuccess()) {
                 DiagnosticCollector collector = compilationPackage.getCollector();
                 List<Diagnostic> diagnostics = collector.getDiagnostics();

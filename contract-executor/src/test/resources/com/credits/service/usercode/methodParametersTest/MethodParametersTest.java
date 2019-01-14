@@ -1,17 +1,18 @@
 import java.util.List;
 import java.util.ArrayList;
 
-public class Contract extends SmartContract {
+public class MethodParametersTest extends SmartContract {
+
+    public MethodParametersTest(String initiator){
+        super(initiator);
+    }
+
 
     private static int statIntVar = 2;
 
     private int intVar = 1;
 
     public void initialize() {}
-
-    public Contract(String initiator){
-        super(initiator);
-    }
 
     public static Integer mainString(List<String> args) {
         System.out.println("Method main(List<String> args) has been invoked");
