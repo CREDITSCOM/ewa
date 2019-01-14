@@ -20,7 +20,7 @@ public class ClassPathLoaderTest {
     @Test
     public void loadClass() throws ClassLoadException {
         URL resource = getClass().getClassLoader().getResource("com/credits/classload/");
-        String className = "Test";
+        String className = "Class";
 
         Class<?> clazz;
         try {
