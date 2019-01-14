@@ -1,16 +1,11 @@
 package com.credits.thrift;
 
-import com.credits.client.executor.thrift.generated.ContractExecutor;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import org.apache.commons.io.FileUtils;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TSocket;
-import org.apache.thrift.transport.TTransport;
-import org.apache.thrift.transport.TTransportException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -43,6 +38,7 @@ public class ThriftServerLoadTest {
         FileUtils.deleteDirectory(new File(dir));
     }
 
+    @Ignore
     @Test
     public void store() {
         NodeApiService nodeApiService = NodeApiServiceImpl.getInstance("localhost", 9080);
