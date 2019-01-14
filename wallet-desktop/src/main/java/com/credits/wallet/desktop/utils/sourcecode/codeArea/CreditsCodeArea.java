@@ -148,19 +148,21 @@ public class CreditsCodeArea extends CodeArea {
         Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.ENTER), e -> {
             String currentLine = getText().split("\n")[getCaretPositionOnLines().lineNumber];
             tabCount = countTabsNumberAtBeginLine(currentLine);
-            if (currentLine.length() > 0
-                    && currentLine.charAt(getCaretPositionOnLines().position - 1) == '{'
-                    && isBraceRequired()) {
-                tabCount += 1;
-                replaceSelection("\n\n" + StringUtils.repeat(TAB_STRING, tabCount - 1) + "}");
-                setCaretPositionOnLine(getCaretPositionOnLines().lineNumber);
-                replaceSelection(StringUtils.repeat(TAB_STRING, tabCount));
-            } else {
-                int caretPosition = getCaretPositionOnLines().position;
-                if(currentLine.charAt(caretPosition > 0 ? caretPosition - 1 : 0) == '{'){
+            int caretPosition = getCaretPositionOnLines().position;
+            if (currentLine.length() > 0) {
+                if (getNextCharAfterCaret(currentLine, caretPosition) == '{' && isBraceRequired()) {
                     tabCount += 1;
+                    replaceSelection("\n\n" + StringUtils.repeat(TAB_STRING, tabCount - 1) + "}");
+                    setCaretPositionOnLine(getCaretPositionOnLines().lineNumber);
+                    replaceSelection(StringUtils.repeat(TAB_STRING, tabCount));
+                } else {
+                    if (getNextCharAfterCaret(currentLine, caretPosition) == '{') {
+                        tabCount += 1;
+                    }
+                    replaceSelection("\n" + StringUtils.repeat(TAB_STRING, tabCount));
                 }
-                replaceSelection("\n" + StringUtils.repeat(TAB_STRING, tabCount));
+            } else {
+                replaceSelection("\n");
             }
         }));
 
@@ -183,6 +185,10 @@ public class CreditsCodeArea extends CodeArea {
                 }
             }
         }));
+    }
+
+    private char getNextCharAfterCaret(String currentLine, int caretPosition) {
+        return currentLine.charAt(caretPosition > 0 ? caretPosition - 1 : 0);
     }
 
     private void trySaveTextToMemory(KeyCode code) {
@@ -265,7 +271,7 @@ public class CreditsCodeArea extends CodeArea {
 
     public void setCaretPositionOnLine(int lineNumber) {
         this.positionCursorToLine(lineNumber);
-        CreditsCodeArea.CaretLinePosition caretLinePosition = this.getCaretPositionOnLines();
+        CreditsCodeArea.CaretLinePosition caretLinePosition = getCaretPositionOnLines();
         String currentLine = caretLinePosition.lines[caretLinePosition.lineNumber];
         this.fixCaretPosition(this.getCaretPosition() + this.getPositionFirstNotSpecialCharacter(
             currentLine));
