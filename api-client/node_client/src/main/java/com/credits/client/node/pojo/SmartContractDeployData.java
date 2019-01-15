@@ -1,8 +1,6 @@
 package com.credits.client.node.pojo;
 
-import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.pojo.ByteCodeObjectData;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -15,12 +13,12 @@ public class SmartContractDeployData implements Serializable {
     private final String sourceCode;
     private final List<ByteCodeObjectData> byteCodeObjectDataList;
     private final String hashState; //unused
-    private final TokenStandart tokenStandard;
+    private final TokenStandartData tokenStandardData;
 
-    public SmartContractDeployData(String sourceCode, List<ByteCodeObjectData> byteCodeObjectDataList,  TokenStandart tokenStandard) {
+    public SmartContractDeployData(String sourceCode, List<ByteCodeObjectData> byteCodeObjectDataList,  TokenStandartData tokenStandardData) {
         this.sourceCode = sourceCode;
         this.byteCodeObjectDataList = byteCodeObjectDataList;
-        this.tokenStandard = tokenStandard;
+        this.tokenStandardData = tokenStandardData;
         this.hashState="";
     }
 
@@ -36,8 +34,8 @@ public class SmartContractDeployData implements Serializable {
         return hashState;
     }
 
-    public TokenStandart getTokenStandard() {
-        return tokenStandard;
+    public TokenStandartData getTokenStandardData() {
+        return tokenStandardData;
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -61,7 +59,7 @@ public class SmartContractDeployData implements Serializable {
         if (hashState != null ? !hashState.equals(that.hashState) : that.hashState != null) {
             return false;
         }
-        return tokenStandard == that.tokenStandard;
+        return tokenStandardData == that.tokenStandardData;
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -70,7 +68,7 @@ public class SmartContractDeployData implements Serializable {
         int result = (sourceCode != null ? sourceCode.hashCode() : 0);
         result = 31 * result + byteCodeObjectDataList.hashCode();
         result = 31 * result + (hashState != null ? hashState.hashCode() : 0);
-        result = 31 * result + tokenStandard.hashCode();
+        result = 31 * result + tokenStandardData.hashCode();
         return result;
     }
 }

@@ -108,7 +108,9 @@ public class SmartContractData implements Serializable {
             return false;
         }
 
-        // TODO add smartContractDeployData equals
+        if (smartContractDeployData != null && !smartContractDeployData.equals(that.smartContractDeployData)) {
+            return false;
+        }
 
         if (!Arrays.equals(objectState, that.objectState)) {
             return false;
@@ -130,7 +132,7 @@ public class SmartContractData implements Serializable {
     public int hashCode() {
         int result = Arrays.hashCode(address);
         result = 31 * result + Arrays.hashCode(deployer);
-        // TODO add smartContractDeployData hashCode
+        result = 31 * result + (smartContractDeployData != null ? smartContractDeployData.hashCode() : 0);
         result = 31 * result + Arrays.hashCode(objectState);
         result = 31 * result + (method != null ? method.hashCode() : 0);
         result = 31 * result + (params != null ? params.hashCode() : 0);

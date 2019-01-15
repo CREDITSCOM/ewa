@@ -3,8 +3,9 @@ package com.credits.client.node.util;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
-import com.credits.client.node.thrift.generated.TokenStandart;
+import com.credits.client.node.pojo.TokenStandartData;
 import com.credits.general.util.GeneralConverter;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ public class NodeClientUtilsTest {
 
     @Test
     public void serializeByThriftTest01() throws NodeClientException {
-        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("sourceCode", null, TokenStandart.CreditsBasic);
+        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("sourceCode", null, TokenStandartData.CreditsBasic);
         SmartContractData smartContractData = new SmartContractData(
             "address".getBytes(),
             "deployer".getBytes(),
@@ -24,6 +25,9 @@ public class NodeClientUtilsTest {
         );
 
         byte[] smartContractBytes = NodeClientUtils.serializeByThrift(smartContractData);
-        LOGGER.info(GeneralConverter.encodeToBASE58(smartContractBytes));
+        Assert.assertEquals(
+                GeneralConverter.encodeToBASE58(smartContractBytes),
+                "BJoykvqsEt5sSAzsgvHeo2px3SefDH7gotPequ2V6hENTJXNLt3P7jB9EXXjEdQZ6p4y2jSnGRZc7WTneeavcNynp7KsVEfHmjtLoHP3fj16K2doV"
+        );
     }
 }

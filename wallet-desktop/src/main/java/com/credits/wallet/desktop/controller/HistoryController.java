@@ -2,8 +2,8 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionData;
-import com.credits.client.node.thrift.generated.TransactionState;
-import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
+import com.credits.client.node.pojo.TransactionStateData;
+import com.credits.client.node.pojo.TransactionsStateGetResultData;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.Callback;
@@ -29,15 +29,11 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.credits.client.node.pojo.TransactionStateData.INPROGRESS;
+import static com.credits.client.node.pojo.TransactionStateData.INVALID;
+import static com.credits.client.node.pojo.TransactionStateData.VALID;
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
-import static com.credits.client.node.thrift.generated.TransactionState.INPROGRESS;
-import static com.credits.client.node.thrift.generated.TransactionState.INVALID;
-import static com.credits.client.node.thrift.generated.TransactionState.VALID;
-import static com.credits.wallet.desktop.AppState.NODE_ERROR;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.detailFromHistory;
-import static com.credits.wallet.desktop.AppState.nodeApiService;
-import static com.credits.wallet.desktop.AppState.selectedTransactionRow;
+import static com.credits.wallet.desktop.AppState.*;
 
 /**
  * Created by goncharov-eg on 29.01.2018.
@@ -146,19 +142,19 @@ public class HistoryController implements Initializable {
         };
     }
 
-    private Callback<TransactionsStateGetResult> handleGetTransactionsStateResult(
+    private Callback<TransactionsStateGetResultData> handleGetTransactionsStateResult(
         ConcurrentHashMap<Long, TransactionRoundData> transactionMap) {
-        return new Callback<TransactionsStateGetResult>() {
+        return new Callback<TransactionsStateGetResultData>() {
             @Override
-            public void onSuccess(TransactionsStateGetResult transactionsStates) throws CreditsException {
-                Map<Long, TransactionState> states = transactionsStates.getStates();
+            public void onSuccess(TransactionsStateGetResultData transactionsStateGetResultData) throws CreditsException {
+                Map<Long, TransactionStateData> states = transactionsStateGetResultData.getStates();
                 states.forEach((k, v) -> {
                     if (v.getValue() == VALID.getValue()) {
                         transactionMap.remove(k);
                     }
                 });
 
-                int curRound = transactionsStates.getRoundNum();
+                int curRound = transactionsStateGetResultData.getRoundNumber();
                 transactionMap.entrySet()
                     .removeIf(e -> e.getValue().getRoundNumber() != 0 &&
                         curRound >= e.getValue().getRoundNumber() + COUNT_ROUNDS_LIFE);

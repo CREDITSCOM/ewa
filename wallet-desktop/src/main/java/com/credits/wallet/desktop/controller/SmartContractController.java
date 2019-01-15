@@ -4,7 +4,7 @@ import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.VariantData;
-import com.credits.general.thrift.generated.Variant;
+import com.credits.general.pojo.VariantType;
 import com.credits.general.util.Callback;
 import com.credits.general.util.variant.VariantUtils;
 import com.credits.wallet.desktop.AppState;
@@ -365,8 +365,8 @@ public class SmartContractController implements Initializable {
             public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
                 ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(),
                     resultData.getLeft());
-                Variant result =
-                    resultData.getRight().getContractResult().orElse(new Variant(Variant._Fields.V_STRING, "void"));
+                VariantData result =
+                    resultData.getRight().getContractResult().orElse(new VariantData(VariantType.STRING, "void"));
                 LOGGER.info("Return value is {}", result);
                 FormUtils.showPlatformInfo("Execute smart contract was success: return value is: " + result);
             }

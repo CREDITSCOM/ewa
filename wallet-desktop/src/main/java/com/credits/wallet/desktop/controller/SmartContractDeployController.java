@@ -2,8 +2,8 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
+import com.credits.client.node.pojo.TokenStandartData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
-import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.ByteArrayContractClassLoader;
@@ -25,11 +25,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -50,21 +46,13 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
-import static com.credits.client.node.thrift.generated.TokenStandart.CreditsBasic;
-import static com.credits.client.node.thrift.generated.TokenStandart.CreditsExtended;
-import static com.credits.client.node.thrift.generated.TokenStandart.NotAToken;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getCalcTransactionIdSourceTargetResult;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getIdWithoutFirstTwoBits;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
 import static com.credits.general.util.Utils.threadPool;
-import static com.credits.wallet.desktop.AppState.NODE_ERROR;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.lastSmartContract;
-import static com.credits.wallet.desktop.AppState.nodeApiService;
-import static com.credits.wallet.desktop.VistaNavigator.SMART_CONTRACT;
-import static com.credits.wallet.desktop.VistaNavigator.WALLET;
-import static com.credits.wallet.desktop.VistaNavigator.loadVista;
+import static com.credits.wallet.desktop.AppState.*;
+import static com.credits.wallet.desktop.VistaNavigator.*;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.saveSmartInTokenList;
@@ -194,10 +182,10 @@ public class SmartContractDeployController implements Initializable {
                     List<ByteCodeObjectData> byteCodeObjectDataList = GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
 
                     Class<?> contractClass = compileSmartContractByteCode(byteCodeObjectDataList);
-                    TokenStandart tokenStandart = getTokenStandard(contractClass);
+                    TokenStandartData tokenStandartData = getTokenStandard(contractClass);
 
                     SmartContractDeployData smartContractDeployData =
-                        new SmartContractDeployData(javaCode, byteCodeObjectDataList, tokenStandart);
+                        new SmartContractDeployData(javaCode, byteCodeObjectDataList, tokenStandartData);
 
                     long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, account, true);
 
@@ -221,7 +209,7 @@ public class SmartContractDeployController implements Initializable {
     }
 
     private TokenInfo getTokenInfo(Class<?> contractClass, SmartContractData smartContractData) {
-        if(smartContractData.getSmartContractDeployData().getTokenStandard() != NotAToken) {
+        if(smartContractData.getSmartContractDeployData().getTokenStandardData() != TokenStandartData.NotAToken) {
             try {
                 Object contractInstance = contractClass.getDeclaredConstructor(String.class).newInstance(encodeToBASE58(smartContractData.getDeployer()));
                 Field initiator = contractClass.getSuperclass().getDeclaredField("initiator");
@@ -250,16 +238,16 @@ public class SmartContractDeployController implements Initializable {
         return contractClass;
     }
 
-    private TokenStandart getTokenStandard(Class<?> contractClass) {
-        TokenStandart tokenStandart = NotAToken;
+    private TokenStandartData getTokenStandard(Class<?> contractClass) {
+        TokenStandartData tokenStandart = TokenStandartData.NotAToken;
         try {
             Class<?>[] interfaces = contractClass.getInterfaces();
             if(interfaces.length > 0) {
                 Class<?> basicStandard = Class.forName("BasicStandard");
                 Class<?> extendedStandard = Class.forName("ExtensionStandard");
                 for (Class<?> _interface : interfaces) {
-                    if (_interface.equals(basicStandard)) tokenStandart = CreditsBasic;
-                    if (_interface.equals(extendedStandard)) tokenStandart = CreditsExtended;
+                    if (_interface.equals(basicStandard)) tokenStandart = TokenStandartData.CreditsBasic;
+                    if (_interface.equals(extendedStandard)) tokenStandart = TokenStandartData.CreditsExtended;
                 }
             }
         } catch (ClassNotFoundException e) {

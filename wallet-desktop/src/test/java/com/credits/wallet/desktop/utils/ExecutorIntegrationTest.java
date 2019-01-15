@@ -3,7 +3,7 @@ package com.credits.wallet.desktop.utils;
 import com.credits.client.executor.service.ContractExecutorApiServiceImpl;
 import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
 import com.credits.general.pojo.ByteCodeObjectData;
-import com.credits.general.thrift.generated.Variant;
+import com.credits.general.pojo.VariantData;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.testUtils.WalletTestUtils;
@@ -43,7 +43,7 @@ public class ExecutorIntegrationTest {
 
         ExecuteByteCodeResult val = contractExecutorService.executeContractMethod(address,
             GeneralConverter.byteCodeObjectsDataToByteCodeObjects(byteCodeObjectDataList), contractState, "val",
-            asList(new Variant[] {}), 500L);
+            asList(new VariantData[] {}), 500L);
 
         int i = val.getRet_val().getV_int_box();
         Assert.assertEquals(i,1);

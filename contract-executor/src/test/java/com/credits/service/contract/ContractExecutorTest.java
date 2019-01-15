@@ -4,7 +4,7 @@ package com.credits.service.contract;
 import com.credits.client.executor.pojo.MethodDescriptionData;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
-import com.credits.client.node.thrift.generated.TokenStandart;
+import com.credits.client.node.pojo.TokenStandartData;
 import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
@@ -58,7 +58,7 @@ public class ContractExecutorTest extends ServiceTest {
                 new SmartContractData(
                         address,
                         address,
-                        new SmartContractDeployData(sourceCode, byteCodeObjectDataList, TokenStandart.CreditsBasic),
+                        new SmartContractDeployData(sourceCode, byteCodeObjectDataList, TokenStandartData.CreditsBasic),
                         null
                 ));
 
@@ -68,7 +68,7 @@ public class ContractExecutorTest extends ServiceTest {
                 new SmartContractData(
                         address,
                         address,
-                        new SmartContractDeployData(sourceCode, byteCodeObjectDataList, TokenStandart.CreditsBasic),
+                        new SmartContractDeployData(sourceCode, byteCodeObjectDataList, TokenStandartData.CreditsBasic),
                         null
                 ));
 

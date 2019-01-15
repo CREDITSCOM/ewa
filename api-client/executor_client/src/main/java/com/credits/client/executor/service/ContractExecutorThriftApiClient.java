@@ -6,14 +6,17 @@ import com.credits.client.executor.thrift.generated.ExecuteByteCodeMultipleResul
 import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
 import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
 import com.credits.client.executor.thrift.generated.GetContractVariablesResult;
+import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.ThriftClientPool;
 import com.credits.general.thrift.generated.ByteCodeObject;
 import com.credits.general.thrift.generated.Variant;
+import com.credits.general.util.variant.VariantConverter;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
 
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.credits.client.executor.thrift.generated.ContractExecutor.Client;
 
@@ -43,9 +46,14 @@ public class ContractExecutorThriftApiClient implements ContractExecutorThriftAp
     }
 
     @Override
-    public ExecuteByteCodeResult executeByteCode(byte[] address, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<Variant> params, long executionTime) throws ContractExecutorClientException {
+    public ExecuteByteCodeResult executeByteCode(byte[] address, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<VariantData> params, long executionTime) throws ContractExecutorClientException {
         Client client = pool.getResource();
-        return callThrift(client, () -> client.executeByteCode(ByteBuffer.wrap(address), byteCodeObjects, ByteBuffer.wrap(contractState), method, params, executionTime));
+        List<Variant> variantList = params.stream().map(variantData -> {
+            return VariantConverter.variantDataToVariant(variantData);
+        }).collect(Collectors.toList());
+        return callThrift(client, () -> client.executeByteCode(ByteBuffer.wrap(address), byteCodeObjects, ByteBuffer.wrap(contractState), method,
+                variantList,
+                executionTime));
     }
 
     @Override

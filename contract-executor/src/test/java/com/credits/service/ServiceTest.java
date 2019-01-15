@@ -2,6 +2,7 @@ package com.credits.service;
 
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
+import com.credits.client.node.pojo.TokenStandartData;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.exception.ContractExecutorException;
@@ -73,7 +74,7 @@ public abstract class ServiceTest {
         when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(new SmartContractData(
                 address,
                 address,
-                new SmartContractDeployData(sourceCode, byteCodeObjects, TokenStandart.CreditsBasic),
+                new SmartContractDeployData(sourceCode, byteCodeObjects, TokenStandartData.CreditsBasic),
                 null
                 )
         );

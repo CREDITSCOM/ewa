@@ -6,10 +6,9 @@ import com.credits.client.executor.util.ContractExecutorPojoConverter;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
-import com.credits.general.thrift.generated.Variant;
+import com.credits.general.pojo.VariantData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.variant.VariantUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.SmartContractsUtils;
 import org.slf4j.Logger;
@@ -20,11 +19,11 @@ import java.math.BigDecimal;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Utils.threadPool;
-import static com.credits.general.util.variant.VariantConverter.variantDataToVariant;
 import static com.credits.general.util.variant.VariantUtils.STRING_TYPE;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.contractExecutorService;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
+import static com.credits.general.util.variant.VariantUtils.createVariantData;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -46,7 +45,7 @@ public class ContractInteractionService {
 
     private BigDecimal getBalance(SmartContractData sc) {
         return new BigDecimal(executeSmartContract(account, sc, BALANCE_OF_METHOD, AppState.DEFAULT_EXECUTION_TIME,
-            variantOf(STRING_TYPE, account)));
+            createVariantData(STRING_TYPE, account)));
     }
 
     private String getName(SmartContractData sc) {
@@ -66,7 +65,7 @@ public class ContractInteractionService {
         supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
             .thenApply((sc) -> {
                 sc.setMethod(TRANSFER_METHOD);
-                sc.setParams(asList(VariantUtils.createVariantData(STRING_TYPE, target), VariantUtils.createVariantData(STRING_TYPE, amount.toString())));
+                sc.setParams(asList(createVariantData(STRING_TYPE, target), createVariantData(STRING_TYPE, amount.toString())));
                 TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData =
                     TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService, account,
                         sc.getBase58Address(), true);
@@ -77,7 +76,7 @@ public class ContractInteractionService {
 
 
     private String executeSmartContract(String smartContractAddress, SmartContractData sc, String methodName,
-        long executionTime, Variant... params) {
+        long executionTime, VariantData... params) {
         if (sc == null || sc.getObjectState().length == 0) {
             throw new NodeClientException("SmartContract " + smartContractAddress + " not found");
         }
@@ -95,9 +94,4 @@ public class ContractInteractionService {
 
         return response.getExecuteBytecodeResult().getV_string();
     }
-
-    private Variant variantOf(String type, String value){
-        return variantDataToVariant(VariantUtils.createVariantData(type, value));
-    }
-
 }

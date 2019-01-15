@@ -2,7 +2,7 @@ package com.credits.client.node.util;
 
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
-import com.credits.client.node.thrift.generated.TokenStandart;
+import com.credits.client.node.pojo.TokenStandartData;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,7 +27,7 @@ public class ObjectKeeperTest {
     public void setUp() throws IOException {
         objectKeeper = new ObjectKeeper<>(account, "obj");
         deleteCacheDirectory();
-        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("aaa", null, TokenStandart.CreditsBasic);
+        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("aaa", null, TokenStandartData.CreditsBasic);
         someData.put("1",new SmartContractData(null, null, smartContractDeployData,null));
     }
 
@@ -56,7 +56,7 @@ public class ObjectKeeperTest {
                 @Override
                 public HashMap<String, SmartContractData> modify(HashMap<String, SmartContractData> keptObject) {
                     if (keptObject != null) {
-                        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("BBB", null, TokenStandart.CreditsBasic);
+                        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("BBB", null, TokenStandartData.CreditsBasic);
                         keptObject.put("2", new SmartContractData(null, null, smartContractDeployData, null));
                     }
                     return keptObject;
@@ -69,7 +69,7 @@ public class ObjectKeeperTest {
     public void usingSerializedObject(){
         objectKeeper.keepObject(someData);
         HashMap<String, SmartContractData> restoredObject = objectKeeper.getKeptObject().get();
-        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("BBB", null, TokenStandart.CreditsBasic);
+        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("BBB", null, TokenStandartData.CreditsBasic);
         restoredObject.put("2", new SmartContractData(null, null, smartContractDeployData, null));
         objectKeeper.keepObject(restoredObject);
         restoredObject = objectKeeper.getKeptObject().get();
