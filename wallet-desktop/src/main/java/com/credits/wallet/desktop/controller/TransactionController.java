@@ -2,13 +2,11 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
-import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 import java.util.Map;
@@ -23,9 +21,6 @@ public class TransactionController implements FormInitializable {
     final int ROW_HEIGHT = 24;
     @FXML
     public HBox listContainer;
-
-    @FXML
-    BorderPane bp;
 
     @FXML
     private TextField labInnerId;
@@ -50,7 +45,7 @@ public class TransactionController implements FormInitializable {
     @Override
     public void initializeForm(Map<String, Object> objects) {
         TransactionTabRow selectedTransactionRow = (TransactionTabRow) objects.get("selectedTransactionRow");
-        FormUtils.resizeForm(bp);
+
         labInnerId.setText(selectedTransactionRow.getBlockId());
         labSource.setText(selectedTransactionRow.getSource());
         labTarget.setText(selectedTransactionRow.getTarget());

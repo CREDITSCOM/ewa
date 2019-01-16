@@ -11,11 +11,9 @@ import com.credits.wallet.desktop.utils.FormUtils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +23,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.nio.file.Files;
-import java.util.ResourceBundle;
+import java.util.Map;
 
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
@@ -39,15 +36,11 @@ import static com.credits.wallet.desktop.AppState.publicKey;
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class PutKeysController implements Initializable {
+public class PutKeysController implements FormInitializable {
     private static Logger LOGGER = LoggerFactory.getLogger(PutKeysController.class);
 
     private static final String ERROR_EMPTY_PUBLIC  = "Public key is empty";
     private static final String ERROR_EMPTY_PRIVATE = "Private key is empty";
-
-
-    @FXML
-    BorderPane bp;
 
     @FXML
     private Button btnBack;
@@ -133,8 +126,7 @@ public class PutKeysController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        FormUtils.resizeForm(bp);
+    public void initializeForm(Map<String, Object> objects) {
         clearLabErr();
 
         btnBack.setVisible(!newAccount);

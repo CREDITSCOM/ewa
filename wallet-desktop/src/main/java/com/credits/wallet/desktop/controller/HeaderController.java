@@ -6,10 +6,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
+import java.util.Map;
+
 /**
  * Created by goncharov-eg on 23.11.2017.
  */
-public class HeaderController {
+public class HeaderController implements FormInitializable{
 
     @FXML
     private Button btnLogout;
@@ -50,5 +52,10 @@ public class HeaderController {
     public void handleSmartDeploy(ActionEvent actionEvent) {
         AppState.newAccount = false;
         VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY,this);
+    }
+
+    @Override
+    public void initializeForm(Map<String, Object> objects) {
+
     }
 }

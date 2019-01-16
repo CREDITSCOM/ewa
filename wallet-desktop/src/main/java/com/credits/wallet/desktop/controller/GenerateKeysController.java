@@ -3,27 +3,20 @@ package com.credits.wallet.desktop.controller;
 import com.credits.client.node.crypto.Ed25519;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
-import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.layout.BorderPane;
 
-import java.net.URL;
 import java.security.KeyPair;
-import java.util.ResourceBundle;
+import java.util.Map;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class GenerateKeysController implements Initializable {
+public class GenerateKeysController implements FormInitializable {
     @FXML
     Button btnShowPassword;
-
-    @FXML
-    BorderPane bp;
 
     @FXML
     PasswordField txPassword;
@@ -46,9 +39,7 @@ public class GenerateKeysController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {  //fixme jumping fields
-        FormUtils.resizeForm(bp);
-
+    public void initializeForm(Map<String, Object> objects) {
         txPassword.setVisible(true);
         labPassword.setVisible(false);
 
@@ -73,5 +64,6 @@ public class GenerateKeysController implements Initializable {
             labPassword.setVisible(false);
         });
     }
+
 }
 

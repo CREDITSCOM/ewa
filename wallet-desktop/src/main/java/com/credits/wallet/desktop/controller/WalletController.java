@@ -25,7 +25,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +62,6 @@ public class WalletController implements FormInitializable {
     public final String CREDITS_TOKEN_NAME = "CS";
     ContextMenu contextMenu = new ContextMenu();
 
-    @FXML
-    BorderPane bp;
     @FXML
     private Label wallet;
     @FXML
@@ -287,7 +284,7 @@ public class WalletController implements FormInitializable {
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
-        FormUtils.resizeForm(bp);
+
 
         initializeTable(coinsTableView);
         updateCoins(coinsTableView);

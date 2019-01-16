@@ -20,7 +20,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -33,7 +32,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,11 +41,10 @@ import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ResourceBundle;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
@@ -62,7 +59,7 @@ import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTrans
 /**
  * Created by goncharov-eg on 30.01.2018.
  */
-public class SmartContractController implements Initializable {
+public class SmartContractController implements FormInitializable {
 
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
 
@@ -77,8 +74,6 @@ public class SmartContractController implements Initializable {
     public Tab favoriteContractsTab;
     @FXML
     public ToggleButton tbFavorite;
-    @FXML
-    BorderPane bp;
     @FXML
     private Pane pControls;
     @FXML
@@ -131,8 +126,7 @@ public class SmartContractController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        FormUtils.resizeForm(bp);
+    public void initializeForm(Map<String, Object> objects) {
         tbFavorite.setVisible(false);
         pControls.setVisible(false);
         pCodePanel.setVisible(false);

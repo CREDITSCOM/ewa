@@ -22,14 +22,16 @@ import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
@@ -41,9 +43,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
+import java.util.Map;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getCalcTransactionIdSourceTargetResult;
@@ -51,8 +52,13 @@ import static com.credits.client.node.util.TransactionIdCalculateUtils.getIdWith
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
 import static com.credits.general.util.Utils.threadPool;
-import static com.credits.wallet.desktop.AppState.*;
-import static com.credits.wallet.desktop.VistaNavigator.*;
+import static com.credits.wallet.desktop.AppState.NODE_ERROR;
+import static com.credits.wallet.desktop.AppState.account;
+import static com.credits.wallet.desktop.AppState.lastSmartContract;
+import static com.credits.wallet.desktop.AppState.nodeApiService;
+import static com.credits.wallet.desktop.VistaNavigator.SMART_CONTRACT;
+import static com.credits.wallet.desktop.VistaNavigator.WALLET;
+import static com.credits.wallet.desktop.VistaNavigator.loadVista;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.saveSmartInTokenList;
@@ -61,7 +67,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 /**
  * Created by goncharov-eg on 30.01.2018.
  */
-public class SmartContractDeployController implements Initializable {
+public class SmartContractDeployController implements FormInitializable {
 
     public static final String BUILD = "Build";
     public static final String COMPILING = "Compiling...";
@@ -77,9 +83,6 @@ public class SmartContractDeployController implements Initializable {
 
     @FXML
     private SplitPane splitPane;
-
-    @FXML
-    BorderPane bp;
 
     @FXML
     private Pane paneCode;
@@ -100,10 +103,7 @@ public class SmartContractDeployController implements Initializable {
     public CompilationPackage compilationPackage;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-        FormUtils.resizeForm(bp);
-
+    public void initializeForm(Map<String, Object> objects) {
         codeArea = CodeAreaUtils.initCodeArea(paneCode, false);
 
         codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (evt) -> {

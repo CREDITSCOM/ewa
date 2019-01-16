@@ -14,20 +14,16 @@ import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
@@ -41,15 +37,13 @@ import static com.credits.wallet.desktop.AppState.nodeApiService;
 /**
  * Created by goncharov-eg on 29.01.2018.
  */
-public class HistoryController implements Initializable {
+public class HistoryController implements FormInitializable {
     private final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
     private final int INIT_PAGE_SIZE = 100;
     private final int FIRST_TRANSACTION_NUMBER = 0;
     private final static Logger LOGGER = LoggerFactory.getLogger(HistoryController.class);
     private final int COUNT_ROUNDS_LIFE = 50;
 
-    @FXML
-    BorderPane bp;
     @FXML
     private TableView<TransactionTabRow> approvedTableView;
 
@@ -58,16 +52,12 @@ public class HistoryController implements Initializable {
 
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        FormUtils.resizeForm(bp);
-
-
+    public void initializeForm(Map<String, Object> objects) {
         initTable(approvedTableView);
         initTable(unapprovedTableView);
 
         fillApprovedTable();
         fillUnapprovedTable();
-
     }
 
     private void initTable(TableView<TransactionTabRow> tableView) {

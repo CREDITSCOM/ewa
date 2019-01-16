@@ -12,7 +12,6 @@ import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +36,6 @@ import static com.credits.wallet.desktop.utils.ApiUtils.createTransaction;
 public class GenerateTransactionController implements FormInitializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(GenerateTransactionController.class);
     private final static String CREDITS_SYMBOL = "CS";
-
-    @FXML
-    BorderPane bp;
 
     @FXML
     private TextField transactionToAddress;
@@ -121,7 +117,7 @@ public class GenerateTransactionController implements FormInitializable {
 
     @Override
     public void initializeForm(Map<String,Object> objects) {
-        FormUtils.resizeForm(bp);
+
         transactionToAddress.setText(objects.get("transactionToAddress").toString());
         transactionAmount.setText(objects.get("amount").toString());
         transactionText.setText(objects.get("transactionText").toString());

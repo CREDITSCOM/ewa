@@ -5,6 +5,7 @@ import com.credits.wallet.desktop.controller.FormInitializable;
 import com.credits.wallet.desktop.controller.MainController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +81,7 @@ public class VistaNavigator {
             FXMLLoader fxmlLoader = new FXMLLoader(VistaNavigator.class.getResource(fxml));
             deinitialize(oldVistaController);
             Node load = fxmlLoader.load();
+            resizeForm((Pane) load);
             initialize(fxmlLoader.getController(),params);
             mainController.setVista(load);
         } catch (IOException e) {
@@ -107,5 +109,10 @@ public class VistaNavigator {
             LOGGER.error("Cannot deinitialize vista", e);
             throw e;
         }
+    }
+
+    public static void resizeForm(Pane pane) {
+        pane.setPrefHeight(700D);
+        pane.setPrefWidth(1300D);
     }
 }
