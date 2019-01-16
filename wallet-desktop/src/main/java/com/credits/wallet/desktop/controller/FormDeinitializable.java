@@ -1,5 +1,5 @@
 package com.credits.wallet.desktop.controller;
 
-public interface Deinitializable {
+public interface FormDeinitializable {
     void deinitialize();
 }

@@ -30,7 +30,6 @@ public class AppStateInitializer {
     public void init() {
         properties = loadProperties();
 
-        AppState.creditMonitorURL = properties.getProperty("creditmonitor.url");
         AppState.nodeApiService = initializeNodeApiService();
         AppState.contractExecutorService = initializeContractExecutorApiService();
         AppState.contractInteractionService = initializeContractInteractionService();

@@ -11,33 +11,30 @@ import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.amount;
 import static com.credits.wallet.desktop.AppState.coin;
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static com.credits.wallet.desktop.AppState.contractInteractionService;
-import static com.credits.wallet.desktop.AppState.noClearForm6;
 import static com.credits.wallet.desktop.utils.ApiUtils.createTransaction;
 
 /**
  * Created by Rustem.Saidaliyev on 26.01.2018.
  */
-public class GenerateTransactionController implements Initializable {
+public class GenerateTransactionController implements FormInitializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(GenerateTransactionController.class);
     private final static String CREDITS_SYMBOL = "CS";
 
@@ -45,35 +42,42 @@ public class GenerateTransactionController implements Initializable {
     BorderPane bp;
 
     @FXML
-    private TextField toAddress; //todo remove global variable
+    private TextField transactionToAddress;
 
     @FXML TextField transactionText;
 
     @FXML
-    private TextField amountInCs;
+    private TextField transactionAmount;
 
     @FXML
     private TextField transactionFeeValue;
 
     @FXML
     private void handleBack() {
-        noClearForm6 = true;
-        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+        String toAddress = transactionToAddress.getText();
+        String amount = transactionAmount.getText();
+        Map<String, Object> params = new HashMap<>();
+        params.put("transactionToAddress",toAddress);
+        params.put("amount",amount);
+        VistaNavigator.loadVista(VistaNavigator.WALLET, params, this);
     }
 
     @FXML
     private void handleGenerate() {
+        String toAddress = transactionToAddress.getText();
         try {
             if(coin.equals(CREDITS_SYMBOL)) {
                 CompletableFuture
-                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account,toAddress.getText(),
+                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account,toAddress,
                         true),threadPool)
-                    .thenApply((transactionData) -> createTransaction(transactionData, AppState.amount, AppState.transactionText))
+                    .thenApply((transactionData) -> createTransaction(transactionData, GeneralConverter.toBigDecimal(
+                        transactionAmount.getText()), transactionText.getText()))
                     .whenComplete(handleCallback(handleTransactionResult()));
             } else {
                 coinsKeeper.getKeptObject().ifPresent(coinsMap ->
                     Optional.ofNullable(coinsMap.get(coin)).ifPresent(
-                        coin -> contractInteractionService.transferTo(coin, AppState.toAddress, amount, handleTransferTokenResult())));
+                        coin -> contractInteractionService.transferTo(coin, toAddress, GeneralConverter.toBigDecimal(
+                            transactionAmount.getText()), handleTransferTokenResult())));
             }
         } catch (CreditsException e) {
             LOGGER.error(NODE_ERROR + ": " + e.getMessage(), e);
@@ -116,11 +120,10 @@ public class GenerateTransactionController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initializeForm(Map<String,Object> objects) {
         FormUtils.resizeForm(bp);
-        this.toAddress.setText(AppState.toAddress);
-        this.amountInCs.setText(GeneralConverter.toString(amount) + " " + coin);
-        this.transactionText.setText(AppState.transactionText);
+        transactionToAddress.setText(objects.get("transactionToAddress").toString());
+        transactionAmount.setText(objects.get("amount").toString());
+        transactionText.setText(objects.get("transactionText").toString());
     }
-
 }

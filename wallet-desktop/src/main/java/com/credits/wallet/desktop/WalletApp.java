@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
-import static com.credits.wallet.desktop.AppState.*;
+import static com.credits.wallet.desktop.AppState.coinsKeeper;
+import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
 
 /**
  * Created by goncharov-eg on 23.11.2017.
@@ -108,9 +109,6 @@ public class WalletApp extends Application {
 
     @Override
     public void stop() {
-        if (executor != null) {
-            executor.shutdown();
-        }
         if(favoriteContractsKeeper != null){
             favoriteContractsKeeper.flush();
         }

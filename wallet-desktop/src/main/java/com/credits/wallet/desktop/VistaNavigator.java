@@ -1,16 +1,19 @@
 package com.credits.wallet.desktop;
 
-import com.credits.wallet.desktop.controller.Deinitializable;
+import com.credits.wallet.desktop.controller.FormDeinitializable;
+import com.credits.wallet.desktop.controller.FormInitializable;
 import com.credits.wallet.desktop.controller.MainController;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Utility class for controlling navigation between vistas.
- *
+ * <p>
  * All methods on the navigator are static to facilitate
  * simple access from anywhere in the application.
  */
@@ -26,7 +29,6 @@ public class VistaNavigator {
     public static final String FORM_5 = "/fxml/put_keys.fxml";
     public static final String WALLET = "/fxml/wallet.fxml";
     public static final String FORM_7 = "/fxml/generate_transaction.fxml";
-    public static final String FORM_8 = "/fxml/transaction_created_info.fxml";
     public static final String HEADER = "/fxml/header.fxml";
     public static final String HISTORY = "/fxml/history.fxml";
     public static final String MAIN = "/fxml/main.fxml";
@@ -34,7 +36,9 @@ public class VistaNavigator {
     public static final String SMART_CONTRACT = "/fxml/smart_contract.fxml";
     public static final String SMART_CONTRACT_DEPLOY = "/fxml/smart_contract_deploy.fxml";
     public static final String TRANSACTION = "/fxml/transaction.fxml";
-    /** The main application layout controller. */
+    /**
+     * The main application layout controller.
+     */
     private static MainController mainController;
 
     /**
@@ -49,46 +53,59 @@ public class VistaNavigator {
     /**
      * Loads the vista specified by the fxml file into the
      * vistaHolder pane of the main application layout.
-     *
+     * <p>
      * Previously loaded vista for the same fxml file are not cached.
      * The fxml is loaded anew and a new vista node hierarchy generated
      * every time this method is invoked.
-     *
+     * <p>
      * A more sophisticated load function could potentially add some
      * enhancements or optimizations, for example:
-     *   cache FXMLLoaders
-     *   cache loaded vista nodes, so they can be recalled or reused
-     *   allow a user to specify vista node reuse or new creation
-     *   allow back and forward history like a browser
+     * cache FXMLLoaders
+     * cache loaded vista nodes, so they can be recalled or reused
+     * allow a user to specify vista node reuse or new creation
+     * allow back and forward history like a browser
      *
      * @param fxml the fxml file to be loaded.
      */
+    public static void loadVista(String fxml, Map<String, Object> params, Object oldVistaController) {
+        changeVista(fxml, params, oldVistaController);
+    }
+
     public static void loadVista(String fxml, Object oldVistaController) {
-        deinitialize(oldVistaController);
-        changeVista(fxml);
+        changeVista(fxml, null, oldVistaController);
+    }
+
+    private static void changeVista(String fxml, Map<String, Object> params, Object oldVistaController) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(VistaNavigator.class.getResource(fxml));
+            deinitialize(oldVistaController);
+            Node load = fxmlLoader.load();
+            initialize(fxmlLoader.getController(),params);
+            mainController.setVista(load);
+        } catch (IOException e) {
+            LOGGER.error("failed!", e);
+        }
+    }
+
+    private static void initialize(Object controller,Map<String, Object> params) {
+        try {
+            if (controller instanceof FormInitializable) {
+                ((FormInitializable) controller).initializeForm(params);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Cannot initialize vista", e);
+            throw e;
+        }
     }
 
     private static void deinitialize(Object oldVistaController) {
         try {
-            if (oldVistaController instanceof Deinitializable) {
-                ((Deinitializable) oldVistaController).deinitialize();
+            if (oldVistaController instanceof FormDeinitializable) {
+                ((FormDeinitializable) oldVistaController).deinitialize();
             }
         } catch (Exception e) {
-            LOGGER.error("Cannot deinitialize vista", e );
-        }
-    }
-
-    private static void changeVista(String fxml) {
-        try {
-            mainController.setVista(
-                FXMLLoader.load(
-                    WalletApp.class.getResource(
-                        fxml
-                    )
-                )
-            );
-        } catch (IOException e) {
-            LOGGER.error("failed!", e );
+            LOGGER.error("Cannot deinitialize vista", e);
+            throw e;
         }
     }
 }

@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -35,9 +36,7 @@ import static com.credits.client.node.thrift.generated.TransactionState.INVALID;
 import static com.credits.client.node.thrift.generated.TransactionState.VALID;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.detailFromHistory;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
-import static com.credits.wallet.desktop.AppState.selectedTransactionRow;
 
 /**
  * Created by goncharov-eg on 29.01.2018.
@@ -81,9 +80,9 @@ public class HistoryController implements Initializable {
             if ((event.isPrimaryButtonDown()|| event.getButton() == MouseButton.PRIMARY) && event.getClickCount() == 2) {
                 TransactionTabRow tabRow = tableView.getSelectionModel().getSelectedItem();
                 if (tabRow != null) {
-                    selectedTransactionRow = tabRow;
-                    detailFromHistory = true;
-                    VistaNavigator.loadVista(VistaNavigator.TRANSACTION,this);
+                    HashMap<String, Object> params = new HashMap<>();
+                    params.put("selectedTransactionRow",tabRow);
+                    VistaNavigator.loadVista(VistaNavigator.TRANSACTION, params,this);
                 }
             }
         });

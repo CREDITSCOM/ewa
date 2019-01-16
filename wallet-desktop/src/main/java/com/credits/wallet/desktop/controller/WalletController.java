@@ -15,7 +15,6 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -34,29 +33,25 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ResourceBundle;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
 import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.amount;
 import static com.credits.wallet.desktop.AppState.coin;
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static com.credits.wallet.desktop.AppState.contractInteractionService;
-import static com.credits.wallet.desktop.AppState.noClearForm6;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
-import static com.credits.wallet.desktop.AppState.toAddress;
 import static com.credits.wallet.desktop.AppState.transactionFeeValue;
-import static com.credits.wallet.desktop.AppState.transactionText;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class WalletController implements Initializable {
+public class WalletController implements FormInitializable {
 
     private static final String ERR_COIN = "Coin must be selected";
     private static final String ERR_AMOUNT = "Amount must be greater than 0";
@@ -117,9 +112,9 @@ public class WalletController implements Initializable {
 
     @FXML
     private void handleGenerate() {
-        amount = GeneralConverter.toBigDecimal(numAmount.getText());
-        toAddress = txKey.getText();
-        transactionText = transText.getText();
+        String amount = numAmount.getText();
+        String transactionToAddress = txKey.getText();
+        String transactionText = transText.getText();
 
         // VALIDATE
         boolean isValidationSuccessful = true;
@@ -131,12 +126,12 @@ public class WalletController implements Initializable {
         } else {
             coin = coinsTableView.getSelectionModel().getSelectedItem().getName();
         }
-        if (toAddress == null || toAddress.isEmpty()) {
+        if (transactionToAddress == null || transactionToAddress.isEmpty()) {
             labErrorKey.setText(ERR_TO_ADDRESS);
             txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             isValidationSuccessful = false;
         }
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+        if (GeneralConverter.toBigDecimal(amount).compareTo(BigDecimal.ZERO) <= 0) {
             labErrorAmount.setText(ERR_AMOUNT);
             numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             isValidationSuccessful = false;
@@ -149,7 +144,7 @@ public class WalletController implements Initializable {
         }
         */
         try {
-            Validator.validateToAddress(toAddress);
+            Validator.validateToAddress(transactionToAddress);
         } catch (ConverterException e) {
             labErrorKey.setText("Invalid Address");
             txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
@@ -157,7 +152,11 @@ public class WalletController implements Initializable {
         }
 
         if (isValidationSuccessful) {
-            VistaNavigator.loadVista(VistaNavigator.FORM_7,this);
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("transactionToAddress",transactionToAddress);
+            params.put("amount",amount);
+            params.put("transactionText",transactionText);
+            VistaNavigator.loadVista(VistaNavigator.FORM_7, params, this);
         }
     }
 
@@ -287,7 +286,7 @@ public class WalletController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initializeForm(Map<String, Object> objects) {
         FormUtils.resizeForm(bp);
 
         initializeTable(coinsTableView);
@@ -321,12 +320,10 @@ public class WalletController implements Initializable {
             }
         });
 
-        if (noClearForm6) {
-            txKey.setText(toAddress);
-            numAmount.setText(GeneralConverter.toString(amount));
+        if (objects!=null) {
+            txKey.setText(objects.get("toAddress").toString());
+            numAmount.setText(objects.get("amount").toString());
             numFee.setText(GeneralConverter.toString(transactionFeeValue));
-
-            noClearForm6 = false;
         }
     }
 }
