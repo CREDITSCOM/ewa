@@ -7,6 +7,7 @@ import com.credits.wallet.desktop.VistaNavigator;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,7 +24,9 @@ public class SaveKeysController implements FormInitializable {
 
     @FXML
     private void handleContinue() {
-        VistaNavigator.loadVista(VistaNavigator.FORM_5,this);
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("isNewAccount","true");
+        VistaNavigator.loadVista(VistaNavigator.FORM_5, params, this);
     }
 
     @Override

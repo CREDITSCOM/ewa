@@ -35,7 +35,6 @@ public class AppState {
     public static Double screenWidth;
     public static Double screenHeight;
 
-    public static boolean newAccount;
     public static String account;
 
     public static BigDecimal transactionFeeValue = FEE_TRAN_AMOUNT;

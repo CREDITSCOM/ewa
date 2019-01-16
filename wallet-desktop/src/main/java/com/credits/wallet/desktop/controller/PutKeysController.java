@@ -29,7 +29,6 @@ import java.util.Map;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
-import static com.credits.wallet.desktop.AppState.newAccount;
 import static com.credits.wallet.desktop.AppState.privateKey;
 import static com.credits.wallet.desktop.AppState.publicKey;
 
@@ -39,7 +38,7 @@ import static com.credits.wallet.desktop.AppState.publicKey;
 public class PutKeysController implements FormInitializable {
     private static Logger LOGGER = LoggerFactory.getLogger(PutKeysController.class);
 
-    private static final String ERROR_EMPTY_PUBLIC  = "Public key is empty";
+    private static final String ERROR_EMPTY_PUBLIC = "Public key is empty";
     private static final String ERROR_EMPTY_PRIVATE = "Private key is empty";
 
     @FXML
@@ -65,7 +64,7 @@ public class PutKeysController implements FormInitializable {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WELCOME,this);
+        VistaNavigator.loadVista(VistaNavigator.WELCOME, this);
     }
 
     @FXML
@@ -73,7 +72,6 @@ public class PutKeysController implements FormInitializable {
         open(txPublic.getText(), txKey.getText());
     }
 
-    @FXML
     private void handleSaveKeys() throws WalletDesktopException {
         FileChooser fileChooser = new FileChooser();
         File defaultDirectory = new File(System.getProperty("user.dir"));
@@ -128,14 +126,9 @@ public class PutKeysController implements FormInitializable {
     @Override
     public void initializeForm(Map<String, Object> objects) {
         clearLabErr();
+        if (objects != null && objects.get("isNewAccount") != null) {
+            hideElementsForUploadExistAccount();
 
-        btnBack.setVisible(!newAccount);
-        btnUpload.setVisible(!newAccount);
-        lblUpload.setVisible(!newAccount);
-        txPublic.setEditable(!newAccount);
-        txKey.setEditable(!newAccount);
-
-        if (newAccount) {
             txKey.setText(GeneralConverter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
             txPublic.setText(GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)));
             try {
@@ -147,6 +140,14 @@ public class PutKeysController implements FormInitializable {
 
     }
 
+    private void hideElementsForUploadExistAccount() {
+        btnBack.setVisible(false);
+        btnUpload.setVisible(false);
+        lblUpload.setVisible(false);
+        txPublic.setEditable(false);
+        txKey.setEditable(false);
+    }
+
     private void open(String pubKey, String privKey) {
         clearLabErr();
 
@@ -154,17 +155,17 @@ public class PutKeysController implements FormInitializable {
         if (privKey.isEmpty()) {
             errorLabelPrivate.setText(ERROR_EMPTY_PRIVATE);
             empty = true;
-        }
-        else
+        } else {
             errorLabelPrivate.setText("");
+        }
 
         if (pubKey.isEmpty()) {
             errorLabelPublic.setText(ERROR_EMPTY_PUBLIC);
             empty = true;
-        }
-        else
+        } else {
             errorLabelPublic.setText("");
-        if(empty) {
+        }
+        if (empty) {
             return;
         }
 
@@ -172,7 +173,7 @@ public class PutKeysController implements FormInitializable {
         try {
             byte[] privateKeyByteArr = GeneralConverter.decodeFromBASE58(privKey);
             privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
-        } catch ( Exception e) {
+        } catch (Exception e) {
             if (e.getMessage() != null) {
                 errorLabelPrivate.setText(e.getMessage());
             } else {
@@ -184,7 +185,7 @@ public class PutKeysController implements FormInitializable {
         try {
             byte[] publicKeyByteArr = GeneralConverter.decodeFromBASE58(pubKey);
             publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
-        } catch ( Exception e) {
+        } catch (Exception e) {
             if (e.getMessage() != null) {
                 errorLabelPublic.setText(e.getMessage());
             } else {
@@ -195,16 +196,20 @@ public class PutKeysController implements FormInitializable {
         }
 
         if (validateKeys(pubKey, privKey)) {
-            VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+            VistaNavigator.loadVista(VistaNavigator.WALLET, this);
         }
     }
 
     private void initStaticData(String pubKey) {
         account = pubKey;
         NodeApiServiceImpl.account = pubKey;
-        if(favoriteContractsKeeper != null) favoriteContractsKeeper.flush();
+        if (favoriteContractsKeeper != null) {
+            favoriteContractsKeeper.flush();
+        }
         favoriteContractsKeeper = new ObjectKeeper<>(account, "favorite");
-        if(coinsKeeper != null) coinsKeeper.flush();
+        if (coinsKeeper != null) {
+            coinsKeeper.flush();
+        }
         coinsKeeper = new ObjectKeeper<>(account, "coins");
     }
 
