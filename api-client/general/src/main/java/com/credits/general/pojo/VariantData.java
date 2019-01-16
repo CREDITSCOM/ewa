@@ -22,6 +22,14 @@ public class VariantData {
     }
 
     @Override
+    public String toString() {
+        return "VariantData{" +
+                "variantType=" + variantType +
+                ", boxedValue=" + boxedValue +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object object) {
         if (!(object instanceof VariantData)) {
             return false;

@@ -1,15 +1,8 @@
 package com.credits.client.node.service;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.SmartContractData;
-import com.credits.client.node.pojo.SmartContractDeployData;
-import com.credits.client.node.pojo.SmartContractInvocationData;
-import com.credits.client.node.pojo.SmartContractTransactionFlowData;
-import com.credits.client.node.pojo.TransactionData;
-import com.credits.client.node.pojo.TransactionFlowData;
-import com.credits.client.node.pojo.TransactionIdData;
+import com.credits.client.node.pojo.*;
 import com.credits.client.node.thrift.generated.API;
-import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.thrift.ThriftClientPool;
@@ -37,6 +30,7 @@ import static org.junit.Assert.fail;
  * Created by Rustem.Saidaliyev on 01.02.2018.
  */
 @SuppressWarnings("SpellCheckingInspection")
+@Ignore
 public class NodeClientTestIT {
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeClientTestIT.class);
     private static final String API_HOST = "localhost";
@@ -136,7 +130,8 @@ public class NodeClientTestIT {
         long transactionId = 12327;
         String source = "4ESD7KpGzJCfDL8pZKhMfcfekqdoBdjSBUF5FiJdkBAC";
         String target = "transactionTarget";
-        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("sourceCode", null, TokenStandart.CreditsBasic);
+
+        SmartContractDeployData smartContractDeployData = new SmartContractDeployData("sourceCode", null, TokenStandartData.CreditsBasic);
         SmartContractInvocationData scData = new SmartContractInvocationData(smartContractDeployData, "method", null, true);
         TransactionFlowData transactionData = new TransactionFlowData(transactionId, decodeFromBASE58(source), decodeFromBASE58(target), new BigDecimal(1), (short) 0x001,null, null);
         SmartContractTransactionFlowData smartContractFlowData = new SmartContractTransactionFlowData(transactionData,scData);

@@ -215,9 +215,9 @@ public class VariantConverter {
                    .collect(
                        Collectors.toMap(entry ->
                        VariantConverter.objectToVariantData(entry.getKey()),
-                       entry -> VariantConverter.objectToVariantData((entry.getValue())
+                       entry -> VariantConverter.objectToVariantData((entry.getValue()))
                        )
-                   ));
+                   );
            variantData = new VariantData(VariantType.MAP, variantDataMap);
        } else if (object instanceof Boolean) {
            variantData = new VariantData(VariantType.BOOL_BOX, object);

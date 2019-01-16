@@ -25,7 +25,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils.computeHighlighting;
-import static javafx.scene.input.KeyCode.*;
+import static javafx.scene.input.KeyCode.BACK_SPACE;
+import static javafx.scene.input.KeyCode.INSERT;
+import static javafx.scene.input.KeyCode.PASTE;
+import static javafx.scene.input.KeyCode.SHIFT;
+import static javafx.scene.input.KeyCode.V;
+import static javafx.scene.input.KeyCode.Y;
+import static javafx.scene.input.KeyCode.Z;
 import static javafx.scene.input.KeyCombination.SHIFT_DOWN;
 import static javafx.scene.input.KeyCombination.SHORTCUT_DOWN;
 import static org.fxmisc.wellbehaved.event.EventPattern.anyOf;
@@ -41,10 +47,11 @@ public class CreditsCodeArea extends CodeArea {
     private static final String TAB_STRING = StringUtils.repeat(" ", TAB_SIZE);
     private static final String DEFAULT_SOURCE_CODE =
             "public class Contract extends SmartContract {\n" + "\n" + TAB_STRING + "public Contract(String initiator) {\n" + TAB_STRING + TAB_STRING + "super(initiator);\n" + TAB_STRING + "}" + "\n" + "}";
+    private static final long PERIOD_OF_SAVING_TEXT = 1000;
     private static int tabCount;
     private ExecutorService codeAreaHighlightExecutor = Executors.newSingleThreadExecutor();
 
-
+    private long lastTimeStampOfSavedText;
     private CreditsToolboxPopup popup;
     private AutocompleteHelper autocompleteHelper;
     private CreditsProposalsPopup creditsProposalsPopup;
@@ -57,6 +64,7 @@ public class CreditsCodeArea extends CodeArea {
         popup = new CreditsToolboxPopup(this, readOnly);
         creditsProposalsPopup = new CreditsProposalsPopup();
         autocompleteHelper = new AutocompleteHelper(this, creditsProposalsPopup);
+        lastTimeStampOfSavedText = System.currentTimeMillis();
     }
 
     private void initCodeAreaLogic() {
@@ -71,6 +79,9 @@ public class CreditsCodeArea extends CodeArea {
         initKeyPressedLogic();
         initRichTextLogic();
         fillDefaultCodeSource();
+        if(AppState.lastSmartContract == null){
+           AppState.lastSmartContract = getText();
+        }
     }
 
     private void initRichTextLogic() {
@@ -105,8 +116,8 @@ public class CreditsCodeArea extends CodeArea {
         });
 
         this.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
-            if (k.getCode() != SHIFT) {
-                KeyCode code = k.getCode();
+            KeyCode code = k.getCode();
+            if (code != SHIFT) {
                 if (code != KeyCode.TAB) {
                     if (code.isLetterKey() || code.isDigitKey() || code.isNavigationKey() || code.isWhitespaceKey()) {
                         tabCount = 0;
@@ -114,7 +125,9 @@ public class CreditsCodeArea extends CodeArea {
                 }
                 this.autocompleteHelper.handleKeyPressEvent(k);
             }
+            trySaveTextToMemory(code);
         });
+
 
         Nodes.addInputMap(this, InputMap.consume(keyPressed(Z, SHORTCUT_DOWN), e -> {
             this.undo();
@@ -135,18 +148,21 @@ public class CreditsCodeArea extends CodeArea {
         Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.ENTER), e -> {
             String currentLine = getText().split("\n")[getCaretPositionOnLines().lineNumber];
             tabCount = countTabsNumberAtBeginLine(currentLine);
-            if (currentLine.length() > 0
-                    && currentLine.charAt(getCaretPositionOnLines().position - 1) == '{'
-                    && isBraceRequired()) {
-                tabCount += 1;
-                replaceSelection("\n\n" + StringUtils.repeat(TAB_STRING, tabCount - 1) + "}");
-                setCaretPositionOnLine(getCaretPositionOnLines().lineNumber);
-                replaceSelection(StringUtils.repeat(TAB_STRING, tabCount));
-            } else {
-                if(currentLine.charAt(getCaretPositionOnLines().position - 1) == '{'){
+            int caretPosition = getCaretPositionOnLines().position;
+            if (currentLine.length() > 0) {
+                if (getNextCharAfterCaret(currentLine, caretPosition) == '{' && isBraceRequired()) {
                     tabCount += 1;
+                    replaceSelection("\n\n" + StringUtils.repeat(TAB_STRING, tabCount - 1) + "}");
+                    setCaretPositionOnLine(getCaretPositionOnLines().lineNumber);
+                    replaceSelection(StringUtils.repeat(TAB_STRING, tabCount));
+                } else {
+                    if (getNextCharAfterCaret(currentLine, caretPosition) == '{') {
+                        tabCount += 1;
+                    }
+                    replaceSelection("\n" + StringUtils.repeat(TAB_STRING, tabCount));
                 }
-                replaceSelection("\n" + StringUtils.repeat(TAB_STRING, tabCount));
+            } else {
+                replaceSelection("\n");
             }
         }));
 
@@ -169,6 +185,21 @@ public class CreditsCodeArea extends CodeArea {
                 }
             }
         }));
+    }
+
+    private char getNextCharAfterCaret(String currentLine, int caretPosition) {
+        return currentLine.charAt(caretPosition > 0 ? caretPosition - 1 : 0);
+    }
+
+    private void trySaveTextToMemory(KeyCode code) {
+        if (code.isLetterKey() || code.isDigitKey() || code.isWhitespaceKey() || code == BACK_SPACE) {
+            if ((System.currentTimeMillis() - lastTimeStampOfSavedText) > PERIOD_OF_SAVING_TEXT) {
+                if (!AppState.lastSmartContract.equals(getText())) {
+                    AppState.lastSmartContract = getText();
+                    lastTimeStampOfSavedText = System.currentTimeMillis();
+                }
+            }
+        }
     }
 
     private boolean isBraceRequired() {
@@ -240,7 +271,7 @@ public class CreditsCodeArea extends CodeArea {
 
     public void setCaretPositionOnLine(int lineNumber) {
         this.positionCursorToLine(lineNumber);
-        CreditsCodeArea.CaretLinePosition caretLinePosition = this.getCaretPositionOnLines();
+        CreditsCodeArea.CaretLinePosition caretLinePosition = getCaretPositionOnLines();
         String currentLine = caretLinePosition.lines[caretLinePosition.lineNumber];
         this.fixCaretPosition(this.getCaretPosition() + this.getPositionFirstNotSpecialCharacter(
             currentLine));

@@ -5,6 +5,7 @@ import com.credits.client.node.pojo.*;
 import com.credits.client.node.pojo.WalletData;
 import com.credits.client.node.thrift.generated.*;
 import com.credits.client.node.util.NodePojoConverter;
+import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Function;
 import com.credits.general.util.exception.ConverterException;
@@ -120,7 +121,7 @@ public class NodeApiServiceImpl implements NodeApiService {
     @Override
     public TransactionFlowResultData smartContractTransactionFlow(SmartContractTransactionFlowData scTransaction)
         throws NodeClientException, ConverterException {
-        //todo validation
+        Validator.validate(scTransaction);
         Transaction transaction = smartContractTransactionFlowDataToTransaction(scTransaction);
         LOGGER.debug("smartContractTransactionFlow -> {}", transaction);
         TransactionFlowResultData response = callTransactionFlow(transaction);
@@ -130,7 +131,7 @@ public class NodeApiServiceImpl implements NodeApiService {
 
     @Override
     public TransactionFlowResultData transactionFlow(TransactionFlowData transactionFlowData) {
-        //todo validation
+        Validator.validate(transactionFlowData);
         Transaction transaction = transactionFlowDataToTransaction(transactionFlowData);
         LOGGER.debug("transaction flow -> {}", transactionFlowData);
         TransactionFlowResultData response = callTransactionFlow(transaction);
@@ -202,13 +203,12 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     @Override
-    //todo add pojo TransactionsStateGetResult
-    public TransactionsStateGetResult getTransactionsState(String address, List<Long> transactionIdList)
+    public TransactionsStateGetResultData getTransactionsState(String address, List<Long> transactionIdList)
         throws NodeClientException, ConverterException {
-        TransactionsStateGetResult result =
+        TransactionsStateGetResult transactionsStateGetResult =
             nodeClient.getTransactionsState(decodeFromBASE58(address), transactionIdList);
-        processApiResponse(result.getStatus());
-        return result;
+        processApiResponse(transactionsStateGetResult.getStatus());
+        return NodePojoConverter.createTransactionsStateGetResultData(transactionsStateGetResult);
     }
 
     public static <R> void async(Function<R> apiCall, Callback<R> callback) {

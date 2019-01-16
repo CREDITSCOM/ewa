@@ -70,7 +70,6 @@ public class GeneralConverter {
         if (value instanceof Short) {
             return String.valueOf(value);
         }
-        // TODO Добавить Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
@@ -98,7 +97,16 @@ public class GeneralConverter {
                 throw new IllegalArgumentException(String.format("Invalid int value: %s", intValue));
             }
         }
-        // TODO Добавить Byte, Short, Float, Long, Character, Double, BigDecimal, Date и т.д.
+        if (value instanceof Byte) {
+            Byte byteValue = (Byte)value;
+            if (byteValue == 1) {
+                return true;
+            } else if (byteValue == 0) {
+                return false;
+            } else {
+                throw new IllegalArgumentException(String.format("Invalid byte value: %s", byteValue));
+            }
+        }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
@@ -110,9 +118,25 @@ public class GeneralConverter {
             return Integer.parseInt((String)value);
         }
         if (value instanceof Double) {
-            return ((Double) value).intValue();
+            final Double doubleValue = (Double)value;
+            if (Math.abs(doubleValue) < (double) Integer.MIN_VALUE || Math.abs(doubleValue) > (double) Integer.MAX_VALUE) {
+                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Integer [%s %s]", Math.abs(doubleValue), Integer.MIN_VALUE, Integer.MAX_VALUE));
+            }
+            return ((Double)value).intValue();
         }
-        // TODO Добавить Byte, Short, Long, Character, Float, Double, Float, BigDecimal, Boolean, Date и т.д.
+        if (value instanceof Byte) {
+            return Integer.valueOf((Byte)value);
+        }
+        if (value instanceof Short) {
+            return Integer.valueOf((Short)value);
+        }
+        if (value instanceof Long) {
+            final Long longValue = (Long)value;
+            if (Math.abs(longValue) < (long) Integer.MIN_VALUE || Math.abs(longValue) > (long) Integer.MAX_VALUE) {
+                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Integer [%s %s]", Math.abs(longValue), Integer.MIN_VALUE, Integer.MAX_VALUE));
+            }
+            return ((Long)value).intValue();
+        }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
@@ -122,10 +146,27 @@ public class GeneralConverter {
         }
         if (value instanceof String) {
             return Float.parseFloat((String) value);
-        } else if (value instanceof Double) {
+        }
+        if (value instanceof Double) {
+            Double doubleValue = (Double)value;
+            if (Math.abs(doubleValue) < (double) Float.MIN_NORMAL || Math.abs(doubleValue) > (double)  Float.MAX_VALUE) {
+                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Float [%s %s]", Math.abs(doubleValue), Float.MIN_NORMAL, Float.MAX_VALUE));
+            }
             return (float)(double)value;
         }
-        // TODO Добавить Byte, Short, Integer, Long, Character, BigDecimal, Boolean, Date и т.д.
+        if (value instanceof Byte) {
+            return (float)(byte)value;
+        }
+        if (value instanceof Short) {
+            return (float)(short)value;
+        }
+        if (value instanceof Integer) {
+            return (float)(int)value;
+        }
+        if (value instanceof Integer) {
+            return (float)(int)value;
+        }
+
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
@@ -136,7 +177,6 @@ public class GeneralConverter {
         if (value instanceof String) {
             return Byte.parseByte((String)value);
         }
-        // TODO Добавить Short, Integer, Long, Character, Float, Double, BigDecimal, Boolean, Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
@@ -150,7 +190,6 @@ public class GeneralConverter {
             BigDecimal bigDecimal = (BigDecimal)value;
             return bigDecimal.shortValueExact();
         }
-        // TODO Добавить Byte, Integer, Long, Character, Float, Double, Boolean, Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
@@ -176,7 +215,6 @@ public class GeneralConverter {
         } else if (value instanceof Double) {
             return ((Double)value).longValue();
         }
-        // TODO Добавить Byte, Short, Integer, Float, Double, Character, BigDecimal, Boolean, Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
@@ -220,7 +258,6 @@ public class GeneralConverter {
             }
             return stringValue.charAt(0);
         }
-        // TODO Добавить Byte, Short, Integer, Float, Long, Double, BigDecimal, Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
@@ -236,7 +273,6 @@ public class GeneralConverter {
         } else if (value instanceof Integer) {
             return ((Integer)value).doubleValue();
         }
-        // TODO Добавить Byte, Short, Long, BigDecimal, Boolean, Date и т.д.
         return null;
     }
 
@@ -254,7 +290,6 @@ public class GeneralConverter {
                 throw new ConverterException(e);
             }
         }
-        // TODO Добавить Byte, Short, Integer, Long, Float, BigDecimal, Boolean, Date и т.д.
         return null;
     }
 
@@ -294,9 +329,6 @@ public class GeneralConverter {
         if (value instanceof Long) {
             return new BigDecimal((Long) value);
         }
-
-
-        // TODO Добавить Integer и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
@@ -372,7 +404,6 @@ public class GeneralConverter {
             buffer.putLong((Long)value);
             return buffer.array();
         }
-        // TODO Добавить String, Byte, Short, Integer, Float, Double, BigDecimal, Date и т.д.
         throw new ConverterException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
 
     }

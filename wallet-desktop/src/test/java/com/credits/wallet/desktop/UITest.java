@@ -87,7 +87,7 @@ public class UITest {
         //balances
         doAnswer(returnBalance(new BigDecimal("2443113.00192177821876551"))).when(mockContractInteractionService).getSmartContractBalance(anyString(), any());
 
-        when(mockNodeApiService.getTransactionsState(any(), any())).thenReturn(FakeData.transactionsStateGetResult);
+        when(mockNodeApiService.getTransactionsState(any(), any())).thenReturn(FakeData.transactionsStateGetResultData);
 
         //transactions
         when(mockNodeApiService.getTransactions(any(), anyLong(), anyLong())).thenReturn(FakeData.transactionsDataList);

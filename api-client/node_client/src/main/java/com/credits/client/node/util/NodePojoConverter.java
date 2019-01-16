@@ -1,25 +1,8 @@
 package com.credits.client.node.util;
 
-import com.credits.client.node.pojo.PoolData;
-import com.credits.client.node.pojo.SmartContractData;
-import com.credits.client.node.pojo.SmartContractDeployData;
-import com.credits.client.node.pojo.SmartContractInvocationData;
-import com.credits.client.node.pojo.SmartContractTransactionFlowData;
-import com.credits.client.node.pojo.TransactionData;
-import com.credits.client.node.pojo.TransactionFlowData;
-import com.credits.client.node.pojo.TransactionFlowResultData;
-import com.credits.client.node.pojo.TransactionIdData;
+import com.credits.client.node.pojo.*;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.generated.Amount;
-import com.credits.client.node.thrift.generated.AmountCommission;
-import com.credits.client.node.thrift.generated.Pool;
-import com.credits.client.node.thrift.generated.SealedTransaction;
-import com.credits.client.node.thrift.generated.SmartContract;
-import com.credits.client.node.thrift.generated.SmartContractDeploy;
-import com.credits.client.node.thrift.generated.SmartContractInvocation;
-import com.credits.client.node.thrift.generated.Transaction;
-import com.credits.client.node.thrift.generated.TransactionFlowResult;
-import com.credits.client.node.thrift.generated.TransactionId;
+import com.credits.client.node.thrift.generated.*;
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.VariantData;
@@ -34,6 +17,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static com.credits.general.util.Constants.ds;
 import static com.credits.general.util.GeneralConverter.byteArrayToByteBuffer;
@@ -180,7 +164,7 @@ public class NodePojoConverter {
         thriftStruct.setSourceCode(data.getSourceCode());
         thriftStruct.setByteCodeObjects(GeneralConverter.byteCodeObjectsDataToByteCodeObjects(data.getByteCodeObjects()));
         thriftStruct.setHashState(data.getHashState());
-        thriftStruct.setTokenStandart(data.getTokenStandard());
+        thriftStruct.setTokenStandart(tokenStandartDataToTokenStandart(data.getTokenStandardData()));
         return thriftStruct;
     }
 
@@ -193,9 +177,8 @@ public class NodePojoConverter {
 
     public static SmartContractDeployData smartContractDeployToSmartContractDeployData(
         SmartContractDeploy thriftStruct) {
-
         return new SmartContractDeployData(thriftStruct.getSourceCode(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(thriftStruct.getByteCodeObjects()),
-            thriftStruct.getTokenStandart());
+            tokenStandartToTokenStandartData(thriftStruct.getTokenStandart()));
     }
 
 
@@ -241,7 +224,7 @@ public class NodePojoConverter {
     public static TransactionFlowResultData transactionFlowResultToTransactionFlowResultData(
         TransactionFlowResult result, byte[] source, byte[] target) {
         return new TransactionFlowResultData(apiResponseToApiResponseData(result.getStatus()), result.getRoundNum(),
-            source, target, result.getSmart_contract_result());
+            source, target, VariantConverter.variantToVariantData(result.getSmart_contract_result()));
     }
 
     public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {
@@ -271,5 +254,69 @@ public class NodePojoConverter {
     public static long getShortTransactionId(long wideTransactionId) {
         long maskForZeroingFirstTwoBit = 0x3FFFFFFFFFFFL;
         return wideTransactionId & maskForZeroingFirstTwoBit;
+    }
+
+    public static TokenStandart tokenStandartDataToTokenStandart(TokenStandartData tokenStardartData) {
+        if (tokenStardartData.equals(TokenStandartData.NotAToken)) {
+            return TokenStandart.NotAToken;
+        }
+        if (tokenStardartData.equals(TokenStandartData.CreditsBasic)) {
+            return TokenStandart.CreditsBasic;
+        }
+        if (tokenStardartData.equals(TokenStandartData.CreditsExtended)) {
+            return TokenStandart.CreditsExtended;
+        }
+        throw new ConverterException(String.format("Unsupported value: %s", tokenStardartData.getValue()));
+    }
+
+    public static TokenStandartData tokenStandartToTokenStandartData(TokenStandart tokenStardart) {
+        if (tokenStardart.equals(TokenStandart.NotAToken)) {
+            return TokenStandartData.NotAToken;
+        }
+        if (tokenStardart.equals(TokenStandart.CreditsBasic)) {
+            return TokenStandartData.CreditsBasic;
+        }
+        if (tokenStardart.equals(TokenStandart.CreditsExtended)) {
+            return TokenStandartData.CreditsExtended;
+        }
+        throw new ConverterException(String.format("Unsupported value: %s", tokenStardart.getValue()));
+    }
+
+    public static TransactionState transactionStateDataToTransactionState(TransactionStateData transactionStateData) {
+        if (transactionStateData.equals(TransactionStateData.INVALID)) {
+            return TransactionState.INVALID;
+        }
+        if (transactionStateData.equals(TransactionStateData.VALID)) {
+            return TransactionState.VALID;
+        }
+        if (transactionStateData.equals(TransactionStateData.INPROGRESS)) {
+            return TransactionState.INPROGRESS;
+        }
+        throw new ConverterException(String.format("Unsupported value: %s", transactionStateData.getValue()));
+    }
+
+    public static TransactionStateData transactionStateToTransactionStateData(TransactionState transactionState) {
+        if (transactionState.equals(TransactionState.INVALID)) {
+            return TransactionStateData.INVALID;
+        }
+        if (transactionState.equals(TransactionState.VALID)) {
+            return TransactionStateData.VALID;
+        }
+        if (transactionState.equals(TransactionState.INPROGRESS)) {
+            return TransactionStateData.INPROGRESS;
+        }
+        throw new ConverterException(String.format("Unsupported value: %s", transactionState.getValue()));
+    }
+
+    public static TransactionsStateGetResultData createTransactionsStateGetResultData(
+            TransactionsStateGetResult result) {
+        return new TransactionsStateGetResultData(
+                apiResponseToApiResponseData(result.getStatus()),
+                result.getStates().entrySet().stream().collect(Collectors.toMap(
+                    e -> e.getKey(),
+                    e -> transactionStateToTransactionStateData(e.getValue())
+                )),
+                result.getRoundNum()
+        );
     }
 }

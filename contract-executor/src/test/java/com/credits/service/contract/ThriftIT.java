@@ -2,8 +2,8 @@ package com.credits.service.contract;
 
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
-import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.client.node.pojo.TokenStandartData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.ServiceTest;
@@ -37,7 +37,7 @@ public class ThriftIT extends ServiceTest {
             new SmartContractData(
                     address,
                     address,
-                    new SmartContractDeployData(sourceCode, byteCodeObjects, TokenStandart.CreditsBasic),
+                    new SmartContractDeployData(sourceCode, byteCodeObjects, TokenStandartData.CreditsBasic),
                     null
             ));
 

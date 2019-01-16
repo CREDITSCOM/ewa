@@ -7,6 +7,7 @@ import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
 import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
 import com.credits.client.executor.thrift.generated.GetContractVariablesResult;
 import com.credits.general.thrift.generated.ByteCodeObject;
+import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.Variant;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public interface ContractExecutorThriftApi {
 
-    ExecuteByteCodeResult executeByteCode(byte[] address, List<ByteCodeObject> byteCodeObjects, byte[] objectState, String method, List<Variant> params, long executionTime) throws ContractExecutorClientException;
+    ExecuteByteCodeResult executeByteCode(byte[] address, List<ByteCodeObject> byteCodeObjects, byte[] objectState, String method, List<VariantData> params, long executionTime) throws ContractExecutorClientException;
 
     ExecuteByteCodeMultipleResult executeByteCodeMultiple(byte[] address, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<List<Variant>> params, long executionTime);
 

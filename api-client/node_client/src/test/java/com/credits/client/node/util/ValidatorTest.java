@@ -1,5 +1,6 @@
 package com.credits.client.node.util;
 
+import com.credits.client.node.exception.NodeClientException;
 import com.credits.general.util.exception.ConverterException;
 import org.junit.Test;
 
@@ -15,12 +16,23 @@ public class ValidatorTest {
     @Test
     public void validateTransactionHashTest() throws ConverterException {
         String hash = "8iif6oqo";
-        validateTransactionHash(hash);
+        try {
+            validateTransactionHash(hash);
+        } catch (NodeClientException e) {
+            e.printStackTrace();
+            assert false;
+        }
     }
 
     @Test
     public void validateToAddressTest() throws ConverterException {
         String toAddress = "HMXHATk9fRJrdHS1rkge5zgwHWXCPAnjUmiSxsGnBcq4";
-        validateToAddress(toAddress);
+        try {
+            validateToAddress(toAddress);
+        } catch(NodeClientException e) {
+            e.printStackTrace();
+            assert false;
+        }
+
     }
 }

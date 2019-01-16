@@ -3,6 +3,7 @@ package com.credits.general.util.variant;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.pojo.VariantType;
 import com.credits.general.util.GeneralConverter;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -12,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.credits.general.util.variant.VariantUtils.COLLECTION_VALUES_DELIMITER;
 import static com.credits.general.util.variant.VariantUtils.MAP_KEY_VALUE_DELIMITER;
@@ -69,50 +69,28 @@ public class VariantUtilsTest {
             case ARRAY:
                 VariantData[] variantDataArr = (VariantData[]) boxedValue;
                 if (variantDataArr.length == 0) break;
-                LOGGER.info("Input {{}: {}} -> VariantData {{}: {}}", classname, value, variantDataArr[0].getVariantType().name + "[]",
-                        Arrays.stream(variantDataArr).map(variantDataElem -> {
-                            return GeneralConverter.toString(variantDataElem.getBoxedValue());
-                        }).collect(Collectors.joining(","))
-                );
                 break;
             case LIST:
                 List<VariantData> variantDataList = (List<VariantData>) boxedValue;
                 if (variantDataList.size() == 0) break;
-                LOGGER.info("Input {{}: {}} -> VariantData {{}: {}}", classname, value, String.format("List<%s>", variantDataList.get(0).getVariantType().name),
-                        variantDataList.stream().map(variantDataElem -> {
-                            return GeneralConverter.toString(variantDataElem.getBoxedValue());
-                        }).collect(Collectors.joining(","))
-                );
                 break;
             case SET:
                 Set<VariantData> variantDataSet = (Set<VariantData>) boxedValue;
                 if (variantDataSet.size() == 0) break;
-                LOGGER.info("Input {{}: {}} -> VariantData {{}: {}}", classname, value, String.format("Set<%s>", variantDataSet.iterator().next().getVariantType().name),
-                        variantDataSet.stream().map(variantDataElem -> {
-                            return GeneralConverter.toString(variantDataElem.getBoxedValue());
-                        }).collect(Collectors.joining(","))
-                );
                 break;
             case MAP:
                 Map<VariantData, VariantData> variantDataMap = (Map<VariantData, VariantData>) boxedValue;
                 if (variantDataMap.size() == 0) break;
-                LOGGER.info("Input {{}: {}} -> VariantData {{}: {}}", classname, value,
-                        String.format(
-                                "Map<%s, %s>",
-                                variantDataMap.keySet().iterator().next().getVariantType().name,
-                                variantDataMap.values().iterator().next().getVariantType().name
-                        ),
-                        variantDataMap.entrySet().stream().map(entrySet -> {
-                            return String.format(
-                                    "%s:%s",
-                                    entrySet.getKey().getBoxedValue(),
-                                    entrySet.getValue().getBoxedValue()
-                            );
-                        }).collect(Collectors.joining(","))
-                );
                 break;
             default:
-                LOGGER.info("Input {{}: {}} -> VariantData {{}: {}}", classname, value, variantType.name, GeneralConverter.toString(boxedValue));
+                boolean valueIsNullOrEmpty = value == null || value.trim().isEmpty();
+                Assert.assertEquals(
+                        String.format("{%s: %s}",
+                                (valueIsNullOrEmpty ? VariantType.NULL.name : classname),
+                                (valueIsNullOrEmpty ? "null" : value)
+                        ),
+                        String.format("{%s: %s}", variantType.name, GeneralConverter.toString(boxedValue))
+                );
         }
     }
 }

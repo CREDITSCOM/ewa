@@ -1,5 +1,7 @@
 package com.credits.general.util;
 
+import com.credits.general.exception.CreditsException;
+
 public class MathUtils {
 
     public static double round(double value, int places) {
@@ -20,8 +22,10 @@ public class MathUtils {
             value *= 0.1;
             ++expi;
         }
-        // TODO validate expi or exp between 0 to 28
         exp = expi + 18;
+        if (exp < 0 || exp > 28) {
+            throw new CreditsException(String.format("exp value %s out of range [0, 28]", exp));
+        }
         frac = Math.round(value * 1024);
         final double _1_1024 = 1.0 / 1024;
         return (sign != 0 ? -1.0 : 1.0) * frac * _1_1024 * Math.pow(10.0, exp - 18);

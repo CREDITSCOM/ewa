@@ -4,6 +4,7 @@ import com.credits.general.exception.CompilationException;
 import com.credits.general.util.PrintOut;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class InMemoryCompilerTest {
             DiagnosticCollector collector = compilationPackage.getCollector();
             List<Diagnostic> diagnostics = collector.getDiagnostics();
             diagnostics.forEach(action -> {
-                LOGGER.info(String.format("Line number: %s; Error message: %s", action.getLineNumber(), action.getMessage(null)));
+                Assert.assertEquals(action.getLineNumber(), 3);
             });
         }
 
@@ -49,7 +50,7 @@ public class InMemoryCompilerTest {
     public void loadJdkPathFromEnvironmentVariablesTest() {
         InMemoryCompiler compiler = new InMemoryCompiler();
         try {
-            LOGGER.info(compiler.loadJdkPathFromEnvironmentVariables());
+            Assert.assertNotNull(compiler.loadJdkPathFromEnvironmentVariables());
         } catch (CompilationException e) {
             e.printStackTrace();
         }
