@@ -39,6 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
+import static com.credits.wallet.desktop.AppState.CREDITS_TOKEN_NAME;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.coin;
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
@@ -59,7 +60,6 @@ public class WalletController implements FormInitializable {
     private final String WAITING_STATE_MESSAGE = "processing...";
     private final String ERROR_STATE_MESSAGE = "not available";
     private final DecimalFormat creditsDecimalFormat = new DecimalFormat("##0." + repeat('0', CREDITS_DECIMAL));
-    public final String CREDITS_TOKEN_NAME = "CS";
     ContextMenu contextMenu = new ContextMenu();
 
     @FXML
@@ -87,12 +87,12 @@ public class WalletController implements FormInitializable {
 
     @FXML
     private void handleLogout() {
-        VistaNavigator.loadVista(VistaNavigator.WELCOME,this);
+        VistaNavigator.loadVista(VistaNavigator.WELCOME, this);
     }
 
     @FXML
     private void handleAddCoin() {
-        VistaNavigator.loadVista(VistaNavigator.NEW_COIN,this);
+        VistaNavigator.loadVista(VistaNavigator.NEW_COIN, this);
     }
 
     @FXML
@@ -116,7 +116,8 @@ public class WalletController implements FormInitializable {
         // VALIDATE
         boolean isValidationSuccessful = true;
         clearLabErr();
-        if (coinsTableView.getSelectionModel().getSelectedItem() == null || coinsTableView.getSelectionModel().getSelectedItem().getName().isEmpty()) {
+        if (coinsTableView.getSelectionModel().getSelectedItem() == null ||
+            coinsTableView.getSelectionModel().getSelectedItem().getName().isEmpty()) {
             labErrorCoin.setText(ERR_COIN);
             coinsTableView.getStyleClass().add("credits-border-red");
             isValidationSuccessful = false;
@@ -150,9 +151,9 @@ public class WalletController implements FormInitializable {
 
         if (isValidationSuccessful) {
             HashMap<String, Object> params = new HashMap<>();
-            params.put("transactionToAddress",transactionToAddress);
-            params.put("amount",amount);
-            params.put("transactionText",transactionText);
+            params.put("transactionToAddress", transactionToAddress);
+            params.put("amount", amount);
+            params.put("transactionText", transactionText);
             VistaNavigator.loadVista(VistaNavigator.FORM_7, params, this);
         }
     }
@@ -160,12 +161,15 @@ public class WalletController implements FormInitializable {
     private void updateCoins(TableView<CoinTabRow> tableView) {
         ObservableList<CoinTabRow> tableViewItems = tableView.getItems();
         addOrUpdateCsCoinRow(tableViewItems);
-        coinsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new).forEach((coinName, contractAddress) -> addOrUpdateUserCoinRow(tableViewItems, coinName, contractAddress));
+        coinsKeeper.getKeptObject()
+            .orElseGet(ConcurrentHashMap::new)
+            .forEach((coinName, contractAddress) -> addOrUpdateUserCoinRow(tableViewItems, coinName, contractAddress));
     }
 
     private EventHandler<MouseEvent> handleDeleteToken(TableRow<CoinTabRow> row) {
         return event -> {
-            if ((!row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals(CREDITS_TOKEN_NAME)) {
+            if ((!row.isEmpty()) && !row.getItem().getName().equals("") &&
+                !row.getItem().getName().equals(CREDITS_TOKEN_NAME)) {
                 row.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
                     if (t.getButton() == MouseButton.SECONDARY) {
                         Platform.runLater(() -> {
@@ -178,7 +182,8 @@ public class WalletController implements FormInitializable {
                                 coinsTableView.getItems().remove(row.getItem());
                                 coinsKeeper.modify(coinsKeeper.new Modifier() {
                                     @Override
-                                    public ConcurrentHashMap<String, String> modify(ConcurrentHashMap<String, String> restoredObject) {
+                                    public ConcurrentHashMap<String, String> modify(
+                                        ConcurrentHashMap<String, String> restoredObject) {
                                         restoredObject.remove(row.getItem().getName());
                                         return restoredObject;
                                     }
@@ -198,12 +203,15 @@ public class WalletController implements FormInitializable {
         async(() -> nodeApiService.getBalance(account), handleUpdateCoinValue(coinRow, creditsDecimalFormat));
     }
 
-    private void addOrUpdateUserCoinRow(ObservableList<CoinTabRow> tableViewItems, String coinName, String smartContractAddress) {
+    private void addOrUpdateUserCoinRow(ObservableList<CoinTabRow> tableViewItems, String coinName,
+        String smartContractAddress) {
         CoinTabRow coinRow = getCoinTabRow(tableViewItems, coinName, smartContractAddress);
-        if(coinRow.getLock().tryLock()) {
+        if (coinRow.getLock().tryLock()) {
             changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
-            DecimalFormat decimalFormat = new DecimalFormat("##0.000000000000000000"); // fixme must use the method "tokenContract.decimal()"
-            contractInteractionService.getSmartContractBalance(smartContractAddress, handleUpdateCoinValue(coinRow, decimalFormat));
+            DecimalFormat decimalFormat =
+                new DecimalFormat("##0.000000000000000000"); // fixme must use the method "tokenContract.decimal()"
+            contractInteractionService.getSmartContractBalance(smartContractAddress,
+                handleUpdateCoinValue(coinRow, decimalFormat));
         }
     }
 
@@ -212,7 +220,8 @@ public class WalletController implements FormInitializable {
         coinRow.setValue(value);
     }
 
-    private CoinTabRow getCoinTabRow(ObservableList<CoinTabRow> tableViewItems, String tokenName, String contractAddress) {
+    private CoinTabRow getCoinTabRow(ObservableList<CoinTabRow> tableViewItems, String tokenName,
+        String contractAddress) {
         CoinTabRow coinRow = new CoinTabRow(tokenName, WAITING_STATE_MESSAGE, contractAddress);
         return tableViewItems.stream()
             .filter(foundCoinRow -> foundCoinRow.getName().equals(coinRow.getName()))
@@ -294,18 +303,16 @@ public class WalletController implements FormInitializable {
 
         clearLabErr();
 
-        numFee.textProperty().addListener(
-            (observable, oldValue, newValue) -> {
-                if(AppState.decimalSeparator.equals(",")) {
-                    newValue = newValue.replace(',','.');
-                }
-                if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue)) { // check newValue is number
-                    return;
-                }
-                double actualFee = MathUtils.calcActualFee(GeneralConverter.toDouble(newValue));
-                this.actualFeeLabel.setText(GeneralConverter.toString(actualFee));
+        numFee.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (AppState.decimalSeparator.equals(",")) {
+                newValue = newValue.replace(',', '.');
             }
-        );
+            if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue)) { // check newValue is number
+                return;
+            }
+            double actualFee = MathUtils.calcActualFee(GeneralConverter.toDouble(newValue));
+            this.actualFeeLabel.setText(GeneralConverter.toString(actualFee));
+        });
 
         numAmount.setOnKeyReleased(event -> NumberUtils.correctNum(event.getText(), numAmount));
 
@@ -317,7 +324,7 @@ public class WalletController implements FormInitializable {
             }
         });
 
-        if (objects!=null) {
+        if (objects != null) {
             txKey.setText(objects.get("toAddress").toString());
             numAmount.setText(objects.get("amount").toString());
             numFee.setText(GeneralConverter.toString(transactionFeeValue));

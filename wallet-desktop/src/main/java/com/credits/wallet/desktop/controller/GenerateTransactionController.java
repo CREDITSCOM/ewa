@@ -23,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.util.Utils.threadPool;
+import static com.credits.wallet.desktop.AppState.CREDITS_TOKEN_NAME;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.coin;
@@ -35,7 +36,6 @@ import static com.credits.wallet.desktop.utils.ApiUtils.createTransaction;
  */
 public class GenerateTransactionController implements FormInitializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(GenerateTransactionController.class);
-    private final static String CREDITS_SYMBOL = "CS";
 
     @FXML
     private TextField transactionToAddress;
@@ -62,7 +62,7 @@ public class GenerateTransactionController implements FormInitializable {
     private void handleGenerate() {
         String toAddress = transactionToAddress.getText();
         try {
-            if(coin.equals(CREDITS_SYMBOL)) {
+            if(coin.equals(CREDITS_TOKEN_NAME)) {
                 CompletableFuture
                     .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account,toAddress,
                         true),threadPool)
