@@ -41,11 +41,8 @@ public class AppState {
     public static String account;
     //todo move to session
 
-    public static BigDecimal transactionFeeValue = FEE_TRAN_AMOUNT;
-
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
 
-    public static Short transactionOfferedMaxFeeValue = OFFERED_MAX_FEE;
 
 }

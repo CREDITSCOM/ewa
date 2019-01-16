@@ -23,8 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult;
+import static com.credits.wallet.desktop.AppState.OFFERED_MAX_FEE;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
-import static com.credits.wallet.desktop.AppState.transactionOfferedMaxFeeValue;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static java.math.BigDecimal.ZERO;
 
@@ -71,7 +71,7 @@ public class ApiUtils {
         long id = transactionData.getTransactionId();
         byte[] source = transactionData.getByteSource();
         byte[] target = transactionData.getByteTarget();
-        short offeredMaxFee = transactionOfferedMaxFeeValue;
+        short offeredMaxFee = OFFERED_MAX_FEE;
         byte currency = 1;
         byte[] textBytes = null;
         if (text != null) {

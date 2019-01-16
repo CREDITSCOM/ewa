@@ -44,7 +44,6 @@ import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static com.credits.wallet.desktop.AppState.contractInteractionService;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
-import static com.credits.wallet.desktop.AppState.transactionFeeValue;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 /**
@@ -326,7 +325,7 @@ public class WalletController implements FormInitializable {
         if (objects != null) {
             txKey.setText(objects.get("transactionToAddress").toString());
             numAmount.setText(objects.get("transactionAmount").toString());
-            numFee.setText(GeneralConverter.toString(transactionFeeValue));
+            numFee.setText(GeneralConverter.toString(AppState.FEE_TRAN_AMOUNT));
         }
     }
 }
