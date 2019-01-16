@@ -57,8 +57,6 @@ public class WalletApp extends Application {
         stage.getIcons().add(new Image(WalletApp.class.getResourceAsStream("/img/icon.png")));
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
-        AppState.screenHeight = bounds.getHeight();
-        AppState.screenWidth = bounds.getWidth();
 
         stage.setX(bounds.getMinX());
         stage.setY(bounds.getMinY());

@@ -41,7 +41,6 @@ import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
 import static com.credits.wallet.desktop.AppState.CREDITS_TOKEN_NAME;
 import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.coin;
 import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static com.credits.wallet.desktop.AppState.contractInteractionService;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
@@ -109,6 +108,7 @@ public class WalletController implements FormInitializable {
 
     @FXML
     private void handleGenerate() {
+        String coin;
         String amount = numAmount.getText();
         String transactionToAddress = txKey.getText();
         String transactionText = transText.getText();
@@ -121,8 +121,6 @@ public class WalletController implements FormInitializable {
             labErrorCoin.setText(ERR_COIN);
             coinsTableView.getStyleClass().add("credits-border-red");
             isValidationSuccessful = false;
-        } else {
-            coin = coinsTableView.getSelectionModel().getSelectedItem().getName();
         }
         if (transactionToAddress == null || transactionToAddress.isEmpty()) {
             labErrorKey.setText(ERR_TO_ADDRESS);
@@ -151,8 +149,9 @@ public class WalletController implements FormInitializable {
 
         if (isValidationSuccessful) {
             HashMap<String, Object> params = new HashMap<>();
+            params.put("coinType", coinsTableView.getSelectionModel().getSelectedItem().getName());
             params.put("transactionToAddress", transactionToAddress);
-            params.put("amount", amount);
+            params.put("transactionAmount", amount);
             params.put("transactionText", transactionText);
             VistaNavigator.loadVista(VistaNavigator.FORM_7, params, this);
         }
@@ -325,8 +324,8 @@ public class WalletController implements FormInitializable {
         });
 
         if (objects != null) {
-            txKey.setText(objects.get("toAddress").toString());
-            numAmount.setText(objects.get("amount").toString());
+            txKey.setText(objects.get("transactionToAddress").toString());
+            numAmount.setText(objects.get("transactionAmount").toString());
             numFee.setText(GeneralConverter.toString(transactionFeeValue));
         }
     }

@@ -33,20 +33,19 @@ public class AppState {
     public static ContractExecutorApiService contractExecutorService;
     public static ContractInteractionService contractInteractionService;
     public static String decimalSeparator = ds;
-    public static Double screenWidth;
-    public static Double screenHeight;
 
+    //todo move to session
+    public static ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper;
+    public static ObjectKeeper<HashMap<String, SmartContractData>> favoriteContractsKeeper;
+    public static String lastSmartContract;
     public static String account;
+    //todo move to session
 
     public static BigDecimal transactionFeeValue = FEE_TRAN_AMOUNT;
-    public static String coin;
 
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
 
     public static Short transactionOfferedMaxFeeValue = OFFERED_MAX_FEE;
 
-    public static ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper;
-    public static ObjectKeeper<HashMap<String, SmartContractData>> favoriteContractsKeeper;
-    public static String lastSmartContract;
 }

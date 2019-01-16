@@ -25,7 +25,7 @@
                 <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can check  and verify your transaction" />
                 <Button fx:id="btnGenerate" layoutX="550.0" layoutY="540.0" onAction="#handleGenerate" prefHeight="60.0" prefWidth="250.0" style="-fx-font-size: 16px;" styleClass="credits-button" text="Generate transaction" wrapText="true">
                 </Button>
-                <Button fx:id="btnBack" layoutX="20.0" layoutY="540.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" >
+                <Button fx:id="btnBack" layoutX="20.0" layoutY="540.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button">
                     <graphic>
                         <ImageView fitHeight="26.0" fitWidth="26.0">
                             <Image url="@../img/arrow_down.png" />
@@ -48,8 +48,13 @@
                     <children>
                         <VBox prefHeight="83.0" prefWidth="500.0">
                             <children>
-                                <Label style="-fx-font-size: 16;" styleClass="arrow" text="   Amount in CS">
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                                      <Label style="-fx-font-size: 16;" styleClass="arrow" text="   Amount in ">
                                 </Label>
+                              <Label fx:id="coinType" style="-fx-font-size: 16;" text="Label" />
+                           </children>
+                        </HBox>
                                 <TextField fx:id="transactionAmount" editable="false" maxHeight="45.0" prefHeight="45.0" prefWidth="500.0" style="-fx-font-size: 16px; -fx-border-color: transparent;" styleClass="credits-textField" />
                             </children>
                         </VBox>
