@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
@@ -36,6 +35,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
@@ -51,6 +51,7 @@ import static org.apache.commons.lang3.StringUtils.repeat;
  */
 public class WalletController implements FormInitializable {
 
+    private static final String ERR_FEE="Fee must be greater than 0";
     private static final String ERR_COIN = "Coin must be selected";
     private static final String ERR_AMOUNT = "Amount must be greater than 0";
     private static final String ERR_TO_ADDRESS = "To address must not be empty";
@@ -61,21 +62,21 @@ public class WalletController implements FormInitializable {
     ContextMenu contextMenu = new ContextMenu();
 
     @FXML
-    private Label wallet;
+    private Label publicWalletID;
     @FXML
-    private Label labErrorCoin;
+    private Label coinsErrorLabel;
     @FXML
-    private Label labErrorKey;
+    private Label addressErrorLabel;
     @FXML
-    private Label labErrorAmount;
+    private Label amountErrorLabel;
     @FXML
-    private Label labErrorFee;
+    private Label feeErrorLabel;
     @FXML
-    private TextField txKey;
+    private TextField addressField;
     @FXML
-    private TextField numAmount;
+    private TextField amountField;
     @FXML
-    private TextField numFee;
+    private TextField feeField;
     @FXML
     private TextField transText;
     @FXML
@@ -95,7 +96,7 @@ public class WalletController implements FormInitializable {
 
     @FXML
     private void handleCopy() {
-        StringSelection selection = new StringSelection(wallet.getText());
+        StringSelection selection = new StringSelection(publicWalletID.getText());
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, selection);
     }
@@ -107,47 +108,33 @@ public class WalletController implements FormInitializable {
 
     @FXML
     private void handleGenerate() {
-        String coin;
-        String transactionAmount = numAmount.getText();
-        String transactionFee = numFee.getText();
-        String transactionToAddress = txKey.getText();
+        String transactionAmount = amountField.getText();
+        String transactionFee = feeField.getText();
+        String transactionToAddress = addressField.getText();
         String transactionText = transText.getText();
 
         // VALIDATE
-        boolean isValidationSuccessful = true;
+        AtomicBoolean isValidationSuccessful = new AtomicBoolean(true);;
         clearLabErr();
-        if (coinsTableView.getSelectionModel().getSelectedItem() == null ||
-            coinsTableView.getSelectionModel().getSelectedItem().getName().isEmpty()) {
-            labErrorCoin.setText(ERR_COIN);
-            coinsTableView.getStyleClass().add("credits-border-red");
-            isValidationSuccessful = false;
+        if (coinsTableView.getSelectionModel().getSelectedItem() == null || coinsTableView.getSelectionModel().getSelectedItem().getName().isEmpty()) {
+            FormUtils.validateTable(coinsTableView, coinsErrorLabel, ERR_COIN, isValidationSuccessful);
         }
         if (transactionToAddress == null || transactionToAddress.isEmpty()) {
-            labErrorKey.setText(ERR_TO_ADDRESS);
-            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful = false;
+            FormUtils.validateField(addressField, addressErrorLabel, ERR_TO_ADDRESS, isValidationSuccessful);
         }
         if (GeneralConverter.toBigDecimal(transactionAmount).compareTo(BigDecimal.ZERO) <= 0) {
-            labErrorAmount.setText(ERR_AMOUNT);
-            numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful = false;
+            FormUtils.validateField(amountField, amountErrorLabel, ERR_AMOUNT, isValidationSuccessful);
         }
-        /*
-        if (AppState.transactionFeeValue.compareTo(BigDecimal.ZERO) <= 0) {
-            labErrorFee.setText(ERR_FEE);
-            numFee.setStyle(numFee.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful = false;
+        if (GeneralConverter.toBigDecimal(transactionFee).compareTo(BigDecimal.ZERO) <= 0) {
+            FormUtils.validateField(feeField, feeErrorLabel, ERR_FEE, isValidationSuccessful);
         }
-        */
         try {
             Validator.validateToAddress(transactionToAddress);
         } catch (NodeClientException e) {
-            labErrorKey.setText("Invalid Address");
-            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful = false;
+            FormUtils.validateField(addressField, addressErrorLabel, "Invalid Address", isValidationSuccessful);
         }
 
-        if (isValidationSuccessful) {
+        if (isValidationSuccessful.get()) {
             HashMap<String, Object> params = new HashMap<>();
             params.put("coinType", coinsTableView.getSelectionModel().getSelectedItem().getName());
             params.put("transactionToAddress", transactionToAddress);
@@ -209,7 +196,7 @@ public class WalletController implements FormInitializable {
         if (coinRow.getLock().tryLock()) {
             changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
             DecimalFormat decimalFormat =
-                new DecimalFormat("##0.000000000000000000"); // fixme must use the method "tokenContract.decimal()"
+                new DecimalFormat("##0.000000000000000000"); // todo must use the method "tokenContract.decimal()"
             contractInteractionService.getSmartContractBalance(smartContractAddress,
                 handleUpdateCoinValue(coinRow, decimalFormat));
         }
@@ -250,16 +237,10 @@ public class WalletController implements FormInitializable {
     }
 
     private void clearLabErr() {
-        coinsTableView.getStyleClass().remove("credits-border-red");
-        labErrorCoin.setText("");
-        labErrorAmount.setText("");
-        labErrorFee.setText("");
-        labErrorKey.setText("");
-
-        /*cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));*/
-        txKey.setStyle(txKey.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
-        numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
-        numFee.setStyle(numFee.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
+        FormUtils.clearErrorOnTable(coinsTableView, coinsErrorLabel);
+        FormUtils.clearErrorOnField(addressField, addressErrorLabel);
+        FormUtils.clearErrorOnField(amountField, amountErrorLabel);
+        FormUtils.clearErrorOnField(feeField, feeErrorLabel);
     }
 
     private void initializeTable(TableView<CoinTabRow> tableView) {
@@ -293,17 +274,14 @@ public class WalletController implements FormInitializable {
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
-
+        clearLabErr();
 
         initializeTable(coinsTableView);
         updateCoins(coinsTableView);
 
-        NodeApiServiceImpl.account = account;
-        wallet.setText(account);
+        publicWalletID.setText(account);
 
-        clearLabErr();
-
-        numFee.textProperty().addListener((observable, oldValue, newValue) -> {
+        feeField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (AppState.decimalSeparator.equals(",")) {
                 newValue = newValue.replace(',', '.');
             }
@@ -314,20 +292,20 @@ public class WalletController implements FormInitializable {
             this.actualFeeLabel.setText(GeneralConverter.toString(actualFee));
         });
 
-        numAmount.setOnKeyReleased(event -> NumberUtils.correctNum(event.getText(), numAmount));
+        amountField.setOnKeyReleased(event -> NumberUtils.correctNum(event.getText(), amountField));
 
-        numFee.setOnKeyReleased(event -> {
+        feeField.setOnKeyReleased(event -> {
             try {
-                NumberUtils.correctNum(event.getText(), numFee);
+                NumberUtils.correctNum(event.getText(), feeField);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
             }
         });
 
         if (objects != null) {
-            txKey.setText(objects.get("transactionToAddress").toString());
-            numAmount.setText(objects.get("transactionAmount").toString());
-            numFee.setText(objects.get("transactionFee").toString());
+            addressField.setText(objects.get("transactionToAddress").toString());
+            amountField.setText(objects.get("transactionAmount").toString());
+            feeField.setText(objects.get("transactionFee").toString());
             transText.setText(objects.get("transactionText").toString());
             int i = 0;
             for (CoinTabRow item : coinsTableView.getItems()) {

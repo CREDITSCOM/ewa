@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.crypto.Ed25519;
-import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.GeneralConverter;
@@ -51,16 +50,16 @@ public class PutKeysController implements FormInitializable {
     private Label lblUpload;
 
     @FXML
-    private TextField txKey;
+    private TextField privateKeyField;
 
     @FXML
-    private TextField txPublic;
+    private TextField publicKeyField;
 
     @FXML
-    private Label errorLabelPrivate;
+    private Label privateKeyErrorLabel;
 
     @FXML
-    private Label errorLabelPublic;
+    private Label publicKeyErrorLabel;
 
     @FXML
     private void handleBack() {
@@ -69,7 +68,7 @@ public class PutKeysController implements FormInitializable {
 
     @FXML
     private void handleOpen() {
-        open(txPublic.getText(), txKey.getText());
+        open(publicKeyField.getText(), privateKeyField.getText());
     }
 
     private void handleSaveKeys() throws WalletDesktopException {
@@ -129,8 +128,8 @@ public class PutKeysController implements FormInitializable {
         if (objects != null && objects.get("isNewAccount") != null) {
             hideElementsForUploadExistAccount();
 
-            txKey.setText(GeneralConverter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
-            txPublic.setText(GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)));
+            privateKeyField.setText(GeneralConverter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
+            publicKeyField.setText(GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)));
             try {
                 handleSaveKeys();
             } catch (WalletDesktopException e) {
@@ -144,8 +143,8 @@ public class PutKeysController implements FormInitializable {
         btnBack.setVisible(false);
         btnUpload.setVisible(false);
         lblUpload.setVisible(false);
-        txPublic.setEditable(false);
-        txKey.setEditable(false);
+        publicKeyField.setEditable(false);
+        privateKeyField.setEditable(false);
     }
 
     private void open(String pubKey, String privKey) {
@@ -153,17 +152,17 @@ public class PutKeysController implements FormInitializable {
 
         boolean empty = false;
         if (privKey.isEmpty()) {
-            errorLabelPrivate.setText(ERROR_EMPTY_PRIVATE);
+            privateKeyErrorLabel.setText(ERROR_EMPTY_PRIVATE);
             empty = true;
         } else {
-            errorLabelPrivate.setText("");
+            privateKeyErrorLabel.setText("");
         }
 
         if (pubKey.isEmpty()) {
-            errorLabelPublic.setText(ERROR_EMPTY_PUBLIC);
+            publicKeyErrorLabel.setText(ERROR_EMPTY_PUBLIC);
             empty = true;
         } else {
-            errorLabelPublic.setText("");
+            publicKeyErrorLabel.setText("");
         }
         if (empty) {
             return;
@@ -175,9 +174,9 @@ public class PutKeysController implements FormInitializable {
             privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
         } catch (Exception e) {
             if (e.getMessage() != null) {
-                errorLabelPrivate.setText(e.getMessage());
+                privateKeyErrorLabel.setText(e.getMessage());
             } else {
-                errorLabelPrivate.setText("Private key error");
+                privateKeyErrorLabel.setText("Private key error");
             }
             LOGGER.error("failed!", e);
             //return;
@@ -187,9 +186,9 @@ public class PutKeysController implements FormInitializable {
             publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
         } catch (Exception e) {
             if (e.getMessage() != null) {
-                errorLabelPublic.setText(e.getMessage());
+                publicKeyErrorLabel.setText(e.getMessage());
             } else {
-                errorLabelPrivate.setText("Public key error");
+                privateKeyErrorLabel.setText("Public key error");
             }
             LOGGER.error("failed!", e);
             //return;
@@ -202,7 +201,6 @@ public class PutKeysController implements FormInitializable {
 
     private void initStaticData(String pubKey) {
         account = pubKey;
-        NodeApiServiceImpl.account = pubKey;
         if (favoriteContractsKeeper != null) {
             favoriteContractsKeeper.flush();
         }
@@ -238,11 +236,8 @@ public class PutKeysController implements FormInitializable {
     }
 
     private void clearLabErr() {
-        errorLabelPublic.setText("");
-        errorLabelPrivate.setText("");
-
-        txKey.setStyle(txKey.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
-        txPublic.setStyle(txPublic.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
+        FormUtils.clearErrorOnField(publicKeyField, publicKeyErrorLabel);
+        FormUtils.clearErrorOnField(privateKeyField, privateKeyErrorLabel);
     }
 
 }

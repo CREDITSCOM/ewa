@@ -2,7 +2,6 @@ package com.credits.wallet.desktop;
 
 import com.credits.client.executor.service.ContractExecutorApiService;
 import com.credits.client.node.service.NodeApiService;
-import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.service.ContractInteractionService;
@@ -76,7 +75,6 @@ public class UITest {
         addressOne = "11111111111111111111111111111111111111111111";
         addressTwo = "22222222222222222222222222222222222222222222";
         addressThree = "33333333333333333333333333333333333333333333";
-        NodeApiServiceImpl.account = walletAddress;
     }
 
     @Ignore
