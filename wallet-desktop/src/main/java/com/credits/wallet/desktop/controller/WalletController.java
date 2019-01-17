@@ -1,11 +1,11 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.MathUtils;
-import com.credits.general.util.exception.ConverterException;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.CoinTabRow;
@@ -108,7 +108,8 @@ public class WalletController implements FormInitializable {
     @FXML
     private void handleGenerate() {
         String coin;
-        String amount = numAmount.getText();
+        String transactionAmount = numAmount.getText();
+        String transactionFee = numFee.getText();
         String transactionToAddress = txKey.getText();
         String transactionText = transText.getText();
 
@@ -126,7 +127,7 @@ public class WalletController implements FormInitializable {
             txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             isValidationSuccessful = false;
         }
-        if (GeneralConverter.toBigDecimal(amount).compareTo(BigDecimal.ZERO) <= 0) {
+        if (GeneralConverter.toBigDecimal(transactionAmount).compareTo(BigDecimal.ZERO) <= 0) {
             labErrorAmount.setText(ERR_AMOUNT);
             numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             isValidationSuccessful = false;
@@ -140,7 +141,7 @@ public class WalletController implements FormInitializable {
         */
         try {
             Validator.validateToAddress(transactionToAddress);
-        } catch (ConverterException e) {
+        } catch (NodeClientException e) {
             labErrorKey.setText("Invalid Address");
             txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
             isValidationSuccessful = false;
@@ -150,7 +151,8 @@ public class WalletController implements FormInitializable {
             HashMap<String, Object> params = new HashMap<>();
             params.put("coinType", coinsTableView.getSelectionModel().getSelectedItem().getName());
             params.put("transactionToAddress", transactionToAddress);
-            params.put("transactionAmount", amount);
+            params.put("transactionAmount", transactionAmount);
+            params.put("transactionFee",transactionFee);
             params.put("transactionText", transactionText);
             VistaNavigator.loadVista(VistaNavigator.FORM_7, params, this);
         }
@@ -325,7 +327,16 @@ public class WalletController implements FormInitializable {
         if (objects != null) {
             txKey.setText(objects.get("transactionToAddress").toString());
             numAmount.setText(objects.get("transactionAmount").toString());
-            numFee.setText(GeneralConverter.toString(AppState.FEE_TRAN_AMOUNT));
+            numFee.setText(objects.get("transactionFee").toString());
+            transText.setText(objects.get("transactionText").toString());
+            int i = 0;
+            for (CoinTabRow item : coinsTableView.getItems()) {
+                if(item.getName().equals(objects.get("coinType").toString())) {
+                    coinsTableView.getSelectionModel().select(i);
+                    break;
+                }
+                i++;
+            }
         }
     }
 }

@@ -53,11 +53,12 @@ public class GenerateTransactionController implements FormInitializable {
 
     @FXML
     private void handleBack() {
-        String toAddress = transactionToAddress.getText();
-        String amount = transactionAmount.getText();
         Map<String, Object> params = new HashMap<>();
-        params.put("transactionToAddress",toAddress);
-        params.put("transactionAmount",amount);
+        params.put("transactionFee",transactionFeeValue.getText());
+        params.put("transactionToAddress",transactionToAddress.getText());
+        params.put("transactionAmount",transactionAmount.getText());
+        params.put("transactionText",transactionText.getText());
+        params.put("coinType", coinType.getText());
         VistaNavigator.loadVista(VistaNavigator.WALLET, params, this);
     }
 
@@ -120,8 +121,8 @@ public class GenerateTransactionController implements FormInitializable {
 
     @Override
     public void initializeForm(Map<String,Object> objects) {
-
         transactionToAddress.setText(objects.get("transactionToAddress").toString());
+        transactionFeeValue.setText(objects.get("transactionFee").toString());
         transactionAmount.setText(objects.get("transactionAmount").toString());
         transactionText.setText(objects.get("transactionText").toString());
         coinType.setText(objects.get("coinType").toString());
