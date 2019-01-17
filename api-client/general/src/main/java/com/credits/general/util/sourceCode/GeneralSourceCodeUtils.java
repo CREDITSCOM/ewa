@@ -1,5 +1,6 @@
 package com.credits.general.util.sourceCode;
 
+import com.credits.general.exception.CreditsException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -12,7 +13,7 @@ public class GeneralSourceCodeUtils {
         CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);
         List typeList = compilationUnit.types();
         if (typeList.size() != 1) {
-            return null;
+            throw new CreditsException("Class name not found");
         }
         TypeDeclaration typeDeclaration = (TypeDeclaration) typeList.get(0);
         return (typeDeclaration).getName().getFullyQualifiedName();

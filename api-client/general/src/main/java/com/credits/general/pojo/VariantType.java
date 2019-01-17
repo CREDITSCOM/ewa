@@ -1,5 +1,6 @@
 package com.credits.general.pojo;
 
+import com.credits.general.exception.CreditsException;
 import com.credits.general.util.variant.VariantUtils;
 
 public enum VariantType {
@@ -37,7 +38,11 @@ public enum VariantType {
                 return variantType;
             }
         }
-        throw new IllegalArgumentException("Incorrect variant type \"" + variant + "\"");
+        StringBuilder availableVariantType = new StringBuilder("\n_____________________________\nAvailable variant types:");
+        for (VariantType value : VariantType.values()) {
+            availableVariantType.append("\n").append(value.toString().toLowerCase());
+        }
+        throw new CreditsException("Incorrect variant type \"" + variant + "\"" + availableVariantType);
     }
 
     public boolean isCollection() {
