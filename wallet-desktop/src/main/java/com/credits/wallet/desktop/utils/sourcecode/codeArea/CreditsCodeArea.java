@@ -25,13 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils.computeHighlighting;
-import static javafx.scene.input.KeyCode.BACK_SPACE;
-import static javafx.scene.input.KeyCode.INSERT;
-import static javafx.scene.input.KeyCode.PASTE;
-import static javafx.scene.input.KeyCode.SHIFT;
-import static javafx.scene.input.KeyCode.V;
-import static javafx.scene.input.KeyCode.Y;
-import static javafx.scene.input.KeyCode.Z;
+import static javafx.scene.input.KeyCode.*;
 import static javafx.scene.input.KeyCombination.SHIFT_DOWN;
 import static javafx.scene.input.KeyCombination.SHORTCUT_DOWN;
 import static org.fxmisc.wellbehaved.event.EventPattern.anyOf;
@@ -150,13 +144,13 @@ public class CreditsCodeArea extends CodeArea {
             tabCount = countTabsNumberAtBeginLine(currentLine);
             int caretPosition = getCaretPositionOnLines().position;
             if (currentLine.length() > 0) {
-                if (getNextCharAfterCaret(currentLine, caretPosition) == '{' && isBraceRequired()) {
+                if (getCharBeforeCaret(currentLine, caretPosition) == '{' && isBraceRequired()) {
                     tabCount += 1;
                     replaceSelection("\n\n" + StringUtils.repeat(TAB_STRING, tabCount - 1) + "}");
                     setCaretPositionOnLine(getCaretPositionOnLines().lineNumber);
                     replaceSelection(StringUtils.repeat(TAB_STRING, tabCount));
                 } else {
-                    if (getNextCharAfterCaret(currentLine, caretPosition) == '{') {
+                    if (getCharBeforeCaret(currentLine, caretPosition) == '{') {
                         tabCount += 1;
                     }
                     replaceSelection("\n" + StringUtils.repeat(TAB_STRING, tabCount));
@@ -187,7 +181,7 @@ public class CreditsCodeArea extends CodeArea {
         }));
     }
 
-    private char getNextCharAfterCaret(String currentLine, int caretPosition) {
+    private char getCharBeforeCaret(String currentLine, int caretPosition) {
         return currentLine.charAt(caretPosition > 0 ? caretPosition - 1 : 0);
     }
 
@@ -255,18 +249,18 @@ public class CreditsCodeArea extends CodeArea {
 
     public CaretLinePosition getCaretPositionOnLines() {
         int caretPosition = this.getCaretPosition();
-        int length = 0;
-        int i=0;
+        int amountCharsBeforeCaretInLine = 0;
+        int i = 0;
         String[] lines = this.getText().split("\n");
         for (String line : lines) {
-            length += line.length();
-            if(caretPosition<=length) {
-               return new CaretLinePosition(i,lines,i==0?caretPosition:line.length()-(length-caretPosition));
+            amountCharsBeforeCaretInLine += line.length();
+            if (caretPosition <= amountCharsBeforeCaretInLine) {
+                return new CaretLinePosition(i, lines, i == 0 ? caretPosition : line.length() - (amountCharsBeforeCaretInLine - caretPosition));
             }
-            length = length+1;
+            amountCharsBeforeCaretInLine = amountCharsBeforeCaretInLine + 1;
             i++;
         }
-        return new CaretLinePosition(0,lines,caretPosition);
+        return new CaretLinePosition(0, lines, lines.length > 0 ? lines[lines.length - 1].length() : 0);
     }
 
     public void setCaretPositionOnLine(int lineNumber) {
