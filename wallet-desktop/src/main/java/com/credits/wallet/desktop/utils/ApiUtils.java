@@ -6,7 +6,6 @@ import com.credits.client.node.pojo.SmartContractInvocationData;
 import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
-import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.client.node.util.SignUtils;
 import com.credits.general.pojo.TransactionRoundData;
@@ -24,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult;
 import static com.credits.wallet.desktop.AppState.OFFERED_MAX_FEE;
+import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static java.math.BigDecimal.ZERO;
@@ -101,7 +101,7 @@ public class ApiUtils {
 
     public static void saveTransactionRoundNumberIntoMap(int roundNumber, long transactionId) {
         ConcurrentHashMap<Long, TransactionRoundData> tempTransactionsData =
-            AppState.sourceMap.get(NodeApiServiceImpl.account);
+            AppState.sourceMap.get(account);
         TransactionRoundData transactionRoundData =
             tempTransactionsData.get(NodePojoConverter.getShortTransactionId(transactionId));
         transactionRoundData.setRoundNumber(roundNumber);

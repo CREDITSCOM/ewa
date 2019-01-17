@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 
-import static com.credits.client.node.service.NodeApiServiceImpl.account;
 import static java.io.File.separator;
 import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
@@ -25,11 +24,11 @@ public class NodeIntegrationTest {
 
     NodeApiServiceImpl mockNodeApiService;
     String path;
+    String account = "5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe";
 
     @Before
     public void setUp() {
         mockNodeApiService = NodeApiServiceImpl.getInstance("127.0.0.1", 9090);
-        account = "5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe";
         path = File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + ".." +
             File.separator + "cache" + File.separator + "test" + File.separator + account + File.separator;
     }

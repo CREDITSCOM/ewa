@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.crypto.Ed25519;
-import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.GeneralConverter;
@@ -202,7 +201,6 @@ public class PutKeysController implements FormInitializable {
 
     private void initStaticData(String pubKey) {
         account = pubKey;
-        NodeApiServiceImpl.account = pubKey;
         if (favoriteContractsKeeper != null) {
             favoriteContractsKeeper.flush();
         }

@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
@@ -280,7 +279,6 @@ public class WalletController implements FormInitializable {
         initializeTable(coinsTableView);
         updateCoins(coinsTableView);
 
-        NodeApiServiceImpl.account = account;
         publicWalletID.setText(account);
 
         feeField.textProperty().addListener((observable, oldValue, newValue) -> {
