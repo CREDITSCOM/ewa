@@ -21,7 +21,6 @@ import static com.credits.wallet.desktop.AppState.contractInteractionService;
 /**
  * Created by goncharov-eg on 07.02.2018.
  */
-//TODO need refactoring
 public class NewCoinController implements FormInitializable {
     private final static Logger LOGGER = LoggerFactory.getLogger(NewCoinController.class);
 
@@ -30,14 +29,13 @@ public class NewCoinController implements FormInitializable {
     private static final String ERR_COIN_DUPLICATE = "Coin already exists";
 
     @FXML
-    private TextField txToken;
+    private TextField tokenField;
     @FXML
-    private TextField txCoin;
-
+    private TextField coinField;
     @FXML
-    private Label labelErrorToken;
+    private Label tokenErrorLabel;
     @FXML
-    private Label labelErrorCoin;
+    private Label coinErrorLabel;
 
     @FXML
     private void handleBack() {
@@ -46,50 +44,51 @@ public class NewCoinController implements FormInitializable {
 
     @FXML
     private void handleSave(){
-
         clearFormErrors();
 
-        String coinName = txCoin.getText().replace(";", "");
-        String smartContractAddress = txToken.getText().replace(";", "");
+        String coinName = coinField.getText().replace(";", "");
+        String smartContractAddress = tokenField.getText().replace(";", "");
 
-        if (validateData(coinName, smartContractAddress)) {
-            return;
+        if (checkValidData(coinName, smartContractAddress)) {
+            addSmartContractTokenBalance(coinName, smartContractAddress);
+            VistaNavigator.loadVista(VistaNavigator.WALLET,this);
         }
-
-        addSmartContractTokenBalance(coinName, smartContractAddress);
-        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
     }
 
-    private boolean validateData(String coinName, String smartContractAddress) {
+    private boolean checkValidData(String coinName, String smartContractAddress) {
         AtomicBoolean isValidationSuccessful = new AtomicBoolean(true);
         if (coinName.isEmpty()) {
-            labelErrorCoin.setText(ERR_COIN);
-            txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful.set(false);
+            FormUtils.validateField(coinField, coinErrorLabel, ERR_COIN, isValidationSuccessful);
         }
 
         if (smartContractAddress.isEmpty()) {
-            labelErrorToken.setText(ERR_TOKEN);
-            txToken.setStyle(txToken.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful.set(false);
+            FormUtils.validateField(tokenField, tokenErrorLabel, ERR_TOKEN, isValidationSuccessful);
         }
 
         coinsKeeper.getKeptObject().ifPresent(coinsMap -> {
             if(coinsMap.containsKey(coinName)) {
-                labelErrorCoin.setText(ERR_COIN_DUPLICATE);
-                txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-                isValidationSuccessful.set(false);
+                FormUtils.validateField(coinField, coinErrorLabel, ERR_COIN_DUPLICATE, isValidationSuccessful);
             }
         });
 
-        return !isValidationSuccessful.get();
+        return isValidationSuccessful.get();
+    }
+
+    @Override
+    public void initializeForm(Map<String, Object> objects) {
+        clearFormErrors();
+    }
+
+    private void clearFormErrors() {
+        FormUtils.clearErrorOnField(tokenField, tokenErrorLabel);
+        FormUtils.clearErrorOnField(coinField, coinErrorLabel);
     }
 
     public static void addSmartContractTokenBalance(String coinName, String smartContractAddress) {
         contractInteractionService.getSmartContractBalance(smartContractAddress, new Callback<BigDecimal>() {
             @Override
             public void onSuccess(BigDecimal balance) throws CreditsException {
-                    SmartContractsUtils.saveSmartInTokenList(coinName, balance, smartContractAddress);
+                SmartContractsUtils.saveSmartInTokenList(coinName, balance, smartContractAddress);
                 if(balance != null){
                     FormUtils.showPlatformInfo("Coin \"" + coinName + "\" was created successfully");
                 }
@@ -102,16 +101,4 @@ public class NewCoinController implements FormInitializable {
         });
     }
 
-    @Override
-    public void initializeForm(Map<String, Object> objects) {
-        clearFormErrors();
-    }
-
-    private void clearFormErrors() {
-        labelErrorToken.setText("");
-        labelErrorCoin.setText("");
-
-        txToken.setStyle(txToken.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
-        txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
-    }
 }
