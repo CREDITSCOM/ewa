@@ -77,8 +77,8 @@ public class HistoryController extends AbstractController {
     }
 
     private void fillUnapprovedTable() {
-        if (session.sourceMap !=null && session.sourceMap.get(session.account) != null) {
-            ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = session.sourceMap.get(session.account);
+        if (session.sourceMap !=null) {
+            ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = session.sourceMap;
             /*List<Long> validIds =
                 transactionsList.stream().map(TransactionData::getId).collect(Collectors.toList());
             sourceTransactionMap.remove(validIds)*/
