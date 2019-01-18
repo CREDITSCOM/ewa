@@ -4,7 +4,6 @@ import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.pojo.TokenStandartData;
 import com.credits.client.node.service.NodeApiService;
-import com.credits.client.node.thrift.generated.TokenStandart;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.GeneralConverter;
@@ -37,7 +36,8 @@ public abstract class ServiceTest {
 
     private final static Logger logger = LoggerFactory.getLogger(ServiceTest.class);
 
-    protected final byte[] address = "1a2b3c".getBytes();
+    protected final byte[] initiatorAddress = "1a2b3c".getBytes();
+    protected final byte[] contractAddress = "4d5e6f".getBytes();
     protected TestComponent testComponent;
 
     @Rule
@@ -71,9 +71,9 @@ public abstract class ServiceTest {
     protected List<ByteCodeObjectData> compileSourceCodeFromFile(String sourceCodePath) throws Exception {
         String sourceCode = readSourceCode(sourceCodePath);
         List<ByteCodeObjectData> byteCodeObjects = compileSourceCode(sourceCode);
-        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(new SmartContractData(
-                address,
-                address,
+        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(initiatorAddress))).thenReturn(new SmartContractData(
+                initiatorAddress,
+                initiatorAddress,
                 new SmartContractDeployData(sourceCode, byteCodeObjects, TokenStandartData.CreditsBasic),
                 null
                 )

@@ -75,14 +75,14 @@ public class ContractInteractionService {
     }
 
 
-    private String executeSmartContract(String smartContractAddress, SmartContractData sc, String methodName,
+    private String executeSmartContract(String initiatorAddress, SmartContractData sc, String methodName,
         long executionTime, VariantData... params) {
         if (sc == null || sc.getObjectState().length == 0) {
-            throw new NodeClientException("SmartContract " + smartContractAddress + " not found");
+            throw new NodeClientException("SmartContract " + initiatorAddress + " not found");
         }
 
         ExecuteByteCodeResult executeResponseData =
-            contractExecutorService.executeContractMethod(GeneralConverter.decodeFromBASE58(smartContractAddress),
+            contractExecutorService.executeContractMethod(GeneralConverter.decodeFromBASE58(initiatorAddress), sc.getAddress(),
                 GeneralConverter.byteCodeObjectsDataToByteCodeObjects(
                     sc.getSmartContractDeployData().getByteCodeObjects()), sc.getObjectState(), methodName,
                 asList(params), executionTime);
