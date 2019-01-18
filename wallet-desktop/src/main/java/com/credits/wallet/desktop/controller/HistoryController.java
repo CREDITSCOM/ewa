@@ -8,7 +8,6 @@ import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
-import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -31,13 +30,12 @@ import static com.credits.client.node.thrift.generated.TransactionState.INPROGRE
 import static com.credits.client.node.thrift.generated.TransactionState.INVALID;
 import static com.credits.client.node.thrift.generated.TransactionState.VALID;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
-import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 
 /**
  * Created by goncharov-eg on 29.01.2018.
  */
-public class HistoryController implements FormInitializable {
+public class HistoryController extends AbstractController {
     private final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
     private final int INIT_PAGE_SIZE = 100;
     private final int FIRST_TRANSACTION_NUMBER = 0;
@@ -72,26 +70,26 @@ public class HistoryController implements FormInitializable {
                 if (tabRow != null) {
                     HashMap<String, Object> params = new HashMap<>();
                     params.put("selectedTransactionRow",tabRow);
-                    VistaNavigator.loadVista(VistaNavigator.TRANSACTION, params,this);
+                    VistaNavigator.loadVista(VistaNavigator.TRANSACTION, this, params);
                 }
             }
         });
     }
 
     private void fillUnapprovedTable() {
-        if (AppState.sourceMap !=null && AppState.sourceMap.get(account) != null) {
-            ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = AppState.sourceMap.get(account);
+        if (session.sourceMap !=null && session.sourceMap.get(session.account) != null) {
+            ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = session.sourceMap.get(session.account);
             /*List<Long> validIds =
                 transactionsList.stream().map(TransactionData::getId).collect(Collectors.toList());
             sourceTransactionMap.remove(validIds)*/
             List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
-            async(() -> nodeApiService.getTransactionsState(account, ids),
+            async(() -> nodeApiService.getTransactionsState(session.account, ids),
                 handleGetTransactionsStateResult(sourceTransactionMap));
         }
     }
 
     private void fillApprovedTable() {
-        async(() -> nodeApiService.getTransactions(account, FIRST_TRANSACTION_NUMBER, INIT_PAGE_SIZE),
+        async(() -> nodeApiService.getTransactions(session.account, FIRST_TRANSACTION_NUMBER, INIT_PAGE_SIZE),
             handleGetTransactionsResult());
     }
 
@@ -205,6 +203,11 @@ public class HistoryController implements FormInitializable {
     private void handleRefresh() {
         fillApprovedTable();
         fillUnapprovedTable();
+    }
+
+    @Override
+    public void formDeinitialize() {
+
     }
 }
 

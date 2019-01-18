@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.credits.wallet.desktop.AppState.account;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -33,7 +32,7 @@ public class SaveNodeApiQueriesTest {
     NodeApiServiceImpl mockNodeApiService;
 
     ObjectKeeper getWalletIdKeeper;
-
+    String account = "5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe";
     static AtomicInteger walletId = new AtomicInteger(0);
     static AtomicInteger smartContractTransactionId = new AtomicInteger(0);
     static AtomicInteger transactionId = new AtomicInteger(0);
@@ -42,13 +41,10 @@ public class SaveNodeApiQueriesTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         doCallRealMethod().when(mockInitializer).loadProperties();
-        doCallRealMethod().when(mockInitializer).initializeContractInteractionService();
         doCallRealMethod().when(mockInitializer).initializeContractExecutorApiService();
         mockNodeApiService.nodeClient = NodeThriftApiClient.getInstance("127.0.0.1", 9090);
         when(mockInitializer.initializeNodeApiService()).thenReturn(mockNodeApiService);
         doCallRealMethod().when(mockInitializer).init();
-        account = "5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe";
-
     }
 
     @Ignore

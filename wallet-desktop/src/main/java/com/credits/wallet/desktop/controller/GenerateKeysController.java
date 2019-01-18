@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class GenerateKeysController implements FormInitializable {
+public class GenerateKeysController extends AbstractController {
     @FXML
     Button btnShowPassword;
 
@@ -65,5 +65,9 @@ public class GenerateKeysController implements FormInitializable {
         });
     }
 
+    @Override
+    public void formDeinitialize() {
+
+    }
 }
 

@@ -4,6 +4,7 @@ import com.credits.client.executor.service.ContractExecutorApiService;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.util.Callback;
+import com.credits.wallet.desktop.controller.WelcomeController;
 import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.testUtils.FakeData;
 import javafx.application.Platform;
@@ -20,7 +21,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Properties;
 
-import static com.credits.wallet.desktop.AppState.account;
 import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -34,7 +34,6 @@ import static org.mockito.Mockito.when;
  */
 public class UITest {
 
-    WalletApp walletApp;
     String walletAddress;
     String addressOne;
     String addressTwo;
@@ -54,49 +53,64 @@ public class UITest {
     ContractInteractionService mockContractInteractionService;
     @Mock
     Properties mockProperties;
+    @Mock
+    WalletApp mockWalletApp;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
         when(mockInitializer.initializeNodeApiService()).thenReturn(mockNodeApiService);
         when(mockInitializer.initializeContractExecutorApiService()).thenReturn(mockContractExecutorService);
-        when(mockInitializer.initializeContractInteractionService()).thenReturn(mockContractInteractionService);
         when(mockInitializer.loadProperties()).thenReturn(mockProperties);
         doCallRealMethod().when(mockInitializer).init();
+        doCallRealMethod().when(mockWalletApp).start(any());
+        injectSession();
 
-        AppState.account = walletAddress;
-        AppState.coinsKeeper = new ObjectKeeper<>(account, "coins");
-        AppState.favoriteContractsKeeper = new ObjectKeeper<>(AppState.account, "favorite");
         when(mockNodeApiService.getBalance(anyString())).thenReturn(new BigDecimal("1000.123456789012345678"));
 
-        walletApp = new WalletApp();
-        walletApp.appStateInitializer = mockInitializer;
+        mockWalletApp.appStateInitializer = mockInitializer;
         walletAddress = addressBase58;
         addressOne = "11111111111111111111111111111111111111111111";
         addressTwo = "22222222222222222222222222222222222222222222";
         addressThree = "33333333333333333333333333333333333333333333";
     }
 
+    private void injectSession() {
+        Session session = new Session();
+        session.account = walletAddress;
+        session.coinsKeeper = new ObjectKeeper<>(session.account, "coins");
+        session.favoriteContractsKeeper = new ObjectKeeper<>(session.account, "favorite");
+
+        WelcomeController welcomeController = new WelcomeController();
+        welcomeController.session = session;
+
+        doAnswer((Answer<Void>) invocationOnMock -> {
+            VistaNavigator.loadVista(mockInitializer.startForm,welcomeController);
+            return null;
+        }).when(mockWalletApp).loadWelcomeForm();
+    }
+
     @Ignore
     @Test
     public void allForms() throws Exception {
-        mockInitializer.startForm = VistaNavigator.HISTORY;
-        AppState.account = walletAddress;
+        mockInitializer.startForm = VistaNavigator.WELCOME;
+        /*todo repair AppState.account = walletAddress;*/
         //balances
-        doAnswer(returnBalance(new BigDecimal("2443113.00192177821876551"))).when(mockContractInteractionService).getSmartContractBalance(anyString(), any());
+        doAnswer(returnBalance(new BigDecimal("2443113.00192177821876551"))).when(mockContractInteractionService)
+            .getSmartContractBalance(anyString(), any());
 
         when(mockNodeApiService.getTransactionsState(any(), any())).thenReturn(FakeData.transactionsStateGetResultData);
 
         //transactions
         when(mockNodeApiService.getTransactions(any(), anyLong(), anyLong())).thenReturn(FakeData.transactionsDataList);
-//        when(mockNodeApiService.transactionFlow(any())).thenReturn(successResponse);
+        //        when(mockNodeApiService.transactionFlow(any())).thenReturn(successResponse);
         when(mockNodeApiService.getWalletTransactionsCount(any())).thenReturn(new Long(1));
         when(mockNodeApiService.getWalletId(walletAddress)).thenReturn(1);
         when(mockNodeApiService.getWalletId(addressTwo)).thenReturn(2);
         when(mockNodeApiService.getWalletId(addressThree)).thenReturn(0);
 
         //smart-contracts
-        when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
+        //when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
         when(mockNodeApiService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
         runApp();
     }
@@ -105,7 +119,7 @@ public class UITest {
     @Test
     public void smartContractsForm() throws Exception {
         mockInitializer.startForm = VistaNavigator.SMART_CONTRACT;
-        when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
+        //when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
         when(mockNodeApiService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
         runApp();
     }
@@ -114,22 +128,23 @@ public class UITest {
     @Test
     public void deployForm() throws Exception {
         mockInitializer.startForm = VistaNavigator.SMART_CONTRACT_DEPLOY;
-        AppState.account = walletAddress;
+        /*todo repair AppState.account = walletAddress;*/
         runApp();
     }
 
     @SuppressWarnings("unchecked")
-    private Answer<Void> returnBalance(BigDecimal balance){
+    private Answer<Void> returnBalance(BigDecimal balance) {
         return answer -> {
             ((Callback<BigDecimal>) answer.getArgument(1)).onSuccess(balance);
             return null;
         };
     }
+
     private void runApp() throws InterruptedException {
         new JFXPanel();
         Platform.runLater(() -> {
             try {
-                walletApp.start(new Stage());
+                mockWalletApp.start(new Stage());
             } catch (IOException e) {
                 e.printStackTrace();
             }

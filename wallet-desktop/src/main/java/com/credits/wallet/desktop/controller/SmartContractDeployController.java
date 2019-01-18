@@ -53,8 +53,6 @@ import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.lastSmartContract;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.VistaNavigator.SMART_CONTRACT;
 import static com.credits.wallet.desktop.VistaNavigator.WALLET;
@@ -67,7 +65,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 /**
  * Created by goncharov-eg on 30.01.2018.
  */
-public class SmartContractDeployController implements FormInitializable {
+public class SmartContractDeployController extends AbstractController {
 
     public static final String BUILD = "Build";
     public static final String COMPILING = "Compiling...";
@@ -187,17 +185,17 @@ public class SmartContractDeployController implements FormInitializable {
                     SmartContractDeployData smartContractDeployData =
                         new SmartContractDeployData(javaCode, byteCodeObjectDataList, tokenStandartData);
 
-                    long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, account, true);
+                    long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, session.account, true);
 
                     SmartContractData smartContractData = new SmartContractData(
-                        generateSmartContractAddress(decodeFromBASE58(account), idWithoutFirstTwoBits, byteCodeObjectDataList),
-                        decodeFromBASE58(account), smartContractDeployData, null);
+                        generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits, byteCodeObjectDataList),
+                        decodeFromBASE58(session.account), smartContractDeployData, null);
 
                     supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService,
-                            account, smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool)
-                        .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
+                        session.account, smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool)
+                        .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData,session))
                         .whenComplete(handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
-                    lastSmartContract = codeArea.getText();
+                    session.lastSmartContract = codeArea.getText();
 
                     loadVista(WALLET, this);
                 }
@@ -214,10 +212,10 @@ public class SmartContractDeployController implements FormInitializable {
                 Object contractInstance = contractClass.getDeclaredConstructor(String.class).newInstance(encodeToBASE58(smartContractData.getDeployer()));
                 Field initiator = contractClass.getSuperclass().getDeclaredField("initiator");
                 initiator.setAccessible(true);
-                initiator.set(contractInstance, account);
+                initiator.set(contractInstance, session.account);
                 String tokenName = (String) contractClass.getMethod("getName").invoke(contractInstance);
                 String balance =
-                    (String) contractClass.getMethod("balanceOf", String.class).invoke(contractInstance, account);
+                    (String) contractClass.getMethod("balanceOf", String.class).invoke(contractInstance, session.account);
                 return new TokenInfo(smartContractData.getBase58Address(), tokenName, new BigDecimal(balance));
             } catch (Exception e) {
                 LOGGER.warn("token \"{}\" can't be add to the balances list. Reason: {}", smartContractData.getBase58Address(), e.getMessage());
@@ -261,7 +259,7 @@ public class SmartContractDeployController implements FormInitializable {
             @Override
             public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
                 ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(),
-                    resultData.getLeft());
+                    resultData.getLeft(),session);
                 String target = resultData.getRight().getTarget();
                 StringSelection selection = new StringSelection(target);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -269,7 +267,7 @@ public class SmartContractDeployController implements FormInitializable {
                 FormUtils.showPlatformInfo(
                     String.format("Smart-contract address%n%n%s%n%nhas generated and copied to clipboard", target));
                 if(tokenInfo != null){
-                    saveSmartInTokenList(tokenInfo.name, tokenInfo.balance, tokenInfo.address);
+                    saveSmartInTokenList(session.coinsKeeper, tokenInfo.name, tokenInfo.balance, tokenInfo.address);
                 }
             }
 
@@ -363,6 +361,11 @@ public class SmartContractDeployController implements FormInitializable {
                 }
             }
         });
+    }
+
+    @Override
+    public void formDeinitialize() {
+
     }
 
     private static class TokenInfo {

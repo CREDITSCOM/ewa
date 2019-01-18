@@ -4,6 +4,8 @@ import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.GeneralConverter;
+import com.credits.wallet.desktop.AppState;
+import com.credits.wallet.desktop.Session;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -25,16 +27,13 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.util.Map;
 
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
-import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
 import static com.credits.wallet.desktop.AppState.privateKey;
 import static com.credits.wallet.desktop.AppState.publicKey;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class PutKeysController implements FormInitializable {
+public class PutKeysController extends AbstractController {
     private static Logger LOGGER = LoggerFactory.getLogger(PutKeysController.class);
 
     private static final String ERROR_EMPTY_PUBLIC = "Public key is empty";
@@ -168,7 +167,7 @@ public class PutKeysController implements FormInitializable {
             return;
         }
 
-        initStaticData(pubKey);
+        setSession(pubKey);
         try {
             byte[] privateKeyByteArr = GeneralConverter.decodeFromBASE58(privKey);
             privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
@@ -199,16 +198,17 @@ public class PutKeysController implements FormInitializable {
         }
     }
 
-    private void initStaticData(String pubKey) {
-        account = pubKey;
-        if (favoriteContractsKeeper != null) {
-            favoriteContractsKeeper.flush();
+    private void setSession(String pubKey) {
+        if(AppState.sessionMap.get(pubKey)!=null) {
+             this.session = AppState.sessionMap.get(pubKey);
+        } else {
+            Session session = new Session();
+            session.account = pubKey;
+            session.favoriteContractsKeeper = new ObjectKeeper<>(session.account, "favorite");
+            session.coinsKeeper = new ObjectKeeper<>(session.account, "coins");
+            AppState.sessionMap.put(pubKey,session);
+            this.session = session;
         }
-        favoriteContractsKeeper = new ObjectKeeper<>(account, "favorite");
-        if (coinsKeeper != null) {
-            coinsKeeper.flush();
-        }
-        coinsKeeper = new ObjectKeeper<>(account, "coins");
     }
 
     private boolean validateKeys(String publicKey, String privateKey) {
@@ -240,4 +240,8 @@ public class PutKeysController implements FormInitializable {
         FormUtils.clearErrorOnField(privateKeyField, privateKeyErrorLabel);
     }
 
+    @Override
+    public void formDeinitialize() {
+
+    }
 }

@@ -51,15 +51,13 @@ import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 import static com.credits.general.util.Utils.threadPool;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
  */
-public class SmartContractController implements FormInitializable {
+public class SmartContractController extends AbstractController {
 
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
 
@@ -133,7 +131,7 @@ public class SmartContractController implements FormInitializable {
         codeArea = CodeAreaUtils.initCodeArea(this.pCodePanel, true);
         codeArea.setEditable(false);
         codeArea.copy();
-        favoriteContracts = favoriteContractsKeeper.getKeptObject().orElseGet(HashMap::new);
+        favoriteContracts = session.favoriteContractsKeeper.getKeptObject().orElseGet(HashMap::new);
         initializeTable(smartContractTableView);
         initializeTable(favoriteContractTableView);
         refreshFavoriteContractsTab();
@@ -259,7 +257,7 @@ public class SmartContractController implements FormInitializable {
     }
 
     private void refreshContractsTab() {
-        async(() -> nodeApiService.getSmartContracts(account), handleGetSmartContractsResult());
+        async(() -> nodeApiService.getSmartContracts(session.account), handleGetSmartContractsResult());
     }
 
     private void refreshFavoriteContractsTab() {
@@ -268,7 +266,9 @@ public class SmartContractController implements FormInitializable {
             favoriteContracts.forEach(
                 (contractName, contractData) -> addContractToTable(favoriteContractTableView, contractData));
         }
-        favoriteContractsKeeper.keepObject(favoriteContracts);
+        if(session!=null) {
+            session.favoriteContractsKeeper.keepObject(favoriteContracts);
+        }
     }
 
     private Callback<List<SmartContractData>> handleGetSmartContractsResult() {
@@ -341,9 +341,9 @@ public class SmartContractController implements FormInitializable {
             smartContractData.setMethod(method);
             smartContractData.setParams(params);
 
-            CompletableFuture.supplyAsync(() -> calcTransactionIdSourceTarget(AppState.nodeApiService, account,
+            CompletableFuture.supplyAsync(() -> calcTransactionIdSourceTarget(AppState.nodeApiService, session.account,
                 smartContractData.getBase58Address(), true), threadPool)
-                .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData))
+                .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData,session))
                 .whenComplete(handleCallback(handleExecuteResult()));
 
 
@@ -358,7 +358,7 @@ public class SmartContractController implements FormInitializable {
             @Override
             public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
                 ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(),
-                    resultData.getLeft());
+                    resultData.getLeft(),session);
                 VariantData result =
                     resultData.getRight().getContractResult().orElse(new VariantData(VariantType.STRING, "void"));
                 LOGGER.info("Return value is {}", result);
@@ -385,5 +385,10 @@ public class SmartContractController implements FormInitializable {
 
     public void handleRefreshSmarts() {
         updateSelectedTab();
+    }
+
+    @Override
+    public void formDeinitialize() {
+
     }
 }

@@ -15,13 +15,10 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
-import static com.credits.wallet.desktop.AppState.contractInteractionService;
-
 /**
  * Created by goncharov-eg on 07.02.2018.
  */
-public class NewCoinController implements FormInitializable {
+public class NewCoinController extends AbstractController {
     private final static Logger LOGGER = LoggerFactory.getLogger(NewCoinController.class);
 
     private static final String ERR_COIN = "You must enter coin mnemonic";
@@ -65,7 +62,7 @@ public class NewCoinController implements FormInitializable {
             FormUtils.validateField(tokenField, tokenErrorLabel, ERR_TOKEN, isValidationSuccessful);
         }
 
-        coinsKeeper.getKeptObject().ifPresent(coinsMap -> {
+        session.coinsKeeper.getKeptObject().ifPresent(coinsMap -> {
             if(coinsMap.containsKey(coinName)) {
                 FormUtils.validateField(coinField, coinErrorLabel, ERR_COIN_DUPLICATE, isValidationSuccessful);
             }
@@ -84,11 +81,11 @@ public class NewCoinController implements FormInitializable {
         FormUtils.clearErrorOnField(coinField, coinErrorLabel);
     }
 
-    public static void addSmartContractTokenBalance(String coinName, String smartContractAddress) {
-        contractInteractionService.getSmartContractBalance(smartContractAddress, new Callback<BigDecimal>() {
+    public void addSmartContractTokenBalance(String coinName, String smartContractAddress) {
+        session.contractInteractionService.getSmartContractBalance(smartContractAddress, new Callback<BigDecimal>() {
             @Override
             public void onSuccess(BigDecimal balance) throws CreditsException {
-                SmartContractsUtils.saveSmartInTokenList(coinName, balance, smartContractAddress);
+                SmartContractsUtils.saveSmartInTokenList(session.coinsKeeper,coinName, balance, smartContractAddress);
                 if(balance != null){
                     FormUtils.showPlatformInfo("Coin \"" + coinName + "\" was created successfully");
                 }
@@ -101,4 +98,8 @@ public class NewCoinController implements FormInitializable {
         });
     }
 
+    @Override
+    public void formDeinitialize() {
+
+    }
 }

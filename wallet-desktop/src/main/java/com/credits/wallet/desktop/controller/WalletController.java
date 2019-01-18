@@ -40,16 +40,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
 import static com.credits.wallet.desktop.AppState.CREDITS_TOKEN_NAME;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
-import static com.credits.wallet.desktop.AppState.contractInteractionService;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class WalletController implements FormInitializable {
+public class WalletController extends AbstractController {
 
     private static final String ERR_FEE="Fee must be greater than 0";
     private static final String ERR_COIN = "Coin must be selected";
@@ -86,6 +83,7 @@ public class WalletController implements FormInitializable {
 
     @FXML
     private void handleLogout() {
+        closeSession();
         VistaNavigator.loadVista(VistaNavigator.WELCOME, this);
     }
 
@@ -141,14 +139,14 @@ public class WalletController implements FormInitializable {
             params.put("transactionAmount", transactionAmount);
             params.put("transactionFee",transactionFee);
             params.put("transactionText", transactionText);
-            VistaNavigator.loadVista(VistaNavigator.FORM_7, params, this);
+            VistaNavigator.loadVista(VistaNavigator.FORM_7, this, params);
         }
     }
 
     private void updateCoins(TableView<CoinTabRow> tableView) {
         ObservableList<CoinTabRow> tableViewItems = tableView.getItems();
         addOrUpdateCsCoinRow(tableViewItems);
-        coinsKeeper.getKeptObject()
+       session.coinsKeeper.getKeptObject()
             .orElseGet(ConcurrentHashMap::new)
             .forEach((coinName, contractAddress) -> addOrUpdateUserCoinRow(tableViewItems, coinName, contractAddress));
     }
@@ -167,7 +165,7 @@ public class WalletController implements FormInitializable {
 
                             removeItem.setOnAction(event1 -> {
                                 coinsTableView.getItems().remove(row.getItem());
-                                coinsKeeper.modify(coinsKeeper.new Modifier() {
+                                session.coinsKeeper.modify(session.coinsKeeper.new Modifier() {
                                     @Override
                                     public ConcurrentHashMap<String, String> modify(
                                         ConcurrentHashMap<String, String> restoredObject) {
@@ -187,7 +185,7 @@ public class WalletController implements FormInitializable {
     private void addOrUpdateCsCoinRow(ObservableList<CoinTabRow> tableViewItems) {
         CoinTabRow coinRow = getCoinTabRow(tableViewItems, CREDITS_TOKEN_NAME, null);
         changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
-        async(() -> nodeApiService.getBalance(account), handleUpdateCoinValue(coinRow, creditsDecimalFormat));
+        async(() -> nodeApiService.getBalance(session.account), handleUpdateCoinValue(coinRow, creditsDecimalFormat));
     }
 
     private void addOrUpdateUserCoinRow(ObservableList<CoinTabRow> tableViewItems, String coinName,
@@ -197,7 +195,7 @@ public class WalletController implements FormInitializable {
             changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
             DecimalFormat decimalFormat =
                 new DecimalFormat("##0.000000000000000000"); // todo must use the method "tokenContract.decimal()"
-            contractInteractionService.getSmartContractBalance(smartContractAddress,
+            session.contractInteractionService.getSmartContractBalance(smartContractAddress,
                 handleUpdateCoinValue(coinRow, decimalFormat));
         }
     }
@@ -279,7 +277,7 @@ public class WalletController implements FormInitializable {
         initializeTable(coinsTableView);
         updateCoins(coinsTableView);
 
-        publicWalletID.setText(account);
+        publicWalletID.setText(session.account);
 
         feeField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (AppState.decimalSeparator.equals(",")) {
@@ -316,5 +314,9 @@ public class WalletController implements FormInitializable {
                 i++;
             }
         }
+    }
+
+    @Override
+    public void formDeinitialize() {
     }
 }

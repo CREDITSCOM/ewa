@@ -19,9 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
-import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
-
 /**
  * Created by goncharov-eg on 23.11.2017.
  */
@@ -88,9 +85,12 @@ public class WalletApp extends Application {
         MainController mainController = loader.getController();
 
         VistaNavigator.setMainController(mainController);
-        VistaNavigator.loadVista(appStateInitializer.startForm,null);
-
+        loadWelcomeForm();
         return mainPane;
+    }
+
+    void loadWelcomeForm() {
+        VistaNavigator.loadVista(appStateInitializer.startForm,null);
     }
 
 
@@ -105,15 +105,6 @@ public class WalletApp extends Application {
         return scene;
     }
 
-    @Override
-    public void stop() {
-        if(favoriteContractsKeeper != null){
-            favoriteContractsKeeper.flush();
-        }
-        if(coinsKeeper != null){
-            coinsKeeper.flush();
-        }
-    }
 
     private void addFonts() {
         Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Black.otf").toExternalForm(),14);

@@ -1,16 +1,12 @@
 package com.credits.wallet.desktop;
 
 import com.credits.client.executor.service.ContractExecutorApiService;
-import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.service.NodeApiService;
-import com.credits.client.node.util.ObjectKeeper;
-import com.credits.general.pojo.TransactionRoundData;
-import com.credits.wallet.desktop.service.ContractInteractionService;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 import static com.credits.general.util.Constants.ds;
 
@@ -25,19 +21,13 @@ public class AppState {
     public static final String CREDITS_TOKEN_NAME = "CS";
 
 
-    public static ConcurrentHashMap<String, ConcurrentHashMap<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();
 
     public static NodeApiService nodeApiService;
     public static ContractExecutorApiService contractExecutorService;
-    public static ContractInteractionService contractInteractionService;
     public static String decimalSeparator = ds;
+    public static Map<String,Session> sessionMap = new HashMap<>();
 
-    //todo move to session
-    public static ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper;
-    public static ObjectKeeper<HashMap<String, SmartContractData>> favoriteContractsKeeper;
     public static String lastSmartContract;
-    public static String account;
-    //todo move to session
 
     public static PrivateKey privateKey;
     public static PublicKey publicKey;

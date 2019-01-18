@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class SaveKeysController implements FormInitializable {
+public class SaveKeysController extends AbstractController {
     @FXML
     private TextField txKey;
 
@@ -26,11 +26,16 @@ public class SaveKeysController implements FormInitializable {
     private void handleContinue() {
         HashMap<String, Object> params = new HashMap<>();
         params.put("isNewAccount","true");
-        VistaNavigator.loadVista(VistaNavigator.FORM_5, params, this);
+        VistaNavigator.loadVista(VistaNavigator.FORM_5, this, params);
     }
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
         txKey.setText(GeneralConverter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
+    }
+
+    @Override
+    public void formDeinitialize() {
+
     }
 }

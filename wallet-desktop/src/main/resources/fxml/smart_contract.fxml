@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.StackPane?>
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
     <top>
-        <fx:include source="header.fxml" />
+        <fx:include fx:id="header" source="header.fxml" />
     </top>
     <center>
         <Pane prefWidth="1300.0" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">

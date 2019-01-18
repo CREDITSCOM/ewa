@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Created by goncharov-eg on 30.01.2018.
  */
-public class TransactionController implements FormInitializable {
+public class TransactionController extends AbstractController{
     private static final String ERR_GETTING_TRANSACTION = "Error getting transaction details";
     public static final int MAX_HEIGHT = 300;
 
@@ -57,6 +57,11 @@ public class TransactionController implements FormInitializable {
         listParams.setItems(items);
         int value = items.size() * ROW_HEIGHT + 2 > MAX_HEIGHT ? MAX_HEIGHT : items.size() * ROW_HEIGHT + 2;
         listContainer.setPrefHeight(value);
+
+    }
+
+    @Override
+    public void formDeinitialize() {
 
     }
 }

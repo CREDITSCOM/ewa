@@ -1,7 +1,7 @@
 package com.credits.wallet.desktop;
 
+import com.credits.wallet.desktop.controller.AbstractController;
 import com.credits.wallet.desktop.controller.FormDeinitializable;
-import com.credits.wallet.desktop.controller.FormInitializable;
 import com.credits.wallet.desktop.controller.MainController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -68,32 +68,34 @@ public class VistaNavigator {
      *
      * @param fxml the fxml file to be loaded.
      */
-    public static void loadVista(String fxml, Map<String, Object> params, Object oldVistaController) {
-        changeVista(fxml, params, oldVistaController);
+    public static void loadVista(String fxml, AbstractController oldVistaController, Map<String, Object> params) {
+        changeVista(fxml, oldVistaController, params);
     }
 
-    public static void loadVista(String fxml, Object oldVistaController) {
-        changeVista(fxml, null, oldVistaController);
+    public static void loadVista(String fxml, AbstractController oldVistaController) {
+        changeVista(fxml, oldVistaController, null);
     }
 
-    private static void changeVista(String fxml, Map<String, Object> params, Object oldVistaController) {
+    private static void changeVista(String fxml, AbstractController oldVistaController, Map<String, Object> params) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(VistaNavigator.class.getResource(fxml));
-            deinitialize(oldVistaController);
             Node load = fxmlLoader.load();
             resizeForm((Pane) load);
-            initialize(fxmlLoader.getController(),params);
+            initialize(oldVistaController,fxmlLoader.getController(),params);
+            deinitialize(oldVistaController);
             mainController.setVista(load);
         } catch (IOException e) {
             LOGGER.error("failed!", e);
         }
     }
 
-    private static void initialize(Object controller,Map<String, Object> params) {
+    private static void initialize(AbstractController oldVistaController, AbstractController newVistaController, Map<String, Object> params) {
         try {
-            if (controller instanceof FormInitializable) {
-                ((FormInitializable) controller).initializeForm(params);
+            if(oldVistaController!=null) {
+                newVistaController.session = oldVistaController.session;
             }
+            newVistaController.initializeHeader();
+            newVistaController.initializeForm(params);
         } catch (Exception e) {
             LOGGER.error("Cannot initialize vista", e);
             throw e;
@@ -103,10 +105,10 @@ public class VistaNavigator {
     private static void deinitialize(Object oldVistaController) {
         try {
             if (oldVistaController instanceof FormDeinitializable) {
-                ((FormDeinitializable) oldVistaController).deinitialize();
+                ((FormDeinitializable) oldVistaController).formDeinitialize();
             }
         } catch (Exception e) {
-            LOGGER.error("Cannot deinitialize vista", e);
+            LOGGER.error("Cannot formDeinitialize vista", e);
             throw e;
         }
     }

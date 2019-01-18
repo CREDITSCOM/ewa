@@ -10,7 +10,9 @@ import java.util.Map;
 /**
  * Created by goncharov-eg on 23.11.2017.
  */
-public class HeaderController implements FormInitializable{
+public class HeaderController extends AbstractController {
+
+    public AbstractController parentController;
 
     @FXML
     private Button btnLogout;
@@ -30,6 +32,7 @@ public class HeaderController implements FormInitializable{
 
     @FXML
     private void handleLogout() {
+        closeSession();
         VistaNavigator.loadVista(VistaNavigator.WELCOME,this);
     }
 
@@ -51,6 +54,11 @@ public class HeaderController implements FormInitializable{
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
+        parentController.initializeForm(objects);
+    }
 
+    @Override
+    public void formDeinitialize() {
+        parentController.formDeinitialize();
     }
 }

@@ -26,15 +26,12 @@ import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.CREDITS_TOKEN_NAME;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
-import static com.credits.wallet.desktop.AppState.contractInteractionService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createTransaction;
 
 /**
  * Created by Rustem.Saidaliyev on 26.01.2018.
  */
-public class GenerateTransactionController implements FormInitializable {
+public class GenerateTransactionController extends AbstractController {
     private final static Logger LOGGER = LoggerFactory.getLogger(GenerateTransactionController.class);
 
     @FXML
@@ -59,7 +56,7 @@ public class GenerateTransactionController implements FormInitializable {
         params.put("transactionAmount",transactionAmount.getText());
         params.put("transactionText",transactionText.getText());
         params.put("coinType", coinType.getText());
-        VistaNavigator.loadVista(VistaNavigator.WALLET, params, this);
+        VistaNavigator.loadVista(VistaNavigator.WALLET, this, params);
     }
 
     @FXML
@@ -68,15 +65,15 @@ public class GenerateTransactionController implements FormInitializable {
         try {
             if(coinType.equals(CREDITS_TOKEN_NAME)) {
                 CompletableFuture
-                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account,toAddress,
+                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,session.account,toAddress,
                         true),threadPool)
                     .thenApply((transactionData) -> createTransaction(transactionData, GeneralConverter.toBigDecimal(
-                        transactionAmount.getText()), transactionText.getText()))
+                        transactionAmount.getText()), transactionText.getText(),session))
                     .whenComplete(handleCallback(handleTransactionResult()));
             } else {
-                coinsKeeper.getKeptObject().ifPresent(coinsMap ->
+                session.coinsKeeper.getKeptObject().ifPresent(coinsMap ->
                     Optional.ofNullable(coinsMap.get(coinType)).ifPresent(
-                        coin -> contractInteractionService.transferTo(coin, toAddress, GeneralConverter.toBigDecimal(
+                        coin -> session.contractInteractionService.transferTo(coin, toAddress, GeneralConverter.toBigDecimal(
                             transactionAmount.getText()), handleTransferTokenResult())));
             }
         } catch (CreditsException e) {
@@ -107,7 +104,7 @@ public class GenerateTransactionController implements FormInitializable {
             @Override
             public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
                 ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(),
-                    resultData.getLeft());
+                    resultData.getLeft(),session);
                 FormUtils.showPlatformInfo("Transaction created");
             }
 
@@ -126,5 +123,10 @@ public class GenerateTransactionController implements FormInitializable {
         transactionAmount.setText(objects.get("transactionAmount").toString());
         transactionText.setText(objects.get("transactionText").toString());
         coinType.setText(objects.get("coinType").toString());
+    }
+
+    @Override
+    public void formDeinitialize() {
+
     }
 }

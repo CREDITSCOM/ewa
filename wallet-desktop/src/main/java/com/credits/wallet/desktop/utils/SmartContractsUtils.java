@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.crypto.Md5;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
@@ -16,7 +17,6 @@ import static com.credits.general.crypto.Blake2S.generateHash;
 import static com.credits.general.util.GeneralConverter.byteArrayToHex;
 import static com.credits.general.util.GeneralConverter.toByteArray;
 import static com.credits.general.util.GeneralConverter.toByteArrayLittleEndian;
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static org.apache.commons.lang3.ArrayUtils.addAll;
 
 public class SmartContractsUtils {
@@ -46,7 +46,7 @@ public class SmartContractsUtils {
         return bytes;
     }
 
-    public static void saveSmartInTokenList(String coinName, BigDecimal balance, String smartContractAddress) {
+    public static void saveSmartInTokenList(ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper, String coinName, BigDecimal balance, String smartContractAddress) {
         if(balance != null) {
             ConcurrentHashMap<String, String> coins = coinsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new);
             coinName = checkCoinNameExist(coinName, coins);

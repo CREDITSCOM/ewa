@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by goncharov-eg on 23.11.2017.
  */
-public class WelcomeController implements FormInitializable {
+public class WelcomeController extends AbstractController {
 
     @FXML
     private void handleExistingAccount() {
@@ -22,7 +22,10 @@ public class WelcomeController implements FormInitializable {
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
-
     }
 
+    @Override
+    public void formDeinitialize() {
+
+    }
 }
