@@ -41,7 +41,6 @@ public class CreditsCodeArea extends CodeArea {
     private static final String TAB_STRING = StringUtils.repeat(" ", TAB_SIZE);
     private static final String DEFAULT_SOURCE_CODE =
             "public class Contract extends SmartContract {\n" + "\n" + TAB_STRING + "public Contract(String initiator) {\n" + TAB_STRING + TAB_STRING + "super(initiator);\n" + TAB_STRING + "}" + "\n" + "}";
-    private static final long PERIOD_OF_SAVING_TEXT = 1000;
     private static int tabCount;
     private ExecutorService codeAreaHighlightExecutor = Executors.newSingleThreadExecutor();
 
@@ -187,11 +186,9 @@ public class CreditsCodeArea extends CodeArea {
 
     private void trySaveTextToMemory(KeyCode code) {
         if (code.isLetterKey() || code.isDigitKey() || code.isWhitespaceKey() || code == BACK_SPACE) {
-            if ((System.currentTimeMillis() - lastTimeStampOfSavedText) > PERIOD_OF_SAVING_TEXT) {
-                if (!AppState.lastSmartContract.equals(getText())) {
-                    AppState.lastSmartContract = getText();
-                    lastTimeStampOfSavedText = System.currentTimeMillis();
-                }
+            if (!AppState.lastSmartContract.equals(getText())) {
+                AppState.lastSmartContract = getText();
+                lastTimeStampOfSavedText = System.currentTimeMillis();
             }
         }
     }
