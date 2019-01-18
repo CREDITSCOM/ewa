@@ -215,10 +215,6 @@ public class ParseCodeUtils {
     }
 
     public static void checkClassAndSuperclassNames(String className, String sourceCode) throws CreditsException {
-        if (!className.equals(CLASS_NAME)) {
-            throw new CreditsException(
-                String.format("Wrong class name %s, class name must be %s", className, CLASS_NAME));
-        }
         String superclassName = parseSuperclassName(sourceCode);
 
         if (superclassName == null || !superclassName.equals(SUPERCLASS_NAME)) {
