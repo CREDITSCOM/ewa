@@ -24,7 +24,6 @@ public class TransactionFlowData extends TransactionData implements Serializable
         this.setSource(source);
         this.setTarget(target);
         this.setAmount(amount);
-        this.setBalance(balance);
         this.setCurrency(currency);
         this.setOfferedMaxFee(offeredMaxFee);
         this.setSmartContractBytes(smartContractBytes);
@@ -38,7 +37,6 @@ public class TransactionFlowData extends TransactionData implements Serializable
         this.setSource(source);
         this.setTarget(target);
         this.setAmount(amount);
-        this.setBalance(balance);
         this.setCurrency(currency);
         this.setOfferedMaxFee(offeredMaxFee);
         this.setSmartContractBytes(smartContractBytes);
@@ -107,7 +105,6 @@ public class TransactionFlowData extends TransactionData implements Serializable
         sb.append(", source=").append(Arrays.toString(source));
         sb.append(", target=").append(Arrays.toString(target));
         sb.append(", amount=").append(amount);
-        sb.append(", balance=").append(balance);
         sb.append(", currency=").append(currency);
         sb.append("offeredMaxFee=").append(offeredMaxFee);
         sb.append(", signature=").append(Arrays.toString(signature));

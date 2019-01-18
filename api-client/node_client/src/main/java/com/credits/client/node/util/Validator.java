@@ -59,7 +59,6 @@ public class Validator {
 //            throw new NodeClientException("signature is empty");
 //        }
         Validator.validateTransactionAmount(data.getAmount());
-        Validator.validateTransactionBalance(data.getBalance());
     }
 
     private static void validateTransactionAmount(BigDecimal amount) {
