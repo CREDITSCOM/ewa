@@ -107,7 +107,6 @@ public class NodePojoConverter {
         data.setId(innerId);
         data.setSource(transaction.getSource());
         data.setTarget(transaction.getTarget());
-        data.setBalance(NodePojoConverter.amountToBigDecimal(transaction.getBalance()));
         data.setCommentBytes(transaction.getUserFields());
         if (transaction.getSmartContract() != null) {
             data.setMethod(transaction.getSmartContract().getMethod());
@@ -134,11 +133,6 @@ public class NodePojoConverter {
         data.setId(innerId);
         data.setSource(transaction.getSource());
         data.setTarget(transaction.getTarget());
-        if (transaction.getBalance() == null) {
-            data.setBalance(BigDecimal.ZERO);
-        } else {
-            data.setBalance(NodePojoConverter.amountToBigDecimal(transaction.getBalance()));
-        }
         data.setCommentBytes(transaction.getUserFields());
         return data;
     }

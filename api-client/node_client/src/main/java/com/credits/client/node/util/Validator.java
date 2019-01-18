@@ -59,7 +59,6 @@ public class Validator {
 //            throw new NodeClientException("signature is empty");
 //        }
         Validator.validateTransactionAmount(data.getAmount());
-        Validator.validateTransactionBalance(data.getBalance());
     }
 
     private static void validateTransactionAmount(BigDecimal amount) {
@@ -68,17 +67,6 @@ public class Validator {
         if (numberOfDecimalPlaces > 18) {
             throw new NodeClientException(String.format("Invalid transaction amount %s, number of decimal places %s larger 18",
                     amount,
-                    numberOfDecimalPlaces)
-            );
-        }
-    }
-
-    private static void validateTransactionBalance(BigDecimal balance) {
-
-        int numberOfDecimalPlaces = Utils.getNumberOfDecimalPlaces(balance);
-        if (numberOfDecimalPlaces > 18) {
-            throw new NodeClientException(String.format("Invalid transaction balance %s, number of decimal places %s larger 18",
-                    balance,
                     numberOfDecimalPlaces)
             );
         }

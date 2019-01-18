@@ -63,7 +63,7 @@ public class GenerateTransactionController extends AbstractController {
     private void handleGenerate() {
         String toAddress = transactionToAddress.getText();
         try {
-            if(coinType.equals(CREDITS_TOKEN_NAME)) {
+            if(coinType.getText().equals(CREDITS_TOKEN_NAME)) {
                 CompletableFuture
                     .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,session.account,toAddress,
                         true),threadPool)

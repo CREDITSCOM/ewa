@@ -18,7 +18,6 @@ public class TransactionData implements Serializable {
     protected byte[] source;
     protected byte[] target;
     protected BigDecimal amount;
-    protected BigDecimal balance;
     protected byte currency = (byte) 1;
     protected byte[] commentBytes;
     protected String method;
@@ -82,14 +81,6 @@ public class TransactionData implements Serializable {
         this.currency = currency;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
     public byte[] getCommentBytes() {
         return commentBytes;
     }
@@ -124,14 +115,13 @@ public class TransactionData implements Serializable {
         }
         TransactionData that = (TransactionData) o;
         return id == that.id && currency == that.currency && Arrays.equals(source, that.source) &&
-            Arrays.equals(target, that.target) && Objects.equals(amount, that.amount) &&
-            Objects.equals(balance, that.balance);
+            Arrays.equals(target, that.target) && Objects.equals(amount, that.amount);
     }
 
     @Override
     public int hashCode() {
 
-        int result = Objects.hash(id, amount, balance, currency);
+        int result = Objects.hash(id, amount, currency);
         result = 31 * result + Arrays.hashCode(source);
         result = 31 * result + Arrays.hashCode(target);
         return result;
@@ -144,7 +134,6 @@ public class TransactionData implements Serializable {
         sb.append(", source=").append(Arrays.toString(source));
         sb.append(", target=").append(Arrays.toString(target));
         sb.append(", amount=").append(amount);
-        sb.append(", balance=").append(balance);
         sb.append(", currency=").append(currency);
         sb.append('}');
         return sb.toString();
