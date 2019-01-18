@@ -46,20 +46,20 @@ public class ContractExecutorThriftApiClient implements ContractExecutorThriftAp
     }
 
     @Override
-    public ExecuteByteCodeResult executeByteCode(byte[] address, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<VariantData> params, long executionTime) throws ContractExecutorClientException {
+    public ExecuteByteCodeResult executeByteCode(byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<VariantData> params, long executionTime) throws ContractExecutorClientException {
         Client client = pool.getResource();
         List<Variant> variantList = params.stream().map(variantData -> {
             return VariantConverter.variantDataToVariant(variantData);
         }).collect(Collectors.toList());
-        return callThrift(client, () -> client.executeByteCode(ByteBuffer.wrap(address), byteCodeObjects, ByteBuffer.wrap(contractState), method,
+        return callThrift(client, () -> client.executeByteCode(ByteBuffer.wrap(initiatorAddress), ByteBuffer.wrap(contractAddress), byteCodeObjects, ByteBuffer.wrap(contractState), method,
                 variantList,
                 executionTime));
     }
 
     @Override
-    public ExecuteByteCodeMultipleResult executeByteCodeMultiple(byte[] address, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<List<Variant>> params, long executionTime) {
+    public ExecuteByteCodeMultipleResult executeByteCodeMultiple(byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<List<Variant>> params, long executionTime) {
         Client client = pool.getResource();
-        return callThrift(client, () -> client.executeByteCodeMultiple(ByteBuffer.wrap(address), byteCodeObjects, ByteBuffer.wrap(contractState), method, params, executionTime));
+        return callThrift(client, () -> client.executeByteCodeMultiple(ByteBuffer.wrap(initiatorAddress), ByteBuffer.wrap(contractAddress), byteCodeObjects, ByteBuffer.wrap(contractState), method, params, executionTime));
     }
 
     @Override

@@ -3,8 +3,6 @@ import com.credits.client.node.pojo.TransactionData;
 import com.credits.general.exception.CreditsException;
 import com.credits.service.node.api.NodeApiInteractionService;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,6 +19,7 @@ public abstract class SmartContract implements Serializable {
     protected static ExecutorService cachedPool;
     protected final transient String initiator;
     private transient String specialProperty = "";
+    protected String contractAddress = "";
 
 
     protected SmartContract(String initiator) {
@@ -60,7 +59,7 @@ public abstract class SmartContract implements Serializable {
 
     final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {
         callService(() -> {
-            service.transactionFlow(initiator, target, amount, fee, userData, specialProperty);
+            service.transactionFlow(contractAddress, target, amount, fee, userData, specialProperty);
             return null;
         });
     }

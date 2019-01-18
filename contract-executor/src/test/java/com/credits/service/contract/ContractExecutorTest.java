@@ -54,26 +54,26 @@ public class ContractExecutorTest extends ServiceTest {
         List<ByteCodeObjectData> byteCodeObjectDataList =
             compileSourceCode(sourceCode);
 
-        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(
+        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(initiatorAddress))).thenReturn(
                 new SmartContractData(
-                        address,
-                        address,
+                        initiatorAddress,
+                        initiatorAddress,
                         new SmartContractDeployData(sourceCode, byteCodeObjectDataList, TokenStandartData.CreditsBasic),
                         null
                 ));
 
-        ceService.execute(address, byteCodeObjectDataList, null, "foo", new Variant[][]{{}},500);
+        ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, null, "foo", new Variant[][]{{}},500);
 
-        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(
+        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(initiatorAddress))).thenReturn(
                 new SmartContractData(
-                        address,
-                        address,
+                        initiatorAddress,
+                        initiatorAddress,
                         new SmartContractDeployData(sourceCode, byteCodeObjectDataList, TokenStandartData.CreditsBasic),
                         null
                 ));
 
         try {
-            ceService.execute(address, byteCodeObjectDataList, null, "foo", new Variant[][]{{}}, 500L);
+            ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, null, "foo", new Variant[][]{{}}, 500L);
         } catch (ContractExecutorException e) {
             System.out.println("bad hash error - " + e.getMessage());
             return;
@@ -87,22 +87,22 @@ public class ContractExecutorTest extends ServiceTest {
         List<ByteCodeObjectData> byteCodeObjectDataList =
             compileSourceCode(sourceCode);
 
-        byte[] contractState = ceService.execute(address, byteCodeObjectDataList, null, null, null, 500L).getContractState();
+        byte[] contractState = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null, 500L).getContractState();
 
-        contractState = ceService.execute(address, byteCodeObjectDataList, contractState, "initialize", new Variant[][]{{}},500L).getContractState();
-        ReturnValue rvTotalInitialized = ceService.execute(address, byteCodeObjectDataList, contractState, "getTotal", new Variant[][]{{}},500L);
+        contractState = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "initialize", new Variant[][]{{}},500L).getContractState();
+        ReturnValue rvTotalInitialized = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "getTotal", new Variant[][]{{}},500L);
         assertEquals(1, rvTotalInitialized.getVariantsList().get(0).getFieldValue());
 
-        contractState = ceService.execute(address, byteCodeObjectDataList, contractState, "addTokens", new Variant[][]{
+        contractState = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "addTokens", new Variant[][]{
             {ContractExecutorUtils.mapVariantDataToVariant(new VariantData(VariantType.INT, 10))}
         },500L).getContractState();
-        ReturnValue rvTotalAfterSumming = ceService.execute(address, byteCodeObjectDataList, contractState, "getTotal", new Variant[][]{{}},500L);
+        ReturnValue rvTotalAfterSumming = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "getTotal", new Variant[][]{{}},500L);
         assertEquals(11, rvTotalAfterSumming.getVariantsList().get(0).getFieldValue());
 
-        contractState = ceService.execute(address, byteCodeObjectDataList, contractState, "addTokens", new Variant[][]{
+        contractState = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "addTokens", new Variant[][]{
             {ContractExecutorUtils.mapVariantDataToVariant(new VariantData(VariantType.INT, -11))}
         },500L).getContractState();
-        ReturnValue rvTotalAfterSubtraction = ceService.execute(address, byteCodeObjectDataList, contractState, "getTotal", new Variant[][]{{}},500L);
+        ReturnValue rvTotalAfterSubtraction = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "getTotal", new Variant[][]{{}},500L);
         assertEquals(0, rvTotalAfterSubtraction.getVariantsList().get(0).getFieldValue());
     }
 
@@ -112,10 +112,10 @@ public class ContractExecutorTest extends ServiceTest {
         List<ByteCodeObjectData> byteCodeObjectDataList =
             compileSourceCode(sourceCode);
 
-        byte[] contractState = ceService.execute(address, byteCodeObjectDataList, null, null, null, 500L).getContractState();
+        byte[] contractState = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null, 500L).getContractState();
 
-        ReturnValue result = ceService.execute(address, byteCodeObjectDataList, contractState, "getInitiatorAddress", new Variant[][]{{}}, 500L);
-        assertEquals(Base58.encode(address), result.getVariantsList().get(0).getV_string());
+        ReturnValue result = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "getInitiatorAddress", new Variant[][]{{}}, 500L);
+        assertEquals(Base58.encode(initiatorAddress), result.getVariantsList().get(0).getV_string());
     }
 
     @Test
@@ -140,7 +140,7 @@ public class ContractExecutorTest extends ServiceTest {
         String sourceCode = readSourceCode("/serviceTest/Contract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
             compileSourceCode(sourceCode);
-        byte[] contractState = ceService.execute(address, byteCodeObjectDataList, null, null, null, 500).getContractState();
+        byte[] contractState = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null, 500).getContractState();
         Map<String, Variant> contractVariables = ceService.getContractVariables(byteCodeObjectDataList, contractState);
         Assert.assertTrue(contractVariables.containsKey("total"));
     }
@@ -152,17 +152,17 @@ public class ContractExecutorTest extends ServiceTest {
         String sourceCode = readSourceCode("/serviceTest/Contract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
             compileSourceCode(sourceCode);
-        byte[] contractState = ceService.execute(address, byteCodeObjectDataList, null, null, null, 500).getContractState();
+        byte[] contractState = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null, 500).getContractState();
 
-        ReturnValue singleCallResult = ceService.execute(address, byteCodeObjectDataList, contractState, "addTokens", new Variant[][] {{Variant.v_int(10)}}, 500);
-        ReturnValue multiplyCallResult = ceService.execute(address, byteCodeObjectDataList, contractState, "addTokens", new Variant[][]{
+        ReturnValue singleCallResult = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "addTokens", new Variant[][] {{Variant.v_int(10)}}, 500);
+        ReturnValue multiplyCallResult = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "addTokens", new Variant[][]{
             {Variant.v_int(10)},
             {Variant.v_int(10)},
             {Variant.v_int(10)},
             {Variant.v_int(10)}}, 500);
         assertNotEquals(singleCallResult.getContractState(), multiplyCallResult.getContractState());
 
-        singleCallResult = ceService.execute(address, byteCodeObjectDataList, contractState, "getTotal", new Variant[][]{{}}, 500);
+        singleCallResult = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "getTotal", new Variant[][]{{}}, 500);
         TestCase.assertEquals(0, singleCallResult.getVariantsList().get(0).getV_int_box());
     }
 

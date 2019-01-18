@@ -12,6 +12,6 @@ import java.util.List;
  */
 public interface ContractExecutorApiService {
 
-    ExecuteByteCodeResult executeContractMethod(byte[] address, List<ByteCodeObject> byteCodeObjects, byte[] objectState, String methodName, List<VariantData> params, long executionTime)
+    ExecuteByteCodeResult executeContractMethod(byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] objectState, String methodName, List<VariantData> params, long executionTime)
         throws ContractExecutorClientException;
 }
