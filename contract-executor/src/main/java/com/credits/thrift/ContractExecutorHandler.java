@@ -44,7 +44,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     }
 
     @Override
-    public ExecuteByteCodeResult executeByteCode(ByteBuffer address, List<ByteCodeObject> byteCodeObjects, ByteBuffer contractState,
+    public ExecuteByteCodeResult executeByteCode(ByteBuffer initiatorAddress, ByteBuffer contractAddress, List<ByteCodeObject> byteCodeObjects, ByteBuffer contractState,
         String method, List<Variant> params, long executionTime) {
         logger.debug("<-- execute(" +
                     "\naddress = {}," +
@@ -53,13 +53,13 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                     "\ncontractState hash= {} " +
                     "\nmethod = {}, " +
                     "\nparams = {}.",
-            encodeToBASE58(address.array()), byteCodeObjects.size(), contractState.array().length, contractState.hashCode(),
+            encodeToBASE58(initiatorAddress.array()), byteCodeObjects.size(), contractState.array().length, contractState.hashCode(),
             method, (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat)));
 
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
         ExecuteByteCodeResult result = new ExecuteByteCodeResult(new APIResponse(SUCCESS_CODE, "success"), null);
         try {
-            ReturnValue returnValue = service.execute(address.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(byteCodeObjects), contractState.array(), method, new Variant[][] {paramsArray},executionTime);
+            ReturnValue returnValue = service.execute(initiatorAddress.array(), contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(byteCodeObjects), contractState.array(), method, new Variant[][] {paramsArray},executionTime);
             result.contractState = ByteBuffer.wrap(returnValue.getContractState());
             if (returnValue.getVariantsList() != null) {
                 result.ret_val = returnValue.getVariantsList().get(0);
@@ -76,7 +76,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
 
     @Override
-    public ExecuteByteCodeMultipleResult executeByteCodeMultiple(ByteBuffer address, List<ByteCodeObject> compilationUnits,
+    public ExecuteByteCodeMultipleResult executeByteCodeMultiple(ByteBuffer initiatorAddress, ByteBuffer contractAddress, List<ByteCodeObject> compilationUnits,
         ByteBuffer contractState, String method, List<List<Variant>> params, long executionTime) {
 
         Variant[][] paramsArray = null;
@@ -90,13 +90,13 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
         logger.info(String.format(
             "<-- executeByteCodeMultiple(\naddress = %s, \nbyteCode length= %d, \ncontractState length= %d, \ncontractState hash= %s \nmethod = %s, \nparams = %s.",
-            encodeToBASE58(address.array()), compilationUnits.size(), contractState.array().length,
+            encodeToBASE58(initiatorAddress.array()), compilationUnits.size(), contractState.array().length,
             contractState.hashCode(), method, Arrays.toString(paramsArray)));
 
         ExecuteByteCodeMultipleResult response = new ExecuteByteCodeMultipleResult();
         try {
             ReturnValue returnValue =
-                service.execute(address.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(compilationUnits), contractState.array(), method, paramsArray,
+                service.execute(initiatorAddress.array(), contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(compilationUnits), contractState.array(), method, paramsArray,
                     executionTime);
             List<GetterMethodResult> getterResults = new ArrayList<>(returnValue.getVariantsList().size());
             List<Variant> variantsList = returnValue.getVariantsList();

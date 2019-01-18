@@ -33,15 +33,16 @@ public class ExecutorIntegrationTest {
         CompilationPackage compilationPackage = SourceCodeBuilder.compileSourceCode(sourceCode).getCompilationPackage();
         List<ByteCodeObjectData> byteCodeObjectDataList =
             GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
-        byte[] address = "address".getBytes();
+        byte[] initiatorAddress = "initiatorAddress".getBytes();
+        byte[] contractAddress = "contractAddress".getBytes();
         ExecuteByteCodeResult executeByteCodeResult =
-            contractExecutorService.executeContractMethod(address,
+            contractExecutorService.executeContractMethod(initiatorAddress, contractAddress,
                 GeneralConverter.byteCodeObjectsDataToByteCodeObjects(byteCodeObjectDataList), "".getBytes(), null,
                 null, 600);
 
         byte[] contractState = executeByteCodeResult.getContractState();
 
-        ExecuteByteCodeResult val = contractExecutorService.executeContractMethod(address,
+        ExecuteByteCodeResult val = contractExecutorService.executeContractMethod(initiatorAddress, contractAddress,
             GeneralConverter.byteCodeObjectsDataToByteCodeObjects(byteCodeObjectDataList), contractState, "val",
             asList(new VariantData[] {}), 500L);
 

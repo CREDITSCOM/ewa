@@ -33,15 +33,15 @@ public class ThriftIT extends ServiceTest {
 
         byteCodeObjects = compileSourceCode(sourceCode);
 
-        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(address))).thenReturn(
+        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(initiatorAddress))).thenReturn(
             new SmartContractData(
-                    address,
-                    address,
+                    initiatorAddress,
+                    initiatorAddress,
                     new SmartContractDeployData(sourceCode, byteCodeObjects, TokenStandartData.CreditsBasic),
                     null
             ));
 
-        contractState = ceService.execute(address, byteCodeObjects, null, null, null, 500L).getContractState();
+        contractState = ceService.execute(initiatorAddress, contractAddress, byteCodeObjects, null, null, null, 500L).getContractState();
     }
 
     @After
@@ -53,14 +53,14 @@ public class ThriftIT extends ServiceTest {
     @Ignore //No enough permissions
     @Test
     public void execute_contract_using_bytecode_getBalance() throws Exception {
-        ceService.execute(address, byteCodeObjects, contractState, "balanceGet", new Variant[][]{{}},500L);
+        ceService.execute(initiatorAddress, contractAddress, byteCodeObjects, contractState, "balanceGet", new Variant[][]{{}},500L);
     }
 
 
     @Ignore
     @Test
     public void execute_contract_using_bytecode_sendTransaction() throws Exception {
-        ceService.execute(address, byteCodeObjects, contractState, "sendZeroCS", new Variant[][]{},500L);
+        ceService.execute(initiatorAddress, contractAddress, byteCodeObjects, contractState, "sendZeroCS", new Variant[][]{},500L);
     }
 
 }

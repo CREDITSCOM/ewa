@@ -35,20 +35,8 @@ import java.net.NetPermission;
 import java.net.SocketPermission;
 import java.security.Permissions;
 import java.security.SecurityPermission;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.PropertyPermission;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.*;
+import java.util.concurrent.*;
 
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialize.Serializer.deserialize;
@@ -89,19 +77,23 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
 
     @Override
-    public ReturnValue execute( byte[] initiatorAddress,  List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState,  String methodName,
+    public ReturnValue execute(byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState,  String methodName,
          Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
 
-        String initiator = "unknown address";
+        String initiatorAddressBase58 = "unknown address";
+        String contractAddressBase58 = "unknown address";
         try {
             if(byteCodeObjectDataList.size()==0) {
                 throw new ContractExecutorException("Bytecode size is 0");
             }
-            requireNonNull(initiatorAddress, "contractAddress is null");
+            requireNonNull(initiatorAddress, "initiatorAddress is null");
+            requireNonNull(contractAddress, "contractAddress is null");
             if(byteCodeObjectDataList.size()==0) {
                 throw new ContractExecutorException("ByteCode is null");
             }
-            initiator = Base58.encode(initiatorAddress);
+            initiatorAddressBase58 = Base58.encode(initiatorAddress);
+            contractAddressBase58 = Base58.encode(contractAddress);
+
 
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
             Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
@@ -121,11 +113,13 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Object instance;
             if (contractState != null && contractState.length != 0) {
                 instance = deserialize(contractState, classLoader);
-                ContractExecutorServiceUtils.initializeField("initiator", initiator, contractClass, instance);
+                ContractExecutorServiceUtils.initializeField("initiator", initiatorAddressBase58, contractClass, instance);
             } else {
-                instance = contractClass.getDeclaredConstructor(String.class).newInstance(initiator);
+                instance = contractClass.getDeclaredConstructor(String.class).newInstance(initiatorAddressBase58);
                 return new ReturnValue(serialize(instance), null, Collections.singletonList(new APIResponse(SUCCESS_CODE, "success")));
             }
+
+            ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass, instance);
 
             int amountParamRows = 1;
             Variant[] params = null;
@@ -141,7 +135,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             Class<?> returnType = targetMethodData.getMethod().getReturnType();
 
-            ContractExecutorServiceUtils.initializeField("specialProperty", System.getProperty(initiator), contractClass, instance);
+            ContractExecutorServiceUtils.initializeField("specialProperty", System.getProperty(initiatorAddressBase58), contractClass, instance);
 
             for (int i = 0; i < amountParamRows; i++) {
                 Object[] parameter = null;
@@ -194,7 +188,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         } catch (Throwable e) {
             throw new ContractExecutorException(
-                "Cannot execute the contract " + initiator + ". Reason: " + getRootCauseMessage(e));
+                "Cannot execute the contract " + initiatorAddressBase58 + ". Reason: " + getRootCauseMessage(e));
         }
     }
 
