@@ -94,7 +94,6 @@ public class UITest {
     @Test
     public void allForms() throws Exception {
         mockInitializer.startForm = VistaNavigator.WELCOME;
-        /*todo repair AppState.account = walletAddress;*/
         //balances
         doAnswer(returnBalance(new BigDecimal("2443113.00192177821876551"))).when(mockContractInteractionService)
             .getSmartContractBalance(anyString(), any());
@@ -128,7 +127,6 @@ public class UITest {
     @Test
     public void deployForm() throws Exception {
         mockInitializer.startForm = VistaNavigator.SMART_CONTRACT_DEPLOY;
-        /*todo repair AppState.account = walletAddress;*/
         runApp();
     }
 
