@@ -11,7 +11,7 @@ public class NumberUtils {
     public static void correctNum(String c, TextField tf) {
         String s = tf.getText();
         // I. remove non-digits character
-        if (!digits.contains(c) && !c.equals(AppState.decimalSeparator)) {
+        if (!digits.contains(c) && !c.equals(AppState.decimalSeparator) && s.contains(c)) {
             int ind = s.indexOf(c);
             s = s.substring(0, ind) + s.substring(ind + 1);
             tf.setText(s);

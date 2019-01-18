@@ -37,6 +37,10 @@ public class ContractInteractionService {
     public static final String GET_NAME_METHOD = "getName";
     public Session session;
 
+    public ContractInteractionService(Session session) {
+        this.session = session;
+    }
+
     public void getSmartContractBalance(String smartContractAddress, Callback<BigDecimal> callback) {
         supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
             .thenApply(this::getBalance)
