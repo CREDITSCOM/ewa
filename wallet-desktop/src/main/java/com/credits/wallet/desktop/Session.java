@@ -13,10 +13,20 @@ public class Session {
     public ObjectKeeper<HashMap<String, SmartContractData>> favoriteContractsKeeper;
     public String lastSmartContract;
     public String account;
-    public ConcurrentHashMap<String, ConcurrentHashMap<Long, TransactionRoundData>> sourceMap = new ConcurrentHashMap<>();
-    public ContractInteractionService contractInteractionService = initializeContractInteractionService();
+    public ConcurrentHashMap<Long, TransactionRoundData> sourceMap = new ConcurrentHashMap<>();
+    public ContractInteractionService contractInteractionService = initializeContractInteractionService(this);
 
-    public ContractInteractionService initializeContractInteractionService() {
-        return new ContractInteractionService();
+    public ContractInteractionService initializeContractInteractionService(Session session) {
+        return new ContractInteractionService(this);
+    }
+
+
+    public void close() {
+        if(this.favoriteContractsKeeper != null){
+            this.favoriteContractsKeeper.flush();
+        }
+        if(this.coinsKeeper != null){
+            this.coinsKeeper.flush();
+        }
     }
 }

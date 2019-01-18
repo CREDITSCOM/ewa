@@ -17,13 +17,7 @@ public abstract class AbstractController implements FormInitializable, FormDeini
     }
 
     public void closeSession() {
-        if(session.favoriteContractsKeeper != null){
-            session.favoriteContractsKeeper.flush();
-        }
-        if(session.coinsKeeper != null){
-            session.coinsKeeper.flush();
-        }
-
+        session.close();
         session = null;
     }
 }
