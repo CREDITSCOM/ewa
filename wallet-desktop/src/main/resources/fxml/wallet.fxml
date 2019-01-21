@@ -77,17 +77,16 @@
                         </Label>
                         <HBox prefHeight="35.0" prefWidth="615.0">
                             <children>
-                                <TextField fx:id="amountField" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" prefWidth="235.0" styleClass="credits-textField" />
+                                <TextField fx:id="amountField" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" prefWidth="350.0" promptText="Put amount here" styleClass="credits-textField" />
                             </children>
                         </HBox>
                         <Label fx:id="amountErrorLabel" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" styleClass="credits--not-padding-labelError" />
-                        <Label styleClass="credits-not-padding-label" text="Transaction Fee, (CS)">
+                        <Label styleClass="credits-not-padding-label" text="Transaction Fee in CS">
                         </Label>
                         <HBox prefHeight="32.0" prefWidth="615.0">
                             <children>
-                                <TextField fx:id="feeField" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" prefWidth="112.0" styleClass="credits-textField" />
-                                <Label prefHeight="45.0" prefWidth="220.0" styleClass="credits-label" text="0.01 - 0.03 - Recomended" />
-                        <Label prefHeight="45.0" prefWidth="74.0" styleClass="credits-label" text="Actual:" />
+                                <TextField fx:id="feeField" maxHeight="45.0" minHeight="45.0" minWidth="350.0" prefHeight="45.0" prefWidth="350.0" promptText="(0.01 - 0.03 - Recomended)" styleClass="credits-textField" />
+                        <Label prefHeight="45.0" prefWidth="98.0" styleClass="credits-label" text="Actual:" />
                         <Label fx:id="actualFeeLabel" prefHeight="45.0" prefWidth="214.0" styleClass="credits-label" text="0" textFill="#0000008e">
                            <font>
                               <Font name="System Bold" size="12.0" />

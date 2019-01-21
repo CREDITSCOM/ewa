@@ -5,7 +5,6 @@ import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.MathUtils;
-import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.CoinTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -48,7 +47,7 @@ import static org.apache.commons.lang3.StringUtils.repeat;
  */
 public class WalletController extends AbstractController {
 
-    private static final String ERR_FEE="Fee must be greater than 0";
+    private static final String ERR_FEE = "Fee must be greater than 0";
     private static final String ERR_COIN = "Coin must be selected";
     private static final String ERR_AMOUNT = "Amount must be greater than 0";
     private static final String ERR_TO_ADDRESS = "To address must not be empty";
@@ -112,9 +111,10 @@ public class WalletController extends AbstractController {
         String transactionText = transText.getText();
 
         // VALIDATE
-        AtomicBoolean isValidationSuccessful = new AtomicBoolean(true);;
+        AtomicBoolean isValidationSuccessful = new AtomicBoolean(true);
         clearLabErr();
-        if (coinsTableView.getSelectionModel().getSelectedItem() == null || coinsTableView.getSelectionModel().getSelectedItem().getName().isEmpty()) {
+        if (coinsTableView.getSelectionModel().getSelectedItem() == null ||
+            coinsTableView.getSelectionModel().getSelectedItem().getName().isEmpty()) {
             FormUtils.validateTable(coinsTableView, coinsErrorLabel, ERR_COIN, isValidationSuccessful);
         }
         if (transactionToAddress == null || transactionToAddress.isEmpty()) {
@@ -137,7 +137,7 @@ public class WalletController extends AbstractController {
             params.put("coinType", coinsTableView.getSelectionModel().getSelectedItem().getName());
             params.put("transactionToAddress", transactionToAddress);
             params.put("transactionAmount", transactionAmount);
-            params.put("transactionFee",transactionFee);
+            params.put("transactionFee", transactionFee);
             params.put("transactionText", transactionText);
             VistaNavigator.loadVista(VistaNavigator.FORM_7, this, params);
         }
@@ -146,7 +146,7 @@ public class WalletController extends AbstractController {
     private void updateCoins(TableView<CoinTabRow> tableView) {
         ObservableList<CoinTabRow> tableViewItems = tableView.getItems();
         addOrUpdateCsCoinRow(tableViewItems);
-       session.coinsKeeper.getKeptObject()
+        session.coinsKeeper.getKeptObject()
             .orElseGet(ConcurrentHashMap::new)
             .forEach((coinName, contractAddress) -> addOrUpdateUserCoinRow(tableViewItems, coinName, contractAddress));
     }
@@ -280,25 +280,20 @@ public class WalletController extends AbstractController {
         publicWalletID.setText(session.account);
 
         feeField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (AppState.decimalSeparator.equals(",")) {
-                newValue = newValue.replace(',', '.');
+            try {
+                newValue = NumberUtils.getCorrectNum(newValue);
+                if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
+                    setFieldsValue(oldValue);
+                    return;
+                }
+                setFieldsValue(newValue);
+            } catch (Exception e) {
+                //FormUtils.showError("Error. Reason: " + e.getMessage());
+                setFieldsValue(oldValue);
             }
-            if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue)) { // check newValue is number
-                return;
-            }
-            double actualFee = MathUtils.calcActualFee(GeneralConverter.toDouble(newValue));
-            this.actualFeeLabel.setText(GeneralConverter.toString(actualFee));
         });
 
         amountField.setOnKeyReleased(event -> NumberUtils.correctNum(event.getText(), amountField));
-
-        feeField.setOnKeyReleased(event -> {
-            try {
-                NumberUtils.correctNum(event.getText(), feeField);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-            }
-        });
 
         if (objects != null) {
             addressField.setText(objects.get("transactionToAddress").toString());
@@ -307,12 +302,23 @@ public class WalletController extends AbstractController {
             transText.setText(objects.get("transactionText").toString());
             int i = 0;
             for (CoinTabRow item : coinsTableView.getItems()) {
-                if(item.getName().equals(objects.get("coinType").toString())) {
+                if (item.getName().equals(objects.get("coinType").toString())) {
                     coinsTableView.getSelectionModel().select(i);
                     break;
                 }
                 i++;
             }
+        }
+    }
+
+    private void setFieldsValue(String oldValue) {
+        if(oldValue.isEmpty()) {
+            actualFeeLabel.setText("");
+            feeField.setText("");
+        } else {
+            double actualFee = MathUtils.calcActualFee(GeneralConverter.toDouble(oldValue));
+            this.actualFeeLabel.setText(GeneralConverter.toString(actualFee));
+            feeField.setText(oldValue);
         }
     }
 

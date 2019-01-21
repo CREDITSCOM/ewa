@@ -23,7 +23,7 @@ public class MathUtils {
             ++expi;
         }
         exp = expi + 18;
-        if (exp < 0 || exp > 28) {
+        if (exp < 0 || exp > 28) {//todo добавить обработку exception + convertацию в short
             throw new CreditsException(String.format("exp value %s out of range [0, 28]", exp));
         }
         frac = Math.round(value * 1024);
