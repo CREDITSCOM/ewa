@@ -72,13 +72,13 @@ public class WalletController extends AbstractController {
     @FXML
     private TextField amountField;
     @FXML
-    private TextField feeField;
+    private TextField maxFeeField;
     @FXML
     private TextField transText;
     @FXML
     private volatile TableView<CoinTabRow> coinsTableView;
     @FXML
-    private Label actualFeeLabel;
+    private TextField actualMaxFeeField;
 
     @FXML
     private void handleLogout() {
@@ -106,7 +106,7 @@ public class WalletController extends AbstractController {
     @FXML
     private void handleGenerate() {
         String transactionAmount = amountField.getText();
-        String transactionFee = feeField.getText();
+        String transactionFee = maxFeeField.getText();
         String transactionToAddress = addressField.getText();
         String transactionText = transText.getText();
 
@@ -124,7 +124,7 @@ public class WalletController extends AbstractController {
             FormUtils.validateField(amountField, amountErrorLabel, ERR_AMOUNT, isValidationSuccessful);
         }
         if (GeneralConverter.toBigDecimal(transactionFee).compareTo(BigDecimal.ZERO) <= 0) {
-            FormUtils.validateField(feeField, feeErrorLabel, ERR_FEE, isValidationSuccessful);
+            FormUtils.validateField(maxFeeField, feeErrorLabel, ERR_FEE, isValidationSuccessful);
         }
         try {
             Validator.validateToAddress(transactionToAddress);
@@ -238,7 +238,7 @@ public class WalletController extends AbstractController {
         FormUtils.clearErrorOnTable(coinsTableView, coinsErrorLabel);
         FormUtils.clearErrorOnField(addressField, addressErrorLabel);
         FormUtils.clearErrorOnField(amountField, amountErrorLabel);
-        FormUtils.clearErrorOnField(feeField, feeErrorLabel);
+        FormUtils.clearErrorOnField(maxFeeField, feeErrorLabel);
     }
 
     private void initializeTable(TableView<CoinTabRow> tableView) {
@@ -279,26 +279,36 @@ public class WalletController extends AbstractController {
 
         publicWalletID.setText(session.account);
 
-        feeField.textProperty().addListener((observable, oldValue, newValue) -> {
+        maxFeeField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 newValue = NumberUtils.getCorrectNum(newValue);
                 if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
-                    setFieldsValue(oldValue);
+                    setFieldValue(actualMaxFeeField, oldValue);
+                    setFieldValue(maxFeeField, oldValue);
+
+                    setFeeFieldsValue(oldValue);
                     return;
                 }
-                setFieldsValue(newValue);
+                setFeeFieldsValue(newValue);
             } catch (Exception e) {
                 //FormUtils.showError("Error. Reason: " + e.getMessage());
-                setFieldsValue(oldValue);
+                setFeeFieldsValue(oldValue);
             }
         });
 
-        amountField.setOnKeyReleased(event -> NumberUtils.correctNum(event.getText(), amountField));
+        amountField.textProperty().addListener((observable, oldValue, newValue) -> {
+            newValue = NumberUtils.getCorrectNum(newValue);
+            if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
+                setFieldValue(amountField, oldValue);
+                return;
+            }
+            setFieldValue(amountField, newValue);
+        });
 
         if (objects != null) {
             addressField.setText(objects.get("transactionToAddress").toString());
             amountField.setText(objects.get("transactionAmount").toString());
-            feeField.setText(objects.get("transactionFee").toString());
+            maxFeeField.setText(objects.get("transactionFee").toString());
             transText.setText(objects.get("transactionText").toString());
             int i = 0;
             for (CoinTabRow item : coinsTableView.getItems()) {
@@ -311,16 +321,25 @@ public class WalletController extends AbstractController {
         }
     }
 
-    private void setFieldsValue(String oldValue) {
+    private void setFeeFieldsValue(String oldValue) {
         if(oldValue.isEmpty()) {
-            actualFeeLabel.setText("");
-            feeField.setText("");
+            actualMaxFeeField.setText("");
+            maxFeeField.setText("");
         } else {
             double actualFee = MathUtils.calcActualFee(GeneralConverter.toDouble(oldValue));
-            this.actualFeeLabel.setText(GeneralConverter.toString(actualFee));
-            feeField.setText(oldValue);
+            actualMaxFeeField.setText(GeneralConverter.toString(actualFee));
+            maxFeeField.setText(oldValue);
         }
     }
+
+    private void setFieldValue(TextField tf, String newValue) {
+        if(newValue.isEmpty()) {
+            tf.setText("");
+        } else {
+            tf.setText(newValue);
+        }
+    }
+
 
     @Override
     public void formDeinitialize() {

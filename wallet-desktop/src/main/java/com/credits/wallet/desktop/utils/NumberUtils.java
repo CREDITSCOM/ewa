@@ -47,7 +47,7 @@ public class NumberUtils {
             return s;
         }
         // 0. Remove non digits characters
-        s = s.replaceAll("[^\\d.]", "");
+        s = s.replaceAll("[^\\d.,]", "");
         // I. Add 0 if first char is separator
         if (AppState.decimalSeparator.equals(",")) {
             s = s.replace(',', '.');
