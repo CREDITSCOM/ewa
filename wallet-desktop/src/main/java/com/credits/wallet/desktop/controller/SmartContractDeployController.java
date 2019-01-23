@@ -11,6 +11,7 @@ import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
+import com.credits.wallet.desktop.struct.ParseResultStruct;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
@@ -43,6 +44,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -125,8 +127,8 @@ public class SmartContractDeployController extends AbstractController {
         buildButton.setDisable(true);
         errorTableView.setVisible(false);
         codeArea.setDisable(true);
-        supplyAsync(() -> SourceCodeBuilder.compileSourceCode(codeArea.getText()))
-            .whenComplete(handleCallback(handleBuildResult()));
+        supplyAsync(() -> SourceCodeBuilder.compileSourceCode(codeArea.getText())).whenComplete(
+            handleCallback(handleBuildResult()));
     }
 
     private Callback<CompilationResult> handleBuildResult() {
@@ -177,7 +179,8 @@ public class SmartContractDeployController extends AbstractController {
                 throw new CreditsException("Source code is not compiled");
             } else {
                 if (compilationPackage.isCompilationStatusSuccess()) {
-                    List<ByteCodeObjectData> byteCodeObjectDataList = GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
+                    List<ByteCodeObjectData> byteCodeObjectDataList =
+                        GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
 
                     Class<?> contractClass = compileSmartContractByteCode(byteCodeObjectDataList);
                     TokenStandartData tokenStandartData = getTokenStandard(contractClass);
@@ -188,13 +191,15 @@ public class SmartContractDeployController extends AbstractController {
                     long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, session.account, true);
 
                     SmartContractData smartContractData = new SmartContractData(
-                        generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits, byteCodeObjectDataList),
-                        decodeFromBASE58(session.account), smartContractDeployData, null);
+                        generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits,
+                            byteCodeObjectDataList), decodeFromBASE58(session.account), smartContractDeployData, null);
 
-                    supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService,
-                        session.account, smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool)
-                        .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData,session))
-                        .whenComplete(handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
+                    supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService, session.account,
+                        smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool).thenApply(
+                        (transactionData) -> createSmartContractTransaction(transactionData, smartContractData,
+                            session))
+                        .whenComplete(
+                            handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
                     session.lastSmartContract = codeArea.getText();
 
                     loadVista(WALLET, this);
@@ -207,18 +212,20 @@ public class SmartContractDeployController extends AbstractController {
     }
 
     private TokenInfo getTokenInfo(Class<?> contractClass, SmartContractData smartContractData) {
-        if(smartContractData.getSmartContractDeployData().getTokenStandardData() != TokenStandartData.NotAToken) {
+        if (smartContractData.getSmartContractDeployData().getTokenStandardData() != TokenStandartData.NotAToken) {
             try {
-                Object contractInstance = contractClass.getDeclaredConstructor(String.class).newInstance(encodeToBASE58(smartContractData.getDeployer()));
+                Object contractInstance = contractClass.getDeclaredConstructor(String.class)
+                    .newInstance(encodeToBASE58(smartContractData.getDeployer()));
                 Field initiator = contractClass.getSuperclass().getDeclaredField("initiator");
                 initiator.setAccessible(true);
                 initiator.set(contractInstance, session.account);
                 String tokenName = (String) contractClass.getMethod("getName").invoke(contractInstance);
-                String balance =
-                    (String) contractClass.getMethod("balanceOf", String.class).invoke(contractInstance, session.account);
+                String balance = (String) contractClass.getMethod("balanceOf", String.class)
+                    .invoke(contractInstance, session.account);
                 return new TokenInfo(smartContractData.getBase58Address(), tokenName, new BigDecimal(balance));
             } catch (Exception e) {
-                LOGGER.warn("token \"{}\" can't be add to the balances list. Reason: {}", smartContractData.getBase58Address(), e.getMessage());
+                LOGGER.warn("token \"{}\" can't be add to the balances list. Reason: {}",
+                    smartContractData.getBase58Address(), e.getMessage());
             }
         }
         return null;
@@ -228,8 +235,9 @@ public class SmartContractDeployController extends AbstractController {
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
         Class<?> contractClass = null;
         for (ByteCodeObjectData compilationUnit : smartContractByteCodeData) {
-            Class<?> tempContractClass = classLoader.buildClass(compilationUnit.getName(), compilationUnit.getByteCode());
-            if(!compilationUnit.getName().contains("$")) {
+            Class<?> tempContractClass =
+                classLoader.buildClass(compilationUnit.getName(), compilationUnit.getByteCode());
+            if (!compilationUnit.getName().contains("$")) {
                 contractClass = tempContractClass;
             }
         }
@@ -240,12 +248,16 @@ public class SmartContractDeployController extends AbstractController {
         TokenStandartData tokenStandart = TokenStandartData.NotAToken;
         try {
             Class<?>[] interfaces = contractClass.getInterfaces();
-            if(interfaces.length > 0) {
+            if (interfaces.length > 0) {
                 Class<?> basicStandard = Class.forName("BasicStandard");
                 Class<?> extendedStandard = Class.forName("ExtensionStandard");
                 for (Class<?> _interface : interfaces) {
-                    if (_interface.equals(basicStandard)) tokenStandart = TokenStandartData.CreditsBasic;
-                    if (_interface.equals(extendedStandard)) tokenStandart = TokenStandartData.CreditsExtended;
+                    if (_interface.equals(basicStandard)) {
+                        tokenStandart = TokenStandartData.CreditsBasic;
+                    }
+                    if (_interface.equals(extendedStandard)) {
+                        tokenStandart = TokenStandartData.CreditsExtended;
+                    }
                 }
             }
         } catch (ClassNotFoundException e) {
@@ -258,15 +270,15 @@ public class SmartContractDeployController extends AbstractController {
         return new Callback<Pair<Long, TransactionFlowResultData>>() {
             @Override
             public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
-                ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(),
-                    resultData.getLeft(),session);
+                ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(), resultData.getLeft(),
+                    session);
                 String target = resultData.getRight().getTarget();
                 StringSelection selection = new StringSelection(target);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);
                 FormUtils.showPlatformInfo(
                     String.format("Smart-contract address%n%n%s%n%nhas generated and copied to clipboard", target));
-                if(tokenInfo != null){
+                if (tokenInfo != null) {
                     saveSmartInTokenList(session.coinsKeeper, tokenInfo.name, tokenInfo.balance, tokenInfo.address);
                 }
             }
@@ -295,11 +307,18 @@ public class SmartContractDeployController extends AbstractController {
         Platform.runLater(() -> {
             classTreeView.setRoot(null);
             String sourceCode = codeArea.getText();
+            ParseResultStruct build =
+                new ParseResultStruct.Builder(sourceCode).fields().constructors().methods().build();
+
+            List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
+            bodyDeclarations.addAll(build.fields);
+            bodyDeclarations.addAll(build.constructors);
+            bodyDeclarations.addAll(build.methods);
+
             String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
             Label labelRoot = new Label(className);
             TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
 
-            List<BodyDeclaration> bodyDeclarations = ParseCodeUtils.parseFieldsConstructorsMethods(sourceCode);
 
             bodyDeclarations.forEach(classMember -> {
                 Label label = new Label(classMember.toString());
@@ -353,7 +372,7 @@ public class SmartContractDeployController extends AbstractController {
         errorTableView.getColumns().add(tabErrorsColText);
 
         errorTableView.setOnMousePressed(event -> {
-            if (event.isPrimaryButtonDown()|| event.getButton() == MouseButton.PRIMARY) {
+            if (event.isPrimaryButtonDown() || event.getButton() == MouseButton.PRIMARY) {
                 BuildSourceCodeError tabRow = errorTableView.getSelectionModel().getSelectedItem();
                 try {
                     codeArea.setCaretPositionOnLine(tabRow.getLine());

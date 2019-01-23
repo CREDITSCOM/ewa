@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.utils.sourcecode;
 
+import com.credits.wallet.desktop.struct.ParseResultStruct;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.junit.Test;
@@ -16,10 +17,13 @@ public class ParseCodeUtilsTest {
             "}";
     @Test
     public void parseClassNameTest() {
-        List<MethodDeclaration> methods = ParseCodeUtils.parseMethods(sourceCode);
+        ParseResultStruct build =
+            new ParseResultStruct.Builder(sourceCode).fields().constructors().methods().build();
+
+        List<MethodDeclaration> methods = build.methods;
         List<SingleVariableDeclaration> methodParams = methods.get(0).parameters();
         methodParams.forEach(methodParam -> {
-            LOGGER.info(ParseCodeUtils.parseClassName(methodParam));
+            LOGGER.info(build.currentClass);
         });
     }
 }

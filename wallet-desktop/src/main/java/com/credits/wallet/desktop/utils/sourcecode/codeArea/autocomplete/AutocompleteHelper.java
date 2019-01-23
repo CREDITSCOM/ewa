@@ -1,19 +1,23 @@
 package com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete;
 
-import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
+import com.credits.wallet.desktop.struct.ParseResultStruct;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.BASIC_STANDARD_CLASS;
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.EXTENSION_STANDARD_CLASS;
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.getFieldsAndMethodsFromSourceCode;
 
 public class AutocompleteHelper {
 
@@ -23,14 +27,19 @@ public class AutocompleteHelper {
 
     public static final List<String> LANGUAGE_KEYWORDS =
         Arrays.asList("public", "private", "if", "else", "this", "new", "for", "while", "break", "final", "static",
-            "return", "switch", "case", "super", "throws", "throw", "true", "false", "try", "catch", "class", "implements", "extends",
-            "protected", "abstract", "assert", "const", "interface", "continue", "default", "do", "finally", "goto",
-            "import", "instanceof", "native", "package", "strictfp", "synchronized", "transient", "volatile");
+            "return", "switch", "case", "super", "throws", "throw", "true", "false", "try", "catch", "class",
+            "implements", "extends", "protected", "abstract", "assert", "const", "interface", "continue", "default",
+            "do", "finally", "goto", "import", "instanceof", "native", "package", "strictfp", "synchronized",
+            "transient", "volatile");
 
+    public static final List<String> INTERFACES_KEYWORDS =
+        Arrays.asList(BASIC_STANDARD_CLASS, EXTENSION_STANDARD_CLASS);
     private CreditsCodeArea codeArea;
 
     private Map<MethodDeclaration, String> classMethods = new HashMap<>();
     private Map<FieldDeclaration, String> classFields = new HashMap<>();
+    private List<String> interfaces;
+    String superClassName;
 
     private CreditsProposalsPopup creditsProposalsPopup;
 
@@ -40,10 +49,13 @@ public class AutocompleteHelper {
     }
 
     private void updateDynamicProposals() {
-        Pair<Map<MethodDeclaration, String>, Map<FieldDeclaration, String>> MethodsFieldsPair =
-            ParseCodeUtils.getMethodsAndFieldsFromSourceCode(codeArea.getText());
-        classMethods = MethodsFieldsPair.getKey();
-        classFields = MethodsFieldsPair.getValue();
+        ParseResultStruct build =
+            new ParseResultStruct.Builder(codeArea.getText()).fields().superClassName().interfaces().methods().build();
+        superClassName = build.superClass;
+        interfaces = new ArrayList<>();
+        interfaces.addAll(build.interfaces);
+        build.methods.forEach(method -> classMethods.put(method, method.toString()));
+        build.fields.forEach(field -> classFields.put(field, field.toString()));
     }
 
     public void handleKeyPressEvent(KeyEvent keyEvent) {
@@ -72,12 +84,34 @@ public class AutocompleteHelper {
 
             String autoCompletedWord = word.toString().trim().toUpperCase();
 
-            if(!autoCompletedWord.isEmpty()) {
+            if (!autoCompletedWord.isEmpty()) {
+
+                INTERFACES_KEYWORDS.forEach(curInterface -> {
+                    if (curInterface.toUpperCase().startsWith(autoCompletedWord)) {
+                        addProposal(curInterface, curInterface, this::handleAutoCompleteWord);
+                    }
+                });
+
                 TYPE_KEYWORDS.forEach(keyword -> {
                     if (keyword.toUpperCase().startsWith(autoCompletedWord)) {
                         addProposal(keyword, keyword, this::handleAutoCompleteWord);
                     }
                 });
+
+
+                try {
+                    for (String anInterface : interfaces) {
+                        if (anInterface.equals(BASIC_STANDARD_CLASS)) {
+                            getFieldsAndMethodsFromSourceCode(BASIC_STANDARD_CLASS);
+                        } else if (anInterface.equals(CreditsProposalsPopup.EXTENSION_STANDARD_CLASS)) {
+                            getFieldsAndMethodsFromSourceCode(BASIC_STANDARD_CLASS);
+                            getFieldsAndMethodsFromSourceCode(CreditsProposalsPopup.EXTENSION_STANDARD_CLASS);
+                        }
+                    }
+                    getFieldsAndMethodsFromSourceCode(superClassName);
+                } catch (Exception ignored) {
+                }
+
 
                 LANGUAGE_KEYWORDS.forEach(keyword -> {
                     if (keyword.toUpperCase().startsWith(autoCompletedWord)) {

@@ -17,24 +17,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CreditsProposalsPopup extends Popup {
+    public static final String BASIC_STANDARD_CLASS = "BasicStandard";
+    public static final String EXTENSION_STANDARD_CLASS = "ExtensionStandard";
+
     private ListView<ProposalItem> listView = new ListView();
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CreditsProposalsPopup.class);
 
-    public static Map<Method, String> parentsMethods = new HashMap<>();
-    public static Map<Field, String> parentsFields = new HashMap<>();
+    public static Map<Method, String> parentsMethods;
+    public static Map<Field, String> parentsFields;
 
-    private static void defaultProposalsInit() {
-        try {
-            getFieldsAndMethodsFromSourceCode("SmartContract");
-            getFieldsAndMethodsFromSourceCode("BasicStandard");
-            getFieldsAndMethodsFromSourceCode("ExtensionStandard");
-        } catch (ClassNotFoundException e) {
-            LOGGER.error("Error on proposal popup init", e);
-        }
-    }
-
-    private static void getFieldsAndMethodsFromSourceCode(String parentClass) throws ClassNotFoundException {
+    public static void getFieldsAndMethodsFromSourceCode(String parentClass) throws ClassNotFoundException {
         Class<?> clazz = Class.forName(parentClass);
         Map<Field, String> declaredFields = JavaReflect.getDeclaredFields(clazz);
         parentsFields.putAll(declaredFields);
@@ -42,11 +35,9 @@ public class CreditsProposalsPopup extends Popup {
         parentsMethods.putAll(declaredMethods);
     }
 
-
     public CreditsProposalsPopup() {
         super();
         this.setAutoHide(true);
-        defaultProposalsInit();
         listView.setStyle("-fx-border-color: blue; -fx-background-insets: 1");
         listView.setMaxHeight(110);
 
@@ -82,6 +73,7 @@ public class CreditsProposalsPopup extends Popup {
         this.getContent().add(listView);
     }
 
+
     private void doProposalItemAction() {
         ProposalItem proposalItem = listView.getSelectionModel().getSelectedItem();
         proposalItem.action();
@@ -91,6 +83,8 @@ public class CreditsProposalsPopup extends Popup {
     public void clearAndHide() {
         this.clear();
         this.hide();
+        parentsMethods = new HashMap<>();
+        parentsFields = new HashMap<>();
     }
 
     public void addItem(ProposalItem element) {

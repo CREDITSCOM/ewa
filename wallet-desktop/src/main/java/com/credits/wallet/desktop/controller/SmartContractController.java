@@ -9,6 +9,7 @@ import com.credits.general.util.Callback;
 import com.credits.general.util.variant.VariantUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
+import com.credits.wallet.desktop.struct.ParseResultStruct;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -238,7 +239,10 @@ public class SmartContractController extends AbstractController {
 
             String sourceCode = smartContractData.getSmartContractDeployData().getSourceCode();
             tfAddress.setText(smartContractData.getBase58Address());
-            List<MethodDeclaration> methods = ParseCodeUtils.parseMethods(sourceCode);
+            ParseResultStruct build =
+                new ParseResultStruct.Builder(sourceCode).methods().build();
+
+            List<MethodDeclaration> methods = build.methods;
             cbMethods.getItems().clear();
             methods.forEach(method -> {
                 cbMethods.getItems().add(method);
@@ -332,7 +336,7 @@ public class SmartContractController extends AbstractController {
                 if (node instanceof TextField) {
                     String paramValue = ((TextField) node).getText();
                     SingleVariableDeclaration variableDeclaration = currentMethodParams.get(i);
-                    String className = ParseCodeUtils.parseClassName(variableDeclaration);
+                    String className = ParseCodeUtils.parseClassName(variableDeclaration.getType());
                     params.add(VariantUtils.createVariantData(className, paramValue));
                     ++i;
                 }
