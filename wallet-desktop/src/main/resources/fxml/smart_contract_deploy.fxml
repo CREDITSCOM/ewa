@@ -2,12 +2,17 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController">
@@ -15,7 +20,7 @@
         <fx:include fx:id="header" source="header.fxml" />
     </top>
     <center>
-        <Pane styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
+        <Pane fx:id="mainPane" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contract making" />
                 <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can check and deploy smart contract" />
@@ -26,21 +31,54 @@
                         </ImageView>
                     </graphic>
                 </Button>
+            <TabPane fx:id="tabPane" layoutX="316.0" layoutY="75.0" prefHeight="500.0" prefWidth="908.0" style="-fx-border-color: black; -fx-border-radius: 0 0 15 15; -fx-border-width: 1; -fx-padding: 0 0 0 0; -fx-background-radius: 15;" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                  <Tab fx:id="createCodeTab" closable="false" text="NewSmartTab">
+                     <content>
+                              <Pane fx:id="buttonPane" prefHeight="200.0" prefWidth="81.0">
+                                  <children>
+                                      <Button layoutX="15.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleSimpleType" text="Usual" />
+                                      <Button layoutX="15.0" layoutY="47.0" mnemonicParsing="false" onAction="#handleBasic" text="Basic" />
+                                      <Button layoutX="8.0" layoutY="81.0" mnemonicParsing="false" onAction="#handleExtended" text="Extended" />
+                                  </children>
+                              </Pane>
+                     </content>
+                  </Tab>
+                <Tab fx:id="codeAreaTab" closable="false" text="CodeAreaTab">
+                     <content>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <SplitPane fx:id="splitPane" dividerPositions="0.9" orientation="VERTICAL" prefHeight="513.0" prefWidth="813.0" style="-fx-background-color: white;  -fx-padding:  15 0 0 0; -fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 15; -fx-background-radius: 15;">
+                                 <items>
+                                    <Pane fx:id="tabPanel" maxHeight="384.0" prefHeight="384.0" prefWidth="811.0">
+                                       <children>
+                                          <VBox fx:id="paneCode" maxHeight="384.0" prefHeight="384.0" prefWidth="811.0" />
+                                       </children>
+                                    </Pane>
+                                    <VBox fx:id="debugPane" minHeight="95.0" prefHeight="95.0" prefWidth="811.0" style="-fx-padding:  0 0 15 0; -fx-border-width: 1 0 0 0;-fx-border-color: black;">
+                                       <children>
+                                          <TableView fx:id="errorTableView" styleClass="credits-history-table-view" />
+                                       </children>
+                                    </VBox>
+                                 </items>
+                              </SplitPane>
+                                  <TreeView fx:id="treeView" prefHeight="498.0" prefWidth="427.0" style="-fx-border-color: black; -fx-border-width: 1; -fx-border-style: none; -fx-background-color: transparent; -fx-border-radius: 15; -fx-background-insets: 15; -fx-padding: 15;" />
+                           </children>
+                        </HBox>
+                     </content>
+                </Tab>
+                <Tab fx:id="testingTab" closable="false" text="TestTab">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
 
                 <Button fx:id="buildButton" layoutX="633.0" layoutY="590.0" onAction="#handleBuild" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Build" />
                 <Button fx:id="deployButton" disable="true" layoutX="1086.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Deploy" />
-                <TreeView fx:id="classTreeView" layoutX="920.0" layoutY="85.0" prefHeight="498.0" prefWidth="364.0" style="-fx-border-color: transparent; -fx-border-width: 0; -fx-border-style: none; -fx-background-color: transparent;" />
-                <Pane layoutX="920.0" layoutY="70.0" pickOnBounds="false" prefHeight="513.0" prefWidth="364.0" style="-fx-border-radius: 15; -fx-border-color: black; -fx-border-width: 1;" />
-                <SplitPane fx:id="splitPane" dividerPositions="0.9" layoutX="20.0" layoutY="70.0" orientation="VERTICAL" prefHeight="513.0" prefWidth="813.0" style="-fx-background-color: white;  -fx-padding:  15 0 0 0; -fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 15; -fx-background-radius: 15;">
-                    <items>
-                        <VBox fx:id="paneCode" maxHeight="384.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="384.0" prefWidth="811.0" />
-                        <VBox fx:id="debugPane" minHeight="95.0" prefHeight="95.0" prefWidth="811.0" style="-fx-padding:  0 0 15 0; -fx-border-width: 1 0 0 0;-fx-border-color: black;">
-                            <children>
-                                <TableView fx:id="errorTableView" styleClass="credits-history-table-view"/>
-                            </children>
-                        </VBox>
-                    </items>
-                </SplitPane>
+            <ListView fx:id="deployContractList" layoutX="29.0" layoutY="75.0" prefHeight="465.0" prefWidth="272.0" />
+            <Button layoutX="29.0" layoutY="550.0" mnemonicParsing="false" onAction="#handleAddContract" prefHeight="25.0" prefWidth="272.0" text="Add contract" />
             </children>
         </Pane>
     </center>
