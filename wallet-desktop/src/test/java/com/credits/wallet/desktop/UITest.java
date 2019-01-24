@@ -2,7 +2,6 @@ package com.credits.wallet.desktop;
 
 import com.credits.client.executor.service.ContractExecutorApiService;
 import com.credits.client.node.service.NodeApiService;
-import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.controller.WelcomeController;
 import com.credits.wallet.desktop.service.ContractInteractionService;
@@ -76,10 +75,7 @@ public class UITest {
     }
 
     private void injectSession() {
-        Session session = new Session();
-        session.account = walletAddress;
-        session.coinsKeeper = new ObjectKeeper<>(session.account, "coins");
-        session.favoriteContractsKeeper = new ObjectKeeper<>(session.account, "favorite");
+        Session session = new Session(walletAddress);
 
         WelcomeController welcomeController = new WelcomeController();
         welcomeController.session = session;

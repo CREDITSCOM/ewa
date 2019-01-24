@@ -1,0 +1,6 @@
+public class %s extends SmartContract {
+
+    public %s(String initiator) {
+        super(initiator);
+    }
+}

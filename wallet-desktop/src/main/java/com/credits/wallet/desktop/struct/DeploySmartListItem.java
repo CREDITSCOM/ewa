@@ -1,6 +1,11 @@
 package com.credits.wallet.desktop.struct;
 
-public class DeploySmartListItem {
+import java.io.Serializable;
+
+public class DeploySmartListItem implements Serializable {
+
+    private static final long serialVersionUID = 4111650022718657168L;
+
     public String name;
     public String sourceCode;
     public ItemState state;

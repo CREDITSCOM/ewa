@@ -21,8 +21,10 @@ import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SplitPane;
@@ -30,6 +32,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
@@ -39,11 +42,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.lang.model.SourceVersion;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -59,13 +64,15 @@ import static com.credits.wallet.desktop.VistaNavigator.SMART_CONTRACT;
 import static com.credits.wallet.desktop.VistaNavigator.WALLET;
 import static com.credits.wallet.desktop.VistaNavigator.loadVista;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
+import static com.credits.wallet.desktop.utils.DeployControllerUtils.getContractFromTemplate;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.getTokenStandard;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.refreshTreeView;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.saveSmartInTokenList;
-import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea.BASIC_SOURCE_CODE;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea.DEFAULT_SOURCE_CODE;
-import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea.EXTENDED_SOURCE_CODE;
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.BASIC_STANDARD_CLASS;
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.DEFAULT_STANDARD_CLASS;
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.EXTENSION_STANDARD_CLASS;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
@@ -75,11 +82,16 @@ public class SmartContractDeployController extends AbstractController {
 
     public static final String BUILD = "Build";
     public static final String COMPILING = "Compiling...";
-    public static final int HEADER_HEIGHT = 30;
-    public static final int TABLE_LINE_HEIGHT = 25;
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
+
     public Pane mainPane;
     public Pane tabPanel;
+
+    @FXML
+    public ComboBox<String> cbContractType;
+
+    @FXML
+    public TextField deployName;
 
     @FXML
     public ListView<DeploySmartListItem> deployContractList;
@@ -95,6 +107,9 @@ public class SmartContractDeployController extends AbstractController {
 
     @FXML
     public Tab createCodeTab;
+
+    @FXML
+    public TextField className;
 
 
     private CreditsCodeArea codeArea;
@@ -130,9 +145,21 @@ public class SmartContractDeployController extends AbstractController {
     public void initializeForm(Map<String, Object> objects) {
 
         initCodeArea();
+        initNewContractForm();
         initDeployContractList();
         initSplitPane();
         initErrorTableView();
+    }
+
+    private void initNewContractForm() {
+        className.clear();
+        ObservableList items = cbContractType.getItems();
+        items.clear();
+        items.add(DEFAULT_STANDARD_CLASS);
+        items.add(BASIC_STANDARD_CLASS);
+        items.add(EXTENSION_STANDARD_CLASS);
+        cbContractType.getSelectionModel().select(0);
+
     }
 
     private void initCodeArea() {
@@ -152,18 +179,22 @@ public class SmartContractDeployController extends AbstractController {
     }
 
     private void initDeployContractList() {
-        if (session.deploySmartListItems == null) {
+        ArrayList<DeploySmartListItem> deploySmartListItems =
+            session.deployContractsKeeper.getKeptObject().orElseGet(ArrayList::new);
+
+        if (deploySmartListItems.isEmpty()) {
             DeploySmartListItem deploySmartItem =
                 new DeploySmartListItem(DEFAULT_SOURCE_CODE, "SmartContract " + session.lastSmartIndex++,
                     DeploySmartListItem.ItemState.SAVED);
             deployContractList.getItems().add(deploySmartItem);
             deployContractList.getSelectionModel().selectFirst();
-            session.deploySmartListItems = deployContractList.getItems();
+            session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
         } else {
             deployContractList.getSelectionModel().selectFirst();
-            deployContractList.getItems().addAll(session.deploySmartListItems);
+            deployContractList.getItems().addAll(deploySmartListItems);
         }
 
+        tabPane.setStyle("-fx-open-tab-animation: NONE; -fx-close-tab-animation: NONE;");
         tabPane.getTabs().remove(createCodeTab);
         tabPane.getSelectionModel().select(0);
 
@@ -178,6 +209,7 @@ public class SmartContractDeployController extends AbstractController {
                 } else {
                     DeploySmartListItem item = getCurrentListItem();
                     returnMainTabs(item);
+                    refreshTreeView(treeView,codeArea);
                 }
             });
     }
@@ -381,18 +413,6 @@ public class SmartContractDeployController extends AbstractController {
     }
 
 
-    public void handleExtended() {
-        saveTypeOfContract(EXTENDED_SOURCE_CODE);
-    }
-
-    public void handleBasic() {
-        saveTypeOfContract(BASIC_SOURCE_CODE);
-    }
-
-    public void handleSimpleType() {
-        saveTypeOfContract(DEFAULT_SOURCE_CODE);
-    }
-
     private void saveTypeOfContract(String sourceCode) {
         DeploySmartListItem item = getCurrentListItem();
         item.sourceCode = sourceCode;
@@ -414,6 +434,7 @@ public class SmartContractDeployController extends AbstractController {
         tabPane.getTabs().add(testingTab);
         tabPane.getSelectionModel().select(0);
         codeArea.replaceText(item.sourceCode);
+        refreshTreeView(treeView,codeArea);
     }
 
     private DeploySmartListItem getCurrentListItem() {
@@ -422,16 +443,39 @@ public class SmartContractDeployController extends AbstractController {
 
     public void handleAddContract() {
         DeploySmartListItem deploySmartItem =
-            new DeploySmartListItem(null, "SmartContract " + session.lastSmartIndex++, DeploySmartListItem.ItemState.NEW);
+            new DeploySmartListItem(null, "NewContract " + session.lastSmartIndex++, DeploySmartListItem.ItemState.NEW);
         deployContractList.getItems().add(deploySmartItem);
-        session.deploySmartListItems = deployContractList.getItems();
+        session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
         deployContractList.getSelectionModel().selectLast();
         deleteMainTabs();
     }
 
 
+    public void handleGenerateSmart() {
+        String selectedType = cbContractType.getSelectionModel().getSelectedItem();
+        String curClassName;
+        if(className.getText().isEmpty()) {
+            curClassName = "Contract";
+        } else {
+            curClassName = className.getText();
 
-
-
-
+            if(!SourceVersion.isIdentifier(curClassName) && !SourceVersion.isKeyword(curClassName)) {
+                FormUtils.showInfo("ClassName is not valid");
+                return;
+            };
+        }
+        try {
+            String contractFromTemplate = getContractFromTemplate(selectedType);
+            if (contractFromTemplate != null) {
+                String sourceCode = String.format(contractFromTemplate, curClassName,curClassName);
+                saveTypeOfContract(sourceCode);
+            }
+            getCurrentListItem().name = curClassName;
+            deployContractList.refresh();
+            session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
+            initNewContractForm();
+        } catch (Exception e) {
+            saveTypeOfContract(DEFAULT_SOURCE_CODE);
+        }
+    }
 }

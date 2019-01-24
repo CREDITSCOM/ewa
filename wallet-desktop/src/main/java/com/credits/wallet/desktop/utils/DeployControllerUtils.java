@@ -14,6 +14,10 @@ import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,5 +96,13 @@ public class DeployControllerUtils {
         return tokenStandart;
     }
 
+    public static String getContractFromTemplate(String template) {
+        try {
+            byte[] encoded = Files.readAllBytes(Paths.get("src/main/resources/template/"+template+".template"));
+            return new String(encoded, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
 }

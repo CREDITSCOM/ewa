@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -31,15 +33,21 @@
                         </ImageView>
                     </graphic>
                 </Button>
-            <TabPane fx:id="tabPane" layoutX="316.0" layoutY="75.0" prefHeight="500.0" prefWidth="908.0" style="-fx-border-color: black; -fx-border-radius: 0 0 15 15; -fx-border-width: 1; -fx-padding: 0 0 0 0; -fx-background-radius: 15;" tabClosingPolicy="UNAVAILABLE">
+            <TabPane fx:id="tabPane" layoutX="316.0" layoutY="75.0" prefHeight="500.0" prefWidth="908.0" style="-fx-border-color: black; -fx-border-radius: 0 0 15 15; -fx-border-width: 0; -fx-padding: 0 0 0 0; -fx-background-radius: 15;" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                   <Tab fx:id="createCodeTab" closable="false" text="NewSmartTab">
                      <content>
-                              <Pane fx:id="buttonPane" prefHeight="200.0" prefWidth="81.0">
+                              <Pane fx:id="buttonPane" prefHeight="200.0" prefWidth="1240.0" style="-fx-border-color: black; -fx-border-radius: 0 0 15 15;">
                                   <children>
-                                      <Button layoutX="15.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleSimpleType" text="Usual" />
-                                      <Button layoutX="15.0" layoutY="47.0" mnemonicParsing="false" onAction="#handleBasic" text="Basic" />
-                                      <Button layoutX="8.0" layoutY="81.0" mnemonicParsing="false" onAction="#handleExtended" text="Extended" />
+                              <ComboBox fx:id="cbContractType" layoutX="30.0" layoutY="50.0" prefHeight="45.0" prefWidth="260.0" styleClass="credits-combobox" />
+                              <Button layoutX="28.0" layoutY="284.0" mnemonicParsing="false" onAction="#handleGenerateSmart" prefHeight="41.0" prefWidth="266.0" styleClass="credits-button" text="Generate code" />
+                              <Label layoutX="30.0" layoutY="20.0" styleClass="credits-label" text="Select the type of smart contract" />
+                              <Label layoutX="30.0" layoutY="130.0" styleClass="credits-label" text="Select the name of smart contract" />
+                                      <HBox layoutX="30.0" layoutY="160.0" prefHeight="45.0" prefWidth="280.0">
+                                          <children>
+                                              <TextField fx:id="className" maxHeight="45.0" minHeight="45.0" prefHeight="45.0" prefWidth="260.0" promptText="Put name here" styleClass="credits-textField" />
+                                          </children>
+                                      </HBox>
                                   </children>
                               </Pane>
                      </content>
@@ -48,7 +56,7 @@
                      <content>
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
-                              <SplitPane fx:id="splitPane" dividerPositions="0.9" orientation="VERTICAL" prefHeight="513.0" prefWidth="813.0" style="-fx-background-color: white;  -fx-padding:  15 0 0 0; -fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 15; -fx-background-radius: 15;">
+                              <SplitPane fx:id="splitPane" dividerPositions="0.9" orientation="VERTICAL" prefHeight="513.0" prefWidth="813.0" style="-fx-background-color: white; -fx-padding: 15 0 0 0; -fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 0 0 0 15; -fx-background-radius: 15;">
                                  <items>
                                     <Pane fx:id="tabPanel" maxHeight="384.0" prefHeight="384.0" prefWidth="811.0">
                                        <children>
@@ -62,7 +70,7 @@
                                     </VBox>
                                  </items>
                               </SplitPane>
-                                  <TreeView fx:id="treeView" prefHeight="498.0" prefWidth="427.0" style="-fx-border-color: black; -fx-border-width: 1; -fx-border-style: none; -fx-background-color: transparent; -fx-border-radius: 15; -fx-background-insets: 15; -fx-padding: 15;" />
+                                  <TreeView fx:id="treeView" prefHeight="498.0" prefWidth="427.0" style="-fx-border-color: black; -fx-border-width: 1; -fx-border-style: none; -fx-background-color: transparent; -fx-border-radius: 0 0 15 0; -fx-background-insets: 15; -fx-padding: 15;" />
                            </children>
                         </HBox>
                      </content>
@@ -77,8 +85,8 @@
 
                 <Button fx:id="buildButton" layoutX="633.0" layoutY="590.0" onAction="#handleBuild" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Build" />
                 <Button fx:id="deployButton" disable="true" layoutX="1086.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Deploy" />
-            <ListView fx:id="deployContractList" layoutX="29.0" layoutY="75.0" prefHeight="465.0" prefWidth="272.0" />
-            <Button layoutX="29.0" layoutY="550.0" mnemonicParsing="false" onAction="#handleAddContract" prefHeight="25.0" prefWidth="272.0" text="Add contract" />
+            <ListView fx:id="deployContractList" layoutX="30.0" layoutY="75.0" prefHeight="457.0" prefWidth="272.0" />
+            <Button layoutX="30.0" layoutY="535.0" mnemonicParsing="false" onAction="#handleAddContract" prefHeight="25.0" prefWidth="272.0" styleClass="credits-button" text="Create new contract" />
             </children>
         </Pane>
     </center>
