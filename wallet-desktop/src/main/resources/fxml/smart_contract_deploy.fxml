@@ -4,12 +4,15 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController">
     <top>
         <fx:include fx:id="header" source="header.fxml" />
@@ -27,7 +30,7 @@
                     </graphic>
                 </Button>
 
-                <Button fx:id="buildButton" layoutX="633.0" layoutY="590.0" onAction="#handleBuild" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Build" />
+                <Button fx:id="buildButton" layoutX="115.0" layoutY="590.0" onAction="#handleBuild" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Build" />
                 <Button fx:id="deployButton" disable="true" layoutX="1086.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Deploy" />
                 <TreeView fx:id="classTreeView" layoutX="920.0" layoutY="85.0" prefHeight="498.0" prefWidth="364.0" style="-fx-border-color: transparent; -fx-border-width: 0; -fx-border-style: none; -fx-background-color: transparent;" />
                 <Pane layoutX="920.0" layoutY="70.0" pickOnBounds="false" prefHeight="513.0" prefWidth="364.0" style="-fx-border-radius: 15; -fx-border-color: black; -fx-border-width: 1;" />
@@ -36,11 +39,20 @@
                         <VBox fx:id="paneCode" maxHeight="384.0" onKeyReleased="#panelCodeKeyReleased" prefHeight="384.0" prefWidth="811.0" />
                         <VBox fx:id="debugPane" minHeight="95.0" prefHeight="95.0" prefWidth="811.0" style="-fx-padding:  0 0 15 0; -fx-border-width: 1 0 0 0;-fx-border-color: black;">
                             <children>
-                                <TableView fx:id="errorTableView" styleClass="credits-history-table-view"/>
+                                <TableView fx:id="errorTableView" styleClass="credits-history-table-view" />
                             </children>
                         </VBox>
                     </items>
                 </SplitPane>
+            <Label layoutX="382.0" layoutY="612.0" styleClass="credits-not-padding-label" text="Transaction Fee in CS" />
+            <Label layoutX="791.0" layoutY="598.0" prefHeight="45.0" prefWidth="76.0" styleClass="credits-label" text="Actual:" />
+            <Label fx:id="actualOfferedMaxFeeLabel" layoutX="868.0" layoutY="598.0" prefHeight="45.0" prefWidth="209.0" styleClass="credits-label" text="0" textFill="#0000008e">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="feeField" layoutX="577.0" layoutY="598.0" maxHeight="45.0" minHeight="45.0" minWidth="57.0" prefHeight="45.0" prefWidth="207.0" promptText="(0.01 - 0.03 - Recomended)" styleClass="credits-textField" />
+            <Label fx:id="feeErrorLabel" layoutX="338.0" layoutY="628.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits--not-padding-labelError" />
             </children>
         </Pane>
     </center>

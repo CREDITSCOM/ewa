@@ -1,6 +1,8 @@
 package com.credits.general.util;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,5 +47,14 @@ public class UtilsTest {
     public void randomAlphaNumericTest() {
         String string = Utils.randomAlphaNumeric(29);
         Assert.assertEquals(29, string.length());
+    }
+
+    @Test
+    @Ignore
+    public void createActualOfferedMaxFeeTest() {
+        double value = 0.0000000000001023D;
+        Pair<Double, Short> actualOfferedMaxFeePair = Utils.createActualOfferedMaxFee(value);
+        LOGGER.info(actualOfferedMaxFeePair.getLeft() + "");
+        LOGGER.info(actualOfferedMaxFeePair.getRight() + "");
     }
 }

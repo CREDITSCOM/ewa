@@ -6,6 +6,8 @@ import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.pojo.VariantType;
 import com.credits.general.util.Callback;
+import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.Utils;
 import com.credits.general.util.variant.VariantUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -13,6 +15,7 @@ import com.credits.wallet.desktop.struct.ParseResultStruct;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
+import com.credits.wallet.desktop.utils.NumberUtils;
 import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
@@ -42,11 +45,13 @@ import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
@@ -60,12 +65,14 @@ import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTrans
  */
 public class SmartContractController extends AbstractController {
 
+    private static final String ERR_FEE = "Fee must be greater than 0";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
 
     private CodeArea codeArea;
     private SmartContractData currentSmartContract;
     private MethodDeclaration currentMethod;
     private HashMap<String, SmartContractData> favoriteContracts;
+    private short actualOfferedMaxFee16Bits;
 
     @FXML
     public Tab myContractsTab;
@@ -91,6 +98,12 @@ public class SmartContractController extends AbstractController {
     private AnchorPane pParams;
     @FXML
     private AnchorPane pParamsContainer;
+    @FXML
+    private TextField feeField;
+    @FXML
+    private Label actualOfferedMaxFeeLabel;
+    @FXML
+    private Label feeErrorLabel;
 
     @FXML
     private void handleBack() {
@@ -136,6 +149,19 @@ public class SmartContractController extends AbstractController {
         initializeTable(smartContractTableView);
         initializeTable(favoriteContractTableView);
         refreshFavoriteContractsTab();
+        feeField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                newValue = NumberUtils.getCorrectNum(newValue);
+                if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
+                    refreshOfferedMaxFeeValues(oldValue);
+                    return;
+                }
+                refreshOfferedMaxFeeValues(newValue);
+            } catch (Exception e) {
+                //FormUtils.showError("Error. Reason: " + e.getMessage());
+                refreshOfferedMaxFeeValues(oldValue);
+            }
+        });
     }
 
     @FXML
@@ -327,6 +353,16 @@ public class SmartContractController extends AbstractController {
     @FXML
     private void handleExecute() {
         try {
+            // VALIDATE
+            AtomicBoolean isValidationSuccessful = new AtomicBoolean(true);
+            clearLabErr();
+            String transactionFee = feeField.getText();
+            if (GeneralConverter.toBigDecimal(transactionFee).compareTo(BigDecimal.ZERO) <= 0) {
+                FormUtils.validateField(feeField, feeErrorLabel, ERR_FEE, isValidationSuccessful);
+            }
+            if (!isValidationSuccessful.get()) {
+                return;
+            }
             String method = cbMethods.getSelectionModel().getSelectedItem().getName().getIdentifier();
             List<VariantData> params = new ArrayList<>();
             List<SingleVariableDeclaration> currentMethodParams = this.currentMethod.parameters();
@@ -347,7 +383,7 @@ public class SmartContractController extends AbstractController {
 
             CompletableFuture.supplyAsync(() -> calcTransactionIdSourceTarget(AppState.nodeApiService, session.account,
                 smartContractData.getBase58Address(), true), threadPool)
-                .thenApply((transactionData) -> createSmartContractTransaction(transactionData, smartContractData,session))
+                .thenApply((transactionData) -> createSmartContractTransaction(transactionData, actualOfferedMaxFee16Bits, smartContractData,session))
                 .whenComplete(handleCallback(handleExecuteResult()));
 
 
@@ -385,6 +421,22 @@ public class SmartContractController extends AbstractController {
         row.setFav(favoriteButton);
         findInFavoriteThenSelect(smartContractData, favoriteButton);
         table.getItems().add(row);
+    }
+
+    private void clearLabErr() {
+        FormUtils.clearErrorOnField(feeField, feeErrorLabel);
+    }
+
+    private void refreshOfferedMaxFeeValues(String oldValue) {
+        if(oldValue.isEmpty()) {
+            actualOfferedMaxFeeLabel.setText("");
+            feeField.setText("");
+        } else {
+            Pair<Double, Short> actualOfferedMaxFeePair = Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
+            this.actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
+            this.actualOfferedMaxFee16Bits = actualOfferedMaxFeePair.getRight();
+            feeField.setText(oldValue);
+        }
     }
 
     public void handleRefreshSmarts() {
