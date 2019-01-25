@@ -233,7 +233,7 @@ public class NodePojoConverter {
         transaction.balance = null;
         transaction.currency = (byte) 1;
         transaction.signature = ByteBuffer.wrap(scTransaction.getSignature());
-        transaction.fee = new AmountCommission(scTransaction.getOfferedMaxFee());
+        transaction.fee = new AmountCommission(scTransaction.getOfferedMaxFee16Bits());
         SmartContractInvocation smartContractInvocation =
             smartContractInvocationDataToSmartContractInvocation(scTransaction.getSmartContractData());
         transaction.setSmartContract(smartContractInvocation);
@@ -258,7 +258,7 @@ public class NodePojoConverter {
         transaction.source = ByteBuffer.wrap(transactionData.getSource());
         transaction.target = ByteBuffer.wrap(transactionData.getTarget());
         transaction.amount = bigDecimalToAmount(transactionData.getAmount());
-        transaction.fee = new AmountCommission(transactionData.getOfferedMaxFee());
+        transaction.fee = new AmountCommission(transactionData.getOfferedMaxFee16Bits());
         transaction.userFields = ByteBuffer.wrap(transactionData.getCommentBytes());
         transaction.signature = ByteBuffer.wrap(transactionData.getSignature());
         return transaction;

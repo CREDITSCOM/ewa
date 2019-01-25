@@ -4,8 +4,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
@@ -15,6 +15,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
     <top>
         <fx:include fx:id="header" source="header.fxml" />
@@ -23,7 +25,7 @@
         <Pane prefWidth="1300.0" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contracts from blockhain" />
-                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" >
+                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button">
                     <graphic>
                         <ImageView fitHeight="26.0" fitWidth="26.0">
                             <Image url="@../img/arrow_down.png" />
@@ -94,7 +96,7 @@
                         </Tab>
                         <Tab fx:id="myContractsTab" onSelectionChanged="#updateSelectedTab" text="My smart contracts">
                             <content>
-                                <TableView fx:id="smartContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view"/>
+                                <TableView fx:id="smartContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view" />
                             </content>
                         </Tab>
                     </tabs>
@@ -118,6 +120,15 @@
                   </ImageView>
                </graphic>
             </Button>
+            <Label layoutX="313.0" layoutY="611.0" styleClass="credits-not-padding-label" text="Transaction Fee in CS" />
+            <TextField fx:id="feeField" layoutX="514.0" layoutY="598.0" maxHeight="45.0" minHeight="45.0" minWidth="266.0" prefHeight="45.0" prefWidth="266.0" promptText="(0.01 - 0.03 - Recomended)" styleClass="credits-textField" />
+            <Label layoutX="786.0" layoutY="597.0" prefHeight="45.0" prefWidth="98.0" styleClass="credits-label" text="Actual:" />
+            <Label fx:id="actualOfferedMaxFeeLabel" layoutX="850.0" layoutY="597.0" prefHeight="45.0" prefWidth="227.0" styleClass="credits-label" text="0" textFill="#0000008e">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="feeErrorLabel" layoutX="265.0" layoutY="628.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" prefWidth="249.0" styleClass="credits--not-padding-labelError" />
             </children>
         </Pane>
     </center>

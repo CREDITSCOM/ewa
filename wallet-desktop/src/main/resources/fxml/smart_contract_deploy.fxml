@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.ComboBox?>
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController">
     <top>
         <fx:include fx:id="header" source="header.fxml" />
@@ -87,6 +87,11 @@
                 <Button fx:id="deployButton" disable="true" layoutX="1086.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Deploy" />
             <ListView fx:id="deployContractList" layoutX="30.0" layoutY="75.0" prefHeight="457.0" prefWidth="272.0" />
             <Button layoutX="30.0" layoutY="535.0" mnemonicParsing="false" onAction="#handleAddContract" prefHeight="25.0" prefWidth="272.0" styleClass="credits-button" text="Create new contract" />
+                <Label layoutX="382.0" layoutY="612.0" styleClass="credits-not-padding-label" text="Transaction Fee in CS" />
+                <Label layoutX="791.0" layoutY="598.0" prefHeight="45.0" prefWidth="76.0" styleClass="credits-label" text="Actual:" />
+                <Label fx:id="actualOfferedMaxFeeLabel" layoutX="868.0" layoutY="598.0" prefHeight="45.0" prefWidth="209.0" styleClass="credits-label" text="0" textFill="#0000008e"/>
+                <TextField fx:id="feeField" layoutX="577.0" layoutY="598.0" maxHeight="45.0" minHeight="45.0" minWidth="57.0" prefHeight="45.0" prefWidth="207.0" promptText="(0.01 - 0.03 - Recomended)" styleClass="credits-textField" />
+                <Label fx:id="feeErrorLabel" layoutX="338.0" layoutY="628.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" prefWidth="240.0" styleClass="credits--not-padding-labelError" />
             </children>
         </Pane>
     </center>

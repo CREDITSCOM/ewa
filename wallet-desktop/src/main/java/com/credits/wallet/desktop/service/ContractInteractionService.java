@@ -65,7 +65,7 @@ public class ContractInteractionService {
                     .whenComplete((aVoid, throwable) -> LOGGER.warn("cannot add balance of contract to tokens balances list. Reason: {}", throwable.getMessage())));
     }*/
 
-    public void transferTo(String smartContractAddress, String target, BigDecimal amount, Callback<String> callback) {
+    public void transferTo(String smartContractAddress, String target, BigDecimal amount, short offeredMaxFee, Callback<String> callback) {
         supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
             .thenApply((sc) -> {
                 sc.setMethod(TRANSFER_METHOD);
@@ -73,7 +73,7 @@ public class ContractInteractionService {
                 TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData =
                     TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService, session.account,
                         sc.getBase58Address(), true);
-                return createSmartContractTransaction(transactionData, sc,session).getRight().getCode().name();
+                return createSmartContractTransaction(transactionData, offeredMaxFee, sc,session).getRight().getCode().name();
             })
             .whenComplete(handleCallback(callback));
     }

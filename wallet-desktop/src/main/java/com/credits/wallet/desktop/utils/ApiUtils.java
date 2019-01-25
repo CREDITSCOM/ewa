@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult;
-import static com.credits.wallet.desktop.AppState.OFFERED_MAX_FEE;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static java.math.BigDecimal.ZERO;
@@ -34,15 +33,16 @@ public class ApiUtils {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);
 
+
     public static Pair<Long, TransactionFlowResultData> createTransaction(
-        CalcTransactionIdSourceTargetResult transactionData, BigDecimal amount, String text, Session session)
+        CalcTransactionIdSourceTargetResult transactionData, BigDecimal amount, short offeredMaxFee16Bits, String text, Session session)
         throws NodeClientException, ConverterException {
         return Pair.of(transactionData.getTransactionId(),
-            nodeApiService.transactionFlow(getTransactionFlowData(transactionData, amount, null, text, session)));
+            nodeApiService.transactionFlow(getTransactionFlowData(transactionData, amount, offeredMaxFee16Bits, null, text, session)));
     }
 
     public static Pair<Long, TransactionFlowResultData> createSmartContractTransaction(
-        CalcTransactionIdSourceTargetResult transactionData, SmartContractData smartContractData, Session session)
+        CalcTransactionIdSourceTargetResult transactionData, short offeredMaxFee, SmartContractData smartContractData, Session session)
         throws NodeClientException, ConverterException {
 
         smartContractData.setAddress(
@@ -54,18 +54,17 @@ public class ApiUtils {
                 smartContractData.getMethod(), smartContractData.getParams(), false);
 
         SmartContractTransactionFlowData scData = new SmartContractTransactionFlowData(
-            getTransactionFlowData(transactionData, ZERO, serializeByThrift(smartContractInvocationData), null,
+            getTransactionFlowData(transactionData, ZERO, offeredMaxFee, serializeByThrift(smartContractInvocationData), null,
                 session), smartContractInvocationData);
 
         return Pair.of(transactionData.getTransactionId(), nodeApiService.smartContractTransactionFlow(scData));
     }
 
     private static TransactionFlowData getTransactionFlowData(CalcTransactionIdSourceTargetResult transactionData,
-        BigDecimal amount, byte[] smartContractBytes, String text, Session session) {
+        BigDecimal amount, short offeredMaxFee16Bits, byte[] smartContractBytes, String text, Session session) {
         long id = transactionData.getTransactionId();
         byte[] source = transactionData.getByteSource();
         byte[] target = transactionData.getByteTarget();
-        short offeredMaxFee = OFFERED_MAX_FEE;
         byte currency = 1;
         byte[] textBytes = null;
         if (text != null) {
@@ -75,7 +74,7 @@ public class ApiUtils {
         saveTransactionIntoMap(transactionData, amount.toString(), String.valueOf(currency), session);
 
         TransactionFlowData transactionFlowData =
-            new TransactionFlowData(id, source, target, amount, offeredMaxFee, smartContractBytes, textBytes);
+            new TransactionFlowData(id, source, target, amount, offeredMaxFee16Bits, smartContractBytes, textBytes);
         SignUtils.signTransaction(transactionFlowData, AppState.privateKey);
         return transactionFlowData;
     }

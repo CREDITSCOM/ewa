@@ -48,6 +48,8 @@ public class GenerateTransactionController extends AbstractController {
     @FXML
     private TextField transactionFeeValue;
 
+    private short actualOfferedMaxFee16Bits;
+
     @FXML
     private void handleBack() {
         Map<String, Object> params = new HashMap<>();
@@ -68,13 +70,13 @@ public class GenerateTransactionController extends AbstractController {
                     .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,session.account,toAddress,
                         true),threadPool)
                     .thenApply((transactionData) -> createTransaction(transactionData, GeneralConverter.toBigDecimal(
-                        transactionAmount.getText()), transactionText.getText(),session))
+                        transactionAmount.getText()), actualOfferedMaxFee16Bits, transactionText.getText(),session))
                     .whenComplete(handleCallback(handleTransactionResult()));
             } else {
                 session.coinsKeeper.getKeptObject().ifPresent(coinsMap ->
                     Optional.ofNullable(coinsMap.get(coinType)).ifPresent(
                         coin -> session.contractInteractionService.transferTo(coin, toAddress, GeneralConverter.toBigDecimal(
-                            transactionAmount.getText()), handleTransferTokenResult())));
+                            transactionAmount.getText()), actualOfferedMaxFee16Bits, handleTransferTokenResult())));
             }
         } catch (CreditsException e) {
             LOGGER.error(NODE_ERROR + ": " + e.getMessage(), e);
@@ -123,6 +125,8 @@ public class GenerateTransactionController extends AbstractController {
         transactionAmount.setText(objects.get("transactionAmount").toString());
         transactionText.setText(objects.get("transactionText").toString());
         coinType.setText(objects.get("coinType").toString());
+        actualOfferedMaxFee16Bits = (Short)objects.get("actualOfferedMaxFee16Bits");
+
     }
 
     @Override
