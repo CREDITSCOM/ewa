@@ -33,11 +33,11 @@
                         </ImageView>
                     </graphic>
                 </Button>
-            <TabPane fx:id="tabPane" layoutX="316.0" layoutY="75.0" prefHeight="500.0" prefWidth="908.0" style="-fx-border-color: black; -fx-border-radius: 0 0 15 15; -fx-border-width: 0; -fx-padding: 0 0 0 0; -fx-background-radius: 15;" tabClosingPolicy="UNAVAILABLE">
+            <TabPane fx:id="tabPane" layoutX="316.0" layoutY="75.0" prefHeight="500.0" prefWidth="966.0" style="-fx-border-color: black; -fx-border-radius: 0 0 15 15; -fx-border-width: 0; -fx-padding: 0 0 0 0; -fx-background-radius: 15;" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                   <Tab fx:id="createCodeTab" closable="false" text="NewSmartTab">
                      <content>
-                              <Pane fx:id="buttonPane" prefHeight="200.0" prefWidth="1240.0" style="-fx-border-color: black; -fx-border-radius: 0 0 15 15;">
+                              <Pane fx:id="buttonPane" prefHeight="200.0" prefWidth="959.0" style="-fx-border-color: black; -fx-border-radius: 0 0 15 15;">
                                   <children>
                               <ComboBox fx:id="cbContractType" layoutX="30.0" layoutY="50.0" prefHeight="45.0" prefWidth="260.0" styleClass="credits-combobox" />
                               <Button layoutX="28.0" layoutY="284.0" mnemonicParsing="false" onAction="#handleGenerateSmart" prefHeight="41.0" prefWidth="266.0" styleClass="credits-button" text="Generate code" />
@@ -83,10 +83,15 @@
               </tabs>
             </TabPane>
 
-                <Button fx:id="buildButton" layoutX="633.0" layoutY="590.0" onAction="#handleBuild" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Build" />
-                <Button fx:id="deployButton" disable="true" layoutX="1086.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="200.0" styleClass="credits-button" text="Deploy" />
+                <Button fx:id="buildButton" layoutX="992.0" layoutY="590.0" onAction="#handleBuild" prefHeight="60.0" prefWidth="140.0" styleClass="credits-button" text="Build" />
+                <Button fx:id="deployButton" disable="true" layoutX="1142.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="140.0" styleClass="credits-button" text="Deploy" />
             <ListView fx:id="deployContractList" layoutX="30.0" layoutY="75.0" prefHeight="457.0" prefWidth="272.0" />
             <Button layoutX="30.0" layoutY="535.0" mnemonicParsing="false" onAction="#handleAddContract" prefHeight="25.0" prefWidth="272.0" styleClass="credits-button" text="Create new contract" />
+                <Label layoutX="318.0" layoutY="605.0" prefHeight="30.0" style="-fx-font-size: 12;" styleClass="credits-not-padding-label" text="Transaction Fee in CS" />
+                <Label layoutX="693.0" layoutY="605.0" prefHeight="30.0" prefWidth="69.0" style="-fx-font-size: 12;" styleClass="credits-label" text="Actual:" />
+                <Label fx:id="actualOfferedMaxFeeLabel" layoutX="754.0" layoutY="605.0" prefHeight="30.0" prefWidth="155.0" style="-fx-font-size: 12;" styleClass="credits-label" text="0" textFill="#0000008e" />
+                <TextField fx:id="feeField" layoutX="493.0" layoutY="590.0" maxHeight="60.0" maxWidth="200.0" minHeight="45.0" minWidth="57.0" prefHeight="60.0" prefWidth="200.0" promptText="(0.01 - 0.03 - Recomended)" style="-fx-font-size: 12px;" styleClass="credits-textField" />
+                <Label fx:id="feeErrorLabel" layoutX="316.0" layoutY="620.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" prefWidth="174.0" style="-fx-font-size: 12;" styleClass="credits--not-padding-labelError" />
             </children>
         </Pane>
     </center>

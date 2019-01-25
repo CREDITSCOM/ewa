@@ -10,14 +10,14 @@ import java.util.Objects;
  */
 public class TransactionFlowData extends TransactionData implements Serializable {
     private static final long serialVersionUID = 4544650022718657166L;
-    protected Short offeredMaxFee;
+    protected Short offeredMaxFee16Bits;
     protected byte[] smartContractBytes;
     protected byte[] signature;
 
     public TransactionFlowData() {
     }
 
-    public TransactionFlowData(long innerId, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee,
+    public TransactionFlowData(long innerId, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee16Bits,
         byte[] smartContractBytes, byte[] commentBytes) {
         super();
         this.setId(innerId);
@@ -25,12 +25,12 @@ public class TransactionFlowData extends TransactionData implements Serializable
         this.setTarget(target);
         this.setAmount(amount);
         this.setCurrency(currency);
-        this.setOfferedMaxFee(offeredMaxFee);
+        this.setOfferedMaxFee16Bits(offeredMaxFee16Bits);
         this.setSmartContractBytes(smartContractBytes);
         this.setCommentBytes(commentBytes);
     }
 
-    public TransactionFlowData(long innerId, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee,
+    public TransactionFlowData(long innerId, byte[] source, byte[] target, BigDecimal amount, Short offeredMaxFee16Bits,
         byte currency, byte[] smartContractBytes, byte[] commentBytes, byte[] signature) {
         super();
         this.setId(innerId);
@@ -38,7 +38,7 @@ public class TransactionFlowData extends TransactionData implements Serializable
         this.setTarget(target);
         this.setAmount(amount);
         this.setCurrency(currency);
-        this.setOfferedMaxFee(offeredMaxFee);
+        this.setOfferedMaxFee16Bits(offeredMaxFee16Bits);
         this.setSmartContractBytes(smartContractBytes);
         this.setCommentBytes(commentBytes);
         this.setSignature(signature);
@@ -46,16 +46,16 @@ public class TransactionFlowData extends TransactionData implements Serializable
 
 
     public TransactionFlowData(TransactionFlowData transaction) {
-        this(transaction.id, transaction.source, transaction.target, transaction.amount, transaction.offeredMaxFee,
+        this(transaction.id, transaction.source, transaction.target, transaction.amount, transaction.offeredMaxFee16Bits,
             transaction.currency, transaction.smartContractBytes, transaction.commentBytes, transaction.signature);
     }
 
-    public Short getOfferedMaxFee() {
-        return offeredMaxFee;
+    public Short getOfferedMaxFee16Bits() {
+        return offeredMaxFee16Bits;
     }
 
-    public void setOfferedMaxFee(Short offeredMaxFee) {
-        this.offeredMaxFee = offeredMaxFee;
+    public void setOfferedMaxFee16Bits(Short offeredMaxFee16Bits) {
+        this.offeredMaxFee16Bits = offeredMaxFee16Bits;
     }
 
     public byte[] getSignature() {
@@ -78,13 +78,13 @@ public class TransactionFlowData extends TransactionData implements Serializable
             return false;
         }
         TransactionFlowData that = (TransactionFlowData) o;
-        return Objects.equals(offeredMaxFee, that.offeredMaxFee) && Arrays.equals(signature, that.signature);
+        return Objects.equals(offeredMaxFee16Bits, that.offeredMaxFee16Bits) && Arrays.equals(signature, that.signature);
     }
 
     @Override
     public int hashCode() {
 
-        int result = Objects.hash(super.hashCode(), offeredMaxFee);
+        int result = Objects.hash(super.hashCode(), offeredMaxFee16Bits);
         result = 31 * result + Arrays.hashCode(signature);
         return result;
     }
@@ -106,7 +106,7 @@ public class TransactionFlowData extends TransactionData implements Serializable
         sb.append(", target=").append(Arrays.toString(target));
         sb.append(", amount=").append(amount);
         sb.append(", currency=").append(currency);
-        sb.append("offeredMaxFee=").append(offeredMaxFee);
+        sb.append("offeredMaxFee16Bits=").append(offeredMaxFee16Bits);
         sb.append(", signature=").append(Arrays.toString(signature));
         sb.append('}');
         return sb.toString();

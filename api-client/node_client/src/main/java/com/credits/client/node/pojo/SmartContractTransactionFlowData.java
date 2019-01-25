@@ -50,7 +50,7 @@ public class SmartContractTransactionFlowData extends TransactionFlowData implem
         sb.append(", target=").append(Arrays.toString(target));
         sb.append(", amount=").append(amount);
         sb.append(", currency=").append(currency);
-        sb.append(", offeredMaxFee=").append(offeredMaxFee);
+        sb.append(", offeredMaxFee16Bits=").append(offeredMaxFee16Bits);
         sb.append(", signature=").append(Arrays.toString(signature));
         sb.append("smartContractData=").append(smartContractData);
         sb.append('}');

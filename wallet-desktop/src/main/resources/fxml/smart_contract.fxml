@@ -23,7 +23,7 @@
         <Pane prefWidth="1300.0" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
             <children>
                 <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contracts from blockhain" />
-                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button" >
+                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button">
                     <graphic>
                         <ImageView fitHeight="26.0" fitWidth="26.0">
                             <Image url="@../img/arrow_down.png" />
@@ -94,7 +94,7 @@
                         </Tab>
                         <Tab fx:id="myContractsTab" onSelectionChanged="#updateSelectedTab" text="My smart contracts">
                             <content>
-                                <TableView fx:id="smartContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view"/>
+                                <TableView fx:id="smartContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view" />
                             </content>
                         </Tab>
                     </tabs>
@@ -118,6 +118,11 @@
                   </ImageView>
                </graphic>
             </Button>
+            <Label layoutX="492.0" layoutY="605.0" prefHeight="30.0" style="-fx-font-size: 12;" styleClass="credits-not-padding-label" text="Transaction Fee in CS" />
+            <Label layoutX="867.0" layoutY="605.0" prefHeight="30.0" prefWidth="69.0" style="-fx-font-size: 12;" styleClass="credits-label" text="Actual:" />
+            <Label fx:id="actualOfferedMaxFeeLabel" layoutX="928.0" layoutY="605.0" prefHeight="30.0" prefWidth="155.0" style="-fx-font-size: 12;" styleClass="credits-label" text="0" textFill="#0000008e" />
+            <TextField fx:id="feeField" layoutX="667.0" layoutY="590.0" maxHeight="60.0" maxWidth="200.0" minHeight="45.0" minWidth="57.0" prefHeight="60.0" prefWidth="200.0" promptText="(0.01 - 0.03 - Recomended)" style="-fx-font-size: 12px;" styleClass="credits-textField" />
+            <Label fx:id="feeErrorLabel" layoutX="490.0" layoutY="620.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" prefWidth="174.0" style="-fx-font-size: 12;" styleClass="credits--not-padding-labelError" />
             </children>
         </Pane>
     </center>

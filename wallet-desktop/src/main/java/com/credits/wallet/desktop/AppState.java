@@ -16,7 +16,6 @@ import static com.credits.general.util.Constants.ds;
 public class AppState {
     public static final String NODE_ERROR="A problem connecting to the Node";
     public static final int CREDITS_DECIMAL = 18;
-    public static final Short OFFERED_MAX_FEE = 0x6648;
     public static final int DEFAULT_EXECUTION_TIME = 1000;
     public static final String CREDITS_TOKEN_NAME = "CS";
 

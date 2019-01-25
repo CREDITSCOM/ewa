@@ -4,7 +4,7 @@ import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.MathUtils;
+import com.credits.general.util.Utils;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.CoinTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -23,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,7 @@ public class WalletController extends AbstractController {
     private final String WAITING_STATE_MESSAGE = "processing...";
     private final String ERROR_STATE_MESSAGE = "not available";
     private final DecimalFormat creditsDecimalFormat = new DecimalFormat("##0." + repeat('0', CREDITS_DECIMAL));
+    private short actualOfferedMaxFee16Bits;
     ContextMenu contextMenu = new ContextMenu();
 
     @FXML
@@ -78,7 +80,7 @@ public class WalletController extends AbstractController {
     @FXML
     private volatile TableView<CoinTabRow> coinsTableView;
     @FXML
-    private TextField actualMaxFeeField;
+    private Label actualOfferedMaxFeeLabel;
 
     @FXML
     private void handleLogout() {
@@ -139,6 +141,8 @@ public class WalletController extends AbstractController {
             params.put("transactionAmount", transactionAmount);
             params.put("transactionFee", transactionFee);
             params.put("transactionText", transactionText);
+            params.put("actualOfferedMaxFee16Bits", actualOfferedMaxFee16Bits);
+
             VistaNavigator.loadVista(VistaNavigator.FORM_7, this, params);
         }
     }
@@ -283,16 +287,13 @@ public class WalletController extends AbstractController {
             try {
                 newValue = NumberUtils.getCorrectNum(newValue);
                 if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
-                    setFieldValue(actualMaxFeeField, oldValue);
-                    setFieldValue(maxFeeField, oldValue);
-
-                    setFeeFieldsValue(oldValue);
+                    refreshOfferedMaxFeeValues(oldValue);
                     return;
                 }
-                setFeeFieldsValue(newValue);
+                refreshOfferedMaxFeeValues(newValue);
             } catch (Exception e) {
                 //FormUtils.showError("Error. Reason: " + e.getMessage());
-                setFeeFieldsValue(oldValue);
+                refreshOfferedMaxFeeValues(oldValue);
             }
         });
 
@@ -321,22 +322,23 @@ public class WalletController extends AbstractController {
         }
     }
 
-    private void setFeeFieldsValue(String oldValue) {
-        if(oldValue.isEmpty()) {
-            actualMaxFeeField.setText("");
-            maxFeeField.setText("");
-        } else {
-            double actualFee = MathUtils.calcActualFee(GeneralConverter.toDouble(oldValue));
-            actualMaxFeeField.setText(GeneralConverter.toString(actualFee));
-            maxFeeField.setText(oldValue);
-        }
-    }
-
     private void setFieldValue(TextField tf, String newValue) {
         if(newValue.isEmpty()) {
             tf.setText("");
         } else {
             tf.setText(newValue);
+        }
+    }
+
+    private void refreshOfferedMaxFeeValues(String oldValue) {
+        if(oldValue.isEmpty()) {
+            actualOfferedMaxFeeLabel.setText("");
+            maxFeeField.setText("");
+        } else {
+            Pair<Double, Short> actualOfferedMaxFeePair = Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
+            this.actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
+            this.actualOfferedMaxFee16Bits = actualOfferedMaxFeePair.getRight();
+            maxFeeField.setText(oldValue);
         }
     }
 

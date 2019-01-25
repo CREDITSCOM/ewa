@@ -88,7 +88,7 @@ public class SignUtils {
             os.write(tStruct.getTarget());
             os.write(GeneralConverter.toByteArrayLittleEndian(amountInt, 4));
             os.write(GeneralConverter.toByteArrayLittleEndian(amountFrac, 8));
-            os.write(GeneralConverter.toByteArrayLittleEndian(tStruct.getOfferedMaxFee(), 2));
+            os.write(GeneralConverter.toByteArrayLittleEndian(tStruct.getOfferedMaxFee16Bits(), 2));
             os.write(GeneralConverter.toByteArrayLittleEndian(tStruct.getCurrency(), 1));
             os.write(GeneralConverter.toByteArrayLittleEndian(ufNum, 1));
             if (tStruct.getSmartContractBytes()!= null) {

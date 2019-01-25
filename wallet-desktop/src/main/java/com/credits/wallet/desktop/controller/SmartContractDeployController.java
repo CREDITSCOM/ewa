@@ -9,11 +9,13 @@ import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.ByteArrayContractClassLoader;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.Utils;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.struct.DeploySmartListItem;
 import com.credits.wallet.desktop.struct.TokenInfoData;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
+import com.credits.wallet.desktop.utils.NumberUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
@@ -51,6 +53,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getCalcTransactionIdSourceTargetResult;
@@ -82,64 +85,57 @@ public class SmartContractDeployController extends AbstractController {
 
     public static final String BUILD = "Build";
     public static final String COMPILING = "Compiling...";
+    private static final String ERR_FEE = "Fee must be greater than 0";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
 
     public Pane mainPane;
     public Pane tabPanel;
+    public CompilationPackage compilationPackage;
+
+    private CreditsCodeArea codeArea;
+    private short actualOfferedMaxFee16Bits;
 
     @FXML
     public ComboBox<String> cbContractType;
-
     @FXML
     public TextField deployName;
-
     @FXML
     public ListView<DeploySmartListItem> deployContractList;
-
     @FXML
     public TabPane tabPane;
-
     @FXML
     public Tab testingTab;
-
     @FXML
     public Tab codeAreaTab;
-
     @FXML
     public Tab createCodeTab;
-
     @FXML
     public TextField className;
-
-
-    private CreditsCodeArea codeArea;
-
     @FXML
     public Pane buttonPane;
-
     @FXML
     private TableView<BuildSourceCodeError> errorTableView;
-
     @FXML
     private SplitPane splitPane;
-
     @FXML
     private Pane paneCode;
-
     @FXML
     private Pane debugPane;
-
     @FXML
     private TreeView<Label> treeView;
-
     @FXML
     private Button deployButton;
-
     @FXML
     private Button buildButton;
+    @FXML
+    private TextField feeField;
+    @FXML
+    private Label actualOfferedMaxFeeLabel;
+    @FXML
+    private Label feeErrorLabel;
 
 
-    public CompilationPackage compilationPackage;
+
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
@@ -149,6 +145,20 @@ public class SmartContractDeployController extends AbstractController {
         initDeployContractList();
         initSplitPane();
         initErrorTableView();
+        feeField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                newValue = NumberUtils.getCorrectNum(newValue);
+                if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
+                    refreshOfferedMaxFeeValues(oldValue);
+                    return;
+                }
+                refreshOfferedMaxFeeValues(newValue);
+            } catch (Exception e) {
+                //FormUtils.showError("Error. Reason: " + e.getMessage());
+                refreshOfferedMaxFeeValues(oldValue);
+            }
+        });
+
     }
 
     private void initNewContractForm() {
@@ -273,6 +283,16 @@ public class SmartContractDeployController extends AbstractController {
 
     @FXML
     private void handleDeploy() {
+        // VALIDATE
+        AtomicBoolean isValidationSuccessful = new AtomicBoolean(true);
+        clearLabErr();
+        String transactionFee = feeField.getText();
+        if (GeneralConverter.toBigDecimal(transactionFee).compareTo(BigDecimal.ZERO) <= 0) {
+            FormUtils.validateField(feeField, feeErrorLabel, ERR_FEE, isValidationSuccessful);
+        }
+        if (!isValidationSuccessful.get()) {
+            return;
+        }
         try {
             String javaCode = SourceCodeUtils.normalizeSourceCode(codeArea.getText());
             if (compilationPackage == null) {
@@ -293,15 +313,16 @@ public class SmartContractDeployController extends AbstractController {
                     long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, session.account, true);
 
                     SmartContractData smartContractData = new SmartContractData(
-                        generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits,
+                    generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits,
                             byteCodeObjectDataList), decodeFromBASE58(session.account), smartContractDeployData, null);
 
                     supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService, session.account,
-                        smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool).thenApply(
-                        (transactionData) -> createSmartContractTransaction(transactionData, smartContractData,
-                            session))
-                        .whenComplete(
-                            handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
+                            smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool).thenApply(
+                            (transactionData) -> createSmartContractTransaction(transactionData, actualOfferedMaxFee16Bits, smartContractData,
+                                    session))
+                            .whenComplete(
+                                    handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
+
                     session.lastSmartContract = codeArea.getText();
 
                     loadVista(WALLET, this);
@@ -405,6 +426,22 @@ public class SmartContractDeployController extends AbstractController {
                 }
             }
         });
+    }
+
+    private void clearLabErr() {
+        FormUtils.clearErrorOnField(feeField, feeErrorLabel);
+    }
+
+    private void refreshOfferedMaxFeeValues(String value) {
+        if(value.isEmpty()) {
+            actualOfferedMaxFeeLabel.setText("");
+            feeField.setText("");
+        } else {
+            Pair<Double, Short> actualOfferedMaxFeePair = Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(value));
+            this.actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
+            this.actualOfferedMaxFee16Bits = actualOfferedMaxFeePair.getRight();
+            feeField.setText(value);
+        }
     }
 
     @Override
