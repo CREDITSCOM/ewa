@@ -1,12 +1,12 @@
 package com.credits.wallet.desktop.service;
 
 import com.credits.client.executor.pojo.ExecuteResponseData;
-import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
 import com.credits.client.executor.util.ContractExecutorPojoConverter;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.pojo.VariantData;
+import com.credits.general.thrift.generated.ExecuteByteCodeResult;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.wallet.desktop.AppState;

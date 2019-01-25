@@ -1,19 +1,10 @@
 package com.credits.thrift;
 
 import com.credits.client.executor.pojo.MethodDescriptionData;
-import com.credits.client.executor.thrift.generated.CompileSourceCodeResult;
-import com.credits.client.executor.thrift.generated.ContractExecutor;
-import com.credits.client.executor.thrift.generated.ExecuteByteCodeMultipleResult;
-import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
-import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
-import com.credits.client.executor.thrift.generated.GetContractVariablesResult;
-import com.credits.client.executor.thrift.generated.GetterMethodResult;
+import com.credits.client.executor.thrift.generated.*;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
-import com.credits.general.thrift.generated.APIResponse;
-import com.credits.general.thrift.generated.ByteCodeObject;
-import com.credits.general.thrift.generated.MethodDescription;
-import com.credits.general.thrift.generated.Variant;
+import com.credits.general.thrift.generated.*;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
@@ -45,7 +36,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     @Override
     public ExecuteByteCodeResult executeByteCode(ByteBuffer initiatorAddress, ByteBuffer contractAddress, List<ByteCodeObject> byteCodeObjects, ByteBuffer contractState,
-        String method, List<Variant> params, long executionTime) {
+                                                 String method, List<Variant> params, long executionTime) {
         logger.debug("<-- execute(" +
                     "\naddress = {}," +
                     "\nbyteCode length= {}, " +

@@ -118,8 +118,8 @@ public class UITest {
     @Test
     public void smartContractsForm() throws Exception {
         mockInitializer.startForm = VistaNavigator.SMART_CONTRACT;
-        //when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
-        when(mockNodeApiService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
+        when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
+//        when(mockNodeApiService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
         runApp();
     }
 

@@ -1,9 +1,9 @@
 package com.credits.client.executor.util;
 
 import com.credits.client.executor.pojo.ExecuteResponseData;
-import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
+import com.credits.general.thrift.generated.ExecuteByteCodeResult;
 
 public class ContractExecutorPojoConverter {
 
