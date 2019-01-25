@@ -10,14 +10,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +67,7 @@ public class DeployControllerUtils {
     }
 
     public static void refreshTreeView(TreeView<Label> treeView, CreditsCodeArea codeArea) {
-        Thread t = new Thread(() -> DeployControllerUtils.refreshClassMembersTree(treeView,codeArea));
+        Thread t = new Thread(() -> DeployControllerUtils.refreshClassMembersTree(treeView, codeArea));
         t.setDaemon(true);
         t.start();
     }
@@ -98,8 +96,8 @@ public class DeployControllerUtils {
 
     public static String getContractFromTemplate(String template) {
         try {
-            byte[] encoded = Files.readAllBytes(Paths.get("src/main/resources/template/"+template+".template"));
-            return new String(encoded, StandardCharsets.UTF_8);
+            return IOUtils.toString(
+                DeployControllerUtils.class.getResourceAsStream("/template/" + template + ".template"), "UTF-8");
         } catch (IOException e) {
             return null;
         }

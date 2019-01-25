@@ -42,8 +42,8 @@ public class Session {
         if(coinsKeeper != null){
             coinsKeeper.flush();
         }
-        if(coinsKeeper != null){
-            coinsKeeper.flush();
+        if(deployContractsKeeper != null){
+            deployContractsKeeper.flush();
         }
     }
 }
