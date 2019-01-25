@@ -11,11 +11,14 @@ import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.Utils;
 import com.credits.general.util.compiler.model.CompilationPackage;
+import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import com.credits.wallet.desktop.struct.DeploySmartListItem;
+import com.credits.wallet.desktop.struct.ParseResultStruct;
 import com.credits.wallet.desktop.struct.TokenInfoData;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
+import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
@@ -26,15 +29,11 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
@@ -90,29 +89,38 @@ public class SmartContractDeployController extends AbstractController {
 
     public Pane mainPane;
     public Pane tabPanel;
-    public CompilationPackage compilationPackage;
+
+    @FXML
+    public ComboBox<String> cbContractType;
+
+    @FXML
+    public TextField deployName;
+
+    @FXML
+    public ListView<DeploySmartListItem> deployContractList;
+
+    @FXML
+    public TabPane tabPane;
+
+    @FXML
+    public Tab testingTab;
+
+    @FXML
+    public Tab codeAreaTab;
+
+    @FXML
+    public Tab createCodeTab;
+
+    @FXML
+    public TextField className;
+
 
     private CreditsCodeArea codeArea;
     private short actualOfferedMaxFee16Bits;
 
     @FXML
-    public ComboBox<String> cbContractType;
-    @FXML
-    public TextField deployName;
-    @FXML
-    public ListView<DeploySmartListItem> deployContractList;
-    @FXML
-    public TabPane tabPane;
-    @FXML
-    public Tab testingTab;
-    @FXML
-    public Tab codeAreaTab;
-    @FXML
-    public Tab createCodeTab;
-    @FXML
-    public TextField className;
-    @FXML
     public Pane buttonPane;
+
     @FXML
     private TableView<BuildSourceCodeError> errorTableView;
     @FXML
@@ -123,6 +131,7 @@ public class SmartContractDeployController extends AbstractController {
     private Pane debugPane;
     @FXML
     private TreeView<Label> treeView;
+
     @FXML
     private Button deployButton;
     @FXML
@@ -136,6 +145,7 @@ public class SmartContractDeployController extends AbstractController {
 
 
 
+    public CompilationPackage compilationPackage;
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
@@ -432,15 +442,15 @@ public class SmartContractDeployController extends AbstractController {
         FormUtils.clearErrorOnField(feeField, feeErrorLabel);
     }
 
-    private void refreshOfferedMaxFeeValues(String value) {
-        if(value.isEmpty()) {
+    private void refreshOfferedMaxFeeValues(String oldValue) {
+        if(oldValue.isEmpty()) {
             actualOfferedMaxFeeLabel.setText("");
             feeField.setText("");
         } else {
-            Pair<Double, Short> actualOfferedMaxFeePair = Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(value));
+            Pair<Double, Short> actualOfferedMaxFeePair = Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
             this.actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
             this.actualOfferedMaxFee16Bits = actualOfferedMaxFeePair.getRight();
-            feeField.setText(value);
+            feeField.setText(oldValue);
         }
     }
 
