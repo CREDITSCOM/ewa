@@ -67,7 +67,7 @@
                 <Label layoutX="20.0" layoutY="30.0" styleClass="credits-topLabelGrayText" text="On this form you can make payments in the Credits platform" />
                 <Button fx:id="btnBack" layoutX="1036.0" layoutY="580.0" onAction="#handleGenerate" prefHeight="60.0" prefWidth="250.0" styleClass="credits-button" text="GENERATE TRANSACTION" />
                 <Label fx:id="coinsErrorLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="362.0" layoutY="492.0" prefHeight="30.0" prefWidth="208.0" styleClass="credits-labelError" />
-                <VBox layoutX="650.0" layoutY="100.0" maxHeight="450.0" minHeight="450.0" prefHeight="450.0" prefWidth="615.0">
+                <VBox layoutX="650.0" layoutY="110.0" maxHeight="450.0" minHeight="392.0" prefHeight="392.0" prefWidth="615.0">
                     <children>
                         <Label styleClass="credits-not-padding-label" text="To address which opened on Credits (only)">
                         </Label>
