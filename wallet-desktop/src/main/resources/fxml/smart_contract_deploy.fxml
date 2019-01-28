@@ -33,9 +33,9 @@
                         </ImageView>
                     </graphic>
                 </Button>
-            <TabPane fx:id="tabPane" layoutX="316.0" layoutY="75.0" prefHeight="500.0" prefWidth="966.0" style="-fx-border-color: black; -fx-border-radius: 15; -fx-border-width: 0; -fx-padding: 0 0 0 0; -fx-background-radius: 15;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
+            <TabPane fx:id="tabPane" layoutX="316.0" layoutY="75.0" prefHeight="500.0" prefWidth="966.0" style="-fx-border-color: black; -fx-border-radius: 15; -fx-border-width: 0; -fx-padding: 0 0 0 0; -fx-background-radius: 15; -fx-open-tab-animation: NONE; -fx-close-tab-animation: NONE;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
               <tabs>
-                  <Tab fx:id="createCodeTab" closable="false" text="NewSmartTab">
+                  <Tab fx:id="createCodeTab" closable="false" text="NewSmart">
                      <content>
                               <Pane fx:id="buttonPane" prefHeight="200.0" prefWidth="959.0" style="-fx-border-color: black; -fx-border-radius: 15 15 15 15;">
                                   <children>
@@ -75,7 +75,7 @@
                         </HBox>
                      </content>
                 </Tab>
-                <Tab fx:id="testingTab" closable="false" text="TestTab">
+                <Tab fx:id="testingTab" closable="false" text="UnitTests">
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 15;" />
                   </content>
@@ -85,8 +85,8 @@
 
                 <Button fx:id="buildButton" layoutX="992.0" layoutY="590.0" onAction="#handleBuild" prefHeight="60.0" prefWidth="140.0" styleClass="credits-button" text="Build" />
                 <Button fx:id="deployButton" disable="true" layoutX="1142.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="140.0" styleClass="credits-button" text="Deploy" />
-            <ListView fx:id="deployContractList" layoutX="30.0" layoutY="75.0" prefHeight="457.0" prefWidth="272.0" style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-padding: 15 1 15 1;" />
-            <Button layoutX="30.0" layoutY="535.0" mnemonicParsing="false" onAction="#handleAddContract" prefHeight="25.0" prefWidth="272.0" styleClass="credits-button" text="Create new contract" />
+            <ListView fx:id="deployContractList" layoutX="30.0" layoutY="99.0" prefHeight="433.0" prefWidth="272.0" style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-padding: 15 1 15 1;" />
+            <Button layoutX="30.0" layoutY="535.0" mnemonicParsing="false" onAction="#handleAddContract" prefHeight="41.0" prefWidth="272.0" styleClass="credits-button" text="Create new contract" />
                 <Label layoutX="318.0" layoutY="605.0" prefHeight="30.0" style="-fx-font-size: 12;" styleClass="credits-not-padding-label" text="Transaction Fee in CS" />
                 <Label layoutX="693.0" layoutY="605.0" prefHeight="30.0" prefWidth="69.0" style="-fx-font-size: 12;" styleClass="credits-label" text="Actual:" />
                 <Label fx:id="actualOfferedMaxFeeLabel" layoutX="754.0" layoutY="605.0" prefHeight="30.0" prefWidth="155.0" style="-fx-font-size: 12;" styleClass="credits-label" text="0" textFill="#0000008e" />

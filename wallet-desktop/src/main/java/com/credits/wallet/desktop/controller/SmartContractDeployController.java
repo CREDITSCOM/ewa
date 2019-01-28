@@ -145,7 +145,6 @@ public class SmartContractDeployController extends AbstractController {
     private Label feeErrorLabel;
 
 
-
     public CompilationPackage compilationPackage;
 
     @Override
@@ -185,9 +184,9 @@ public class SmartContractDeployController extends AbstractController {
 
     private void initCodeArea() {
         codeArea = CodeAreaUtils.initCodeArea(paneCode, false);
-        refreshTreeView(treeView,codeArea);
+        refreshTreeView(treeView, codeArea);
         codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (evt) -> {
-            refreshTreeView(treeView,codeArea);
+            refreshTreeView(treeView, codeArea);
             cleanCompilationPackage(false);
         });
     }
@@ -203,6 +202,20 @@ public class SmartContractDeployController extends AbstractController {
         ArrayList<DeploySmartListItem> deploySmartListItems =
             session.deployContractsKeeper.getKeptObject().orElseGet(ArrayList::new);
 
+        deployContractList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            session.lastSmartIndex = deployContractList.getSelectionModel().getSelectedIndex();
+            if (oldValue != null) {
+                oldValue.sourceCode = codeArea.getText();
+            }
+            if (newValue.state == DeploySmartListItem.ItemState.NEW) {
+                deleteMainTabs();
+            } else {
+                DeploySmartListItem item = getCurrentListItem();
+                returnMainTabs(item);
+                refreshTreeView(treeView, codeArea);
+            }
+        });
+
         if (deploySmartListItems.isEmpty()) {
             DeploySmartListItem deploySmartItem =
                 new DeploySmartListItem(DEFAULT_SOURCE_CODE, "SmartContract " + session.lastSmartIndex++,
@@ -211,28 +224,16 @@ public class SmartContractDeployController extends AbstractController {
             deployContractList.getSelectionModel().selectFirst();
             session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
         } else {
-            deployContractList.getSelectionModel().selectFirst();
             deployContractList.getItems().addAll(deploySmartListItems);
+            deployContractList.getSelectionModel().select(session.lastSmartIndex);
         }
 
-        tabPane.setStyle("-fx-open-tab-animation: NONE; -fx-close-tab-animation: NONE;");
-        tabPane.getTabs().remove(createCodeTab);
+        if(getCurrentListItem().state.equals(DeploySmartListItem.ItemState.NEW)) {
+            deleteMainTabs();
+        } else {
+            returnMainTabs(getCurrentListItem());
+        }
         tabPane.getSelectionModel().select(0);
-
-        deployContractList.getSelectionModel()
-            .selectedItemProperty()
-            .addListener((observable, oldValue, newValue) -> {
-                if(oldValue!=null) {
-                    oldValue.sourceCode = codeArea.getText();
-                }
-                if(newValue.state == DeploySmartListItem.ItemState.NEW) {
-                    deleteMainTabs();
-                } else {
-                    DeploySmartListItem item = getCurrentListItem();
-                    returnMainTabs(item);
-                    refreshTreeView(treeView,codeArea);
-                }
-            });
     }
 
     private void cleanCompilationPackage(boolean buildButtonDisable) {
@@ -324,18 +325,15 @@ public class SmartContractDeployController extends AbstractController {
                     long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, session.account, true);
 
                     SmartContractData smartContractData = new SmartContractData(
-                    generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits,
+                        generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits,
                             byteCodeObjectDataList), decodeFromBASE58(session.account), smartContractDeployData, null);
 
                     supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService, session.account,
-                            smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool).thenApply(
-                            (transactionData) -> createSmartContractTransaction(transactionData, actualOfferedMaxFee16Bits, smartContractData,
-                                    session))
-                            .whenComplete(
-                                    handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
-
-                    session.lastSmartContract = codeArea.getText();
-
+                        smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool).thenApply(
+                        (transactionData) -> createSmartContractTransaction(transactionData, actualOfferedMaxFee16Bits,
+                            smartContractData, session))
+                        .whenComplete(
+                            handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
                     loadVista(WALLET, this);
                 }
             }
@@ -392,7 +390,8 @@ public class SmartContractDeployController extends AbstractController {
                 FormUtils.showPlatformInfo(
                     String.format("Smart-contract address%n%n%s%n%nhas generated and copied to clipboard", target));
                 if (tokenInfoData != null) {
-                    saveSmartInTokenList(session.coinsKeeper, tokenInfoData.name, tokenInfoData.balance, tokenInfoData.address);
+                    saveSmartInTokenList(session.coinsKeeper, tokenInfoData.name, tokenInfoData.balance,
+                        tokenInfoData.address);
                 }
             }
 
@@ -444,11 +443,12 @@ public class SmartContractDeployController extends AbstractController {
     }
 
     private void refreshOfferedMaxFeeValues(String oldValue) {
-        if(oldValue.isEmpty()) {
+        if (oldValue.isEmpty()) {
             actualOfferedMaxFeeLabel.setText("");
             feeField.setText("");
         } else {
-            Pair<Double, Short> actualOfferedMaxFeePair = Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
+            Pair<Double, Short> actualOfferedMaxFeePair =
+                Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
             this.actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
             this.actualOfferedMaxFee16Bits = actualOfferedMaxFeePair.getRight();
             feeField.setText(oldValue);
@@ -457,6 +457,8 @@ public class SmartContractDeployController extends AbstractController {
 
     @Override
     public void formDeinitialize() {
+        DeploySmartListItem item = getCurrentListItem();
+        item.sourceCode = codeArea.getText();
         codeArea.cleanAll();
     }
 
@@ -470,19 +472,20 @@ public class SmartContractDeployController extends AbstractController {
 
     private void deleteMainTabs() {
         cleanCompilationPackage(true);
-        tabPane.getTabs().removeAll(createCodeTab,codeAreaTab,testingTab);
+        tabPane.getTabs().removeAll(createCodeTab, codeAreaTab, testingTab);
         tabPane.getTabs().add(createCodeTab);
         tabPane.getSelectionModel().select(0);
     }
 
     private void returnMainTabs(DeploySmartListItem item) {
         cleanCompilationPackage(false);
-        tabPane.getTabs().removeAll(createCodeTab,codeAreaTab,testingTab);
+        tabPane.getTabs().removeAll(createCodeTab, codeAreaTab, testingTab);
+        codeAreaTab.setText(item.name);
         tabPane.getTabs().add(codeAreaTab);
         tabPane.getTabs().add(testingTab);
         tabPane.getSelectionModel().select(0);
         codeArea.replaceText(item.sourceCode);
-        refreshTreeView(treeView,codeArea);
+        refreshTreeView(treeView, codeArea);
     }
 
     private DeploySmartListItem getCurrentListItem() {
@@ -502,20 +505,21 @@ public class SmartContractDeployController extends AbstractController {
     public void handleGenerateSmart() {
         String selectedType = cbContractType.getSelectionModel().getSelectedItem();
         String curClassName;
-        if(className.getText().isEmpty()) {
+        if (className.getText().isEmpty()) {
             curClassName = "Contract";
         } else {
             curClassName = className.getText();
 
-            if(!SourceVersion.isIdentifier(curClassName) && !SourceVersion.isKeyword(curClassName)) {
+            if (!SourceVersion.isIdentifier(curClassName) && !SourceVersion.isKeyword(curClassName)) {
                 FormUtils.showInfo("ClassName is not valid");
                 return;
-            };
+            }
+            ;
         }
         try {
             String contractFromTemplate = getContractFromTemplate(selectedType);
             if (contractFromTemplate != null) {
-                String sourceCode = String.format(contractFromTemplate, curClassName,curClassName);
+                String sourceCode = String.format(contractFromTemplate, curClassName, curClassName);
                 saveTypeOfContract(sourceCode);
             }
             getCurrentListItem().name = curClassName;

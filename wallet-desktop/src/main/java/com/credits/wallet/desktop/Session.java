@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Session {
+    public int lastSmartIndex;
     public ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper;
     public ObjectKeeper<HashMap<String, SmartContractData>> favoriteContractsKeeper;
     public ObjectKeeper<ArrayList<DeploySmartListItem>> deployContractsKeeper;
-    public String lastSmartContract;
     public String account;
     public ConcurrentHashMap<Long, TransactionRoundData> sourceMap = new ConcurrentHashMap<>();
     public ContractInteractionService contractInteractionService = initializeContractInteractionService();
@@ -33,7 +33,6 @@ public class Session {
     }
     public ObservableList<DeploySmartListItem> deploySmartListItems;
 
-    public int lastSmartIndex =0;
 
     public void close() {
         if(favoriteContractsKeeper != null){

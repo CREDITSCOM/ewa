@@ -26,7 +26,6 @@ public class AppState {
     public static String decimalSeparator = ds;
     public static Map<String,Session> sessionMap = new HashMap<>();
 
-    public static String lastSmartContract;
 
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
