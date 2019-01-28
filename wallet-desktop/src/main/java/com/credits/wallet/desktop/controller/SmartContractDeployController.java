@@ -14,6 +14,7 @@ import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.struct.DeploySmartListItem;
 import com.credits.wallet.desktop.struct.TokenInfoData;
 import com.credits.wallet.desktop.utils.ApiUtils;
+import com.credits.wallet.desktop.utils.DeployControllerUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
@@ -39,6 +40,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
@@ -153,7 +157,6 @@ public class SmartContractDeployController extends AbstractController {
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
-
         initCodeArea();
         initNewContractForm();
         initDeployContractList();
@@ -206,6 +209,19 @@ public class SmartContractDeployController extends AbstractController {
         ArrayList<DeploySmartListItem> deploySmartListItems =
             session.deployContractsKeeper.getKeptObject().orElseGet(ArrayList::new);
 
+
+        final KeyCombination keyCombinationShiftC = new KeyCodeCombination(KeyCode.DELETE, KeyCombination.CONTROL_DOWN);
+
+        deployContractList.setOnKeyPressed(event -> {
+            if (keyCombinationShiftC.match(event)) {
+                deployContractList.getItems().remove(getCurrentListItem());
+                session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
+                if (deployContractList.getItems().size() == 0) {
+                    handleAddContract();
+                }
+            }
+        });
+
         deployContractList.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
                 Platform.runLater(() -> {
@@ -217,7 +233,7 @@ public class SmartContractDeployController extends AbstractController {
                     removeItem.setOnAction(event1 -> {
                         deployContractList.getItems().remove(getCurrentListItem());
                         session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
-                        if(deployContractList.getItems().size()==0) {
+                        if (deployContractList.getItems().size() == 0) {
                             handleAddContract();
                         }
                     });
@@ -227,7 +243,7 @@ public class SmartContractDeployController extends AbstractController {
         });
 
         deployContractList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue == null) {
+            if (newValue == null) {
                 return;
             }
             session.lastSmartIndex = deployContractList.getSelectionModel().getSelectedIndex();
@@ -244,9 +260,9 @@ public class SmartContractDeployController extends AbstractController {
         });
 
         if (deploySmartListItems.isEmpty()) {
-            DeploySmartListItem deploySmartItem =
-                new DeploySmartListItem(DEFAULT_SOURCE_CODE, "SmartContract " ,
-                    DeploySmartListItem.ItemState.SAVED);
+            DeploySmartListItem deploySmartItem = new DeploySmartListItem(DEFAULT_SOURCE_CODE,
+                DeployControllerUtils.checkContractNameExist("SmartContract", deployContractList.getItems()),
+                DeploySmartListItem.ItemState.SAVED);
             deployContractList.getItems().add(deploySmartItem);
             deployContractList.getSelectionModel().selectFirst();
             session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
@@ -520,8 +536,9 @@ public class SmartContractDeployController extends AbstractController {
     }
 
     public void handleAddContract() {
-        DeploySmartListItem deploySmartItem =
-            new DeploySmartListItem(null, "NewContract", DeploySmartListItem.ItemState.NEW);
+        DeploySmartListItem deploySmartItem = new DeploySmartListItem(null,
+            DeployControllerUtils.checkContractNameExist("NewContract", deployContractList.getItems()),
+            DeploySmartListItem.ItemState.NEW);
         deployContractList.getItems().add(deploySmartItem);
         session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
         deployContractList.getSelectionModel().selectLast();
@@ -533,7 +550,7 @@ public class SmartContractDeployController extends AbstractController {
         String selectedType = cbContractType.getSelectionModel().getSelectedItem();
         String curClassName;
         if (className.getText().isEmpty()) {
-            curClassName = "SmartContract";
+            curClassName = DeployControllerUtils.checkContractNameExist("SmartContract", deployContractList.getItems());
         } else {
             curClassName = className.getText();
 

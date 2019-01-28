@@ -2,10 +2,12 @@ package com.credits.wallet.desktop.utils;
 
 import com.credits.client.node.pojo.TokenStandartData;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
+import com.credits.wallet.desktop.struct.DeploySmartListItem;
 import com.credits.wallet.desktop.struct.ParseResultStruct;
 import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DeployControllerUtils {
 
@@ -103,4 +106,28 @@ public class DeployControllerUtils {
         }
     }
 
+    public static String checkContractNameExist(String smartName, ObservableList<DeploySmartListItem> list) {
+        AtomicBoolean flag = new AtomicBoolean(false);
+        list.forEach(el->{
+            if(el.name.equals(smartName)) {
+                flag.set(true);
+            }
+        });
+        if(flag.get()) {
+            String nameWithBrace = smartName + "(";
+            int maxNumber = 0;
+            for (DeploySmartListItem existingItem : list){
+                String existingName = existingItem.name;
+                if(existingName.contains(nameWithBrace)){
+                    int number = SmartContractsUtils.parseNumberOfDuplicateName(nameWithBrace.length(), existingName);
+                    if (number != 0 && number > maxNumber) maxNumber = number;
+                }
+            }
+            if(maxNumber>0) {
+                return smartName + "(" + ++maxNumber + ")";
+            }
+            return smartName + "(1)";
+        }
+        return smartName;
+    }
 }

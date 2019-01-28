@@ -70,7 +70,7 @@ public class SmartContractsUtils {
         return coinName;
     }
 
-    private static int parseNumberOfDuplicateName(int identityPieceIndex, String coinName) {
+    public static int parseNumberOfDuplicateName(int identityPieceIndex, String coinName) {
         StringBuilder sb = new StringBuilder(coinName);
         sb.replace(0, identityPieceIndex, "");
         sb.deleteCharAt(sb.length() - 1);
