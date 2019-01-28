@@ -261,7 +261,7 @@ public class SmartContractDeployController extends AbstractController {
 
         if (deploySmartListItems.isEmpty()) {
             DeploySmartListItem deploySmartItem = new DeploySmartListItem(DEFAULT_SOURCE_CODE,
-                DeployControllerUtils.checkContractNameExist("SmartContract", deployContractList.getItems()),
+                DeployControllerUtils.checkContractNameExist("Contract", deployContractList.getItems()),
                 DeploySmartListItem.ItemState.SAVED);
             deployContractList.getItems().add(deploySmartItem);
             deployContractList.getSelectionModel().selectFirst();
@@ -380,7 +380,7 @@ public class SmartContractDeployController extends AbstractController {
                     loadVista(WALLET, this);
                 }
             }
-        } catch (CreditsException e) {
+        } catch (Exception e) {
             LOGGER.error("failed!", e);
             FormUtils.showError(NODE_ERROR + ": " + e.getMessage());
         }
@@ -506,9 +506,7 @@ public class SmartContractDeployController extends AbstractController {
     }
 
 
-    private void saveTypeOfContract(String sourceCode) {
-        DeploySmartListItem item = getCurrentListItem();
-        item.sourceCode = sourceCode;
+    private void saveTypeOfContract(DeploySmartListItem item) {
         item.state = DeploySmartListItem.ItemState.SAVED;
         returnMainTabs(item);
     }
@@ -545,33 +543,37 @@ public class SmartContractDeployController extends AbstractController {
         deleteMainTabs();
     }
 
-
+    @FXML
     public void handleGenerateSmart() {
         String selectedType = cbContractType.getSelectionModel().getSelectedItem();
         String curClassName;
         if (className.getText().isEmpty()) {
-            curClassName = DeployControllerUtils.checkContractNameExist("SmartContract", deployContractList.getItems());
+            curClassName = "Contract";
         } else {
             curClassName = className.getText();
 
-            if (!SourceVersion.isIdentifier(curClassName) && !SourceVersion.isKeyword(curClassName)) {
+        if ((!SourceVersion.isIdentifier(curClassName) && !SourceVersion.isKeyword(curClassName)) || !curClassName.matches("^[a-zA-Z0-9]+$")) {
                 FormUtils.showInfo("ClassName is not valid");
                 return;
             }
-            ;
         }
         try {
             String contractFromTemplate = getContractFromTemplate(selectedType);
+            String sourceCode = null;
             if (contractFromTemplate != null) {
-                String sourceCode = String.format(contractFromTemplate, curClassName, curClassName);
-                saveTypeOfContract(sourceCode);
+                sourceCode = String.format(contractFromTemplate, curClassName, curClassName);
             }
-            getCurrentListItem().name = curClassName;
+            DeploySmartListItem item = getCurrentListItem();
+            item.sourceCode = sourceCode;
+            item.name = DeployControllerUtils.checkContractNameExist(curClassName, deployContractList.getItems());
+            saveTypeOfContract(item);
             deployContractList.refresh();
             session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
             initNewContractForm();
         } catch (Exception e) {
-            saveTypeOfContract(DEFAULT_SOURCE_CODE);
+            DeploySmartListItem currentListItem = getCurrentListItem();
+            currentListItem.sourceCode= DEFAULT_SOURCE_CODE;
+            saveTypeOfContract(currentListItem);
         }
     }
 }

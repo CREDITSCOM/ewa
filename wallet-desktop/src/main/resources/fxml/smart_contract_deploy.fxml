@@ -35,7 +35,7 @@
                 </Button>
             <TabPane fx:id="tabPane" layoutX="316.0" layoutY="75.0" prefHeight="500.0" prefWidth="966.0" style="-fx-border-color: black; -fx-border-radius: 15; -fx-border-width: 0; -fx-padding: 0 0 0 0; -fx-background-radius: 15; -fx-open-tab-animation: NONE; -fx-close-tab-animation: NONE;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
               <tabs>
-                  <Tab fx:id="createCodeTab" closable="false" text="NewSmart">
+                  <Tab fx:id="createCodeTab" closable="false" text="NewContract">
                      <content>
                               <Pane fx:id="buttonPane" prefHeight="200.0" prefWidth="959.0" style="-fx-border-color: black; -fx-border-radius: 15 15 15 15;">
                                   <children>
