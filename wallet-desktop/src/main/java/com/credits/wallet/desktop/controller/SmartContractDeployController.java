@@ -27,8 +27,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -90,6 +92,8 @@ public class SmartContractDeployController extends AbstractController {
 
     public Pane mainPane;
     public Pane tabPanel;
+
+    ContextMenu contextMenu = new ContextMenu();
 
     @FXML
     public ComboBox<String> cbContractType;
@@ -202,7 +206,30 @@ public class SmartContractDeployController extends AbstractController {
         ArrayList<DeploySmartListItem> deploySmartListItems =
             session.deployContractsKeeper.getKeptObject().orElseGet(ArrayList::new);
 
+        deployContractList.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                Platform.runLater(() -> {
+                    contextMenu.getItems().clear();
+                    contextMenu.hide();
+                    MenuItem removeItem = new MenuItem("Delete");
+                    contextMenu.getItems().add(removeItem);
+
+                    removeItem.setOnAction(event1 -> {
+                        deployContractList.getItems().remove(getCurrentListItem());
+                        session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
+                        if(deployContractList.getItems().size()==0) {
+                            handleAddContract();
+                        }
+                    });
+                    contextMenu.show(deployContractList, event.getScreenX(), event.getScreenY());
+                });
+            }
+        });
+
         deployContractList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue == null) {
+                return;
+            }
             session.lastSmartIndex = deployContractList.getSelectionModel().getSelectedIndex();
             if (oldValue != null) {
                 oldValue.sourceCode = codeArea.getText();
@@ -218,7 +245,7 @@ public class SmartContractDeployController extends AbstractController {
 
         if (deploySmartListItems.isEmpty()) {
             DeploySmartListItem deploySmartItem =
-                new DeploySmartListItem(DEFAULT_SOURCE_CODE, "SmartContract " + session.lastSmartIndex++,
+                new DeploySmartListItem(DEFAULT_SOURCE_CODE, "SmartContract " ,
                     DeploySmartListItem.ItemState.SAVED);
             deployContractList.getItems().add(deploySmartItem);
             deployContractList.getSelectionModel().selectFirst();
@@ -228,7 +255,7 @@ public class SmartContractDeployController extends AbstractController {
             deployContractList.getSelectionModel().select(session.lastSmartIndex);
         }
 
-        if(getCurrentListItem().state.equals(DeploySmartListItem.ItemState.NEW)) {
+        if (getCurrentListItem().state.equals(DeploySmartListItem.ItemState.NEW)) {
             deleteMainTabs();
         } else {
             returnMainTabs(getCurrentListItem());
@@ -494,7 +521,7 @@ public class SmartContractDeployController extends AbstractController {
 
     public void handleAddContract() {
         DeploySmartListItem deploySmartItem =
-            new DeploySmartListItem(null, "NewContract " + session.lastSmartIndex++, DeploySmartListItem.ItemState.NEW);
+            new DeploySmartListItem(null, "NewContract", DeploySmartListItem.ItemState.NEW);
         deployContractList.getItems().add(deploySmartItem);
         session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
         deployContractList.getSelectionModel().selectLast();
@@ -506,7 +533,7 @@ public class SmartContractDeployController extends AbstractController {
         String selectedType = cbContractType.getSelectionModel().getSelectedItem();
         String curClassName;
         if (className.getText().isEmpty()) {
-            curClassName = "Contract";
+            curClassName = "SmartContract";
         } else {
             curClassName = className.getText();
 
