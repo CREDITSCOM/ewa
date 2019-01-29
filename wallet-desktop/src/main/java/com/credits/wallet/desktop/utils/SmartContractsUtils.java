@@ -11,12 +11,11 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.general.crypto.Blake2S.generateHash;
-import static com.credits.general.util.GeneralConverter.byteArrayToHex;
-import static com.credits.general.util.GeneralConverter.toByteArray;
-import static com.credits.general.util.GeneralConverter.toByteArrayLittleEndian;
+import static com.credits.general.util.GeneralConverter.*;
 import static org.apache.commons.lang3.ArrayUtils.addAll;
 
 public class SmartContractsUtils {
@@ -56,16 +55,17 @@ public class SmartContractsUtils {
         }
     }
 
-    private static String checkCoinNameExist(String coinName, ConcurrentHashMap<String, String> coins) {
+    static String checkCoinNameExist(String coinName, Map<String, String> coins) {
         if(coins.containsKey(coinName)) {
             String nameWithBrace = coinName + "(";
+            int number = 0;
             for (String existingName : coins.keySet()){
                if(existingName.contains(nameWithBrace)){
-                   int number = parseNumberOfDuplicateName(nameWithBrace.length(), existingName);
-                   if (number != 0) return coinName + "(" + ++number + ")";
+                   int parsedNumber = parseNumberOfDuplicateName(nameWithBrace.length(), existingName);
+                   if(parsedNumber > number) number = parsedNumber;
                }
             }
-            return coinName + "(1)";
+            return coinName + "(" + ++number + ")";
         }
         return coinName;
     }
