@@ -559,6 +559,21 @@
 .credits-menuitemButton:hover {
     -fx-text-fill:black;
 }
+
+
+.credits-syncProgress > .bar {
+    -fx-background-color: black;
+    -fx-padding: 2px;
+    -fx-background-insets: 0;
+}
+.credits-syncProgress:indeterminate > .bar {
+    -fx-background-color: black;
+    -fx-padding: 2px;
+    -fx-background-insets: 0;
+}
+.credits-syncProgress > .track {
+    -fx-background-color: white;
+}
 /*******************************************************************************
  *                                                                             *
  * HEADER                                                                      *

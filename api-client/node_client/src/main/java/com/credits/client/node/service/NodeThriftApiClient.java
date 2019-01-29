@@ -2,7 +2,22 @@ package com.credits.client.node.service;
 
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionIdData;
-import com.credits.client.node.thrift.generated.*;
+import com.credits.client.node.thrift.generated.API;
+import com.credits.client.node.thrift.generated.PoolInfoGetResult;
+import com.credits.client.node.thrift.generated.PoolListGetResult;
+import com.credits.client.node.thrift.generated.SmartContractAddressesListGetResult;
+import com.credits.client.node.thrift.generated.SmartContractGetResult;
+import com.credits.client.node.thrift.generated.SmartContractsListGetResult;
+import com.credits.client.node.thrift.generated.SyncStateResult;
+import com.credits.client.node.thrift.generated.Transaction;
+import com.credits.client.node.thrift.generated.TransactionFlowResult;
+import com.credits.client.node.thrift.generated.TransactionGetResult;
+import com.credits.client.node.thrift.generated.TransactionsGetResult;
+import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
+import com.credits.client.node.thrift.generated.WalletBalanceGetResult;
+import com.credits.client.node.thrift.generated.WalletDataGetResult;
+import com.credits.client.node.thrift.generated.WalletIdGetResult;
+import com.credits.client.node.thrift.generated.WalletTransactionsCountGetResult;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.thrift.ThriftClientPool;
 import org.apache.thrift.TException;
@@ -65,6 +80,11 @@ public class NodeThriftApiClient implements NodeThriftApi {
     public WalletBalanceGetResult getBalance(byte[] address) throws NodeClientException {
         API.Client client = pool.getResource();
         return callThrift(client, () -> client.WalletBalanceGet(ByteBuffer.wrap(address)));
+    }
+
+    public SyncStateResult getSync() throws NodeClientException {
+        API.Client client = pool.getResource();
+        return callThrift(client, client::SyncStateGet);
     }
 
     public SmartContractGetResult getSmartContract(byte[] address) throws NodeClientException {

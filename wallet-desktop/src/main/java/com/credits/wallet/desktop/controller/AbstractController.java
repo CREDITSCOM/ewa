@@ -13,6 +13,7 @@ public abstract class AbstractController implements FormInitializable, FormDeini
         if(headerController!=null) {
             headerController.parentController = this;
             headerController.session = this.session;
+            headerController.initializeForm(null);
         }
     }
 
