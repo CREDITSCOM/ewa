@@ -2,7 +2,15 @@ package com.credits.client.node.service;
 
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.*;
+import com.credits.client.node.pojo.PoolData;
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractTransactionFlowData;
+import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
+import com.credits.client.node.pojo.TransactionIdData;
+import com.credits.client.node.pojo.TransactionsStateGetResultData;
+import com.credits.client.node.pojo.WalletData;
 import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
@@ -12,6 +20,8 @@ import java.util.List;
 public interface NodeApiService {
 
     BigDecimal getBalance(String address) throws NodeClientException, ConverterException;
+
+    int getSynchronizePercent() throws NodeClientException, ConverterException;
 
     List<TransactionData> getTransactions(String address, long offset, long limit) throws NodeClientException, ConverterException;
 

@@ -19,6 +19,7 @@ import com.credits.client.node.thrift.generated.SmartContract;
 import com.credits.client.node.thrift.generated.SmartContractAddressesListGetResult;
 import com.credits.client.node.thrift.generated.SmartContractGetResult;
 import com.credits.client.node.thrift.generated.SmartContractsListGetResult;
+import com.credits.client.node.thrift.generated.SyncStateResult;
 import com.credits.client.node.thrift.generated.Transaction;
 import com.credits.client.node.thrift.generated.TransactionFlowResult;
 import com.credits.client.node.thrift.generated.TransactionGetResult;
@@ -92,6 +93,23 @@ public class NodeApiServiceImpl implements NodeApiService {
         LOGGER.info(String.format("getBalance: <--- balance = %s", balance));
         return balance;
     }
+
+    @Override
+    public int getSynchronizePercent() throws NodeClientException, ConverterException {
+        SyncStateResult result = nodeClient.getSync();
+        processApiResponse(result.getStatus());
+        long currRound = result.getCurrRound();
+        long lastBlock = result.getLastBlock();
+        if (lastBlock == 0) {
+            return 0;
+        }
+        int i = (int) ((currRound * 100.0f) / lastBlock);
+        if (i > 100) {
+            return 0;
+        }
+        return i;
+    }
+
 
     @Override
     public List<TransactionData> getTransactions(String address, long offset, long limit)
@@ -173,7 +191,8 @@ public class NodeApiServiceImpl implements NodeApiService {
         TransactionFlowResult result = nodeClient.transactionFlow(transaction);
         logApiResponse(result.getStatus());
         processApiResponse(result.getStatus());
-        return transactionFlowResultToTransactionFlowResultData(result, transaction.getSource(), transaction.getTarget());
+        return transactionFlowResultToTransactionFlowResultData(result, transaction.getSource(),
+            transaction.getTarget());
     }
 
 
@@ -185,7 +204,8 @@ public class NodeApiServiceImpl implements NodeApiService {
         processApiResponse(result.getStatus());
         SmartContract smartContract = result.getSmartContract();
         SmartContractData smartContractData = smartContractToSmartContractData(smartContract);
-        LOGGER.info(String.format("<--- smart contract hashState = %s", smartContractData.getSmartContractDeployData().getHashState()));
+        LOGGER.info(String.format("<--- smart contract hashState = %s",
+            smartContractData.getSmartContractDeployData().getHashState()));
         return smartContractData;
     }
 
@@ -242,7 +262,7 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     public static <R> void async(Function<R> apiCall, Callback<R> callback) {
-        CompletableFuture.supplyAsync(apiCall::apply,threadPool).whenComplete(handleCallback(callback));
+        CompletableFuture.supplyAsync(apiCall::apply, threadPool).whenComplete(handleCallback(callback));
     }
 
     public static <R> BiConsumer<R, Throwable> handleCallback(Callback<R> callback) {
