@@ -567,7 +567,7 @@
     -fx-background-insets: 0;
 }
 .credits-syncProgress:indeterminate > .bar {
-    -fx-background-color: black;
+    -fx-background-color: green;
     -fx-padding: 2px;
     -fx-background-insets: 0;
 }

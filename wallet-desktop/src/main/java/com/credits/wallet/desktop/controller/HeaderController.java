@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.VistaNavigator;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -62,17 +63,20 @@ public class HeaderController extends AbstractController {
     public void initializeForm(Map<String, Object> objects) {
         headerExecService = Executors.newScheduledThreadPool(1);
         runnable = () -> {
-            try {
-                int synchronizePercent = nodeApiService.getSynchronizePercent();
-                sync.setProgress(synchronizePercent);
-                syncPercent.setText(synchronizePercent + "%");
-                if(synchronizePercent ==100 && !flag) {
-                    changeDelay();
+            Platform.runLater(() -> {
+
+                try {
+                    int synchronizePercent = nodeApiService.getSynchronizePercent();
+                    sync.setProgress((double)synchronizePercent/100);
+                    syncPercent.setText(synchronizePercent + "%");
+                    if (synchronizePercent == 100 && !flag) {
+                        changeDelay();
+                    }
+                } catch (Exception e) {
+                    sync.setProgress(0);
+                    syncPercent.setText("0%");
                 }
-            } catch (Exception e) {
-                sync.setProgress(0);
-                syncPercent.setText("0%");
-            }
+            });
         };
         future = headerExecService.scheduleWithFixedDelay(runnable, 0, DELAY_BEFORE_FULL_SYNC, TimeUnit.SECONDS);
     }
