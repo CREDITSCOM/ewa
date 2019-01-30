@@ -9,14 +9,6 @@ public abstract class AbstractController implements FormInitializable, FormDeini
     @FXML
     private HeaderController headerController;
 
-    public void initializeHeader() {
-        if(headerController!=null) {
-            headerController.parentController = this;
-            headerController.session = this.session;
-            headerController.initializeForm(null);
-        }
-    }
-
     public void closeSession() {
         session.close();
         session = null;

@@ -85,12 +85,12 @@ public class WalletController extends AbstractController {
     @FXML
     private void handleLogout() {
         closeSession();
-        VistaNavigator.loadVista(VistaNavigator.WELCOME, this);
+        VistaNavigator.loadVista(VistaNavigator.WELCOME);
     }
 
     @FXML
     private void handleAddCoin() {
-        VistaNavigator.loadVista(VistaNavigator.NEW_COIN, this);
+        VistaNavigator.loadVista(VistaNavigator.NEW_COIN);
     }
 
     @FXML
@@ -143,7 +143,7 @@ public class WalletController extends AbstractController {
             params.put("transactionText", transactionText);
             params.put("actualOfferedMaxFee16Bits", actualOfferedMaxFee16Bits);
 
-            VistaNavigator.loadVista(VistaNavigator.FORM_7, this, params);
+            VistaNavigator.loadVista(VistaNavigator.FORM_7, params);
         }
     }
 

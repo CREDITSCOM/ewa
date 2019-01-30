@@ -22,8 +22,6 @@ public class AppStateInitializer {
 
     public final int DEFAULT_CONTRACT_EXECUTOR_API_PORT = 9080;
 
-    public String startForm = VistaNavigator.WELCOME;
-
     Properties properties;
 
     public void init() {

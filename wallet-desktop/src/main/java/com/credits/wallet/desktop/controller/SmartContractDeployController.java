@@ -377,7 +377,7 @@ public class SmartContractDeployController extends AbstractController {
                             smartContractData, session))
                         .whenComplete(
                             handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
-                    loadVista(WALLET, this);
+                    loadVista(WALLET);
                 }
             }
         } catch (Exception e) {
@@ -448,7 +448,7 @@ public class SmartContractDeployController extends AbstractController {
 
     @FXML
     private void handleBack() {
-        loadVista(SMART_CONTRACT, this);
+        loadVista(SMART_CONTRACT);
     }
 
 

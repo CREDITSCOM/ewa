@@ -19,14 +19,14 @@ public class SaveKeysController extends AbstractController {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.FORM_1,this);
+        VistaNavigator.loadVista(VistaNavigator.FORM_1);
     }
 
     @FXML
     private void handleContinue() {
         HashMap<String, Object> params = new HashMap<>();
         params.put("isNewAccount","true");
-        VistaNavigator.loadVista(VistaNavigator.FORM_5, this, params);
+        VistaNavigator.loadVista(VistaNavigator.FORM_5, params);
     }
 
     @Override

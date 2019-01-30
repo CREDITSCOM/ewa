@@ -61,7 +61,7 @@ public class PutKeysController extends AbstractController {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WELCOME, this);
+        VistaNavigator.loadVista(VistaNavigator.WELCOME);
     }
 
     @FXML
@@ -193,7 +193,7 @@ public class PutKeysController extends AbstractController {
         }
 
         if (validateKeys(pubKey, privKey)) {
-            VistaNavigator.loadVista(VistaNavigator.WALLET, this);
+            VistaNavigator.loadVista(VistaNavigator.WALLET);
         }
     }
 

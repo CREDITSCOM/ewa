@@ -36,7 +36,7 @@ public class NewCoinController extends AbstractController {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+        VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
     @FXML
@@ -48,7 +48,7 @@ public class NewCoinController extends AbstractController {
 
         if (checkValidData(coinName, smartContractAddress)) {
             addSmartContractTokenBalance(coinName, smartContractAddress);
-            VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+            VistaNavigator.loadVista(VistaNavigator.WALLET);
         }
     }
 

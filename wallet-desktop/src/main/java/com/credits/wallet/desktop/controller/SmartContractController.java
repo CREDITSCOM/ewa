@@ -107,12 +107,12 @@ public class SmartContractController extends AbstractController {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WALLET, this);
+        VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
     @FXML
     private void handleCreate() {
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY, this);
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY);
     }
 
     @FXML

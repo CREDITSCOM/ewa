@@ -2,9 +2,11 @@ package com.credits.wallet.desktop;
 
 import com.credits.wallet.desktop.controller.AbstractController;
 import com.credits.wallet.desktop.controller.FormDeinitializable;
+import com.credits.wallet.desktop.controller.HeaderController;
 import com.credits.wallet.desktop.controller.MainController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +23,6 @@ import java.util.Map;
 public class VistaNavigator {
     private final static Logger LOGGER = LoggerFactory.getLogger(VistaNavigator.class);
 
-    /**
-     * Convenience constants for fxml layouts managed by the navigator.
-     */
     public static final String WELCOME = "/fxml/welcome.fxml";
     public static final String FORM_1 = "/fxml/generate_keys.fxml";
     public static final String FORM_4 = "/fxml/save_keys.fxml";
@@ -37,67 +36,65 @@ public class VistaNavigator {
     public static final String SMART_CONTRACT = "/fxml/smart_contract.fxml";
     public static final String SMART_CONTRACT_DEPLOY = "/fxml/smart_contract_deploy.fxml";
     public static final String TRANSACTION = "/fxml/transaction.fxml";
-    /**
-     * The main application layout controller.
-     */
-    private static MainController mainController;
 
-    /**
-     * Stores the main controller for later use in navigation tasks.
-     *
-     * @param mainController the main application layout controller.
-     */
-    public static void setMainController(MainController mainController) {
+    private static MainController mainController;
+    private static HeaderController headerController;
+    private static AbstractController currentVistaController;
+
+    public static void setCurrentVistaController(AbstractController currentVistaController) {
+        VistaNavigator.currentVistaController = currentVistaController;
+    }
+
+    public static AbstractController getCurrentVistaController() {
+        return currentVistaController;
+    }
+
+    static void saveMainController(MainController mainController) {
         VistaNavigator.mainController = mainController;
     }
 
-    /**
-     * Loads the vista specified by the fxml file into the
-     * vistaHolder pane of the main application layout.
-     * <p>
-     * Previously loaded vista for the same fxml file are not cached.
-     * The fxml is loaded anew and a new vista node hierarchy generated
-     * every time this method is invoked.
-     * <p>
-     * A more sophisticated load function could potentially add some
-     * enhancements or optimizations, for example:
-     * cache FXMLLoaders
-     * cache loaded vista nodes, so they can be recalled or reused
-     * allow a user to specify vista node reuse or new creation
-     * allow back and forward history like a browser
-     *
-     * @param fxml the fxml file to be loaded.
-     */
-    public static void loadVista(String fxml, AbstractController oldVistaController, Map<String, Object> params) {
-        changeVista(fxml, oldVistaController, params);
+    public static void loadVista(String fxml, Map<String, Object> params) {
+        changeVista(fxml, params);
     }
 
-    public static void loadVista(String fxml, AbstractController oldVistaController) {
-        changeVista(fxml, oldVistaController, null);
+    public static void loadVista(String fxml) {
+        changeVista(fxml, null);
     }
 
-    private static void changeVista(String fxml, AbstractController oldVistaController, Map<String, Object> params) {
+    static void loadFirstForm(String form) throws IOException {
+        FXMLLoader headerLoader = new FXMLLoader(VistaNavigator.class.getResource(VistaNavigator.HEADER));
+        BorderPane headerPane = headerLoader.load();
+        mainController.setTopVista(headerPane);
+        headerController = headerLoader.getController();
+        VistaNavigator.loadVista(form, null);
+    }
+
+
+    private static void changeVista(String fxml, Map<String, Object> params) {
         try {
+            AbstractController oldVista = currentVistaController;
             FXMLLoader fxmlLoader = new FXMLLoader(VistaNavigator.class.getResource(fxml));
             Node load = fxmlLoader.load();
+            currentVistaController = fxmlLoader.getController();
             resizeForm((Pane) load);
-            initialize(oldVistaController,fxmlLoader.getController(),params);
-            deinitialize(oldVistaController);
+            initializeNewController(oldVista, fxmlLoader.getController(), params);
+            deinitialize(oldVista);
             mainController.setVista(load);
         } catch (IOException e) {
             LOGGER.error("failed!", e);
         }
     }
 
-    private static void initialize(AbstractController oldVistaController, AbstractController newVistaController, Map<String, Object> params) {
+    private static void initializeNewController(AbstractController oldVistaController,
+        AbstractController newVistaController, Map<String, Object> params) {
         try {
-            if(oldVistaController!=null) {
+            if (oldVistaController != null) {
                 newVistaController.session = oldVistaController.session;
             }
-            newVistaController.initializeHeader();
+            headerController.changeParentController(newVistaController);
             newVistaController.initializeForm(params);
         } catch (Exception e) {
-            LOGGER.error("Cannot initialize vista", e);
+            LOGGER.error("Cannot initializeNewController vista", e);
             throw e;
         }
     }

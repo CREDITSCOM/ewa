@@ -100,8 +100,10 @@ public class NodeApiServiceImpl implements NodeApiService {
         processApiResponse(result.getStatus());
         long currRound = result.getCurrRound();
         long lastBlock = result.getLastBlock();
-        LOGGER.info("Last round is " + String.valueOf(currRound));
-        LOGGER.info("Synchronized round is " + String.valueOf(lastBlock));
+/*
+        LOGGER.debug("Last round is " + String.valueOf(currRound));
+        LOGGER.debug("Synchronized round is " + String.valueOf(lastBlock));
+*/
         if (lastBlock == 0) {
             return 0;
         }

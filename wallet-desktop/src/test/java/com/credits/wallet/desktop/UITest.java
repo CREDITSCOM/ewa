@@ -55,6 +55,8 @@ public class UITest {
     @Mock
     WalletApp mockWalletApp;
 
+    String startForm;
+
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
@@ -63,7 +65,14 @@ public class UITest {
         when(mockInitializer.loadProperties()).thenReturn(mockProperties);
         doCallRealMethod().when(mockInitializer).init();
         doCallRealMethod().when(mockWalletApp).start(any());
-        injectSession();
+        doAnswer((Answer<Void>) invocationOnMock -> {
+            WelcomeController welcomeController = new WelcomeController();
+            welcomeController.session = new Session(walletAddress);
+            VistaNavigator.setCurrentVistaController(welcomeController);
+            VistaNavigator.loadFirstForm(startForm);
+            return null;
+        }).when(mockWalletApp).loadFirstForm(any());
+
 
         when(mockNodeApiService.getBalance(anyString())).thenReturn(new BigDecimal("1000.123456789012345678"));
 
@@ -74,22 +83,10 @@ public class UITest {
         addressThree = "33333333333333333333333333333333333333333333";
     }
 
-    private void injectSession() {
-        Session session = new Session(walletAddress);
-
-        WelcomeController welcomeController = new WelcomeController();
-        welcomeController.session = session;
-
-        doAnswer((Answer<Void>) invocationOnMock -> {
-            VistaNavigator.loadVista(mockInitializer.startForm,welcomeController);
-            return null;
-        }).when(mockWalletApp).loadWelcomeForm();
-    }
-
     @Ignore
     @Test
     public void allForms() throws Exception {
-        mockInitializer.startForm = VistaNavigator.WELCOME;
+        startForm = VistaNavigator.WELCOME;
         //balances
         doAnswer(returnBalance(new BigDecimal("2443113.00192177821876551"))).when(mockContractInteractionService)
             .getSmartContractBalance(anyString(), any());
@@ -113,16 +110,16 @@ public class UITest {
     @Ignore
     @Test
     public void smartContractsForm() throws Exception {
-        mockInitializer.startForm = VistaNavigator.SMART_CONTRACT;
         //when(mockNodeApiService.getSmartContract(any())).thenReturn(FakeData.smartContractDataList.get(1));
         when(mockNodeApiService.getSmartContracts(any())).thenReturn(FakeData.smartContractDataList);
+        startForm = VistaNavigator.SMART_CONTRACT;
         runApp();
     }
 
     @Ignore
     @Test
     public void deployForm() throws Exception {
-        mockInitializer.startForm = VistaNavigator.SMART_CONTRACT_DEPLOY;
+        startForm = VistaNavigator.SMART_CONTRACT_DEPLOY;
         runApp();
     }
 

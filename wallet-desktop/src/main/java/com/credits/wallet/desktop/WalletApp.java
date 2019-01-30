@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
@@ -64,6 +65,7 @@ public class WalletApp extends Application {
         stage.setTitle("Credits");
 
         stage.setScene(createScene(loadMainPane()));
+        loadFirstForm(VistaNavigator.WELCOME);
         //ScenicView.show(stage.getScene());
         stage.setOnCloseRequest(event -> {
             AppState.sessionMap.forEach((account, session) -> session.close());
@@ -73,19 +75,16 @@ public class WalletApp extends Application {
         stage.show();
     }
 
+    void loadFirstForm(String form) throws IOException {
+        VistaNavigator.loadFirstForm(form);
+    }
 
     private Pane loadMainPane() throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        Pane mainPane = loader.load(WalletApp.class.getResourceAsStream(VistaNavigator.MAIN));
+        BorderPane mainPane = loader.load(WalletApp.class.getResourceAsStream(VistaNavigator.MAIN));
         MainController mainController = loader.getController();
-
-        VistaNavigator.setMainController(mainController);
-        loadWelcomeForm();
+        VistaNavigator.saveMainController(mainController);
         return mainPane;
-    }
-
-    void loadWelcomeForm() {
-        VistaNavigator.loadVista(appStateInitializer.startForm, null);
     }
 
 

@@ -36,6 +36,7 @@ public class SaveNodeApiQueriesTest {
     static AtomicInteger walletId = new AtomicInteger(0);
     static AtomicInteger smartContractTransactionId = new AtomicInteger(0);
     static AtomicInteger transactionId = new AtomicInteger(0);
+    String startForm;
 
     @Before
     public void setUp() {
@@ -69,7 +70,7 @@ public class SaveNodeApiQueriesTest {
 
         walletApp = new WalletApp();
         walletApp.appStateInitializer = mockInitializer;
-        mockInitializer.startForm = VistaNavigator.WELCOME;
+        startForm = VistaNavigator.WELCOME;
         runApp();
     }
 

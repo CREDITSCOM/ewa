@@ -39,7 +39,7 @@ public class TransactionController extends AbstractController{
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.HISTORY,this);
+        VistaNavigator.loadVista(VistaNavigator.HISTORY);
     }
 
     @Override
