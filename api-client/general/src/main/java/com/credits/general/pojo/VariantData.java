@@ -23,10 +23,7 @@ public class VariantData {
 
     @Override
     public String toString() {
-        return "VariantData{" +
-                "variantType=" + variantType +
-                ", boxedValue=" + boxedValue +
-                '}';
+        return String.format("value: %s; type: %s", boxedValue, variantType);
     }
 
     @Override

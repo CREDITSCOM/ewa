@@ -51,7 +51,7 @@ public class ApiUtils {
 
         SmartContractInvocationData smartContractInvocationData =
             new SmartContractInvocationData(smartContractData.getSmartContractDeployData(),
-                smartContractData.getMethod(), smartContractData.getParams(), false);
+                smartContractData.getMethod(), smartContractData.getParams(), false, null);
 
         SmartContractTransactionFlowData scData = new SmartContractTransactionFlowData(
             getTransactionFlowData(transactionData, ZERO, offeredMaxFee, serializeByThrift(smartContractInvocationData), null,

@@ -1,64 +1,132 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.wallet.desktop.VistaNavigator;
-import javafx.event.ActionEvent;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.ProgressBar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static com.credits.wallet.desktop.AppState.DELAY_AFTER_FULL_SYNC;
+import static com.credits.wallet.desktop.AppState.DELAY_BEFORE_FULL_SYNC;
+import static com.credits.wallet.desktop.AppState.nodeApiService;
 
 /**
  * Created by goncharov-eg on 23.11.2017.
  */
-public class HeaderController extends AbstractController {
+public class HeaderController implements Initializable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HeaderController.class);
 
     public AbstractController parentController;
 
     @FXML
-    private Button btnLogout;
+    public ProgressBar sync;
 
     @FXML
-    private Button btnWallet;
+    public Label syncPercent;
 
     @FXML
-    private Button btnTransaction;
-
+    public Button btnWallet;
     @FXML
-    private Button btnSmartExecute;
-
+    public Button btnTransaction;
     @FXML
-    private Button btnSmartDeploy;
+    public Button btnSmartExecute;
+    @FXML
+    public Button btnSmartDeploy;
+    @FXML
+    public Button btnLogout;
+    @FXML
+    public MenuButton btnSmartMenu;
 
-
+    private ScheduledExecutorService headerExecService = Executors.newScheduledThreadPool(1);
+    private Runnable runnable;
+    private Future future;
+    private boolean flag = false;
     @FXML
     private void handleLogout() {
-        closeSession();
-        VistaNavigator.loadVista(VistaNavigator.WELCOME,this);
+        parentController.closeSession();
+        VistaNavigator.loadVista(VistaNavigator.WELCOME);
     }
 
-    public void handleWallet(ActionEvent actionEvent) {
-        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+    public void handleWallet() {
+        VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
-    public void handleTransaction(ActionEvent actionEvent) {
-        VistaNavigator.loadVista(VistaNavigator.HISTORY,this);
+    public void handleTransaction() {
+        VistaNavigator.loadVista(VistaNavigator.HISTORY);
     }
 
-    public void handleSmartExecute(ActionEvent actionEvent) {
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT,this);
+    public void handleSmartExecute() {
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT);
     }
 
-    public void handleSmartDeploy(ActionEvent actionEvent) {
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY,this);
+    public void handleSmartDeploy() {
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_DEPLOY);
+    }
+
+    public void initializeSynchronize() {
+        headerExecService = Executors.newScheduledThreadPool(1);
+        runnable = () -> Platform.runLater(() -> {
+
+            try {
+                int synchronizePercent = nodeApiService.getSynchronizePercent();
+                sync.setProgress((double)synchronizePercent/100);
+                syncPercent.setText(synchronizePercent + "%");
+                if (synchronizePercent == 100 && !flag) {
+                    changeDelay();
+                }
+            } catch (Exception e) {
+                sync.setProgress(0);
+                syncPercent.setText("0%");
+            }
+        });
+        future = headerExecService.scheduleWithFixedDelay(runnable, 0, DELAY_BEFORE_FULL_SYNC, TimeUnit.SECONDS);
+    }
+
+    private void changeDelay() {
+        flag = future.cancel(false);
+        System.out.println("Synchronized is 100% : " + flag);
+        future = headerExecService.scheduleWithFixedDelay(runnable, 0, DELAY_AFTER_FULL_SYNC, TimeUnit.SECONDS);
+    }
+
+
+
+    public void changeElementVisible() {
+        if(parentController.session==null) {
+            setMainElementsVisible(false);
+        } else {
+            setMainElementsVisible(true);
+        }
+    }
+
+    private void setMainElementsVisible(boolean b) {
+        btnLogout.setVisible(b);
+        btnSmartMenu.setVisible(b);
+        btnSmartDeploy.setVisible(b);
+        btnSmartExecute.setVisible(b);
+        btnTransaction.setVisible(b);
+        btnWallet.setVisible(b);
     }
 
     @Override
-    public void initializeForm(Map<String, Object> objects) {
-        parentController.initializeForm(objects);
+    public void initialize(URL location, ResourceBundle resources) {
+        initializeSynchronize();
     }
 
-    @Override
-    public void formDeinitialize() {
-        parentController.formDeinitialize();
+    public void changeParentController(AbstractController newVistaController) {
+        parentController = newVistaController;
+        changeElementVisible();
     }
 }

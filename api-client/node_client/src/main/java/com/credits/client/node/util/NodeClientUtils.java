@@ -42,7 +42,7 @@ public class NodeClientUtils {
         if (object.getClass().equals(SmartContractData.class)) {
             tBase = NodePojoConverter.smartContractDataToSmartContract((SmartContractData)object);
         } else if (object.getClass().equals(SmartContractInvocationData.class)) {
-            tBase = NodePojoConverter.smartContractInvocationDataToSmartContractInvocation((SmartContractInvocationData)object);
+            tBase = NodePojoConverter.createSmartContractInvocation((SmartContractInvocationData)object);
         } else {
             throw new NodeClientException("Invalid TBase object");
         }

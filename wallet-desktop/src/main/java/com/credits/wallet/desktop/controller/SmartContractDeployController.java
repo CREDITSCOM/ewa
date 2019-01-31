@@ -11,12 +11,12 @@ import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.Utils;
 import com.credits.general.util.compiler.model.CompilationPackage;
-import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
-import com.credits.wallet.desktop.struct.ParseResultStruct;
+import com.credits.wallet.desktop.struct.DeploySmartListItem;
+import com.credits.wallet.desktop.struct.TokenInfoData;
 import com.credits.wallet.desktop.utils.ApiUtils;
+import com.credits.wallet.desktop.utils.DeployControllerUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.NumberUtils;
-import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
@@ -24,24 +24,33 @@ import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.tuple.Pair;
-import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.lang.model.SourceVersion;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -64,8 +73,15 @@ import static com.credits.wallet.desktop.VistaNavigator.SMART_CONTRACT;
 import static com.credits.wallet.desktop.VistaNavigator.WALLET;
 import static com.credits.wallet.desktop.VistaNavigator.loadVista;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
+import static com.credits.wallet.desktop.utils.DeployControllerUtils.getContractFromTemplate;
+import static com.credits.wallet.desktop.utils.DeployControllerUtils.getTokenStandard;
+import static com.credits.wallet.desktop.utils.DeployControllerUtils.refreshTreeView;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.saveSmartInTokenList;
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea.DEFAULT_SOURCE_CODE;
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.BASIC_STANDARD_CLASS;
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.DEFAULT_STANDARD_CLASS;
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.EXTENSION_STANDARD_CLASS;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
@@ -75,14 +91,44 @@ public class SmartContractDeployController extends AbstractController {
 
     public static final String BUILD = "Build";
     public static final String COMPILING = "Compiling...";
-    public static final int HEADER_HEIGHT = 30;
-    public static final int TABLE_LINE_HEIGHT = 25;
     private static final String ERR_FEE = "Fee must be greater than 0";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
+
+    public Pane mainPane;
+    public Pane tabPanel;
+
+    ContextMenu contextMenu = new ContextMenu();
+
+    @FXML
+    public ComboBox<String> cbContractType;
+
+    @FXML
+    public TextField deployName;
+
+    @FXML
+    public ListView<DeploySmartListItem> deployContractList;
+
+    @FXML
+    public TabPane tabPane;
+
+    @FXML
+    public Tab testingTab;
+
+    @FXML
+    public Tab codeAreaTab;
+
+    @FXML
+    public Tab createCodeTab;
+
+    @FXML
+    public TextField className;
+
 
     private CreditsCodeArea codeArea;
     private short actualOfferedMaxFee16Bits;
 
+    @FXML
+    public Pane buttonPane;
 
     @FXML
     private TableView<BuildSourceCodeError> errorTableView;
@@ -93,7 +139,8 @@ public class SmartContractDeployController extends AbstractController {
     @FXML
     private Pane debugPane;
     @FXML
-    private TreeView<Label> classTreeView;
+    private TreeView<Label> treeView;
+
     @FXML
     private Button deployButton;
     @FXML
@@ -106,25 +153,14 @@ public class SmartContractDeployController extends AbstractController {
     private Label feeErrorLabel;
 
 
-
     public CompilationPackage compilationPackage;
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
-        codeArea = CodeAreaUtils.initCodeArea(paneCode, false);
-
-        codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (evt) -> {
-            compilationPackage = null;
-            deployButton.setDisable(true);
-            buildButton.setDisable(false);
-        });
-
-        for (SplitPane.Divider d : splitPane.getDividers()) {
-            d.positionProperty()
-                .addListener((observable, oldValue, newValue) -> errorTableView.setPrefHeight(debugPane.getHeight()));
-        }
-
-        panelCodeKeyReleased();
+        initCodeArea();
+        initNewContractForm();
+        initDeployContractList();
+        initSplitPane();
         initErrorTableView();
         feeField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
@@ -140,6 +176,113 @@ public class SmartContractDeployController extends AbstractController {
             }
         });
 
+    }
+
+    private void initNewContractForm() {
+        className.clear();
+        ObservableList items = cbContractType.getItems();
+        items.clear();
+        items.add(DEFAULT_STANDARD_CLASS);
+        items.add(BASIC_STANDARD_CLASS);
+        items.add(EXTENSION_STANDARD_CLASS);
+        cbContractType.getSelectionModel().select(0);
+
+    }
+
+    private void initCodeArea() {
+        codeArea = CodeAreaUtils.initCodeArea(paneCode, false);
+        refreshTreeView(treeView, codeArea);
+        codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (evt) -> {
+            refreshTreeView(treeView, codeArea);
+            cleanCompilationPackage(false);
+        });
+    }
+
+    private void initSplitPane() {
+        for (SplitPane.Divider d : splitPane.getDividers()) {
+            d.positionProperty()
+                .addListener((observable, oldValue, newValue) -> errorTableView.setPrefHeight(debugPane.getHeight()));
+        }
+    }
+
+    private void initDeployContractList() {
+        ArrayList<DeploySmartListItem> deploySmartListItems =
+            session.deployContractsKeeper.getKeptObject().orElseGet(ArrayList::new);
+
+
+        final KeyCombination keyCombinationShiftC = new KeyCodeCombination(KeyCode.DELETE, KeyCombination.CONTROL_DOWN);
+
+        deployContractList.setOnKeyPressed(event -> {
+            if (keyCombinationShiftC.match(event)) {
+                deployContractList.getItems().remove(getCurrentListItem());
+                session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
+                if (deployContractList.getItems().size() == 0) {
+                    handleAddContract();
+                }
+            }
+        });
+
+        deployContractList.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                Platform.runLater(() -> {
+                    contextMenu.getItems().clear();
+                    contextMenu.hide();
+                    MenuItem removeItem = new MenuItem("Delete");
+                    contextMenu.getItems().add(removeItem);
+
+                    removeItem.setOnAction(event1 -> {
+                        deployContractList.getItems().remove(getCurrentListItem());
+                        session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
+                        if (deployContractList.getItems().size() == 0) {
+                            handleAddContract();
+                        }
+                    });
+                    contextMenu.show(deployContractList, event.getScreenX(), event.getScreenY());
+                });
+            }
+        });
+
+        deployContractList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            session.lastSmartIndex = deployContractList.getSelectionModel().getSelectedIndex();
+            if (oldValue != null) {
+                oldValue.sourceCode = codeArea.getText();
+            }
+            if (newValue.state == DeploySmartListItem.ItemState.NEW) {
+                deleteMainTabs();
+            } else {
+                DeploySmartListItem item = getCurrentListItem();
+                returnMainTabs(item);
+                refreshTreeView(treeView, codeArea);
+            }
+        });
+
+        if (deploySmartListItems.isEmpty()) {
+            DeploySmartListItem deploySmartItem = new DeploySmartListItem(DEFAULT_SOURCE_CODE,
+                DeployControllerUtils.checkContractNameExist("Contract", deployContractList.getItems()),
+                DeploySmartListItem.ItemState.SAVED);
+            deployContractList.getItems().add(deploySmartItem);
+            deployContractList.getSelectionModel().selectFirst();
+            session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
+        } else {
+            deployContractList.getItems().addAll(deploySmartListItems);
+            deployContractList.getSelectionModel().select(session.lastSmartIndex);
+        }
+
+        if (getCurrentListItem().state.equals(DeploySmartListItem.ItemState.NEW)) {
+            deleteMainTabs();
+        } else {
+            returnMainTabs(getCurrentListItem());
+        }
+        tabPane.getSelectionModel().select(0);
+    }
+
+    private void cleanCompilationPackage(boolean buildButtonDisable) {
+        compilationPackage = null;
+        deployButton.setDisable(true);
+        buildButton.setDisable(buildButtonDisable);
     }
 
     @FXML
@@ -166,7 +309,10 @@ public class SmartContractDeployController extends AbstractController {
                 if (errorsList.size() > 0) {
                     Platform.runLater(() -> {
                         buildButton.setDisable(false);
-                        refillErrorsTableView(errorsList);
+                        errorTableView.getItems().clear();
+                        errorTableView.getItems().addAll(errorsList);
+                        errorTableView.setVisible(true);
+                        errorTableView.setPrefHeight(debugPane.getPrefHeight());
                     });
                 } else {
                     compilationPackage = compilationResult.getCompilationPackage();
@@ -222,28 +368,25 @@ public class SmartContractDeployController extends AbstractController {
                     long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, session.account, true);
 
                     SmartContractData smartContractData = new SmartContractData(
-                    generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits,
+                        generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits,
                             byteCodeObjectDataList), decodeFromBASE58(session.account), smartContractDeployData, null);
 
                     supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService, session.account,
-                            smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool).thenApply(
-                            (transactionData) -> createSmartContractTransaction(transactionData, actualOfferedMaxFee16Bits, smartContractData,
-                                    session))
-                            .whenComplete(
-                                    handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
-
-                    session.lastSmartContract = codeArea.getText();
-
-                    loadVista(WALLET, this);
+                        smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool).thenApply(
+                        (transactionData) -> createSmartContractTransaction(transactionData, actualOfferedMaxFee16Bits,
+                            smartContractData, session))
+                        .whenComplete(
+                            handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
+                    loadVista(WALLET);
                 }
             }
-        } catch (CreditsException e) {
+        } catch (Exception e) {
             LOGGER.error("failed!", e);
             FormUtils.showError(NODE_ERROR + ": " + e.getMessage());
         }
     }
 
-    private TokenInfo getTokenInfo(Class<?> contractClass, SmartContractData smartContractData) {
+    private TokenInfoData getTokenInfo(Class<?> contractClass, SmartContractData smartContractData) {
         if (smartContractData.getSmartContractDeployData().getTokenStandardData() != TokenStandartData.NotAToken) {
             try {
                 Object contractInstance = contractClass.getDeclaredConstructor(String.class)
@@ -254,7 +397,7 @@ public class SmartContractDeployController extends AbstractController {
                 String tokenName = (String) contractClass.getMethod("getName").invoke(contractInstance);
                 String balance = (String) contractClass.getMethod("balanceOf", String.class)
                     .invoke(contractInstance, session.account);
-                return new TokenInfo(smartContractData.getBase58Address(), tokenName, new BigDecimal(balance));
+                return new TokenInfoData(smartContractData.getBase58Address(), tokenName, new BigDecimal(balance));
             } catch (Exception e) {
                 LOGGER.warn("token \"{}\" can't be add to the balances list. Reason: {}",
                     smartContractData.getBase58Address(), e.getMessage());
@@ -276,42 +419,26 @@ public class SmartContractDeployController extends AbstractController {
         return contractClass;
     }
 
-    private TokenStandartData getTokenStandard(Class<?> contractClass) {
-        TokenStandartData tokenStandart = TokenStandartData.NotAToken;
-        try {
-            Class<?>[] interfaces = contractClass.getInterfaces();
-            if (interfaces.length > 0) {
-                Class<?> basicStandard = Class.forName("BasicStandard");
-                Class<?> extendedStandard = Class.forName("ExtensionStandard");
-                for (Class<?> _interface : interfaces) {
-                    if (_interface.equals(basicStandard)) {
-                        tokenStandart = TokenStandartData.CreditsBasic;
-                    }
-                    if (_interface.equals(extendedStandard)) {
-                        tokenStandart = TokenStandartData.CreditsExtended;
-                    }
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            LOGGER.debug("can't find standard classes. Reason {}", e.getMessage());
-        }
-        return tokenStandart;
-    }
 
-    private Callback<Pair<Long, TransactionFlowResultData>> handleDeployResult(TokenInfo tokenInfo) {
+    private Callback<Pair<Long, TransactionFlowResultData>> handleDeployResult(TokenInfoData tokenInfoData) {
         return new Callback<Pair<Long, TransactionFlowResultData>>() {
             @Override
             public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
                 ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(), resultData.getLeft(),
                     session);
-                String target = resultData.getRight().getTarget();
+                TransactionFlowResultData transactionFlowResultData = resultData.getRight();
+                String target = transactionFlowResultData.getTarget();
                 StringSelection selection = new StringSelection(target);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);
                 FormUtils.showPlatformInfo(
-                    String.format("Smart-contract address%n%n%s%n%nhas generated and copied to clipboard", target));
-                if (tokenInfo != null) {
-                    saveSmartInTokenList(session.coinsKeeper, tokenInfo.name, tokenInfo.balance, tokenInfo.address);
+                    String.format("%s%n%nSmart-contract address%n%n%s%n%ncopied to clipboard",
+                            transactionFlowResultData.getMessage(), target
+                    )
+                );
+                if (tokenInfoData != null) {
+                    saveSmartInTokenList(session.coinsKeeper, tokenInfoData.name, tokenInfoData.balance,
+                        tokenInfoData.address);
                 }
             }
 
@@ -325,65 +452,9 @@ public class SmartContractDeployController extends AbstractController {
 
     @FXML
     private void handleBack() {
-        loadVista(SMART_CONTRACT, this);
+        loadVista(SMART_CONTRACT);
     }
 
-    @FXML
-    private void panelCodeKeyReleased() {
-        Thread t = new Thread(this::refreshClassMembersTree);
-        t.setDaemon(true);
-        t.start();
-    }
-
-    private synchronized void refreshClassMembersTree() {
-        Platform.runLater(() -> {
-            classTreeView.setRoot(null);
-            String sourceCode = codeArea.getText();
-            ParseResultStruct build =
-                new ParseResultStruct.Builder(sourceCode).fields().constructors().methods().build();
-
-            List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
-            bodyDeclarations.addAll(build.fields);
-            bodyDeclarations.addAll(build.constructors);
-            bodyDeclarations.addAll(build.methods);
-
-            String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
-            Label labelRoot = new Label(className);
-            TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
-
-
-            bodyDeclarations.forEach(classMember -> {
-                Label label = new Label(classMember.toString());
-                TreeItem<Label> treeItem = new TreeItem<>();
-                treeItem.setValue(label);
-                treeRoot.getChildren().add(treeItem);
-            });
-
-            treeRoot.setExpanded(true);
-            classTreeView.setRoot(treeRoot);
-            classTreeView.setShowRoot(false);
-
-            classTreeView.setOnMouseClicked(event -> {
-                if (event.isPrimaryButtonDown() || event.getButton() == MouseButton.PRIMARY) {
-                    BodyDeclaration selected =
-                        bodyDeclarations.get(classTreeView.getSelectionModel().getSelectedIndices().get(0));
-                    try {
-                        int lineNumber = ParseCodeUtils.getLineNumber(sourceCode, selected);
-                        codeArea.setCaretPositionOnLine(lineNumber);
-                    } catch (Exception ignored) {
-                    }
-                }
-            });
-
-        });
-    }
-
-    private void refillErrorsTableView(List<BuildSourceCodeError> listOfError) {
-        errorTableView.getItems().clear();
-        errorTableView.getItems().addAll(listOfError);
-        errorTableView.setVisible(true);
-        errorTableView.setPrefHeight(debugPane.getPrefHeight());
-    }
 
     private void initErrorTableView() {
         TableColumn<BuildSourceCodeError, String> tabErrorsColLine = new TableColumn<>();
@@ -419,11 +490,12 @@ public class SmartContractDeployController extends AbstractController {
     }
 
     private void refreshOfferedMaxFeeValues(String oldValue) {
-        if(oldValue.isEmpty()) {
+        if (oldValue.isEmpty()) {
             actualOfferedMaxFeeLabel.setText("");
             feeField.setText("");
         } else {
-            Pair<Double, Short> actualOfferedMaxFeePair = Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
+            Pair<Double, Short> actualOfferedMaxFeePair =
+                Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
             this.actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
             this.actualOfferedMaxFee16Bits = actualOfferedMaxFeePair.getRight();
             feeField.setText(oldValue);
@@ -432,18 +504,80 @@ public class SmartContractDeployController extends AbstractController {
 
     @Override
     public void formDeinitialize() {
-
+        DeploySmartListItem item = getCurrentListItem();
+        item.sourceCode = codeArea.getText();
+        codeArea.cleanAll();
     }
 
-    private static class TokenInfo {
-        final String address;
-        final String name;
-        final BigDecimal balance;
 
-        private TokenInfo(String smartContractAddress, String tokenName, BigDecimal balance) {
-            this.address = smartContractAddress;
-            this.name = tokenName;
-            this.balance = balance;
+    private void saveTypeOfContract(DeploySmartListItem item) {
+        item.state = DeploySmartListItem.ItemState.SAVED;
+        returnMainTabs(item);
+    }
+
+    private void deleteMainTabs() {
+        cleanCompilationPackage(true);
+        tabPane.getTabs().removeAll(createCodeTab, codeAreaTab, testingTab);
+        tabPane.getTabs().add(createCodeTab);
+        tabPane.getSelectionModel().select(0);
+    }
+
+    private void returnMainTabs(DeploySmartListItem item) {
+        cleanCompilationPackage(false);
+        tabPane.getTabs().removeAll(createCodeTab, codeAreaTab, testingTab);
+        codeAreaTab.setText(item.name);
+        tabPane.getTabs().add(codeAreaTab);
+        tabPane.getTabs().add(testingTab);
+        tabPane.getSelectionModel().select(0);
+        codeArea.replaceText(item.sourceCode);
+        refreshTreeView(treeView, codeArea);
+    }
+
+    private DeploySmartListItem getCurrentListItem() {
+        return deployContractList.getSelectionModel().getSelectedItem();
+    }
+
+    public void handleAddContract() {
+        DeploySmartListItem deploySmartItem = new DeploySmartListItem(null,
+            DeployControllerUtils.checkContractNameExist("NewContract", deployContractList.getItems()),
+            DeploySmartListItem.ItemState.NEW);
+        deployContractList.getItems().add(deploySmartItem);
+        session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
+        deployContractList.getSelectionModel().selectLast();
+        deleteMainTabs();
+    }
+
+    @FXML
+    public void handleGenerateSmart() {
+        String selectedType = cbContractType.getSelectionModel().getSelectedItem();
+        String curClassName;
+        if (className.getText().isEmpty()) {
+            curClassName = "Contract";
+        } else {
+            curClassName = className.getText();
+
+        if ((!SourceVersion.isIdentifier(curClassName) && !SourceVersion.isKeyword(curClassName)) || !curClassName.matches("^[a-zA-Z0-9]+$")) {
+                FormUtils.showInfo("ClassName is not valid");
+                return;
+            }
+        }
+        try {
+            String contractFromTemplate = getContractFromTemplate(selectedType);
+            String sourceCode = null;
+            if (contractFromTemplate != null) {
+                sourceCode = String.format(contractFromTemplate, curClassName, curClassName);
+            }
+            DeploySmartListItem item = getCurrentListItem();
+            item.sourceCode = sourceCode;
+            item.name = DeployControllerUtils.checkContractNameExist(curClassName, deployContractList.getItems());
+            saveTypeOfContract(item);
+            deployContractList.refresh();
+            session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
+            initNewContractForm();
+        } catch (Exception e) {
+            DeploySmartListItem currentListItem = getCurrentListItem();
+            currentListItem.sourceCode= DEFAULT_SOURCE_CODE;
+            saveTypeOfContract(currentListItem);
         }
     }
 }

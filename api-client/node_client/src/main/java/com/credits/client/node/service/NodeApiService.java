@@ -13,7 +13,12 @@ public interface NodeApiService {
 
     BigDecimal getBalance(String address) throws NodeClientException, ConverterException;
 
+    int getSynchronizePercent() throws NodeClientException, ConverterException;
+
     List<TransactionData> getTransactions(String address, long offset, long limit) throws NodeClientException, ConverterException;
+
+    List<SmartContractTransactionData> getSmartContractTransactions(String address, long offset, long limit)
+            throws NodeClientException, ConverterException;
 
     @Deprecated
     TransactionData getTransaction(TransactionIdData transactionIdData) throws NodeClientException;

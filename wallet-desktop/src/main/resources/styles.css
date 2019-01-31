@@ -145,6 +145,21 @@
 
 
 
+/*******************************************************************************
+ *                                                                             *
+ * DEPLOY COMBOBOX                                                             *
+ *                                                                             *
+ ******************************************************************************/
+#cbContractType >  .combo-box-popup>.list-view {
+    -fx-pref-width: 260;
+}
+/*******************************************************************************
+ *                                                                             *
+ * DEPLOY COMBOBOX                                                             *
+ *                                                                             *
+ ******************************************************************************/
+
+
 
 
 /*******************************************************************************
@@ -543,6 +558,21 @@
 .menu-button:hover .label,
 .credits-menuitemButton:hover {
     -fx-text-fill:black;
+}
+
+
+.credits-syncProgress > .bar {
+    -fx-background-color: black;
+    -fx-padding: 2px;
+    -fx-background-insets: 0;
+}
+.credits-syncProgress:indeterminate > .bar {
+    -fx-background-color: black;
+    -fx-padding: 2px;
+    -fx-background-insets: 0;
+}
+.credits-syncProgress > .track {
+    -fx-background-color: white;
 }
 /*******************************************************************************
  *                                                                             *
