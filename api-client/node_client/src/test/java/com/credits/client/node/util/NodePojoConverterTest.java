@@ -60,7 +60,7 @@ public class NodePojoConverterTest {
                 0
         );
         SealedTransaction sealedTransaction = new SealedTransaction(transactionId, transaction);
-        TransactionData transactionData = transactionToTransactionData(sealedTransaction);
+        TransactionData transactionData = createTransactionData(sealedTransaction);
         Assert.assertEquals(
                 transactionData.toString(),
                 "TransactionData{id=0, source=[115, 111, 117, 114, 99, 101], target=[116, 97, 114, 103, 101, 116], amount=0.0, balance=0.0, currency=1}"
@@ -80,7 +80,7 @@ public class NodePojoConverterTest {
                 new AmountCommission((short)1),
                 0
         );
-        TransactionData transactionData = transactionToTransactionData(transaction);
+        TransactionData transactionData = createTransactionData(transaction);
         Assert.assertEquals(
                 transactionData.toString(),
                 "TransactionData{id=0, source=[115, 111, 117, 114, 99, 101], target=[116, 97, 114, 103, 101, 116], amount=0.0, balance=0.0, currency=1}"

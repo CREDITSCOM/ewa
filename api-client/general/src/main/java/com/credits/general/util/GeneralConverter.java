@@ -1,9 +1,6 @@
 package com.credits.general.util;
 
-import com.credits.general.pojo.ApiResponseCode;
-import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.ByteCodeObjectData;
-import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.exception.ConverterException;
@@ -17,12 +14,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.BitSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.Arrays.stream;
 
@@ -443,9 +435,5 @@ public class GeneralConverter {
             }
         }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
-    }
-
-    public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {
-        return new ApiResponseData(ApiResponseCode.valueOf(apiResponse.getCode()),apiResponse.getMessage());
     }
 }

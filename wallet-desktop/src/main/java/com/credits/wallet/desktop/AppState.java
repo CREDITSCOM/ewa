@@ -18,6 +18,8 @@ public class AppState {
     public static final int CREDITS_DECIMAL = 18;
     public static final int DEFAULT_EXECUTION_TIME = 1000;
     public static final String CREDITS_TOKEN_NAME = "CS";
+    public static final int DELAY_AFTER_FULL_SYNC = 5;
+    public static final int DELAY_BEFORE_FULL_SYNC = 2;
 
 
 
@@ -26,7 +28,6 @@ public class AppState {
     public static String decimalSeparator = ds;
     public static Map<String,Session> sessionMap = new HashMap<>();
 
-    public static String lastSmartContract;
 
     public static PrivateKey privateKey;
     public static PublicKey publicKey;

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
@@ -15,6 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
@@ -64,6 +66,40 @@
                                 </Pane>
                             </content>
                         </Tab>
+                  <Tab text="Approved transactions">
+                     <content>
+                        <VBox layoutX="20.0" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
+                           <children>
+                              <TableView fx:id="approvedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view,credits-transaction-table-view">
+                                 <columns>
+                                    <TableColumn prefWidth="95.0" text="Id" />
+                                    <TableColumn prefWidth="400.0" text="Source" />
+                                    <TableColumn prefWidth="400.0" text="Target" />
+                                    <TableColumn prefWidth="210.0" text="Amount" />
+                                    <TableColumn prefWidth="140.0" text="State" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+                  <Tab text="Unapproved transactions">
+                     <content>
+                        <VBox minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
+                           <children>
+                              <TableView fx:id="unapprovedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view, credits-transaction-table-view">
+                                 <columns>
+                                    <TableColumn prefWidth="40.0" text="Id" />
+                                    <TableColumn prefWidth="420.0" text="Source" />
+                                    <TableColumn prefWidth="420.0" text="Target" />
+                                    <TableColumn prefWidth="210.0" text="Amount" />
+                                    <TableColumn prefWidth="140.0" text="State" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
                     </tabs>
                 </TabPane>
                 <Label layoutX="20.0" layoutY="30.0" prefHeight="60.0" prefWidth="398.0" styleClass="credits-topLabelGrayText" text="On this form you can searching and running some smart contracts from blockhain" wrapText="true" />

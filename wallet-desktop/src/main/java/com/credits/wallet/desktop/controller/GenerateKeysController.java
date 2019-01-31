@@ -26,7 +26,7 @@ public class GenerateKeysController extends AbstractController {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WELCOME,this);
+        VistaNavigator.loadVista(VistaNavigator.WELCOME);
     }
 
     @FXML
@@ -35,7 +35,7 @@ public class GenerateKeysController extends AbstractController {
         AppState.publicKey = keyPair.getPublic();
         AppState.privateKey = keyPair.getPrivate();
 
-        VistaNavigator.loadVista(VistaNavigator.FORM_4,this);
+        VistaNavigator.loadVista(VistaNavigator.FORM_4);
     }
 
     @Override

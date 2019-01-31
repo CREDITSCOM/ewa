@@ -1,5 +1,6 @@
 package com.credits.client.node.pojo;
 
+import com.credits.general.pojo.ExecuteByteCodeResultData;
 import com.credits.general.pojo.VariantData;
 
 import java.io.Serializable;
@@ -14,12 +15,14 @@ public class SmartContractInvocationData implements Serializable {
     private String method;
     private List<VariantData> params;
     private boolean forgetNewState;
+    private ExecuteByteCodeResultData executeResult;
 
-    public SmartContractInvocationData(SmartContractDeployData smartContractDeployData, String method, List<VariantData> params, boolean forgetNewState) {
+    public SmartContractInvocationData(SmartContractDeployData smartContractDeployData, String method, List<VariantData> params, boolean forgetNewState, ExecuteByteCodeResultData executeResult) {
         this.smartContractDeployData = smartContractDeployData;
         this.method = method;
         this.params = params;
         this.forgetNewState = forgetNewState;
+        this.executeResult = executeResult;
     }
 
     public SmartContractDeployData getSmartContractDeployData() {
@@ -52,5 +55,13 @@ public class SmartContractInvocationData implements Serializable {
 
     public void setForgetNewState(boolean forgetNewState) {
         this.forgetNewState = forgetNewState;
+    }
+
+    public ExecuteByteCodeResultData getExecuteResult() {
+        return executeResult;
+    }
+
+    public void setExecuteResult(ExecuteByteCodeResultData executeResult) {
+        this.executeResult = executeResult;
     }
 }

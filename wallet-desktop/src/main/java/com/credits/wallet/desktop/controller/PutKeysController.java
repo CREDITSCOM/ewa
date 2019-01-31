@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.crypto.Ed25519;
-import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.GeneralConverter;
 import com.credits.wallet.desktop.AppState;
@@ -62,7 +61,7 @@ public class PutKeysController extends AbstractController {
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WELCOME, this);
+        VistaNavigator.loadVista(VistaNavigator.WELCOME);
     }
 
     @FXML
@@ -194,7 +193,7 @@ public class PutKeysController extends AbstractController {
         }
 
         if (validateKeys(pubKey, privKey)) {
-            VistaNavigator.loadVista(VistaNavigator.WALLET, this);
+            VistaNavigator.loadVista(VistaNavigator.WALLET);
         }
     }
 
@@ -202,12 +201,7 @@ public class PutKeysController extends AbstractController {
         if(AppState.sessionMap.get(pubKey)!=null) {
              this.session = AppState.sessionMap.get(pubKey);
         } else {
-            Session session = new Session();
-            session.account = pubKey;
-            session.favoriteContractsKeeper = new ObjectKeeper<>(session.account, "favorite");
-            session.coinsKeeper = new ObjectKeeper<>(session.account, "coins");
-            AppState.sessionMap.put(pubKey,session);
-            this.session = session;
+            this.session = new Session(pubKey);
         }
     }
 

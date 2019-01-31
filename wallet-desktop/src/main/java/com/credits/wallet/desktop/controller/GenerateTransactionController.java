@@ -58,7 +58,7 @@ public class GenerateTransactionController extends AbstractController {
         params.put("transactionAmount",transactionAmount.getText());
         params.put("transactionText",transactionText.getText());
         params.put("coinType", coinType.getText());
-        VistaNavigator.loadVista(VistaNavigator.WALLET, this, params);
+        VistaNavigator.loadVista(VistaNavigator.WALLET, params);
     }
 
     @FXML
@@ -84,7 +84,7 @@ public class GenerateTransactionController extends AbstractController {
             return;
         }
 
-        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+        VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
     private Callback<String> handleTransferTokenResult() {

@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop.utils.sourcecode.codeArea;
 
-import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.AutocompleteHelper;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup;
 import javafx.concurrent.Task;
@@ -25,7 +24,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils.computeHighlighting;
-import static javafx.scene.input.KeyCode.*;
+import static javafx.scene.input.KeyCode.INSERT;
+import static javafx.scene.input.KeyCode.PASTE;
+import static javafx.scene.input.KeyCode.SHIFT;
+import static javafx.scene.input.KeyCode.V;
+import static javafx.scene.input.KeyCode.Y;
+import static javafx.scene.input.KeyCode.Z;
 import static javafx.scene.input.KeyCombination.SHIFT_DOWN;
 import static javafx.scene.input.KeyCombination.SHORTCUT_DOWN;
 import static org.fxmisc.wellbehaved.event.EventPattern.anyOf;
@@ -39,8 +43,9 @@ public class CreditsCodeArea extends CodeArea {
     private static final String ROUND_BRACKET_SYMBOL = "(";
     private static final String NEW_LINE_SYMBOL = "\n";
     private static final String TAB_STRING = StringUtils.repeat(" ", TAB_SIZE);
-    private static final String DEFAULT_SOURCE_CODE =
+    public static final String DEFAULT_SOURCE_CODE =
             "public class Contract extends SmartContract {\n" + "\n" + TAB_STRING + "public Contract(String initiator) {\n" + TAB_STRING + TAB_STRING + "super(initiator);\n" + TAB_STRING + "}" + "\n" + "}";
+
     private static int tabCount;
     private ExecutorService codeAreaHighlightExecutor = Executors.newSingleThreadExecutor();
 
@@ -57,24 +62,12 @@ public class CreditsCodeArea extends CodeArea {
         popup = new CreditsToolboxPopup(this, readOnly);
         creditsProposalsPopup = new CreditsProposalsPopup();
         autocompleteHelper = new AutocompleteHelper(this, creditsProposalsPopup);
-        lastTimeStampOfSavedText = System.currentTimeMillis();
     }
 
     private void initCodeAreaLogic() {
-
-        this.sceneProperty().addListener((observable, old, newPropertyValue) -> {
-            if (newPropertyValue == null) {
-                this.cleanAll();
-            }
-
-        });
-
         initKeyPressedLogic();
         initRichTextLogic();
-        fillDefaultCodeSource();
-        if(AppState.lastSmartContract == null){
-           AppState.lastSmartContract = getText();
-        }
+        this.replaceText(0, 0, DEFAULT_SOURCE_CODE);
     }
 
     private void initRichTextLogic() {
@@ -118,7 +111,6 @@ public class CreditsCodeArea extends CodeArea {
                 }
                 this.autocompleteHelper.handleKeyPressEvent(k);
             }
-            trySaveTextToMemory(code);
         });
 
 
@@ -184,14 +176,6 @@ public class CreditsCodeArea extends CodeArea {
         return currentLine.charAt(caretPosition > 0 ? caretPosition - 1 : 0);
     }
 
-    private void trySaveTextToMemory(KeyCode code) {
-        if (code.isLetterKey() || code.isDigitKey() || code.isWhitespaceKey() || code == BACK_SPACE) {
-            if (!AppState.lastSmartContract.equals(getText())) {
-                AppState.lastSmartContract = getText();
-                lastTimeStampOfSavedText = System.currentTimeMillis();
-            }
-        }
-    }
 
     private boolean isBraceRequired() {
         int[] chars = getText().chars().toArray();
@@ -315,14 +299,6 @@ public class CreditsCodeArea extends CodeArea {
 
     public void fixCaretPosition(int caretPosition) {
         this.selectRange(caretPosition,caretPosition);
-    }
-
-    public void fillDefaultCodeSource() {
-        if (AppState.lastSmartContract == null) {
-            this.replaceText(0, 0, DEFAULT_SOURCE_CODE);
-        } else {
-            this.replaceText(AppState.lastSmartContract);
-        }
     }
 
     public void cleanAll() {

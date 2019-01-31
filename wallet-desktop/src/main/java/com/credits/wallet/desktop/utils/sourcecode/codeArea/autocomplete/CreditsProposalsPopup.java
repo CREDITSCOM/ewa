@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CreditsProposalsPopup extends Popup {
+    public static final String DEFAULT_STANDARD_CLASS = "Default";
     public static final String BASIC_STANDARD_CLASS = "BasicStandard";
     public static final String EXTENSION_STANDARD_CLASS = "ExtensionStandard";
 
