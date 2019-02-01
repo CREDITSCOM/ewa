@@ -128,7 +128,7 @@
                        styleClass="credits-smart-table-view"/>
         </Tab>
     </TabPane>
-    <Label layoutX="501.0" layoutY="159.0" style="-fx-font-size: 14px;"   text="Contract address">
+    <Label layoutX="501.0" layoutY="159.0" style="-fx-font-size: 14px;" text="Contract address">
     </Label>
     <Button layoutX="1085.0" layoutY="590.0" onAction="#handleExecute" prefHeight="60.0" prefWidth="200.0"
             style="-fx-font-family: Times New Roman;" styleClass="credits-button" text="EXECUTE"/>

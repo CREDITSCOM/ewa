@@ -92,9 +92,12 @@
     -fx-padding: 0 0.20em 0 0.20em;
 }
 
-/*.tree-view > .list-view {
-    -fx-border-color: red;
-}*/
+.tree-view, .tree-cell {
+    -fx-pref-height: 25;
+}
+.tree-view, .tree-cell .label {
+    -fx-font-size: 12;
+}
 /*******************************************************************************
  *                                                                             *
  * STANDARD ELEMENTS                                                           *
@@ -748,10 +751,6 @@
 
 .comment {
     -fx-fill: cadetblue;
-}
-
-.tree-cell  {
-    -fx-font-size: 14px;
 }
 
 .styled-text-area .paragraph-box .label {
