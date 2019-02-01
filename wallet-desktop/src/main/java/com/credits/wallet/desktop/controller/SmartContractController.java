@@ -1,13 +1,16 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.*;
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractTransactionData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
+import com.credits.client.node.pojo.TransactionStateData;
+import com.credits.client.node.pojo.TransactionsStateGetResultData;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.Utils;
 import com.credits.general.util.variant.VariantUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -16,7 +19,6 @@ import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.struct.SmartContractTransactionTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.NumberUtils;
 import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
@@ -26,7 +28,14 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -51,7 +60,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
-import static com.credits.client.node.thrift.generated.TransactionState.*;
+import static com.credits.client.node.thrift.generated.TransactionState.INPROGRESS;
+import static com.credits.client.node.thrift.generated.TransactionState.INVALID;
+import static com.credits.client.node.thrift.generated.TransactionState.VALID;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
@@ -70,7 +81,6 @@ public class SmartContractController extends AbstractController {
     private SmartContractData currentSmartContract;
     private MethodDeclaration currentMethod;
     private HashMap<String, SmartContractData> favoriteContracts;
-    private short actualOfferedMaxFee16Bits;
 
     private final int FIRST_TRANSACTION_NUMBER = 0;
     private final int INIT_PAGE_SIZE = 100;
@@ -157,20 +167,7 @@ public class SmartContractController extends AbstractController {
         initializeTable(smartContractTableView);
         initializeTable(favoriteContractTableView);
         refreshFavoriteContractsTab();
-        feeField.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                newValue = NumberUtils.getCorrectNum(newValue);
-                if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
-                    refreshOfferedMaxFeeValues(oldValue);
-                    return;
-                }
-                refreshOfferedMaxFeeValues(newValue);
-            } catch (Exception e) {
-                //FormUtils.showError("Error. Reason: " + e.getMessage());
-                refreshOfferedMaxFeeValues(oldValue);
-            }
-        });
-
+        FormUtils.initFeeField(feeField,actualOfferedMaxFeeLabel);
         initTable(approvedTableView);
         initTable(unapprovedTableView);
 /*
@@ -538,7 +535,7 @@ public class SmartContractController extends AbstractController {
 
             CompletableFuture.supplyAsync(() -> calcTransactionIdSourceTarget(AppState.nodeApiService, session.account,
                 smartContractData.getBase58Address(), true), threadPool)
-                .thenApply((transactionData) -> createSmartContractTransaction(transactionData, actualOfferedMaxFee16Bits, smartContractData,session))
+                .thenApply((transactionData) -> createSmartContractTransaction(transactionData, FormUtils.getActualOfferedMaxFee16Bits(feeField), smartContractData,session))
                 .whenComplete(handleCallback(handleExecuteResult()));
 
 
@@ -578,18 +575,6 @@ public class SmartContractController extends AbstractController {
 
     private void clearLabErr() {
         FormUtils.clearErrorOnField(feeField, feeErrorLabel);
-    }
-
-    private void refreshOfferedMaxFeeValues(String oldValue) {
-        if(oldValue.isEmpty()) {
-            actualOfferedMaxFeeLabel.setText("");
-            feeField.setText("");
-        } else {
-            Pair<Double, Short> actualOfferedMaxFeePair = Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
-            this.actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
-            this.actualOfferedMaxFee16Bits = actualOfferedMaxFeePair.getRight();
-            feeField.setText(oldValue);
-        }
     }
 
     public void handleRefreshSmarts() {

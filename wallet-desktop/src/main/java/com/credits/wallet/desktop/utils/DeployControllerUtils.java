@@ -1,9 +1,14 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.client.node.pojo.TokenStandartData;
+import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.Utils;
 import com.credits.wallet.desktop.struct.DeploySmartListItem;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,4 +77,42 @@ public class DeployControllerUtils {
         }
         return smartName;
     }
+
+
+    public short actualOfferedMaxFee16Bits;
+
+
+    public void initializeFee(TextField feeField, Label actualOfferedMaxFeeLabel, Label feeErrorLabel) {
+        feeField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                newValue = NumberUtils.getCorrectNum(newValue);
+                if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
+                    refreshOfferedMaxFeeValues(oldValue,feeField,actualOfferedMaxFeeLabel,feeErrorLabel);
+                    return;
+                }
+                refreshOfferedMaxFeeValues(newValue,feeField,actualOfferedMaxFeeLabel,feeErrorLabel);
+            } catch (Exception e) {
+                //FormUtils.showError("Error. Reason: " + e.getMessage());
+                refreshOfferedMaxFeeValues(oldValue,feeField,actualOfferedMaxFeeLabel,feeErrorLabel);
+            }
+        });
+    }
+
+    private void refreshOfferedMaxFeeValues(String oldValue,TextField feeField, Label actualOfferedMaxFeeLabel, Label feeErrorLabel) {
+        if (oldValue.isEmpty()) {
+            actualOfferedMaxFeeLabel.setText("");
+            feeField.setText("");
+        } else {
+            Pair<Double, Short> actualOfferedMaxFeePair =
+                Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
+            actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
+            actualOfferedMaxFee16Bits = actualOfferedMaxFeePair.getRight();
+            feeField.setText(oldValue);
+        }
+    }
+
+    public static short getActualOfferedMaxFee16Bits() {
+        return 0;
+    }
+
 }

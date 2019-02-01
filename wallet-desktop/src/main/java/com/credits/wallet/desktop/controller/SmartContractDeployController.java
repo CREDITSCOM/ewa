@@ -9,12 +9,10 @@ import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.ByteArrayContractClassLoader;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.Utils;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.struct.TokenInfoData;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.NumberUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
 import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
@@ -66,8 +64,6 @@ public class SmartContractDeployController extends AbstractController {
 
     public Pane mainPane;
 
-    private short actualOfferedMaxFee16Bits;
-
     @FXML
     private DeployTabController deployTabController;
     @FXML
@@ -88,21 +84,10 @@ public class SmartContractDeployController extends AbstractController {
         deployTabController.session = session;
         deployTabController.parentController = this;
         deployTabController.initializeForm(null);
-        feeField.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                newValue = NumberUtils.getCorrectNum(newValue);
-                if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
-                    refreshOfferedMaxFeeValues(oldValue);
-                    return;
-                }
-                refreshOfferedMaxFeeValues(newValue);
-            } catch (Exception e) {
-                //FormUtils.showError("Error. Reason: " + e.getMessage());
-                refreshOfferedMaxFeeValues(oldValue);
-            }
-        });
+        FormUtils.initFeeField(feeField,actualOfferedMaxFeeLabel);
 
     }
+
 
     void cleanCompilationPackage(boolean buildButtonDisable) {
         compilationPackage = null;
@@ -198,7 +183,7 @@ public class SmartContractDeployController extends AbstractController {
 
                     supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService, session.account,
                         smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool).thenApply(
-                        (transactionData) -> createSmartContractTransaction(transactionData, actualOfferedMaxFee16Bits,
+                        (transactionData) -> createSmartContractTransaction(transactionData, FormUtils.getActualOfferedMaxFee16Bits(feeField),
                             smartContractData, session))
                         .whenComplete(
                             handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
@@ -210,6 +195,7 @@ public class SmartContractDeployController extends AbstractController {
             FormUtils.showError(NODE_ERROR + ": " + e.getMessage());
         }
     }
+
 
     private TokenInfoData getTokenInfo(Class<?> contractClass, SmartContractData smartContractData) {
         if (smartContractData.getSmartContractDeployData().getTokenStandardData() != TokenStandartData.NotAToken) {
@@ -287,18 +273,6 @@ public class SmartContractDeployController extends AbstractController {
         FormUtils.clearErrorOnField(feeField, feeErrorLabel);
     }
 
-    private void refreshOfferedMaxFeeValues(String oldValue) {
-        if (oldValue.isEmpty()) {
-            actualOfferedMaxFeeLabel.setText("");
-            feeField.setText("");
-        } else {
-            Pair<Double, Short> actualOfferedMaxFeePair =
-                Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
-            this.actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
-            this.actualOfferedMaxFee16Bits = actualOfferedMaxFeePair.getRight();
-            feeField.setText(oldValue);
-        }
-    }
 
     @Override
     public void formDeinitialize() {

@@ -4,7 +4,6 @@ import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.Utils;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.CoinTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -23,7 +22,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +54,6 @@ public class WalletController extends AbstractController {
     private final String WAITING_STATE_MESSAGE = "processing...";
     private final String ERROR_STATE_MESSAGE = "not available";
     private final DecimalFormat creditsDecimalFormat = new DecimalFormat("##0." + repeat('0', CREDITS_DECIMAL));
-    private short actualOfferedMaxFee16Bits;
     ContextMenu contextMenu = new ContextMenu();
 
     @FXML
@@ -74,7 +71,7 @@ public class WalletController extends AbstractController {
     @FXML
     private TextField amountField;
     @FXML
-    private TextField maxFeeField;
+    private TextField feeField;
     @FXML
     private TextField transText;
     @FXML
@@ -108,7 +105,7 @@ public class WalletController extends AbstractController {
     @FXML
     private void handleGenerate() {
         String transactionAmount = amountField.getText();
-        String transactionFee = maxFeeField.getText();
+        String transactionFee = feeField.getText();
         String transactionToAddress = addressField.getText();
         String transactionText = transText.getText();
 
@@ -126,7 +123,7 @@ public class WalletController extends AbstractController {
             FormUtils.validateField(amountField, amountErrorLabel, ERR_AMOUNT, isValidationSuccessful);
         }
         if (GeneralConverter.toBigDecimal(transactionFee).compareTo(BigDecimal.ZERO) <= 0) {
-            FormUtils.validateField(maxFeeField, feeErrorLabel, ERR_FEE, isValidationSuccessful);
+            FormUtils.validateField(feeField, feeErrorLabel, ERR_FEE, isValidationSuccessful);
         }
         try {
             Validator.validateToAddress(transactionToAddress);
@@ -141,7 +138,7 @@ public class WalletController extends AbstractController {
             params.put("transactionAmount", transactionAmount);
             params.put("transactionFee", transactionFee);
             params.put("transactionText", transactionText);
-            params.put("actualOfferedMaxFee16Bits", actualOfferedMaxFee16Bits);
+            params.put("actualOfferedMaxFee16Bits", FormUtils.getActualOfferedMaxFee16Bits(feeField));
 
             VistaNavigator.loadVista(VistaNavigator.FORM_7, params);
         }
@@ -242,7 +239,7 @@ public class WalletController extends AbstractController {
         FormUtils.clearErrorOnTable(coinsTableView, coinsErrorLabel);
         FormUtils.clearErrorOnField(addressField, addressErrorLabel);
         FormUtils.clearErrorOnField(amountField, amountErrorLabel);
-        FormUtils.clearErrorOnField(maxFeeField, feeErrorLabel);
+        FormUtils.clearErrorOnField(feeField, feeErrorLabel);
     }
 
     private void initializeTable(TableView<CoinTabRow> tableView) {
@@ -283,19 +280,7 @@ public class WalletController extends AbstractController {
 
         publicWalletID.setText(session.account);
 
-        maxFeeField.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                newValue = NumberUtils.getCorrectNum(newValue);
-                if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
-                    refreshOfferedMaxFeeValues(oldValue);
-                    return;
-                }
-                refreshOfferedMaxFeeValues(newValue);
-            } catch (Exception e) {
-                //FormUtils.showError("Error. Reason: " + e.getMessage());
-                refreshOfferedMaxFeeValues(oldValue);
-            }
-        });
+        FormUtils.initFeeField(feeField,actualOfferedMaxFeeLabel);
 
         amountField.textProperty().addListener((observable, oldValue, newValue) -> {
             newValue = NumberUtils.getCorrectNum(newValue);
@@ -309,7 +294,7 @@ public class WalletController extends AbstractController {
         if (objects != null) {
             addressField.setText(objects.get("transactionToAddress").toString());
             amountField.setText(objects.get("transactionAmount").toString());
-            maxFeeField.setText(objects.get("transactionFee").toString());
+            feeField.setText(objects.get("transactionFee").toString());
             transText.setText(objects.get("transactionText").toString());
             int i = 0;
             for (CoinTabRow item : coinsTableView.getItems()) {
@@ -327,18 +312,6 @@ public class WalletController extends AbstractController {
             tf.setText("");
         } else {
             tf.setText(newValue);
-        }
-    }
-
-    private void refreshOfferedMaxFeeValues(String oldValue) {
-        if(oldValue.isEmpty()) {
-            actualOfferedMaxFeeLabel.setText("");
-            maxFeeField.setText("");
-        } else {
-            Pair<Double, Short> actualOfferedMaxFeePair = Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
-            this.actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
-            this.actualOfferedMaxFee16Bits = actualOfferedMaxFeePair.getRight();
-            maxFeeField.setText(oldValue);
         }
     }
 

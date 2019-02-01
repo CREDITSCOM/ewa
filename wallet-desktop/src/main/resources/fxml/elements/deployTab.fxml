@@ -43,7 +43,7 @@
         </Tab>
         <Tab fx:id="codeAreaTab" closable="false" text="CodeAreaTab">
             <SplitPane dividerPositions="0.5" prefHeight="100.0" prefWidth="200.0"
-                       style="-fx-border-color: green; -fx-padding: 0; -fx-background-insets: 15; -fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: transparent;">
+                       style="-fx-border-color: black; -fx-padding: 0; -fx-background-insets: 15; -fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: transparent;">
                 <SplitPane fx:id="splitPane" dividerPositions="0.9" orientation="VERTICAL" prefHeight="513.0"
                            prefWidth="813.0"
                            style="-fx-background-color: transparent; -fx-border-radius: 15 0 0 15; -fx-background-radius: 15;">
