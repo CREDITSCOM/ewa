@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<Pane layoutX="50.0" layoutY="75.0" prefHeight="500.0" prefWidth="1239.0" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.credits.wallet.desktop.controller.DeployTabController">
+    <ListView fx:id="deployContractList" layoutY="23.0" prefHeight="433.0" prefWidth="272.0"
+              style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-padding: 15 1 15 1;"/>
+    <Button layoutY="460.0" mnemonicParsing="false" onAction="#handleAddContract" prefHeight="41.0"
+            prefWidth="272.0" styleClass="credits-button" text="Create new contract"/>
+    <TabPane fx:id="tabPane" layoutX="309.0" prefHeight="500.0" prefWidth="902.0"
+             style="-fx-border-color: black; -fx-border-radius: 15; -fx-border-width: 0; -fx-padding: 0 0 0 0; -fx-background-radius: 15; -fx-open-tab-animation: NONE; -fx-close-tab-animation: NONE;"
+             styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
+        <Tab fx:id="createCodeTab" closable="false" text="NewContract">
+            <Pane fx:id="buttonPane" prefHeight="200.0" prefWidth="388.0"
+                  style="-fx-border-color: black; -fx-border-radius: 15 15 15 15;">
+                <ComboBox fx:id="cbContractType" layoutX="30.0" layoutY="50.0" prefHeight="45.0" prefWidth="260.0"
+                          styleClass="credits-combobox"/>
+                <Button layoutX="28.0" layoutY="284.0" mnemonicParsing="false" onAction="#handleGenerateSmart"
+                        prefHeight="41.0" prefWidth="266.0" styleClass="credits-button" text="Generate code"/>
+                <Label layoutX="30.0" layoutY="20.0" styleClass="credits-label"
+                       text="Select the type of smart contract"/>
+                <Label layoutX="30.0" layoutY="130.0" styleClass="credits-label"
+                       text="Select the name of smart contract"/>
+                <HBox layoutX="30.0" layoutY="160.0" prefHeight="45.0" prefWidth="280.0">
+                    <TextField fx:id="className" maxHeight="45.0" minHeight="45.0" prefHeight="45.0"
+                               prefWidth="260.0" promptText="Put name here" styleClass="credits-textField"/>
+                </HBox>
+            </Pane>
+        </Tab>
+        <Tab fx:id="codeAreaTab" closable="false" text="CodeAreaTab">
+            <SplitPane dividerPositions="0.5" prefHeight="100.0" prefWidth="200.0"
+                       style="-fx-border-color: green; -fx-padding: 0; -fx-background-insets: 15; -fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: transparent;">
+                <SplitPane fx:id="splitPane" dividerPositions="0.9" orientation="VERTICAL" prefHeight="513.0"
+                           prefWidth="813.0"
+                           style="-fx-background-color: transparent; -fx-border-radius: 15 0 0 15; -fx-background-radius: 15;">
+                    <Pane maxHeight="384.0" prefHeight="384.0" prefWidth="811.0">
+                        <VBox fx:id="paneCode" layoutY="27.0" maxHeight="384.0" prefHeight="384.0"
+                              prefWidth="811.0"/>
+                    </Pane>
+                    <VBox fx:id="debugPane" minHeight="95.0" prefHeight="95.0" prefWidth="446.0"
+                          style="-fx-padding: 0 0 15 0; -fx-border-width: 1 0 0 0; -fx-border-color: transparent;">
+                        <TableView fx:id="errorTableView" styleClass="credits-history-table-view"/>
+                    </VBox>
+                </SplitPane>
+                <fx:include fx:id="treeViews" source="treeView.fxml"/>
+            </SplitPane>
+        </Tab>
+        <Tab fx:id="testingTab" closable="false" text="UnitTests">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
+                        style="-fx-border-width: 1; -fx-border-color: black; -fx-border-radius: 15;"/>
+        </Tab>
+    </TabPane>
+</Pane>
