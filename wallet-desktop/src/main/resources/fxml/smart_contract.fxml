@@ -4,9 +4,9 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
@@ -17,155 +17,147 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<Pane prefWidth="1300.0" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER"
+      xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
+    <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contracts from blockhain"/>
+    <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0"
+            style="-fx-font-size: 22;" styleClass="credits-button">
+        <graphic>
+            <ImageView fitHeight="26.0" fitWidth="26.0">
+                <Image url="@../img/arrow_down.png"/>
+            </ImageView>
+        </graphic>
+    </Button>
 
-<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1300.0" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
-    <top>
-        <fx:include fx:id="header" source="header.fxml" />
-    </top>
-    <center>
-        <Pane prefWidth="1300.0" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER">
-            <children>
-                <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contracts from blockhain" />
-                <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button">
-                    <graphic>
-                        <ImageView fitHeight="26.0" fitWidth="26.0">
-                            <Image url="@../img/arrow_down.png" />
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <TabPane layoutX="490.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="800.0" style="-fx-border-radius: 15;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
-                    <tabs>
-                        <Tab text="Choose method">
-                            <content>
-                                <Pane maxHeight="325.0" maxWidth="800.0" minHeight="325.0" minWidth="800.0" prefHeight="325.0" prefWidth="800.0" styleClass="credits-PaneInTab">
-                                <Pane fx:id="pControls" maxHeight="315.0" maxWidth="800.0" minHeight="315.0" minWidth="800.0" prefHeight="315.0" prefWidth="800.0">
-                                    <children>
-                                        <Label layoutX="15.0" layoutY="16.0" style="-fx-font-size: 18px;" styleClass="text" text="Choose method">
-                                        </Label>
-                                        <ComboBox fx:id="cbMethods" layoutX="15.0" layoutY="46.0" onAction="#cbMethodsOnAction" prefHeight="56.0" prefWidth="770.0" style="-fx-font-size: 14px;" styleClass="credits-combobox" />
-                                        <AnchorPane fx:id="pParams" layoutX="15.0" layoutY="120.0" prefHeight="185.0" prefWidth="350.0" visible="false">
-                                            <children>
-                                                <Label layoutX="2.0" layoutY="7.0" prefHeight="27.0" prefWidth="350.0" style="-fx-font-size: 18px;" text="Method parameters:">
-                                                </Label>
-                                                <AnchorPane fx:id="pParamsContainer" layoutY="30.0" minHeight="0.0" minWidth="0.0" prefHeight="140.0" prefWidth="500.0" />
-                                            </children>
-                                        </AnchorPane>
-                                    </children>
-                                </Pane>
-                                </Pane>
-                            </content>
-                        </Tab>
-                        <Tab text="See the code">
-                            <content>
-                                <Pane layoutX="400.0" maxHeight="320.0" minHeight="325.0" prefHeight="325.0" prefWidth="800.0" styleClass="credits-PaneInTab">
-                                    <children>
-                                        <StackPane fx:id="pCodePanel" layoutX="1.0" layoutY="15.0" maxHeight="289.0" maxWidth="798.0" minHeight="289.0" minWidth="798.0" prefHeight="289.0" prefWidth="798.0" />
-                                    </children>
-                                </Pane>
-                            </content>
-                        </Tab>
-                  <Tab text="Approved transactions">
-                     <content>
-                        <VBox layoutX="20.0" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
-                           <children>
-                              <TableView fx:id="approvedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view,credits-transaction-table-view">
-                                 <columns>
-                                    <TableColumn prefWidth="95.0" text="Id" />
-                                    <TableColumn prefWidth="400.0" text="Source" />
-                                    <TableColumn prefWidth="400.0" text="Target" />
-                                    <TableColumn prefWidth="210.0" text="Amount" />
-                                    <TableColumn prefWidth="140.0" text="State" />
-                                 </columns>
-                              </TableView>
-                           </children>
-                        </VBox>
-                     </content>
-                  </Tab>
-                  <Tab text="Unapproved transactions">
-                     <content>
-                        <VBox minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
-                           <children>
-                              <TableView fx:id="unapprovedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0" styleClass="credits-history-table-view, credits-transaction-table-view">
-                                 <columns>
-                                    <TableColumn prefWidth="40.0" text="Id" />
-                                    <TableColumn prefWidth="420.0" text="Source" />
-                                    <TableColumn prefWidth="420.0" text="Target" />
-                                    <TableColumn prefWidth="210.0" text="Amount" />
-                                    <TableColumn prefWidth="140.0" text="State" />
-                                 </columns>
-                              </TableView>
-                           </children>
-                        </VBox>
-                     </content>
-                  </Tab>
-                    </tabs>
-                </TabPane>
-                <Label layoutX="20.0" layoutY="30.0" prefHeight="60.0" prefWidth="398.0" styleClass="credits-topLabelGrayText" text="On this form you can searching and running some smart contracts from blockhain" wrapText="true" />
-                <Label layoutX="6.0" layoutY="120.0" styleClass="credits-label" text="Search smart contracts" />
-                <HBox layoutX="20.0" layoutY="150.0" minHeight="45.0" prefHeight="45.0" prefWidth="430.0" style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: black;">
-                    <children>
-                        <TextField fx:id="tfSearchAddress" prefHeight="45.0" prefWidth="375.0" style="-fx-background-color: transparent;" styleClass="arrow" />
-                        <Button maxHeight="42.0" minHeight="28.0" onAction="#handleSearch" prefHeight="42.0" prefWidth="56.0" style="-fx-border-color: transparent;" styleClass="credits-button">
-                            <graphic>
-                                <ImageView fitHeight="30.0" fitWidth="30.0">
-                                    <Image url="@../img/search.png" />
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </children>
-                </HBox>
-                <Pane layoutX="490.0" prefHeight="80.0" prefWidth="810.0" style="-fx-background-color: #E5E5E5;">
-                    <children>
-                        <Label prefHeight="17.0" prefWidth="409.0" />
-                        <Label layoutX="379.0" layoutY="8.0" prefHeight="65.0" prefWidth="193.0" style="-fx-font-size: 22;" text="Create new Smart-contract" textAlignment="RIGHT" wrapText="true" />
-                        <Button layoutX="596.0" layoutY="10.0" onAction="#handleCreate" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #E5E5E5;" styleClass="credits-button" text="Go" />
-                    </children>
+    <TabPane layoutX="490.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="800.0"
+             style="-fx-border-radius: 15;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
+        <Tab text="Choose method">
+            <Pane maxHeight="325.0" maxWidth="800.0" minHeight="325.0" minWidth="800.0" prefHeight="325.0"
+                  prefWidth="800.0" styleClass="credits-PaneInTab">
+                <Pane fx:id="pControls" maxHeight="315.0" maxWidth="800.0" minHeight="315.0" minWidth="800.0"
+                      prefHeight="315.0" prefWidth="800.0">
+                    <Label layoutX="15.0" layoutY="16.0" style="-fx-font-size: 18px;" text="Choose method">
+                    </Label>
+                    <ComboBox fx:id="cbMethods" layoutX="15.0" layoutY="46.0" onAction="#cbMethodsOnAction"
+                              prefHeight="56.0" prefWidth="770.0" style="-fx-font-size: 14px;"
+                              styleClass="credits-combobox"/>
+                    <AnchorPane fx:id="pParams" layoutX="15.0" layoutY="120.0" prefHeight="185.0"
+                                prefWidth="350.0" visible="false">
+                        <Label layoutX="2.0" layoutY="7.0" prefHeight="27.0" prefWidth="350.0"
+                               style="-fx-font-size: 18px;" text="Method parameters:">
+                        </Label>
+                        <AnchorPane fx:id="pParamsContainer" layoutY="30.0" minHeight="0.0"
+                                    minWidth="0.0" prefHeight="140.0" prefWidth="500.0"/>
+                    </AnchorPane>
                 </Pane>
-                <TabPane layoutX="20.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="430.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
-                    <tabs>
-                        <Tab fx:id="favoriteContractsTab" onSelectionChanged="#updateSelectedTab" text="Favorites">
-                            <content>
-                                <TableView fx:id="favoriteContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view" />
-                            </content>
-                        </Tab>
-                        <Tab fx:id="myContractsTab" onSelectionChanged="#updateSelectedTab" text="My smart contracts">
-                            <content>
-                                <TableView fx:id="smartContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0" minWidth="430.0" prefHeight="325.0" prefWidth="430.0" styleClass="credits-smart-table-view" />
-                            </content>
-                        </Tab>
-                    </tabs>
-                </TabPane>
-                <Label layoutX="501.0" layoutY="159.0" style="-fx-font-size: 14px;" styleClass="text" text="Contract address">
-                </Label>
-                <Button layoutX="1085.0" layoutY="590.0" onAction="#handleExecute" prefHeight="60.0" prefWidth="200.0" style="-fx-font-family: Times New Roman;" styleClass="credits-button" text="EXECUTE" />
-            <HBox layoutX="490.0" layoutY="121.0" maxWidth="800.0" prefHeight="32.0" prefWidth="800.0">
-               <children>
-                      <TextField fx:id="tfAddress" editable="false" prefHeight="32.0" prefWidth="450.0" style="-fx-background-color: transparent; -fx-background-insets: 0px; -fx-font-size: 14px;" styleClass="arrow" text="Please choose smart contract" />
-                      <ToggleButton fx:id="tbFavorite" mnemonicParsing="false" prefHeight="55.0" prefWidth="71.0" styleClass="credits-checkbox">
-                </ToggleButton>
-               </children>
-            </HBox>
-            <Button layoutX="406.0" layoutY="212.0" minHeight="40.0" minWidth="40.0" onAction="#handleRefreshSmarts" prefHeight="40.0" prefWidth="40.0" style="-fx-border-color: transparent; -fx-background-color: transparent;" styleClass="credits-button-refresh">
-               <graphic>
-                  <ImageView fitHeight="32.0" fitWidth="32.0" style="-fx-background-color: transparent;">
-                     <image>
-                        <Image url="@../img/reload.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Label layoutX="313.0" layoutY="611.0" styleClass="credits-not-padding-label" text="Transaction Fee in CS" />
-            <TextField fx:id="feeField" layoutX="514.0" layoutY="598.0" maxHeight="45.0" minHeight="45.0" minWidth="266.0" prefHeight="45.0" prefWidth="266.0" promptText="(0.01 - 0.03 - Recomended)" styleClass="credits-textField" />
-            <Label layoutX="786.0" layoutY="597.0" prefHeight="45.0" prefWidth="98.0" styleClass="credits-label" text="Actual:" />
-            <Label fx:id="actualOfferedMaxFeeLabel" layoutX="850.0" layoutY="597.0" prefHeight="45.0" prefWidth="227.0" styleClass="credits-label" text="0" textFill="#0000008e">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Label>
-            <Label fx:id="feeErrorLabel" layoutX="265.0" layoutY="628.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" prefWidth="249.0" styleClass="credits--not-padding-labelError" />
-            </children>
-        </Pane>
-    </center>
-</BorderPane>
+            </Pane>
+        </Tab>
+        <Tab text="See the code">
+            <Pane layoutX="400.0" maxHeight="320.0" minHeight="325.0" prefHeight="325.0" prefWidth="800.0"
+                  styleClass="credits-PaneInTab">
+                <StackPane fx:id="pCodePanel" layoutX="1.0" layoutY="15.0" maxHeight="289.0"
+                           maxWidth="798.0" minHeight="289.0" minWidth="798.0" prefHeight="289.0"
+                           prefWidth="798.0"/>
+            </Pane>
+        </Tab>
+        <Tab text="Approved transactions">
+            <VBox layoutX="20.0" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
+                  styleClass="credits-history-tab-pane">
+                <TableView fx:id="approvedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0"
+                           styleClass="credits-history-table-view,credits-transaction-table-view">
+                    <columns>
+                        <TableColumn prefWidth="95.0" text="Id"/>
+                        <TableColumn prefWidth="400.0" text="Source"/>
+                        <TableColumn prefWidth="400.0" text="Target"/>
+                        <TableColumn prefWidth="210.0" text="Amount"/>
+                        <TableColumn prefWidth="140.0" text="State"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+        <Tab text="Unapproved transactions">
+            <VBox minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
+                  styleClass="credits-history-tab-pane">
+                <TableView fx:id="unapprovedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0"
+                           styleClass="credits-history-table-view, credits-transaction-table-view">
+                    <columns>
+                        <TableColumn prefWidth="40.0" text="Id"/>
+                        <TableColumn prefWidth="420.0" text="Source"/>
+                        <TableColumn prefWidth="420.0" text="Target"/>
+                        <TableColumn prefWidth="210.0" text="Amount"/>
+                        <TableColumn prefWidth="140.0" text="State"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+    </TabPane>
+    <Label layoutX="20.0" layoutY="30.0" prefHeight="60.0" prefWidth="398.0" styleClass="credits-topLabelGrayText"
+           text="On this form you can searching and running some smart contracts from blockhain" wrapText="true"/>
+    <Label layoutX="6.0" layoutY="120.0" styleClass="credits-label" text="Search smart contracts"/>
+    <HBox layoutX="20.0" layoutY="150.0" minHeight="45.0" prefHeight="45.0" prefWidth="430.0"
+          style="-fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: black;">
+        <TextField fx:id="tfSearchAddress" prefHeight="45.0" prefWidth="375.0"
+                   style="-fx-background-color: transparent;" styleClass="arrow"/>
+        <Button maxHeight="42.0" minHeight="28.0" onAction="#handleSearch" prefHeight="42.0" prefWidth="56.0"
+                style="-fx-border-color: transparent;" styleClass="credits-button">
+            <graphic>
+                <ImageView fitHeight="30.0" fitWidth="30.0">
+                    <Image url="@../img/search.png"/>
+                </ImageView>
+            </graphic>
+        </Button>
+    </HBox>
+    <Pane layoutX="490.0" prefHeight="80.0" prefWidth="810.0" style="-fx-background-color: #E5E5E5;">
+        <Label prefHeight="17.0" prefWidth="409.0"/>
+        <Label layoutX="379.0" layoutY="8.0" prefHeight="65.0" prefWidth="193.0" style="-fx-font-size: 22;"
+               text="Create new Smart-contract" textAlignment="RIGHT" wrapText="true"/>
+        <Button layoutX="596.0" layoutY="10.0" onAction="#handleCreate" prefHeight="60.0" prefWidth="200.0"
+                style="-fx-background-color: #E5E5E5;" styleClass="credits-button" text="Go"/>
+    </Pane>
+    <TabPane layoutX="20.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="430.0"
+             styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
+        <Tab fx:id="favoriteContractsTab" onSelectionChanged="#updateSelectedTab" text="Favorites">
+            <TableView fx:id="favoriteContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0"
+                       minWidth="430.0" prefHeight="325.0" prefWidth="430.0"
+                       styleClass="credits-smart-table-view"/>
+        </Tab>
+        <Tab fx:id="myContractsTab" onSelectionChanged="#updateSelectedTab" text="My smart contracts">
+            <TableView fx:id="smartContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0"
+                       minWidth="430.0" prefHeight="325.0" prefWidth="430.0"
+                       styleClass="credits-smart-table-view"/>
+        </Tab>
+    </TabPane>
+    <Label layoutX="501.0" layoutY="159.0" style="-fx-font-size: 14px;"   text="Contract address">
+    </Label>
+    <Button layoutX="1085.0" layoutY="590.0" onAction="#handleExecute" prefHeight="60.0" prefWidth="200.0"
+            style="-fx-font-family: Times New Roman;" styleClass="credits-button" text="EXECUTE"/>
+    <HBox layoutX="490.0" layoutY="121.0" maxWidth="800.0" prefHeight="32.0" prefWidth="800.0">
+        <TextField fx:id="tfAddress" editable="false" prefHeight="32.0" prefWidth="450.0"
+                   style="-fx-background-color: transparent; -fx-background-insets: 0px; -fx-font-size: 14px;"
+                   styleClass="arrow" text="Please choose smart contract"/>
+        <ToggleButton fx:id="tbFavorite" mnemonicParsing="false" prefHeight="55.0" prefWidth="71.0"
+                      styleClass="credits-checkbox">
+        </ToggleButton>
+    </HBox>
+    <Button layoutX="406.0" layoutY="212.0" minHeight="40.0" minWidth="40.0" onAction="#handleRefreshSmarts"
+            prefHeight="40.0" prefWidth="40.0" style="-fx-border-color: transparent; -fx-background-color: transparent;"
+            styleClass="credits-button-refresh">
+        <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" style="-fx-background-color: transparent;">
+                <Image url="@../img/reload.png"/>
+            </ImageView>
+        </graphic>
+    </Button>
+    <Label layoutX="492.0" layoutY="605.0" prefHeight="30.0" style="-fx-font-size: 12;"
+           styleClass="credits-not-padding-label" text="Transaction Fee in CS"/>
+    <Label layoutX="867.0" layoutY="605.0" prefHeight="30.0" prefWidth="69.0" style="-fx-font-size: 12;"
+           styleClass="credits-label" text="Actual:"/>
+    <Label fx:id="actualOfferedMaxFeeLabel" layoutX="928.0" layoutY="605.0" prefHeight="30.0" prefWidth="155.0"
+           style="-fx-font-size: 12;" styleClass="credits-label" text="0" textFill="#0000008e"/>
+    <TextField fx:id="feeField" layoutX="667.0" layoutY="590.0" maxHeight="60.0" maxWidth="200.0" minHeight="45.0"
+               minWidth="57.0" prefHeight="60.0" prefWidth="200.0" promptText="(0.01 - 0.03 - Recomended)"
+               style="-fx-font-size: 12px;" styleClass="credits-textField"/>
+    <Label fx:id="feeErrorLabel" layoutX="490.0" layoutY="620.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0"
+           prefWidth="174.0" style="-fx-font-size: 12;" styleClass="credits--not-padding-labelError"/>
+</Pane>
