@@ -26,6 +26,8 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.lang.model.SourceVersion;
 import java.util.ArrayList;
@@ -38,6 +40,8 @@ import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.EXTENSION_STANDARD_CLASS;
 
 public class DeployTabController extends AbstractController {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(DeployTabController.class);
 
     public static final String DEFAULT_TEST = "DefaultTest";
     @FXML
@@ -106,7 +110,7 @@ public class DeployTabController extends AbstractController {
                 sourceCode = String.format(contractFromTemplate, curClassName, curClassName);
             }
             String contractFromTemplate1 = getContractFromTemplate(DEFAULT_TEST);
-            if(contractFromTemplate1 != null) {
+            if (contractFromTemplate1 != null) {
                 testSourceCode = String.format(contractFromTemplate1, curClassName, curClassName);
             }
             DeploySmartListItem item = getCurrentListItem();
@@ -118,6 +122,7 @@ public class DeployTabController extends AbstractController {
             session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
             initNewContractForm();
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             DeploySmartListItem currentListItem = getCurrentListItem();
             currentListItem.sourceCode = DEFAULT_SOURCE_CODE;
             saveTypeOfContract(currentListItem);
@@ -193,7 +198,7 @@ public class DeployTabController extends AbstractController {
             }
             session.lastSmartIndex = deployContractList.getSelectionModel().getSelectedIndex();
             if (oldValue != null) {
-                oldValue.sourceCode = codeArea.getText();
+                saveCodeFromTextArea(oldValue);
             }
             if (newValue.state == DeploySmartListItem.ItemState.NEW) {
                 deleteMainTabs();
@@ -205,7 +210,7 @@ public class DeployTabController extends AbstractController {
         });
 
         if (deploySmartListItems.isEmpty()) {
-            DeploySmartListItem deploySmartItem = new DeploySmartListItem(null,null,
+            DeploySmartListItem deploySmartItem = new DeploySmartListItem(null, null,
                 DeployControllerUtils.checkContractNameExist("Contract", deployContractList.getItems()),
                 DeploySmartListItem.ItemState.NEW);
             deployContractList.getItems().add(deploySmartItem);
@@ -222,6 +227,14 @@ public class DeployTabController extends AbstractController {
             returnMainTabs(getCurrentListItem());
         }
         tabPane.getSelectionModel().select(0);
+    }
+
+    private void saveCodeFromTextArea(DeploySmartListItem item) {
+        if (codeAreaTab.isSelected()) {
+            item.sourceCode = codeArea.getText();
+        } else if (testingTab.isSelected()) {
+            item.testSourceCode = codeArea.getText();
+        }
     }
 
     private void initErrorTableView() {
@@ -284,7 +297,8 @@ public class DeployTabController extends AbstractController {
     @Override
     public void formDeinitialize() {
         DeploySmartListItem item = getCurrentListItem();
-        item.sourceCode = codeArea.getText();
+        saveCodeFromTextArea(item);
+        session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
         codeArea.cleanAll();
     }
 
@@ -304,6 +318,12 @@ public class DeployTabController extends AbstractController {
                 testingTab.setContent(null);
                 codeAreaTab.setContent(tabContent);
                 DeploySmartListItem currentListItem = getCurrentListItem();
+                if (currentListItem.sourceCode == null) {
+                    currentListItem.sourceCode = "";
+                }
+                if(!codeArea.getText().isEmpty()) {
+                    currentListItem.testSourceCode = codeArea.getText();
+                }
                 codeArea.replaceText(currentListItem.sourceCode);
                 treeViewsController.refreshTreeView(codeArea);
             });
@@ -312,9 +332,16 @@ public class DeployTabController extends AbstractController {
                 codeAreaTab.setContent(null);
                 testingTab.setContent(tabContent);
                 DeploySmartListItem currentListItem = getCurrentListItem();
+                if (currentListItem.testSourceCode == null) {
+                    currentListItem.testSourceCode = "";
+                }
+                if(!codeArea.getText().isEmpty()) {
+                    currentListItem.sourceCode = codeArea.getText();
+                }
                 codeArea.replaceText(currentListItem.testSourceCode);
                 treeViewsController.refreshTreeView(codeArea);
-            }); ;
+            });
+            ;
 
         }
     }

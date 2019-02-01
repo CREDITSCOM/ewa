@@ -5,7 +5,6 @@ import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.struct.DeploySmartListItem;
-import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +30,6 @@ public class Session {
     public ContractInteractionService initializeContractInteractionService() {
         return new ContractInteractionService(this);
     }
-    public ObservableList<DeploySmartListItem> deploySmartListItems;
 
 
     public void close() {
