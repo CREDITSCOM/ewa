@@ -38,7 +38,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -75,7 +74,6 @@ import static com.credits.wallet.desktop.VistaNavigator.loadVista;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.getContractFromTemplate;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.getTokenStandard;
-import static com.credits.wallet.desktop.utils.DeployControllerUtils.refreshTreeView;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.saveSmartInTokenList;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea.DEFAULT_SOURCE_CODE;
@@ -97,13 +95,13 @@ public class SmartContractDeployController extends AbstractController {
     public Pane mainPane;
     public Pane tabPanel;
 
+    @FXML
+    private TreeViewController treeViewsController;
+
     ContextMenu contextMenu = new ContextMenu();
 
     @FXML
     public ComboBox<String> cbContractType;
-
-    @FXML
-    public TextField deployName;
 
     @FXML
     public ListView<DeploySmartListItem> deployContractList;
@@ -138,9 +136,6 @@ public class SmartContractDeployController extends AbstractController {
     private Pane paneCode;
     @FXML
     private Pane debugPane;
-    @FXML
-    private TreeView<Label> treeView;
-
     @FXML
     private Button deployButton;
     @FXML
@@ -191,9 +186,9 @@ public class SmartContractDeployController extends AbstractController {
 
     private void initCodeArea() {
         codeArea = CodeAreaUtils.initCodeArea(paneCode, false);
-        refreshTreeView(treeView, codeArea);
+        treeViewsController.refreshTreeView(codeArea);
         codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (evt) -> {
-            refreshTreeView(treeView, codeArea);
+            treeViewsController.refreshTreeView(codeArea);
             cleanCompilationPackage(false);
         });
     }
@@ -255,7 +250,7 @@ public class SmartContractDeployController extends AbstractController {
             } else {
                 DeploySmartListItem item = getCurrentListItem();
                 returnMainTabs(item);
-                refreshTreeView(treeView, codeArea);
+                treeViewsController.refreshTreeView(codeArea);
             }
         });
 
@@ -530,7 +525,7 @@ public class SmartContractDeployController extends AbstractController {
         tabPane.getTabs().add(testingTab);
         tabPane.getSelectionModel().select(0);
         codeArea.replaceText(item.sourceCode);
-        refreshTreeView(treeView, codeArea);
+        treeViewsController.refreshTreeView(codeArea);
     }
 
     private DeploySmartListItem getCurrentListItem() {
@@ -556,7 +551,8 @@ public class SmartContractDeployController extends AbstractController {
         } else {
             curClassName = className.getText();
 
-        if ((!SourceVersion.isIdentifier(curClassName) && !SourceVersion.isKeyword(curClassName)) || !curClassName.matches("^[a-zA-Z0-9]+$")) {
+            if ((!SourceVersion.isIdentifier(curClassName) && !SourceVersion.isKeyword(curClassName)) ||
+                !curClassName.matches("^[a-zA-Z0-9]+$")) {
                 FormUtils.showInfo("ClassName is not valid");
                 return;
             }
@@ -576,7 +572,7 @@ public class SmartContractDeployController extends AbstractController {
             initNewContractForm();
         } catch (Exception e) {
             DeploySmartListItem currentListItem = getCurrentListItem();
-            currentListItem.sourceCode= DEFAULT_SOURCE_CODE;
+            currentListItem.sourceCode = DEFAULT_SOURCE_CODE;
             saveTypeOfContract(currentListItem);
         }
     }
