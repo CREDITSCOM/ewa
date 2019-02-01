@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import com.credits.wallet.desktop.struct.ParseResultStruct;
 import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
@@ -43,8 +42,8 @@ public class TreeViewController extends AbstractController {
             bodyDeclarations.addAll(build.constructors);
             bodyDeclarations.addAll(build.methods);
 
-            String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
-            Label labelRoot = new Label(className);
+            //String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
+            Label labelRoot = new Label(/*className*/);
             TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
 
 

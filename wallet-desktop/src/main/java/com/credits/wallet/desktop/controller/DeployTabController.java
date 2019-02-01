@@ -39,6 +39,9 @@ import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.
 
 public class DeployTabController extends AbstractController {
 
+    public static final String DEFAULT_TEST = "DefaultTest";
+    @FXML
+    public SplitPane tabContent;
     @FXML
     private TreeViewController treeViewsController;
     @FXML
@@ -71,7 +74,7 @@ public class DeployTabController extends AbstractController {
     SmartContractDeployController parentController;
 
     public void handleAddContract() {
-        DeploySmartListItem deploySmartItem = new DeploySmartListItem(null,
+        DeploySmartListItem deploySmartItem = new DeploySmartListItem(null, null,
             DeployControllerUtils.checkContractNameExist("NewContract", deployContractList.getItems()),
             DeploySmartListItem.ItemState.NEW);
         deployContractList.getItems().add(deploySmartItem);
@@ -98,11 +101,17 @@ public class DeployTabController extends AbstractController {
         try {
             String contractFromTemplate = getContractFromTemplate(selectedType);
             String sourceCode = null;
+            String testSourceCode = null;
             if (contractFromTemplate != null) {
                 sourceCode = String.format(contractFromTemplate, curClassName, curClassName);
             }
+            String contractFromTemplate1 = getContractFromTemplate(DEFAULT_TEST);
+            if(contractFromTemplate1 != null) {
+                testSourceCode = String.format(contractFromTemplate1, curClassName, curClassName);
+            }
             DeploySmartListItem item = getCurrentListItem();
             item.sourceCode = sourceCode;
+            item.testSourceCode = testSourceCode;
             item.name = DeployControllerUtils.checkContractNameExist(curClassName, deployContractList.getItems());
             saveTypeOfContract(item);
             deployContractList.refresh();
@@ -196,9 +205,9 @@ public class DeployTabController extends AbstractController {
         });
 
         if (deploySmartListItems.isEmpty()) {
-            DeploySmartListItem deploySmartItem = new DeploySmartListItem(DEFAULT_SOURCE_CODE,
+            DeploySmartListItem deploySmartItem = new DeploySmartListItem(null,null,
                 DeployControllerUtils.checkContractNameExist("Contract", deployContractList.getItems()),
-                DeploySmartListItem.ItemState.SAVED);
+                DeploySmartListItem.ItemState.NEW);
             deployContractList.getItems().add(deploySmartItem);
             deployContractList.getSelectionModel().selectFirst();
             session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
@@ -286,5 +295,27 @@ public class DeployTabController extends AbstractController {
         initDeployContractList();
         initSplitPane();
         initErrorTableView();
+    }
+
+    @FXML
+    private void updateSelectedTab() {
+        if (codeAreaTab != null && codeAreaTab.isSelected()) {
+            Platform.runLater(() -> {
+                testingTab.setContent(null);
+                codeAreaTab.setContent(tabContent);
+                DeploySmartListItem currentListItem = getCurrentListItem();
+                codeArea.replaceText(currentListItem.sourceCode);
+                treeViewsController.refreshTreeView(codeArea);
+            });
+        } else if (testingTab != null && testingTab.isSelected()) {
+            Platform.runLater(() -> {
+                codeAreaTab.setContent(null);
+                testingTab.setContent(tabContent);
+                DeploySmartListItem currentListItem = getCurrentListItem();
+                codeArea.replaceText(currentListItem.testSourceCode);
+                treeViewsController.refreshTreeView(codeArea);
+            }); ;
+
+        }
     }
 }

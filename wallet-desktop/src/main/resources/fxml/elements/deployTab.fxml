@@ -27,8 +27,8 @@
                 </HBox>
             </Pane>
         </Tab>
-        <Tab fx:id="codeAreaTab" closable="false" text="CodeAreaTab">
-            <SplitPane dividerPositions="0.5" prefHeight="100.0" prefWidth="200.0" style="-fx-border-color: black; -fx-padding: 0; -fx-background-insets: 15; -fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: transparent;">
+        <Tab fx:id="codeAreaTab" closable="false" onSelectionChanged="#updateSelectedTab" text="CodeAreaTab">
+            <SplitPane fx:id="tabContent" dividerPositions="0.5" prefHeight="100.0" prefWidth="200.0" style="-fx-border-color: black; -fx-padding: 0; -fx-background-insets: 15; -fx-border-radius: 15; -fx-background-radius: 15; -fx-background-color: transparent;">
                 <SplitPane fx:id="splitPane" dividerPositions="0.9" orientation="VERTICAL" prefHeight="513.0" prefWidth="813.0" style="-fx-background-color: transparent; -fx-border-radius: 15 0 0 15; -fx-background-radius: 15;">
                     <VBox fx:id="paneCode" layoutY="27.0" maxHeight="384.0" prefHeight="347.0" prefWidth="448.0" style="-fx-padding: 15 0 0 0;" />
                     <VBox fx:id="debugPane" minHeight="95.0" prefHeight="95.0" prefWidth="446.0" style="-fx-padding: 0 0 15 0; -fx-border-width: 1 0 0 0; -fx-border-color: transparent;">
@@ -38,7 +38,7 @@
                 <fx:include fx:id="treeViews" source="treeView.fxml" />
             </SplitPane>
         </Tab>
-        <Tab fx:id="testingTab" closable="false" text="UnitTests">
+        <Tab fx:id="testingTab" closable="false" onSelectionChanged="#updateSelectedTab" text="UnitTests">
         </Tab>
     </TabPane>
 </Pane>
