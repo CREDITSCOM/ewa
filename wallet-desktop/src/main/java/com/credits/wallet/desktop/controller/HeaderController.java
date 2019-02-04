@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.general.thrift.ThriftClientPool;
 import com.credits.wallet.desktop.VistaNavigator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -54,6 +55,8 @@ public class HeaderController implements Initializable {
     private Runnable runnable;
     private Future future;
     private boolean flag = false;
+    private boolean connect = true;
+
     @FXML
     private void handleLogout() {
         parentController.closeSession();
@@ -79,14 +82,20 @@ public class HeaderController implements Initializable {
     public void initializeSynchronize() {
         headerExecService = Executors.newScheduledThreadPool(1);
         runnable = () -> Platform.runLater(() -> {
-
             try {
                 int synchronizePercent = nodeApiService.getSynchronizePercent();
                 sync.setProgress((double)synchronizePercent/100);
                 syncPercent.setText(synchronizePercent + "%");
                 if (synchronizePercent == 100 && !flag) {
-                    changeDelay();
+                    changeDelay(DELAY_AFTER_FULL_SYNC);
                 }
+                connect = true;
+            } catch (ThriftClientPool.ThriftClientException te) {
+                if(connect) {
+                    changeDelay(30);
+                }
+                connect = false;
+                LOGGER.error("Connection was refused");
             } catch (Exception e) {
                 sync.setProgress(0);
                 syncPercent.setText("0%");
@@ -95,10 +104,10 @@ public class HeaderController implements Initializable {
         future = headerExecService.scheduleWithFixedDelay(runnable, 0, DELAY_BEFORE_FULL_SYNC, TimeUnit.SECONDS);
     }
 
-    private void changeDelay() {
+    private void changeDelay(int delay) {
         flag = future.cancel(false);
         System.out.println("Synchronized is 100% : " + flag);
-        future = headerExecService.scheduleWithFixedDelay(runnable, 0, DELAY_AFTER_FULL_SYNC, TimeUnit.SECONDS);
+        future = headerExecService.scheduleWithFixedDelay(runnable, delay, delay, TimeUnit.SECONDS);
     }
 
 

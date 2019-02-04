@@ -82,22 +82,6 @@ public class DeployControllerUtils {
     public short actualOfferedMaxFee16Bits;
 
 
-    public void initializeFee(TextField feeField, Label actualOfferedMaxFeeLabel, Label feeErrorLabel) {
-        feeField.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                newValue = NumberUtils.getCorrectNum(newValue);
-                if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
-                    refreshOfferedMaxFeeValues(oldValue,feeField,actualOfferedMaxFeeLabel,feeErrorLabel);
-                    return;
-                }
-                refreshOfferedMaxFeeValues(newValue,feeField,actualOfferedMaxFeeLabel,feeErrorLabel);
-            } catch (Exception e) {
-                //FormUtils.showError("Error. Reason: " + e.getMessage());
-                refreshOfferedMaxFeeValues(oldValue,feeField,actualOfferedMaxFeeLabel,feeErrorLabel);
-            }
-        });
-    }
-
     private void refreshOfferedMaxFeeValues(String oldValue,TextField feeField, Label actualOfferedMaxFeeLabel, Label feeErrorLabel) {
         if (oldValue.isEmpty()) {
             actualOfferedMaxFeeLabel.setText("");

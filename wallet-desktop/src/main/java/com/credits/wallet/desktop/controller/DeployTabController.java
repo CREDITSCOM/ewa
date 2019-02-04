@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.getContractFromTemplate;
-import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea.DEFAULT_SOURCE_CODE;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.BASIC_STANDARD_CLASS;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.DEFAULT_STANDARD_CLASS;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.EXTENSION_STANDARD_CLASS;
@@ -57,11 +56,11 @@ public class DeployTabController extends AbstractController {
     @FXML
     public TabPane tabPane;
     @FXML
-    public Tab testingTab;
+    public Tab testTab;
     @FXML
-    public Tab codeAreaTab;
+    public Tab existSmartTab;
     @FXML
-    public Tab createCodeTab;
+    public Tab newSmartTab;
     @FXML
     public TextField className;
     @FXML
@@ -75,7 +74,86 @@ public class DeployTabController extends AbstractController {
     @FXML
     public CreditsCodeArea codeArea;
 
+    private Tab prevSelectTab;
     SmartContractDeployController parentController;
+
+
+    @Override
+    public void initializeForm(Map<String, Object> objects) {
+        initTabContentPane();
+        initDeployContractList(); //создаем лист с контрактами
+        initCodeAreaTab();//поведение tabов
+    }
+
+    private void initDeployContractList() {
+        addDeleteOnKeybordEvent();
+        addDeleteOnSecondButtonEvent();
+        addListViewSelectEvent();
+        initStartListViewState();
+    }
+
+    private void initStartListViewState() {
+        tabPane.getTabs().removeAll(existSmartTab, testTab);
+        ArrayList<DeploySmartListItem> deploySmartListItems =
+            session.deployContractsKeeper.getKeptObject().orElseGet(ArrayList::new);
+        if (deploySmartListItems.isEmpty()) {
+            DeploySmartListItem deploySmartItem = new DeploySmartListItem(null, null,
+                DeployControllerUtils.checkContractNameExist("Contract", deployContractList.getItems()),
+                DeploySmartListItem.ItemState.NEW);
+            deployContractList.getItems().add(deploySmartItem);
+            deployContractList.getSelectionModel().selectFirst();
+            session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
+        } else {
+            deployContractList.getItems().addAll(deploySmartListItems);
+            deployContractList.getSelectionModel().select(session.lastSmartIndex);
+        }
+    }
+
+    private void addListViewSelectEvent() {
+        deployContractList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            if(oldValue!=null) {
+                if (oldValue.state.equals(DeploySmartListItem.ItemState.SAVED)) {
+                    if (tabPane.getSelectionModel().getSelectedItem() == existSmartTab) {
+                        oldValue.sourceCode = codeArea.getText();
+                    }
+                    if (tabPane.getSelectionModel().getSelectedItem() == testTab) {
+                        oldValue.testSourceCode = codeArea.getText();
+                    }
+                }
+            }
+            session.lastSmartIndex = deployContractList.getSelectionModel().getSelectedIndex();
+            changeTab();
+        });
+    }
+
+    private void addDeleteOnSecondButtonEvent() {
+        deployContractList.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                Platform.runLater(() -> {
+                    contextMenu.getItems().clear();
+                    contextMenu.hide();
+                    MenuItem removeItem = new MenuItem("Delete");
+                    contextMenu.getItems().add(removeItem);
+                    removeItem.setOnAction(event1 -> {
+                        deleteCurrentListItem();
+                    });
+                    contextMenu.show(deployContractList, event.getScreenX(), event.getScreenY());
+                });
+            }
+        });
+    }
+
+    private void deleteCurrentListItem() {
+        deployContractList.getItems().remove(getCurrentListItem());
+        session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
+        if (deployContractList.getItems().size() == 0) {
+            handleAddContract();
+        }
+    }
+
 
     public void handleAddContract() {
         DeploySmartListItem deploySmartItem = new DeploySmartListItem(null, null,
@@ -84,7 +162,6 @@ public class DeployTabController extends AbstractController {
         deployContractList.getItems().add(deploySmartItem);
         session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
         deployContractList.getSelectionModel().selectLast();
-        deleteMainTabs();
     }
 
     @FXML
@@ -102,34 +179,27 @@ public class DeployTabController extends AbstractController {
                 return;
             }
         }
-        try {
-            String contractFromTemplate = getContractFromTemplate(selectedType);
-            String sourceCode = null;
-            String testSourceCode = null;
-            if (contractFromTemplate != null) {
-                sourceCode = String.format(contractFromTemplate, curClassName, curClassName);
-            }
-            String contractFromTemplate1 = getContractFromTemplate(DEFAULT_TEST);
-            if (contractFromTemplate1 != null) {
-                testSourceCode = String.format(contractFromTemplate1, curClassName, curClassName);
-            }
-            DeploySmartListItem item = getCurrentListItem();
-            item.sourceCode = sourceCode;
-            item.testSourceCode = testSourceCode;
-            item.name = DeployControllerUtils.checkContractNameExist(curClassName, deployContractList.getItems());
-            saveTypeOfContract(item);
-            deployContractList.refresh();
-            session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
-            initNewContractForm();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            DeploySmartListItem currentListItem = getCurrentListItem();
-            currentListItem.sourceCode = DEFAULT_SOURCE_CODE;
-            saveTypeOfContract(currentListItem);
+        String contractFromTemplate = getContractFromTemplate(selectedType);
+        String sourceCode = null;
+        String testSourceCode = null;
+        if (contractFromTemplate != null) {
+            sourceCode = String.format(contractFromTemplate, curClassName, curClassName);
         }
+        String contractFromTemplate1 = getContractFromTemplate(DEFAULT_TEST);
+        if (contractFromTemplate1 != null) {
+            testSourceCode = String.format(contractFromTemplate1, curClassName, curClassName);
+        }
+        DeploySmartListItem item = getCurrentListItem();
+        item.sourceCode = sourceCode;
+        item.testSourceCode = testSourceCode;
+        item.name = DeployControllerUtils.checkContractNameExist(curClassName, deployContractList.getItems());
+        item.state = DeploySmartListItem.ItemState.SAVED;
+        deployContractList.refresh();
+        session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
+        changeTab();
     }
 
-    private void initNewContractForm() {
+    private void initNewSmartTab() {
         className.clear();
         ObservableList<String> items = cbContractType.getItems();
         items.clear();
@@ -137,6 +207,12 @@ public class DeployTabController extends AbstractController {
         items.add(BASIC_STANDARD_CLASS);
         items.add(EXTENSION_STANDARD_CLASS);
         cbContractType.getSelectionModel().select(0);
+    }
+
+    private void initTabContentPane() {
+        initSplitPane();
+        initErrorTableView();
+        initCodeArea();
     }
 
     private void initCodeArea() {
@@ -155,84 +231,11 @@ public class DeployTabController extends AbstractController {
         }
     }
 
-    private void initDeployContractList() {
-        ArrayList<DeploySmartListItem> deploySmartListItems =
-            session.deployContractsKeeper.getKeptObject().orElseGet(ArrayList::new);
-
-
-        final KeyCombination keyCombinationShiftC = new KeyCodeCombination(KeyCode.DELETE, KeyCombination.CONTROL_DOWN);
-
-        deployContractList.setOnKeyPressed(event -> {
-            if (keyCombinationShiftC.match(event)) {
-                deployContractList.getItems().remove(getCurrentListItem());
-                session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
-                if (deployContractList.getItems().size() == 0) {
-                    handleAddContract();
-                }
-            }
-        });
-
-        deployContractList.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.SECONDARY) {
-                Platform.runLater(() -> {
-                    contextMenu.getItems().clear();
-                    contextMenu.hide();
-                    MenuItem removeItem = new MenuItem("Delete");
-                    contextMenu.getItems().add(removeItem);
-
-                    removeItem.setOnAction(event1 -> {
-                        deployContractList.getItems().remove(getCurrentListItem());
-                        session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
-                        if (deployContractList.getItems().size() == 0) {
-                            handleAddContract();
-                        }
-                    });
-                    contextMenu.show(deployContractList, event.getScreenX(), event.getScreenY());
-                });
-            }
-        });
-
-        deployContractList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null) {
-                return;
-            }
-            session.lastSmartIndex = deployContractList.getSelectionModel().getSelectedIndex();
-            if (oldValue != null) {
-                saveCodeFromTextArea(oldValue);
-            }
-            if (newValue.state == DeploySmartListItem.ItemState.NEW) {
-                deleteMainTabs();
-            } else {
-                DeploySmartListItem item = getCurrentListItem();
-                returnMainTabs(item);
-                treeViewsController.refreshTreeView(codeArea);
-            }
-        });
-
-        if (deploySmartListItems.isEmpty()) {
-            DeploySmartListItem deploySmartItem = new DeploySmartListItem(null, null,
-                DeployControllerUtils.checkContractNameExist("Contract", deployContractList.getItems()),
-                DeploySmartListItem.ItemState.NEW);
-            deployContractList.getItems().add(deploySmartItem);
-            deployContractList.getSelectionModel().selectFirst();
-            session.deployContractsKeeper.keepObject(new ArrayList<>(deployContractList.getItems()));
-        } else {
-            deployContractList.getItems().addAll(deploySmartListItems);
-            deployContractList.getSelectionModel().select(session.lastSmartIndex);
-        }
-
-        if (getCurrentListItem().state.equals(DeploySmartListItem.ItemState.NEW)) {
-            deleteMainTabs();
-        } else {
-            returnMainTabs(getCurrentListItem());
-        }
-        tabPane.getSelectionModel().select(0);
-    }
 
     private void saveCodeFromTextArea(DeploySmartListItem item) {
-        if (codeAreaTab.isSelected()) {
+        if (existSmartTab.isSelected()) {
             item.sourceCode = codeArea.getText();
-        } else if (testingTab.isSelected()) {
+        } else if (testTab.isSelected()) {
             item.testSourceCode = codeArea.getText();
         }
     }
@@ -266,27 +269,26 @@ public class DeployTabController extends AbstractController {
         });
     }
 
-    private void saveTypeOfContract(DeploySmartListItem item) {
-        item.state = DeploySmartListItem.ItemState.SAVED;
-        returnMainTabs(item);
-    }
-
-    private void deleteMainTabs() {
+    private void changeTab() {
         parentController.cleanCompilationPackage(true);
-        tabPane.getTabs().removeAll(createCodeTab, codeAreaTab, testingTab);
-        tabPane.getTabs().add(createCodeTab);
-        tabPane.getSelectionModel().select(0);
-    }
-
-    private void returnMainTabs(DeploySmartListItem item) {
-        parentController.cleanCompilationPackage(false);
-        tabPane.getTabs().removeAll(createCodeTab, codeAreaTab, testingTab);
-        codeAreaTab.setText(item.name);
-        tabPane.getTabs().add(codeAreaTab);
-        tabPane.getTabs().add(testingTab);
-        tabPane.getSelectionModel().select(0);
-        codeArea.replaceText(item.sourceCode);
-        treeViewsController.refreshTreeView(codeArea);
+        DeploySmartListItem currentListItem = getCurrentListItem();
+        Platform.runLater(() -> {
+            if (currentListItem.state.equals(DeploySmartListItem.ItemState.NEW)) {
+                if(tabPane.getTabs().size()==2) {
+                    tabPane.getTabs().removeAll(existSmartTab, testTab);
+                    tabPane.getTabs().addAll(newSmartTab);
+                }
+                initNewSmartTab();
+            } else {
+                if(tabPane.getTabs().size()==1) {
+                    tabPane.getTabs().remove(newSmartTab);
+                    tabPane.getTabs().addAll(existSmartTab, testTab);
+                }
+                codeArea.replaceText(currentListItem.sourceCode);
+                treeViewsController.refreshTreeView(codeArea);
+            }
+            tabPane.getSelectionModel().clearAndSelect(0);
+        });
     }
 
 
@@ -302,47 +304,79 @@ public class DeployTabController extends AbstractController {
         codeArea.cleanAll();
     }
 
-    @Override
-    public void initializeForm(Map<String, Object> objects) {
-        initCodeArea();
-        initNewContractForm();
-        initDeployContractList();
-        initSplitPane();
-        initErrorTableView();
-    }
-
-    @FXML
-    private void updateSelectedTab() {
-        if (codeAreaTab != null && codeAreaTab.isSelected()) {
-            Platform.runLater(() -> {
-                testingTab.setContent(null);
-                codeAreaTab.setContent(tabContent);
+    int i=0;
+    private void initCodeAreaTab() {
+        tabPane.getSelectionModel().selectedItemProperty().addListener((ov, tabOld, tabNew) -> {
+            i++;
+            if(tabOld!=null) {
+                prevSelectTab = tabOld;
+            }
+            if(tabNew!=null) {
+                System.out.println("prev "+ i+" "+prevSelectTab.getId());
+                System.out.println("new "+ i+" "+tabNew.getId());
                 DeploySmartListItem currentListItem = getCurrentListItem();
-                if (currentListItem.sourceCode == null) {
-                    currentListItem.sourceCode = "";
+                if(prevSelectTab==newSmartTab && tabNew==existSmartTab) {
+                    Platform.runLater(() -> {
+                        existSmartTab.setContent(tabContent);
+                        codeArea.replaceText(currentListItem.sourceCode);
+                        treeViewsController.refreshTreeView(codeArea);
+                    });
                 }
-                if(!codeArea.getText().isEmpty()) {
-                    currentListItem.testSourceCode = codeArea.getText();
+                if(prevSelectTab==existSmartTab && tabNew==testTab) {
+                    Platform.runLater(() -> {
+                        existSmartTab.setContent(null);
+                        currentListItem.sourceCode = codeArea.getText();
+                        testTab.setContent(tabContent);
+                        codeArea.replaceText(currentListItem.testSourceCode);
+                        treeViewsController.refreshTreeView(codeArea);
+                    });
                 }
-                codeArea.replaceText(currentListItem.sourceCode);
-                treeViewsController.refreshTreeView(codeArea);
-            });
-        } else if (testingTab != null && testingTab.isSelected()) {
-            Platform.runLater(() -> {
-                codeAreaTab.setContent(null);
-                testingTab.setContent(tabContent);
-                DeploySmartListItem currentListItem = getCurrentListItem();
-                if (currentListItem.testSourceCode == null) {
-                    currentListItem.testSourceCode = "";
+                if(prevSelectTab==testTab && tabNew==existSmartTab) {
+                    Platform.runLater(() -> {
+                        testTab.setContent(null);
+                        currentListItem.testSourceCode = codeArea.getText();
+                        existSmartTab.setContent(tabContent);
+                        codeArea.replaceText(currentListItem.sourceCode);
+                        treeViewsController.refreshTreeView(codeArea);
+                    });
                 }
-                if(!codeArea.getText().isEmpty()) {
+            }
+/*            DeploySmartListItem currentListItem = getCurrentListItem();
+            if (tabOld != null) {
+                if (tabOld == existSmartTab) {
+                    existSmartTab.setContent(null);
                     currentListItem.sourceCode = codeArea.getText();
                 }
+                if (tabOld == testTab) {
+                    testTab.setContent(null);
+                    currentListItem.testSourceCode = codeArea.getText();
+                }
+            }
+            if (tabNew == existSmartTab) {
+                Platform.runLater(() -> {
+                    existSmartTab.setContent(tabContent);
+                    codeArea.replaceText(currentListItem.sourceCode);
+                    treeViewsController.refreshTreeView(codeArea);
+                });
+            }
+            if (tabNew == testTab) {
+                testTab.setContent(tabContent);
                 codeArea.replaceText(currentListItem.testSourceCode);
                 treeViewsController.refreshTreeView(codeArea);
-            });
-            ;
+            }*/
+        });
 
-        }
+
     }
+
+    private void addDeleteOnKeybordEvent() {
+        final KeyCombination keyCombinationShiftC = new KeyCodeCombination(KeyCode.DELETE, KeyCombination.CONTROL_DOWN);
+
+        deployContractList.setOnKeyPressed(event -> {
+            if (keyCombinationShiftC.match(event)) {
+                deleteCurrentListItem();
+            }
+        });
+    }
+
 }
