@@ -279,6 +279,4 @@ public class SmartContractDeployController extends AbstractController {
         deployTabController.formDeinitialize();
     }
 
-
-
 }

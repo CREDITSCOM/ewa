@@ -22,8 +22,7 @@ public class InMemoryCompilerTest {
         InMemoryCompiler compiler = new InMemoryCompiler();
         CompilationPackage compilationPackage = null;
         try {
-            compilationPackage = compiler.compile(
-                    "public class Contract extends SmartContract { \n" +
+            compilationPackage = compiler.compile( "public class Contract extends SmartContract { \n" +
                             "public Contract() { \n" +
                             "total = 0;wqwe \n" +
                             "} \n" +

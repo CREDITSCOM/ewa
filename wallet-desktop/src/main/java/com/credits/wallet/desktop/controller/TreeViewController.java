@@ -5,11 +5,16 @@ import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +27,9 @@ public class TreeViewController extends AbstractController {
     private static Logger LOGGER = LoggerFactory.getLogger(TreeViewController.class);
 
     @FXML
-    public TreeView<Label> treeView;
+    public TreeView<String> treeView;
+    @FXML
+    DeployTabController parentController;
 
     public void refreshTreeView(CreditsCodeArea codeArea) {
         Thread t = new Thread(() -> refreshClassMembersTree(codeArea));
@@ -43,14 +50,42 @@ public class TreeViewController extends AbstractController {
             bodyDeclarations.addAll(build.methods);
 
             //String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
-            Label labelRoot = new Label(/*className*/);
-            TreeItem<Label> treeRoot = new TreeItem<>(labelRoot);
+
+            TreeItem<String> treeRoot = new TreeItem<>();
 
 
             bodyDeclarations.forEach(classMember -> {
-                Label label = new Label(classMember.toString());
-                TreeItem<Label> treeItem = new TreeItem<>();
-                treeItem.setValue(label);
+                TreeItem<String> treeItem = null;
+                if (classMember instanceof MethodDeclaration && !((MethodDeclaration) classMember).isConstructor()) {
+                    boolean isTest = false;
+                    for (Object modifier : classMember.modifiers()) {
+                        if (modifier instanceof MarkerAnnotation) {
+                            if (modifier.toString().equals("@Test")) {
+                                isTest = true;
+                                break;
+                            }
+                            ;
+                        }
+                    }
+                    if (isTest) {
+                        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/img/play2.png")));
+                        Button button = new Button();
+                        button.setMaxSize(20,20);
+                        button.setCursor(Cursor.HAND);
+                        button.setPickOnBounds(false);
+                        button.setText(((MethodDeclaration) classMember).getName().toString());
+                        button.setStyle("-fx-text-fill:transparent;-fx-background-color: transparent");
+                        button.setOnMouseClicked(event -> {
+                            parentController.doTestMethod(((Button)event.getTarget()).getText());
+                        });
+                        //button.getStyleClass().add("credits-button");
+                        button.setGraphic(icon);
+                        treeItem = new TreeItem<>(classMember.toString(), button);
+                    }
+                }
+                if (treeItem == null) {
+                    treeItem = new TreeItem<>(classMember.toString());
+                }
                 treeRoot.getChildren().add(treeItem);
             });
 

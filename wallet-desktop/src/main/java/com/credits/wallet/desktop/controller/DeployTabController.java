@@ -1,9 +1,14 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.general.util.ByteArrayContractClassLoader;
+import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.struct.DeploySmartListItem;
 import com.credits.wallet.desktop.utils.DeployControllerUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
+import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
@@ -26,11 +31,23 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
+import org.junit.Ignore;
+import org.junit.internal.TextListener;
+import org.junit.runner.Description;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.InitializationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.lang.model.SourceVersion;
+import java.lang.reflect.Method;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.getContractFromTemplate;
@@ -93,7 +110,7 @@ public class DeployTabController extends AbstractController {
     }
 
     private void initStartListViewState() {
-        tabPane.getTabs().removeAll(existSmartTab, testTab);
+        tabPane.getTabs().removeAll(newSmartTab);
         ArrayList<DeploySmartListItem> deploySmartListItems =
             session.deployContractsKeeper.getKeptObject().orElseGet(ArrayList::new);
         if (deploySmartListItems.isEmpty()) {
@@ -114,7 +131,7 @@ public class DeployTabController extends AbstractController {
             if (newValue == null) {
                 return;
             }
-            if(oldValue!=null) {
+            if (oldValue != null) {
                 if (oldValue.state.equals(DeploySmartListItem.ItemState.SAVED)) {
                     if (tabPane.getSelectionModel().getSelectedItem() == existSmartTab) {
                         oldValue.sourceCode = codeArea.getText();
@@ -187,7 +204,7 @@ public class DeployTabController extends AbstractController {
         }
         String contractFromTemplate1 = getContractFromTemplate(DEFAULT_TEST);
         if (contractFromTemplate1 != null) {
-            testSourceCode = String.format(contractFromTemplate1, curClassName, curClassName);
+            testSourceCode = String.format(contractFromTemplate1, curClassName, curClassName, curClassName,session.account);
         }
         DeploySmartListItem item = getCurrentListItem();
         item.sourceCode = sourceCode;
@@ -217,6 +234,7 @@ public class DeployTabController extends AbstractController {
 
     private void initCodeArea() {
         codeArea = CodeAreaUtils.initCodeArea(paneCode, false);
+        treeViewsController.parentController = this;
         treeViewsController.refreshTreeView(codeArea);
         codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (evt) -> {
             treeViewsController.refreshTreeView(codeArea);
@@ -270,19 +288,20 @@ public class DeployTabController extends AbstractController {
     }
 
     private void changeTab() {
-        parentController.cleanCompilationPackage(true);
         DeploySmartListItem currentListItem = getCurrentListItem();
         Platform.runLater(() -> {
             if (currentListItem.state.equals(DeploySmartListItem.ItemState.NEW)) {
-                if(tabPane.getTabs().size()==2) {
+                if (tabPane.getTabs().size() == 2) {
                     tabPane.getTabs().removeAll(existSmartTab, testTab);
                     tabPane.getTabs().addAll(newSmartTab);
                 }
+                parentController.cleanCompilationPackage(true);
                 initNewSmartTab();
             } else {
-                if(tabPane.getTabs().size()==1) {
+                if (tabPane.getTabs().size() == 1) {
                     tabPane.getTabs().remove(newSmartTab);
                     tabPane.getTabs().addAll(existSmartTab, testTab);
+                    parentController.cleanCompilationPackage(false);
                 }
                 codeArea.replaceText(currentListItem.sourceCode);
                 treeViewsController.refreshTreeView(codeArea);
@@ -304,25 +323,21 @@ public class DeployTabController extends AbstractController {
         codeArea.cleanAll();
     }
 
-    int i=0;
     private void initCodeAreaTab() {
         tabPane.getSelectionModel().selectedItemProperty().addListener((ov, tabOld, tabNew) -> {
-            i++;
-            if(tabOld!=null) {
+            if (tabOld != null) {
                 prevSelectTab = tabOld;
             }
-            if(tabNew!=null) {
-                System.out.println("prev "+ i+" "+prevSelectTab.getId());
-                System.out.println("new "+ i+" "+tabNew.getId());
+            if (tabNew != null) {
                 DeploySmartListItem currentListItem = getCurrentListItem();
-                if(prevSelectTab==newSmartTab && tabNew==existSmartTab) {
+                if (prevSelectTab == newSmartTab && tabNew == existSmartTab) {
                     Platform.runLater(() -> {
                         existSmartTab.setContent(tabContent);
                         codeArea.replaceText(currentListItem.sourceCode);
                         treeViewsController.refreshTreeView(codeArea);
                     });
                 }
-                if(prevSelectTab==existSmartTab && tabNew==testTab) {
+                if (prevSelectTab == existSmartTab && tabNew == testTab) {
                     Platform.runLater(() -> {
                         existSmartTab.setContent(null);
                         currentListItem.sourceCode = codeArea.getText();
@@ -331,7 +346,7 @@ public class DeployTabController extends AbstractController {
                         treeViewsController.refreshTreeView(codeArea);
                     });
                 }
-                if(prevSelectTab==testTab && tabNew==existSmartTab) {
+                if (prevSelectTab == testTab && tabNew == existSmartTab) {
                     Platform.runLater(() -> {
                         testTab.setContent(null);
                         currentListItem.testSourceCode = codeArea.getText();
@@ -341,32 +356,7 @@ public class DeployTabController extends AbstractController {
                     });
                 }
             }
-/*            DeploySmartListItem currentListItem = getCurrentListItem();
-            if (tabOld != null) {
-                if (tabOld == existSmartTab) {
-                    existSmartTab.setContent(null);
-                    currentListItem.sourceCode = codeArea.getText();
-                }
-                if (tabOld == testTab) {
-                    testTab.setContent(null);
-                    currentListItem.testSourceCode = codeArea.getText();
-                }
-            }
-            if (tabNew == existSmartTab) {
-                Platform.runLater(() -> {
-                    existSmartTab.setContent(tabContent);
-                    codeArea.replaceText(currentListItem.sourceCode);
-                    treeViewsController.refreshTreeView(codeArea);
-                });
-            }
-            if (tabNew == testTab) {
-                testTab.setContent(tabContent);
-                codeArea.replaceText(currentListItem.testSourceCode);
-                treeViewsController.refreshTreeView(codeArea);
-            }*/
         });
-
-
     }
 
     private void addDeleteOnKeybordEvent() {
@@ -379,4 +369,68 @@ public class DeployTabController extends AbstractController {
         });
     }
 
+    public static class FilterRunner extends BlockJUnit4ClassRunner {
+
+        private List<String> testsToRun;
+        FilterRunner(Class<?> klass, List<String> testsToRun) throws InitializationError {
+            super(klass);
+            this.testsToRun = testsToRun;
+        }
+
+        @Override
+        protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
+            Description description = describeChild(method);
+            if (method.getAnnotation(Ignore.class) != null || !testsToRun.contains(method.getName())) {
+                notifier.fireTestIgnored(description);
+            } else {
+                runLeaf(methodBlock(method), description, notifier);
+            }
+        }
+
+    }
+
+    public void doTestMethod(String methodName) {
+        try {
+            String contractSourceCode = getCurrentListItem().sourceCode;
+            String testSourceCode = codeArea.getText();
+            ClassLoader mainClassLoader = this.getClass().getClassLoader();
+            ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
+            Class<?> mainClass = compileClass(classLoader,contractSourceCode);
+            Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
+            defineClass.setAccessible(true);
+
+            URLClassLoader urlClassLoader = (URLClassLoader) Thread
+                .currentThread().getContextClassLoader();
+
+
+            Class<?> testClass = compileClass(classLoader, testSourceCode);
+            JUnitCore junit = new JUnitCore();
+            junit.addListener(new TextListener(System.out));
+            junit.run(new FilterRunner(testClass, Collections.singletonList(methodName)));
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+
+    }
+
+    private static Class<?> compileSmartContractByteCode(ByteArrayContractClassLoader classLoader, List<ByteCodeObjectData> smartContractByteCodeData) {
+        Class<?> contractClass = null;
+        for (ByteCodeObjectData compilationUnit : smartContractByteCodeData) {
+            Class<?> tempContractClass =
+                classLoader.buildClass(compilationUnit.getName(), compilationUnit.getByteCode());
+            if (!compilationUnit.getName().contains("$")) {
+                contractClass = tempContractClass;
+            }
+        }
+        return contractClass;
+    }
+
+    public Class<?> compileClass(ByteArrayContractClassLoader classLoader, String sourceCode) {
+        CompilationPackage compilationPackage = SourceCodeBuilder.compileSourceCode(classLoader,sourceCode).getCompilationPackage();
+        if (compilationPackage.isCompilationStatusSuccess()) {
+            List<ByteCodeObjectData> byteCodeObjectDataList = GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
+            return compileSmartContractByteCode(classLoader,byteCodeObjectDataList);
+        } else
+            return null;
+    }
 }

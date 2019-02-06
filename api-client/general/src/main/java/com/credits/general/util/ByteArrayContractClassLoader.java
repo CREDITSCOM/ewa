@@ -5,7 +5,6 @@ import java.util.Map;
 
 public class ByteArrayContractClassLoader extends ClassLoader {
     private Map<String, Class<?>> loadedClasses = null;
-    private Class contractClass = null;
 
     public Class<?> buildClass(String className, byte[] byteCode) {
         Class<?> clazz = defineClass(className, byteCode, 0, byteCode.length);
@@ -15,7 +14,7 @@ public class ByteArrayContractClassLoader extends ClassLoader {
     }
 
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    public Class<?> findClass(String name) throws ClassNotFoundException {
         if (loadedClasses != null && loadedClasses.containsKey(name)) {
             return loadedClasses.get(name);
         }

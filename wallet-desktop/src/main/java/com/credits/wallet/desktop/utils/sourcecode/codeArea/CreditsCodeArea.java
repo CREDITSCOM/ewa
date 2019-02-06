@@ -67,7 +67,7 @@ public class CreditsCodeArea extends CodeArea {
     private void initCodeAreaLogic() {
         initKeyPressedLogic();
         initRichTextLogic();
-        this.replaceText(0, 0, DEFAULT_SOURCE_CODE);
+        //this.replaceText(0, 0, DEFAULT_SOURCE_CODE);
     }
 
     private void initRichTextLogic() {
