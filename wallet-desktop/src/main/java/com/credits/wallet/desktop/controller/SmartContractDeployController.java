@@ -89,7 +89,7 @@ public class SmartContractDeployController extends AbstractController {
     }
 
 
-    void cleanCompilationPackage(boolean buildButtonDisable) {
+    public void cleanCompilationPackage(boolean buildButtonDisable) {
         compilationPackage = null;
         deployButton.setDisable(true);
         buildButton.setDisable(buildButtonDisable);
@@ -99,9 +99,9 @@ public class SmartContractDeployController extends AbstractController {
     private void handleBuild() {
         buildButton.setText(COMPILING);
         buildButton.setDisable(true);
-        deployTabController.errorTableView.setVisible(false);
-        deployTabController.codeArea.setDisable(true);
-        supplyAsync(() -> SourceCodeBuilder.compileSourceCode(deployTabController.codeArea.getText())).whenComplete(
+        deployTabController.smartErrorTableView.setVisible(false);
+        deployTabController.smartCodeArea.setDisable(true);
+        supplyAsync(() -> SourceCodeBuilder.compileSourceCode(deployTabController.smartCodeArea.getText())).whenComplete(
             handleCallback(handleBuildResult()));
     }
 
@@ -112,17 +112,17 @@ public class SmartContractDeployController extends AbstractController {
             public void onSuccess(CompilationResult compilationResult) {
                 List errorsList = compilationResult.getErrors();
                 Platform.runLater(() -> {
-                    deployTabController.codeArea.setDisable(false);
+                    deployTabController.smartCodeArea.setDisable(false);
                     buildButton.setText(BUILD);
                 });
 
                 if (errorsList.size() > 0) {
                     Platform.runLater(() -> {
                         buildButton.setDisable(false);
-                        deployTabController.errorTableView.getItems().clear();
-                        deployTabController.errorTableView.getItems().addAll(errorsList);
-                        deployTabController.errorTableView.setVisible(true);
-                        deployTabController.errorTableView.setPrefHeight(deployTabController.debugPane.getPrefHeight());
+                        deployTabController.smartErrorTableView.getItems().clear();
+                        deployTabController.smartErrorTableView.getItems().addAll(errorsList);
+                        deployTabController.smartErrorTableView.setVisible(true);
+                        deployTabController.smartErrorTableView.setPrefHeight(deployTabController.smartErrorPanel.getPrefHeight());
                     });
                 } else {
                     compilationPackage = compilationResult.getCompilationPackage();
@@ -136,7 +136,7 @@ public class SmartContractDeployController extends AbstractController {
             @Override
             public void onError(Throwable e) {
                 Platform.runLater(() -> {
-                    deployTabController.codeArea.setDisable(false);
+                    deployTabController.smartCodeArea.setDisable(false);
                     buildButton.setDisable(false);
                     buildButton.setText(BUILD);
                     FormUtils.showPlatformError(e.getMessage());
@@ -159,7 +159,7 @@ public class SmartContractDeployController extends AbstractController {
             return;
         }
         try {
-            String javaCode = SourceCodeUtils.normalizeSourceCode(deployTabController.codeArea.getText());
+            String javaCode = SourceCodeUtils.normalizeSourceCode(deployTabController.smartCodeArea.getText());
             if (compilationPackage == null) {
                 buildButton.setDisable(false);
                 deployButton.setDisable(true);

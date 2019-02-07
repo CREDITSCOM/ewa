@@ -29,7 +29,7 @@ public class TreeViewController extends AbstractController {
     @FXML
     public TreeView<String> treeView;
     @FXML
-    DeployTabController parentController;
+    public DeployTabController parentController;
 
     public void refreshTreeView(CreditsCodeArea codeArea) {
         Thread t = new Thread(() -> refreshClassMembersTree(codeArea));

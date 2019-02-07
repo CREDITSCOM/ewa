@@ -1,14 +1,22 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.client.node.pojo.TokenStandartData;
-import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.Utils;
+import com.credits.wallet.desktop.controller.DeployTabController;
+import com.credits.wallet.desktop.controller.SmartContractDeployController;
+import com.credits.wallet.desktop.controller.TreeViewController;
 import com.credits.wallet.desktop.struct.DeploySmartListItem;
+import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
+import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
+import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.VBox;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class DeployControllerUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(DeployControllerUtils.class);
-
-
-
 
     public static TokenStandartData getTokenStandard(Class<?> contractClass) {
         TokenStandartData tokenStandart = TokenStandartData.NotAToken;
@@ -78,25 +83,62 @@ public class DeployControllerUtils {
         return smartName;
     }
 
-
-    public short actualOfferedMaxFee16Bits;
-
-
-    private void refreshOfferedMaxFeeValues(String oldValue,TextField feeField, Label actualOfferedMaxFeeLabel, Label feeErrorLabel) {
-        if (oldValue.isEmpty()) {
-            actualOfferedMaxFeeLabel.setText("");
-            feeField.setText("");
-        } else {
-            Pair<Double, Short> actualOfferedMaxFeePair =
-                Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(oldValue));
-            actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
-            actualOfferedMaxFee16Bits = actualOfferedMaxFeePair.getRight();
-            feeField.setText(oldValue);
+    public static void initSplitPane(SplitPane innerSplitPane, VBox errorPanel,
+        TableView<BuildSourceCodeError> tableView) {
+        for (SplitPane.Divider d : innerSplitPane.getDividers()) {
+            d.positionProperty()
+                .addListener((observable, oldValue, newValue) -> tableView.setPrefHeight(errorPanel.getHeight()));
         }
     }
 
-    public static short getActualOfferedMaxFee16Bits() {
-        return 0;
+    public static void initErrorTableView(VBox errorPanel, TableView<BuildSourceCodeError> errorTableView, CreditsCodeArea codeArea) {
+        TableColumn<BuildSourceCodeError, String> tabErrorsColLine = new TableColumn<>();
+        tabErrorsColLine.setText("Line");
+        tabErrorsColLine.setCellValueFactory(new PropertyValueFactory<>("line"));
+        tabErrorsColLine.setPrefWidth(errorPanel.getPrefWidth() * 0.1);
+
+        TableColumn<BuildSourceCodeError, String> tabErrorsColText = new TableColumn<>();
+        tabErrorsColText.setText("Error");
+        tabErrorsColText.setCellValueFactory(new PropertyValueFactory<>("text"));
+        tabErrorsColText.setPrefWidth(errorPanel.getPrefWidth() * 0.88);
+
+        errorTableView.setVisible(false);
+        errorTableView.setPrefHeight(errorPanel.getPrefHeight());
+        errorTableView.setPrefWidth(errorPanel.getPrefWidth());
+
+        errorTableView.getColumns().add(tabErrorsColLine);
+        errorTableView.getColumns().add(tabErrorsColText);
+
+        errorTableView.setOnMousePressed(event -> {
+            if (event.isPrimaryButtonDown() || event.getButton() == MouseButton.PRIMARY) {
+                BuildSourceCodeError tabRow = errorTableView.getSelectionModel().getSelectedItem();
+                try {
+                    codeArea.setCaretPositionOnLine(tabRow.getLine());
+                } catch (Exception ignored) {
+                }
+            }
+        });
     }
+
+    public static CreditsCodeArea initTabCodeArea(VBox sourceCodeBox, TreeViewController treeViewController,
+        DeployTabController deployTabController, SmartContractDeployController smartContractDeployController) {
+        CreditsCodeArea codeArea = CodeAreaUtils.initCodeArea(sourceCodeBox, false);
+        treeViewController.parentController = deployTabController;
+        treeViewController.refreshTreeView(codeArea);
+        initTreeViewCodeAreaListener(codeArea, treeViewController, smartContractDeployController);
+        return codeArea;
+    }
+
+    private static void initTreeViewCodeAreaListener(CreditsCodeArea codeArea, TreeViewController treeViewController,
+        SmartContractDeployController smartContractDeployController) {
+        codeArea.addEventHandler(KeyEvent.KEY_PRESSED, (evt) -> {
+            treeViewController.refreshTreeView(codeArea);
+            smartContractDeployController.cleanCompilationPackage(false);
+        });
+    }
+
+
+
+
 
 }
