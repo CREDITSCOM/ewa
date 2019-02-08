@@ -14,12 +14,14 @@ import com.credits.wallet.desktop.struct.TokenInfoData;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
+import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
 import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -112,21 +114,12 @@ public class SmartContractDeployController extends AbstractController {
             @Override
             @SuppressWarnings("unchecked")
             public void onSuccess(CompilationResult compilationResult) {
-                List errorsList = compilationResult.getErrors();
                 Platform.runLater(() -> {
                     deployTabController.smartCodeArea.setDisable(false);
                     buildButton.setText(BUILD);
                 });
-
-                if (errorsList.size() > 0) {
-                    Platform.runLater(() -> {
-                        buildButton.setDisable(false);
-                        deployTabController.smartErrorTableView.getItems().clear();
-                        deployTabController.smartErrorTableView.getItems().addAll(errorsList);
-                        deployTabController.smartErrorTableView.setVisible(true);
-                        deployTabController.smartErrorTableView.setPrefHeight(deployTabController.smartErrorPanel.getPrefHeight());
-                    });
-                } else {
+                if(checkIsError(deployTabController.smartErrorPanel, deployTabController.smartErrorTableView,
+                    compilationResult)) {
                     compilationPackage = compilationResult.getCompilationPackage();
                     Platform.runLater(() -> {
                         buildButton.setDisable(true);
@@ -146,6 +139,22 @@ public class SmartContractDeployController extends AbstractController {
                 LOGGER.error("failed!", e);
             }
         };
+    }
+
+    boolean checkIsError(VBox smartErrorPanel, TableView<BuildSourceCodeError> tableView,
+        CompilationResult compilationResult) {
+        List<BuildSourceCodeError> errorsList = compilationResult.getErrors();
+        if (errorsList.size() > 0) {
+            Platform.runLater(() -> {
+                buildButton.setDisable(false);
+                tableView.getItems().clear();
+                tableView.getItems().addAll(errorsList);
+                tableView.setVisible(true);
+                tableView.setPrefHeight(smartErrorPanel.getPrefHeight());
+            });
+            return true;
+        }
+        return false;
     }
 
     @FXML

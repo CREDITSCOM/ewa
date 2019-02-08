@@ -78,7 +78,6 @@ public class TreeViewController extends AbstractController {
                         button.setOnMouseClicked(event -> {
                             parentController.doTestMethod(((Button)event.getTarget()).getText());
                         });
-                        //button.getStyleClass().add("credits-button");
                         button.setGraphic(icon);
                         treeItem = new TreeItem<>(classMember.toString(), button);
                     }

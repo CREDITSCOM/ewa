@@ -8,6 +8,7 @@ import com.credits.wallet.desktop.struct.DeploySmartListItem;
 import com.credits.wallet.desktop.utils.DeployControllerUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
+import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
 import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
@@ -21,6 +22,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -39,6 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.lang.model.SourceVersion;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,6 +72,12 @@ public class DeployTabController extends AbstractController {
     public CreditsCodeArea smartCodeArea;
     @FXML
     public VBox smartErrorPanel;
+    @FXML
+    public TextArea testConsole;
+    @FXML
+    public Tab testBottomErrorTab;
+    @FXML
+    public TabPane testBottomTabPane;
     @FXML
     private TreeViewController smartTreeViewController;
     @FXML
@@ -105,6 +115,7 @@ public class DeployTabController extends AbstractController {
     @FXML
     public TextField className;
 
+    OutputStream out;
 
     private Tab prevSelectTab;
     SmartContractDeployController parentController;
@@ -112,22 +123,30 @@ public class DeployTabController extends AbstractController {
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
+        initConsoleOutput();
         initNewSmartTab();
         initSmartTab();
         initTestTab();
         initDeployContractList();
     }
 
+    private void initConsoleOutput() {
+        out = new OutputStream() {
+            @Override
+            public void write(int b) {
+                appendTextToTextArea(testConsole, String.valueOf((char) b));
+            }
+        };
+    }
+
     private void initTestTab() {
-        testCodeArea = initTabCodeArea(testSourceCodeBox, testTreeViewController, this,
-            parentController);
+        testCodeArea = initTabCodeArea(testSourceCodeBox, testTreeViewController, this, parentController);
     }
 
     private void initSmartTab() {
         initSplitPane(smartInnerSplitPane, smartErrorPanel, smartErrorTableView);
         initErrorTableView(smartErrorPanel, smartErrorTableView, smartCodeArea);
-        smartCodeArea = initTabCodeArea(smartSourceCodeBox, smartTreeViewController, this,
-            parentController);
+        smartCodeArea = initTabCodeArea(smartSourceCodeBox, smartTreeViewController, this, parentController);
     }
 
     private void initNewSmartTab() {
@@ -155,6 +174,7 @@ public class DeployTabController extends AbstractController {
             }
         });
     }
+
     private void initStartListViewState(ListView<DeploySmartListItem> listView) {
         ArrayList<DeploySmartListItem> deploySmartListItems =
             session.deployContractsKeeper.getKeptObject().orElseGet(ArrayList::new);
@@ -173,7 +193,7 @@ public class DeployTabController extends AbstractController {
 
     private void addListViewSelectEvent(ListView<DeploySmartListItem> listView) {
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if(oldValue!=null) {
+            if (oldValue != null) {
                 saveCodeFromTextArea(oldValue);
             }
             changeTab(newValue);
@@ -326,14 +346,23 @@ public class DeployTabController extends AbstractController {
 
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
             Class<?> testClass = compileClasses(classLoader, sourceCodes);
-            JUnitCore junit = new JUnitCore();
-            junit.addListener(new TextListener(System.out));
-            junit.run(new FilterRunner(testClass, Collections.singletonList(methodName)));
+            if(testClass!=null) {
+                JUnitCore junit = new JUnitCore();
+                junit.addListener(new TextListener(new PrintStream(out, true)));
+                junit.run(new FilterRunner(testClass, Collections.singletonList(methodName)));
+            } else {
+                testBottomTabPane.getSelectionModel().select(testBottomErrorTab);
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
-
     }
+
+
+    public void appendTextToTextArea(TextArea textArea, String str) {
+        Platform.runLater(() -> textArea.appendText(str));
+    }
+
 
     private static Class<?> compileSmartContractByteCode(ByteArrayContractClassLoader classLoader,
         List<ByteCodeObjectData> smartContractByteCodeData) {
@@ -349,13 +378,13 @@ public class DeployTabController extends AbstractController {
     }
 
     public Class<?> compileClasses(ByteArrayContractClassLoader classLoader, ArrayList<String> sourceCode) {
-        CompilationPackage compilationPackage = SourceCodeBuilder.compileSourceCode(sourceCode).getCompilationPackage();
-        if (compilationPackage.isCompilationStatusSuccess()) {
+        CompilationResult compilationResult = SourceCodeBuilder.compileSourceCode(sourceCode);
+        if (parentController.checkIsError(testErrorPane1, testErrorTableView, compilationResult)) {
+            CompilationPackage compilationPackage = compilationResult.getCompilationPackage();
             List<ByteCodeObjectData> byteCodeObjectDataList =
                 GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
             return compileSmartContractByteCode(classLoader, byteCodeObjectDataList);
-        } else {
-            return null;
         }
+        return null;
     }
 }

@@ -63,13 +63,13 @@
                     <VBox fx:id="testSourceCodeBox" layoutY="27.0" maxHeight="441.0" prefHeight="441.0" prefWidth="446.0" style="-fx-padding: 15 0 0 0;" />
                     <fx:include fx:id="testTreeView" source="treeView.fxml" />
                 </SplitPane>
-                <TabPane prefWidth="900.0" side="BOTTOM" styleClass="credits-deploy-bottom-tab-pane">
+                <TabPane fx:id="testBottomTabPane" prefWidth="900.0" side="BOTTOM" styleClass="credits-deploy-bottom-tab-pane">
                     <Tab closable="false" styleClass="credits-deploy-bottom-tab" text="Console">
                         <VBox>
-                            <TextArea prefHeight="443.0" prefWidth="900.0" styleClass="credits-deploy-textArea" />
+                            <TextArea fx:id="testConsole" prefHeight="443.0" prefWidth="900.0" styleClass="credits-deploy-textArea" />
                         </VBox>
                     </Tab>
-                    <Tab closable="false" styleClass="credits-deploy-bottom-tab" text="Errors">
+                    <Tab fx:id="testBottomErrorTab" closable="false" styleClass="credits-deploy-bottom-tab" text="Errors">
                         <VBox fx:id="testErrorPane1" minHeight="95.0" prefHeight="95.0" prefWidth="446.0" style="-fx-padding: 0 0 15 0; -fx-border-width: 1 0 0 0; -fx-border-color: transparent;">
                             <TableView fx:id="testErrorTableView" prefHeight="65.0" prefWidth="900.0" styleClass="credits-history-table-view" />
                         </VBox>
