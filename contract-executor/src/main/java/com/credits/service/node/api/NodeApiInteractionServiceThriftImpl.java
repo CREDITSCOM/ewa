@@ -7,7 +7,6 @@ import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.service.NodeApiService;
-import com.credits.client.node.util.SignUtils;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.util.Base58;
@@ -69,7 +68,6 @@ public class NodeApiInteractionServiceThriftImpl implements NodeApiInteractionSe
 
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(calcTransactionIdSourceTargetResult.getTransactionId(), Base58.decode(calcTransactionIdSourceTargetResult.getSource()), Base58.decode(calcTransactionIdSourceTargetResult.getTarget()), decAmount, maxFee,  null, userData);
-        SignUtils.signTransaction(transactionFlowData, loadPrivateKey(specialProperty));
         service.transactionFlow(transactionFlowData);
     }
 
