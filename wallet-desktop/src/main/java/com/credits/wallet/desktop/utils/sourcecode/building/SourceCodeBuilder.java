@@ -11,10 +11,13 @@ import org.eclipse.jdt.core.compiler.IProblem;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SourceCodeBuilder {
     public static CompilationResult compileSourceCode(String sourceCode) {
+        Map<String, String> classesToCompile = new HashMap<>();
         CompilationPackage compilationPackage = null;
         String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
         List<BuildSourceCodeError> errorsList = new ArrayList<>();
@@ -36,7 +39,8 @@ public class SourceCodeBuilder {
                 errorsList.add(tr);
             }
         } else {
-            compilationPackage = new InMemoryCompiler().compile(sourceCode);
+            classesToCompile.put(className, sourceCode);
+            compilationPackage = new InMemoryCompiler().compile(classesToCompile);
             if (!compilationPackage.isCompilationStatusSuccess()) {
                 DiagnosticCollector collector = compilationPackage.getCollector();
                 List<Diagnostic> diagnostics = collector.getDiagnostics();
@@ -48,6 +52,18 @@ public class SourceCodeBuilder {
                 });
             }
         }
-        return new CompilationResult(compilationPackage,errorsList);
+        return new CompilationResult(compilationPackage, errorsList);
+    }
+
+    public static CompilationResult compileSourceCode(List<String> sourceCodes) {
+        List<BuildSourceCodeError> errorsList = new ArrayList<>();
+        Map<String, String> classesToCompile = new HashMap<>();
+        sourceCodes.forEach(code->{
+            String className = GeneralSourceCodeUtils.parseClassName(code);
+            //ParseCodeUtils.checkClassAndSuperclassNames(className, code);
+            classesToCompile.put(className,code);
+        });
+        CompilationPackage compilationPackage = new InMemoryCompiler().compile(classesToCompile);
+        return new CompilationResult(compilationPackage, errorsList);
     }
 }

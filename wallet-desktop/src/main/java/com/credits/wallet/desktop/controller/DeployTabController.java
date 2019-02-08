@@ -39,8 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.lang.model.SourceVersion;
-import java.lang.reflect.Method;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -318,17 +316,12 @@ public class DeployTabController extends AbstractController {
         try {
             String contractSourceCode = smartCodeArea.getText();
             String testSourceCode = testCodeArea.getText();
-            ClassLoader mainClassLoader = this.getClass().getClassLoader();
+            ArrayList<String> sourceCodes = new ArrayList<>();
+            sourceCodes.add(contractSourceCode);
+            sourceCodes.add(testSourceCode);
+
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
-            Class<?> mainClass = compileClass(classLoader, contractSourceCode);
-            Method defineClass =
-                ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
-            defineClass.setAccessible(true);
-
-            URLClassLoader urlClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-
-
-            Class<?> testClass = compileClass(classLoader, testSourceCode);
+            Class<?> testClass = compileClasses(classLoader, sourceCodes);
             JUnitCore junit = new JUnitCore();
             junit.addListener(new TextListener(System.out));
             junit.run(new FilterRunner(testClass, Collections.singletonList(methodName)));
@@ -340,18 +333,18 @@ public class DeployTabController extends AbstractController {
 
     private static Class<?> compileSmartContractByteCode(ByteArrayContractClassLoader classLoader,
         List<ByteCodeObjectData> smartContractByteCodeData) {
-        Class<?> contractClass = null;
+        Class<?> testClass = null;
         for (ByteCodeObjectData compilationUnit : smartContractByteCodeData) {
             Class<?> tempContractClass =
                 classLoader.buildClass(compilationUnit.getName(), compilationUnit.getByteCode());
-            if (!compilationUnit.getName().contains("$")) {
-                contractClass = tempContractClass;
+            if (compilationUnit.getName().contains("Test")) {
+                testClass = tempContractClass;
             }
         }
-        return contractClass;
+        return testClass;
     }
 
-    public Class<?> compileClass(ByteArrayContractClassLoader classLoader, String sourceCode) {
+    public Class<?> compileClasses(ByteArrayContractClassLoader classLoader, ArrayList<String> sourceCode) {
         CompilationPackage compilationPackage = SourceCodeBuilder.compileSourceCode(sourceCode).getCompilationPackage();
         if (compilationPackage.isCompilationStatusSuccess()) {
             List<ByteCodeObjectData> byteCodeObjectDataList =

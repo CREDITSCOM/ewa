@@ -9,6 +9,7 @@ import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
+import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import com.credits.service.contract.ContractExecutorService;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -27,7 +28,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.io.File.separator;
 import static org.mockito.Mockito.when;
@@ -55,7 +58,11 @@ public abstract class ServiceTest {
     }
 
     public static List<ByteCodeObjectData> compileSourceCode(String sourceCode) {
-        CompilationPackage compilationPackage = new InMemoryCompiler().compile(sourceCode);
+        Map<String,String> classesToCompile = new HashMap<>();
+        String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
+        classesToCompile.put(className,sourceCode);
+
+        CompilationPackage compilationPackage = new InMemoryCompiler().compile(classesToCompile);
         if (compilationPackage.isCompilationStatusSuccess()) {
             return GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
         } else {

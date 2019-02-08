@@ -20,7 +20,9 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -35,11 +37,9 @@ public class InMemoryCompiler {
 	/**
 	 * Compiles a single class.
 	 *
-	 * @param code class code
 	 * @return Compilation package
 	 */
-	public CompilationPackage compile(String code) throws CompilationException {
-		String className = GeneralSourceCodeUtils.parseClassName(code);
+	public CompilationPackage compile(Map<String, String> classesToCompile) throws CompilationException {
 		JavaCompiler compiler = getSystemJavaCompiler();
 
 		DiagnosticCollector<JavaFileObject> collector = getDiagnosticCollector();
@@ -58,7 +58,10 @@ public class InMemoryCompiler {
 
 		// java source from string
 		List<JavaSourceFromString> strFiles = new ArrayList<>();
-		strFiles.add(new JavaSourceFromString(className, code) );
+		for (String className : classesToCompile.keySet()) {
+			String classCode = classesToCompile.get(className);
+			strFiles.add(new JavaSourceFromString(className, classCode) );
+		}
 
 		// compile
 		CompilationTask task = compiler.getTask(null, manager, collector, options, null, strFiles);
@@ -108,7 +111,11 @@ public class InMemoryCompiler {
 	}
 
 	public static CompilationPackage compileSourceCode(String sourceCode) throws CompilationException, CompilationErrorException {
-		CompilationPackage compilationPackage = new InMemoryCompiler().compile(sourceCode);
+		Map<String,String> classesToCompile = new HashMap<>();
+		String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
+		classesToCompile.put(className,sourceCode);
+
+		CompilationPackage compilationPackage = new InMemoryCompiler().compile(classesToCompile);
 
 		if (!compilationPackage.isCompilationStatusSuccess()) {
 			DiagnosticCollector collector = compilationPackage.getCollector();
@@ -125,5 +132,6 @@ public class InMemoryCompiler {
 		}
 		return compilationPackage;
 	}
+
 
 }
