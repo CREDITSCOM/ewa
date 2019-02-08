@@ -188,6 +188,7 @@ public class DeployTabController extends AbstractController {
             smartTab.setDisable(true);
             testTab.setDisable(true);
             tabPane.getSelectionModel().select(newSmartTab);
+            parentController.feeDeployPane.setVisible(false);
         } else {
             smartCodeArea.replaceText(currentItem.sourceCode);
             testCodeArea.replaceText(currentItem.testSourceCode);
@@ -195,6 +196,9 @@ public class DeployTabController extends AbstractController {
             smartTab.setDisable(false);
             testTab.setDisable(false);
             tabPane.getSelectionModel().select(smartTab);
+            smartTreeViewController.refreshTreeView(smartCodeArea);
+            testTreeViewController.refreshTreeView(testCodeArea);
+            parentController.feeDeployPane.setVisible(true);
         }
     }
 

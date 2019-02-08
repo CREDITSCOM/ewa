@@ -22,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,8 @@ public class SmartContractDeployController extends AbstractController {
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
 
     public Pane mainPane;
-
+    @FXML
+    public VBox feeDeployPane;
     @FXML
     private DeployTabController deployTabController;
     @FXML

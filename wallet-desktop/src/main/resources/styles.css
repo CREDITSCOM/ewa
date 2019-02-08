@@ -429,6 +429,7 @@
 }
 .credits-deploy-bottom-tab-pane .credits-deploy-bottom-tab
 {
+    -fx-pref-height: 28;
     -fx-background-radius: 0;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
