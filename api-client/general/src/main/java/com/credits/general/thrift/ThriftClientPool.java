@@ -20,6 +20,7 @@ public class ThriftClientPool<T extends TServiceClient> implements
     AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThriftClientPool.class);
+    public static final int SOCKET_TIMEOUT = 30000;
 
     private final GenericObjectPool<T> internalPool;
 
@@ -96,7 +97,7 @@ public class ThriftClientPool<T extends TServiceClient> implements
         }
 
         public TProtocol make() {
-            TTransport transport = new TSocket(host, port,30000);
+            TTransport transport = new TSocket(host, port, SOCKET_TIMEOUT);
             try {
                 transport.open();
             } catch (TTransportException e) {
