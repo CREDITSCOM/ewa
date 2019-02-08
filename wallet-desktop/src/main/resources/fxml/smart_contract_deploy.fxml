@@ -6,6 +6,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <Pane fx:id="mainPane" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractDeployController">
     <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contract making" />
@@ -17,15 +18,29 @@
             </ImageView>
         </graphic>
     </Button>
-
-    <Button fx:id="buildButton" layoutX="992.0" layoutY="590.0" onAction="#handleBuild" prefHeight="60.0" prefWidth="140.0" styleClass="credits-button" text="Build" />
-    <Button fx:id="deployButton" disable="true" layoutX="1142.0" layoutY="590.0" onAction="#handleDeploy" prefHeight="60.0" prefWidth="140.0" styleClass="credits-button" text="Deploy" />
-    <Label layoutX="318.0" layoutY="605.0" prefHeight="30.0" style="-fx-font-size: 12;" styleClass="credits-not-padding-label" text="Transaction Fee in CS" />
-    <Label layoutX="693.0" layoutY="605.0" prefHeight="30.0" prefWidth="69.0" style="-fx-font-size: 12;" styleClass="credits-label" text="Actual:" />
-    <Label fx:id="actualOfferedMaxFeeLabel" layoutX="754.0" layoutY="605.0" prefHeight="30.0" prefWidth="155.0" style="-fx-font-size: 12;" styleClass="credits-label" text="0" textFill="#0000008e" />
-    <TextField fx:id="feeField" layoutX="493.0" layoutY="590.0" maxHeight="60.0" maxWidth="200.0" minHeight="45.0" minWidth="57.0" prefHeight="60.0" prefWidth="200.0" promptText="(0.01 - 0.03 - Recomended)" style="-fx-font-size: 12px;" styleClass="credits-textField" />
-    <Label fx:id="feeErrorLabel" layoutX="316.0" layoutY="620.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" prefWidth="174.0" style="-fx-font-size: 12;" styleClass="credits--not-padding-labelError" />
+    <Label fx:id="feeErrorLabel" layoutX="680.0" layoutY="575.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" prefWidth="174.0" style="-fx-font-size: 12;" styleClass="credits--not-padding-labelError" />
     <Pane layoutX="50.0" layoutY="75.0" prefHeight="500.0" prefWidth="1216.0">
-        <fx:include fx:id="deployTab" source="elements/deployTab.fxml"/>
+        <fx:include fx:id="deployTab" source="elements/deployTab.fxml" />
+   
+       <Button fx:id="buildButton" layoutX="1054.0" layoutY="1.0" onAction="#handleBuild" prefHeight="27.0" prefWidth="155.0" styleClass="credits-deploy-button" text="Build">
+           <graphic>
+               <ImageView fitHeight="17.0" fitWidth="19.0">
+                   <Image url="@../img/build.png" />
+               </ImageView>
+           </graphic>
+       </Button>
+        <HBox layoutX="470.0" layoutY="472.0" prefHeight="27.0" prefWidth="741.0">
+            <Label prefHeight="30.0" prefWidth="189.0" style="-fx-font-size: 12;" styleClass="credits-not-padding-label" text="Transaction Fee in CS" />
+          <TextField fx:id="feeField" alignment="CENTER" maxHeight="60.0" maxWidth="200.0" minHeight="6.0" minWidth="57.0" prefHeight="12.0" prefWidth="193.0" promptText="(0.01 - 0.03 - Recomended)" style="-fx-border-width: 1;" styleClass="arrow" />
+          <Label prefHeight="30.0" prefWidth="69.0" style="-fx-font-size: 12;" styleClass="credits-label" text="Actual:" />
+          <Label fx:id="actualOfferedMaxFeeLabel" prefHeight="30.0" prefWidth="161.0" style="-fx-font-size: 12;" styleClass="credits-label" text="0" textFill="#0000008e" />
+          <Button fx:id="deployButton" disable="true" onAction="#handleDeploy" prefHeight="12.0" prefWidth="140.0" styleClass="credits-deploy-button" text="Deploy">
+              <graphic>
+                  <ImageView fitHeight="17.0" fitWidth="19.0">
+                      <Image url="@../img/dep.png" />
+                  </ImageView>
+              </graphic>
+          </Button>
+        </HBox>
     </Pane>
 </Pane>

@@ -28,7 +28,7 @@
 
     <TabPane layoutX="20.0" layoutY="80.0" prefHeight="470.0" prefWidth="1250.0"
              styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
-        <Tab text="Approved transactions">
+        <Tab styleClass="credits-tab" text="Approved transactions">
             <VBox layoutX="20.0" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
                   styleClass="credits-history-tab-pane">
                 <TableView fx:id="approvedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0"
@@ -44,7 +44,7 @@
 
             </VBox>
         </Tab>
-        <Tab text="Unapproved transactions">
+        <Tab styleClass="credits-tab" text="Unapproved transactions">
             <VBox minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
                   styleClass="credits-history-tab-pane">
                 <TableView fx:id="unapprovedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0"

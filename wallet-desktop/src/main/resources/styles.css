@@ -338,6 +338,180 @@
 
 
 
+/*******************************************************************************
+ *                                                                             *
+ * DEPLOY TAB PANE                                                              *
+ *                                                                             *
+ ******************************************************************************/
+
+
+.credits-deploy-tab-pane > .tab-header-area {
+    -fx-padding: 0;
+}
+
+.credits-deploy-tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: #F2F2F2;
+    -fx-border-color: #9B9B9B;
+    -fx-border-width: 1 1 0 1;
+}
+
+.credits-deploy-tab-pane .credits-deploy-tab:selected
+{
+    -fx-background-color: #FFFFFF;
+}
+
+.credits-deploy-tab-pane .credits-deploy-tab:selected:hover
+{
+    -fx-background-color: #FFFFFF;
+}
+
+.credits-deploy-tab-pane .credits-deploy-tab:hover
+{
+    -fx-cursor: hand;
+    -fx-background-color: #D4D4D4;
+}
+.credits-deploy-tab-pane .credits-deploy-tab
+{
+    -fx-background-radius: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-alignment: CENTER;
+    -fx-background-color: #D4D4D4;
+    -fx-border-color: #9B9B9B;
+}
+
+.credits-deploy-tab-pane .credits-deploy-tab:selected .tab-label {
+    -fx-text-fill: #335BB3;
+    -fx-font-weight: bold;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * DEPLOY TAB PANE                                                              *
+ *                                                                             *
+ ******************************************************************************/
+
+
+/*******************************************************************************
+ *                                                                             *
+ * DEPLOY BOTTOM_TAB PANE                                                              *
+ *                                                                             *
+ ******************************************************************************/
+
+
+.credits-deploy-bottom-tab-pane > .tab-header-area {
+    -fx-padding: 0;
+}
+
+.credits-deploy-bottom-tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: #F2F2F2;
+    -fx-border-color: #9B9B9B;
+    -fx-border-width: 0 1 1 1;
+}
+
+.credits-deploy-bottom-tab-pane .credits-deploy-bottom-tab:selected
+{
+    -fx-border-color: #BDBDBD;
+    -fx-background-color: #BDBDBD;
+}
+
+.credits-deploy-bottom-tab-pane .credits-deploy-bottom-tab:selected:hover
+{
+    -fx-border-color: #BDBDBD;
+    -fx-background-color: #BDBDBD;
+}
+
+.credits-deploy-bottom-tab-pane .credits-deploy-bottom-tab:hover
+{
+    -fx-border-color: #D9D9D9;
+    -fx-background-color: #D9D9D9;
+    -fx-cursor: hand;
+}
+.credits-deploy-bottom-tab-pane .credits-deploy-bottom-tab
+{
+    -fx-background-radius: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-alignment: CENTER;
+    -fx-background-color: #F2F2F2;
+    -fx-border-color: transparent;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * DEPLOY BOTTOM_TAB PANE                                                              *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * DEPLOY BUTTON                                                               *
+ *                                                                             *
+ ******************************************************************************/
+
+
+.credits-deploy-button {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.credits-deploy-button:hover {
+}
+
+.credits-deploy-button:pressed {
+    -fx-scale-y: 0.98;
+    -fx-scale-x: 0.98;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * DEPLOY BUTTON                                                               *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * DEPLOY TEXTAREA                                                             *
+ *                                                                             *
+ ******************************************************************************/
+
+
+.credits-deploy-textArea {
+
+
+    -fx-background-radius: 0;
+
+    -fx-border-radius: 0;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-focus-color: #CFCFCF;
+    -fx-faint-focus-color: transparent;
+}
+
+.credits-deploy-textArea:focused .content {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+
+.credits-deploy-textArea .content {
+    -fx-cursor: text;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+/*******************************************************************************
+ *                                                                             *
+ * DEPLOY TEXTAREA                                                             *
+ *                                                                             *
+ ******************************************************************************/
+
 
 
 
@@ -346,11 +520,11 @@
  * SMART TAB PANE                                                              *
  *                                                                             *
  ******************************************************************************/
-.credits-tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+.credits-tab-pane:focused > .tab-header-area > .headers-region .credits-tab:selected .focus-indicator {
     -fx-border-radius: 10 10 0 0;
 }
 
-.credits-tab-pane .tab-header-area .tab-header-background {
+.credits-tab-pane > .tab-header-area > .tab-header-background {
     -fx-opacity: 0;
 }
 
@@ -359,30 +533,30 @@
     -fx-tab-min-width:90px;
 }
 
-.credits-tab-pane .tab{
+.credits-tab-pane .credits-tab{
     -fx-background-radius: 10 10 0 0;
     -fx-border-radius: 10 10 0 0;
     -fx-background-insets: 0 1 0 1,0,0;
 }
-.credits-tab-pane .tab
+.credits-tab-pane .credits-tab
 {
     -fx-background-color: #808080;
 
 }
 
-.credits-tab-pane .tab:selected
+.credits-tab-pane .credits-tab:selected
 {
     -fx-background-color: #3c3c3c;
 }
 
-.credits-tab-pane .tab .tab-label {
+.credits-tab-pane .credits-tab  .tab-label {
     -fx-alignment: CENTER;
     -fx-text-fill: white;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
 
-.credits-tab-pane .tab:selected .tab-label {
+.credits-tab-pane .credits-tab:selected .tab-label {
     -fx-alignment: CENTER;
     -fx-text-fill: white;
 }
@@ -393,7 +567,7 @@
     -fx-border-radius: 15;
 }
 
-.tab-pane:top *.tab-header-area {
+.credits-tab-pane:top *.tab-header-area {
     -fx-padding: 0 0 0 15; /* overridden as 5 2 0 0 */
 }
 

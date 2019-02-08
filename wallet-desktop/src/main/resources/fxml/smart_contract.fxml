@@ -32,7 +32,7 @@
 
     <TabPane layoutX="490.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="800.0"
              style="-fx-border-radius: 15;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
-        <Tab text="Choose method">
+        <Tab styleClass="credits-tab" text="Choose method">
             <Pane maxHeight="325.0" maxWidth="800.0" minHeight="325.0" minWidth="800.0" prefHeight="325.0"
                   prefWidth="800.0" styleClass="credits-PaneInTab">
                 <Pane fx:id="pControls" maxHeight="315.0" maxWidth="800.0" minHeight="315.0" minWidth="800.0"
@@ -53,7 +53,7 @@
                 </Pane>
             </Pane>
         </Tab>
-        <Tab text="See the code">
+        <Tab styleClass="credits-tab" text="See the code">
             <Pane layoutX="400.0" maxHeight="320.0" minHeight="325.0" prefHeight="325.0" prefWidth="800.0"
                   styleClass="credits-PaneInTab">
                 <StackPane fx:id="pCodePanel" layoutX="1.0" layoutY="15.0" maxHeight="289.0"
@@ -61,7 +61,7 @@
                            prefWidth="798.0"/>
             </Pane>
         </Tab>
-        <Tab text="Approved transactions">
+        <Tab styleClass="credits-tab" text="Approved transactions">
             <VBox layoutX="20.0" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
                   styleClass="credits-history-tab-pane">
                 <TableView fx:id="approvedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0"
@@ -76,15 +76,15 @@
                 </TableView>
             </VBox>
         </Tab>
-        <Tab text="Unapproved transactions">
+        <Tab styleClass="credits-tab" text="Unapproved transactions">
             <VBox minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
                   styleClass="credits-history-tab-pane">
                 <TableView fx:id="unapprovedTableView" layoutY="15.0" prefHeight="430.0" prefWidth="1250.0"
                            styleClass="credits-history-table-view, credits-transaction-table-view">
                     <columns>
-                        <TableColumn prefWidth="40.0" text="Id"/>
-                        <TableColumn prefWidth="420.0" text="Source"/>
-                        <TableColumn prefWidth="420.0" text="Target"/>
+                        <TableColumn prefWidth="95.0" text="Id"/>
+                        <TableColumn prefWidth="400.0" text="Source"/>
+                        <TableColumn prefWidth="400.0" text="Target"/>
                         <TableColumn prefWidth="210.0" text="Amount"/>
                         <TableColumn prefWidth="140.0" text="State"/>
                     </columns>
@@ -117,12 +117,12 @@
     </Pane>
     <TabPane layoutX="20.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="430.0"
              styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
-        <Tab fx:id="favoriteContractsTab" onSelectionChanged="#updateSelectedTab" text="Favorites">
+        <Tab styleClass="credits-tab" fx:id="favoriteContractsTab" onSelectionChanged="#updateSelectedTab" text="Favorites">
             <TableView fx:id="favoriteContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0"
                        minWidth="430.0" prefHeight="325.0" prefWidth="430.0"
                        styleClass="credits-smart-table-view"/>
         </Tab>
-        <Tab fx:id="myContractsTab" onSelectionChanged="#updateSelectedTab" text="My smart contracts">
+        <Tab styleClass="credits-tab" fx:id="myContractsTab" onSelectionChanged="#updateSelectedTab" text="My smart contracts">
             <TableView fx:id="smartContractTableView" maxHeight="300.0" maxWidth="417.0" minHeight="325.0"
                        minWidth="430.0" prefHeight="325.0" prefWidth="430.0"
                        styleClass="credits-smart-table-view"/>

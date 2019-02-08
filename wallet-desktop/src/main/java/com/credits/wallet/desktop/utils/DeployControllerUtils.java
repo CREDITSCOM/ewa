@@ -102,7 +102,7 @@ public class DeployControllerUtils {
         tabErrorsColText.setCellValueFactory(new PropertyValueFactory<>("text"));
         tabErrorsColText.setPrefWidth(errorPanel.getPrefWidth() * 0.88);
 
-        errorTableView.setVisible(false);
+        //errorTableView.setVisible(false);
         errorTableView.setPrefHeight(errorPanel.getPrefHeight());
         errorTableView.setPrefWidth(errorPanel.getPrefWidth());
 
