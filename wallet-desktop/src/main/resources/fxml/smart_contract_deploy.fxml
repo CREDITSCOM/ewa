@@ -18,7 +18,7 @@
             </ImageView>
         </graphic>
     </Button>
-    <Label fx:id="feeErrorLabel" layoutX="680.0" layoutY="575.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" prefWidth="174.0" style="-fx-font-size: 12;" styleClass="credits--not-padding-labelError" />
+    <Label fx:id="feeErrorLabel" layoutX="714.0" layoutY="575.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" prefWidth="174.0" style="-fx-font-size: 12;" styleClass="credits--not-padding-labelError" />
     <Pane layoutX="50.0" layoutY="75.0" prefHeight="500.0" prefWidth="1216.0">
         <fx:include fx:id="deployTab" source="elements/deployTab.fxml" />
    
@@ -34,7 +34,7 @@
           <TextField fx:id="feeField" alignment="CENTER" maxHeight="60.0" maxWidth="200.0" minHeight="6.0" minWidth="57.0" prefHeight="12.0" prefWidth="193.0" promptText="(0.01 - 0.03 - Recomended)" style="-fx-border-width: 1;" styleClass="arrow" />
           <Label prefHeight="30.0" prefWidth="69.0" style="-fx-font-size: 12;" styleClass="credits-label" text="Actual:" />
           <Label fx:id="actualOfferedMaxFeeLabel" prefHeight="30.0" prefWidth="161.0" style="-fx-font-size: 12;" styleClass="credits-label" text="0" textFill="#0000008e" />
-          <Button fx:id="deployButton" disable="true" onAction="#handleDeploy" prefHeight="12.0" prefWidth="140.0" styleClass="credits-deploy-button" text="Deploy">
+          <Button fx:id="deployButton" disable="true" onAction="#handleDeploy" prefHeight="27.0" prefWidth="146.0" styleClass="credits-deploy-button" text="Deploy">
               <graphic>
                   <ImageView fitHeight="17.0" fitWidth="19.0">
                       <Image url="@../img/dep.png" />
