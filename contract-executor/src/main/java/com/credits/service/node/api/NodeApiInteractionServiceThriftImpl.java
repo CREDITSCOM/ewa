@@ -1,6 +1,5 @@
 package com.credits.service.node.api;
 
-import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.PoolData;
 import com.credits.client.node.pojo.TransactionData;
@@ -8,9 +7,7 @@ import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
-import com.credits.exception.ContractExecutorException;
 import com.credits.general.util.Base58;
-import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.ioc.Injector;
 import org.slf4j.Logger;
@@ -18,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.security.PrivateKey;
 import java.util.List;
 
 public class NodeApiInteractionServiceThriftImpl implements NodeApiInteractionService {
@@ -69,10 +65,5 @@ public class NodeApiInteractionServiceThriftImpl implements NodeApiInteractionSe
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(calcTransactionIdSourceTargetResult.getTransactionId(), Base58.decode(calcTransactionIdSourceTargetResult.getSource()), Base58.decode(calcTransactionIdSourceTargetResult.getTarget()), decAmount, maxFee,  null, userData);
         service.transactionFlow(transactionFlowData);
-    }
-
-    private PrivateKey loadPrivateKey(String privateKeyBase58) {
-        if(privateKeyBase58 == null) throw new ContractExecutorException("transaction can't be sign. Private key not found");
-        return Ed25519.bytesToPrivateKey(GeneralConverter.decodeFromBASE58(privateKeyBase58));
     }
 }
