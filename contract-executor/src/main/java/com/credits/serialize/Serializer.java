@@ -33,7 +33,7 @@ public class Serializer {
         try (ObjectOutputStream ous = new ObjectOutputStream(baos)) {
             ous.writeObject(instance);
         } catch (IOException e) {
-            throw new ContractExecutorException("Cannot keepObject smart contract instance. " + e);
+            throw new ContractExecutorException("Cannot serialize smart contract instance. " + e);
         }
         return baos.toByteArray();
     }

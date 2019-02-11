@@ -14,6 +14,6 @@ public class ContractExecutorHandlerTest {
         ContractExecutorHandler contractExecutorHandler = new ContractExecutorHandler();
         CompileSourceCodeResult sourceCodeResult =
             contractExecutorHandler.compileSourceCode(readSourceCode("com\\credits\\thrift\\Contract.java"));
-        assertEquals(new APIResponse((byte) 0, "Success"), sourceCodeResult.status);
+        assertEquals(new APIResponse((byte) 0, "success"), sourceCodeResult.status);
     }
 }
