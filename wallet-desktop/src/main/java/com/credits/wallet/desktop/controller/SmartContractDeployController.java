@@ -118,7 +118,7 @@ public class SmartContractDeployController extends AbstractController {
                     deployTabController.smartCodeArea.setDisable(false);
                     buildButton.setText(BUILD);
                 });
-                if(checkIsError(deployTabController.smartErrorPanel, deployTabController.smartErrorTableView,
+                if(checkNotError(deployTabController.smartErrorPanel, deployTabController.smartErrorTableView,
                     compilationResult)) {
                     compilationPackage = compilationResult.getCompilationPackage();
                     Platform.runLater(() -> {
@@ -141,7 +141,7 @@ public class SmartContractDeployController extends AbstractController {
         };
     }
 
-    boolean checkIsError(VBox smartErrorPanel, TableView<BuildSourceCodeError> tableView,
+    boolean checkNotError(VBox smartErrorPanel, TableView<BuildSourceCodeError> tableView,
         CompilationResult compilationResult) {
         List<BuildSourceCodeError> errorsList = compilationResult.getErrors();
         if (errorsList.size() > 0) {
@@ -152,9 +152,9 @@ public class SmartContractDeployController extends AbstractController {
                 tableView.setVisible(true);
                 tableView.setPrefHeight(smartErrorPanel.getPrefHeight());
             });
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     @FXML

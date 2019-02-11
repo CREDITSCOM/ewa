@@ -379,7 +379,7 @@ public class DeployTabController extends AbstractController {
 
     public Class<?> compileClasses(ByteArrayContractClassLoader classLoader, ArrayList<String> sourceCode) {
         CompilationResult compilationResult = SourceCodeBuilder.compileSourceCode(sourceCode);
-        if (parentController.checkIsError(testErrorPane1, testErrorTableView, compilationResult)) {
+        if (parentController.checkNotError(testErrorPane1, testErrorTableView, compilationResult)) {
             CompilationPackage compilationPackage = compilationResult.getCompilationPackage();
             List<ByteCodeObjectData> byteCodeObjectDataList =
                 GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
