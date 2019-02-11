@@ -283,10 +283,10 @@ public class NodePojoConverter {
         transaction.target = ByteBuffer.wrap(transactionData.getTarget());
         transaction.amount = bigDecimalToAmount(transactionData.getAmount());
         transaction.fee = new AmountCommission(transactionData.getOfferedMaxFee16Bits());
-        if(transaction.userFields!=null) {
+        if(transactionData.getCommentBytes()!=null) {
             transaction.userFields = ByteBuffer.wrap(transactionData.getCommentBytes());
         }
-        if(transaction.signature!=null) {
+        if(transactionData.getSignature()!=null) {
             transaction.signature = ByteBuffer.wrap(transactionData.getSignature());
         }
         return transaction;
