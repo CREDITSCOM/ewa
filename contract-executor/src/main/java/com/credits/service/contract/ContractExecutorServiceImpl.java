@@ -12,9 +12,9 @@ import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.MethodArgument;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
+import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
-import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodArgumentsValuesData;
 import com.credits.secure.Sandbox;
@@ -35,8 +35,20 @@ import java.net.NetPermission;
 import java.net.SocketPermission;
 import java.security.Permissions;
 import java.security.SecurityPermission;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.PropertyPermission;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialize.Serializer.deserialize;
@@ -251,15 +263,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public List<ByteCodeObjectData> compileClass( String sourceCode) throws ContractExecutorException, CompilationErrorException, CompilationException {
         requireNonNull(sourceCode, "sourceCode of contract class is null");
         if (sourceCode.isEmpty()) throw new ContractExecutorException("sourceCode of contract class is empty");
-
         CompilationPackage compilationPackage = InMemoryCompiler.compileSourceCode(sourceCode);
-        List<CompilationUnit> compilationUnits = compilationPackage.getUnits();
-        if (compilationUnits.size() > 1) {
-            throw new IllegalArgumentException("Only one class (and class without inner class) can be compiled.");
-        }
-        CompilationUnit compilationUnit = compilationUnits.get(0);
-        return Collections.singletonList(
-            new ByteCodeObjectData(compilationUnit.getName(), compilationUnit.getByteCode()));
+        return GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
     }
 
 
