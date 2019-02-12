@@ -1,3 +1,6 @@
+import org.omg.PortableServer.ServantActivator;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -330,7 +333,7 @@ public class Contract extends SmartContract {
     }
 
 
-    public static class Task {
+    public static class Task implements Serializable{
         int taskId;
         User owner;
         User doer;
@@ -353,7 +356,7 @@ public class Contract extends SmartContract {
         }
     }
 
-    public static class User {
+    public static class User implements Serializable {
         String id;
         double balance;
         double ascrowBalance;
@@ -373,7 +376,7 @@ public class Contract extends SmartContract {
         }
     }
 
-    private static class Dispute {
+    private static class Dispute implements Serializable {
         int disputeTaskCost;
         boolean applyOwner;
         boolean applyDoer;
