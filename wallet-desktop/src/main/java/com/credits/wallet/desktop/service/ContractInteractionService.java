@@ -48,12 +48,12 @@ public class ContractInteractionService {
     }
 
     private BigDecimal getBalance(SmartContractData sc) {
-        return new BigDecimal(executeSmartContract(session.account, sc, BALANCE_OF_METHOD, AppState.DEFAULT_EXECUTION_TIME,
+        return new BigDecimal(executeSmartContract(session.account, sc, BALANCE_OF_METHOD,
             createVariantData(STRING_TYPE, session.account)));
     }
 
     private String getName(SmartContractData sc) {
-        return executeSmartContract(session.account, sc, GET_NAME_METHOD, AppState.DEFAULT_EXECUTION_TIME);
+        return executeSmartContract(session.account, sc, GET_NAME_METHOD);
     }
 
 
@@ -79,17 +79,15 @@ public class ContractInteractionService {
     }
 
 
-    private String executeSmartContract(String initiatorAddress, SmartContractData sc, String methodName,
-        long executionTime, VariantData... params) {
+    private String executeSmartContract(String initiatorAddress, SmartContractData sc, String methodName, VariantData... params) {
         if (sc == null || sc.getObjectState().length == 0) {
             throw new NodeClientException("SmartContract " + initiatorAddress + " not found");
         }
-
         ExecuteByteCodeResult executeResponseData =
             contractExecutorService.executeContractMethod(GeneralConverter.decodeFromBASE58(initiatorAddress), sc.getAddress(),
                 GeneralConverter.byteCodeObjectsDataToByteCodeObjects(
                     sc.getSmartContractDeployData().getByteCodeObjects()), sc.getObjectState(), methodName,
-                asList(params), executionTime);
+                asList(params), AppState.DEFAULT_EXECUTION_TIME);
         ExecuteResponseData response = ContractExecutorPojoConverter.executeByteCodeResultToExecuteResponseData(executeResponseData);
 
         if (response.getCode() != SUCCESS) {

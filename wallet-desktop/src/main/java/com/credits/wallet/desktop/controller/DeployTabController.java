@@ -202,23 +202,25 @@ public class DeployTabController extends AbstractController {
     }
 
     private void changeTab(DeploySmartListItem currentItem) {
-        if (currentItem.state.equals(DeploySmartListItem.ItemState.NEW)) {
-            initNewSmartTab();
-            newSmartTab.setDisable(false);
-            smartTab.setDisable(true);
-            testTab.setDisable(true);
-            tabPane.getSelectionModel().select(newSmartTab);
-            parentController.feeDeployPane.setVisible(false);
-        } else {
-            smartCodeArea.replaceText(currentItem.sourceCode);
-            testCodeArea.replaceText(currentItem.testSourceCode);
-            newSmartTab.setDisable(true);
-            smartTab.setDisable(false);
-            testTab.setDisable(false);
-            tabPane.getSelectionModel().select(smartTab);
-            smartTreeViewController.refreshTreeView(smartCodeArea);
-            testTreeViewController.refreshTreeView(testCodeArea);
-            parentController.feeDeployPane.setVisible(true);
+        if(currentItem!=null) {
+            if (currentItem.state.equals(DeploySmartListItem.ItemState.NEW)) {
+                initNewSmartTab();
+                newSmartTab.setDisable(false);
+                smartTab.setDisable(true);
+                testTab.setDisable(true);
+                tabPane.getSelectionModel().select(newSmartTab);
+                parentController.feeDeployPane.setVisible(false);
+            } else {
+                smartCodeArea.replaceText(currentItem.sourceCode);
+                testCodeArea.replaceText(currentItem.testSourceCode);
+                newSmartTab.setDisable(true);
+                smartTab.setDisable(false);
+                testTab.setDisable(false);
+                tabPane.getSelectionModel().select(smartTab);
+                smartTreeViewController.refreshTreeView(smartCodeArea);
+                testTreeViewController.refreshTreeView(testCodeArea);
+                parentController.feeDeployPane.setVisible(true);
+            }
         }
     }
 

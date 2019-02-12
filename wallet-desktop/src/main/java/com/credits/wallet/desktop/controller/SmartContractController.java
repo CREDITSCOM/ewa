@@ -485,7 +485,7 @@ public class SmartContractController extends AbstractController {
             double layoutY = 10;
             for (SingleVariableDeclaration param : params) {
                 TextField paramValueTextField = new TextField();
-                paramValueTextField.setLayoutX(150);
+                paramValueTextField.setLayoutX(250);
                 paramValueTextField.setLayoutY(layoutY);
                 paramValueTextField.setStyle(
                     "-fx-background-color:  #fff; -fx-border-radius:15; -fx-border-width: 1; -fx-border-color:  #000; -fx-font-size: 16px");
