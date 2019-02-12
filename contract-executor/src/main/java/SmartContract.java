@@ -18,8 +18,8 @@ public abstract class SmartContract implements Serializable {
     protected static NodeApiInteractionService service;
     protected static ExecutorService cachedPool;
     protected final transient String initiator;
-    private transient String specialProperty = "";
     protected String contractAddress = "";
+    protected long accessId = 0;
 
 
     protected SmartContract(String initiator) {
@@ -34,34 +34,30 @@ public abstract class SmartContract implements Serializable {
     }
 
     final protected TransactionData getTransaction(String transactionId) {
-        return callService(() -> {
-            return service.getTransaction(transactionId);
-        });
+        return callService(() -> service.getTransaction(transactionId));
     }
 
     final protected List<TransactionData> getTransactions(String address, long offset, long limit) {
-        return callService(() -> {
-            return service.getTransactions(address, offset, limit);
-        });
+        return callService(() -> service.getTransactions(address, offset, limit));
     }
 
     final protected List<PoolData> getPoolList(long offset, long limit) {
-        return callService(() -> {
-            return service.getPoolList(offset, limit);
-        });
+        return callService(() -> service.getPoolList(offset, limit));
     }
 
     final protected PoolData getPoolInfo(byte[] hash, long index) {
-        return callService(() -> {
-            return service.getPoolInfo(hash, index);
-        });
+        return callService(() -> service.getPoolInfo(hash, index));
     }
 
     final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {
         callService(() -> {
-            service.transactionFlow(contractAddress, target, amount, fee, userData, specialProperty);
+            service.transactionFlow(contractAddress, target, amount, fee, userData);
             return null;
         });
+    }
+
+    final protected byte[] getSeed(){
+        return callService(() -> service.getSeed(accessId));
     }
 
     private interface Function<R> {
@@ -70,15 +66,11 @@ public abstract class SmartContract implements Serializable {
 
     private <R> R callService(SmartContract.Function<R> method) {
 
-        Callable<R> callable = new Callable<R>() {
-            @Override
-            public R call() {
-                try {
-                    R res = method.apply();
-                    return res;
-                } catch (CreditsException e) {
-                    throw new RuntimeException(e);
-                }
+        Callable<R> callable = () -> {
+            try {
+                return method.apply();
+            } catch (CreditsException e) {
+                throw new RuntimeException(e);
             }
         };
         Future<R> future = cachedPool.submit(callable);

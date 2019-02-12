@@ -3,6 +3,7 @@ package com.credits.client.node.service;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.thrift.generated.API;
+import com.credits.client.node.thrift.generated.GetSeedResult;
 import com.credits.client.node.thrift.generated.PoolInfoGetResult;
 import com.credits.client.node.thrift.generated.PoolListGetResult;
 import com.credits.client.node.thrift.generated.SmartContractAddressesListGetResult;
@@ -125,6 +126,12 @@ public class NodeThriftApiClient implements NodeThriftApi {
     public TransactionsStateGetResult getTransactionsState(byte[] address, List<Long> transactionIdList) throws NodeClientException {
         API.Client client = pool.getResource();
         return callThrift(client, () -> client.TransactionsStateGet(ByteBuffer.wrap(address),transactionIdList));
+    }
+
+    @Override
+    public GetSeedResult getSeed(long accessId) throws NodeClientException {
+        API.Client client = pool.getResource();
+        return callThrift(client, () -> client.GetSeed(accessId));
     }
 
     private <R> R callThrift(API.Client client, Function<R> method) throws NodeClientException {

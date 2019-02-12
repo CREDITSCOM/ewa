@@ -2,6 +2,7 @@ package com.credits.client.node.service;
 
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionIdData;
+import com.credits.client.node.thrift.generated.GetSeedResult;
 import com.credits.client.node.thrift.generated.PoolInfoGetResult;
 import com.credits.client.node.thrift.generated.PoolListGetResult;
 import com.credits.client.node.thrift.generated.SmartContractAddressesListGetResult;
@@ -43,4 +44,5 @@ interface NodeThriftApi {
 
     TransactionsStateGetResult getTransactionsState(byte[] address, List<Long> transactionIdList) throws NodeClientException;
 
+    GetSeedResult getSeed(long accessId) throws NodeClientException;
 }

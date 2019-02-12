@@ -1,9 +1,18 @@
 package com.credits.client.node.service;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.*;
+import com.credits.client.node.pojo.PoolData;
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractTransactionData;
+import com.credits.client.node.pojo.SmartContractTransactionFlowData;
+import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
+import com.credits.client.node.pojo.TransactionIdData;
+import com.credits.client.node.pojo.TransactionsStateGetResultData;
 import com.credits.client.node.pojo.WalletData;
 import com.credits.client.node.thrift.generated.Amount;
+import com.credits.client.node.thrift.generated.GetSeedResult;
 import com.credits.client.node.thrift.generated.Pool;
 import com.credits.client.node.thrift.generated.PoolInfoGetResult;
 import com.credits.client.node.thrift.generated.PoolListGetResult;
@@ -41,7 +50,15 @@ import java.util.stream.Collectors;
 
 import static com.credits.client.node.util.NodeClientUtils.logApiResponse;
 import static com.credits.client.node.util.NodeClientUtils.processApiResponse;
-import static com.credits.client.node.util.NodePojoConverter.*;
+import static com.credits.client.node.util.NodePojoConverter.amountToBigDecimal;
+import static com.credits.client.node.util.NodePojoConverter.createSmartContractTransactionData;
+import static com.credits.client.node.util.NodePojoConverter.createTransactionData;
+import static com.credits.client.node.util.NodePojoConverter.poolToPoolData;
+import static com.credits.client.node.util.NodePojoConverter.smartContractToSmartContractData;
+import static com.credits.client.node.util.NodePojoConverter.smartContractTransactionFlowDataToTransaction;
+import static com.credits.client.node.util.NodePojoConverter.transactionFlowDataToTransaction;
+import static com.credits.client.node.util.NodePojoConverter.transactionFlowResultToTransactionFlowResultData;
+import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
 import static com.credits.general.util.GeneralConverter.byteArrayToByteBuffer;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.Utils.threadPool;
@@ -269,6 +286,13 @@ public class NodeApiServiceImpl implements NodeApiService {
             nodeClient.getTransactionsState(decodeFromBASE58(address), transactionIdList);
         processApiResponse(transactionsStateGetResult.getStatus());
         return NodePojoConverter.createTransactionsStateGetResultData(transactionsStateGetResult);
+    }
+
+    @Override
+    public byte[] getSeed(long accessId) throws NodeClientException {
+        GetSeedResult seed = nodeClient.getSeed(accessId);
+        processApiResponse(seed.getStatus());
+        return seed.getSeed();
     }
 
     public static <R> void async(Function<R> apiCall, Callback<R> callback) {

@@ -2,7 +2,16 @@ package com.credits.client.node.service;
 
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.*;
+import com.credits.client.node.pojo.PoolData;
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractTransactionData;
+import com.credits.client.node.pojo.SmartContractTransactionFlowData;
+import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
+import com.credits.client.node.pojo.TransactionIdData;
+import com.credits.client.node.pojo.TransactionsStateGetResultData;
+import com.credits.client.node.pojo.WalletData;
 import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
@@ -44,4 +53,6 @@ public interface NodeApiService {
     Long getWalletTransactionsCount(String address) throws NodeClientException, ConverterException;
 
     TransactionsStateGetResultData getTransactionsState(String address, List<Long> transactionIdList) throws NodeClientException, ConverterException;
+
+    byte[] getSeed(long accessId) throws NodeClientException;
 }

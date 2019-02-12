@@ -132,6 +132,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             }
 
             ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass, instance);
+            ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, instance);
 
             int amountParamRows = 1;
             Variant[] params = null;
