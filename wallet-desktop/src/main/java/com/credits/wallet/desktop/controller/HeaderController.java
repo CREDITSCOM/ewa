@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressBar;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,9 +84,11 @@ public class HeaderController implements Initializable {
         headerExecService = Executors.newScheduledThreadPool(1);
         runnable = () -> Platform.runLater(() -> {
             try {
-                int synchronizePercent = nodeApiService.getSynchronizePercent();
+                Pair<Integer, Long> blockAndSynchronizePercent = nodeApiService.getBlockAndSynchronizePercent();
+                Long lastRound = blockAndSynchronizePercent.getRight();
+                int synchronizePercent = blockAndSynchronizePercent.getLeft();
                 sync.setProgress((double)synchronizePercent/100);
-                syncPercent.setText(synchronizePercent + "%");
+                syncPercent.setText(synchronizePercent + "%" + "  |  block num: " + lastRound);
                 if (synchronizePercent == 100 && !flag) {
                     changeDelay(DELAY_AFTER_FULL_SYNC);
                 }
