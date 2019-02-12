@@ -17,9 +17,9 @@ import java.util.List;
  */
 public interface ContractExecutorThriftApi {
 
-    ExecuteByteCodeResult executeByteCode(byte[] initatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] objectState, String method, List<VariantData> params, long executionTime) throws ContractExecutorClientException;
+    ExecuteByteCodeResult executeByteCode(long accessId, byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] objectState, String method, List<VariantData> params, long executionTime) throws ContractExecutorClientException;
 
-    ExecuteByteCodeMultipleResult executeByteCodeMultiple(byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<List<Variant>> params, long executionTime);
+    ExecuteByteCodeMultipleResult executeByteCodeMultiple(long accessId, byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<List<Variant>> params, long executionTime);
 
     GetContractMethodsResult getContractMethods(List<ByteCodeObject> byteCodeObjects) throws ContractExecutorClientException;
 

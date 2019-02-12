@@ -49,7 +49,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
         String sourceCode = readSourceCode("/thriftIntegrationTest/Contract.java");
         byteCodeObjectDataList = compileSourceCode(sourceCode);
 
-        contractState = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null,500L).getContractState();
+        contractState = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null,500L).getContractState();
     }
 
     @After
@@ -62,7 +62,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     @Ignore("need resolve file permission for this test")
     public void execute_contract_using_bytecode_getBalance() throws Exception {
         when(mockNodeApiService.getBalance(any())).thenReturn(new BigDecimal(555));
-        String balance = (String) ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList,
+        String balance = (String) ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList,
             contractState, "balanceGet", new Variant[][] {{}},500L).getVariantsList().get(0).getFieldValue();
         assertEquals("555", balance);
     }
@@ -70,7 +70,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     @Test
     public void execute_contract_method_with_variant_parameters() throws ContractExecutorException {
         Integer newValue =
-        ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList,
+        ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList,
             contractState, "addValue", new Variant[][]{{new Variant(Variant._Fields.V_INT_BOX, 112233)}},500L).getVariantsList().get(0).getV_int_box();
         assertEquals(112233, newValue.intValue());
 

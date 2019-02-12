@@ -36,13 +36,13 @@ public class ExecutorIntegrationTest {
         byte[] initiatorAddress = "initiatorAddress".getBytes();
         byte[] contractAddress = "contractAddress".getBytes();
         ExecuteByteCodeResult executeByteCodeResult =
-            contractExecutorService.executeContractMethod(initiatorAddress, contractAddress,
+            contractExecutorService.executeContractMethod(0, initiatorAddress, contractAddress,
                 GeneralConverter.byteCodeObjectsDataToByteCodeObjects(byteCodeObjectDataList), "".getBytes(), null,
                 null, 600);
 
         byte[] contractState = executeByteCodeResult.getContractState();
 
-        ExecuteByteCodeResult val = contractExecutorService.executeContractMethod(initiatorAddress, contractAddress,
+        ExecuteByteCodeResult val = contractExecutorService.executeContractMethod(0, initiatorAddress, contractAddress,
             GeneralConverter.byteCodeObjectsDataToByteCodeObjects(byteCodeObjectDataList), contractState, "val",
             asList(new VariantData[] {}), 500L);
 

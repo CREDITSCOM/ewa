@@ -33,11 +33,10 @@ public class ContractExecutorApiServiceImpl implements ContractExecutorApiServic
     }
 
     @Override
-    public ExecuteByteCodeResult executeContractMethod(byte[] initiatorAddress, byte[] contractAdddress, List<ByteCodeObject> byteCodeObjects, byte[] objectState, String methodName, List<VariantData> params, long executionTime)
-//    public ExecuteResponseData executeContractMethod(byte[] address, byte[] bytecode, byte[] objectState, String methodName, List<VariantData> params, long executionTime)
+    public ExecuteByteCodeResult executeContractMethod(long accessId, byte[] initiatorAddress, byte[] contractAdddress, List<ByteCodeObject> byteCodeObjects, byte[] objectState, String methodName, List<VariantData> params, long executionTime)
         throws ContractExecutorClientException {
         ExecuteByteCodeResult
-            result = apiClient.executeByteCode(initiatorAddress, contractAdddress, byteCodeObjects, objectState, methodName, params, executionTime);
+            result = apiClient.executeByteCode(accessId, initiatorAddress, contractAdddress, byteCodeObjects, objectState, methodName, params, executionTime);
         return result;
     }
 }

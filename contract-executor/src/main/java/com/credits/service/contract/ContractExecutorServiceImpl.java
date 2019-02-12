@@ -89,7 +89,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
 
     @Override
-    public ReturnValue execute(byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState,  String methodName,
+    public ReturnValue execute(long accessId, byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState,  String methodName,
          Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
 
         String initiatorAddressBase58 = "unknown address";

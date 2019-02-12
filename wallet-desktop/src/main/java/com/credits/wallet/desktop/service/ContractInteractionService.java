@@ -86,7 +86,8 @@ public class ContractInteractionService {
         }
 
         ExecuteByteCodeResult executeResponseData =
-            contractExecutorService.executeContractMethod(GeneralConverter.decodeFromBASE58(initiatorAddress), sc.getAddress(),
+            //todo add request to node accessId
+            contractExecutorService.executeContractMethod(0, GeneralConverter.decodeFromBASE58(initiatorAddress), sc.getAddress(),
                 GeneralConverter.byteCodeObjectsDataToByteCodeObjects(
                     sc.getSmartContractDeployData().getByteCodeObjects()), sc.getObjectState(), methodName,
                 asList(params), executionTime);

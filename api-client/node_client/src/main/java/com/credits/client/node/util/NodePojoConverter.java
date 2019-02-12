@@ -27,11 +27,9 @@ import com.credits.client.node.thrift.generated.TransactionFlowResult;
 import com.credits.client.node.thrift.generated.TransactionId;
 import com.credits.client.node.thrift.generated.TransactionState;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
-import com.credits.general.pojo.ExecuteByteCodeResultData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.GeneralPojoConverter;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.general.util.variant.VariantConverter;
 import org.apache.commons.codec.binary.Hex;
@@ -46,7 +44,6 @@ import java.util.stream.Collectors;
 import static com.credits.general.util.Constants.ds;
 import static com.credits.general.util.GeneralConverter.byteArrayToByteBuffer;
 import static com.credits.general.util.GeneralPojoConverter.createApiResponseData;
-import static com.credits.general.util.GeneralPojoConverter.createExecuteByteCodeResultData;
 
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
@@ -221,11 +218,11 @@ public class NodePojoConverter {
                 NodePojoConverter.smartContractDeployDataToSmartContractDeploy(smartContractDeployData));
         }
 
-        ExecuteByteCodeResultData executeResult = smartContractInvocationData.getExecuteResult();
-        if (executeResult != null) {
-            thriftStruct.setExecuteResult(
-                    GeneralPojoConverter.createExecuteByteCodeResult(executeResult));
-        }
+//        ExecuteByteCodeResultData executeResult = smartContractInvocationData.getExecuteResult();
+//        if (executeResult != null) {
+//            thriftStruct.setExecuteResult(
+//                    GeneralPojoConverter.createExecuteByteCodeResult(executeResult));
+//        }
         return thriftStruct;
     }
 
@@ -237,7 +234,8 @@ public class NodePojoConverter {
                 thriftStruct.getMethod(),
                 thriftStruct.getParams().stream().map(VariantConverter::variantToVariantData).collect(Collectors.toList()),
                 thriftStruct.forgetNewState,
-                (thriftStruct.getExecuteResult() == null ? null : createExecuteByteCodeResultData(thriftStruct.getExecuteResult()))
+                null
+//                (thriftStruct.getExecuteResult() == null ? null : createExecuteByteCodeResultData(thriftStruct.getExecuteResult()))
         );
     }
 
