@@ -1,7 +1,9 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.ByteArrayContractClassLoader;
+import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.struct.DeploySmartListItem;
@@ -50,6 +52,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.getContractFromTemplate;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.initErrorTableView;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.initSplitPane;
@@ -57,6 +60,7 @@ import static com.credits.wallet.desktop.utils.DeployControllerUtils.initTabCode
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.BASIC_STANDARD_CLASS;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.DEFAULT_STANDARD_CLASS;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.EXTENSION_STANDARD_CLASS;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class DeployTabController extends AbstractController {
 
@@ -84,6 +88,8 @@ public class DeployTabController extends AbstractController {
     public TabPane smartBottomTabPane;
     @FXML
     public TabPane testBottomTabPane;
+    @FXML
+    public Button testBuildButton;
     @FXML
     private TreeViewController smartTreeViewController;
     @FXML
@@ -128,13 +134,10 @@ public class DeployTabController extends AbstractController {
     public TextField feeField;
     @FXML
     private Label actualOfferedMaxFeeLabel;
-    @FXML
-    public Label feeErrorLabel;
 
 
     OutputStream out;
 
-    private Tab prevSelectTab;
     SmartContractDeployController parentController;
 
 
@@ -157,7 +160,9 @@ public class DeployTabController extends AbstractController {
     }
 
     private void initTestTab() {
+        initSplitPane(testInnerSplitPane, testErrorPane1, testErrorTableView);
         testCodeArea = initTabCodeArea(testSourceCodeBox, testTreeViewController, this, parentController);
+        initErrorTableView(testErrorPane1, testErrorTableView, testCodeArea);
     }
 
     private void initSmartTab() {
@@ -220,7 +225,7 @@ public class DeployTabController extends AbstractController {
     }
 
     private void changeTab(DeploySmartListItem currentItem) {
-        if(currentItem!=null) {
+        if (currentItem != null) {
             if (currentItem.state.equals(DeploySmartListItem.ItemState.NEW)) {
                 initNewSmartTab();
                 newSmartTab.setDisable(false);
@@ -334,7 +339,8 @@ public class DeployTabController extends AbstractController {
 
     @FXML
     public void handleBuildSmart() {
-        parentController.handleBuild(smartCodeArea,smartErrorTableView,smartErrorPanel,smartBottomTabPane,smartBottomErrorTab);
+        parentController.handleBuild(smartCodeArea, smartErrorTableView, smartErrorPanel, smartBottomTabPane,
+            smartBottomErrorTab);
     }
 
     @FXML
@@ -366,15 +372,9 @@ public class DeployTabController extends AbstractController {
 
     public void doTestMethod(String methodName) {
         try {
-            String contractSourceCode = smartCodeArea.getText();
-            String testSourceCode = testCodeArea.getText();
-            ArrayList<String> sourceCodes = new ArrayList<>();
-            sourceCodes.add(contractSourceCode);
-            sourceCodes.add(testSourceCode);
-
-            ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
-            Class<?> testClass = compileClasses(classLoader, sourceCodes);
-            if(testClass!=null) {
+            Class<?> testClass = compileTestClasses();
+            if (testClass != null) {
+                testConsole.clear();
                 JUnitCore junit = new JUnitCore();
                 junit.addListener(new TextListener(new PrintStream(out, true)));
                 junit.run(new FilterRunner(testClass, Collections.singletonList(methodName)));
@@ -386,6 +386,35 @@ public class DeployTabController extends AbstractController {
         }
     }
 
+    @FXML
+    public void handleBuildTest() {
+        testBuildButton.setDisable(true);
+        supplyAsync(this::compileTestClasses).whenComplete(handleCallback(handleBuildResult()));
+
+    }
+
+
+    private Callback<Class> handleBuildResult() {
+        return new Callback<Class>() {
+            @Override
+            public void onSuccess(Class resultData) throws CreditsException {
+                testBuildButton.setDisable(false);
+                if (compileTestClasses() != null) {
+                    testErrorTableView.getItems().clear();
+                    testErrorTableView.refresh();
+                    FormUtils.showInfo("Compile is ok");
+                } else {
+                    FormUtils.showInfo("Need to fix errors in contracts code");
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                testBuildButton.setDisable(false);
+                LOGGER.error("failed!", e);
+            }
+        };
+    }
 
     public void appendTextToTextArea(TextArea textArea, String str) {
         Platform.runLater(() -> textArea.appendText(str));
@@ -405,10 +434,16 @@ public class DeployTabController extends AbstractController {
         return testClass;
     }
 
-    public Class<?> compileClasses(ByteArrayContractClassLoader classLoader, ArrayList<String> sourceCode) {
-        CompilationResult compilationResult = SourceCodeBuilder.compileSourceCode(sourceCode);
-        if (parentController.checkNotError(testErrorPane1, testErrorTableView, compilationResult,
-            testBottomTabPane,testBottomErrorTab)) {
+    public Class<?> compileTestClasses() {
+        String contractSourceCode = smartCodeArea.getText();
+        String testSourceCode = testCodeArea.getText();
+        List<String> sourceCodes = new ArrayList<>();
+        sourceCodes.add(contractSourceCode);
+        sourceCodes.add(testSourceCode);
+        ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
+        CompilationResult compilationResult = SourceCodeBuilder.compileSourceCode(sourceCodes);
+        if (parentController.checkNotError(testErrorPane1, testErrorTableView, compilationResult, testBottomTabPane,
+            testBottomErrorTab)) {
             CompilationPackage compilationPackage = compilationResult.getCompilationPackage();
             List<ByteCodeObjectData> byteCodeObjectDataList =
                 GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);

@@ -48,7 +48,7 @@ public class ParseCodeUtils {
         throw new IllegalArgumentException(String.format("Unsupported org.eclipse.jdt.core.dom.Type class: %s", type.getClass().getName()));
     }
 
-    public static void checkClassAndSuperclassNames(String className, String sourceCode) throws CreditsException {
+    public static void checkClassAndSuperclassNames(String sourceCode) throws CreditsException {
         ParseResultStruct build =
             new ParseResultStruct.Builder(sourceCode).superClassName().build();
 

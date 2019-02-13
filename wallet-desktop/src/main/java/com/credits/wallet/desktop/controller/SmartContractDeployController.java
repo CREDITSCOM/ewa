@@ -34,6 +34,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -90,12 +91,12 @@ public class SmartContractDeployController extends AbstractController {
         errorTableView.setVisible(false);
         codeArea.setDisable(true);
         setFocusOnFeeField();
-        supplyAsync(() -> SourceCodeBuilder.compileSourceCode(codeArea.getText())).whenComplete(
+        supplyAsync(() -> SourceCodeBuilder.compileSourceCode(Collections.singletonList(codeArea.getText()))).whenComplete(
             handleCallback(handleBuildResult(codeArea, errorTableView, bottomPane, bottomTabPane, bottomErrorTab)));
     }
 
     public void setFocusOnFeeField() {
-        if(deployTabController.feeField.getText().isEmpty()) {
+        if (deployTabController.feeField.getText().isEmpty()) {
             deployTabController.feeField.requestFocus();
         }
     }
