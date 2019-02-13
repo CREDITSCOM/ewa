@@ -43,9 +43,11 @@
                     </ImageView>
                 </graphic>
             </Button>
-            <ProgressBar fx:id="sync" layoutX="536.0" layoutY="46.0" prefWidth="330.0" styleClass="credits-syncProgress" />
-            <Label layoutX="545.0" layoutY="21.0" styleClass="credits-headerButton" text="Synchronization:" />
-            <Label fx:id="syncPercent" layoutX="693.0" layoutY="21.0" styleClass="credits-headerButton" text="0%" />
+            <ProgressBar fx:id="sync" layoutX="526.0" layoutY="46.0" prefWidth="360.0" styleClass="credits-syncProgress" />
+            <Label layoutX="535.0" layoutY="21.0" styleClass="credits-headerButton" text="Synchronization:" />
+            <Label fx:id="syncPercent" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="663.0" layoutY="20.0" prefHeight="25.0" prefWidth="73.0" styleClass="credits-headerButton" text="0%" textAlignment="RIGHT" />
+         <Label layoutX="724.0" layoutY="20.0" prefHeight="25.0" prefWidth="105.0" styleClass="credits-headerButton" text="LastRound:" />
+         <Label fx:id="lastRoundLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="823.0" layoutY="20.0" prefHeight="25.0" prefWidth="79.0" styleClass="credits-headerButton" text="0" textAlignment="RIGHT" />
 
         </Pane>
     </center>

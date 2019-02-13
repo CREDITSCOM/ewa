@@ -91,6 +91,8 @@ public class DeployTabController extends AbstractController {
     @FXML
     public Button testBuildButton;
     @FXML
+    public Tab testBottomConsoleTab;
+    @FXML
     private TreeViewController smartTreeViewController;
     @FXML
     public TableView<BuildSourceCodeError> smartErrorTableView;
@@ -378,6 +380,7 @@ public class DeployTabController extends AbstractController {
                 JUnitCore junit = new JUnitCore();
                 junit.addListener(new TextListener(new PrintStream(out, true)));
                 junit.run(new FilterRunner(testClass, Collections.singletonList(methodName)));
+                testBottomTabPane.getSelectionModel().select(testBottomConsoleTab);
             } else {
                 testBottomTabPane.getSelectionModel().select(testBottomErrorTab);
             }
@@ -399,13 +402,8 @@ public class DeployTabController extends AbstractController {
             @Override
             public void onSuccess(Class resultData) throws CreditsException {
                 testBuildButton.setDisable(false);
-                if (compileTestClasses() != null) {
-                    testErrorTableView.getItems().clear();
-                    testErrorTableView.refresh();
-                    FormUtils.showInfo("Compile is ok");
-                } else {
-                    FormUtils.showInfo("Need to fix errors in contracts code");
-                }
+                testErrorTableView.getItems().clear();
+                testErrorTableView.refresh();
             }
 
             @Override

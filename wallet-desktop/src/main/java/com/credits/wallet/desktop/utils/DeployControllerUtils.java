@@ -92,6 +92,12 @@ public class DeployControllerUtils {
     }
 
     public static void initErrorTableView(VBox errorPanel, TableView<BuildSourceCodeError> errorTableView, CreditsCodeArea codeArea) {
+        TableColumn<BuildSourceCodeError, String> tabErrorsColClassName = new TableColumn<>();
+        tabErrorsColClassName.setText("ClassName");
+        tabErrorsColClassName.setCellValueFactory(new PropertyValueFactory<>("className"));
+        tabErrorsColClassName.setPrefWidth(errorPanel.getPrefWidth() * 0.2);
+
+
         TableColumn<BuildSourceCodeError, String> tabErrorsColLine = new TableColumn<>();
         tabErrorsColLine.setText("Line");
         tabErrorsColLine.setCellValueFactory(new PropertyValueFactory<>("line"));
@@ -100,15 +106,15 @@ public class DeployControllerUtils {
         TableColumn<BuildSourceCodeError, String> tabErrorsColText = new TableColumn<>();
         tabErrorsColText.setText("Error");
         tabErrorsColText.setCellValueFactory(new PropertyValueFactory<>("text"));
-        tabErrorsColText.setPrefWidth(errorPanel.getPrefWidth() * 0.88);
+        tabErrorsColText.setPrefWidth(errorPanel.getPrefWidth() * 0.68);
 
         //errorTableView.setVisible(false);
         errorTableView.setPrefHeight(errorPanel.getPrefHeight());
         errorTableView.setPrefWidth(errorPanel.getPrefWidth());
 
+        errorTableView.getColumns().add(tabErrorsColClassName);
         errorTableView.getColumns().add(tabErrorsColLine);
         errorTableView.getColumns().add(tabErrorsColText);
-
         errorTableView.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown() || event.getButton() == MouseButton.PRIMARY) {
                 BuildSourceCodeError tabRow = errorTableView.getSelectionModel().getSelectedItem();

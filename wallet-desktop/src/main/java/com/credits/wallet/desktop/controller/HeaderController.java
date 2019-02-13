@@ -51,6 +51,8 @@ public class HeaderController implements Initializable {
     public Button btnLogout;
     @FXML
     public MenuButton btnSmartMenu;
+    @FXML
+    public Label lastRoundLabel;
 
     private ScheduledExecutorService headerExecService = Executors.newScheduledThreadPool(1);
     private Runnable runnable;
@@ -82,28 +84,34 @@ public class HeaderController implements Initializable {
 
     public void initializeSynchronize() {
         headerExecService = Executors.newScheduledThreadPool(1);
-        runnable = () -> Platform.runLater(() -> {
+        runnable = () -> {
             try {
                 Pair<Integer, Long> blockAndSynchronizePercent = nodeApiService.getBlockAndSynchronizePercent();
                 Long lastRound = blockAndSynchronizePercent.getRight();
                 int synchronizePercent = blockAndSynchronizePercent.getLeft();
-                sync.setProgress((double)synchronizePercent/100);
-                syncPercent.setText(synchronizePercent + "%" + "  |  block num: " + lastRound);
+                Platform.runLater(() -> {
+                    sync.setProgress((double) synchronizePercent / 100);
+                    syncPercent.setText(String.valueOf(synchronizePercent));
+                    lastRoundLabel.setText(String.valueOf(lastRound));
+                });
                 if (synchronizePercent == 100 && !flag) {
                     changeDelay(DELAY_AFTER_FULL_SYNC);
                 }
                 connect = true;
             } catch (ThriftClientPool.ThriftClientException te) {
-                if(connect) {
+                if (connect) {
                     changeDelay(30);
                 }
                 connect = false;
                 LOGGER.error("Connection was refused");
             } catch (Exception e) {
-                sync.setProgress(0);
-                syncPercent.setText("0%");
+                Platform.runLater(() -> {
+                    sync.setProgress(0);
+                    syncPercent.setText("0%");
+                    lastRoundLabel.setText(String.valueOf(0));
+                });
             }
-        });
+        };
         future = headerExecService.scheduleWithFixedDelay(runnable, 0, DELAY_BEFORE_FULL_SYNC, TimeUnit.SECONDS);
     }
 
@@ -114,9 +122,8 @@ public class HeaderController implements Initializable {
     }
 
 
-
     public void changeElementVisible() {
-        if(parentController.session==null) {
+        if (parentController.session == null) {
             setMainElementsVisible(false);
         } else {
             setMainElementsVisible(true);
