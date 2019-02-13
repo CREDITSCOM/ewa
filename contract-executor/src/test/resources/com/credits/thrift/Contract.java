@@ -1,5 +1,3 @@
-import org.omg.PortableServer.ServantActivator;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,14 +14,16 @@ public class Contract extends SmartContract {
     private Map<String, User> users;
 
 
-    public Contract(String initiator) {
-        super(initiator);
+    public Contract() {
         counterTaskId = 0;
         smartOwner = "5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe";
         tasks = new HashMap<>();
         users = new HashMap<>();
         smartOwnerUser = new User(smartOwner, 0, "URL");
         users.put(smartOwner, smartOwnerUser);
+        System.out.println("accessId - " + accessId);
+        System.out.println("initiator - " + initiator);
+        System.out.println("contract address - " + contractAddress);
     }
 
     //Регистрирует пользователя в смартконтракте
@@ -34,6 +34,11 @@ public class Contract extends SmartContract {
     public byte[] testGetSeed(){
         return getSeed();
     }
+
+    public String getProperties(){
+       return accessId + " " + initiator + " " + contractAddress;
+    }
+
     //Добавить баланс
     public void addBalance(String address, double tokens) throws Exception {
         User currentUser = getUserFromUserList(address);

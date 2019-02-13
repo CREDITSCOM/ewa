@@ -17,14 +17,9 @@ public abstract class SmartContract implements Serializable {
 
     protected static NodeApiInteractionService service;
     protected static ExecutorService cachedPool;
-    protected final transient String initiator;
-    protected String contractAddress = "";
-    protected long accessId = 0;
-
-
-    protected SmartContract(String initiator) {
-        this.initiator = initiator;
-    }
+    protected static transient long accessId = 0;
+    protected static transient String initiator;
+    protected static String contractAddress = "";
 
     final protected BigDecimal getBalance(String address) {
         return callService(() -> {

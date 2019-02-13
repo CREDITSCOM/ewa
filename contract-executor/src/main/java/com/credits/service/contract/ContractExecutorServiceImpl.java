@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ReflectPermission;
@@ -72,15 +71,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         INJECTOR.component.inject(this);
         try {
             Class<?> contract = Class.forName("SmartContract");
-            Field interactionService = contract.getDeclaredField("service");
-            interactionService.setAccessible(true);
-            interactionService.set(null, dbInteractionService);
-
-            Field cachedPoolField = contract.getDeclaredField("cachedPool");
-            cachedPoolField.setAccessible(true);
-            ExecutorService cachedPool = Executors.newCachedThreadPool();
-            cachedPoolField.set(null, cachedPool);
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+            ContractExecutorServiceUtils.initializeSmartContractField("service", dbInteractionService, contract, null);
+            ContractExecutorServiceUtils.initializeSmartContractField("cachedPool", Executors.newCachedThreadPool(), contract, null);
+        } catch (ClassNotFoundException e) {
             logger.error("Cannot load smart contract's super class", e);
         }
     }
@@ -91,7 +84,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
          Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
 
         String initiatorAddressBase58 = "unknown address";
-        String contractAddressBase58 = "unknown address";
+        String contractAddressBase58;
         try {
             if(byteCodeObjectDataList.size()==0) {
                 throw new ContractExecutorException("Bytecode size is 0");
@@ -104,6 +97,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
             Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
+            ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, null);
+            ContractExecutorServiceUtils.initializeField("initiator", initiatorAddressBase58, contractClass, null);
+            ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass, null);
 
             // add classes to Sandbox
             Sandbox.confine(contractClass, createPermissions());
@@ -122,7 +118,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 instance = deserialize(contractState, classLoader);
                 ContractExecutorServiceUtils.initializeField("initiator", initiatorAddressBase58, contractClass, instance);
             } else {
-                instance = contractClass.getDeclaredConstructor(String.class).newInstance(initiatorAddressBase58);
+                instance = contractClass.newInstance();
                 return new ReturnValue(serialize(instance), null, Collections.singletonList(new APIResponse(SUCCESS_CODE, "success")));
             }
 

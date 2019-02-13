@@ -57,5 +57,14 @@ public class ContractExecutorServiceUtils {
         }
     }
 
+    public static void initializeSmartContractField(String fieldName, Object value, Class<?> clazz, Object instance) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(instance, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            logger.error("Cannot initialize \"{}\" field. Reason:{}", fieldName, e.getMessage());
+        }
+    }
 
 }

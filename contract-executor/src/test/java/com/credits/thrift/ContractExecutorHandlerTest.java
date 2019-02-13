@@ -52,42 +52,6 @@ public class ContractExecutorHandlerTest {
         contractAddress = ByteBuffer.wrap(decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpd"));
     }
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void getSeedCallIntoSmartContract() {
-        ExecuteByteCodeResult executeByteCodeResult = contractExecutorHandler.executeByteCode(
-            0,
-            initiatorAddress,
-            contractAddress,
-            byteCodeObjects,
-            ByteBuffer.allocate(0),
-            "",
-            EMPTY_LIST,
-            500);
-
-        assertEquals(new APIResponse((byte) 0, "success"), executeByteCodeResult.status);
-
-        ByteBuffer contractState = ByteBuffer.wrap(executeByteCodeResult.getContractState());
-
-        when(mockApiInteractionService.getSeed(anyLong())).thenReturn(new byte[]{0xB, 0xA, 0xB, 0xE});
-
-        executeByteCodeResult = contractExecutorHandler.executeByteCode(
-            1,
-            initiatorAddress,
-            contractAddress,
-            byteCodeObjects,
-            contractState,
-            "testGetSeed",
-            EMPTY_LIST,
-            5000);
-
-        assertEquals(Arrays.asList(
-                new Variant(V_BYTE, (byte) 0xB),
-                new Variant(V_BYTE, (byte) 0xA),
-                new Variant(V_BYTE, (byte) 0xB),
-                new Variant(V_BYTE, (byte) 0xE)), executeByteCodeResult.getRet_val().getV_array());
-    }
-
     @Before
     public void setUp(){
         mockApiInteractionService = mock(NodeApiInteractionService.class);
@@ -96,9 +60,43 @@ public class ContractExecutorHandlerTest {
     }
 
     @Test
+    public void getSeedCallIntoSmartContract() {
+        ExecuteByteCodeResult executeByteCodeResult = deploySmartContract();
+        assertEquals(new APIResponse((byte) 0, "success"), executeByteCodeResult.status);
+
+        when(mockApiInteractionService.getSeed(anyLong())).thenReturn(new byte[]{0xB, 0xA, 0xB, 0xE});
+        executeByteCodeResult = executeSmartContract(ByteBuffer.wrap(executeByteCodeResult.getContractState()), 1, "testGetSeed", 5000);
+        assertEquals(Arrays.asList(
+                new Variant(V_BYTE, (byte) 0xB),
+                new Variant(V_BYTE, (byte) 0xA),
+                new Variant(V_BYTE, (byte) 0xB),
+                new Variant(V_BYTE, (byte) 0xE)), executeByteCodeResult.getRet_val().getV_array());
+    }
+
+
+
+    @Test
+    public void useContractProperties() {
+        ExecuteByteCodeResult executeByteCodeResult = deploySmartContract();
+        executeByteCodeResult = executeSmartContract(ByteBuffer.wrap(executeByteCodeResult.getContractState()), 1234, "getProperties", 1000);
+        assertEquals("1234 5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe 5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpd", executeByteCodeResult.getRet_val().getV_string());
+
+    }
+
+    @Test
     public void compileSourceCodeTest() throws Exception {
         CompileSourceCodeResult sourceCodeResult = contractExecutorHandler.compileSourceCode(contractSourcecode);
         assertEquals(new APIResponse((byte) 0, "success"), sourceCodeResult.status);
 
+    }
+
+    @SuppressWarnings("unchecked")
+    private ExecuteByteCodeResult executeSmartContract(ByteBuffer contractState, int accessId, String methodName, int executiontime) {
+        return contractExecutorHandler.executeByteCode(accessId, initiatorAddress, contractAddress, byteCodeObjects,
+            contractState, methodName, EMPTY_LIST, executiontime);
+    }
+
+    private ExecuteByteCodeResult deploySmartContract() {
+        return executeSmartContract(ByteBuffer.allocate(0), 1123, "", 500);
     }
 }
