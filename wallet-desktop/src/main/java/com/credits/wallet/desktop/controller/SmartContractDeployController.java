@@ -89,8 +89,15 @@ public class SmartContractDeployController extends AbstractController {
         deployTabController.smartBuildButton.setDisable(true);
         errorTableView.setVisible(false);
         codeArea.setDisable(true);
+        setFocusOnFeeField();
         supplyAsync(() -> SourceCodeBuilder.compileSourceCode(codeArea.getText())).whenComplete(
             handleCallback(handleBuildResult(codeArea, errorTableView, bottomPane, bottomTabPane, bottomErrorTab)));
+    }
+
+    public void setFocusOnFeeField() {
+        if(deployTabController.feeField.getText().isEmpty()) {
+            deployTabController.feeField.requestFocus();
+        }
     }
 
     private Callback<CompilationResult> handleBuildResult(CreditsCodeArea codeArea,
@@ -147,6 +154,7 @@ public class SmartContractDeployController extends AbstractController {
         String transactionFee = deployTabController.feeField.getText();
         if (GeneralConverter.toBigDecimal(transactionFee).compareTo(BigDecimal.ZERO) <= 0) {
             FormUtils.setErrorStyle(deployTabController.feeField);
+            setFocusOnFeeField();
             return;
         }
         try {
