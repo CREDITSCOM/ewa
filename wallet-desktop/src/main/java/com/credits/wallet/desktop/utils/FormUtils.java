@@ -90,8 +90,12 @@ public class FormUtils {
     public static void validateField(TextField textField, Label errorLabel, String errorText,
         AtomicBoolean validationFlag) {
         errorLabel.setText(errorText);
-        textField.setStyle(textField.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+        setErrorStyle(textField);
         validationFlag.set(false);
+    }
+
+    public static void setErrorStyle(TextField textField) {
+        textField.setStyle(textField.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
     }
 
     public static void validateTable(TableView<CoinTabRow> tableView, Label errorLabel, String errorText,
@@ -108,6 +112,10 @@ public class FormUtils {
 
     public static void clearErrorOnField(TextField textField, Label errorLabel) {
         errorLabel.setText("");
+        clearErrorStyle(textField);
+    }
+
+    public static void clearErrorStyle(TextField textField) {
         textField.setStyle(textField.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
     }
 

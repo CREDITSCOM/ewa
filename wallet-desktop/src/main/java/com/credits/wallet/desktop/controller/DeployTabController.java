@@ -14,8 +14,10 @@ import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
@@ -75,7 +77,11 @@ public class DeployTabController extends AbstractController {
     @FXML
     public TextArea testConsole;
     @FXML
+    public Tab smartBottomErrorTab;
+    @FXML
     public Tab testBottomErrorTab;
+    @FXML
+    public TabPane smartBottomTabPane;
     @FXML
     public TabPane testBottomTabPane;
     @FXML
@@ -114,6 +120,17 @@ public class DeployTabController extends AbstractController {
     public Tab newSmartTab;
     @FXML
     public TextField className;
+    @FXML
+    public Button smartDeployButton;
+    @FXML
+    public Button smartBuildButton;
+    @FXML
+    public TextField feeField;
+    @FXML
+    private Label actualOfferedMaxFeeLabel;
+    @FXML
+    public Label feeErrorLabel;
+
 
     OutputStream out;
 
@@ -145,8 +162,9 @@ public class DeployTabController extends AbstractController {
 
     private void initSmartTab() {
         initSplitPane(smartInnerSplitPane, smartErrorPanel, smartErrorTableView);
-        initErrorTableView(smartErrorPanel, smartErrorTableView, smartCodeArea);
         smartCodeArea = initTabCodeArea(smartSourceCodeBox, smartTreeViewController, this, parentController);
+        initErrorTableView(smartErrorPanel, smartErrorTableView, smartCodeArea);
+        FormUtils.initFeeField(feeField, actualOfferedMaxFeeLabel);
     }
 
     private void initNewSmartTab() {
@@ -209,7 +227,6 @@ public class DeployTabController extends AbstractController {
                 smartTab.setDisable(true);
                 testTab.setDisable(true);
                 tabPane.getSelectionModel().select(newSmartTab);
-                parentController.feeDeployPane.setVisible(false);
             } else {
                 smartCodeArea.replaceText(currentItem.sourceCode);
                 testCodeArea.replaceText(currentItem.testSourceCode);
@@ -219,7 +236,6 @@ public class DeployTabController extends AbstractController {
                 tabPane.getSelectionModel().select(smartTab);
                 smartTreeViewController.refreshTreeView(smartCodeArea);
                 testTreeViewController.refreshTreeView(testCodeArea);
-                parentController.feeDeployPane.setVisible(true);
             }
         }
     }
@@ -316,6 +332,16 @@ public class DeployTabController extends AbstractController {
         testCodeArea.cleanAll();
     }
 
+    @FXML
+    public void handleBuildSmart() {
+        parentController.handleBuild(smartCodeArea,smartErrorTableView,smartErrorPanel,smartBottomTabPane,smartBottomErrorTab);
+    }
+
+    @FXML
+    public void handleDeploySmart() {
+        parentController.handleDeploy();
+    }
+
 
     public static class FilterRunner extends BlockJUnit4ClassRunner {
 
@@ -381,7 +407,8 @@ public class DeployTabController extends AbstractController {
 
     public Class<?> compileClasses(ByteArrayContractClassLoader classLoader, ArrayList<String> sourceCode) {
         CompilationResult compilationResult = SourceCodeBuilder.compileSourceCode(sourceCode);
-        if (parentController.checkNotError(testErrorPane1, testErrorTableView, compilationResult)) {
+        if (parentController.checkNotError(testErrorPane1, testErrorTableView, compilationResult,
+            testBottomTabPane,testBottomErrorTab)) {
             CompilationPackage compilationPackage = compilationResult.getCompilationPackage();
             List<ByteCodeObjectData> byteCodeObjectDataList =
                 GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
