@@ -3,6 +3,7 @@ package com.credits.wallet.desktop.utils.sourcecode.building;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
+import com.credits.general.util.compiler.model.JavaSourceFromString;
 import com.credits.general.util.sourceCode.EclipseJdt;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
@@ -23,41 +24,39 @@ public class SourceCodeBuilder {
     }
 
     public static CompilationResult compileSourceCode(List<String> sourceCodes, List<BuildSourceCodeError> errorsList) {
+        Map<String, String> classesToCompile = new HashMap<>();
         sourceCodes.forEach((sourceCode)->{
-            errorsList.addAll(checkSyntax(sourceCode));
+            String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
+            classesToCompile.put(className, sourceCode);
+            errorsList.addAll(checkSyntax(sourceCode,className));
         });
         if (errorsList.size()>0) {
             return new CompilationResult(null, errorsList);
         }
-        return compileClasses(sourceCodes, errorsList);
+        return compileClasses(classesToCompile, errorsList);
     }
 
-    private static CompilationResult compileClasses(List<String> sourceCodes, List<BuildSourceCodeError> errorsList) {
-        CompilationPackage compilationPackage;
-        Map<String, String> classesToCompile = new HashMap<>();
-        sourceCodes.forEach(code -> {
-            String className = GeneralSourceCodeUtils.parseClassName(code);
-            classesToCompile.put(className, code);
-        });
-        compilationPackage = new InMemoryCompiler().compile(classesToCompile);
+    private static CompilationResult compileClasses(Map<String, String> classesToCompile, List<BuildSourceCodeError> errorsList) {
+        CompilationPackage compilationPackage = new InMemoryCompiler().compile(classesToCompile);
         if (!compilationPackage.isCompilationStatusSuccess()) {
             DiagnosticCollector collector = compilationPackage.getCollector();
             List<Diagnostic> diagnostics = collector.getDiagnostics();
             diagnostics.forEach(action -> {
+                String className = ((JavaSourceFromString) action.getSource()).getName();
                 BuildSourceCodeError tr =
-                    new BuildSourceCodeError(Math.toIntExact(action.getLineNumber()), action.getMessage(null));
+                    new BuildSourceCodeError(className, Math.toIntExact(action.getLineNumber()), action.getMessage(null));
                 errorsList.add(tr);
             });
         }
         return new CompilationResult(compilationPackage, errorsList);
     }
 
-    private static List<BuildSourceCodeError> checkSyntax(String sourceCode) {
+    private static List<BuildSourceCodeError> checkSyntax(String sourceCode, String className) {
         List<BuildSourceCodeError> errorsList = new ArrayList<>();
         IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
         if (problemArr.length > 0) {
             for (IProblem p : problemArr) {
-                BuildSourceCodeError tr = new BuildSourceCodeError(p.getSourceLineNumber(), p.getMessage());
+                BuildSourceCodeError tr = new BuildSourceCodeError(className, p.getSourceLineNumber(), p.getMessage());
                 errorsList.add(tr);
             }
         }
@@ -72,10 +71,11 @@ public class SourceCodeBuilder {
 
     private static List<BuildSourceCodeError> checkSuperClassNames(String sourceCode,
         List<BuildSourceCodeError> errorsList) {
+        String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
         try {
             ParseCodeUtils.checkClassAndSuperclassNames(sourceCode);
         } catch (CreditsException e) {
-            BuildSourceCodeError tr = new BuildSourceCodeError(1, e.getMessage());
+            BuildSourceCodeError tr = new BuildSourceCodeError(className,1, e.getMessage());
             errorsList.add(tr);
         }
         return errorsList;
