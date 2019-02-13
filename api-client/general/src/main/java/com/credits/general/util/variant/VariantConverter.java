@@ -7,7 +7,13 @@ import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class VariantConverter {
@@ -192,15 +198,27 @@ public class VariantConverter {
         }
         return object;
     }
-
    public static VariantData objectToVariantData(Object object) {
-       VariantData variantData;
+       VariantData variantData = null;
        if (object == null) {
            variantData = new VariantData(VariantType.NULL, null);
        } else if (object.getClass().isArray()) {
-           List<VariantData> variantDataCollection =
-                   Arrays.stream((Object[]) object).map(VariantConverter::objectToVariantData).collect(Collectors.toList());
+           List<VariantData> variantDataCollection = null;
+               if(object instanceof Object[]) {
+                   variantDataCollection = Arrays.stream((Object[]) object).map(VariantConverter::objectToVariantData).collect(Collectors.toList());
+               } else if (object instanceof byte[]) {
+                   variantDataCollection = new ArrayList<>();
+                   for (byte b : (byte[]) object) {
+                       variantDataCollection.add(new VariantData(VariantType.BYTE, b));
+                   }
+               }
+               //fixme add other array types
            variantData = new VariantData(VariantType.ARRAY, variantDataCollection.toArray(new VariantData[]{}));
+       } else if(object.getClass().isPrimitive()){
+           if(byte.class.isInstance(object)){
+               variantData = new VariantData(VariantType.BYTE, object);
+           }
+           //fixme add other primitive types
        } else if (object instanceof List) {
            List<VariantData> variantDataCollection =
                    ((List<Object>) object).stream().map(VariantConverter::objectToVariantData).collect(Collectors.toList());
@@ -235,7 +253,8 @@ public class VariantConverter {
            variantData = new VariantData(VariantType.DOUBLE_BOX, object);
        } else if (object instanceof String) {
            variantData = new VariantData(VariantType.STRING, object);
-       } else {
+       }
+       if (variantData == null) {
            throw new ConverterException(String.format("Unsupported object type: %s", object.getClass().getSimpleName()));
        }
        return variantData;

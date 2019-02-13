@@ -31,6 +31,9 @@ public class Contract extends SmartContract {
         users.put(userAddress, new User(userAddress, balance, descriptionURL));
     }
 
+    public byte[] testGetSeed(){
+        return getSeed();
+    }
     //Добавить баланс
     public void addBalance(String address, double tokens) throws Exception {
         User currentUser = getUserFromUserList(address);

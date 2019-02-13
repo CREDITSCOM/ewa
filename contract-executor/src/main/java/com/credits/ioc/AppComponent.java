@@ -2,6 +2,7 @@ package com.credits.ioc;
 
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.service.node.api.NodeApiInteractionServiceThriftImpl;
+import com.credits.thrift.ContractExecutorHandler;
 import com.credits.thrift.ContractExecutorServer;
 import dagger.Component;
 
@@ -14,4 +15,5 @@ public interface AppComponent {
     void inject(NodeApiInteractionServiceThriftImpl levelDbInteractionServiceThrift);
     void inject(ContractExecutorServer contractExecutorServer);
     void inject(AppModule appModule);
+    void inject(ContractExecutorHandler contractExecutorHandler);
 }

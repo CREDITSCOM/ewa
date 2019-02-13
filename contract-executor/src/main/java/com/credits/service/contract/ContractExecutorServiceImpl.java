@@ -61,15 +61,13 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
 public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
+    private ExecutorService executorService;
 
     @Inject
     public ApplicationProperties properties;
 
-    @Inject
-    public NodeApiInteractionService dbInteractionService;
-    private ExecutorService executorService;
 
-    public ContractExecutorServiceImpl() {
+    public ContractExecutorServiceImpl(NodeApiInteractionService dbInteractionService) {
         executorService = Executors.newCachedThreadPool();
         INJECTOR.component.inject(this);
         try {
@@ -100,9 +98,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             }
             requireNonNull(initiatorAddress, "initiatorAddress is null");
             requireNonNull(contractAddress, "contractAddress is null");
-            if(byteCodeObjectDataList.size()==0) {
-                throw new ContractExecutorException("ByteCode is null");
-            }
             initiatorAddressBase58 = Base58.encode(initiatorAddress);
             contractAddressBase58 = Base58.encode(contractAddress);
 
@@ -147,8 +142,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             APIResponse[] returnStatuses = new APIResponse[amountParamRows];
 
             Class<?> returnType = targetMethodData.getMethod().getReturnType();
-
-            ContractExecutorServiceUtils.initializeField("specialProperty", System.getProperty(initiatorAddressBase58), contractClass, instance);
 
             for (int i = 0; i < amountParamRows; i++) {
                 Object[] parameter = null;

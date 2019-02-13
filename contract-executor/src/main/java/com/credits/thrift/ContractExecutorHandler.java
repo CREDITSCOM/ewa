@@ -17,11 +17,13 @@ import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
+import com.credits.service.node.api.NodeApiInteractionService;
 import org.apache.thrift.TException;
 import org.apache.thrift.TUnion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
+import static com.credits.ioc.Injector.INJECTOR;
 import static java.util.stream.Collectors.toList;
 
 public class ContractExecutorHandler implements ContractExecutor.Iface {
@@ -37,10 +40,14 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     public final static byte ERROR_CODE = (byte) 1;
     public final static byte SUCCESS_CODE = (byte) 0;
 
-    private ContractExecutorService service;
+    ContractExecutorService service;
+
+    @Inject
+    public NodeApiInteractionService dbInteractionService;
 
     ContractExecutorHandler(){
-        service = new ContractExecutorServiceImpl();
+        INJECTOR.component.inject(this);
+        service = new ContractExecutorServiceImpl(dbInteractionService);
     }
 
     @Override
