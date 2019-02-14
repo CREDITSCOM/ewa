@@ -17,12 +17,12 @@ import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
 import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
+import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,7 +36,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getCalcTransactionIdSourceTargetResult;
@@ -64,23 +63,10 @@ public class SmartContractDeployController extends AbstractController {
     public static final String COMPILING = "Compiling...";
     private static final String ERR_FEE = "Fee must be greater than 0";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractDeployController.class);
-
-    public Pane mainPane;
-    @FXML
-    public VBox feeDeployPane;
     @FXML
     private DeployTabController deployTabController;
-    @FXML
-    private Button deployButton;
-    @FXML
-    private Button buildButton;
-    @FXML
-    private TextField feeField;
-    @FXML
-    private Label actualOfferedMaxFeeLabel;
-    @FXML
-    private Label feeErrorLabel;
 
+    public Pane mainPane;
     public CompilationPackage compilationPackage;
 
     @Override
@@ -88,42 +74,47 @@ public class SmartContractDeployController extends AbstractController {
         deployTabController.session = session;
         deployTabController.parentController = this;
         deployTabController.initializeForm(null);
-        FormUtils.initFeeField(feeField,actualOfferedMaxFeeLabel);
-
     }
 
 
     public void cleanCompilationPackage(boolean buildButtonDisable) {
         compilationPackage = null;
-        deployButton.setDisable(true);
-        buildButton.setDisable(buildButtonDisable);
+        deployTabController.smartDeployButton.setDisable(true);
+        deployTabController.smartBuildButton.setDisable(buildButtonDisable);
     }
 
-    @FXML
-    private void handleBuild() {
-        buildButton.setText(COMPILING);
-        buildButton.setDisable(true);
-        deployTabController.smartErrorTableView.setVisible(false);
-        deployTabController.smartCodeArea.setDisable(true);
-        supplyAsync(() -> SourceCodeBuilder.compileSourceCode(deployTabController.smartCodeArea.getText())).whenComplete(
-            handleCallback(handleBuildResult()));
+    public void handleBuild(CreditsCodeArea codeArea, TableView<BuildSourceCodeError> errorTableView, VBox bottomPane,
+        TabPane bottomTabPane, Tab bottomErrorTab) {
+        deployTabController.smartBuildButton.setText(COMPILING);
+        deployTabController.smartBuildButton.setDisable(true);
+        errorTableView.setVisible(false);
+        codeArea.setDisable(true);
+        setFocusOnFeeField();
+        supplyAsync(() -> SourceCodeBuilder.compileSmartSourceCode(codeArea.getText())).whenComplete(
+            handleCallback(handleBuildResult(codeArea, errorTableView, bottomPane, bottomTabPane, bottomErrorTab)));
     }
 
-    private Callback<CompilationResult> handleBuildResult() {
+    public void setFocusOnFeeField() {
+        if (deployTabController.feeField.getText().isEmpty()) {
+            deployTabController.feeField.requestFocus();
+        }
+    }
+
+    private Callback<CompilationResult> handleBuildResult(CreditsCodeArea codeArea,
+        TableView<BuildSourceCodeError> errorTableView, VBox bottomPane, TabPane bottomTabPane, Tab bottomErrorTab) {
         return new Callback<CompilationResult>() {
             @Override
             @SuppressWarnings("unchecked")
             public void onSuccess(CompilationResult compilationResult) {
                 Platform.runLater(() -> {
-                    deployTabController.smartCodeArea.setDisable(false);
-                    buildButton.setText(BUILD);
+                    codeArea.setDisable(false);
+                    deployTabController.smartBuildButton.setText(BUILD);
                 });
-                if(checkNotError(deployTabController.smartErrorPanel, deployTabController.smartErrorTableView,
-                    compilationResult)) {
+                if (checkNotError(bottomPane, errorTableView, compilationResult, bottomTabPane, bottomErrorTab)) {
                     compilationPackage = compilationResult.getCompilationPackage();
                     Platform.runLater(() -> {
-                        buildButton.setDisable(true);
-                        deployButton.setDisable(false);
+                        deployTabController.smartBuildButton.setDisable(true);
+                        deployTabController.smartDeployButton.setDisable(false);
                     });
                 }
             }
@@ -132,8 +123,8 @@ public class SmartContractDeployController extends AbstractController {
             public void onError(Throwable e) {
                 Platform.runLater(() -> {
                     deployTabController.smartCodeArea.setDisable(false);
-                    buildButton.setDisable(false);
-                    buildButton.setText(BUILD);
+                    deployTabController.smartBuildButton.setDisable(false);
+                    deployTabController.smartBuildButton.setText(BUILD);
                     FormUtils.showPlatformError(e.getMessage());
                 });
                 LOGGER.error("failed!", e);
@@ -142,38 +133,35 @@ public class SmartContractDeployController extends AbstractController {
     }
 
     boolean checkNotError(VBox smartErrorPanel, TableView<BuildSourceCodeError> tableView,
-        CompilationResult compilationResult) {
+        CompilationResult compilationResult, TabPane bottomTabPane, Tab bottomErrorTab) {
         List<BuildSourceCodeError> errorsList = compilationResult.getErrors();
         if (errorsList.size() > 0) {
             Platform.runLater(() -> {
-                buildButton.setDisable(false);
+                deployTabController.smartBuildButton.setDisable(false);
                 tableView.getItems().clear();
                 tableView.getItems().addAll(errorsList);
                 tableView.setVisible(true);
                 tableView.setPrefHeight(smartErrorPanel.getPrefHeight());
+                bottomTabPane.getSelectionModel().select(bottomErrorTab);
             });
             return false;
         }
         return true;
     }
 
-    @FXML
-    private void handleDeploy() {
-        // VALIDATE
-        AtomicBoolean isValidationSuccessful = new AtomicBoolean(true);
+    public void handleDeploy() {
         clearLabErr();
-        String transactionFee = feeField.getText();
+        String transactionFee = deployTabController.feeField.getText();
         if (GeneralConverter.toBigDecimal(transactionFee).compareTo(BigDecimal.ZERO) <= 0) {
-            FormUtils.validateField(feeField, feeErrorLabel, ERR_FEE, isValidationSuccessful);
-        }
-        if (!isValidationSuccessful.get()) {
+            FormUtils.setErrorStyle(deployTabController.feeField);
+            setFocusOnFeeField();
             return;
         }
         try {
             String javaCode = SourceCodeUtils.normalizeSourceCode(deployTabController.smartCodeArea.getText());
             if (compilationPackage == null) {
-                buildButton.setDisable(false);
-                deployButton.setDisable(true);
+                deployTabController.smartBuildButton.setDisable(false);
+                deployTabController.smartDeployButton.setDisable(true);
                 throw new CreditsException("Source code is not compiled");
             } else {
                 if (compilationPackage.isCompilationStatusSuccess()) {
@@ -194,8 +182,9 @@ public class SmartContractDeployController extends AbstractController {
 
                     supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService, session.account,
                         smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool).thenApply(
-                        (transactionData) -> createSmartContractTransaction(transactionData, FormUtils.getActualOfferedMaxFee16Bits(feeField),
-                            smartContractData, session))
+                        (transactionData) -> createSmartContractTransaction(transactionData,
+                            FormUtils.getActualOfferedMaxFee16Bits(deployTabController.feeField), smartContractData,
+                            session))
                         .whenComplete(
                             handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
                     loadVista(WALLET);
@@ -253,11 +242,8 @@ public class SmartContractDeployController extends AbstractController {
                 StringSelection selection = new StringSelection(target);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);
-                FormUtils.showPlatformInfo(
-                    String.format("%s%n%nSmart-contract address%n%n%s%n%ncopied to clipboard",
-                            transactionFlowResultData.getMessage(), target
-                    )
-                );
+                FormUtils.showPlatformInfo(String.format("%s%n%nSmart-contract address%n%n%s%n%ncopied to clipboard",
+                    transactionFlowResultData.getMessage(), target));
                 if (tokenInfoData != null) {
                     saveSmartInTokenList(session.coinsKeeper, tokenInfoData.name, tokenInfoData.balance,
                         tokenInfoData.address);
@@ -278,10 +264,8 @@ public class SmartContractDeployController extends AbstractController {
     }
 
 
-
-
     private void clearLabErr() {
-        FormUtils.clearErrorOnField(feeField, feeErrorLabel);
+        FormUtils.clearErrorStyle(deployTabController.feeField);
     }
 
 

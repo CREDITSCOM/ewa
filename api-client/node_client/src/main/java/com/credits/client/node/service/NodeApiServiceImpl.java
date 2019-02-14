@@ -1,7 +1,15 @@
 package com.credits.client.node.service;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.*;
+import com.credits.client.node.pojo.PoolData;
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractTransactionData;
+import com.credits.client.node.pojo.SmartContractTransactionFlowData;
+import com.credits.client.node.pojo.TransactionData;
+import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
+import com.credits.client.node.pojo.TransactionIdData;
+import com.credits.client.node.pojo.TransactionsStateGetResultData;
 import com.credits.client.node.pojo.WalletData;
 import com.credits.client.node.thrift.generated.Amount;
 import com.credits.client.node.thrift.generated.Pool;
@@ -27,6 +35,7 @@ import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Function;
 import com.credits.general.util.exception.ConverterException;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +50,15 @@ import java.util.stream.Collectors;
 
 import static com.credits.client.node.util.NodeClientUtils.logApiResponse;
 import static com.credits.client.node.util.NodeClientUtils.processApiResponse;
-import static com.credits.client.node.util.NodePojoConverter.*;
+import static com.credits.client.node.util.NodePojoConverter.amountToBigDecimal;
+import static com.credits.client.node.util.NodePojoConverter.createSmartContractTransactionData;
+import static com.credits.client.node.util.NodePojoConverter.createTransactionData;
+import static com.credits.client.node.util.NodePojoConverter.poolToPoolData;
+import static com.credits.client.node.util.NodePojoConverter.smartContractToSmartContractData;
+import static com.credits.client.node.util.NodePojoConverter.smartContractTransactionFlowDataToTransaction;
+import static com.credits.client.node.util.NodePojoConverter.transactionFlowDataToTransaction;
+import static com.credits.client.node.util.NodePojoConverter.transactionFlowResultToTransactionFlowResultData;
+import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
 import static com.credits.general.util.GeneralConverter.byteArrayToByteBuffer;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.Utils.threadPool;
@@ -81,7 +98,7 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     @Override
-    public int getSynchronizePercent() throws NodeClientException, ConverterException {
+    public Pair<Integer, Long> getBlockAndSynchronizePercent() throws NodeClientException, ConverterException {
         SyncStateResult result = nodeClient.getSync();
         processApiResponse(result.getStatus());
         long currRound = result.getCurrRound();
@@ -91,16 +108,16 @@ public class NodeApiServiceImpl implements NodeApiService {
         LOGGER.debug("Synchronized round is " + String.valueOf(lastBlock));
 */
         if (lastBlock == 0) {
-            return 0;
+            return Pair.of(0, 0L);
         }
         int i = (int) ((lastBlock * 100.0f) / currRound);
         if (i > 100) {
-            return 0;
+            return Pair.of(0,currRound);
         }
         if(i==99) {
-            return 100;
+            return Pair.of(100,currRound);
         }
-        return i;
+        return Pair.of(i,currRound);
     }
 
 

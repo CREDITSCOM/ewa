@@ -14,12 +14,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 
 public class ExecutorIntegrationTest {
     ContractExecutorApiServiceImpl contractExecutorService;
+
     @Before
     public void setUp() {
         contractExecutorService = ContractExecutorApiServiceImpl.getInstance("127.0.0.1", 9080);
@@ -30,7 +32,8 @@ public class ExecutorIntegrationTest {
     @Test
     public void executorIntegrationTest() throws IOException {
         String sourceCode = WalletTestUtils.readSourceCode("/executorIntegrationTest/Contract.java");
-        CompilationPackage compilationPackage = SourceCodeBuilder.compileSourceCode(sourceCode).getCompilationPackage();
+        CompilationPackage compilationPackage =
+            SourceCodeBuilder.compileSourceCode(Collections.singletonList(sourceCode)).getCompilationPackage();
         List<ByteCodeObjectData> byteCodeObjectDataList =
             GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
         byte[] initiatorAddress = "initiatorAddress".getBytes();
@@ -47,9 +50,8 @@ public class ExecutorIntegrationTest {
             asList(new VariantData[] {}), 500L);
 
         int i = val.getRet_val().getV_int_box();
-        Assert.assertEquals(i,1);
+        Assert.assertEquals(i, 1);
     }
-
 
 
 }

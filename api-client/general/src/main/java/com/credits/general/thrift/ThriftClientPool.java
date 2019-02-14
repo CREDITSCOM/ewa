@@ -20,7 +20,7 @@ public class ThriftClientPool<T extends TServiceClient> implements
     AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThriftClientPool.class);
-    public static final int SOCKET_TIMEOUT = 30000;
+    public static final int SOCKET_TIMEOUT = 1200000;
 
     private final GenericObjectPool<T> internalPool;
 
