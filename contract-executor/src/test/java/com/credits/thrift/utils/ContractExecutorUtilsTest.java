@@ -3,6 +3,7 @@ package com.credits.thrift.utils;
 import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
+import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.variant.VariantUtils;
 import com.credits.service.ServiceTest;
 import org.junit.Assert;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.credits.TestUtils.SimpleInMemoryCompiler.compile;
 
 public class ContractExecutorUtilsTest extends ServiceTest {
 
@@ -89,7 +89,7 @@ public class ContractExecutorUtilsTest extends ServiceTest {
     }
 
     private Object getInstance(String source) throws Exception{
-        byte[] byteCode = compile(source, "Contract", "TKN");
+        byte[] byteCode = InMemoryCompiler.compileSourceCode(source).getUnits().get(0).getByteCode();
         Class<?> clazz = new ByteArrayContractClassLoader().buildClass(byteCode);
         return clazz.getDeclaredConstructor(String.class).newInstance("12345ABCDEF");
     }

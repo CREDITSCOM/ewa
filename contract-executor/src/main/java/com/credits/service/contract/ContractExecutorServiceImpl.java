@@ -199,6 +199,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             return new ReturnValue(serialize(instance), returnValues, new ArrayList<>(Arrays.asList(returnStatuses)));
 
         } catch (Throwable e) {
+            System.out.println("root cause message  - " + getRootCauseMessage(e));
+            e.printStackTrace();
             throw new ContractExecutorException(
                 "Cannot execute the contract " + initiatorAddressBase58 + ". Reason: " + getRootCauseMessage(e));
         }
