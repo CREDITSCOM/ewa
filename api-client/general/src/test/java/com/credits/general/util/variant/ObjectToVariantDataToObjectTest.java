@@ -6,15 +6,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
+import static org.junit.runners.Parameterized.Parameter;
+import static org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class ObjectToVariantDataToObjectTest {
 
-    @Parameterized.Parameter
+    @Parameter
     public Object object;
 
-    @Parameterized.Parameters(name = "{0}")
+    @Parameters(name = "{index}: {0}")
     public static Collection<Object> data() {
         return Arrays.asList(
                 null,
@@ -25,6 +33,18 @@ public class ObjectToVariantDataToObjectTest {
                 999999999999999L,
                 (float)999.99,
                 9999999999.99,
+                new byte[]{0xB, 0xA, 0xB, 0xE},
+                new int[]{1, 2, 3, 4},
+                new short[]{1, 2, 3, 4},
+                new long[]{1, 2, 3, 4},
+                new float[]{1, 2, 3, 4},
+                new double[]{1, 2, 3, 4},
+                new Byte[]{0xB},
+                new Integer[]{1},
+                new Short[]{1},
+                new Long[]{1L},
+                new Float[]{1f},
+                new Double[]{1d},
                 new ArrayList<String>() {{
                     add("A");
                     add("B");
@@ -68,6 +88,10 @@ public class ObjectToVariantDataToObjectTest {
     public void test() {
         VariantData variantData = VariantConverter.objectToVariantData(object);
         Object objectOut = VariantConverter.variantDataToObject(variantData);
-        Assert.assertEquals(object, objectOut);
+        if (object != null && object.getClass().isArray()) {
+            Assert.assertArrayEquals(new Object[] {object}, new Object[] {objectOut});
+        } else {
+            Assert.assertEquals(object, objectOut);
+        }
     }
 }
