@@ -315,39 +315,66 @@ public class VariantConverter {
         Object boxedValue = variantData.getBoxedValue();
         switch (variantType) {
             case ARRAY:
-                VariantData[] variantDataArr = (VariantData[]) boxedValue;
-                if (variantDataArr[0].getVariantType() == VariantType.BYTE) {
-                    byte[] bytes = new byte[variantDataArr.length];
-                    for (int i = 0; i < variantDataArr.length; i++) {
-                        bytes[i] = (byte) variantDataArr[i].getBoxedValue();
-                    }
-                    return bytes;
-                }
-                //fixme add int, short, long, float, double array converters
-               List<Object> objectArrAsList =
-                       Arrays.stream(variantDataArr).map(
-                               VariantConverter::variantDataToObject
-                       ).collect(Collectors.toList());
-               return objectArrAsList.toArray();
-           case LIST:
-               List<VariantData> variantDataList = (List<VariantData>) boxedValue;
-               return variantDataList.stream().map(
-                       VariantConverter::variantDataToObject
-               ).collect(Collectors.toList());
-           case SET:
-               Set<VariantData> variantDataSet = (Set<VariantData>) boxedValue;
-               return variantDataSet.stream().map(
-                       VariantConverter::variantDataToObject
-                       ).collect(Collectors.toSet());
-           case MAP:
-               Map<VariantData, VariantData> variantDataMap = (Map<VariantData, VariantData>) boxedValue;
-               return variantDataMap.entrySet().stream()
-                       .collect(Collectors.toMap(
-                           e -> VariantConverter.variantDataToObject(e.getKey()),
-                           e -> VariantConverter.variantDataToObject(e.getValue())
-                       ));
-           default:
-               return boxedValue;
-       }
-   }
+                return fromVariantDataToArray((VariantData[]) boxedValue);
+            case LIST:
+                List<VariantData> variantDataList = (List<VariantData>) boxedValue;
+                return variantDataList.stream().map(VariantConverter::variantDataToObject).collect(Collectors.toList());
+            case SET:
+                Set<VariantData> variantDataSet = (Set<VariantData>) boxedValue;
+                return variantDataSet.stream().map(VariantConverter::variantDataToObject).collect(Collectors.toSet());
+            case MAP:
+                Map<VariantData, VariantData> variantDataMap = (Map<VariantData, VariantData>) boxedValue;
+                return variantDataMap.entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(e -> VariantConverter.variantDataToObject(e.getKey()),
+                        e -> VariantConverter.variantDataToObject(e.getValue())));
+            default:
+                return boxedValue;
+        }
+    }
+
+    private static Object fromVariantDataToArray(VariantData[] variantDataArr) {
+        if (variantDataArr[0].getVariantType() == VariantType.BYTE) {
+            byte[] bytes = new byte[variantDataArr.length];
+            for (int i = 0; i < variantDataArr.length; i++) {
+                bytes[i] = (byte) variantDataArr[i].getBoxedValue();
+            }
+            return bytes;
+        } else if (variantDataArr[0].getVariantType() == VariantType.INT) {
+            int[] ints = new int[variantDataArr.length];
+            for (int i = 0; i < variantDataArr.length; i++) {
+                ints[i] = (int) variantDataArr[i].getBoxedValue();
+            }
+            return ints;
+        } else if (variantDataArr[0].getVariantType() == VariantType.SHORT) {
+            short[] shorts = new short[variantDataArr.length];
+            for (int i = 0; i < variantDataArr.length; i++) {
+                shorts[i] = (short) variantDataArr[i].getBoxedValue();
+            }
+            return shorts;
+        } else if (variantDataArr[0].getVariantType() == VariantType.LONG) {
+            long[] longs = new long[variantDataArr.length];
+            for (int i = 0; i < variantDataArr.length; i++) {
+                longs[i] = (long) variantDataArr[i].getBoxedValue();
+            }
+            return longs;
+        } else if (variantDataArr[0].getVariantType() == VariantType.FLOAT) {
+            float[] floats = new float[variantDataArr.length];
+            for (int i = 0; i < variantDataArr.length; i++) {
+                floats[i] = (float) variantDataArr[i].getBoxedValue();
+            }
+            return floats;
+        } else if (variantDataArr[0].getVariantType() == VariantType.DOUBLE) {
+            double[] doubles = new double[variantDataArr.length];
+            for (int i = 0; i < variantDataArr.length; i++) {
+                doubles[i] = (double) variantDataArr[i].getBoxedValue();
+            }
+            return doubles;
+        }
+        List<Object> objectArrAsList =
+            Arrays.stream(variantDataArr).map(
+                VariantConverter::variantDataToObject
+            ).collect(Collectors.toList());
+        return objectArrAsList.toArray();
+    }
 }
