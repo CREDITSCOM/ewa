@@ -8,8 +8,7 @@ public class Contract extends SmartContract {
         total = 1;
     }
 
-    public Contract(String initiator) {
-        super(initiator);
+    public Contract() {
         System.out.println("It is initiator adderss - " + initiator);
     }
 

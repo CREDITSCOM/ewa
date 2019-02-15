@@ -3,11 +3,6 @@ import java.util.ArrayList;
 
 public class MethodParametersTest extends SmartContract {
 
-    public MethodParametersTest(String initiator){
-        super(initiator);
-    }
-
-
     private static int statIntVar = 2;
 
     private int intVar = 1;

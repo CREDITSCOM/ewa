@@ -21,8 +21,7 @@ public class Contract extends SmartContract {
 
     private int total;
 
-    public Contract(String initiator) throws Exception {
-        super(initiator);
+    public Contract() throws Exception {
         String name = Thread.currentThread().getName();
         System.out.println("The constructor has been invoked. Thread: " + name);
     }

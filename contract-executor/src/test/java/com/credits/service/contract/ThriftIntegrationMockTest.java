@@ -68,6 +68,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     }
 
     @Test
+    @Ignore("need resolve file permission for this test")
     public void execute_contract_method_with_variant_parameters() throws ContractExecutorException {
         Integer newValue =
         ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList,

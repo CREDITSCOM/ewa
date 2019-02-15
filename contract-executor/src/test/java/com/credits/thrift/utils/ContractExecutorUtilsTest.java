@@ -34,8 +34,7 @@ public class ContractExecutorUtilsTest extends ServiceTest {
         "    public Set<Integer> setIntegerField;\n" +
         "    public Map<String, Integer> mapStringIntegerField;\n" +
         "\n" +
-        "    public Contract(String initiator) {\n" +
-        "        super(initiator);\n" +
+        "    public Contract() {\n" +
         "        this.nullField = null;\n" +
         "        this.intField = 5;\n" +
         "        this.integerField = 55;\n" +
@@ -51,8 +50,7 @@ public class ContractExecutorUtilsTest extends ServiceTest {
         "}";
 
     private String sourceCodeWithoutVariables = "public class Contract extends SmartContract {\n" +
-        "    public Contract(String initiator) {\n" +
-        "        super(initiator);" +
+        "    public Contract() {\n" +
         "    }\n" +
         "}";
 
@@ -91,6 +89,6 @@ public class ContractExecutorUtilsTest extends ServiceTest {
     private Object getInstance(String source) throws Exception{
         byte[] byteCode = InMemoryCompiler.compileSourceCode(source).getUnits().get(0).getByteCode();
         Class<?> clazz = new ByteArrayContractClassLoader().buildClass(byteCode);
-        return clazz.getDeclaredConstructor(String.class).newInstance("12345ABCDEF");
+        return clazz.newInstance();
     }
 }

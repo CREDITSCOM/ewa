@@ -7,10 +7,6 @@ public class Contract extends SmartContract {
         System.out.println("Constructor");
     }
 
-    public Contract(String initiator){
-        super(initiator);
-    }
-
     public void initialize() {
     }
 
