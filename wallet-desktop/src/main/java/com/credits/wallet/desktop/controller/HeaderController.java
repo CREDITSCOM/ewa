@@ -91,7 +91,7 @@ public class HeaderController implements Initializable {
                 int synchronizePercent = blockAndSynchronizePercent.getLeft();
                 Platform.runLater(() -> {
                     sync.setProgress((double) synchronizePercent / 100);
-                    syncPercent.setText(String.valueOf(synchronizePercent));
+                    syncPercent.setText(String.valueOf(synchronizePercent)+"%");
                     lastRoundLabel.setText(String.valueOf(lastRound));
                 });
                 if (synchronizePercent == 100 && !flag) {
