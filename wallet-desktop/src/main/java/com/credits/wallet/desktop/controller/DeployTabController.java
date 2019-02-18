@@ -182,6 +182,7 @@ public class DeployTabController extends AbstractController {
         items.add(BASIC_STANDARD_CLASS);
         items.add(EXTENSION_STANDARD_CLASS);
         cbContractType.getSelectionModel().select(0);
+        tabPane.getTabs().remove(newSmartTab);
     }
 
     private void initDeployContractList() {
@@ -230,19 +231,35 @@ public class DeployTabController extends AbstractController {
         if (currentItem != null) {
             if (currentItem.state.equals(DeploySmartListItem.ItemState.NEW)) {
                 initNewSmartTab();
-                newSmartTab.setDisable(false);
+                /*newSmartTab.setDisable(false);
                 smartTab.setDisable(true);
-                testTab.setDisable(true);
-                tabPane.getSelectionModel().select(newSmartTab);
+                testTab.setDisable(true);*/
+                Platform.runLater(() -> {
+                    tabPane.getTabs().clear();
+                    tabPane.getTabs().addAll(newSmartTab);
+                    tabPane.getSelectionModel().select(newSmartTab);
+                });
             } else {
                 smartCodeArea.replaceText(currentItem.sourceCode);
                 testCodeArea.replaceText(currentItem.testSourceCode);
-                newSmartTab.setDisable(true);
+                Platform.runLater(() -> {
+                    tabPane.getTabs().clear();
+                    String tabName;
+                    if(currentItem.name.indexOf("(")>0) {
+                        tabName = currentItem.name.substring(0, currentItem.name.indexOf("("));
+                    } else {
+                        tabName = currentItem.name;
+                    }
+                    smartTab.setText(tabName);
+                    testTab.setText(tabName +"Test");
+                    tabPane.getTabs().addAll(smartTab,testTab);
+                /*newSmartTab.setDisable(true);
                 smartTab.setDisable(false);
-                testTab.setDisable(false);
-                tabPane.getSelectionModel().select(smartTab);
-                smartTreeViewController.refreshTreeView(smartCodeArea);
-                testTreeViewController.refreshTreeView(testCodeArea);
+                testTab.setDisable(false);*/
+                    tabPane.getSelectionModel().select(smartTab);
+                    smartTreeViewController.refreshTreeView(smartCodeArea);
+                    testTreeViewController.refreshTreeView(testCodeArea);
+                });
             }
         }
     }
