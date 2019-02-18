@@ -3,30 +3,13 @@ package com.credits.client.node.service;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.*;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.generated.Amount;
-import com.credits.client.node.thrift.generated.Pool;
-import com.credits.client.node.thrift.generated.PoolInfoGetResult;
-import com.credits.client.node.thrift.generated.PoolListGetResult;
-import com.credits.client.node.thrift.generated.SealedTransaction;
-import com.credits.client.node.thrift.generated.SmartContract;
-import com.credits.client.node.thrift.generated.SmartContractAddressesListGetResult;
-import com.credits.client.node.thrift.generated.SmartContractGetResult;
-import com.credits.client.node.thrift.generated.SmartContractsListGetResult;
-import com.credits.client.node.thrift.generated.SyncStateResult;
-import com.credits.client.node.thrift.generated.Transaction;
-import com.credits.client.node.thrift.generated.TransactionFlowResult;
-import com.credits.client.node.thrift.generated.TransactionGetResult;
-import com.credits.client.node.thrift.generated.TransactionsGetResult;
-import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
-import com.credits.client.node.thrift.generated.WalletBalanceGetResult;
-import com.credits.client.node.thrift.generated.WalletDataGetResult;
-import com.credits.client.node.thrift.generated.WalletIdGetResult;
-import com.credits.client.node.thrift.generated.WalletTransactionsCountGetResult;
+import com.credits.client.node.thrift.generated.*;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
 import com.credits.general.util.Function;
 import com.credits.general.util.exception.ConverterException;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +64,7 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     @Override
-    public int getSynchronizePercent() throws NodeClientException, ConverterException {
+    public Pair<Integer, Long> getBlockAndSynchronizePercent() throws NodeClientException, ConverterException {
         SyncStateResult result = nodeClient.getSync();
         processApiResponse(result.getStatus());
         long currRound = result.getCurrRound();
@@ -91,16 +74,16 @@ public class NodeApiServiceImpl implements NodeApiService {
         LOGGER.debug("Synchronized round is " + String.valueOf(lastBlock));
 */
         if (lastBlock == 0) {
-            return 0;
+            return Pair.of(0, 0L);
         }
         int i = (int) ((lastBlock * 100.0f) / currRound);
         if (i > 100) {
-            return 0;
+            return Pair.of(0,currRound);
         }
         if(i==99) {
-            return 100;
+            return Pair.of(100,currRound);
         }
-        return i;
+        return Pair.of(i,currRound);
     }
 
 

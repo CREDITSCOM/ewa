@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.util.Properties;
 
-import static com.credits.wallet.desktop.testUtils.FakeData.addressBase58;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;

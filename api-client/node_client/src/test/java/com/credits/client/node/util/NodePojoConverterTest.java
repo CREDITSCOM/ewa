@@ -57,7 +57,8 @@ public class NodePojoConverterTest {
                 (byte)1,
                 ByteBuffer.wrap("signature".getBytes()),
                 new AmountCommission((short)1),
-                0
+                0,
+                null
         );
         SealedTransaction sealedTransaction = new SealedTransaction(transactionId, transaction);
         TransactionData transactionData = createTransactionData(sealedTransaction);
@@ -78,7 +79,8 @@ public class NodePojoConverterTest {
                 (byte)1,
                 ByteBuffer.wrap("signature".getBytes()),
                 new AmountCommission((short)1),
-                0
+                0,
+                null
         );
         TransactionData transactionData = createTransactionData(transaction);
         Assert.assertEquals(

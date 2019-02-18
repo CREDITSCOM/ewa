@@ -7,7 +7,13 @@ import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class VariantConverter {
@@ -193,60 +199,130 @@ public class VariantConverter {
         return object;
     }
 
-   public static VariantData objectToVariantData(Object object) {
-       VariantData variantData;
-       if (object == null) {
-           variantData = new VariantData(VariantType.NULL, null);
-       } else if (object.getClass().isArray()) {
-           List<VariantData> variantDataCollection =
-                   Arrays.stream((Object[]) object).map(VariantConverter::objectToVariantData).collect(Collectors.toList());
-           variantData = new VariantData(VariantType.ARRAY, variantDataCollection.toArray(new VariantData[]{}));
-       } else if (object instanceof List) {
-           List<VariantData> variantDataCollection =
-                   ((List<Object>) object).stream().map(VariantConverter::objectToVariantData).collect(Collectors.toList());
-           variantData = new VariantData(VariantType.LIST, variantDataCollection);
-       } else if (object instanceof Set) {
-           Set<VariantData> variantDataCollection =
-                   ((Set<Object>) object).stream().map(VariantConverter::objectToVariantData).collect(Collectors.toSet());
-           variantData = new VariantData(VariantType.SET, variantDataCollection);
-       } else if (object instanceof Map) {
-           Map<VariantData, VariantData> variantDataMap = ((Map<Object, Object>) object).entrySet()
-                   .stream()
-                   .collect(
-                       Collectors.toMap(entry ->
-                       VariantConverter.objectToVariantData(entry.getKey()),
-                       entry -> VariantConverter.objectToVariantData((entry.getValue()))
-                       )
-                   );
-           variantData = new VariantData(VariantType.MAP, variantDataMap);
-       } else if (object instanceof Boolean) {
-           variantData = new VariantData(VariantType.BOOL_BOX, object);
-       } else if (object instanceof Byte) {
-           variantData = new VariantData(VariantType.BYTE_BOX, object);
-       } else if (object instanceof Short) {
-           variantData = new VariantData(VariantType.SHORT_BOX, object);
-       } else if (object instanceof Integer) {
-           variantData = new VariantData(VariantType.INT_BOX, object);
-       } else if (object instanceof Long) {
-           variantData = new VariantData(VariantType.LONG_BOX, object);
-       } else if (object instanceof Float) {
-           variantData = new VariantData(VariantType.FLOAT_BOX, object);
-       } else if (object instanceof Double) {
-           variantData = new VariantData(VariantType.DOUBLE_BOX, object);
-       } else if (object instanceof String) {
-           variantData = new VariantData(VariantType.STRING, object);
-       } else {
-           throw new ConverterException(String.format("Unsupported object type: %s", object.getClass().getSimpleName()));
-       }
-       return variantData;
-   }
+    public static VariantData objectToVariantData(Object object) {
+        VariantData variantData = null;
+        if (object == null) {
+            variantData = new VariantData(VariantType.NULL, null);
+        } else if (object.getClass().isArray()) {
+            variantData = fromArrayToVariantData(object);
+        } else if (object.getClass().isPrimitive()) {
+            variantData = fromPrimitiveTypeToVariantData(object);
+        } else if (object instanceof List) {
+            List<VariantData> variantDataCollection = ((List<Object>) object).stream()
+                .map(VariantConverter::objectToVariantData)
+                .collect(Collectors.toList());
+            variantData = new VariantData(VariantType.LIST, variantDataCollection);
+        } else if (object instanceof Set) {
+            Set<VariantData> variantDataCollection =
+                ((Set<Object>) object).stream().map(VariantConverter::objectToVariantData).collect(Collectors.toSet());
+            variantData = new VariantData(VariantType.SET, variantDataCollection);
+        } else if (object instanceof Map) {
+            Map<VariantData, VariantData> variantDataMap = ((Map<Object, Object>) object).entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> VariantConverter.objectToVariantData(entry.getKey()),
+                    entry -> VariantConverter.objectToVariantData((entry.getValue()))));
+            variantData = new VariantData(VariantType.MAP, variantDataMap);
+        } else if (object instanceof Boolean) {
+            variantData = new VariantData(VariantType.BOOL_BOX, object);
+        } else if (object instanceof Byte) {
+            variantData = new VariantData(VariantType.BYTE_BOX, object);
+        } else if (object instanceof Short) {
+            variantData = new VariantData(VariantType.SHORT_BOX, object);
+        } else if (object instanceof Integer) {
+            variantData = new VariantData(VariantType.INT_BOX, object);
+        } else if (object instanceof Long) {
+            variantData = new VariantData(VariantType.LONG_BOX, object);
+        } else if (object instanceof Float) {
+            variantData = new VariantData(VariantType.FLOAT_BOX, object);
+        } else if (object instanceof Double) {
+            variantData = new VariantData(VariantType.DOUBLE_BOX, object);
+        } else if (object instanceof String) {
+            variantData = new VariantData(VariantType.STRING, object);
+        }
+        if (variantData == null) {
+            throw new ConverterException(
+                String.format("Unsupported object type: %s", object.getClass().getSimpleName()));
+        }
+        return variantData;
+    }
 
-   public static Object variantDataToObject(VariantData variantData) {
-       VariantType variantType = variantData.getVariantType();
-       Object boxedValue = variantData.getBoxedValue();
-       switch(variantType) {
-           case ARRAY:
-               VariantData[] variantDataArr = (VariantData[]) boxedValue;
+    private static VariantData fromPrimitiveTypeToVariantData(Object object) {
+        VariantData variantData = null;
+        if (byte.class.isInstance(object)) {
+            variantData = new VariantData(VariantType.BYTE, object);
+        }
+        if (int.class.isInstance(object)) {
+            variantData = new VariantData(VariantType.INT, object);
+        }
+        if (short.class.isInstance(object)) {
+            variantData = new VariantData(VariantType.SHORT, object);
+        }
+        if (long.class.isInstance(object)) {
+            variantData = new VariantData(VariantType.LONG, object);
+        }
+        if (float.class.isInstance(object)) {
+            variantData = new VariantData(VariantType.FLOAT, object);
+        }
+        if (double.class.isInstance(object)) {
+            variantData = new VariantData(VariantType.DOUBLE, object);
+        }
+        return variantData;
+    }
+
+    private static VariantData fromArrayToVariantData(Object object) {
+        VariantData variantData;
+        List<VariantData> variantDataCollection = new ArrayList<>();
+        if (object instanceof Object[]) {
+            variantDataCollection = Arrays.stream((Object[]) object)
+                .map(VariantConverter::objectToVariantData)
+                .collect(Collectors.toList());
+        } else if (object instanceof byte[]) {
+            for (byte b : (byte[]) object) {
+                variantDataCollection.add(new VariantData(VariantType.BYTE, b));
+            }
+        } else if (object instanceof int[]) {
+            for (int i : (int[]) object) {
+                variantDataCollection.add(new VariantData(VariantType.INT, i));
+            }
+        } else if (object instanceof long[]) {
+            for (long i : (long[]) object) {
+                variantDataCollection.add(new VariantData(VariantType.LONG, i));
+            }
+        } else if (object instanceof short[]) {
+            for (short s : (short[]) object) {
+                variantDataCollection.add(new VariantData(VariantType.SHORT, s));
+            }
+        } else if (object instanceof float[]) {
+            for (float f : (float[]) object) {
+                variantDataCollection.add(new VariantData(VariantType.FLOAT, f));
+            }
+        } else if (object instanceof double[]) {
+            for (double d : (double[]) object) {
+                variantDataCollection.add(new VariantData(VariantType.DOUBLE, d));
+            }
+        }
+
+        if(variantDataCollection.isEmpty()) {
+            throw new ConverterException(
+                String.format("Unsupported object type: %s", object.getClass().getSimpleName()));
+        }
+        variantData = new VariantData(VariantType.ARRAY, variantDataCollection.toArray(new VariantData[] {}));
+        return variantData;
+    }
+
+    public static Object variantDataToObject(VariantData variantData) {
+        VariantType variantType = variantData.getVariantType();
+        Object boxedValue = variantData.getBoxedValue();
+        switch (variantType) {
+            case ARRAY:
+                VariantData[] variantDataArr = (VariantData[]) boxedValue;
+                if (variantDataArr[0].getVariantType() == VariantType.BYTE) {
+                    byte[] bytes = new byte[variantDataArr.length];
+                    for (int i = 0; i < variantDataArr.length; i++) {
+                        bytes[i] = (byte) variantDataArr[i].getBoxedValue();
+                    }
+                    return bytes;
+                }
                List<Object> objectArrAsList =
                        Arrays.stream(variantDataArr).map(
                                VariantConverter::variantDataToObject

@@ -1,12 +1,10 @@
 package com.credits.classload;
 
-import com.credits.exception.CompilationException;
+import com.credits.general.exception.CompilationErrorException;
+import com.credits.general.util.compiler.InMemoryCompiler;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.MalformedURLException;
-
-import static com.credits.TestUtils.SimpleInMemoryCompiler;
 
 public class ByteArrayContractClassLoaderTest {
 
@@ -22,15 +20,15 @@ public class ByteArrayContractClassLoaderTest {
 
     @Test
     public void buildClassTest() throws Exception {
-        byte[] bytecode = SimpleInMemoryCompiler.compile(sourceCode, "Contract", "TKN");
+        byte[] bytecode = InMemoryCompiler.compileSourceCode(sourceCode).getUnits().get(0).getByteCode();
 
         Class clazz = new ByteArrayContractClassLoader().buildClass(bytecode);
         clazz.newInstance();
     }
 
     @Test(expected = LinkageError.class)
-    public void buildClassTwice() throws CompilationException, MalformedURLException {
-        byte[] bytecode = SimpleInMemoryCompiler.compile(sourceCode, "Contract", "TKN");
+    public void buildClassTwice() throws CompilationErrorException {
+        byte[] bytecode = InMemoryCompiler.compileSourceCode(sourceCode).getUnits().get(0).getByteCode();
 
         ByteArrayContractClassLoader loader = new ByteArrayContractClassLoader();
         loader.buildClass(bytecode);
@@ -38,11 +36,11 @@ public class ByteArrayContractClassLoaderTest {
     }
 
     @Test
-    public void loadOtherClass() throws CompilationException, MalformedURLException {
+    public void loadOtherClass() throws CompilationErrorException {
         sourceCode = "public class Contract {\n" + "\n" + "    public Contract() {\n" +
             "try {\n new java.net.ServerSocket(5000);\n} catch (java.io.IOException e) {\ne.printStackTrace();\n}\n" + "    }\n" + "}";
 
-        byte[] bytecode = SimpleInMemoryCompiler.compile(sourceCode, "Contract", "TKN");
+        byte[] bytecode = InMemoryCompiler.compileSourceCode(sourceCode).getUnits().get(0).getByteCode();
         ByteArrayContractClassLoader loader = new ByteArrayContractClassLoader();
         loader.buildClass(bytecode);
     }

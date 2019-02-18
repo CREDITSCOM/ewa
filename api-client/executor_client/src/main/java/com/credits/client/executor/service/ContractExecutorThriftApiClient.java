@@ -1,14 +1,10 @@
 package com.credits.client.executor.service;
 
 import com.credits.client.executor.exception.ContractExecutorClientException;
-import com.credits.client.executor.thrift.generated.CompileSourceCodeResult;
-import com.credits.client.executor.thrift.generated.ExecuteByteCodeMultipleResult;
-import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
-import com.credits.client.executor.thrift.generated.GetContractVariablesResult;
+import com.credits.client.executor.thrift.generated.*;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.ThriftClientPool;
 import com.credits.general.thrift.generated.ByteCodeObject;
-import com.credits.general.thrift.generated.ExecuteByteCodeResult;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.variant.VariantConverter;
 import org.apache.thrift.TBase;

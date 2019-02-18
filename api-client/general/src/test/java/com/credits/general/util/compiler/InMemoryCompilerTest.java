@@ -4,6 +4,7 @@ import com.credits.general.exception.CompilationException;
 import com.credits.general.util.PrintOut;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
+import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -11,7 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryCompilerTest {
 
@@ -22,12 +25,15 @@ public class InMemoryCompilerTest {
         InMemoryCompiler compiler = new InMemoryCompiler();
         CompilationPackage compilationPackage = null;
         try {
+            String sourceCode =
+                "public class Contract extends SmartContract { \n" + "public Contract() { \n" + "total = 0;wqwe \n" +
+                    "} \n" + "}";
+            Map<String,String> classesToCompile = new HashMap<>();
+            String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
+            classesToCompile.put(className,sourceCode);
+
             compilationPackage = compiler.compile(
-                    "public class Contract extends SmartContract { \n" +
-                            "public Contract() { \n" +
-                            "total = 0;wqwe \n" +
-                            "} \n" +
-                            "}");
+                classesToCompile);
         } catch (CompilationException e) {
             e.printStackTrace();
         }

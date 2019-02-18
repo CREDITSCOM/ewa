@@ -4,7 +4,6 @@ import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.ByteCodeObject;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.exception.ConverterException;
-import org.apache.commons.beanutils.converters.BigDecimalConverter;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -48,10 +47,11 @@ public class GeneralConverter {
             return String.valueOf(value);
         }
         if (value instanceof BigDecimal) {
-            BigDecimalConverter bigDecimalConverter = new BigDecimalConverter();
-            bigDecimalConverter.setLocale(Constants.LOCALE);
-            bigDecimalConverter.setPattern("#.##################");
-            return (String) bigDecimalConverter.convert(String.class, value);
+//            BigDecimalConverter bigDecimalConverter = new BigDecimalConverter();
+//            bigDecimalConverter.setLocale(Constants.LOCALE);
+//            bigDecimalConverter.setPattern("#.##################");
+//            return (String) bigDecimalConverter.convert(String.class, value);
+            return value.toString();
         }
         if (value instanceof Boolean) {
             return String.valueOf(value);

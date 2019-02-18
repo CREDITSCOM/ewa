@@ -48,26 +48,31 @@ public class FakeData {
         try {
             byte[] byteAddress = decodeFromBASE58("G2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZZ");
 
-            TransactionData transactionData01 = new TransactionData(1L, byteAddress, decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(1.0));
+            TransactionData transactionData01 = new TransactionData(1L, byteAddress, decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(1.0), null);
             transactionData01.setParams(
                     Arrays.asList(
                             new VariantData(VariantType.STRING, "value01"),
                             new VariantData(VariantType.STRING, "value02")
                     )
             );
+            SmartStateTransInfoData smartInfo01 = new SmartStateTransInfoData(
+                    true,
+                    new BigDecimal("0"),
+                    new VariantData(VariantType.STRING, "returnValue"),
+                    new TransactionIdData("".getBytes(), 0)
+            );
             transactionData01.setMethod("method01");
             transactionData01.setBlockId("blockId01");
+            transactionData01.setSmartInfo(smartInfo01);
+            transactionData01.setType(TransactionTypeData.TT_SmartDeploy);
             SmartContractInvocationData smartContractInvocationData01 = new SmartContractInvocationData(null,
-                    null, null, false,
-                    new ExecuteByteCodeResultData(
-                            successResponse, null, new VariantData(VariantType.STRING, "value01")
-                    )
+                    null, null, false
             );
 
             SmartContractTransactionData smartContractTransactionData1 = new SmartContractTransactionData(
                     transactionData01, smartContractInvocationData01);
 
-            TransactionData transactionData02 = new TransactionData(1L, byteAddress, decodeFromBASE58("777EN2pQ4wh9XuGneMD1h2Lme2TZmzNv7rUa9uZLz8CM"), null);
+            TransactionData transactionData02 = new TransactionData(1L, byteAddress, decodeFromBASE58("777EN2pQ4wh9XuGneMD1h2Lme2TZmzNv7rUa9uZLz8CM"), null, null);
             transactionData02.setParams(
                     Arrays.asList(
                             new VariantData(VariantType.STRING, "value01"),
@@ -77,10 +82,7 @@ public class FakeData {
             transactionData02.setMethod("method01");
             transactionData02.setBlockId("blockId01");
             SmartContractInvocationData smartContractInvocationData02 = new SmartContractInvocationData(null,
-                    null, null, false,
-                    new ExecuteByteCodeResultData(
-                            successResponse, null, new VariantData(VariantType.STRING, "value01")
-                    )
+                    null, null, false
             );
             SmartContractTransactionData smartContractTransactionData2 = new SmartContractTransactionData(
                     transactionData02, smartContractInvocationData02);
@@ -128,39 +130,39 @@ public class FakeData {
 
             transactionData1 = new TransactionData(1L,
                 byteAddress,
-                decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(1.0));
+                decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(1.0), null);
             transactionData2 =
                 (new TransactionData(2L,
                     byteAddress,
-                    decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(1.0)));
+                    decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(1.0), null));
             transactionData3 =
                 (new TransactionData(3L,
                     byteAddress,
-                    decodeFromBASE58("777EN2pQ4wh9XuGneMD1h2Lme2TZmzNv7rUa9uZLz8CM"), new BigDecimal(2.0)));
+                    decodeFromBASE58("777EN2pQ4wh9XuGneMD1h2Lme2TZmzNv7rUa9uZLz8CM"), new BigDecimal(2.0), null));
             transactionData4 =
                 (new TransactionData(4L,
                     byteAddress,
-                    decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(3.0)));
+                    decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(3.0), null));
             transactionData5 =
                 (new TransactionData(5L,
                     byteAddress,
-                    decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(4.0)));
+                    decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(4.0), null));
             transactionData6 =
                 (new TransactionData(6L,
                     byteAddress,
-                    decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(5.0)));
+                    decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(5.0), null));
             transactionData7 =
                 (new TransactionData(7L,
                     byteAddress,
-                    decodeFromBASE58("BqN3YEfYvJh2JfaQZWcmV9aByikt1DZERgMXuKVdtqBE"), new BigDecimal(6.0)));
+                    decodeFromBASE58("BqN3YEfYvJh2JfaQZWcmV9aByikt1DZERgMXuKVdtqBE"), new BigDecimal(6.0), null));
             transactionData8 =
                 (new TransactionData(8L,
                     byteAddress,
-                    decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(7.0)));
+                    decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(7.0), null));
             transactionData9 =
                 (new TransactionData(9L,
                     byteAddress,
-                    decodeFromBASE58("BqN3YEfYvJh2JfaQZWcmV9aByikt1DZERgMXuKVdtqBE"), new BigDecimal(8.0)));
+                    decodeFromBASE58("BqN3YEfYvJh2JfaQZWcmV9aByikt1DZERgMXuKVdtqBE"), new BigDecimal(8.0), null));
 
             transactionsDataList.add(transactionData1);
             transactionsDataList.add(transactionData2);
@@ -175,7 +177,7 @@ public class FakeData {
                 transactionData10 =
                     (new TransactionData(200L,
                         byteAddress,
-                        byteAddress, new BigDecimal(2147483647.0)));
+                        byteAddress, new BigDecimal(2147483647.0), null));
                 transactionsDataList.add(transactionData10);
             }
 

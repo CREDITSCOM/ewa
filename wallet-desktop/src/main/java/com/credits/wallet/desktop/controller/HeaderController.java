@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.general.thrift.ThriftClientPool;
 import com.credits.wallet.desktop.VistaNavigator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -8,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.ProgressBar;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,11 +51,15 @@ public class HeaderController implements Initializable {
     public Button btnLogout;
     @FXML
     public MenuButton btnSmartMenu;
+    @FXML
+    public Label lastRoundLabel;
 
     private ScheduledExecutorService headerExecService = Executors.newScheduledThreadPool(1);
     private Runnable runnable;
     private Future future;
     private boolean flag = false;
+    private boolean connect = true;
+
     @FXML
     private void handleLogout() {
         parentController.closeSession();
@@ -78,33 +84,46 @@ public class HeaderController implements Initializable {
 
     public void initializeSynchronize() {
         headerExecService = Executors.newScheduledThreadPool(1);
-        runnable = () -> Platform.runLater(() -> {
-
+        runnable = () -> {
             try {
-                int synchronizePercent = nodeApiService.getSynchronizePercent();
-                sync.setProgress((double)synchronizePercent/100);
-                syncPercent.setText(synchronizePercent + "%");
+                Pair<Integer, Long> blockAndSynchronizePercent = nodeApiService.getBlockAndSynchronizePercent();
+                Long lastRound = blockAndSynchronizePercent.getRight();
+                int synchronizePercent = blockAndSynchronizePercent.getLeft();
+                Platform.runLater(() -> {
+                    sync.setProgress((double) synchronizePercent / 100);
+                    syncPercent.setText(String.valueOf(synchronizePercent));
+                    lastRoundLabel.setText(String.valueOf(lastRound));
+                });
                 if (synchronizePercent == 100 && !flag) {
-                    changeDelay();
+                    changeDelay(DELAY_AFTER_FULL_SYNC);
                 }
+                connect = true;
+            } catch (ThriftClientPool.ThriftClientException te) {
+                if (connect) {
+                    changeDelay(30);
+                }
+                connect = false;
+                LOGGER.error("Connection was refused");
             } catch (Exception e) {
-                sync.setProgress(0);
-                syncPercent.setText("0%");
+                Platform.runLater(() -> {
+                    sync.setProgress(0);
+                    syncPercent.setText("0%");
+                    lastRoundLabel.setText(String.valueOf(0));
+                });
             }
-        });
+        };
         future = headerExecService.scheduleWithFixedDelay(runnable, 0, DELAY_BEFORE_FULL_SYNC, TimeUnit.SECONDS);
     }
 
-    private void changeDelay() {
+    private void changeDelay(int delay) {
         flag = future.cancel(false);
         System.out.println("Synchronized is 100% : " + flag);
-        future = headerExecService.scheduleWithFixedDelay(runnable, 0, DELAY_AFTER_FULL_SYNC, TimeUnit.SECONDS);
+        future = headerExecService.scheduleWithFixedDelay(runnable, delay, delay, TimeUnit.SECONDS);
     }
 
 
-
     public void changeElementVisible() {
-        if(parentController.session==null) {
+        if (parentController.session == null) {
             setMainElementsVisible(false);
         } else {
             setMainElementsVisible(true);

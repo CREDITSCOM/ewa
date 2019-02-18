@@ -1,0 +1,9 @@
+import org.junit.Assert;
+import org.junit.Test;
+
+public class Test%s {
+    @Test
+    public void method1() {
+        //%s instance = new %s("%s");
+    }
+}

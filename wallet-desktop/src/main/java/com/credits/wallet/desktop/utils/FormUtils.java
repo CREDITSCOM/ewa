@@ -1,5 +1,7 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.Utils;
 import com.credits.wallet.desktop.struct.CoinTabRow;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -11,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -20,21 +23,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FormUtils {
 
     public static void showError(String text) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.initStyle(StageStyle.UTILITY);
-        alert.setTitle("Error");
-        alert.setHeaderText("Error!");
-        alert.setContentText(text);
-        alert.showAndWait();
+        Platform.runLater(()-> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initStyle(StageStyle.UTILITY);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error!");
+            alert.setContentText(text);
+            alert.showAndWait();
+        });
     }
 
     public static void showInfo(String text) {
+        Platform.runLater(()->{
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.initStyle(StageStyle.UTILITY);
         alert.setTitle("Information");
         alert.setHeaderText("Information");
         alert.setContentText(text);
         alert.showAndWait();
+        });
     }
 
     public static void showPlatformWarning(String content) {
@@ -87,8 +94,12 @@ public class FormUtils {
     public static void validateField(TextField textField, Label errorLabel, String errorText,
         AtomicBoolean validationFlag) {
         errorLabel.setText(errorText);
-        textField.setStyle(textField.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+        setErrorStyle(textField);
         validationFlag.set(false);
+    }
+
+    public static void setErrorStyle(TextField textField) {
+        textField.setStyle(textField.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
     }
 
     public static void validateTable(TableView<CoinTabRow> tableView, Label errorLabel, String errorText,
@@ -105,7 +116,45 @@ public class FormUtils {
 
     public static void clearErrorOnField(TextField textField, Label errorLabel) {
         errorLabel.setText("");
+        clearErrorStyle(textField);
+    }
+
+    public static void clearErrorStyle(TextField textField) {
         textField.setStyle(textField.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
+    }
+
+    public static short getActualOfferedMaxFee16Bits(TextField feeField) {
+        Pair<Double, Short> actualOfferedMaxFeePair =
+            Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(feeField.getText()));
+        return  actualOfferedMaxFeePair.getRight();
+    }
+
+    public static void initFeeField(TextField feeField, Label actualOfferedMaxFeeLabel) {
+        feeField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                newValue = NumberUtils.getCorrectNum(newValue);
+                if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
+                    refreshOfferedMaxFeeValues(feeField,actualOfferedMaxFeeLabel,oldValue);
+                    return;
+                }
+                refreshOfferedMaxFeeValues(feeField,actualOfferedMaxFeeLabel,newValue);
+            } catch (Exception e) {
+                //FormUtils.showError("Error. Reason: " + e.getMessage());
+                refreshOfferedMaxFeeValues(feeField,actualOfferedMaxFeeLabel,oldValue);
+            }
+        });
+    }
+
+    private static void refreshOfferedMaxFeeValues(TextField feeField, Label actualOfferedMaxFeeLabel, String value) {
+        if (value.isEmpty()) {
+            actualOfferedMaxFeeLabel.setText("");
+            feeField.setText("");
+        } else {
+            Pair<Double, Short> actualOfferedMaxFeePair =
+                Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(value));
+            actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
+            feeField.setText(value);
+        }
     }
 }
 
