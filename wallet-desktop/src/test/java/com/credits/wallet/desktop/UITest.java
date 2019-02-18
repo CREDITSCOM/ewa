@@ -91,6 +91,25 @@ public class UITest {
         return privateKey;
     }
 
+//<<<<<<< Updated upstream
+//=======
+//    private void injectSession() {
+//        Session session = new Session();
+//        session.account = walletAddress;
+//        session.coinsKeeper = new ObjectKeeper<>(session.account, "coins");
+//        session.favoriteContractsKeeper = new ObjectKeeper<>(session.account, "favorite");
+//        session.sourceMap = FakeData.sourceMap.get("GWe8WZYLBxAqsfPZgejnysXQm5Q697VSsyr3x59RvYBf");
+//
+//        WelcomeController welcomeController = new WelcomeController();
+//        welcomeController.session = session;
+//
+//        doAnswer((Answer<Void>) invocationOnMock -> {
+//            VistaNavigator.loadVista(mockInitializer.startForm,welcomeController);
+//            return null;
+//        }).when(mockWalletApp).loadWelcomeForm();
+//    }
+//
+//>>>>>>> Stashed changes
     @Ignore
     @Test
     public void allForms() throws Exception {

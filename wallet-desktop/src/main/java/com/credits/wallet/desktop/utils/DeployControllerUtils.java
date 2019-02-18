@@ -92,11 +92,11 @@ public class DeployControllerUtils {
     }
 
     public static void initErrorTableView(VBox errorPanel, TableView<BuildSourceCodeError> errorTableView, CreditsCodeArea codeArea) {
+
         TableColumn<BuildSourceCodeError, String> tabErrorsColClassName = new TableColumn<>();
         tabErrorsColClassName.setText("ClassName");
         tabErrorsColClassName.setCellValueFactory(new PropertyValueFactory<>("className"));
         tabErrorsColClassName.setPrefWidth(errorPanel.getPrefWidth() * 0.2);
-
 
         TableColumn<BuildSourceCodeError, String> tabErrorsColLine = new TableColumn<>();
         tabErrorsColLine.setText("Line");
@@ -142,9 +142,4 @@ public class DeployControllerUtils {
             smartContractDeployController.cleanCompilationPackage(false);
         });
     }
-
-
-
-
-
 }

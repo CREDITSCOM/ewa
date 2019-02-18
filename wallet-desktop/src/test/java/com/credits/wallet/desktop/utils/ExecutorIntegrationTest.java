@@ -1,9 +1,9 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.client.executor.service.ContractExecutorApiServiceImpl;
+import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.VariantData;
-import com.credits.general.thrift.generated.ExecuteByteCodeResult;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.testUtils.WalletTestUtils;

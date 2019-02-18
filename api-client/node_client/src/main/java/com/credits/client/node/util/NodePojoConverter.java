@@ -1,37 +1,11 @@
 package com.credits.client.node.util;
 
-import com.credits.client.node.pojo.PoolData;
-import com.credits.client.node.pojo.SmartContractData;
-import com.credits.client.node.pojo.SmartContractDeployData;
-import com.credits.client.node.pojo.SmartContractInvocationData;
-import com.credits.client.node.pojo.SmartContractTransactionData;
-import com.credits.client.node.pojo.SmartContractTransactionFlowData;
-import com.credits.client.node.pojo.TokenStandartData;
-import com.credits.client.node.pojo.TransactionData;
-import com.credits.client.node.pojo.TransactionFlowData;
-import com.credits.client.node.pojo.TransactionFlowResultData;
-import com.credits.client.node.pojo.TransactionIdData;
-import com.credits.client.node.pojo.TransactionStateData;
-import com.credits.client.node.pojo.TransactionsStateGetResultData;
+import com.credits.client.node.pojo.*;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.generated.Amount;
-import com.credits.client.node.thrift.generated.AmountCommission;
-import com.credits.client.node.thrift.generated.Pool;
-import com.credits.client.node.thrift.generated.SealedTransaction;
-import com.credits.client.node.thrift.generated.SmartContract;
-import com.credits.client.node.thrift.generated.SmartContractDeploy;
-import com.credits.client.node.thrift.generated.SmartContractInvocation;
-import com.credits.client.node.thrift.generated.TokenStandart;
-import com.credits.client.node.thrift.generated.Transaction;
-import com.credits.client.node.thrift.generated.TransactionFlowResult;
-import com.credits.client.node.thrift.generated.TransactionId;
-import com.credits.client.node.thrift.generated.TransactionState;
-import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
-import com.credits.general.pojo.ExecuteByteCodeResultData;
+import com.credits.client.node.thrift.generated.*;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.GeneralPojoConverter;
 import com.credits.general.util.exception.ConverterException;
 import com.credits.general.util.variant.VariantConverter;
 import org.apache.commons.codec.binary.Hex;
@@ -46,7 +20,7 @@ import java.util.stream.Collectors;
 import static com.credits.general.util.Constants.ds;
 import static com.credits.general.util.GeneralConverter.byteArrayToByteBuffer;
 import static com.credits.general.util.GeneralPojoConverter.createApiResponseData;
-import static com.credits.general.util.GeneralPojoConverter.createExecuteByteCodeResultData;
+import static com.credits.general.util.variant.VariantConverter.variantToVariantData;
 
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
@@ -114,12 +88,14 @@ public class NodePojoConverter {
             data.setMethod(transaction.getSmartContract().getMethod());
             data.setParams(variantListToVariantDataList(transaction.getSmartContract().getParams()));
         }
+        data.setSmartInfo(NodePojoConverter.createSmartTransInfoData(transaction.getSmartInfo()));
+        data.setType(createTransactionTypeData(transaction.getType()));
         return data;
     }
 
     private static List<VariantData> variantListToVariantDataList(List<Variant> params) {
         ArrayList<VariantData> objectParams = new ArrayList<>();
-        params.forEach(object -> objectParams.add(VariantConverter.variantToVariantData(object)));
+        params.forEach(object -> objectParams.add(variantToVariantData(object)));
         return objectParams;
     }
 
@@ -136,6 +112,7 @@ public class NodePojoConverter {
         data.setSource(transaction.getSource());
         data.setTarget(transaction.getTarget());
         data.setCommentBytes(transaction.getUserFields());
+        data.setType(TransactionTypeData.TT_Normal);
         return data;
     }
 
@@ -203,6 +180,98 @@ public class NodePojoConverter {
             tokenStandartToTokenStandartData(thriftStruct.getTokenStandart()));
     }
 
+    public static SmartTransInfoData createSmartTransInfoData(
+            SmartTransInfo thriftStruct) {
+
+        if (thriftStruct.isSetV_smartDeploy()) {
+            SmartDeployTransInfo child = thriftStruct.getV_smartDeploy();
+            return createSmartDeployTransInfoData(child);
+        } else if (thriftStruct.isSetV_smartExecution()) {
+            SmartExecutionTransInfo child = thriftStruct.getV_smartExecution();
+            return createSmartExecutionTransInfoData(child);
+        } else if (thriftStruct.isSetV_smartState()) {
+            SmartStateTransInfo child = thriftStruct.getV_smartState();
+            return createSmartStateTransInfoData(child);
+        } else if (thriftStruct.isSetV_tokenDeploy()) {
+            TokenDeployTransInfo child = thriftStruct.getV_tokenDeploy();
+            return createTokenDeployTransInfoData(child);
+        } else if (thriftStruct.isSetV_tokenTransfer()) {
+            TokenTransferTransInfo child = thriftStruct.getV_tokenTransfer();
+            return createTokenTransferTransInfoData(child);
+        } else {
+            throw new ConverterException(String.format("Unsupported value: %s", thriftStruct.toString()));
+        }
+    }
+
+    public static SmartDeployTransInfoData createSmartDeployTransInfoData(SmartDeployTransInfo thriftStruct) {
+        return new SmartDeployTransInfoData(
+                createSmartOperationStateData(thriftStruct.getState()),
+                createTransactionIdData(thriftStruct.getStateTransaction())
+        );
+    }
+
+    public static SmartExecutionTransInfoData createSmartExecutionTransInfoData(SmartExecutionTransInfo thriftStruct) {
+        return new SmartExecutionTransInfoData(
+                thriftStruct.getMethod(),
+                variantListToVariantDataList(thriftStruct.getParams()),
+                createSmartOperationStateData(thriftStruct.getState()),
+                createTransactionIdData(thriftStruct.getStateTransaction())
+        );
+    }
+
+    public static SmartStateTransInfoData createSmartStateTransInfoData(SmartStateTransInfo thriftStruct) {
+        return new SmartStateTransInfoData(
+                thriftStruct.isSuccess(),
+                amountToBigDecimal(thriftStruct.getExecutionFee()),
+                thriftStruct.getReturnValue() == null ? null : variantToVariantData(thriftStruct.getReturnValue()),
+                createTransactionIdData(thriftStruct.getStartTransaction())
+        );
+    }
+
+    public static TokenDeployTransInfoData createTokenDeployTransInfoData(TokenDeployTransInfo thriftStruct) {
+        return new TokenDeployTransInfoData(
+                thriftStruct.getName(),
+                thriftStruct.getCode(),
+                createTokenStandartData(thriftStruct.getStandart())
+        );
+    }
+
+    public static TokenTransferTransInfoData createTokenTransferTransInfoData(TokenTransferTransInfo thriftStruct) {
+        return new TokenTransferTransInfoData(
+                thriftStruct.getCode(),
+                thriftStruct.getSender(),
+                thriftStruct.getReceiver(),
+                thriftStruct.getAmount()
+        );
+    }
+
+
+    public static TokenStandartData createTokenStandartData(TokenStandart thriftStruct) {
+        switch (thriftStruct) {
+            case CreditsBasic: return TokenStandartData.CreditsBasic;
+            case CreditsExtended: return TokenStandartData.CreditsExtended;
+            case NotAToken: return TokenStandartData.NotAToken;
+            default: throw new ConverterException(String.format("Unsupported value: %s", thriftStruct.getValue()));
+        }
+    }
+
+
+
+    public static TransactionIdData createTransactionIdData(TransactionId thriftStruct) {
+        return new TransactionIdData(
+                thriftStruct.getPoolHash(),
+                thriftStruct.getIndex()
+        );
+    }
+
+    public static SmartOperationStateData createSmartOperationStateData(SmartOperationState thriftStruct) {
+        switch (thriftStruct) {
+            case SOS_Failed: return SmartOperationStateData.SOS_Failed;
+            case SOS_Pending: return SmartOperationStateData.SOS_Pending;
+            case SOS_Success: return SmartOperationStateData.SOS_Success;
+            default: throw new ConverterException(String.format("Unsupported value: %s", thriftStruct.getValue()));
+        }
+    }
 
     public static SmartContractInvocation createSmartContractInvocation(
         SmartContractInvocationData smartContractInvocationData) {
@@ -221,11 +290,6 @@ public class NodePojoConverter {
                 NodePojoConverter.smartContractDeployDataToSmartContractDeploy(smartContractDeployData));
         }
 
-        ExecuteByteCodeResultData executeResult = smartContractInvocationData.getExecuteResult();
-        if (executeResult != null) {
-            thriftStruct.setExecuteResult(
-                    GeneralPojoConverter.createExecuteByteCodeResult(executeResult));
-        }
         return thriftStruct;
     }
 
@@ -236,8 +300,7 @@ public class NodePojoConverter {
                 createSmartContractDeployData(thriftStruct.getSmartContractDeploy()),
                 thriftStruct.getMethod(),
                 thriftStruct.getParams().stream().map(VariantConverter::variantToVariantData).collect(Collectors.toList()),
-                thriftStruct.forgetNewState,
-                (thriftStruct.getExecuteResult() == null ? null : createExecuteByteCodeResultData(thriftStruct.getExecuteResult()))
+                thriftStruct.forgetNewState
         );
     }
 
@@ -265,7 +328,7 @@ public class NodePojoConverter {
         TransactionData transactionData = createTransactionData(thriftStruct);
         return new SmartContractTransactionData(
                 transactionData,
-                createSmartContractInvocationData(thriftStruct.getTrxn().getSmartContract())
+                thriftStruct.getTrxn().getSmartContract() == null ? null: createSmartContractInvocationData(thriftStruct.getTrxn().getSmartContract())
         );
     }
 
@@ -273,7 +336,7 @@ public class NodePojoConverter {
         TransactionFlowResult result, byte[] source, byte[] target) {
         return new TransactionFlowResultData(createApiResponseData(result.getStatus()), result.getRoundNum(),
             source, target, result.getSmart_contract_result() == null ? null
-            : VariantConverter.variantToVariantData(result.getSmart_contract_result()));
+            : variantToVariantData(result.getSmart_contract_result()));
     }
 
     public static Transaction transactionFlowDataToTransaction(TransactionFlowData transactionData) {
@@ -355,6 +418,38 @@ public class NodePojoConverter {
             return TransactionStateData.INPROGRESS;
         }
         throw new ConverterException(String.format("Unsupported value: %s", transactionState.getValue()));
+    }
+
+    public static TransactionType createTransactionType(TransactionTypeData data) {
+        if (data.equals(TransactionTypeData.TT_Normal)) {
+            return TransactionType.TT_Normal;
+        }
+        if (data.equals(TransactionTypeData.TT_SmartDeploy)) {
+            return TransactionType.TT_SmartDeploy;
+        }
+        if (data.equals(TransactionTypeData.TT_SmartExecute)) {
+            return TransactionType.TT_SmartExecute;
+        }
+        if (data.equals(TransactionTypeData.TT_SmartState)) {
+            return TransactionType.TT_SmartState;
+        }
+        throw new ConverterException(String.format("Unsupported value: %s", data.getValue()));
+    }
+
+    public static TransactionTypeData createTransactionTypeData(TransactionType thriftStruct) {
+        if (thriftStruct.equals(TransactionType.TT_Normal)) {
+            return TransactionTypeData.TT_Normal;
+        }
+        if (thriftStruct.equals(TransactionType.TT_SmartDeploy)) {
+            return TransactionTypeData.TT_SmartDeploy;
+        }
+        if (thriftStruct.equals(TransactionType.TT_SmartExecute)) {
+            return TransactionTypeData.TT_SmartExecute;
+        }
+        if (thriftStruct.equals(TransactionType.TT_SmartState)) {
+            return TransactionTypeData.TT_SmartState;
+        }
+        throw new ConverterException(String.format("Unsupported value: %s", thriftStruct.getValue()));
     }
 
     public static TransactionsStateGetResultData createTransactionsStateGetResultData(

@@ -60,8 +60,8 @@
                    </HBox>
                   <HBox fx:id="listContainer1" layoutX="10.0" layoutY="190.0" prefHeight="300.0" prefWidth="1200.0">
                      <children>
-                        <Label minWidth="50.0" prefHeight="25.0" prefWidth="80.0" text="Return value:" />
-                          <TextField fx:id="labReturnedValue" editable="false" prefHeight="20.0" prefWidth="1000.0" styleClass="copyable-label" text="Label" />
+                        <Label minWidth="50.0" prefHeight="25.0" prefWidth="80.0" text="Info:" />
+                        <ListView fx:id="listSmartInfo" prefHeight="151.0" prefWidth="1000.0" styleClass="credits-transaction-params-list" />
                      </children>
                   </HBox>
                </children>

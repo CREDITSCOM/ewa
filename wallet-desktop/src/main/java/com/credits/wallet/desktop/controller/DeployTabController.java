@@ -373,7 +373,6 @@ public class DeployTabController extends AbstractController {
         parentController.handleDeploy();
     }
 
-
     public static class FilterRunner extends BlockJUnit4ClassRunner {
 
         private List<String> testsToRun;
