@@ -28,6 +28,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -92,6 +94,10 @@ public class DeployTabController extends AbstractController {
     public Button testBuildButton;
     @FXML
     public Tab testBottomConsoleTab;
+    @FXML
+    public Label deployContractListLabel;
+    @FXML
+    public Button hideButton;
     @FXML
     private TreeViewController smartTreeViewController;
     @FXML
@@ -466,4 +472,38 @@ public class DeployTabController extends AbstractController {
         }
         return null;
     }
+
+    private double oldTabPaneWidth;
+    private double oldTabPaneX;
+    private double oldHideButtonX;
+    private ImageView oldHideButtonImage;
+    public void hideList() {
+        Platform.runLater(() -> {
+            if (deployContractList.isVisible()) {
+                deployContractListLabel.setVisible(false);
+                deployContractList.setVisible(false);
+                oldTabPaneWidth = tabPane.getWidth();
+                oldTabPaneX = tabPane.getLayoutX();
+                oldHideButtonX = hideButton.getLayoutX();
+                oldHideButtonImage = (ImageView) hideButton.getGraphic();
+                tabPane.setPrefWidth(tabPane.getWidth()+(tabPane.getLayoutX()-deployContractListLabel.getLayoutX()));
+                hideButton.setLayoutX(deployContractListLabel.getLayoutX());
+                ImageView value = new ImageView(new Image(getClass().getResourceAsStream("/img/vi.png")));
+                value.setFitWidth(oldHideButtonImage.getFitWidth());
+                value.setFitHeight(oldHideButtonImage.getFitHeight());
+                hideButton.setGraphic(value);
+                tabPane.setLayoutX(hideButton.getLayoutX()+hideButton.getPrefWidth()+10);
+            } else {
+                deployContractListLabel.setVisible(true);
+                deployContractList.setVisible(true);
+                hideButton.setGraphic(oldHideButtonImage);
+                hideButton.setLayoutX(oldHideButtonX);
+                tabPane.setPrefWidth(oldTabPaneWidth);
+                tabPane.setLayoutX(oldTabPaneX);
+            }
+        });
+    }
+
+
+
 }

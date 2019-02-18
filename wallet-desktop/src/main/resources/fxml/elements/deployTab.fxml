@@ -16,12 +16,19 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <Pane prefHeight="500.0" prefWidth="1216.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.DeployTabController">
-    <Label alignment="CENTER" layoutX="5.0" prefHeight="25.0" prefWidth="270.0" style="-fx-border-color: #9B9B9B #9B9B9B black #9B9B9B; -fx-border-width: 1 1 0 1; -fx-background-color: #F2F2F2;" text="SmartContracts" />
+    <Label fx:id="deployContractListLabel" alignment="CENTER" layoutX="5.0" prefHeight="25.0" prefWidth="270.0" style="-fx-border-color: #9B9B9B #9B9B9B black #9B9B9B; -fx-border-width: 1 1 0 1; -fx-background-color: #F2F2F2;" text="SmartContracts" />
     <ListView fx:id="deployContractList" layoutX="5.0" layoutY="25.0" prefHeight="475.0" prefWidth="270.0" style="-fx-padding: 15 1 15 1; -fx-border-color: black; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" />
     <Button layoutX="240.0" mnemonicParsing="false" onAction="#handleAddContract" prefHeight="0.0" prefWidth="0.0" styleClass="credits-deploy-button">
         <graphic>
             <ImageView fitHeight="17.0" fitWidth="19.0">
                 <Image url="@../../img/plus.png" />
+            </ImageView>
+        </graphic>
+    </Button>
+    <Button fx:id="hideButton" layoutX="5.0" layoutY="1.0" mnemonicParsing="false" onAction="#hideList" prefHeight="25.0" prefWidth="21.0" styleClass="credits-deploy-button">
+        <graphic>
+            <ImageView fitHeight="17.0" fitWidth="19.0">
+                <Image url="@../../img/non_vi.png" />
             </ImageView>
         </graphic>
     </Button>
