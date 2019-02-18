@@ -1,7 +1,6 @@
 public class %s extends SmartContract implements BasicStandard {
 
-    public %s(String initiator) {
-        super(initiator);
+    public %s() {
     }
 
     @Override
