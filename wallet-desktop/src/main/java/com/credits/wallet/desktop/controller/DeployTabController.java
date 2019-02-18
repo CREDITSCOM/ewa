@@ -28,6 +28,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -92,6 +94,10 @@ public class DeployTabController extends AbstractController {
     public Button testBuildButton;
     @FXML
     public Tab testBottomConsoleTab;
+    @FXML
+    public Label deployContractListLabel;
+    @FXML
+    public Button hideButton;
     @FXML
     private TreeViewController smartTreeViewController;
     @FXML
@@ -182,6 +188,7 @@ public class DeployTabController extends AbstractController {
         items.add(BASIC_STANDARD_CLASS);
         items.add(EXTENSION_STANDARD_CLASS);
         cbContractType.getSelectionModel().select(0);
+        tabPane.getTabs().remove(newSmartTab);
     }
 
     private void initDeployContractList() {
@@ -230,19 +237,35 @@ public class DeployTabController extends AbstractController {
         if (currentItem != null) {
             if (currentItem.state.equals(DeploySmartListItem.ItemState.NEW)) {
                 initNewSmartTab();
-                newSmartTab.setDisable(false);
+                /*newSmartTab.setDisable(false);
                 smartTab.setDisable(true);
-                testTab.setDisable(true);
-                tabPane.getSelectionModel().select(newSmartTab);
+                testTab.setDisable(true);*/
+                Platform.runLater(() -> {
+                    tabPane.getTabs().clear();
+                    tabPane.getTabs().addAll(newSmartTab);
+                    tabPane.getSelectionModel().select(newSmartTab);
+                });
             } else {
                 smartCodeArea.replaceText(currentItem.sourceCode);
                 testCodeArea.replaceText(currentItem.testSourceCode);
-                newSmartTab.setDisable(true);
+                Platform.runLater(() -> {
+                    tabPane.getTabs().clear();
+                    String tabName;
+                    if(currentItem.name.indexOf("(")>0) {
+                        tabName = currentItem.name.substring(0, currentItem.name.indexOf("("));
+                    } else {
+                        tabName = currentItem.name;
+                    }
+                    smartTab.setText(tabName);
+                    testTab.setText(tabName +"Test");
+                    tabPane.getTabs().addAll(smartTab,testTab);
+                /*newSmartTab.setDisable(true);
                 smartTab.setDisable(false);
-                testTab.setDisable(false);
-                tabPane.getSelectionModel().select(smartTab);
-                smartTreeViewController.refreshTreeView(smartCodeArea);
-                testTreeViewController.refreshTreeView(testCodeArea);
+                testTab.setDisable(false);*/
+                    tabPane.getSelectionModel().select(smartTab);
+                    smartTreeViewController.refreshTreeView(smartCodeArea);
+                    testTreeViewController.refreshTreeView(testCodeArea);
+                });
             }
         }
     }
@@ -449,4 +472,38 @@ public class DeployTabController extends AbstractController {
         }
         return null;
     }
+
+    private double oldTabPaneWidth;
+    private double oldTabPaneX;
+    private double oldHideButtonX;
+    private ImageView oldHideButtonImage;
+    public void hideList() {
+        Platform.runLater(() -> {
+            if (deployContractList.isVisible()) {
+                deployContractListLabel.setVisible(false);
+                deployContractList.setVisible(false);
+                oldTabPaneWidth = tabPane.getWidth();
+                oldTabPaneX = tabPane.getLayoutX();
+                oldHideButtonX = hideButton.getLayoutX();
+                oldHideButtonImage = (ImageView) hideButton.getGraphic();
+                tabPane.setPrefWidth(tabPane.getWidth()+(tabPane.getLayoutX()-deployContractListLabel.getLayoutX()));
+                hideButton.setLayoutX(deployContractListLabel.getLayoutX());
+                ImageView value = new ImageView(new Image(getClass().getResourceAsStream("/img/vi.png")));
+                value.setFitWidth(oldHideButtonImage.getFitWidth());
+                value.setFitHeight(oldHideButtonImage.getFitHeight());
+                hideButton.setGraphic(value);
+                tabPane.setLayoutX(hideButton.getLayoutX()+hideButton.getPrefWidth()+10);
+            } else {
+                deployContractListLabel.setVisible(true);
+                deployContractList.setVisible(true);
+                hideButton.setGraphic(oldHideButtonImage);
+                hideButton.setLayoutX(oldHideButtonX);
+                tabPane.setPrefWidth(oldTabPaneWidth);
+                tabPane.setLayoutX(oldTabPaneX);
+            }
+        });
+    }
+
+
+
 }

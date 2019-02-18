@@ -42,10 +42,12 @@ public class SourceCodeBuilder {
             DiagnosticCollector collector = compilationPackage.getCollector();
             List<Diagnostic> diagnostics = collector.getDiagnostics();
             diagnostics.forEach(action -> {
-                String className = ((JavaSourceFromString) action.getSource()).getName();
-                BuildSourceCodeError tr =
-                    new BuildSourceCodeError(className, Math.toIntExact(action.getLineNumber()), action.getMessage(null));
-                errorsList.add(tr);
+                if(action.getSource() !=null) {
+                    String className = ((JavaSourceFromString) action.getSource()).getName();
+                    BuildSourceCodeError tr =
+                        new BuildSourceCodeError(className, Math.toIntExact(action.getLineNumber()), action.getMessage(null));
+                    errorsList.add(tr);
+                }
             });
         }
         return new CompilationResult(compilationPackage, errorsList);
