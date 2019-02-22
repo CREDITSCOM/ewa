@@ -1,11 +1,16 @@
 package com.credits.utils;
 
+import com.credits.general.pojo.AnnotationData;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.credits.general.util.variant.VariantConverter.variantToObject;
 
@@ -65,6 +70,27 @@ public class ContractExecutorServiceUtils {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             logger.error("Cannot initialize \"{}\" field. Reason:{}", fieldName, e.getMessage());
         }
+    }
+
+    public static AnnotationData parseAnnotationData(String annotation) {
+        String name = null;
+        Map<String, String> annotationArguments = new HashMap<>();
+        new AnnotationData(name, annotationArguments);
+
+        if (annotation.contains("@")) {
+            int paramIndex = annotation.indexOf("(");
+            name = annotation.substring(1, paramIndex);
+            annotation = annotation.substring(paramIndex+1,annotation.length()-1);
+            if(annotation.length()>0) {
+                String regex = "([A-Za-z0-9]+) *= *([A-Za-z0-9]+)";
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(annotation);
+                while (matcher.find()) {
+                    annotationArguments.put(matcher.group(1),matcher.group(2));
+                }
+            }
+        }
+        return new AnnotationData(name,annotationArguments);
     }
 
 }

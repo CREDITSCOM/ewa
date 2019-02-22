@@ -1,16 +1,23 @@
 package com.credits.thrift;
 
-import com.credits.client.executor.pojo.MethodDescriptionData;
-import com.credits.client.executor.thrift.generated.*;
+import com.credits.general.pojo.MethodDescriptionData;
+import com.credits.client.executor.thrift.generated.CompileSourceCodeResult;
+import com.credits.client.executor.thrift.generated.ContractExecutor;
+import com.credits.client.executor.thrift.generated.ExecuteByteCodeMultipleResult;
+import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
+import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
+import com.credits.client.executor.thrift.generated.GetContractVariablesResult;
+import com.credits.client.executor.thrift.generated.GetterMethodResult;
+import com.credits.client.executor.thrift.generated.SmartContractBinary;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
-import com.credits.general.thrift.generated.MethodDescription;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
+import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import org.apache.thrift.TException;
 import org.apache.thrift.TUnion;
@@ -44,42 +51,41 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         service = new ContractExecutorServiceImpl(dbInteractionService);
     }
 
+
     @Override
-    public ExecuteByteCodeResult executeByteCode(long accessId, ByteBuffer initiatorAddress, ByteBuffer contractAddress, List<ByteCodeObject> byteCodeObjects, ByteBuffer contractState,
-                                                 String method, List<Variant> params, long executionTime) {
+    public ExecuteByteCodeResult executeByteCode(long accessId, ByteBuffer initiatorAddress,
+        SmartContractBinary invokedContract, String method, List<Variant> params, long executionTime) throws TException {
         logger.debug("<-- execute(" +
-                    "\naddress = {}," +
-                    "\nbyteCode length= {}, " +
-                    "\ncontractState length= {}, " +
-                    "\ncontractState hash= {} " +
-                    "\nmethod = {}, " +
-                    "\nparams = {}.",
-            encodeToBASE58(initiatorAddress.array()), byteCodeObjects.size(), contractState.array().length, contractState.hashCode(),
+                "\naddress = {}," +
+                "\nbyteCode length= {}, " +
+                "\ncontractState length= {}, " +
+                "\ncontractState hash= {} " +
+                "\nmethod = {}, " +
+                "\nparams = {}.",
+            encodeToBASE58(initiatorAddress.array()), invokedContract.byteCodeObjects.size(), invokedContract.contractState.array().length, invokedContract.contractState.hashCode(),
             method, (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat)));
 
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
-        ExecuteByteCodeResult result = new ExecuteByteCodeResult(new APIResponse(SUCCESS_CODE, "success"), null);
+        ExecuteByteCodeResult result = new ExecuteByteCodeResult(new APIResponse(SUCCESS_CODE, "success"), null,null);/*todo what ? ?*/
         try {
-            ReturnValue returnValue = service.execute(initiatorAddress.array(), contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(byteCodeObjects), contractState.array(), method, new Variant[][] {paramsArray},executionTime);
-            result.contractState = ByteBuffer.wrap(returnValue.getContractState());
+            ReturnValue returnValue = service.execute(accessId, initiatorAddress.array(), invokedContract.contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(invokedContract.byteCodeObjects), invokedContract.contractState.array(), method, new Variant[][] {paramsArray},executionTime);
+            result.invokedContractState = ByteBuffer.wrap(returnValue.getContractState());
             if (returnValue.getVariantsList() != null) {
                 result.ret_val = returnValue.getVariantsList().get(0);
             }
             logger.info("executeByteCode -->\ncontractState length= {}\ncontractState hash= {}\nresponse= {}",
-                result.contractState.array().length, result.contractState.hashCode(), result);
+                result.invokedContractState.array().length, result.invokedContractState.hashCode(), result);
         } catch (ContractExecutorException e) {
             result.setStatus(new APIResponse(ERROR_CODE, e.getMessage()));
             logger.info("executeByteCode --> {}", result);
         }
-        logger.debug("execute --> contractStateHash {} {}", Arrays.hashCode(result.getContractState()), result);
+        logger.debug("execute --> contractStateHash {} {}", Arrays.hashCode(result.getInvokedContractState()), result);
         return result;
     }
 
-
     @Override
-    public ExecuteByteCodeMultipleResult executeByteCodeMultiple(ByteBuffer initiatorAddress, ByteBuffer contractAddress, List<ByteCodeObject> compilationUnits,
-        ByteBuffer contractState, String method, List<List<Variant>> params, long executionTime) {
-
+    public ExecuteByteCodeMultipleResult executeByteCodeMultiple(long accessId, ByteBuffer initiatorAddress,
+        SmartContractBinary invokedContract, String method, List<List<Variant>> params, long executionTime) {
         Variant[][] paramsArray = null;
         if (params != null) {
             paramsArray = new Variant[params.size()][];
@@ -91,13 +97,13 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
         logger.info(String.format(
             "<-- executeByteCodeMultiple(\naddress = %s, \nbyteCode length= %d, \ncontractState length= %d, \ncontractState hash= %s \nmethod = %s, \nparams = %s.",
-            encodeToBASE58(initiatorAddress.array()), compilationUnits.size(), contractState.array().length,
-            contractState.hashCode(), method, Arrays.toString(paramsArray)));
+            encodeToBASE58(initiatorAddress.array()), invokedContract.getByteCodeObjects().size(), invokedContract.contractState.array().length,
+            invokedContract.contractState.hashCode(), method, Arrays.toString(paramsArray)));
 
         ExecuteByteCodeMultipleResult response = new ExecuteByteCodeMultipleResult();
         try {
             ReturnValue returnValue =
-                service.execute(initiatorAddress.array(), contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(compilationUnits), contractState.array(), method, paramsArray,
+                service.execute(accessId, initiatorAddress.array(), invokedContract.contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(invokedContract.getByteCodeObjects()), invokedContract.contractState.array(), method, paramsArray,
                     executionTime);
             List<GetterMethodResult> getterResults = new ArrayList<>(returnValue.getVariantsList().size());
             List<Variant> variantsList = returnValue.getVariantsList();
@@ -123,7 +129,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         GetContractMethodsResult result = new GetContractMethodsResult();
         try {
             List<MethodDescriptionData> contractsMethods = service.getContractsMethods(GeneralConverter.byteCodeObjectTobyteCodeObjectData(compilationUnits));
-            result.methods = contractsMethods.stream().map( it -> new MethodDescription(it.returnType, it.name, it.args)).collect(toList());
+            result.methods = contractsMethods.stream().map(GeneralConverter::convertMethodDataToMethodDescription).collect(toList());
             result.setStatus(new APIResponse(SUCCESS_CODE, "success"));
         } catch (ContractExecutorException e) {
             result.setStatus(getErrorState(e.getMessage()));

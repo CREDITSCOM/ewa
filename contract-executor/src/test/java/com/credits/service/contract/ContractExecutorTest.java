@@ -1,7 +1,8 @@
 package com.credits.service.contract;
 
 
-import com.credits.client.executor.pojo.MethodDescriptionData;
+import com.credits.general.pojo.MethodArgumentData;
+import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.pojo.TokenStandartData;
@@ -11,7 +12,6 @@ import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.pojo.VariantType;
-import com.credits.general.thrift.generated.MethodArgument;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.general.util.GeneralConverter;
@@ -27,10 +27,10 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;

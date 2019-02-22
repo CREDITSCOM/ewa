@@ -1,7 +1,13 @@
 package com.credits.general.util;
 
+import com.credits.general.pojo.AnnotationData;
 import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.general.pojo.MethodArgumentData;
+import com.credits.general.pojo.MethodDescriptionData;
+import com.credits.general.thrift.generated.Annotation;
 import com.credits.general.thrift.generated.ByteCodeObject;
+import com.credits.general.thrift.generated.MethodArgument;
+import com.credits.general.thrift.generated.MethodDescription;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.exception.ConverterException;
 
@@ -436,4 +442,25 @@ public class GeneralConverter {
         }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
+
+
+    public static MethodDescription convertMethodDataToMethodDescription(MethodDescriptionData data) {
+        List<MethodArgument> methodArgumentList = new ArrayList<>();
+        for (MethodArgumentData arg : data.args) {
+            List<Annotation> annotationList = getAnnotations(arg.annotations);
+            new MethodArgument(arg.returnType,arg.name,annotationList);
+        }
+        new MethodDescription(data.returnType,data.name,methodArgumentList,getAnnotations(data.annotations));
+        return null;
+    }
+
+    public static List<Annotation> getAnnotations(List<AnnotationData> annotations) {
+        List<Annotation> annotationList = new ArrayList<>();
+        for (AnnotationData annotation : annotations) {
+            annotationList.add(new Annotation(annotation.name,annotation.arguments));
+        }
+        return annotationList;
+    }
+
+
 }
