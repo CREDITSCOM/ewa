@@ -43,7 +43,7 @@ public class MethodParametersTest extends ServiceTest {
         byteCodeObjects = compileSourceCodeFromFile(sourceCodePath);
         classLoader = new ByteArrayContractClassLoader();
         contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjects, classLoader);
-        contractState = ceService.execute(initiatorAddress, contractAddress, byteCodeObjects, null, null, null, 500L).getContractState();
+        contractState = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjects, null, null, null, 500L).getContractState();
     }
 
 

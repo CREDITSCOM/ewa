@@ -1,7 +1,5 @@
 package com.credits.wallet.desktop;
 
-import com.credits.client.executor.service.ContractExecutorApiService;
-import com.credits.client.executor.service.ContractExecutorApiServiceImpl;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -28,7 +26,6 @@ public class AppStateInitializer {
         properties = loadProperties();
 
         AppState.nodeApiService = initializeNodeApiService();
-        AppState.contractExecutorService = initializeContractExecutorApiService();
     }
 
     public Properties loadProperties() {
@@ -54,14 +51,4 @@ public class AppStateInitializer {
         return NodeApiServiceImpl.getInstance(apiAddress, apiPort == null ? DEFAULT_NODE_API_PORT : Integer.parseInt(apiPort));
     }
 
-    public ContractExecutorApiService initializeContractExecutorApiService() {
-        String executorHost = properties.getProperty("contract.executor.host");
-        String executorPort = properties.getProperty("contract.executor.port");
-
-        if (executorHost == null || executorHost.isEmpty() || executorPort == null || executorPort.isEmpty()) {
-            FormUtils.showError(ERR_NO_CONTRACT_EXECUTOR_API_ADDRESS);
-        }
-        return ContractExecutorApiServiceImpl.getInstance(executorHost,
-            executorPort == null ? DEFAULT_CONTRACT_EXECUTOR_API_PORT : Integer.parseInt(executorPort));
-    }
 }

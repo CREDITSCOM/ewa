@@ -26,12 +26,12 @@ public class CompilationTest extends ServiceTest {
             compileSourceCode(sourceCode);
 
         byte[] contractState =
-            ceService.execute(initiatorAddress, contractAddress, byteCodeObjects, null, null, null, 500L).getContractState();
+            ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjects, null, null, null, 500L).getContractState();
 
-        ReturnValue result = ceService.execute(initiatorAddress, contractAddress, byteCodeObjects, contractState, "addBalance",
+        ReturnValue result = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjects, contractState, "addBalance",
             new Variant[][] {{v_string("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe"), v_int(4)}}, 500L);
         ReturnValue result1 =
-            ceService.execute(initiatorAddress, contractAddress, byteCodeObjects, result.getContractState(), "getUserBalance",
+            ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjects, result.getContractState(), "getUserBalance",
                 new Variant[][] {{v_string("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe")}}, 500L);
     }
 }

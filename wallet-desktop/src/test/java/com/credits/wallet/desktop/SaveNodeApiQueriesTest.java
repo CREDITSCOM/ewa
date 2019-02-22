@@ -42,7 +42,6 @@ public class SaveNodeApiQueriesTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         doCallRealMethod().when(mockInitializer).loadProperties();
-        doCallRealMethod().when(mockInitializer).initializeContractExecutorApiService();
         mockNodeApiService.nodeClient = NodeThriftApiClient.getInstance("127.0.0.1", 9090);
         when(mockInitializer.initializeNodeApiService()).thenReturn(mockNodeApiService);
         doCallRealMethod().when(mockInitializer).init();

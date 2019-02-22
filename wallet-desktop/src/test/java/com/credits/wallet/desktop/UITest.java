@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop;
 
-import com.credits.client.executor.service.ContractExecutorApiService;
 import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.general.util.Callback;
@@ -47,8 +46,6 @@ public class UITest {
     @Mock
     NodeApiService mockNodeApiService;
     @Mock
-    ContractExecutorApiService mockContractExecutorService;
-    @Mock
     ContractInteractionService mockContractInteractionService;
     @Mock
     Properties mockProperties;
@@ -61,7 +58,6 @@ public class UITest {
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
         when(mockInitializer.initializeNodeApiService()).thenReturn(mockNodeApiService);
-        when(mockInitializer.initializeContractExecutorApiService()).thenReturn(mockContractExecutorService);
         when(mockInitializer.loadProperties()).thenReturn(mockProperties);
         doCallRealMethod().when(mockInitializer).init();
         doCallRealMethod().when(mockWalletApp).start(any());

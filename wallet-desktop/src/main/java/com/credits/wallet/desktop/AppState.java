@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop;
 
-import com.credits.client.executor.service.ContractExecutorApiService;
 import com.credits.client.node.service.NodeApiService;
 
 import java.security.PrivateKey;
@@ -24,7 +23,6 @@ public class AppState {
 
 
     public static NodeApiService nodeApiService;
-    public static ContractExecutorApiService contractExecutorService;
     public static String decimalSeparator = ds;
     public static Map<String,Session> sessionMap = new HashMap<>();
 

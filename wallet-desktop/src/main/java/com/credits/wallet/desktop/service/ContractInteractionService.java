@@ -21,7 +21,6 @@ import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.general.util.variant.VariantUtils.STRING_TYPE;
 import static com.credits.general.util.variant.VariantUtils.createVariantData;
-import static com.credits.wallet.desktop.AppState.contractExecutorService;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static java.util.Arrays.asList;
@@ -80,9 +79,12 @@ public class ContractInteractionService {
 
 
     private String executeSmartContract(String initiatorAddress, SmartContractData sc, String methodName, VariantData... params) {
-        if (sc == null || sc.getObjectState().length == 0) {
+        /*if (sc == null || sc.getObjectState().length == 0) {
             throw new NodeClientException("SmartContract " + initiatorAddress + " not found");
         }
+
+
+
         ExecuteByteCodeResult executeResponseData =
             //todo add request to node accessId
             contractExecutorService.executeContractMethod(0, GeneralConverter.decodeFromBASE58(initiatorAddress), sc.getAddress(),
@@ -95,6 +97,8 @@ public class ContractInteractionService {
             throw new NodeClientException("Failure. Node response: " + response.getMessage());
         }
 
-        return response.getExecuteBytecodeResult().getV_string();
+        return response.getExecuteBytecodeResult().getV_string();*/
+        return null;
+        //todo add request to node accessId
     }
 }

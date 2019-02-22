@@ -117,7 +117,6 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         return response;
     }
 
-
     @Override
     public GetContractMethodsResult getContractMethods(List<ByteCodeObject> compilationUnits) {
         logger.debug("<-- getContractMethods(bytecode = {} bytes)", compilationUnits.size());

@@ -2,14 +2,15 @@ package com.credits.service.contract;
 
 import com.credits.ApplicationProperties;
 import com.credits.classload.ByteArrayContractClassLoader;
-import com.credits.client.executor.pojo.MethodDescriptionData;
+import com.credits.general.pojo.AnnotationData;
+import com.credits.general.pojo.MethodArgumentData;
+import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.exception.CompilationException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.APIResponse;
-import com.credits.general.thrift.generated.MethodArgument;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.general.util.GeneralConverter;
@@ -18,6 +19,7 @@ import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodArgumentsValuesData;
 import com.credits.secure.Sandbox;
+import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractExecutorUtils;
@@ -27,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ReflectPermission;
@@ -34,14 +37,27 @@ import java.net.NetPermission;
 import java.net.SocketPermission;
 import java.security.Permissions;
 import java.security.SecurityPermission;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.PropertyPermission;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialize.Serializer.deserialize;
 import static com.credits.serialize.Serializer.serialize;
 import static com.credits.thrift.ContractExecutorHandler.ERROR_CODE;
 import static com.credits.thrift.ContractExecutorHandler.SUCCESS_CODE;
+import static com.credits.utils.ContractExecutorServiceUtils.parseAnnotationData;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
@@ -68,8 +84,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
 
     @Override
-    public ReturnValue execute(byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState,  String methodName,
-         Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
+    public ReturnValue execute(long accessId, byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState,  String methodName,
+        Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
 
         String initiatorAddressBase58 = "unknown address";
         String contractAddressBase58;
@@ -85,6 +101,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
             Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
+            ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, null);
             ContractExecutorServiceUtils.initializeField("initiator", initiatorAddressBase58, contractClass, null);
             ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass, null);
 
@@ -110,6 +127,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             }
 
             ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass, instance);
+            ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, instance);
 
             int amountParamRows = 1;
             Variant[] params = null;
@@ -213,11 +231,21 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         List<MethodDescriptionData> result = new ArrayList<>();
         for (Method method : contractClass.getMethods()) {
             if (objectMethods.contains(method.getName())) continue;
-            ArrayList<MethodArgument> args = new ArrayList<>();
-            for (Parameter parameter : method.getParameters()) {
-                args.add(new MethodArgument(parameter.getType().getTypeName(), parameter.getName()));
+            ArrayList<MethodArgumentData> args = new ArrayList<>();
+            List<AnnotationData> methodAnnotationDataList = new ArrayList<>();
+            for (Annotation annotation : method.getAnnotations()) {
+                AnnotationData methodAnnotationData = parseAnnotationData(annotation.toString());
+                methodAnnotationDataList.add(methodAnnotationData);
             }
-            result.add(new MethodDescriptionData(method.getGenericReturnType().getTypeName(), method.getName(), args));
+            for (Parameter parameter : method.getParameters()) {
+                List<AnnotationData> paramAnnotationDataList = new ArrayList<>();
+                for (Annotation annotation : parameter.getAnnotations()) {
+                    AnnotationData parameterAnnotationData = parseAnnotationData(annotation.toString());
+                    paramAnnotationDataList.add(parameterAnnotationData);
+                }
+                args.add(new MethodArgumentData(parameter.getType().getTypeName(), parameter.getName(),paramAnnotationDataList));
+            }
+            result.add(new MethodDescriptionData(method.getGenericReturnType().getTypeName(), method.getName(), args,methodAnnotationDataList));
         }
 
         return result;
@@ -270,7 +298,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new PropertyPermission("com.sun.security.preserveOldDCEncoding", "read"));
         permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
         permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
-//        permissions.add(new FilePermission("<<ALL FILES>>", "read"));
+        //        permissions.add(new FilePermission("<<ALL FILES>>", "read"));
         return permissions;
     }
 
