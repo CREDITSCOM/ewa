@@ -1,7 +1,9 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.ByteArrayContractClassLoader;
+import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.struct.DeploySmartListItem;
@@ -14,8 +16,10 @@ import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
@@ -24,6 +28,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -48,6 +54,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.getContractFromTemplate;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.initErrorTableView;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.initSplitPane;
@@ -55,6 +62,7 @@ import static com.credits.wallet.desktop.utils.DeployControllerUtils.initTabCode
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.BASIC_STANDARD_CLASS;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.DEFAULT_STANDARD_CLASS;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.EXTENSION_STANDARD_CLASS;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class DeployTabController extends AbstractController {
 
@@ -75,9 +83,21 @@ public class DeployTabController extends AbstractController {
     @FXML
     public TextArea testConsole;
     @FXML
+    public Tab smartBottomErrorTab;
+    @FXML
     public Tab testBottomErrorTab;
     @FXML
+    public TabPane smartBottomTabPane;
+    @FXML
     public TabPane testBottomTabPane;
+    @FXML
+    public Button testBuildButton;
+    @FXML
+    public Tab testBottomConsoleTab;
+    @FXML
+    public Label deployContractListLabel;
+    @FXML
+    public Button hideButton;
     @FXML
     private TreeViewController smartTreeViewController;
     @FXML
@@ -114,10 +134,18 @@ public class DeployTabController extends AbstractController {
     public Tab newSmartTab;
     @FXML
     public TextField className;
+    @FXML
+    public Button smartDeployButton;
+    @FXML
+    public Button smartBuildButton;
+    @FXML
+    public TextField feeField;
+    @FXML
+    private Label actualOfferedMaxFeeLabel;
+
 
     OutputStream out;
 
-    private Tab prevSelectTab;
     SmartContractDeployController parentController;
 
 
@@ -140,13 +168,16 @@ public class DeployTabController extends AbstractController {
     }
 
     private void initTestTab() {
+        initSplitPane(testInnerSplitPane, testErrorPane1, testErrorTableView);
         testCodeArea = initTabCodeArea(testSourceCodeBox, testTreeViewController, this, parentController);
+        initErrorTableView(testErrorPane1, testErrorTableView, testCodeArea);
     }
 
     private void initSmartTab() {
         initSplitPane(smartInnerSplitPane, smartErrorPanel, smartErrorTableView);
-        initErrorTableView(smartErrorPanel, smartErrorTableView, smartCodeArea);
         smartCodeArea = initTabCodeArea(smartSourceCodeBox, smartTreeViewController, this, parentController);
+        initErrorTableView(smartErrorPanel, smartErrorTableView, smartCodeArea);
+        FormUtils.initFeeField(feeField, actualOfferedMaxFeeLabel);
     }
 
     private void initNewSmartTab() {
@@ -157,6 +188,7 @@ public class DeployTabController extends AbstractController {
         items.add(BASIC_STANDARD_CLASS);
         items.add(EXTENSION_STANDARD_CLASS);
         cbContractType.getSelectionModel().select(0);
+        tabPane.getTabs().remove(newSmartTab);
     }
 
     private void initDeployContractList() {
@@ -202,23 +234,39 @@ public class DeployTabController extends AbstractController {
     }
 
     private void changeTab(DeploySmartListItem currentItem) {
-        if (currentItem.state.equals(DeploySmartListItem.ItemState.NEW)) {
-            initNewSmartTab();
-            newSmartTab.setDisable(false);
-            smartTab.setDisable(true);
-            testTab.setDisable(true);
-            tabPane.getSelectionModel().select(newSmartTab);
-            parentController.feeDeployPane.setVisible(false);
-        } else {
-            smartCodeArea.replaceText(currentItem.sourceCode);
-            testCodeArea.replaceText(currentItem.testSourceCode);
-            newSmartTab.setDisable(true);
-            smartTab.setDisable(false);
-            testTab.setDisable(false);
-            tabPane.getSelectionModel().select(smartTab);
-            smartTreeViewController.refreshTreeView(smartCodeArea);
-            testTreeViewController.refreshTreeView(testCodeArea);
-            parentController.feeDeployPane.setVisible(true);
+        if (currentItem != null) {
+            if (currentItem.state.equals(DeploySmartListItem.ItemState.NEW)) {
+                initNewSmartTab();
+                /*newSmartTab.setDisable(false);
+                smartTab.setDisable(true);
+                testTab.setDisable(true);*/
+                Platform.runLater(() -> {
+                    tabPane.getTabs().clear();
+                    tabPane.getTabs().addAll(newSmartTab);
+                    tabPane.getSelectionModel().select(newSmartTab);
+                });
+            } else {
+                smartCodeArea.replaceText(currentItem.sourceCode);
+                testCodeArea.replaceText(currentItem.testSourceCode);
+                Platform.runLater(() -> {
+                    tabPane.getTabs().clear();
+                    String tabName;
+                    if(currentItem.name.indexOf("(")>0) {
+                        tabName = currentItem.name.substring(0, currentItem.name.indexOf("("));
+                    } else {
+                        tabName = currentItem.name;
+                    }
+                    smartTab.setText(tabName);
+                    testTab.setText(tabName +"Test");
+                    tabPane.getTabs().addAll(smartTab,testTab);
+                /*newSmartTab.setDisable(true);
+                smartTab.setDisable(false);
+                testTab.setDisable(false);*/
+                    tabPane.getSelectionModel().select(smartTab);
+                    smartTreeViewController.refreshTreeView(smartCodeArea);
+                    testTreeViewController.refreshTreeView(testCodeArea);
+                });
+            }
         }
     }
 
@@ -314,6 +362,16 @@ public class DeployTabController extends AbstractController {
         testCodeArea.cleanAll();
     }
 
+    @FXML
+    public void handleBuildSmart() {
+        parentController.handleBuild(smartCodeArea, smartErrorTableView, smartErrorPanel, smartBottomTabPane,
+            smartBottomErrorTab);
+    }
+
+    @FXML
+    public void handleDeploySmart() {
+        parentController.handleDeploy();
+    }
 
     public static class FilterRunner extends BlockJUnit4ClassRunner {
 
@@ -338,18 +396,13 @@ public class DeployTabController extends AbstractController {
 
     public void doTestMethod(String methodName) {
         try {
-            String contractSourceCode = smartCodeArea.getText();
-            String testSourceCode = testCodeArea.getText();
-            ArrayList<String> sourceCodes = new ArrayList<>();
-            sourceCodes.add(contractSourceCode);
-            sourceCodes.add(testSourceCode);
-
-            ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
-            Class<?> testClass = compileClasses(classLoader, sourceCodes);
-            if(testClass!=null) {
+            Class<?> testClass = compileTestClasses();
+            if (testClass != null) {
+                testConsole.clear();
                 JUnitCore junit = new JUnitCore();
                 junit.addListener(new TextListener(new PrintStream(out, true)));
                 junit.run(new FilterRunner(testClass, Collections.singletonList(methodName)));
+                testBottomTabPane.getSelectionModel().select(testBottomConsoleTab);
             } else {
                 testBottomTabPane.getSelectionModel().select(testBottomErrorTab);
             }
@@ -358,6 +411,30 @@ public class DeployTabController extends AbstractController {
         }
     }
 
+    @FXML
+    public void handleBuildTest() {
+        testBuildButton.setDisable(true);
+        supplyAsync(this::compileTestClasses).whenComplete(handleCallback(handleBuildResult()));
+
+    }
+
+
+    private Callback<Class> handleBuildResult() {
+        return new Callback<Class>() {
+            @Override
+            public void onSuccess(Class resultData) throws CreditsException {
+                testBuildButton.setDisable(false);
+                testErrorTableView.getItems().clear();
+                testErrorTableView.refresh();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                testBuildButton.setDisable(false);
+                LOGGER.error("failed!", e);
+            }
+        };
+    }
 
     public void appendTextToTextArea(TextArea textArea, String str) {
         Platform.runLater(() -> textArea.appendText(str));
@@ -377,9 +454,16 @@ public class DeployTabController extends AbstractController {
         return testClass;
     }
 
-    public Class<?> compileClasses(ByteArrayContractClassLoader classLoader, ArrayList<String> sourceCode) {
-        CompilationResult compilationResult = SourceCodeBuilder.compileSourceCode(sourceCode);
-        if (parentController.checkNotError(testErrorPane1, testErrorTableView, compilationResult)) {
+    public Class<?> compileTestClasses() {
+        String contractSourceCode = smartCodeArea.getText();
+        String testSourceCode = testCodeArea.getText();
+        List<String> sourceCodes = new ArrayList<>();
+        sourceCodes.add(contractSourceCode);
+        sourceCodes.add(testSourceCode);
+        ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
+        CompilationResult compilationResult = SourceCodeBuilder.compileSourceCode(sourceCodes);
+        if (parentController.checkNotError(testErrorPane1, testErrorTableView, compilationResult, testBottomTabPane,
+            testBottomErrorTab)) {
             CompilationPackage compilationPackage = compilationResult.getCompilationPackage();
             List<ByteCodeObjectData> byteCodeObjectDataList =
                 GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
@@ -387,4 +471,38 @@ public class DeployTabController extends AbstractController {
         }
         return null;
     }
+
+    private double oldTabPaneWidth;
+    private double oldTabPaneX;
+    private double oldHideButtonX;
+    private ImageView oldHideButtonImage;
+    public void hideList() {
+        Platform.runLater(() -> {
+            if (deployContractList.isVisible()) {
+                deployContractListLabel.setVisible(false);
+                deployContractList.setVisible(false);
+                oldTabPaneWidth = tabPane.getWidth();
+                oldTabPaneX = tabPane.getLayoutX();
+                oldHideButtonX = hideButton.getLayoutX();
+                oldHideButtonImage = (ImageView) hideButton.getGraphic();
+                tabPane.setPrefWidth(tabPane.getWidth()+(tabPane.getLayoutX()-deployContractListLabel.getLayoutX()));
+                hideButton.setLayoutX(deployContractListLabel.getLayoutX());
+                ImageView value = new ImageView(new Image(getClass().getResourceAsStream("/img/vi.png")));
+                value.setFitWidth(oldHideButtonImage.getFitWidth());
+                value.setFitHeight(oldHideButtonImage.getFitHeight());
+                hideButton.setGraphic(value);
+                tabPane.setLayoutX(hideButton.getLayoutX()+hideButton.getPrefWidth()+10);
+            } else {
+                deployContractListLabel.setVisible(true);
+                deployContractList.setVisible(true);
+                hideButton.setGraphic(oldHideButtonImage);
+                hideButton.setLayoutX(oldHideButtonX);
+                tabPane.setPrefWidth(oldTabPaneWidth);
+                tabPane.setLayoutX(oldTabPaneX);
+            }
+        });
+    }
+
+
+
 }

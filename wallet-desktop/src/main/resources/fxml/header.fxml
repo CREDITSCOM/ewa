@@ -13,48 +13,41 @@
 <?import javafx.scene.layout.Pane?>
 <BorderPane maxHeight="40.0" minHeight="40.0" prefWidth="1300.0" styleClass="credits-headerPane" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.HeaderController">
     <center>
-        <Pane maxHeight="40.0" maxWidth="1300.0" minHeight="70.0" minWidth="0.0" prefHeight="40.0" prefWidth="1300.0"
-              BorderPane.alignment="CENTER">
-            <HBox layoutX="-15.0" layoutY="-15.0"/>
-            <Button fx:id="btnWallet" layoutX="10.0" layoutY="18.0" onAction="#handleWallet" prefWidth="100.0"
-                    styleClass="credits-headerButton" text="Wallet">
+        <Pane maxHeight="40.0" maxWidth="1300.0" minHeight="70.0" minWidth="0.0" prefHeight="40.0" prefWidth="1300.0" BorderPane.alignment="CENTER">
+            <HBox layoutX="-15.0" layoutY="-15.0" />
+            <Button fx:id="btnWallet" layoutX="10.0" layoutY="18.0" onAction="#handleWallet" prefWidth="100.0" styleClass="credits-headerButton" text="Wallet">
             </Button>
-            <Button fx:id="btnTransaction" alignment="CENTER" contentDisplay="CENTER" layoutX="110.0" layoutY="17.0"
-                    nodeOrientation="LEFT_TO_RIGHT" onAction="#handleTransaction" prefHeight="40.0" prefWidth="120.0"
-                    style="-fx-line-spacing: -5;" styleClass="credits-headerButton" text="Transactions history"
-                    textAlignment="CENTER" wrapText="true">
+            <Button fx:id="btnTransaction" alignment="CENTER" contentDisplay="CENTER" layoutX="110.0" layoutY="17.0" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleTransaction" prefHeight="40.0" prefWidth="120.0" style="-fx-line-spacing: -5;" styleClass="credits-headerButton" text="Transactions history" textAlignment="CENTER" wrapText="true">
                 <padding>
-                    <Insets bottom="-4.0" top="-10.0"/>
+                    <Insets bottom="-4.0" top="-10.0" />
                 </padding>
             </Button>
             <MenuButton fx:id="btnSmartMenu" layoutX="237.0" layoutY="18.0" styleClass="credits-headerButton" text="Smart contracts">
                 <items>
                     <MenuItem>
                         <graphic>
-                            <Button fx:id="btnSmartExecute" onAction="#handleSmartExecute"
-                                    styleClass="credits-menuitemButton" text="Execute smart"/>
+                            <Button fx:id="btnSmartExecute" onAction="#handleSmartExecute" styleClass="credits-menuitemButton" text="Execute smart" />
                         </graphic>
                     </MenuItem>
                     <MenuItem>
                         <graphic>
-                            <Button fx:id="btnSmartDeploy" onAction="#handleSmartDeploy"
-                                    styleClass="credits-menuitemButton" text="Deploy new smart"/>
+                            <Button fx:id="btnSmartDeploy" onAction="#handleSmartDeploy" styleClass="credits-menuitemButton" text="Deploy new smart" />
                         </graphic>
                     </MenuItem>
                 </items>
             </MenuButton>
-            <Button fx:id="btnLogout" layoutX="1172.0" layoutY="17.0" onAction="#handleLogout"
-                    styleClass="credits-headerButton" text="Logout">
+            <Button fx:id="btnLogout" layoutX="1172.0" layoutY="17.0" onAction="#handleLogout" styleClass="credits-headerButton" text="Logout">
                 <graphic>
                     <ImageView fitHeight="15.0" fitWidth="15.0">
-                        <Image url="@../img/logout_white.png"/>
+                        <Image url="@../img/logout_white.png" />
                     </ImageView>
                 </graphic>
             </Button>
-            <ProgressBar fx:id="sync" layoutX="536.0" layoutY="46.0" prefWidth="200.0"
-                         styleClass="credits-syncProgress"/>
-            <Label layoutX="545.0" layoutY="21.0" styleClass="credits-headerButton" text="Synchronization:"/>
-            <Label fx:id="syncPercent" layoutX="693.0" layoutY="21.0" styleClass="credits-headerButton" text="0%"/>
+            <ProgressBar fx:id="sync" layoutX="526.0" layoutY="46.0" prefWidth="360.0" styleClass="credits-syncProgress" />
+            <Label layoutX="535.0" layoutY="21.0" styleClass="credits-headerButton" text="Synchronization:" />
+            <Label fx:id="syncPercent" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="663.0" layoutY="20.0" prefHeight="25.0" prefWidth="73.0" styleClass="credits-headerButton" text="0%" textAlignment="RIGHT" />
+         <Label layoutX="724.0" layoutY="20.0" prefHeight="25.0" prefWidth="105.0" styleClass="credits-headerButton" text="LastRound:" />
+         <Label fx:id="lastRoundLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="823.0" layoutY="20.0" prefHeight="25.0" prefWidth="79.0" styleClass="credits-headerButton" text="0" textAlignment="RIGHT" />
 
         </Pane>
     </center>

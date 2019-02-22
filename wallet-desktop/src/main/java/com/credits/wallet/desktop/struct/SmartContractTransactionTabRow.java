@@ -1,19 +1,19 @@
 package com.credits.wallet.desktop.struct;
 
-import com.credits.general.pojo.VariantData;
+import com.credits.client.node.pojo.SmartTransInfoData;
 
 /**
  * Created by Rustem Saidaliyev on 25.06.2018.
  */
 public class SmartContractTransactionTabRow extends TransactionTabRow {
 
-    private VariantData returnedValue;
+    private SmartTransInfoData smartInfo;
 
-    public VariantData getReturnedValue() {
-        return returnedValue;
+    public SmartTransInfoData getSmartInfo() {
+        return smartInfo;
     }
 
-    public void setReturnedValue(VariantData returnedValue) {
-        this.returnedValue = returnedValue;
+    public void setSmartInfo(SmartTransInfoData smartInfo) {
+        this.smartInfo = smartInfo;
     }
 }

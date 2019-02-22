@@ -18,7 +18,7 @@ import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodArgumentsValuesData;
 import com.credits.secure.Sandbox;
-import com.credits.service.node.api.NodeApiInteractionService;
+import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractExecutorUtils;
 import com.credits.utils.ContractExecutorServiceUtils;
@@ -34,20 +34,8 @@ import java.net.NetPermission;
 import java.net.SocketPermission;
 import java.security.Permissions;
 import java.security.SecurityPermission;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.PropertyPermission;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.*;
+import java.util.concurrent.*;
 
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialize.Serializer.deserialize;
@@ -66,7 +54,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public ApplicationProperties properties;
 
 
-    public ContractExecutorServiceImpl(NodeApiInteractionService dbInteractionService) {
+    public ContractExecutorServiceImpl(NodeApiExecInteractionService dbInteractionService) {
         executorService = Executors.newCachedThreadPool();
         INJECTOR.component.inject(this);
         try {
@@ -80,7 +68,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
 
     @Override
-    public ReturnValue execute(long accessId, byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState,  String methodName,
+    public ReturnValue execute(byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState,  String methodName,
          Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
 
         String initiatorAddressBase58 = "unknown address";
@@ -97,7 +85,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
             Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
-            ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, null);
             ContractExecutorServiceUtils.initializeField("initiator", initiatorAddressBase58, contractClass, null);
             ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass, null);
 
@@ -123,7 +110,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             }
 
             ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass, instance);
-            ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, instance);
 
             int amountParamRows = 1;
             Variant[] params = null;

@@ -23,21 +23,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FormUtils {
 
     public static void showError(String text) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.initStyle(StageStyle.UTILITY);
-        alert.setTitle("Error");
-        alert.setHeaderText("Error!");
-        alert.setContentText(text);
-        alert.showAndWait();
+        Platform.runLater(()-> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initStyle(StageStyle.UTILITY);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error!");
+            alert.setContentText(text);
+            alert.showAndWait();
+        });
     }
 
     public static void showInfo(String text) {
+        Platform.runLater(()->{
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.initStyle(StageStyle.UTILITY);
         alert.setTitle("Information");
         alert.setHeaderText("Information");
         alert.setContentText(text);
         alert.showAndWait();
+        });
     }
 
     public static void showPlatformWarning(String content) {
@@ -90,8 +94,12 @@ public class FormUtils {
     public static void validateField(TextField textField, Label errorLabel, String errorText,
         AtomicBoolean validationFlag) {
         errorLabel.setText(errorText);
-        textField.setStyle(textField.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
+        setErrorStyle(textField);
         validationFlag.set(false);
+    }
+
+    public static void setErrorStyle(TextField textField) {
+        textField.setStyle(textField.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
     }
 
     public static void validateTable(TableView<CoinTabRow> tableView, Label errorLabel, String errorText,
@@ -108,6 +116,10 @@ public class FormUtils {
 
     public static void clearErrorOnField(TextField textField, Label errorLabel) {
         errorLabel.setText("");
+        clearErrorStyle(textField);
+    }
+
+    public static void clearErrorStyle(TextField textField) {
         textField.setStyle(textField.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
     }
 

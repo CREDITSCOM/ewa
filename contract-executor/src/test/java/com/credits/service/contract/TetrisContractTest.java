@@ -28,39 +28,39 @@ public class TetrisContractTest extends ServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     public void tetrisContractTest() throws Exception {
-        ReturnValue deployValue = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null,500L);
+        ReturnValue deployValue = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null,500L);
         Assert.assertNotNull(deployValue);
         Assert.assertNotNull(deployValue.getContractState());
 
-        ReturnValue executeValueGetAction = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getCurrentAction", new Variant[][]{{}},500L);
+        ReturnValue executeValueGetAction = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getCurrentAction", new Variant[][]{{}},500L);
         Assert.assertNotNull(executeValueGetAction);
         Assert.assertNotNull(executeValueGetAction.getContractState());
         Assert.assertEquals(1, executeValueGetAction.getVariantsList().get(0).getFieldValue());
 
-        ReturnValue executeValueGetBalances = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getBalance", new Variant[][]{{
+        ReturnValue executeValueGetBalances = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getBalance", new Variant[][]{{
             ContractExecutorUtils.mapVariantDataToVariant(new VariantData(VariantType.INT, 0))}},500L);
         Assert.assertTrue(executeValueGetBalances.getVariantsList().get(0).getFieldValue() instanceof Map);
         Assert.assertEquals(20, ((Map<Variant, Variant>) executeValueGetBalances.getVariantsList().get(0).getFieldValue()).get(new Variant(Variant._Fields.V_STRING, "testKey2")).getFieldValue());
 
-        ReturnValue executeGetSetOfString = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getSetOfString", new Variant[][]{{}},500L);
+        ReturnValue executeGetSetOfString = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getSetOfString", new Variant[][]{{}},500L);
         Assert.assertTrue(((Set<Variant>) executeGetSetOfString.getVariantsList().get(0).getFieldValue()).contains(new Variant(Variant._Fields.V_STRING, "Hello")));
 
-        ReturnValue executeGetSetOfInteger = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getSetOfInteger", new Variant[][]{{}},500L);
+        ReturnValue executeGetSetOfInteger = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getSetOfInteger", new Variant[][]{{}},500L);
         Assert.assertTrue(((Set<Variant>) executeGetSetOfInteger.getVariantsList().get(0).getFieldValue()).contains(new Variant(Variant._Fields.V_INT_BOX, 555)));
 
-        ReturnValue executeGetListOfDouble = ceService.execute(0, initiatorAddress, contractAddress,  byteCodeObjectDataList, deployValue.getContractState(), "getListOfDouble", new Variant[][]{{}},500L);
+        ReturnValue executeGetListOfDouble = ceService.execute(initiatorAddress, contractAddress,  byteCodeObjectDataList, deployValue.getContractState(), "getListOfDouble", new Variant[][]{{}},500L);
         Assert.assertTrue(((List<Variant>) executeGetListOfDouble.getVariantsList().get(0).getFieldValue()).contains(new Variant(Variant._Fields.V_DOUBLE_BOX, 5.55)));
 
-        ReturnValue executeGetListOfString = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getListOfString", new Variant[][]{{}},500L);
+        ReturnValue executeGetListOfString = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getListOfString", new Variant[][]{{}},500L);
         Assert.assertTrue(((List<Variant>) executeGetListOfString.getVariantsList().get(0).getFieldValue()).contains(new Variant(Variant._Fields.V_STRING, "Hello")));
 
-        ReturnValue executeGetDouble = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getDouble", new Variant[][]{{}},500L);
+        ReturnValue executeGetDouble = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getDouble", new Variant[][]{{}},500L);
         Assert.assertEquals(5.55, executeGetDouble.getVariantsList().get(0).getFieldValue());
 
-        ReturnValue executeGetByte = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getByte", new Variant[][]{{}},500L);
+        ReturnValue executeGetByte = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getByte", new Variant[][]{{}},500L);
         Assert.assertEquals((byte) 5, executeGetByte.getVariantsList().get(0).getFieldValue());
 
-        ReturnValue executeGetString = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getString", new Variant[][]{{}},500L);
+        ReturnValue executeGetString = ceService.execute(initiatorAddress, contractAddress, byteCodeObjectDataList, deployValue.getContractState(), "getString", new Variant[][]{{}},500L);
         Assert.assertEquals("Hello", executeGetString.getVariantsList().get(0).getFieldValue());
     }
 }

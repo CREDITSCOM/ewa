@@ -3,6 +3,7 @@ package com.credits.wallet.desktop.utils.sourcecode.building;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
+import com.credits.general.util.compiler.model.JavaSourceFromString;
 import com.credits.general.util.sourceCode.EclipseJdt;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
@@ -11,59 +12,75 @@ import org.eclipse.jdt.core.compiler.IProblem;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class SourceCodeBuilder {
-    public static CompilationResult compileSourceCode(String sourceCode) {
-        Map<String, String> classesToCompile = new HashMap<>();
-        CompilationPackage compilationPackage = null;
-        String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
-        List<BuildSourceCodeError> errorsList = new ArrayList<>();
-        try {
-            ParseCodeUtils.checkClassAndSuperclassNames(className, sourceCode);
-        } catch (CreditsException e) {
-            BuildSourceCodeError tr = new BuildSourceCodeError();
-            tr.setLine(1);
-            tr.setText(e.getMessage());
-            errorsList.add(tr);
-        }
-        IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
-        if (problemArr.length > 0) {
 
-            for (IProblem p : problemArr) {
-                BuildSourceCodeError tr = new BuildSourceCodeError();
-                tr.setLine(p.getSourceLineNumber());
-                tr.setText(p.getMessage());
-                errorsList.add(tr);
-            }
-        } else {
+
+    public static CompilationResult compileSourceCode(List<String> sourceCodes) {
+        return compileSourceCode(sourceCodes,new ArrayList<>());
+    }
+
+    public static CompilationResult compileSourceCode(List<String> sourceCodes, List<BuildSourceCodeError> errorsList) {
+        Map<String, String> classesToCompile = new HashMap<>();
+        sourceCodes.forEach((sourceCode)->{
+            String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
             classesToCompile.put(className, sourceCode);
-            compilationPackage = new InMemoryCompiler().compile(classesToCompile);
-            if (!compilationPackage.isCompilationStatusSuccess()) {
-                DiagnosticCollector collector = compilationPackage.getCollector();
-                List<Diagnostic> diagnostics = collector.getDiagnostics();
-                diagnostics.forEach(action -> {
-                    BuildSourceCodeError tr = new BuildSourceCodeError();
-                    tr.setLine(Math.toIntExact(action.getLineNumber()));
-                    tr.setText(action.getMessage(null));
+            errorsList.addAll(checkSyntax(sourceCode,className));
+        });
+        if (errorsList.size()>0) {
+            return new CompilationResult(null, errorsList);
+        }
+        return compileClasses(classesToCompile, errorsList);
+    }
+
+    private static CompilationResult compileClasses(Map<String, String> classesToCompile, List<BuildSourceCodeError> errorsList) {
+        CompilationPackage compilationPackage = new InMemoryCompiler().compile(classesToCompile);
+        if (!compilationPackage.isCompilationStatusSuccess()) {
+            DiagnosticCollector collector = compilationPackage.getCollector();
+            List<Diagnostic> diagnostics = collector.getDiagnostics();
+            diagnostics.forEach(action -> {
+                if(action.getSource() !=null) {
+                    String className = ((JavaSourceFromString) action.getSource()).getName();
+                    BuildSourceCodeError tr =
+                        new BuildSourceCodeError(className, Math.toIntExact(action.getLineNumber()), action.getMessage(null));
                     errorsList.add(tr);
-                });
-            }
+                }
+            });
         }
         return new CompilationResult(compilationPackage, errorsList);
     }
 
-    public static CompilationResult compileSourceCode(List<String> sourceCodes) {
+    private static List<BuildSourceCodeError> checkSyntax(String sourceCode, String className) {
         List<BuildSourceCodeError> errorsList = new ArrayList<>();
-        Map<String, String> classesToCompile = new HashMap<>();
-        sourceCodes.forEach(code->{
-            String className = GeneralSourceCodeUtils.parseClassName(code);
-            //ParseCodeUtils.checkClassAndSuperclassNames(className, code);
-            classesToCompile.put(className,code);
-        });
-        CompilationPackage compilationPackage = new InMemoryCompiler().compile(classesToCompile);
-        return new CompilationResult(compilationPackage, errorsList);
+        IProblem[] problemArr = EclipseJdt.checkSyntax(sourceCode);
+        if (problemArr.length > 0) {
+            for (IProblem p : problemArr) {
+                BuildSourceCodeError tr = new BuildSourceCodeError(className, p.getSourceLineNumber(), p.getMessage());
+                errorsList.add(tr);
+            }
+        }
+        return errorsList;
+    }
+
+    public static CompilationResult compileSmartSourceCode(String sourceCode) {
+        List<BuildSourceCodeError> errorsList = new ArrayList<>();
+        errorsList.addAll(checkSuperClassNames(sourceCode,errorsList));
+        return compileSourceCode(Collections.singletonList(sourceCode),errorsList);
+    }
+
+    private static List<BuildSourceCodeError> checkSuperClassNames(String sourceCode,
+        List<BuildSourceCodeError> errorsList) {
+        String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
+        try {
+            ParseCodeUtils.checkClassAndSuperclassNames(sourceCode);
+        } catch (CreditsException e) {
+            BuildSourceCodeError tr = new BuildSourceCodeError(className,1, e.getMessage());
+            errorsList.add(tr);
+        }
+        return errorsList;
     }
 }

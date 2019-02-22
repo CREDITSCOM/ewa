@@ -1,23 +1,17 @@
 package com.credits.thrift;
 
 import com.credits.client.executor.pojo.MethodDescriptionData;
-import com.credits.client.executor.thrift.generated.CompileSourceCodeResult;
-import com.credits.client.executor.thrift.generated.ContractExecutor;
-import com.credits.client.executor.thrift.generated.ExecuteByteCodeMultipleResult;
-import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
-import com.credits.client.executor.thrift.generated.GetContractVariablesResult;
-import com.credits.client.executor.thrift.generated.GetterMethodResult;
+import com.credits.client.executor.thrift.generated.*;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
-import com.credits.general.thrift.generated.ExecuteByteCodeResult;
 import com.credits.general.thrift.generated.MethodDescription;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
-import com.credits.service.node.api.NodeApiInteractionService;
+import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import org.apache.thrift.TException;
 import org.apache.thrift.TUnion;
 import org.slf4j.Logger;
@@ -43,7 +37,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     ContractExecutorService service;
 
     @Inject
-    public NodeApiInteractionService dbInteractionService;
+    public NodeApiExecInteractionService dbInteractionService;
 
     ContractExecutorHandler(){
         INJECTOR.component.inject(this);
@@ -66,7 +60,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
         ExecuteByteCodeResult result = new ExecuteByteCodeResult(new APIResponse(SUCCESS_CODE, "success"), null);
         try {
-            ReturnValue returnValue = service.execute(accessId, initiatorAddress.array(), contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(byteCodeObjects), contractState.array(), method, new Variant[][] {paramsArray},executionTime);
+            ReturnValue returnValue = service.execute(initiatorAddress.array(), contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(byteCodeObjects), contractState.array(), method, new Variant[][] {paramsArray},executionTime);
             result.contractState = ByteBuffer.wrap(returnValue.getContractState());
             if (returnValue.getVariantsList() != null) {
                 result.ret_val = returnValue.getVariantsList().get(0);
@@ -83,7 +77,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
 
     @Override
-    public ExecuteByteCodeMultipleResult executeByteCodeMultiple(long accessId, ByteBuffer initiatorAddress, ByteBuffer contractAddress, List<ByteCodeObject> compilationUnits,
+    public ExecuteByteCodeMultipleResult executeByteCodeMultiple(ByteBuffer initiatorAddress, ByteBuffer contractAddress, List<ByteCodeObject> compilationUnits,
         ByteBuffer contractState, String method, List<List<Variant>> params, long executionTime) {
 
         Variant[][] paramsArray = null;
@@ -103,7 +97,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         ExecuteByteCodeMultipleResult response = new ExecuteByteCodeMultipleResult();
         try {
             ReturnValue returnValue =
-                service.execute(accessId, initiatorAddress.array(), contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(compilationUnits), contractState.array(), method, paramsArray,
+                service.execute(initiatorAddress.array(), contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(compilationUnits), contractState.array(), method, paramsArray,
                     executionTime);
             List<GetterMethodResult> getterResults = new ArrayList<>(returnValue.getVariantsList().size());
             List<Variant> variantsList = returnValue.getVariantsList();

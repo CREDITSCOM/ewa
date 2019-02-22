@@ -16,7 +16,7 @@ import static com.credits.general.util.Constants.ds;
 public class AppState {
     public static final String NODE_ERROR="A problem connecting to the Node";
     public static final int CREDITS_DECIMAL = 18;
-    public static final int DEFAULT_EXECUTION_TIME = 1000;
+    public static final long DEFAULT_EXECUTION_TIME = 1000;
     public static final String CREDITS_TOKEN_NAME = "CS";
     public static final int DELAY_AFTER_FULL_SYNC = 5;
     public static final int DELAY_BEFORE_FULL_SYNC = 2;

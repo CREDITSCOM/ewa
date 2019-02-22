@@ -5,6 +5,10 @@ import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.service.node.api.NodeApiInteractionServiceThriftImpl;
+import com.credits.service.node.apiexec.NodeApiExecInteractionService;
+import com.credits.service.node.apiexec.NodeApiExecInteractionServiceThriftImpl;
+import com.credits.service.node.apiexec.NodeApiExecService;
+import com.credits.service.node.apiexec.NodeApiExecServiceImpl;
 import dagger.Module;
 import dagger.Provides;
 
@@ -32,7 +36,19 @@ public class AppModule {
 
     @Singleton
     @Provides
+    public NodeApiExecService provideNodeThriftApiExec(ApplicationProperties properties) {
+        return NodeApiExecServiceImpl.getInstance(properties.apiHost, 9070); // TODO вынести в проперти
+    }
+
+    @Singleton
+    @Provides
     public ApplicationProperties provideProperties() {
         return new ApplicationProperties();
+    }
+
+    @Singleton
+    @Provides
+    public NodeApiExecInteractionService provideNodeApiExecInteractionService() {
+        return new NodeApiExecInteractionServiceThriftImpl();
     }
 }

@@ -13,6 +13,7 @@ import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.TransactionsStateGetResultData;
 import com.credits.client.node.pojo.WalletData;
 import com.credits.general.util.exception.ConverterException;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -22,7 +23,7 @@ public interface NodeApiService {
 
     BigDecimal getBalance(String address) throws NodeClientException, ConverterException;
 
-    int getSynchronizePercent() throws NodeClientException, ConverterException;
+    Pair<Integer, Long> getBlockAndSynchronizePercent() throws NodeClientException, ConverterException;
 
     List<TransactionData> getTransactions(String address, long offset, long limit) throws NodeClientException, ConverterException;
 
@@ -53,6 +54,4 @@ public interface NodeApiService {
     Long getWalletTransactionsCount(String address) throws NodeClientException, ConverterException;
 
     TransactionsStateGetResultData getTransactionsState(String address, List<Long> transactionIdList) throws NodeClientException, ConverterException;
-
-    byte[] getSeed(long accessId) throws NodeClientException;
 }

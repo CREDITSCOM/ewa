@@ -1,7 +1,7 @@
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Test%s {
+public class %sTest {
     @Test
     public void method1() {
         //%s instance = new %s("%s");

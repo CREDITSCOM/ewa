@@ -1,14 +1,10 @@
 package com.credits.client.executor.service;
 
 import com.credits.client.executor.exception.ContractExecutorClientException;
-import com.credits.client.executor.thrift.generated.CompileSourceCodeResult;
-import com.credits.client.executor.thrift.generated.ExecuteByteCodeMultipleResult;
-import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
-import com.credits.client.executor.thrift.generated.GetContractVariablesResult;
+import com.credits.client.executor.thrift.generated.*;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.ThriftClientPool;
 import com.credits.general.thrift.generated.ByteCodeObject;
-import com.credits.general.thrift.generated.ExecuteByteCodeResult;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.variant.VariantConverter;
 import org.apache.thrift.TBase;
@@ -55,9 +51,9 @@ public class ContractExecutorThriftApiClient implements ContractExecutorThriftAp
     }
 
     @Override
-    public ExecuteByteCodeMultipleResult executeByteCodeMultiple(long accessId, byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<List<Variant>> params, long executionTime) {
+    public ExecuteByteCodeMultipleResult executeByteCodeMultiple(byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<List<Variant>> params, long executionTime) {
         Client client = pool.getResource();
-        return callThrift(client, () -> client.executeByteCodeMultiple(accessId, ByteBuffer.wrap(initiatorAddress), ByteBuffer.wrap(contractAddress), byteCodeObjects, ByteBuffer.wrap(contractState), method, params, executionTime));
+        return callThrift(client, () -> client.executeByteCodeMultiple(ByteBuffer.wrap(initiatorAddress), ByteBuffer.wrap(contractAddress), byteCodeObjects, ByteBuffer.wrap(contractState), method, params, executionTime));
     }
 
     @Override

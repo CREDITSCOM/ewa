@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.client.node.pojo.*;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTransactionTabRow;
 import javafx.collections.FXCollections;
@@ -9,6 +10,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class SmartContractTransactionController extends AbstractController{
@@ -16,6 +18,9 @@ public class SmartContractTransactionController extends AbstractController{
     public static final int MAX_HEIGHT = 300;
 
     final int ROW_HEIGHT = 24;
+
+    private SmartContractData selectedContract;
+    private String selectedContractsTab;
     @FXML
     public HBox listContainer;
 
@@ -34,15 +39,20 @@ public class SmartContractTransactionController extends AbstractController{
     @FXML
     private ListView listParams;
     @FXML
-    private TextField labReturnedValue;
+    private ListView listSmartInfo;
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT);
+        Map<String, Object> params = new HashMap<>();
+        params.put(SmartContractController.SELECTED_CONTRACT_KEY, selectedContract);
+        params.put(SmartContractController.SELECTED_CONTRACTS_TAB_KEY, selectedContractsTab);
+        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT, params);
     }
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
+        selectedContract = (SmartContractData)objects.get(SmartContractController.SELECTED_CONTRACT_KEY);
+        selectedContractsTab = (String)objects.get(SmartContractController.SELECTED_CONTRACTS_TAB_KEY);
         SmartContractTransactionTabRow selectedTransactionRow = (SmartContractTransactionTabRow) objects.get("selectedTransactionRow");
 
         labInnerId.setText(selectedTransactionRow.getBlockId());
@@ -56,7 +66,27 @@ public class SmartContractTransactionController extends AbstractController{
             selectedTransactionRow.getParams().forEach(item -> items.add(item.getBoxedValue().toString()));
         }
         listParams.setItems(items);
-        labReturnedValue.setText(selectedTransactionRow.getReturnedValue() == null ? "" : selectedTransactionRow.getReturnedValue().toString());
+
+        SmartTransInfoData smartInfo = selectedTransactionRow.getSmartInfo();
+
+        ObservableList<String> smartInfoItems = FXCollections.observableArrayList();
+        if (smartInfo.isSmartDeploy()) {
+            SmartDeployTransInfoData data = smartInfo.getSmartDeployTransInfoData();
+            smartInfoItems.add(String.format("State: %s", data.getState().toString()));
+        } else if (smartInfo.isSmartExecution()) {
+            SmartExecutionTransInfoData data = smartInfo.getSmartExecutionTransInfoData();
+            smartInfoItems.add(String.format("State: %s", data.getState().toString()));
+            smartInfoItems.add(String.format("Method: %s", data.getMethod()));
+            StringBuilder params = new StringBuilder();
+            data.getParams().forEach(variantData -> params.append(variantData.getBoxedValue().toString() + "\n"));
+            smartInfoItems.add(String.format("Params: %s", params.toString()));
+        } else if (smartInfo.isSmartState()) {
+            SmartStateTransInfoData data = smartInfo.getSmartStateTransInfoData();
+            smartInfoItems.add(String.format("Is success: %s", data.isSuccess()));
+            smartInfoItems.add(String.format("Execution fee: %s", data.getExecutionFee()));
+            smartInfoItems.add(String.format("Return value: %s", data.getReturnValue() == null ? null : data.getReturnValue().toString()));
+        }
+        listSmartInfo.setItems(smartInfoItems);
         int value = items.size() * ROW_HEIGHT + 2 > MAX_HEIGHT ? MAX_HEIGHT : items.size() * ROW_HEIGHT + 2;
         listContainer.setPrefHeight(value);
 

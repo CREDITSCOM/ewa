@@ -1,13 +1,9 @@
 package com.credits.client.executor.service;
 
 import com.credits.client.executor.exception.ContractExecutorClientException;
-import com.credits.client.executor.thrift.generated.CompileSourceCodeResult;
-import com.credits.client.executor.thrift.generated.ExecuteByteCodeMultipleResult;
-import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
-import com.credits.client.executor.thrift.generated.GetContractVariablesResult;
+import com.credits.client.executor.thrift.generated.*;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.ByteCodeObject;
-import com.credits.general.thrift.generated.ExecuteByteCodeResult;
 import com.credits.general.thrift.generated.Variant;
 
 import java.util.List;
@@ -19,7 +15,7 @@ public interface ContractExecutorThriftApi {
 
     ExecuteByteCodeResult executeByteCode(long accessId, byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] objectState, String method, List<VariantData> params, long executionTime) throws ContractExecutorClientException;
 
-    ExecuteByteCodeMultipleResult executeByteCodeMultiple(long accessId, byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<List<Variant>> params, long executionTime);
+    ExecuteByteCodeMultipleResult executeByteCodeMultiple(byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObject> byteCodeObjects, byte[] contractState, String method, List<List<Variant>> params, long executionTime);
 
     GetContractMethodsResult getContractMethods(List<ByteCodeObject> byteCodeObjects) throws ContractExecutorClientException;
 
