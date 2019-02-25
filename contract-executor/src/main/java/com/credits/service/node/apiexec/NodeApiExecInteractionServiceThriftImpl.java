@@ -5,6 +5,7 @@ import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.Utils;
 import com.credits.ioc.Injector;
 import com.credits.pojo.apiexec.GetSmartCodeResultData;
+import com.credits.pojo.apiexec.SmartContractGetResultData;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +29,16 @@ public class NodeApiExecInteractionServiceThriftImpl implements NodeApiExecInter
         return service.getSeed(accessId);
     }
 
+
+
     @Override
     public GetSmartCodeResultData getSmartCode(long accessId, String addressBase58) {
         return service.getSmartCode(accessId, addressBase58);
+    }
+
+    @Override
+    public SmartContractGetResultData getExternalSmartContractByteCode(long accessId, String addressBase58) {
+        return service.getSmartContractBinary(accessId,addressBase58);
     }
 
     @Override

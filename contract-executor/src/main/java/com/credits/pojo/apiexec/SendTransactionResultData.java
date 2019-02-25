@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SendTransactionResultData extends ApiResponseData {
-    private static final long serialVersionUID = 4691482244448740354L;
+    private static final long serialVersionUID = 4691482244448740353L;
 
     private final List<ByteCodeObjectData> byteCodeObjects;
     private final byte[] contractState;
