@@ -450,8 +450,7 @@ public class GeneralConverter {
             List<Annotation> annotationList = getAnnotations(arg.annotations);
             new MethodArgument(arg.returnType,arg.name,annotationList);
         }
-        new MethodDescription(data.returnType,data.name,methodArgumentList,getAnnotations(data.annotations));
-        return null;
+        return new MethodDescription(data.returnType,data.name,methodArgumentList,getAnnotations(data.annotations));
     }
 
     public static List<Annotation> getAnnotations(List<AnnotationData> annotations) {
