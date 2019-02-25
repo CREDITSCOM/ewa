@@ -88,7 +88,9 @@ public class NodePojoConverter {
             data.setMethod(transaction.getSmartContract().getMethod());
             data.setParams(variantListToVariantDataList(transaction.getSmartContract().getParams()));
         }
-        data.setSmartInfo(NodePojoConverter.createSmartTransInfoData(transaction.getSmartInfo()));
+        if (transaction.getSmartInfo() != null) {
+            data.setSmartInfo(NodePojoConverter.createSmartTransInfoData(transaction.getSmartInfo()));
+        }
         data.setType(createTransactionTypeData(transaction.getType()));
         return data;
     }
