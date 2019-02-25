@@ -1,6 +1,5 @@
 package com.credits.service.node.apiexec;
 
-import com.credits.client.executor.thrift.generated.SmartContractBinary;
 import com.credits.client.executor.thrift.generated.apiexec.GetSeedResult;
 import com.credits.client.executor.thrift.generated.apiexec.GetSmartCodeResult;
 import com.credits.client.executor.thrift.generated.apiexec.SendTransactionResult;

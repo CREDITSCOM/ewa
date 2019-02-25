@@ -8,6 +8,9 @@ import com.credits.thrift.ContractExecutorHandler;
 import com.credits.thrift.ReturnValue;
 
 import java.io.Serializable;
+import java.lang.ref.Reference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -19,12 +22,11 @@ public abstract class SmartContract implements Serializable {
 
     protected static NodeApiExecInteractionService service;
     protected static ContractExecutorServiceImpl contractExecutorService;
-
+    protected List<byte[]> externalContractsStateByteCode = new ArrayList<>();
     protected static ExecutorService cachedPool;
     protected static transient long accessId = 0;
     protected static transient String initiator;
     protected static String contractAddress = "";
-
     //    final protected BigDecimal getBalance(String address) {
     //        return callService(() -> {
     //            byte currencyByte = (byte) 1;
@@ -60,8 +62,10 @@ public abstract class SmartContract implements Serializable {
         SmartContractGetResultData externalSmartContractByteCode =
             service.getExternalSmartContractByteCode(accessId, externalSmartContractAddress);
 
-        return contractExecutorService.executeExternalSmartContract(accessId, initiator, externalSmartContractAddress,
-            externalSmartContractMethod, externalSmartContractParams, externalSmartContractByteCode);
+        ReturnValue returnValue = contractExecutorService.executeExternalSmartContract(accessId, initiator, externalSmartContractAddress,
+                externalSmartContractMethod, externalSmartContractParams, externalSmartContractByteCode);
+
+        return returnValue;
     }
 
 

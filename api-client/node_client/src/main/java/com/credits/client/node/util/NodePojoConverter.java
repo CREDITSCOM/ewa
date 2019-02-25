@@ -27,6 +27,8 @@ import static com.credits.general.util.variant.VariantConverter.variantToVariant
  */
 public class NodePojoConverter {
 
+    public static final String BIGDECIMAL_SEPARATOR = ".";
+
     public static Double amountToDouble(Amount amount) {
 
         int integralPart = amount.getIntegral();
@@ -58,8 +60,8 @@ public class NodePojoConverter {
 
         String valueAsString = GeneralConverter.toString(value);
 
-        if (valueAsString.contains(ds)) {
-            String[] valueDelimited = valueAsString.split("[" + ds + "]");
+        if (valueAsString.contains(BIGDECIMAL_SEPARATOR)) {
+            String[] valueDelimited = valueAsString.split("[" + BIGDECIMAL_SEPARATOR + "]");
             integral = Integer.parseInt(valueDelimited[0]);
             String fractionAsString = String.format("%-18s", valueDelimited[1]).replace(' ', '0');
             fraction = Long.parseLong(fractionAsString);
