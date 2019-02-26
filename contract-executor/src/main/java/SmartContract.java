@@ -58,7 +58,7 @@ public abstract class SmartContract implements Serializable {
     }
 
     final protected ReturnValue invokeExternalContact(String externalSmartContractAddress,
-        String externalSmartContractMethod, VariantData externalSmartContractParams) {
+        String externalSmartContractMethod, List<VariantData> externalSmartContractParams) {
         SmartContractGetResultData externalSmartContractByteCode =
             service.getExternalSmartContractByteCode(accessId, externalSmartContractAddress);
 

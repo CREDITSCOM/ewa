@@ -2,8 +2,8 @@ package com.credits.utils;
 
 import com.credits.client.executor.thrift.generated.apiexec.GetSmartCodeResult;
 import com.credits.client.executor.thrift.generated.apiexec.SmartContractGetResult;
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.ByteCodeObject;
-import com.credits.pojo.apiexec.ByteCodeObjectData;
 import com.credits.pojo.apiexec.GetSmartCodeResultData;
 import com.credits.pojo.apiexec.SmartContractGetResultData;
 
