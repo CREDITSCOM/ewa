@@ -7,7 +7,8 @@ import java.util.Properties;
 public class ApplicationProperties {
     public String apiHost = "localhost";
     public int apiPort = 9090;
-    public int executorPort = 9070;
+    public int executorPort = 9080;
+    public int apiExecPort = 9070;
 
     public ApplicationProperties(){
         Properties properties = new Properties();
@@ -17,6 +18,7 @@ public class ApplicationProperties {
             System.setProperty(publicKey, properties.getProperty("contract.executor.private.key"));
             apiHost = properties.getProperty("contract.executor.host");
             apiPort = Integer.parseInt(properties.getProperty("node.api.port"));
+            apiExecPort = Integer.parseInt(properties.getProperty("contract.apiExecutor.port"));
             executorPort = Integer.parseInt(properties.getProperty("contract.executor.port"));
         } catch (IOException e) {
             throw new RuntimeException("can't load propertyFile", e);
