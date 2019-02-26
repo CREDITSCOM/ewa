@@ -7,7 +7,7 @@ import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.credits.general.util.Constants.ds;
+import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
 
 /**
  * Created by goncharov-eg on 19.01.2018.
@@ -23,7 +23,7 @@ public class AppState {
 
 
     public static NodeApiService nodeApiService;
-    public static String decimalSeparator = ds;
+    public static String decimalSeparator = DECIMAL_SEPARATOR;
     public static Map<String,Session> sessionMap = new HashMap<>();
 
 

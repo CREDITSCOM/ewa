@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import static com.credits.general.util.Constants.ds;
+import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
 import static com.credits.general.util.GeneralConverter.byteArrayToByteBuffer;
 import static com.credits.general.util.GeneralPojoConverter.createApiResponseData;
 import static com.credits.general.util.variant.VariantConverter.variantToVariantData;
@@ -58,8 +58,8 @@ public class NodePojoConverter {
 
         String valueAsString = GeneralConverter.toString(value);
 
-        if (valueAsString.contains(ds)) {
-            String[] valueDelimited = valueAsString.split("[" + ds + "]");
+        if (valueAsString.contains(DECIMAL_SEPARATOR)) {
+            String[] valueDelimited = valueAsString.split("[" + DECIMAL_SEPARATOR + "]");
             integral = Integer.parseInt(valueDelimited[0]);
             String fractionAsString = String.format("%-18s", valueDelimited[1]).replace(' ', '0');
             fraction = Long.parseLong(fractionAsString);

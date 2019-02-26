@@ -10,6 +10,7 @@ import com.credits.general.thrift.generated.MethodArgument;
 import com.credits.general.thrift.generated.MethodDescription;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.exception.ConverterException;
+import org.apache.commons.beanutils.converters.BigDecimalConverter;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -53,11 +54,10 @@ public class GeneralConverter {
             return String.valueOf(value);
         }
         if (value instanceof BigDecimal) {
-//            BigDecimalConverter bigDecimalConverter = new BigDecimalConverter();
-//            bigDecimalConverter.setLocale(Constants.LOCALE);
-//            bigDecimalConverter.setPattern("#.##################");
-//            return (String) bigDecimalConverter.convert(String.class, value);
-            return value.toString();
+            BigDecimalConverter bigDecimalConverter = new BigDecimalConverter();
+            bigDecimalConverter.setLocale(Constants.LOCALE);
+            bigDecimalConverter.setPattern("#.##################");
+            return (String) bigDecimalConverter.convert(String.class, value);
         }
         if (value instanceof Boolean) {
             return String.valueOf(value);

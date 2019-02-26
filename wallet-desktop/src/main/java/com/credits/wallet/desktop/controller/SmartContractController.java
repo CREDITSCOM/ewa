@@ -7,7 +7,6 @@ import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.Utils;
 import com.credits.general.util.variant.VariantUtils;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
@@ -16,7 +15,6 @@ import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.struct.SmartContractTransactionTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
-import com.credits.wallet.desktop.utils.NumberUtils;
 import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils;
@@ -181,14 +179,10 @@ public class SmartContractController extends AbstractController {
     }
 
     private void fillTransactionsTables(String base58Address) {
-        System.out.println("fillTransactionsTables");
-
         approvedTableView.getItems().clear();
         approvedList.clear();
-
         unapprovedTableView.getItems().clear();
         unapprovedList.clear();
-
         if (session.sourceMap != null) {
             ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = session.sourceMap;
             List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
