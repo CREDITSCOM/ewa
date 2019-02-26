@@ -26,17 +26,23 @@ public class Contract extends SmartContract {
         System.out.println("contract address - " + contractAddress);
     }
 
+    public void waitFiveSec() throws InterruptedException {
+        System.out.println("accesId " + accessId + " waiting 5 second...");
+        Thread.sleep(5000);
+        System.out.println("accesId " + accessId + " 5 second expired");
+    }
+
     //Регистрирует пользователя в смартконтракте
     public void register(String userAddress, double balance, String descriptionURL) {
         users.put(userAddress, new User(userAddress, balance, descriptionURL));
     }
 
-    public byte[] testGetSeed(){
+    public byte[] testGetSeed() {
         return getSeed();
     }
 
-    public String getProperties(){
-       return accessId + " " + initiator + " " + contractAddress;
+    public String getProperties() {
+        return accessId + " " + initiator + " " + contractAddress;
     }
 
     //Добавить баланс
@@ -341,7 +347,7 @@ public class Contract extends SmartContract {
     }
 
 
-    public static class Task implements Serializable{
+    public static class Task implements Serializable {
         int taskId;
         User owner;
         User doer;
