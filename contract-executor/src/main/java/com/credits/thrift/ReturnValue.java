@@ -18,10 +18,6 @@ public class ReturnValue {
         this.statuses = statuses;
     }
 
-    public List<Variant> getVariants() {
-        return variants;
-    }
-
     public void setVariants(List<Variant> variants) {
         this.variants = variants;
     }

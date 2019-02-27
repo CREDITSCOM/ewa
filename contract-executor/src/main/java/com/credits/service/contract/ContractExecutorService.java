@@ -6,6 +6,7 @@ import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.Variant;
+import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.thrift.ReturnValue;
 
 import java.util.List;
@@ -30,4 +31,8 @@ public interface ContractExecutorService {
     Map<String, Variant> getContractVariables(List<ByteCodeObjectData> contractBytecode, byte[] contractState) throws ContractExecutorException;
 
     List<ByteCodeObjectData> compileClass(String sourceCode) throws CompilationErrorException, CompilationException, ContractExecutorException, CompilationErrorException;
+
+    ReturnValue executeExternalSmartContract(long accessId, String initiatorAddress,
+        String externalSmartContractAddress, String externalSmartContractMethod,
+        List<Object> externalSmartContractParams, SmartContractGetResultData externalSmartContractByteCode);
 }

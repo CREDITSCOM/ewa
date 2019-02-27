@@ -1,20 +1,19 @@
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CreditsException;
-import com.credits.general.pojo.VariantData;
 import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
-import com.credits.thrift.ContractExecutorHandler;
 import com.credits.thrift.ReturnValue;
 
 import java.io.Serializable;
-import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
+import static com.credits.general.util.variant.VariantConverter.variantToObject;
 
 public abstract class SmartContract implements Serializable {
 
@@ -57,15 +56,16 @@ public abstract class SmartContract implements Serializable {
         });
     }
 
-    final protected ReturnValue invokeExternalContact(String externalSmartContractAddress,
-        String externalSmartContractMethod, List<VariantData> externalSmartContractParams) {
+    final protected Object invokeExternalContact(String externalSmartContractAddress, String externalSmartContractMethod, List externalSmartContractParams) {
         SmartContractGetResultData externalSmartContractByteCode =
             service.getExternalSmartContractByteCode(accessId, externalSmartContractAddress);
 
         ReturnValue returnValue = contractExecutorService.executeExternalSmartContract(accessId, initiator, externalSmartContractAddress,
                 externalSmartContractMethod, externalSmartContractParams, externalSmartContractByteCode);
-
-        return returnValue;
+        if(externalSmartContractByteCode.getContractState()!=returnValue.getContractState() && !externalSmartContractByteCode.isStateCanModify()) {
+            throw new ContractExecutorException("Contract state can not be modify");
+        }
+        return variantToObject(returnValue.getVariantsList().get(0));
     }
 
 
