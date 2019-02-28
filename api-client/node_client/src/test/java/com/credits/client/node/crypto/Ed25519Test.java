@@ -16,7 +16,7 @@ import java.security.PublicKey;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.credits.general.util.Constants.ds;
+import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 /**
@@ -99,8 +99,8 @@ public class Ed25519Test {
         KeyPair keyPair = Ed25519.generateKeyPair();
         PrivateKey privateKey = keyPair.getPrivate();
         String innerId = "1111111111111111111111111";
-        String amountAsString = "1" + ds + "111111111111111";
-        String balanceAsString = "1" + ds + "111111111111111";
+        String amountAsString = "1" + DECIMAL_SEPARATOR + "111111111111111";
+        String balanceAsString = "1" + DECIMAL_SEPARATOR + "111111111111111";
         BigDecimal amount = new BigDecimal(amountAsString);
         BigDecimal balance = new BigDecimal(balanceAsString);
         String source = "account";

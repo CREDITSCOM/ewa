@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.util.BitSet;
 
-import static com.credits.general.util.Constants.ds;
+import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
 
 
 /**
@@ -19,7 +19,7 @@ public class GeneralConverterTest {
 
     @Test
     public void toStringTest() {
-        Assert.assertEquals("1" + ds + "0000000000001", GeneralConverter.toString(1.0000000000001));
+        Assert.assertEquals("1" + DECIMAL_SEPARATOR + "0000000000001", GeneralConverter.toString(1.0000000000001));
         Assert.assertEquals("1000000001", GeneralConverter.toString(1000000001));
         Assert.assertEquals("111111111111111111", GeneralConverter.toString(111111111111111111L));
         Assert.assertEquals("2222222222222222222", GeneralConverter.toString(new BigDecimal(2222222222222222222L)));
@@ -77,7 +77,7 @@ public class GeneralConverterTest {
     public void toBigDecimalTest() {
         String longString = "111111111111111111L";
         String intString = "1111111111";
-        String doubleString = "1" + ds + "1111111111111111";
+        String doubleString = "1" + DECIMAL_SEPARATOR + "1111111111111111";
         long longValue = GeneralConverter.toBigDecimal(longString).longValue();
         int integerValue = GeneralConverter.toBigDecimal(intString).intValue();
         double doubleValue = GeneralConverter.toBigDecimal(doubleString).setScale(13, BigDecimal.ROUND_DOWN).doubleValue();
@@ -158,7 +158,7 @@ public class GeneralConverterTest {
 
     @Test
     public void toDoubleTest02() {
-        String value = "1" + ds + "2";
+        String value = "1" + DECIMAL_SEPARATOR + "2";
         Assert.assertEquals(GeneralConverter.toDouble(value, Constants.LOCALE, GeneralConverter.DOUBLE_FORMAT), (Double)1.2D);
     }
     @Test

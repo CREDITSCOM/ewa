@@ -35,6 +35,11 @@ public class NodePojoConverterTest {
         Amount amount = bigDecimalToAmount(value);
         Assert.assertEquals(amount.getIntegral(), 1);
         Assert.assertEquals(amount.getFraction(), 111111111111100000L);
+        valueAsString = "10.0";
+        value = toBigDecimal(valueAsString);
+        amount = bigDecimalToAmount(value);
+        Assert.assertEquals(amount.getIntegral(), 10);
+        Assert.assertEquals(amount.getFraction(), 0L);
     }
 
     @Test
