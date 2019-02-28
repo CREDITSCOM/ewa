@@ -2,13 +2,13 @@ package com.credits.service.contract;
 
 import com.credits.ApplicationProperties;
 import com.credits.classload.ByteArrayContractClassLoader;
-import com.credits.general.pojo.AnnotationData;
-import com.credits.general.pojo.MethodArgumentData;
-import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.exception.CompilationException;
+import com.credits.general.pojo.AnnotationData;
 import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.general.pojo.MethodArgumentData;
+import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
@@ -20,7 +20,6 @@ import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodArgumentsValuesData;
 import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.secure.Sandbox;
-import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractExecutorUtils;
@@ -113,7 +112,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Sandbox.confine(contractClass, createPermissions());
             Class<?> serviceClass;
             try {
-                serviceClass = Class.forName("com.credits.service.node.api.NodeApiInteractionServiceThriftImpl");
+                serviceClass = Class.forName("com.credits.service.node.apiexec.NodeApiExecInteractionServiceThriftImpl");
             } catch (ClassNotFoundException e) {
                 throw new ContractExecutorException("", e);
             }
@@ -312,6 +311,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new RuntimePermission("accessClassInPackage.sun.security.rsa"));
         permissions.add(new RuntimePermission("accessClassInPackage.sun.security.provider"));
         permissions.add(new RuntimePermission("java.lang.RuntimePermission", "loadLibrary.sunec"));
+        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "createClassLoader"));
         permissions.add(new SecurityPermission("getProperty.networkaddress.cache.ttl", "read"));
         permissions.add(new SecurityPermission("getProperty.networkaddress.cache.negative.ttl", "read"));
         permissions.add(new SecurityPermission("getProperty.jdk.jar.disabledAlgorithms"));
