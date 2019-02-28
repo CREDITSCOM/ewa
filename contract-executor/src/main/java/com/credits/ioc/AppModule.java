@@ -37,7 +37,7 @@ public class AppModule {
     @Singleton
     @Provides
     public NodeApiExecService provideNodeThriftApiExec(ApplicationProperties properties) {
-        return NodeApiExecServiceImpl.getInstance(properties.apiHost, properties.apiExecPort);
+        return NodeApiExecServiceImpl.getInstance(properties.apiHost, properties.executorNodeApiPort);
     }
 
     @Singleton
