@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.io.FilePermission;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -324,7 +323,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new PropertyPermission("com.sun.security.preserveOldDCEncoding", "read"));
         permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
         permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
-                permissions.add(new FilePermission("<<ALL FILES>>", "read"));
+//                permissions.add(new FilePermission("<<ALL FILES>>", "read"));
         return permissions;
     }
 
