@@ -52,7 +52,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialize.Serializer.deserialize;
@@ -387,7 +386,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             for (int i = 0; i < amountParamRows; i++) {
                 Object[] parameter = null;
-                Thread invokeFunctionThread;
+                Thread invokeFunctionThread = null;
                 try {
                     if (targetMethodData.getArgTypes() != null) {
                             parameter = ContractExecutorServiceUtils.castValues(targetMethodData.getArgTypes(), params);
@@ -405,9 +404,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 } catch (Throwable e) {
                     returnVariantDataList[i] = null;
                     returnStatuses[i] = new APIResponse(ERROR_CODE, e.getMessage());
-                    if (amountParamRows == 1) {
-                        throw e;
-                    }
+                    throw e;
                 }
             }
             List<Variant> returnValues = null;

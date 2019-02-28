@@ -36,5 +36,5 @@ public abstract class SmartContract implements Serializable {
 
     final protected byte[] getSeed() { return null;}
 
-    final protected Object invokeExternalContact(String externalSmartContractAddress, String externalSmartContractMethod, List externalSmartContractParams){ return null;}
+    final protected Object invokeExternalContract(String externalSmartContractAddress, String externalSmartContractMethod, List externalSmartContractParams){ return null;}
     }

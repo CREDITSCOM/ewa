@@ -56,7 +56,7 @@ public abstract class SmartContract implements Serializable {
         });
     }
 
-    final protected Object invokeExternalContact(String externalSmartContractAddress, String externalSmartContractMethod, List externalSmartContractParams) {
+    final protected Object invokeExternalContract(String externalSmartContractAddress, String externalSmartContractMethod, List externalSmartContractParams) {
         SmartContractGetResultData externalSmartContractByteCode =
             service.getExternalSmartContractByteCode(accessId, externalSmartContractAddress);
 
@@ -65,6 +65,7 @@ public abstract class SmartContract implements Serializable {
         if(externalSmartContractByteCode.getContractState()!=returnValue.getContractState() && !externalSmartContractByteCode.isStateCanModify()) {
             throw new ContractExecutorException("Contract state can not be modify");
         }
+        this.externalContractsStateByteCode.add(returnValue.getContractState());
         return variantToObject(returnValue.getVariantsList().get(0));
     }
 
