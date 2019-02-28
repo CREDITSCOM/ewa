@@ -1,6 +1,7 @@
 package com.credits.service.contract;
 
 
+import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.MethodArgumentData;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.client.node.pojo.SmartContractData;
@@ -15,6 +16,7 @@ import com.credits.general.pojo.VariantType;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.general.util.GeneralConverter;
+import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.service.ServiceTest;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractExecutorUtils;
@@ -31,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.credits.thrift.ContractExecutorHandler.SUCCESS_CODE;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
@@ -117,6 +120,26 @@ public class ContractExecutorTest extends ServiceTest {
         ReturnValue result = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "getInitiatorAddress", new Variant[][]{{}}, 500L);
         assertEquals(Base58.encode(initiatorAddress), result.getVariantsList().get(0).getV_string());
     }
+
+    @Test
+    public void innerSmartsTest() throws Exception {
+        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+        List<ByteCodeObjectData> byteCodeObjectDataList =
+            compileSourceCode(sourceCode);
+
+        byte[] contractState = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null, 500L).getContractState();
+
+/*
+        ReturnValue result = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, contractState, "getInitiatorAddress", new Variant[][]{{}}, 500L);
+*/
+        SmartContractGetResultData smartContractGetResultData =
+            new SmartContractGetResultData(new ApiResponseData(null, "success"), byteCodeObjectDataList, contractState,
+                true);
+        ReturnValue result = ceService.executeExternalSmartContract(0, Base58.encode(initiatorAddress), Base58.encode(contractAddress),
+                "getInitiatorAddress", new ArrayList<>(), smartContractGetResultData);
+        assertEquals(Base58.encode(initiatorAddress), result.getVariantsList().get(0).getV_string());
+    }
+
 
     @Test
     public void get_methods_of_contract() throws Exception{

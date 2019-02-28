@@ -27,6 +27,7 @@ import static com.credits.general.util.variant.VariantConverter.variantToVariant
  */
 public class NodePojoConverter {
 
+
     public static Double amountToDouble(Amount amount) {
 
         int integralPart = amount.getIntegral();

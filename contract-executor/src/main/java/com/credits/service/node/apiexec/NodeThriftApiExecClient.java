@@ -4,6 +4,7 @@ import com.credits.client.executor.thrift.generated.apiexec.APIEXEC;
 import com.credits.client.executor.thrift.generated.apiexec.GetSeedResult;
 import com.credits.client.executor.thrift.generated.apiexec.GetSmartCodeResult;
 import com.credits.client.executor.thrift.generated.apiexec.SendTransactionResult;
+import com.credits.client.executor.thrift.generated.apiexec.SmartContractGetResult;
 import com.credits.client.node.thrift.generated.Transaction;
 import com.credits.client.node.thrift.generated.WalletIdGetResult;
 import com.credits.exception.ApiClientException;
@@ -55,6 +56,13 @@ public class NodeThriftApiExecClient implements NodeThriftApiExec {
         APIEXEC.Client client = pool.getResource();
         return callThrift(client, () -> client.GetSmartCode(accessId, ByteBuffer.wrap(address)));
     }
+
+    @Override
+    public SmartContractGetResult getSmartContractBinary(long accessId, byte[] address) throws ApiClientException {
+        APIEXEC.Client client = pool.getResource();
+        return callThrift(client, () -> client.SmartContractGet(accessId, ByteBuffer.wrap(address)));
+    }
+
 
     @Override
     public SendTransactionResult sendTransaction(Transaction transaction) throws ApiClientException {

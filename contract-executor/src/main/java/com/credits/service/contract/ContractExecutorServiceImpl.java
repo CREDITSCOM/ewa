@@ -18,6 +18,7 @@ import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodArgumentsValuesData;
+import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.secure.Sandbox;
 import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
@@ -76,7 +77,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             Class<?> contract = Class.forName("SmartContract");
             ContractExecutorServiceUtils.initializeSmartContractField("service", dbInteractionService, contract, null);
-            ContractExecutorServiceUtils.initializeSmartContractField("cachedPool", Executors.newCachedThreadPool(), contract, null);
+            ContractExecutorServiceUtils.initializeSmartContractField("contractExecutorService", this, contract, null);
+            ContractExecutorServiceUtils.initializeSmartContractField("cachedPool", Executors.newCachedThreadPool(),
+                contract, null);
         } catch (ClassNotFoundException e) {
             logger.error("Cannot load smart contract's super class", e);
         }
@@ -84,13 +87,14 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
 
     @Override
-    public ReturnValue execute(long accessId, byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState,  String methodName,
+    public ReturnValue execute(long accessId, byte[] initiatorAddress, byte[] contractAddress,
+        List<ByteCodeObjectData> byteCodeObjectDataList, byte[] contractState, String methodName,
         Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
 
         String initiatorAddressBase58 = "unknown address";
         String contractAddressBase58;
         try {
-            if(byteCodeObjectDataList.size()==0) {
+            if (byteCodeObjectDataList.size() == 0) {
                 throw new ContractExecutorException("Bytecode size is 0");
             }
             requireNonNull(initiatorAddress, "initiatorAddress is null");
@@ -98,9 +102,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             initiatorAddressBase58 = Base58.encode(initiatorAddress);
             contractAddressBase58 = Base58.encode(contractAddress);
 
-
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
-            Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
+            Class<?> contractClass =
+                ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
             ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, null);
             ContractExecutorServiceUtils.initializeField("initiator", initiatorAddressBase58, contractClass, null);
             ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass, null);
@@ -114,20 +118,28 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 throw new ContractExecutorException("", e);
             }
             Permissions permissions = createPermissions();
-            permissions.add(new SocketPermission(properties.apiHost + ":" + properties.apiPort, "connect,listen,resolve"));
+            permissions.add(
+                new SocketPermission(properties.apiHost + ":" + properties.apiPort, "connect,listen,resolve"));
             Sandbox.confine(serviceClass, permissions);
 
             Object instance;
             if (contractState != null && contractState.length != 0) {
                 instance = deserialize(contractState, classLoader);
-                ContractExecutorServiceUtils.initializeField("initiator", initiatorAddressBase58, contractClass, instance);
+                ContractExecutorServiceUtils.initializeField("initiator", initiatorAddressBase58, contractClass,
+                    instance);
             } else {
                 instance = contractClass.newInstance();
-                return new ReturnValue(serialize(instance), null, Collections.singletonList(new APIResponse(SUCCESS_CODE, "success")));
+                return new ReturnValue(serialize(instance), null, null,
+                    Collections.singletonList(new APIResponse(SUCCESS_CODE, "success")));
             }
 
-            ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass, instance);
+            ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass,
+                instance);
             ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, instance);
+            ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, instance);
+            List<byte[]> externalContractsStateByteCode = new ArrayList<>();
+            ContractExecutorServiceUtils.initializeField("externalContracts", externalContractsStateByteCode,
+                contractClass, null);
 
             int amountParamRows = 1;
             Variant[] params = null;
@@ -136,7 +148,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 params = paramsTable[0];
             }
 
-            MethodArgumentsValuesData targetMethodData = getMethodArgumentsValuesByNameAndParams(contractClass, methodName, params);
+            MethodArgumentsValuesData targetMethodData =
+                getMethodArgumentsValuesByNameAndParams(contractClass, methodName, params);
 
             VariantData[] returnVariantDataList = new VariantData[amountParamRows];
             APIResponse[] returnStatuses = new APIResponse[amountParamRows];
@@ -149,7 +162,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 try {
                     if (targetMethodData.getArgTypes() != null) {
                         if (paramsTable != null && paramsTable[i] != null) {
-                            parameter = ContractExecutorServiceUtils.castValues(targetMethodData.getArgTypes(), paramsTable[i]);
+                            parameter =
+                                ContractExecutorServiceUtils.castValues(targetMethodData.getArgTypes(), paramsTable[i]);
                         }
                     }
 
@@ -159,7 +173,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
                     executorService.submit(invokeFunctionThread);
 
-                    returnVariantDataList[i] = invokeFunctionTask.get(executionTime, TimeUnit.MILLISECONDS); // will wait for the async completion
+                    returnVariantDataList[i] = invokeFunctionTask.get(executionTime,
+                        TimeUnit.MILLISECONDS); // will wait for the async completion
                     logger.info("is ok");
                     returnStatuses[i] = new APIResponse(SUCCESS_CODE, "success");
                 } catch (TimeoutException ex) {
@@ -190,7 +205,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 }
             }
 
-            return new ReturnValue(serialize(instance), returnValues, new ArrayList<>(Arrays.asList(returnStatuses)));
+            return new ReturnValue(serialize(instance), returnValues, externalContractsStateByteCode,
+                new ArrayList<>(Arrays.asList(returnStatuses)));
 
         } catch (Throwable e) {
             System.out.println("root cause message  - " + getRootCauseMessage(e));
@@ -200,16 +216,16 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
     }
 
-    static MethodArgumentsValuesData getMethodArgumentsValuesByNameAndParams(Class<?> contractClass,
-        String methodName, Variant[] params) {
-        if (params==null) {
+    static MethodArgumentsValuesData getMethodArgumentsValuesByNameAndParams(Class<?> contractClass, String methodName,
+        Variant[] params) {
+        if (params == null) {
             throw new ContractExecutorException("Cannot find method params == null");
         }
 
         Class[] argTypes = ContractExecutorServiceUtils.getArgTypes(params);
         Method method = MethodUtils.getMatchingAccessibleMethod(contractClass, methodName, argTypes);
-        if (method!=null) {
-            return  new MethodArgumentsValuesData(method, argTypes, params);
+        if (method != null) {
+            return new MethodArgumentsValuesData(method, argTypes, params);
         } else {
             throw new ContractExecutorException("Cannot find a method by name and parameters specified");
         }
@@ -226,11 +242,15 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         requireNonNull(byteCodeObjectDataList, "bytecode of contract class is null");
 
         ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
-        Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
-        Set<String> objectMethods = new HashSet<>(Arrays.asList("getClass", "hashCode", "equals", "toString", "notify", "notifyAll", "wait", "finalize"));
+        Class<?> contractClass =
+            ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
+        Set<String> objectMethods = new HashSet<>(
+            Arrays.asList("getClass", "hashCode", "equals", "toString", "notify", "notifyAll", "wait", "finalize"));
         List<MethodDescriptionData> result = new ArrayList<>();
         for (Method method : contractClass.getMethods()) {
-            if (objectMethods.contains(method.getName())) continue;
+            if (objectMethods.contains(method.getName())) {
+                continue;
+            }
             ArrayList<MethodArgumentData> args = new ArrayList<>();
             List<AnnotationData> methodAnnotationDataList = new ArrayList<>();
             for (Annotation annotation : method.getAnnotations()) {
@@ -243,22 +263,26 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     AnnotationData parameterAnnotationData = parseAnnotationData(annotation.toString());
                     paramAnnotationDataList.add(parameterAnnotationData);
                 }
-                args.add(new MethodArgumentData(parameter.getType().getTypeName(), parameter.getName(),paramAnnotationDataList));
+                args.add(new MethodArgumentData(parameter.getType().getTypeName(), parameter.getName(),
+                    paramAnnotationDataList));
             }
-            result.add(new MethodDescriptionData(method.getGenericReturnType().getTypeName(), method.getName(), args,methodAnnotationDataList));
+            result.add(new MethodDescriptionData(method.getGenericReturnType().getTypeName(), method.getName(), args,
+                methodAnnotationDataList));
         }
 
         return result;
     }
 
     @Override
-    public Map<String, Variant> getContractVariables(List<ByteCodeObjectData> byteCodeObjectDataList,  byte[] contractState) throws ContractExecutorException {
+    public Map<String, Variant> getContractVariables(List<ByteCodeObjectData> byteCodeObjectDataList,
+        byte[] contractState) throws ContractExecutorException {
         requireNonNull(byteCodeObjectDataList, "bytecode of contract class is null");
         requireNonNull(contractState, "contract state is null");
 
         if (contractState.length != 0) {
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
-            Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
+            Class<?> contractClass =
+                ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
             return ContractExecutorUtils.getContractVariables(deserialize(contractState, classLoader));
         } else {
             throw new ContractExecutorException("contract state is empty");
@@ -266,13 +290,15 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public List<ByteCodeObjectData> compileClass( String sourceCode) throws ContractExecutorException, CompilationErrorException, CompilationException {
+    public List<ByteCodeObjectData> compileClass(String sourceCode)
+        throws ContractExecutorException, CompilationErrorException, CompilationException {
         requireNonNull(sourceCode, "sourceCode of contract class is null");
-        if (sourceCode.isEmpty()) throw new ContractExecutorException("sourceCode of contract class is empty");
+        if (sourceCode.isEmpty()) {
+            throw new ContractExecutorException("sourceCode of contract class is empty");
+        }
         CompilationPackage compilationPackage = InMemoryCompiler.compileSourceCode(sourceCode);
         return GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
     }
-
 
 
     private Permissions createPermissions() {
@@ -302,5 +328,105 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         return permissions;
     }
 
+    @Override
+    public ReturnValue executeExternalSmartContract(long accessId, String initiatorAddress,
+        String externalSmartContractAddress, String externalSmartContractMethod,
+        List<Object> externalSmartContractParams, SmartContractGetResultData externalSmartContractByteCode) {
+        List<ByteCodeObjectData> byteCodeObjectDataList = externalSmartContractByteCode.getByteCodeObjects();
+        byte[] contractState = externalSmartContractByteCode.getContractState();
 
+        Variant[] params = new Variant[externalSmartContractParams.size()];
+        for (int i = 0; i < externalSmartContractParams.size(); i++) {
+            Variant variant = ContractExecutorUtils.mapObjectToVariant(externalSmartContractParams.get(i));
+            params[i] = variant;
+        }
+
+
+        try {
+            if (byteCodeObjectDataList.size() == 0) {
+                throw new ContractExecutorException("Bytecode size is 0");
+            }
+            requireNonNull(initiatorAddress, "initiatorAddress is null");
+            requireNonNull(externalSmartContractAddress, "contractAddress is null");
+
+            ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
+            Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
+            ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, null);
+            ContractExecutorServiceUtils.initializeField("initiator", initiatorAddress, contractClass, null);
+            ContractExecutorServiceUtils.initializeField("contractAddress", externalSmartContractAddress, contractClass, null);
+
+
+            Object instance;
+            if (contractState != null && contractState.length != 0) {
+                instance = deserialize(contractState, classLoader);
+                ContractExecutorServiceUtils.initializeField("initiator", initiatorAddress, contractClass,
+                    instance);
+            } else {
+                instance = contractClass.newInstance();
+                return new ReturnValue(serialize(instance), null, null,
+                    Collections.singletonList(new APIResponse(SUCCESS_CODE, "success")));
+            }
+
+            List<byte[]> externalContractsStateByteCode = new ArrayList<>();
+            ContractExecutorServiceUtils.initializeField("externalContracts", externalContractsStateByteCode,
+                contractClass, null);
+            ContractExecutorServiceUtils.initializeField("contractAddress", externalSmartContractAddress, contractClass,
+                instance);
+            ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, instance);
+
+            int amountParamRows = 1;
+
+            MethodArgumentsValuesData targetMethodData =
+                getMethodArgumentsValuesByNameAndParams(contractClass, externalSmartContractMethod, params);
+
+            VariantData[] returnVariantDataList = new VariantData[amountParamRows];
+            APIResponse[] returnStatuses = new APIResponse[amountParamRows];
+
+            Class<?> returnType = targetMethodData.getMethod().getReturnType();
+
+            for (int i = 0; i < amountParamRows; i++) {
+                Object[] parameter = null;
+                Thread invokeFunctionThread = null;
+                try {
+                    if (targetMethodData.getArgTypes() != null) {
+                            parameter = ContractExecutorServiceUtils.castValues(targetMethodData.getArgTypes(), params);
+                    }
+
+                    Callable<VariantData> invokeFunction = invokeFunction(instance, targetMethodData, parameter);
+                    FutureTask<VariantData> invokeFunctionTask = new FutureTask<>(invokeFunction);
+                    invokeFunctionThread = new Thread(invokeFunctionTask);
+
+                    executorService.submit(invokeFunctionThread);
+
+                    returnVariantDataList[i] = invokeFunctionTask.get();
+                    logger.info("is ok");
+                    returnStatuses[i] = new APIResponse(SUCCESS_CODE, "success");
+                } catch (Throwable e) {
+                    returnVariantDataList[i] = null;
+                    returnStatuses[i] = new APIResponse(ERROR_CODE, e.getMessage());
+                    throw e;
+                }
+            }
+            List<Variant> returnValues = null;
+            if (returnType != void.class) {
+                returnValues = new ArrayList<>(amountParamRows);
+                for (VariantData returnVariantData : returnVariantDataList) {
+                    if (returnVariantData == null) {
+                        returnValues.add(null);
+                    } else {
+                        returnValues.add(ContractExecutorUtils.mapVariantDataToVariant(returnVariantData));
+                    }
+                }
+            }
+
+            return new ReturnValue(serialize(instance), returnValues, externalContractsStateByteCode,
+                new ArrayList<>(Arrays.asList(returnStatuses)));
+
+        } catch (Throwable e) {
+            System.out.println("root cause message  - " + getRootCauseMessage(e));
+            e.printStackTrace();
+            throw new ContractExecutorException(
+                "Cannot execute the contract " + initiatorAddress + ". Reason: " + getRootCauseMessage(e));
+        }
+    }
 }
