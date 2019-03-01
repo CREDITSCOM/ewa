@@ -2,6 +2,7 @@ import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CreditsException;
 import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.service.contract.ContractExecutorServiceImpl;
+import com.credits.service.contract.SmartContractConstants;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
 
@@ -23,9 +24,9 @@ public abstract class SmartContract implements Serializable {
     protected static ContractExecutorServiceImpl contractExecutorService;
     protected List<byte[]> externalContractsStateByteCode = new ArrayList<>();
     protected static ExecutorService cachedPool;
-    protected static transient long accessId = 0;
-    protected static transient String initiator;
-    protected static String contractAddress = "";
+    protected final transient long accessId;
+    protected final transient String initiator;
+    protected final String contractAddress;
     //    final protected BigDecimal getBalance(String address) {
     //        return callService(() -> {
     //            byte currencyByte = (byte) 1;
@@ -49,6 +50,15 @@ public abstract class SmartContract implements Serializable {
     //        return callService(() -> service.getPoolInfo(hash, index));
     //    }
 
+    public SmartContract(){
+        ThreadLocal<SmartContractConstants> threadLocal = new ThreadLocal<>();
+        SmartContractConstants contractConstants =  threadLocal.get();
+        initiator = contractConstants.initiator;
+        accessId = contractConstants.accessId;
+        contractAddress = contractConstants.contractAddress;
+        System.out.println(Thread.currentThread() + " smart init accessId " + accessId);
+        threadLocal.remove();
+    }
     final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {
         callService(() -> {
             service.sendTransaction(contractAddress, target, amount, fee, userData);

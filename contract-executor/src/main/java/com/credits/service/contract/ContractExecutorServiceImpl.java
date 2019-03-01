@@ -104,9 +104,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
             Class<?> contractClass =
                 ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
-            ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, null);
-            ContractExecutorServiceUtils.initializeField("initiator", initiatorAddressBase58, contractClass, null);
-            ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass, null);
+            new ThreadLocal<SmartContractConstants>().set(
+                new SmartContractConstants(initiatorAddressBase58, contractAddressBase58, accessId));
 
             // add classes to Sandbox
             Sandbox.confine(contractClass, createPermissions());
@@ -117,8 +116,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 throw new ContractExecutorException("", e);
             }
             Permissions permissions = createPermissions();
-            permissions.add(
-                new SocketPermission(properties.apiHost + ":" + properties.executorNodeApiPort, "connect,listen,resolve"));
+            permissions.add(new SocketPermission(properties.apiHost + ":" + properties.executorNodeApiPort,
+                "connect,listen,resolve"));
             Sandbox.confine(serviceClass, permissions);
 
             Object instance;
@@ -323,7 +322,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new PropertyPermission("com.sun.security.preserveOldDCEncoding", "read"));
         permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
         permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
-//                permissions.add(new FilePermission("<<ALL FILES>>", "read"));
+        //                permissions.add(new FilePermission("<<ALL FILES>>", "read"));
         return permissions;
     }
 
@@ -349,17 +348,18 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             requireNonNull(externalSmartContractAddress, "contractAddress is null");
 
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
-            Class<?> contractClass = ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
+            Class<?> contractClass =
+                ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
             ContractExecutorServiceUtils.initializeField("accessId", accessId, contractClass, null);
             ContractExecutorServiceUtils.initializeField("initiator", initiatorAddress, contractClass, null);
-            ContractExecutorServiceUtils.initializeField("contractAddress", externalSmartContractAddress, contractClass, null);
+            ContractExecutorServiceUtils.initializeField("contractAddress", externalSmartContractAddress, contractClass,
+                null);
 
 
             Object instance;
             if (contractState != null && contractState.length != 0) {
                 instance = deserialize(contractState, classLoader);
-                ContractExecutorServiceUtils.initializeField("initiator", initiatorAddress, contractClass,
-                    instance);
+                ContractExecutorServiceUtils.initializeField("initiator", initiatorAddress, contractClass, instance);
             } else {
                 instance = contractClass.newInstance();
                 return new ReturnValue(serialize(instance), null, null,
@@ -388,7 +388,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 Thread invokeFunctionThread = null;
                 try {
                     if (targetMethodData.getArgTypes() != null) {
-                            parameter = ContractExecutorServiceUtils.castValues(targetMethodData.getArgTypes(), params);
+                        parameter = ContractExecutorServiceUtils.castValues(targetMethodData.getArgTypes(), params);
                     }
 
                     Callable<VariantData> invokeFunction = invokeFunction(instance, targetMethodData, parameter);
