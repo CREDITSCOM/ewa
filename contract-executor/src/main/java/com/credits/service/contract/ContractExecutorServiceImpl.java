@@ -110,7 +110,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             ContractExecutorServiceUtils.initializeField("contractAddress", contractAddressBase58, contractClass, null);
 
             // add classes to Sandbox
-            Sandbox.confine(contractClass, createPermissions());
+            //Sandbox.confine(contractClass, createPermissions());
             Class<?> serviceClass;
             try {
                 serviceClass = Class.forName("com.credits.service.node.api.NodeApiInteractionServiceThriftImpl");
@@ -120,7 +120,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Permissions permissions = createPermissions();
             permissions.add(
                 new SocketPermission(properties.apiHost + ":" + properties.apiPort, "connect,listen,resolve"));
-            Sandbox.confine(serviceClass, permissions);
+            //Sandbox.confine(serviceClass, permissions);
 
             Object instance;
             if (contractState != null && contractState.length != 0) {

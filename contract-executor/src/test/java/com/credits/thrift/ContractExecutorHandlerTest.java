@@ -15,7 +15,7 @@ public class ContractExecutorHandlerTest {
     public void compileSourceCodeTest() throws Exception {
         ContractExecutorHandler contractExecutorHandler = new ContractExecutorHandler();
         CompileSourceCodeResult sourceCodeResult =
-            contractExecutorHandler.compileSourceCode(readSourceCode("com\\credits\\thrift\\Contract.java"));
+            contractExecutorHandler.compileSourceCode(readSourceCode("com\\credits\\thrift\\MySmartContract.java"));
         assertEquals(new APIResponse((byte) 0, "success"), sourceCodeResult.status);
     }
 }

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Contract extends SmartContract {
+public class MySmartContract extends SmartContract {
     int counterTaskId;
     String smartOwner;
     User smartOwnerUser;
@@ -14,7 +14,7 @@ public class Contract extends SmartContract {
     private Map<String, User> users;
 
 
-    public Contract() {
+    public MySmartContract() {
         counterTaskId = 0;
         smartOwner = "5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe";
         tasks = new HashMap<>();

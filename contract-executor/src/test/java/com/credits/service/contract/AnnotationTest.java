@@ -28,13 +28,13 @@ public class AnnotationTest extends ServiceTest {
     @Test
     public void main() {
         String getter = "@Getter()";
-        String contractAnn = "@ContractAnn(address=test2, method=notGetBalance)";
+        String contractAnn = "@Contract(address=test2, method=notGetBalance)";
         String contractMethod = "@ContractMethod(id = 0, method = \"\")";
         AnnotationData annotationData = parseAnnotationData(getter);
         AnnotationData annotationData1 = parseAnnotationData(contractAnn);
         AnnotationData annotationData2 = parseAnnotationData(contractMethod);
         Assert.assertEquals(annotationData, new AnnotationData("Getter", new HashMap<>()));
-        Assert.assertEquals(annotationData1, new AnnotationData("ContractAnn", new HashMap<String, String>() {{
+        Assert.assertEquals(annotationData1, new AnnotationData("Contract", new HashMap<String, String>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -75,7 +75,7 @@ public class AnnotationTest extends ServiceTest {
     public MethodDescriptionData createAddTokensMethodDescriptionData(AnnotationData getterAnnotation) {
         ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
         addTokensAnnotationData.add(getterAnnotation);
-        addTokensAnnotationData.add(new AnnotationData("ContractAnn", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -92,7 +92,7 @@ public class AnnotationTest extends ServiceTest {
 
     public MethodDescriptionData createAddTokenMethodDescriptionData(AnnotationData getterAnnotation) {
         ArrayList<AnnotationData> addTokenAnnotationData = new ArrayList<>();
-        addTokenAnnotationData.add(new AnnotationData("ContractAnn", new HashMap<String, String>() {{
+        addTokenAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
             put("address", "test1");
             put("method", "getBalance");
         }}));

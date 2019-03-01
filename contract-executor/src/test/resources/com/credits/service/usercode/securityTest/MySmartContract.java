@@ -17,11 +17,11 @@ import java.util.concurrent.*;
 
 import static java.io.File.*;
 
-public class Contract extends SmartContract {
+public class MySmartContract extends SmartContract {
 
     private int total;
 
-    public Contract() throws Exception {
+    public MySmartContract() throws Exception {
         String name = Thread.currentThread().getName();
         System.out.println("The constructor has been invoked. Thread: " + name);
     }

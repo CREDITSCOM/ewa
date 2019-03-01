@@ -46,7 +46,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
         interactionService.setAccessible(true);
         interactionService.set(null, dbservice);
 
-        String sourceCode = readSourceCode("/thriftIntegrationTest/Contract.java");
+        String sourceCode = readSourceCode("/thriftIntegrationTest/MySmartContract.java");
         byteCodeObjectDataList = compileSourceCode(sourceCode);
 
         contractState = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null,500L).getContractState();

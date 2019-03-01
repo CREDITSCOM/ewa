@@ -12,7 +12,7 @@ public class ByteArrayContractClassLoaderTest {
 
     @Before
     public void setUp() throws Exception {
-        sourceCode = "public class Contract {\n" + "\n" + "    public Contract() {\n" +
+        sourceCode = "public class MySmartContract {\n" + "\n" + "    public MySmartContract() {\n" +
             "        System.out.println(\"Hello World!!\"); ;\n" + "    }\n" + "}";
         String sourceCode2 =
             "public class HelloWorld extends SomeClass{ \n@Override \npublic void foo(){\nSystem.out.println(\"HelloWorld method called\");\n}\n}\npublic class SomeClass{\npublic void foo()\nSystem.out.println(\"SomeClass method called\");\n}\n}";
@@ -37,7 +37,7 @@ public class ByteArrayContractClassLoaderTest {
 
     @Test
     public void loadOtherClass() throws CompilationErrorException {
-        sourceCode = "public class Contract {\n" + "\n" + "    public Contract() {\n" +
+        sourceCode = "public class MySmartContract {\n" + "\n" + "    public MySmartContract() {\n" +
             "try {\n new java.net.ServerSocket(5000);\n} catch (java.io.IOException e) {\ne.printStackTrace();\n}\n" + "    }\n" + "}";
 
         byte[] bytecode = InMemoryCompiler.compileSourceCode(sourceCode).getUnits().get(0).getByteCode();

@@ -1,19 +1,18 @@
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
-import java.net.ServerSocket;
+public class MySmartContract extends SmartContract {
+    Integer value = new Integer(0);
 
-public class Contract extends SmartContract {
-    public Contract() {
+    public MySmartContract(){
         System.out.println("Constructor");
     }
 
     public void initialize() {
     }
 
-    public void balanceGet() throws Exception {
+    public String balanceGet() throws Exception {
         System.out.println("getBalance()");
         java.math.BigDecimal balance = getBalance("1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2");
         System.out.println("getBalance=" + balance);
+        return balance.toString();
     }
 
     public void sendZeroCS() throws Exception {
@@ -26,8 +25,7 @@ public class Contract extends SmartContract {
         getClass().getConstructor().newInstance();
     }
 
-    public void openSocket() throws Exception {
-        new ServerSocket(5555);
-        System.out.println();
+    public Integer addValue(Integer value){
+        return this.value += value;
     }
-};
+}

@@ -7,6 +7,7 @@ import com.credits.thrift.ReturnValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -62,11 +63,15 @@ public abstract class SmartContract implements Serializable {
 
         ReturnValue returnValue = contractExecutorService.executeExternalSmartContract(accessId, initiator, externalSmartContractAddress,
                 externalSmartContractMethod, externalSmartContractParams, externalSmartContractByteCode);
-        if(externalSmartContractByteCode.getContractState()!=returnValue.getContractState() && !externalSmartContractByteCode.isStateCanModify()) {
+        if(!Arrays.equals(externalSmartContractByteCode.getContractState(), returnValue.getContractState()) && !externalSmartContractByteCode.isStateCanModify()) {
             throw new ContractExecutorException("Contract state can not be modify");
         }
         this.externalContractsStateByteCode.add(returnValue.getContractState());
-        return variantToObject(returnValue.getVariantsList().get(0));
+        if(returnValue.getVariantsList()!=null) {
+            return variantToObject(returnValue.getVariantsList().get(0));
+        } else {
+            return null;
+        }
     }
 
 

@@ -57,7 +57,7 @@ public class SecurityTest extends ServiceTest {
     public void setUp() throws Exception {
         super.setUp();
 
-        String sourceCode = "/securityTest/Contract.java";
+        String sourceCode = "/securityTest/MySmartContract.java";
         byteCodeObjectData = compileSourceCodeFromFile(sourceCode);
 
         contractState = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectData, null, null, null,500L).getContractState();

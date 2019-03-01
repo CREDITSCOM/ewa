@@ -29,7 +29,7 @@ public class ThriftIT extends ServiceTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        String sourceCode = readSourceCode("/thriftIntegrationTest/Contract.java");
+        String sourceCode = readSourceCode("/thriftIntegrationTest/MySmartContract.java");
 
         byteCodeObjects = compileSourceCode(sourceCode);
 

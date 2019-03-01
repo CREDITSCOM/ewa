@@ -4,8 +4,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface ContractAnn {
-    String address();
-    String method();
+@Target({ElementType.PARAMETER,ElementType.METHOD})
+public @interface Getter {
+
 }

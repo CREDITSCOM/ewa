@@ -51,7 +51,7 @@ public class ContractExecutorTest extends ServiceTest {
     @Test
     public void execute_bytecode() throws Exception {
         String sourceCode =
-                "public class Contract implements java.io.Serializable {\n" + "\n" + "    public Contract(String initiator) {\n" +
+                "public class MySmartContract implements java.io.Serializable {\n" + "\n" + "    public MySmartContract(String initiator) {\n" +
                         "        System.out.println(\"Hello World!!\"); \n" +
                         "    }\npublic void foo(){\nSystem.out.println(\"Method foo executed\");\n}\n}";
         List<ByteCodeObjectData> byteCodeObjectDataList =
@@ -86,7 +86,7 @@ public class ContractExecutorTest extends ServiceTest {
 
     @Test
     public void save_state_smart_contract() throws Exception {
-        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+        String sourceCode = readSourceCode("/serviceTest/MySmartContract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
             compileSourceCode(sourceCode);
 
@@ -111,7 +111,7 @@ public class ContractExecutorTest extends ServiceTest {
 
     @Test
     public void initiator_init() throws Exception {
-        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+        String sourceCode = readSourceCode("/serviceTest/MySmartContract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
             compileSourceCode(sourceCode);
 
@@ -123,7 +123,7 @@ public class ContractExecutorTest extends ServiceTest {
 
     @Test
     public void innerSmartsTest() throws Exception {
-        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+        String sourceCode = readSourceCode("/serviceTest/MySmartContract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
             compileSourceCode(sourceCode);
 
@@ -143,7 +143,7 @@ public class ContractExecutorTest extends ServiceTest {
 
     @Test
     public void get_methods_of_contract() throws Exception{
-        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+        String sourceCode = readSourceCode("/serviceTest/MySmartContract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
             compileSourceCode(sourceCode);
 
@@ -160,7 +160,7 @@ public class ContractExecutorTest extends ServiceTest {
 
     @Test
     public void get_contract_variables() throws Exception{
-        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+        String sourceCode = readSourceCode("/serviceTest/MySmartContract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
             compileSourceCode(sourceCode);
         byte[] contractState = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null, 500).getContractState();
@@ -172,7 +172,7 @@ public class ContractExecutorTest extends ServiceTest {
 
     @Test
     public void multipleMethodCall() throws Exception {
-        String sourceCode = readSourceCode("/serviceTest/Contract.java");
+        String sourceCode = readSourceCode("/serviceTest/MySmartContract.java");
         List<ByteCodeObjectData> byteCodeObjectDataList =
             compileSourceCode(sourceCode);
         byte[] contractState = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null, 500).getContractState();
@@ -193,7 +193,7 @@ public class ContractExecutorTest extends ServiceTest {
     public void compileClassCall() {
         String sourceCode = null;
         try {
-            sourceCode = readSourceCode("/serviceTest/Contract.java");
+            sourceCode = readSourceCode("/serviceTest/MySmartContract.java");
         } catch (IOException e) {
             e.printStackTrace();
         }

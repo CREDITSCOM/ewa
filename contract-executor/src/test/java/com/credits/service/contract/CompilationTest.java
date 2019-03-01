@@ -21,7 +21,7 @@ public class CompilationTest extends ServiceTest {
 
     @Test
     public void initiator_init() throws Exception {
-        String sourceCode = readSourceCode("/compilationTest/Contract.java");
+        String sourceCode = readSourceCode("/compilationTest/MySmartContract.java");
         List<ByteCodeObjectData> byteCodeObjects =
             compileSourceCode(sourceCode);
 

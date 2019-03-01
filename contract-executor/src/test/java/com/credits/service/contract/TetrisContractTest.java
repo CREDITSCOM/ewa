@@ -22,7 +22,7 @@ public class TetrisContractTest extends ServiceTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        byteCodeObjectDataList = compileSourceCodeFromFile("/tetrisContractTest/Contract.java");
+        byteCodeObjectDataList = compileSourceCodeFromFile("/tetrisContractTest/MySmartContract.java");
     }
 
     @Test

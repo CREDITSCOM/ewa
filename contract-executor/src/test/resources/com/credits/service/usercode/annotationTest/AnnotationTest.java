@@ -1,4 +1,4 @@
-public class Contract extends SmartContract {
+public class AnnotationTest extends SmartContract {
 
     public int total;
 
@@ -9,12 +9,12 @@ public class Contract extends SmartContract {
         total = 1;
     }
 
-    public Contract() {
+    public AnnotationTest() {
         System.out.println("It is initiator adderss - " + initiator);
     }
 
     @Getter
-    @ContractAnn(address = "test2", method = "notGetBalance")
+    @Contract(address = "test2", method = "notGetBalance")
     public void addTokens(int amount) {
         total += amount;
         System.out.println(java.lang.Integer.toString(amount) + " tokens were added to total");
@@ -26,7 +26,7 @@ public class Contract extends SmartContract {
     }
 
 
-    @ContractAnn(address = "test1", method = "getBalance")
+    @Contract(address = "test1", method = "getBalance")
     public void addToken(@Getter int amount) {
         total += amount;
         System.out.println(java.lang.Integer.toString(amount) + " tokens were added to total");

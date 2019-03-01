@@ -1,12 +1,12 @@
 import java.util.*;
 
-public class Contract extends SmartContract {
+public class MySmartContract extends SmartContract {
 
     private Map<String, Integer> actions;
     private Map<String, Integer> balances;
     private String publicKey;
 
-    public Contract() {
+    public MySmartContract() {
         publicKey = "userPublicKey";
         actions = new HashMap<>();
         actions.put(publicKey, 1);

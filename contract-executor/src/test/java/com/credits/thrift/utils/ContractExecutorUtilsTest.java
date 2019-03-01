@@ -24,7 +24,7 @@ public class ContractExecutorUtilsTest extends ServiceTest {
         "import java.util.Map;\n" +
         "import java.util.Set;\n" +
         "\n" +
-        "public class Contract extends SmartContract {\n" +
+        "public class MySmartContract extends SmartContract {\n" +
         "    public String nullField;\n" +
         "    public int intField;\n" +
         "    public Integer integerField;\n" +
@@ -34,7 +34,7 @@ public class ContractExecutorUtilsTest extends ServiceTest {
         "    public Set<Integer> setIntegerField;\n" +
         "    public Map<String, Integer> mapStringIntegerField;\n" +
         "\n" +
-        "    public Contract() {\n" +
+        "    public MySmartContract() {\n" +
         "        this.nullField = null;\n" +
         "        this.intField = 5;\n" +
         "        this.integerField = 55;\n" +
@@ -49,8 +49,8 @@ public class ContractExecutorUtilsTest extends ServiceTest {
         "    }\n" +
         "}";
 
-    private String sourceCodeWithoutVariables = "public class Contract extends SmartContract {\n" +
-        "    public Contract() {\n" +
+    private String sourceCodeWithoutVariables = "public class MySmartContract extends SmartContract {\n" +
+        "    public MySmartContract() {\n" +
         "    }\n" +
         "}";
 

@@ -1,7 +1,7 @@
 package com.credits.classload;
 
 public class ByteArrayContractClassLoader extends ClassLoader {
-    private static final String className = "Contract";
+    private static final String className = "MySmartContract";
     private Class contractClass = null;
 
     public Class<?> buildClass(byte[] byteCode) {

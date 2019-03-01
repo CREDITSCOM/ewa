@@ -1,4 +1,4 @@
-public class Contract extends SmartContract {
+public class MySmartContract extends SmartContract {
 
     public int total;
 
@@ -8,7 +8,7 @@ public class Contract extends SmartContract {
         total = 1;
     }
 
-    public Contract() {
+    public MySmartContract() {
         System.out.println("It is initiator adderss - " + initiator);
     }
 
