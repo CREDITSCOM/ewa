@@ -112,7 +112,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Sandbox.confine(contractClass, createPermissions());
             Class<?> serviceClass;
             try {
-                serviceClass = Class.forName("com.credits.service.node.apiexec.NodeApiExecInteractionServiceThriftImpl");
+                serviceClass = Class.forName("com.credits.service.node.apiexec.NodeApiExecServiceImpl");
             } catch (ClassNotFoundException e) {
                 throw new ContractExecutorException("", e);
             }
