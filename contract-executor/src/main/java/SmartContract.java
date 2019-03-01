@@ -59,7 +59,7 @@ public abstract class SmartContract implements Serializable {
 
     final protected Object invokeExternalContract(String externalSmartContractAddress, String externalSmartContractMethod, List externalSmartContractParams) {
         SmartContractGetResultData externalSmartContractByteCode =
-            service.getExternalSmartContractByteCode(accessId, externalSmartContractAddress);
+            callService(() -> service.getExternalSmartContractByteCode(accessId, externalSmartContractAddress));
 
         ReturnValue returnValue = contractExecutorService.executeExternalSmartContract(accessId, initiator, externalSmartContractAddress,
                 externalSmartContractMethod, externalSmartContractParams, externalSmartContractByteCode);

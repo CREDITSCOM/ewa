@@ -1,6 +1,5 @@
 package com.credits.thrift;
 
-import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.client.executor.thrift.generated.CompileSourceCodeResult;
 import com.credits.client.executor.thrift.generated.ContractExecutor;
 import com.credits.client.executor.thrift.generated.ExecuteByteCodeMultipleResult;
@@ -11,13 +10,13 @@ import com.credits.client.executor.thrift.generated.GetterMethodResult;
 import com.credits.client.executor.thrift.generated.SmartContractBinary;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
+import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
-import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import org.apache.thrift.TException;
 import org.apache.thrift.TUnion;
@@ -56,13 +55,14 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     public ExecuteByteCodeResult executeByteCode(long accessId, ByteBuffer initiatorAddress,
         SmartContractBinary invokedContract, String method, List<Variant> params, long executionTime) throws TException {
         logger.debug("<-- execute(" +
+                "\naccessId = {}," +
                 "\naddress = {}," +
                 "\nbyteCode length= {}, " +
                 "\ncontractState length= {}, " +
                 "\ncontractState hash= {} " +
                 "\nmethod = {}, " +
                 "\nparams = {}.",
-            encodeToBASE58(initiatorAddress.array()), invokedContract.byteCodeObjects.size(), invokedContract.contractState.array().length, invokedContract.contractState.hashCode(),
+            accessId, encodeToBASE58(initiatorAddress.array()), invokedContract.byteCodeObjects.size(), invokedContract.contractState.array().length, invokedContract.contractState.hashCode(),
             method, (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat)));
 
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);

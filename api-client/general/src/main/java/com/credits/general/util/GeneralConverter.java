@@ -20,7 +20,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.BitSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import static java.util.Arrays.stream;
 
@@ -48,7 +53,7 @@ public class GeneralConverter {
             return String.valueOf(value);
         }
         if (value instanceof Integer) {
-            return String.valueOf(value);
+             return String.valueOf(value);
         }
         if (value instanceof Long) {
             return String.valueOf(value);
