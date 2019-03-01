@@ -311,7 +311,7 @@ public class DeployTabController extends AbstractController {
         String selectedType = cbContractType.getSelectionModel().getSelectedItem();
         String curClassName;
         if (className.getText().isEmpty()) {
-            curClassName = "Contract";
+            curClassName = "MySmartContract";
         } else {
             curClassName = className.getText();
 
