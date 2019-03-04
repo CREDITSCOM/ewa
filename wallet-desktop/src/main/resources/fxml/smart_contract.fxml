@@ -149,4 +149,5 @@
     <Label fx:id="actualOfferedMaxFeeLabel" layoutX="928.0" layoutY="605.0" prefHeight="30.0" prefWidth="155.0" style="-fx-font-size: 12;" styleClass="credits-label" text="0" textFill="#0000008e" />
     <TextField fx:id="feeField" layoutX="667.0" layoutY="590.0" maxHeight="60.0" maxWidth="200.0" minHeight="45.0" minWidth="57.0" prefHeight="60.0" prefWidth="200.0" promptText="(0.01 - 0.03 - Recomended)" style="-fx-font-size: 12px;" styleClass="credits-textField" />
     <Label fx:id="feeErrorLabel" layoutX="490.0" layoutY="620.0" maxHeight="45.0" minHeight="20.0" prefHeight="30.0" prefWidth="174.0" style="-fx-font-size: 12;" styleClass="credits--not-padding-labelError" />
+   <TextField fx:id="usdSmart" layoutX="250.0" layoutY="590.0" maxHeight="60.0" maxWidth="200.0" minHeight="45.0" minWidth="57.0" prefHeight="60.0" prefWidth="200.0" promptText="Used smart contracts" style="-fx-font-size: 12px;" styleClass="credits-textField" />
 </Pane>

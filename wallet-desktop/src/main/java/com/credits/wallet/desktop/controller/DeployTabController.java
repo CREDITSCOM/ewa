@@ -141,6 +141,8 @@ public class DeployTabController extends AbstractController {
     @FXML
     public TextField feeField;
     @FXML
+    public TextField usdSmarts;
+    @FXML
     private Label actualOfferedMaxFeeLabel;
 
 

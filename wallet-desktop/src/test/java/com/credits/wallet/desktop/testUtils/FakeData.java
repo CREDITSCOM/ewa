@@ -66,7 +66,7 @@ public class FakeData {
             transactionData01.setSmartInfo(smartInfo01);
             transactionData01.setType(TransactionTypeData.TT_SmartDeploy);
             SmartContractInvocationData smartContractInvocationData01 = new SmartContractInvocationData(null,
-                    null, null, false
+                    null, null, null,false
             );
 
             SmartContractTransactionData smartContractTransactionData1 = new SmartContractTransactionData(
@@ -82,7 +82,7 @@ public class FakeData {
             transactionData02.setMethod("method01");
             transactionData02.setBlockId("blockId01");
             SmartContractInvocationData smartContractInvocationData02 = new SmartContractInvocationData(null,
-                    null, null, false
+                    null, null, null,false
             );
             SmartContractTransactionData smartContractTransactionData2 = new SmartContractTransactionData(
                     transactionData02, smartContractInvocationData02);

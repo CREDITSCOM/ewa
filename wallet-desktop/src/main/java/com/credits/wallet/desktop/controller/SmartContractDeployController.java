@@ -18,6 +18,7 @@ import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
 import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
+import com.google.common.base.CharMatcher;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
@@ -34,6 +35,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +55,7 @@ import static com.credits.wallet.desktop.VistaNavigator.loadVista;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.getTokenStandard;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
+import static com.credits.wallet.desktop.utils.SmartContractsUtils.getSmartsListFromField;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.saveSmartInTokenList;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -158,6 +163,7 @@ public class SmartContractDeployController extends AbstractController {
             return;
         }
         try {
+            List<ByteBuffer> usedSmartsListFromField = getSmartsListFromField(deployTabController.usdSmarts.getText());
             String javaCode = SourceCodeUtils.normalizeSourceCode(deployTabController.smartCodeArea.getText());
             if (compilationPackage == null) {
                 deployTabController.smartBuildButton.setDisable(false);
@@ -183,7 +189,7 @@ public class SmartContractDeployController extends AbstractController {
                     supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService, session.account,
                             smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool).thenApply(
                             (transactionData) -> createSmartContractTransaction(transactionData,
-                                    FormUtils.getActualOfferedMaxFee16Bits(deployTabController.feeField), smartContractData,
+                                    FormUtils.getActualOfferedMaxFee16Bits(deployTabController.feeField), smartContractData, usedSmartsListFromField,
                                     session))
                             .whenComplete(
                                     handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
@@ -195,6 +201,9 @@ public class SmartContractDeployController extends AbstractController {
             FormUtils.showError(NODE_ERROR + ": " + e.getMessage());
         }
     }
+
+
+
 
 
     private TokenInfoData getTokenInfo(Class<?> contractClass, SmartContractData smartContractData) {

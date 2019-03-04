@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
@@ -72,7 +73,7 @@ public class ContractInteractionService {
                 TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData =
                     TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService, session.account,
                         sc.getBase58Address(), true);
-                return createSmartContractTransaction(transactionData, offeredMaxFee, sc,session).getRight().getCode().name();
+                return createSmartContractTransaction(transactionData, offeredMaxFee, sc, new ArrayList<>(),session).getRight().getCode().name();
             })
             .whenComplete(handleCallback(callback));
     }

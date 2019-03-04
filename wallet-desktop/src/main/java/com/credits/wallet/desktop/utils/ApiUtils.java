@@ -17,7 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
@@ -42,7 +44,7 @@ public class ApiUtils {
     }
 
     public static Pair<Long, TransactionFlowResultData> createSmartContractTransaction(
-        CalcTransactionIdSourceTargetResult transactionData, short offeredMaxFee, SmartContractData smartContractData, Session session)
+        CalcTransactionIdSourceTargetResult transactionData, short offeredMaxFee, SmartContractData smartContractData, List<ByteBuffer> usedSmartContracts, Session session)
         throws NodeClientException, ConverterException {
 
         smartContractData.setAddress(
@@ -51,7 +53,7 @@ public class ApiUtils {
 
         SmartContractInvocationData smartContractInvocationData =
             new SmartContractInvocationData(smartContractData.getSmartContractDeployData(),
-                smartContractData.getMethod(), smartContractData.getParams(), false);
+                smartContractData.getMethod(), smartContractData.getParams(), usedSmartContracts,false);
 
         SmartContractTransactionFlowData scData = new SmartContractTransactionFlowData(
             getTransactionFlowData(transactionData, ZERO, offeredMaxFee, serializeByThrift(smartContractInvocationData), null,

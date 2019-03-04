@@ -302,6 +302,7 @@ public class NodePojoConverter {
                 createSmartContractDeployData(thriftStruct.getSmartContractDeploy()),
                 thriftStruct.getMethod(),
                 thriftStruct.getParams().stream().map(VariantConverter::variantToVariantData).collect(Collectors.toList()),
+                thriftStruct.getUsedContracts(),
                 thriftStruct.forgetNewState
         );
     }

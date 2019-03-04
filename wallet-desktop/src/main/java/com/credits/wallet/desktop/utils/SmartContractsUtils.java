@@ -4,11 +4,16 @@ import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.crypto.Md5;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.general.util.GeneralConverter;
+import com.credits.wallet.desktop.exception.WalletDesktopException;
+import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +28,32 @@ public class SmartContractsUtils {
     private final static Logger LOGGER = LoggerFactory.getLogger(SmartContractsUtils.class);
     private static byte[] bytes;
 
+
+    public static List<ByteBuffer> getSmartsListFromField(String field) {
+        try {
+            List<ByteBuffer> myList = new ArrayList<>();
+            if (!field.isEmpty()) {
+                String[] split = field.split(",");
+                for (String aSplit : split) {
+                    String contractAddress = CharMatcher.is('\"').trimFrom(aSplit);
+                    if (!contractAddress.isEmpty()) {
+                        byte[] bytes = GeneralConverter.decodeFromBASE64(contractAddress);
+                        myList.add(ByteBuffer.wrap(bytes));
+
+                    }
+                }
+            }
+            return myList;
+        } catch (Exception e) {
+            throw new CreditsException("Cannot parse used smart contracts");
+        }
+    }
+
+
+    private boolean isSmartContract(String s) {
+        GeneralConverter.decodeFromBASE64(s);
+        return false;
+    }
 
     public static byte[] generateSmartContractAddress(byte[] deployerAddress, long transactionId, List<ByteCodeObjectData> byteCodeObjects) {
 

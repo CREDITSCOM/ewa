@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +56,7 @@ import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
+import static com.credits.wallet.desktop.utils.SmartContractsUtils.getSmartsListFromField;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -80,6 +82,8 @@ public class SmartContractController extends AbstractController {
     private List<SmartContractTransactionTabRow> approvedList = new ArrayList<>();
     private SmartContractData selectedContract;
 
+    @FXML
+    public TextField usdSmart;
     @FXML
     public Tab myContractsTab;
     @FXML
@@ -551,6 +555,7 @@ public class SmartContractController extends AbstractController {
     @FXML
     private void handleExecute() {
         try {
+            List<ByteBuffer> usedSmartsListFromField = getSmartsListFromField(usdSmart.getText());
             // VALIDATE
             AtomicBoolean isValidationSuccessful = new AtomicBoolean(true);
             clearLabErr();
@@ -581,7 +586,7 @@ public class SmartContractController extends AbstractController {
 
             CompletableFuture.supplyAsync(() -> calcTransactionIdSourceTarget(AppState.nodeApiService, session.account,
                     smartContractData.getBase58Address(), true), threadPool)
-                    .thenApply((transactionData) -> createSmartContractTransaction(transactionData, FormUtils.getActualOfferedMaxFee16Bits(feeField), smartContractData,session))
+                    .thenApply((transactionData) -> createSmartContractTransaction(transactionData, FormUtils.getActualOfferedMaxFee16Bits(feeField), smartContractData, usedSmartsListFromField, session))
                     .whenComplete(handleCallback(handleExecuteResult()));
 
 

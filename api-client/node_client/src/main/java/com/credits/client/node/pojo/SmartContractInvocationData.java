@@ -3,6 +3,7 @@ package com.credits.client.node.pojo;
 import com.credits.general.pojo.VariantData;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -13,13 +14,15 @@ public class SmartContractInvocationData implements Serializable {
     private SmartContractDeployData smartContractDeployData;
     private String method;
     private List<VariantData> params;
+    private List<ByteBuffer> usedContracts;
     private boolean forgetNewState;
 
-    public SmartContractInvocationData(SmartContractDeployData smartContractDeployData, String method, List<VariantData> params, boolean forgetNewState) {
+    public SmartContractInvocationData(SmartContractDeployData smartContractDeployData, String method, List<VariantData> params, List<ByteBuffer> usedContracts, boolean forgetNewState) {
         this.smartContractDeployData = smartContractDeployData;
         this.method = method;
         this.params = params;
         this.forgetNewState = forgetNewState;
+        this.usedContracts = usedContracts;
     }
 
     public SmartContractDeployData getSmartContractDeployData() {
@@ -54,4 +57,11 @@ public class SmartContractInvocationData implements Serializable {
         this.forgetNewState = forgetNewState;
     }
 
+    public List<ByteBuffer> getUsedContracts() {
+        return usedContracts;
+    }
+
+    public void setUsedContracts(List<ByteBuffer> usedContracts) {
+        this.usedContracts = usedContracts;
+    }
 }

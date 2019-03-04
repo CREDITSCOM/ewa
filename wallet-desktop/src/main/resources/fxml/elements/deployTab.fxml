@@ -4,10 +4,11 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -15,6 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+
 <Pane prefHeight="500.0" prefWidth="1216.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.DeployTabController">
     <Label fx:id="deployContractListLabel" alignment="CENTER" layoutX="5.0" prefHeight="25.0" prefWidth="270.0" style="-fx-border-color: #9B9B9B #9B9B9B black #9B9B9B; -fx-border-width: 1 1 0 1; -fx-background-color: #F2F2F2;" text="SmartContracts" />
     <ListView fx:id="deployContractList" layoutX="5.0" layoutY="25.0" prefHeight="475.0" prefWidth="270.0" style="-fx-padding: 15 1 15 1; -fx-border-color: black; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;" />
@@ -67,9 +69,10 @@
                     </TabPane>
                 </SplitPane>
                 <HBox alignment="CENTER" maxHeight="28.0" prefHeight="25.0" prefWidth="900.0" style="-fx-background-color: #F5FFF4; -fx-border-color: black; -fx-border-width: 0 1 1 1;">
-                    <Label maxWidth="125.0" minWidth="125.0" prefHeight="17.0" prefWidth="125.0" />
-                    <Label maxHeight="20.0" maxWidth="140.0" minWidth="140.0" prefHeight="20.0" prefWidth="140.0" style="-fx-font-size: 12;" styleClass="credits-not-padding-label" text="Transaction Fee in CS" />
-                    <TextField fx:id="feeField" alignment="CENTER" maxHeight="20.0" maxWidth="210.0" minHeight="0.0" minWidth="210.0" prefHeight="20.0" prefWidth="210.0" promptText="(0.01 - 0.03 - Recomended)" style="                     -fx-focus-color: transparent; -fx-border-width: 1; -fx-font-size: 12; -fx-border-color: #ececec;" />
+               <TextField fx:id="usdSmarts" alignment="CENTER" maxHeight="20.0" maxWidth="210.0" minHeight="0.0" minWidth="134.0" prefHeight="20.0" prefWidth="143.0" promptText="Used smart contracts" style="                     -fx-focus-color: transparent; -fx-border-width: 1; -fx-font-size: 12; -fx-border-color: #ececec;" />
+               <Separator orientation="VERTICAL" prefHeight="200.0" />
+                    <Label maxHeight="20.0" maxWidth="150.0" minWidth="115.0" prefHeight="20.0" prefWidth="150.0" style="-fx-font-size: 12;" styleClass="credits-not-padding-label" text="Transaction Fee in CS" />
+                    <TextField fx:id="feeField" alignment="CENTER" maxHeight="20.0" maxWidth="210.0" minHeight="0.0" minWidth="183.0" prefHeight="20.0" prefWidth="183.0" promptText="(0.01 - 0.03 - Recomended)" style="                     -fx-focus-color: transparent; -fx-border-width: 1; -fx-font-size: 12; -fx-border-color: #ececec;" />
                     <Label maxHeight="20.0" maxWidth="50.0" minWidth="50.0" prefHeight="20.0" prefWidth="50.0" style="-fx-font-size: 12;" styleClass="credits-not-padding-label" text="  Actual:" />
                     <Label fx:id="actualOfferedMaxFeeLabel" maxHeight="20.0" maxWidth="120.0" minWidth="120.0" prefHeight="20.0" prefWidth="120.0" style="-fx-font-size: 12;" styleClass="credits-not-padding-label" text="0" textFill="#0000008e" />
                     <Button fx:id="smartBuildButton" maxHeight="27.0" maxWidth="120.0" minWidth="120.0" onAction="#handleBuildSmart" prefHeight="27.0" prefWidth="120.0" styleClass="credits-deploy-button" text="Build">
