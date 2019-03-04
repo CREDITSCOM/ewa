@@ -38,7 +38,7 @@ public class SecurityTest extends ServiceTest {
     @Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-            {"getBalance", null, false},
+//            {"getBalance", null, false},
             {"openSocket",  new Variant(V_INT, 5555), false},
             {"setTotal", new Variant(V_INT, 1000), false},
             {"getTotal", null, false},
