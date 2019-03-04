@@ -34,11 +34,13 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.ReflectPermission;
 import java.net.NetPermission;
 import java.net.SocketPermission;
+import java.nio.ByteBuffer;
 import java.security.Permissions;
 import java.security.SecurityPermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -134,7 +136,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     Collections.singletonList(new APIResponse(SUCCESS_CODE, "success")));
             }
 
-            List<byte[]> externalContractsStateByteCode = new ArrayList<>();
+            Map<ByteBuffer,ByteBuffer> externalContractsStateByteCode = new HashMap<>();
             initializeField("externalContracts", externalContractsStateByteCode, contractClass, null);
 
             int amountParamRows = 1;
@@ -329,7 +331,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     @Override
     public ReturnValue executeExternalSmartContract(long accessId, String initiatorAddress,
         String externalSmartContractAddress, String externalSmartContractMethod,
-        List<Object> externalSmartContractParams, SmartContractGetResultData externalSmartContractByteCode) {
+        List<Object> externalSmartContractParams, SmartContractGetResultData externalSmartContractByteCode,
+        Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode) {
         List<ByteCodeObjectData> byteCodeObjectDataList = externalSmartContractByteCode.getByteCodeObjects();
         byte[] contractState = externalSmartContractByteCode.getContractState();
 
@@ -366,7 +369,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     Collections.singletonList(new APIResponse(SUCCESS_CODE, "success")));
             }
 
-            List<byte[]> externalContractsStateByteCode = new ArrayList<>();
             initializeField("externalContracts", externalContractsStateByteCode,
                 contractClass, null);
             initializeField("contractAddress", externalSmartContractAddress, contractClass,

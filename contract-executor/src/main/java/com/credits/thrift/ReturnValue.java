@@ -3,15 +3,17 @@ package com.credits.thrift;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 
+import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Map;
 
 public class ReturnValue {
     private byte[] contractState;
     private List<Variant> variants;
-    private List<byte[]> externalContractsState ;
+    private Map<ByteBuffer,ByteBuffer> externalContractsState ;
     private List<APIResponse> statuses;
 
-    public ReturnValue(byte[] contractState, List<Variant> variant, List<byte[]> externalContractsState, List<APIResponse> statuses) {
+    public ReturnValue(byte[] contractState, List<Variant> variant, Map<ByteBuffer,ByteBuffer> externalContractsState, List<APIResponse> statuses) {
         this.externalContractsState = externalContractsState;
         this.contractState = contractState;
         this.variants = variant;
@@ -22,11 +24,11 @@ public class ReturnValue {
         this.variants = variants;
     }
 
-    public List<byte[]> getExternalContractsState() {
+    public Map<ByteBuffer,ByteBuffer> getExternalContractsState() {
         return externalContractsState;
     }
 
-    public void setExternalContractsState(List<byte[]> externalContractsState) {
+    public void setExternalContractsState(Map<ByteBuffer,ByteBuffer> externalContractsState) {
         this.externalContractsState = externalContractsState;
     }
 

@@ -52,12 +52,6 @@ public class NodeThriftApiExecClient implements NodeThriftApiExec {
     }
 
     @Override
-    public GetSmartCodeResult getSmartCode(long accessId, byte[] address) throws ApiClientException {
-        APIEXEC.Client client = pool.getResource();
-        return callThrift(client, () -> client.GetSmartCode(accessId, ByteBuffer.wrap(address)));
-    }
-
-    @Override
     public SmartContractGetResult getSmartContractBinary(long accessId, byte[] address) throws ApiClientException {
         APIEXEC.Client client = pool.getResource();
         return callThrift(client, () -> client.SmartContractGet(accessId, ByteBuffer.wrap(address)));

@@ -16,7 +16,7 @@ import static com.credits.general.util.GeneralPojoConverter.createApiResponseDat
  */
 public class ApiExecClientPojoConverter {
 
-    public static GetSmartCodeResultData createGetSmartCodeResultData(GetSmartCodeResult thriftStruct) {
+    public static GetSmartCodeResultData createGetSmartCodeResultData(SmartContractGetResult thriftStruct) {
 
         return new GetSmartCodeResultData(
                 createApiResponseData(thriftStruct.getStatus()),

@@ -73,6 +73,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             if (returnValue.getVariantsList() != null) {
                 result.ret_val = returnValue.getVariantsList().get(0);
             }
+            result.externalContractsState = returnValue.getExternalContractsState();
             logger.info("executeByteCode -->\ncontractState length= {}\ncontractState hash= {}\nresponse= {}",
                 result.invokedContractState.array().length, result.invokedContractState.hashCode(), result);
         } catch (ContractExecutorException e) {

@@ -9,6 +9,7 @@ import com.credits.general.thrift.generated.Variant;
 import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.thrift.ReturnValue;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 
@@ -34,5 +35,6 @@ public interface ContractExecutorService {
 
     ReturnValue executeExternalSmartContract(long accessId, String initiatorAddress,
         String externalSmartContractAddress, String externalSmartContractMethod,
-        List<Object> externalSmartContractParams, SmartContractGetResultData externalSmartContractByteCode);
+        List<Object> externalSmartContractParams, SmartContractGetResultData externalSmartContractByteCode,
+        Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode);
 }

@@ -54,7 +54,7 @@ public class NodeApiExecServiceImpl implements NodeApiExecService {
     @Override
     public GetSmartCodeResultData getSmartCode(long accessId, String addressBase58) throws ApiClientException {
         LOGGER.debug(String.format("getSmartCode: ---> accessId = %s; addressBase58 = %s", accessId, addressBase58));
-        GetSmartCodeResult result = nodeClient.getSmartCode(accessId, decodeFromBASE58(addressBase58));
+        SmartContractGetResult result = nodeClient.getSmartContractBinary(accessId, decodeFromBASE58(addressBase58));
         processApiResponse(result.getStatus());
         GetSmartCodeResultData data = createGetSmartCodeResultData(result);
         LOGGER.debug(String.format("getSmartCode: <--- result = %s", data));

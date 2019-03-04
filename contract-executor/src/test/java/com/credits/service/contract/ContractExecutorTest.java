@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.credits.thrift.ContractExecutorHandler.SUCCESS_CODE;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
@@ -136,7 +135,7 @@ public class ContractExecutorTest extends ServiceTest {
             new SmartContractGetResultData(new ApiResponseData(null, "success"), byteCodeObjectDataList, contractState,
                 true);
         ReturnValue result = ceService.executeExternalSmartContract(0, Base58.encode(initiatorAddress), Base58.encode(contractAddress),
-                "getInitiatorAddress", new ArrayList<>(), smartContractGetResultData);
+                "getInitiatorAddress", new ArrayList<>(), smartContractGetResultData, externalContractsStateByteCode);
         assertEquals(Base58.encode(initiatorAddress), result.getVariantsList().get(0).getV_string());
     }
 

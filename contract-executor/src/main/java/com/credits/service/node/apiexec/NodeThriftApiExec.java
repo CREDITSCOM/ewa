@@ -11,8 +11,6 @@ import com.credits.exception.ApiClientException;
 interface NodeThriftApiExec {
     GetSeedResult getSeed(long accessId) throws ApiClientException;
 
-    GetSmartCodeResult getSmartCode(long accessId, byte[] address) throws ApiClientException;
-
     SmartContractGetResult getSmartContractBinary(long accessId, byte[] address) throws ApiClientException;
 
     SendTransactionResult sendTransaction(Transaction transaction) throws ApiClientException;
