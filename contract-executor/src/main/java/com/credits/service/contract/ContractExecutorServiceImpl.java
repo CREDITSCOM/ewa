@@ -17,6 +17,7 @@ import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.variant.VariantConverter;
+import com.credits.general.util.variant.VariantUtils;
 import com.credits.pojo.MethodArgumentsValuesData;
 import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.secure.Sandbox;
@@ -193,17 +194,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     }
                 }
             }
-            List<Variant> returnValues = null;
-            if (returnType != void.class) {
-                returnValues = new ArrayList<>(amountParamRows);
-                for (VariantData returnVariantData : returnVariantDataList) {
-                    if (returnVariantData == null) {
-                        returnValues.add(null);
-                    } else {
-                        returnValues.add(ContractExecutorUtils.mapVariantDataToVariant(returnVariantData));
-                    }
-                }
-            }
+            List<Variant> returnValues = createReturnVariantList(amountParamRows, returnVariantDataList, returnType);
 
             return new ReturnValue(serialize(instance), returnValues, externalContractsStateByteCode,
                 new ArrayList<>(Arrays.asList(returnStatuses)));
@@ -395,17 +386,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     throw e;
                 }
             }
-            List<Variant> returnValues = null;
-            if (returnType != void.class) {
-                returnValues = new ArrayList<>(amountParamRows);
-                for (VariantData returnVariantData : returnVariantDataList) {
-                    if (returnVariantData == null) {
-                        returnValues.add(null);
-                    } else {
-                        returnValues.add(ContractExecutorUtils.mapVariantDataToVariant(returnVariantData));
-                    }
-                }
-            }
+            List<Variant> returnValues = createReturnVariantList(amountParamRows, returnVariantDataList, returnType);
 
             return new ReturnValue(serialize(instance), returnValues, externalContractsStateByteCode,
                 new ArrayList<>(Arrays.asList(returnStatuses)));
@@ -416,5 +397,22 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             throw new ContractExecutorException(
                 "Cannot execute the contract " + initiatorAddress + ". Reason: " + getRootCauseMessage(e));
         }
+    }
+
+    private List<Variant> createReturnVariantList(int amountParamRows, VariantData[] returnVariantDataList,
+        Class<?> returnType) {
+        List<Variant> returnValues = new ArrayList<>();
+        if (returnType != void.class) {
+            for (VariantData returnVariantData : returnVariantDataList) {
+                if (returnVariantData == null) {
+                    returnValues.add(new Variant(Variant._Fields.V_NULL, VariantUtils.NULL_TYPE_VALUE));
+                } else {
+                    returnValues.add(ContractExecutorUtils.mapVariantDataToVariant(returnVariantData));
+                }
+            }
+        } else {
+            returnValues.add(new Variant(Variant._Fields.V_NULL, VariantUtils.NULL_TYPE_VALUE));
+        }
+        return returnValues;
     }
 }

@@ -3,7 +3,9 @@ import com.credits.client.node.pojo.TransactionData;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Map;
 
 public abstract class SmartContract implements Serializable {
 
