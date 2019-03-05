@@ -32,11 +32,11 @@ public class AnnotationTest extends SmartContract {
         System.out.println(java.lang.Integer.toString(amount) + " tokens were added to total");
     }
 
-    public void testToken(@ContractAddress(id = 0, address = "qwe") int amount) {
+    public void testToken(@ContractAddress(id = 0) int amount) {
 
     }
 
-    public void testNotToken(@ContractMethod(id = 0, method = "") int amount) {
+    public void testNotToken(@ContractMethod(id = 0) int amount) {
 
     }
 }

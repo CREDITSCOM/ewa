@@ -29,7 +29,7 @@ public class AnnotationTest extends ServiceTest {
     public void main() {
         String getter = "@Getter()";
         String contractAnn = "@Contract(address=test2, method=notGetBalance)";
-        String contractMethod = "@ContractMethod(id = 0, method = \"\")";
+        String contractMethod = "@ContractMethod(id = 0)";
         AnnotationData annotationData = parseAnnotationData(getter);
         AnnotationData annotationData1 = parseAnnotationData(contractAnn);
         AnnotationData annotationData2 = parseAnnotationData(contractMethod);
@@ -105,7 +105,6 @@ public class AnnotationTest extends ServiceTest {
     public MethodDescriptionData createTestTokenMethodDescriptionData() {
         ArrayList<AnnotationData> testTokenAnnotationData = new ArrayList<>();
         testTokenAnnotationData.add(new AnnotationData("ContractAddress", new HashMap<String, String>() {{
-            put("address", "qwe");
             put("id", "0");
         }}));
         return new MethodDescriptionData("void", "testToken",
