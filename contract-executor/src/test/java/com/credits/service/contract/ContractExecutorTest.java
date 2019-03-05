@@ -1,16 +1,16 @@
 package com.credits.service.contract;
 
 
-import com.credits.general.pojo.ApiResponseData;
-import com.credits.general.pojo.MethodArgumentData;
-import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.SmartContractDeployData;
 import com.credits.client.node.pojo.TokenStandartData;
 import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
+import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.general.pojo.MethodArgumentData;
+import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.pojo.VariantType;
 import com.credits.general.thrift.generated.Variant;
@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -135,7 +136,7 @@ public class ContractExecutorTest extends ServiceTest {
             new SmartContractGetResultData(new ApiResponseData(null, "success"), byteCodeObjectDataList, contractState,
                 true);
         ReturnValue result = ceService.executeExternalSmartContract(0, Base58.encode(initiatorAddress), Base58.encode(contractAddress),
-                "getInitiatorAddress", new ArrayList<>(), smartContractGetResultData, externalContractsStateByteCode);
+                "getInitiatorAddress", new ArrayList<>(), smartContractGetResultData, new HashMap<>());
         assertEquals(Base58.encode(initiatorAddress), result.getVariantsList().get(0).getV_string());
     }
 
