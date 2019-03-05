@@ -205,7 +205,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 }
             }
 
-            ContractExecutorServiceUtils.getField("externalContracts",contractClass,instance);
             return new ReturnValue(serialize(instance), returnValues, externalContractsStateByteCode,
                 new ArrayList<>(Arrays.asList(returnStatuses)));
 
