@@ -236,6 +236,7 @@ public class DeployTabController extends AbstractController {
     }
 
     private void changeTab(DeploySmartListItem currentItem) {
+        parentController.cleanCompilationPackage(false);
         if (currentItem != null) {
             if (currentItem.state.equals(DeploySmartListItem.ItemState.NEW)) {
                 initNewSmartTab();

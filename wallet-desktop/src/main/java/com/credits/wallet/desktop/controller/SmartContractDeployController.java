@@ -18,7 +18,6 @@ import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
 import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
-import com.google.common.base.CharMatcher;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
@@ -36,8 +35,6 @@ import java.awt.datatransfer.StringSelection;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 

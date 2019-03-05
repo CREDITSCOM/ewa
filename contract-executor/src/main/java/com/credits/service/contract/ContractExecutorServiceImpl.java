@@ -23,6 +23,7 @@ import com.credits.secure.Sandbox;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractExecutorUtils;
+import com.credits.utils.ContractExecutorServiceUtils;
 import org.apache.commons.beanutils.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,8 +84,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Class<?> contract = Class.forName("SmartContract");
             initializeSmartContractField("service", dbInteractionService, contract, null);
             initializeSmartContractField("contractExecutorService", this, contract, null);
-            initializeSmartContractField("cachedPool", Executors.newCachedThreadPool(),
-                contract, null);
+            initializeSmartContractField("cachedPool", Executors.newCachedThreadPool(), contract, null);
         } catch (ClassNotFoundException e) {
             logger.error("Cannot load smart contract's super class", e);
         }
@@ -130,14 +130,15 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 initializeField("initiator", initiatorAddressBase58, contractClass, instance);
                 initializeField("accessId", accessId, contractClass, instance);
             } else {
-                initSessionSmartContractConstants(Thread.currentThread().getId(), initiatorAddressBase58, contractAddressBase58, accessId);
+                initSessionSmartContractConstants(Thread.currentThread().getId(), initiatorAddressBase58,
+                    contractAddressBase58, accessId);
                 instance = contractClass.newInstance();
                 return new ReturnValue(serialize(instance), null, null,
                     Collections.singletonList(new APIResponse(SUCCESS_CODE, "success")));
             }
 
-            Map<ByteBuffer,ByteBuffer> externalContractsStateByteCode = new HashMap<>();
-            initializeField("externalContracts", externalContractsStateByteCode, contractClass, null);
+            Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode = new HashMap<>();
+            initializeField("externalContracts", externalContractsStateByteCode, contractClass, instance);
 
             int amountParamRows = 1;
             Variant[] params = null;
@@ -160,8 +161,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 try {
                     if (targetMethodData.getArgTypes() != null) {
                         if (paramsTable != null && paramsTable[i] != null) {
-                            parameter =
-                                castValues(targetMethodData.getArgTypes(), paramsTable[i]);
+                            parameter = castValues(targetMethodData.getArgTypes(), paramsTable[i]);
                         }
                     }
 
@@ -169,7 +169,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     FutureTask<VariantData> invokeFunctionTask = new FutureTask<>(invokeFunction);
                     invokeFunctionThread = new Thread(invokeFunctionTask);
 
-                    initSessionSmartContractConstants(invokeFunctionThread.getId(), initiatorAddressBase58, contractAddressBase58, accessId);
+                    initSessionSmartContractConstants(invokeFunctionThread.getId(), initiatorAddressBase58,
+                        contractAddressBase58, accessId);
                     executorService.submit(invokeFunctionThread);
 
                     returnVariantDataList[i] = invokeFunctionTask.get(executionTime,
@@ -204,6 +205,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 }
             }
 
+            ContractExecutorServiceUtils.getField("externalContracts",contractClass,instance);
             return new ReturnValue(serialize(instance), returnValues, externalContractsStateByteCode,
                 new ArrayList<>(Arrays.asList(returnStatuses)));
 
@@ -324,7 +326,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new PropertyPermission("com.sun.security.preserveOldDCEncoding", "read"));
         permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
         permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
-//                        permissions.add(new FilePermission("<<ALL FILES>>", "read"));
+        //                        permissions.add(new FilePermission("<<ALL FILES>>", "read"));
         return permissions;
     }
 
@@ -353,26 +355,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
             Class<?> contractClass =
                 ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
-            initializeField("accessId", accessId, contractClass, null);
-            initializeField("initiator", initiatorAddress, contractClass, null);
-            initializeField("contractAddress", externalSmartContractAddress, contractClass,
-                null);
 
 
-            Object instance;
-            if (contractState != null && contractState.length != 0) {
-                instance = deserialize(contractState, classLoader);
-                initializeField("initiator", initiatorAddress, contractClass, instance);
-            } else {
-                instance = contractClass.newInstance();
-                return new ReturnValue(serialize(instance), null, null,
-                    Collections.singletonList(new APIResponse(SUCCESS_CODE, "success")));
-            }
-
-            initializeField("externalContracts", externalContractsStateByteCode,
-                contractClass, null);
-            initializeField("contractAddress", externalSmartContractAddress, contractClass,
-                instance);
+            Object instance = deserialize(contractState, classLoader);
+            initializeField("initiator", initiatorAddress, contractClass, instance);
+            initializeField("externalContracts", externalContractsStateByteCode, contractClass, instance);
+            initializeField("contractAddress", externalSmartContractAddress, contractClass, instance);
             initializeField("accessId", accessId, contractClass, instance);
 
             int amountParamRows = 1;

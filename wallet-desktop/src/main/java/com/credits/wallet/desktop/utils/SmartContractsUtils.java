@@ -37,7 +37,7 @@ public class SmartContractsUtils {
                 for (String aSplit : split) {
                     String contractAddress = CharMatcher.is('\"').trimFrom(aSplit);
                     if (!contractAddress.isEmpty()) {
-                        byte[] bytes = GeneralConverter.decodeFromBASE64(contractAddress);
+                        byte[] bytes = GeneralConverter.decodeFromBASE58(contractAddress);
                         myList.add(ByteBuffer.wrap(bytes));
 
                     }
@@ -47,12 +47,6 @@ public class SmartContractsUtils {
         } catch (Exception e) {
             throw new CreditsException("Cannot parse used smart contracts");
         }
-    }
-
-
-    private boolean isSmartContract(String s) {
-        GeneralConverter.decodeFromBASE64(s);
-        return false;
     }
 
     public static byte[] generateSmartContractAddress(byte[] deployerAddress, long transactionId, List<ByteCodeObjectData> byteCodeObjects) {

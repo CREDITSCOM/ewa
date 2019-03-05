@@ -27,7 +27,7 @@ public abstract class SmartContract implements Serializable {
 
     protected static NodeApiExecInteractionService service;
     protected static ContractExecutorServiceImpl contractExecutorService;
-    protected Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode = new HashMap<>();
+    protected transient Map<ByteBuffer, ByteBuffer> externalContracts;
     protected static ExecutorService cachedPool;
     protected final transient long accessId;
     protected final transient String initiator;
@@ -72,19 +72,19 @@ public abstract class SmartContract implements Serializable {
     }
 
     final protected Object invokeExternalContract(String externalSmartContractAddress,
-        String externalSmartContractMethod, List externalSmartContractParams) {
+        String externalSmartContractMethod, List<Object> externalSmartContractParams) {
         SmartContractGetResultData externalSmartContractByteCode =
             callService(() -> service.getExternalSmartContractByteCode(accessId, externalSmartContractAddress));
 
         ReturnValue returnValue =
             contractExecutorService.executeExternalSmartContract(accessId, initiator, externalSmartContractAddress,
-                externalSmartContractMethod, externalSmartContractParams, externalSmartContractByteCode,externalContractsStateByteCode);
+                externalSmartContractMethod, externalSmartContractParams, externalSmartContractByteCode,
+                externalContracts);
         if (!Arrays.equals(externalSmartContractByteCode.getContractState(), returnValue.getContractState()) &&
             !externalSmartContractByteCode.isStateCanModify()) {
             throw new ContractExecutorException("Contract state can not be modify");
         }
-        this.externalContractsStateByteCode.put(
-            ByteBuffer.wrap(GeneralConverter.decodeFromBASE64(externalSmartContractAddress)),
+        externalContracts.put(ByteBuffer.wrap(GeneralConverter.decodeFromBASE58(externalSmartContractAddress)),
             ByteBuffer.wrap(returnValue.getContractState()));
         if (returnValue.getVariantsList() != null) {
             return variantToObject(returnValue.getVariantsList().get(0));
