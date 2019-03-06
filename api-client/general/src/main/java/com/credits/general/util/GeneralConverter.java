@@ -453,7 +453,8 @@ public class GeneralConverter {
         List<MethodArgument> methodArgumentList = new ArrayList<>();
         for (MethodArgumentData arg : data.args) {
             List<Annotation> annotationList = getAnnotations(arg.annotations);
-            new MethodArgument(arg.returnType,arg.name,annotationList);
+            methodArgumentList.add(new MethodArgument(arg.returnType,arg.name,annotationList));
+
         }
         return new MethodDescription(data.returnType,data.name,methodArgumentList,getAnnotations(data.annotations));
     }

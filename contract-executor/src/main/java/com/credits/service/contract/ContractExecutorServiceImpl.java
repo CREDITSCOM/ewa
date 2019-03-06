@@ -24,7 +24,6 @@ import com.credits.secure.Sandbox;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractExecutorUtils;
-import com.credits.utils.ContractExecutorServiceUtils;
 import org.apache.commons.beanutils.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,7 +193,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     }
                 }
             }
-            List<Variant> returnValues = createReturnVariantList(amountParamRows, returnVariantDataList, returnType);
+            List<Variant> returnValues = createReturnVariantList(returnVariantDataList, returnType);
 
             return new ReturnValue(serialize(instance), returnValues, externalContractsStateByteCode,
                 new ArrayList<>(Arrays.asList(returnStatuses)));
@@ -325,6 +324,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         String externalSmartContractAddress, String externalSmartContractMethod,
         List<Object> externalSmartContractParams, SmartContractGetResultData externalSmartContractByteCode,
         Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode) {
+        logger.info("Execute method {} smart contract {} from initiator {}", externalSmartContractAddress,
+            initiatorAddress, externalSmartContractMethod);
         List<ByteCodeObjectData> byteCodeObjectDataList = externalSmartContractByteCode.getByteCodeObjects();
         byte[] contractState = externalSmartContractByteCode.getContractState();
 
@@ -386,7 +387,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     throw e;
                 }
             }
-            List<Variant> returnValues = createReturnVariantList(amountParamRows, returnVariantDataList, returnType);
+            List<Variant> returnValues = createReturnVariantList(returnVariantDataList, returnType);
 
             return new ReturnValue(serialize(instance), returnValues, externalContractsStateByteCode,
                 new ArrayList<>(Arrays.asList(returnStatuses)));
@@ -399,8 +400,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
     }
 
-    private List<Variant> createReturnVariantList(int amountParamRows, VariantData[] returnVariantDataList,
-        Class<?> returnType) {
+
+    private List<Variant> createReturnVariantList(VariantData[] returnVariantDataList, Class<?> returnType) {
         List<Variant> returnValues = new ArrayList<>();
         if (returnType != void.class) {
             for (VariantData returnVariantData : returnVariantDataList) {
