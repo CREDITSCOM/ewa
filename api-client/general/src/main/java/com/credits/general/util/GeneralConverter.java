@@ -229,6 +229,9 @@ public class GeneralConverter {
     }
 
     public static  List<ByteCodeObject> byteCodeObjectsDataToByteCodeObjects(List<ByteCodeObjectData> byteCodeObjects) {
+        if (byteCodeObjects == null) {
+            return null;
+        }
         List<ByteCodeObject> compilationUnits = new ArrayList<>();
         byteCodeObjects.forEach(unit->compilationUnits.add(new ByteCodeObject(unit.getName(),ByteBuffer.wrap(unit.getByteCode()))));
         return compilationUnits;

@@ -45,17 +45,6 @@ public class InMemoryCompiler {
 		DiagnosticCollector<JavaFileObject> collector = getDiagnosticCollector();
 		InMemoryClassManager manager = getClassManager(compiler);
 
-		// defining classpath
-		String classpath;
-		try {
-			classpath = loadClasspath();
-		} catch (UnsupportedEncodingException e) {
-			throw new CompilationException(e);
-		}
-
-		// add classpath to options
-		List<String> options = Arrays.asList("-parameters", "-classpath", classpath);
-
 		// java source from string
 		List<JavaSourceFromString> strFiles = new ArrayList<>();
 		for (String className : classesToCompile.keySet()) {
@@ -64,7 +53,7 @@ public class InMemoryCompiler {
 		}
 
 		// compile
-		CompilationTask task = compiler.getTask(null, manager, collector, options, null, strFiles);
+		CompilationTask task = compiler.getTask(null, manager, collector, null, null, strFiles);
 		boolean status = task.call();
 
 		List<CompilationUnit> compilationUnits = manager.getAllClasses();

@@ -56,7 +56,11 @@
                     <skipTests>${skipTests}</skipTests>
                     <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
                     <testFailureIgnore>true</testFailureIgnore>
-            </configuration>
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                        <exclude>**/*IntegrationTest.java</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
             <plugin>

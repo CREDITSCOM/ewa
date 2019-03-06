@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.credits.service.contract.SmartContractConstants.initSessionSmartContractConstants;
+
 
 public class ContractExecutorUtilsTest extends ServiceTest {
 
@@ -89,6 +91,8 @@ public class ContractExecutorUtilsTest extends ServiceTest {
     private Object getInstance(String source) throws Exception{
         byte[] byteCode = InMemoryCompiler.compileSourceCode(source).getUnits().get(0).getByteCode();
         Class<?> clazz = new ByteArrayContractClassLoader().buildClass(byteCode);
+        initSessionSmartContractConstants(Thread.currentThread().getId(), "",
+                "", 0);
         return clazz.newInstance();
     }
 }

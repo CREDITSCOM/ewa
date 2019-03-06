@@ -80,7 +80,7 @@ public class NodePojoConverterTest {
         TransactionData transactionData = createTransactionData(sealedTransaction);
         Assert.assertEquals(
                 transactionData.toString(),
-                "TransactionData{id=0, source=[115, 111, 117, 114, 99, 101], target=[116, 97, 114, 103, 101, 116], amount=0.0, balance=0.0, currency=1}"
+                "TransactionData{id=0, blockId='706f6f6c48617368.0', source=[115, 111, 117, 114, 99, 101], target=[116, 97, 114, 103, 101, 116], amount=0.0, currency=1, commentBytes=null, method='null', params=null, type=TT_Normal, smartInfo=null}"
         );
     }
 
@@ -101,7 +101,7 @@ public class NodePojoConverterTest {
         TransactionData transactionData = createTransactionData(transaction);
         Assert.assertEquals(
                 transactionData.toString(),
-                "TransactionData{id=0, source=[115, 111, 117, 114, 99, 101], target=[116, 97, 114, 103, 101, 116], amount=0.0, balance=0.0, currency=1}"
+                "TransactionData{id=0, blockId='null', source=[115, 111, 117, 114, 99, 101], target=[116, 97, 114, 103, 101, 116], amount=0.0, currency=1, commentBytes=null, method='null', params=null, type=TT_Normal, smartInfo=null}"
         );
     }
 
