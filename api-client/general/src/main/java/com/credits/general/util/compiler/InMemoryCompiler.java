@@ -20,6 +20,7 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +53,13 @@ public class InMemoryCompiler {
 			strFiles.add(new JavaSourceFromString(className, classCode) );
 		}
 
+		// add classpath to options
+		List<String> options = Collections.singletonList("-parameters");
+
+
 		// compile
-		CompilationTask task = compiler.getTask(null, manager, collector, null, null, strFiles);
+		CompilationTask task = compiler.getTask(null, manager, collector, options, null, strFiles);
+
 		boolean status = task.call();
 
 		List<CompilationUnit> compilationUnits = manager.getAllClasses();

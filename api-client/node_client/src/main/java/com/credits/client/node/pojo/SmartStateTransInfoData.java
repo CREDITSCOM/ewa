@@ -2,9 +2,13 @@ package com.credits.client.node.pojo;
 
 import com.credits.general.pojo.VariantData;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class SmartStateTransInfoData extends SmartTransInfoData {
+public class SmartStateTransInfoData extends SmartTransInfoData implements Serializable {
+    private static final long serialVersionUID = 7544650022718657111L;
+
+
     public boolean success;
     public BigDecimal executionFee;
     public VariantData returnValue;

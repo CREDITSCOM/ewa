@@ -62,12 +62,17 @@ public class ContractExecutorUtilsTest extends ServiceTest {
     @Before
     @Override
     public void setUp() throws Exception {
+        initSessionSmartContractConstants(Thread.currentThread().getId(), "aa",
+            "", 1);
         instanceWithVariables = getInstance(sourceCodeWithVariables);
+        initSessionSmartContractConstants(Thread.currentThread().getId(), "aa",
+            "", 1);
         instanceWithoutVariables = getInstance(sourceCodeWithoutVariables);
     }
 
     @Test
     public void getContractVariablesTest() throws ContractExecutorException {
+
         Map<String, Variant> map = ContractExecutorUtils.getContractVariables(instanceWithVariables);
         Assert.assertNotNull(map);
         Assert.assertEquals(VariantUtils.NULL_TYPE_VALUE, map.get("nullField").getFieldValue());

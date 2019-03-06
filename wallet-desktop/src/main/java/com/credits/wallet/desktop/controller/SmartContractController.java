@@ -243,7 +243,7 @@ public class SmartContractController extends AbstractController {
                 if (e instanceof NodeClientException) {
                     FormUtils.showError(NODE_ERROR);
                 } else {
-                    FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
+                    FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY + "\n" + e.getMessage());
                 }
             }
         };
@@ -319,7 +319,7 @@ public class SmartContractController extends AbstractController {
                 if (e instanceof NodeClientException) {
                     FormUtils.showError(NODE_ERROR);
                 } else {
-                    FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY);
+                    FormUtils.showError(ERR_GETTING_TRANSACTION_HISTORY + "\n" + e.getMessage());
                 }
             }
         };
