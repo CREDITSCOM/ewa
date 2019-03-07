@@ -16,17 +16,9 @@ import java.util.concurrent.ExecutionException;
 
 public interface ContractExecutorService {
 
-    /**
-     * Executes a method by specified address, method name and parameters.
-     * It performs a default constructor to instantiate a class if necessary.
-     *
-     * @param accessId
-     * @param initiatorAddress    address of node that execute this method
-     * @param methodName A name of a method
-     * @param params     Parameters of a method
-     */
-    ReturnValue execute(long accessId, byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList, byte[] contractState, String methodName, Variant[][] params,
-        long executionTime) throws ContractExecutorException;
+    ReturnValue deploySmartContract(Session session);
+
+    ReturnValue executeSmartContract(InvokeMethodSession session) throws ContractExecutorException;
 
     List<MethodDescriptionData> getContractsMethods(List<ByteCodeObjectData> byteCodeObjectDataList) throws ContractExecutorException;
 

@@ -21,6 +21,7 @@ public class SmartContractConstants {
         sessions.put(threadId, new SmartContractConstants(initiator, contractAddress, accessId));
     }
 
+
     public static SmartContractConstants getSessionSmartContractConstants(long threadId) {
         return sessions.remove(threadId);
     }

@@ -1,6 +1,5 @@
 package com.credits.thrift.utils;
 
-import com.credits.classload.ByteArrayContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.InMemoryCompiler;
@@ -13,8 +12,6 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static com.credits.service.contract.SmartContractConstants.initSessionSmartContractConstants;
 
 
 public class ContractExecutorUtilsTest extends ServiceTest {
@@ -62,17 +59,12 @@ public class ContractExecutorUtilsTest extends ServiceTest {
     @Before
     @Override
     public void setUp() throws Exception {
-        initSessionSmartContractConstants(Thread.currentThread().getId(), "aa",
-            "", 1);
         instanceWithVariables = getInstance(sourceCodeWithVariables);
-        initSessionSmartContractConstants(Thread.currentThread().getId(), "aa",
-            "", 1);
         instanceWithoutVariables = getInstance(sourceCodeWithoutVariables);
     }
 
     @Test
     public void getContractVariablesTest() throws ContractExecutorException {
-
         Map<String, Variant> map = ContractExecutorUtils.getContractVariables(instanceWithVariables);
         Assert.assertNotNull(map);
         Assert.assertEquals(VariantUtils.NULL_TYPE_VALUE, map.get("nullField").getFieldValue());
@@ -95,9 +87,9 @@ public class ContractExecutorUtilsTest extends ServiceTest {
 
     private Object getInstance(String source) throws Exception{
         byte[] byteCode = InMemoryCompiler.compileSourceCode(source).getUnits().get(0).getByteCode();
-        Class<?> clazz = new ByteArrayContractClassLoader().buildClass(byteCode);
-        initSessionSmartContractConstants(Thread.currentThread().getId(), "",
-                "", 0);
-        return clazz.newInstance();
+        //fixme
+//        Class<?> clazz = new BytecodeContractClassLoader().loadClass(byteCode);
+//        return clazz.newInstance();
+        return null;
     }
 }
