@@ -3,9 +3,12 @@ package com.credits.secure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.ReflectPermission;
+import java.net.NetPermission;
 import java.security.*;
 import java.util.Collections;
 import java.util.Map;
+import java.util.PropertyPermission;
 import java.util.WeakHashMap;
 
 /**
@@ -80,6 +83,8 @@ public final class Sandbox {
             }
         });
     }
+
+
 
     /**
      * All future actions that are executed through the given {@code clasS} will be checked against the given {@code

@@ -37,7 +37,7 @@ public class ContractExecutorServiceUtils {
             }
 
             retVal[i] = variantToObject(param);
-            logger.info(String.format("param[%s] = %s", i, retVal[i]));
+            logger.debug(String.format("param[%s] = %s", i, retVal[i]));
             i++;
         }
         return retVal;

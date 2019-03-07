@@ -12,6 +12,7 @@ import com.credits.thrift.ReturnValue;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public interface ContractExecutorService {
 
@@ -33,8 +34,9 @@ public interface ContractExecutorService {
 
     List<ByteCodeObjectData> compileClass(String sourceCode) throws CompilationErrorException, CompilationException, ContractExecutorException, CompilationErrorException;
 
+
     ReturnValue executeExternalSmartContract(long accessId, String initiatorAddress,
         String externalSmartContractAddress, String externalSmartContractMethod,
-        List<Object> externalSmartContractParams, SmartContractGetResultData externalSmartContractByteCode,
-        Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode);
+        List<Object> externalSmartContractParams, List<ByteCodeObjectData> byteCodeObjectDataList, byte[] contractState,
+        Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode) throws ExecutionException, InterruptedException;
 }
