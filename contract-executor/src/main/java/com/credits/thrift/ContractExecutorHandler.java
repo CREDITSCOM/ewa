@@ -53,7 +53,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     @Override
     public ExecuteByteCodeResult executeByteCode(long accessId, ByteBuffer initiatorAddress,
-        SmartContractBinary invokedContract, String method, List<Variant> params, long executionTime) throws TException {
+        SmartContractBinary invokedContract, String method, List<Variant> params, long executionTime, byte version) {
         logger.debug("<-- execute(" +
                 "\naccessId = {}," +
                 "\naddress = {}," +
@@ -86,7 +86,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     @Override
     public ExecuteByteCodeMultipleResult executeByteCodeMultiple(long accessId, ByteBuffer initiatorAddress,
-        SmartContractBinary invokedContract, String method, List<List<Variant>> params, long executionTime) {
+        SmartContractBinary invokedContract, String method, List<List<Variant>> params, long executionTime, byte version) {
         Variant[][] paramsArray = null;
         if (params != null) {
             paramsArray = new Variant[params.size()][];
@@ -125,7 +125,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     }
 
     @Override
-    public GetContractMethodsResult getContractMethods(List<ByteCodeObject> compilationUnits) {
+    public GetContractMethodsResult getContractMethods(List<ByteCodeObject> compilationUnits, byte version) {
         logger.debug("<-- getContractMethods(bytecode = {} bytes)", compilationUnits.size());
         GetContractMethodsResult result = new GetContractMethodsResult();
         try {
@@ -140,7 +140,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     }
 
     @Override
-    public GetContractVariablesResult getContractVariables(List<ByteCodeObject> compilationUnits, ByteBuffer contractState) {
+    public GetContractVariablesResult getContractVariables(List<ByteCodeObject> compilationUnits, ByteBuffer contractState, byte version) {
         logger.debug("<-- getContractVariables(bytecode = {} bytes, contractState = {} bytes)", compilationUnits.size(),
             contractState.array().length);
         GetContractVariablesResult result = new GetContractVariablesResult();
@@ -160,7 +160,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     }
 
     @Override
-    public CompileSourceCodeResult compileSourceCode(String sourceCode) throws TException {
+    public CompileSourceCodeResult compileSourceCode(String sourceCode, byte version) throws TException {
         logger.debug("<-- compileBytecode(sourceCode = {})", sourceCode);
         CompileSourceCodeResult result = new CompileSourceCodeResult();
         try {
@@ -176,4 +176,5 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         logger.debug("compileByteCode --> {}", result);
         return result;
     }
+
 }

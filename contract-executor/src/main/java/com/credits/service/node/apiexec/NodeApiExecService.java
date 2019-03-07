@@ -13,9 +13,9 @@ public interface NodeApiExecService {
 
     GetSmartCodeResultData getSmartCode(long accessId, String addressBase58) throws NodeClientException;
 
-    void sendTransaction(TransactionFlowData transactionFlowData) throws NodeClientException;
+    void sendTransaction(long accessId,TransactionFlowData transactionFlowData) throws NodeClientException;
 
     SmartContractGetResultData getSmartContractBinary(long accessId, String addressBase58) throws ApiClientException;
 
-    int getWalletId(String addressBase58) throws NodeClientException;
+    int getWalletId(long accessId, String addressBase58) throws NodeClientException;
 }

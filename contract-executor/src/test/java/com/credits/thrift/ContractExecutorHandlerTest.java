@@ -115,7 +115,7 @@ public class ContractExecutorHandlerTest {
 
     @Test
     public void compileSourceCodeTest() throws Exception {
-        CompileSourceCodeResult sourceCodeResult = contractExecutorHandler.compileSourceCode(contractSourcecode);
+        CompileSourceCodeResult sourceCodeResult = contractExecutorHandler.compileSourceCode(contractSourcecode,(byte) 100);
         assertEquals(new APIResponse((byte) 0, "success"), sourceCodeResult.status);
 
     }
@@ -124,7 +124,8 @@ public class ContractExecutorHandlerTest {
     private ExecuteByteCodeResult executeSmartContract(ByteBuffer contractState, int accessId, String methodName, int executiontime)
         throws TException {
         SmartContractBinary smartContractBinary = new SmartContractBinary(contractAddress,byteCodeObjects,contractState, true);
-        return contractExecutorHandler.executeByteCode(accessId, initiatorAddress, smartContractBinary, methodName, EMPTY_LIST, executiontime);
+        return contractExecutorHandler.executeByteCode(accessId, initiatorAddress, smartContractBinary, methodName, EMPTY_LIST, executiontime,
+            (byte) 100);
     }
 
     private ExecuteByteCodeResult deploySmartContract() throws TException {

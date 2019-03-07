@@ -1,7 +1,6 @@
 package com.credits.service.node.apiexec;
 
 import com.credits.client.executor.thrift.generated.apiexec.GetSeedResult;
-import com.credits.client.executor.thrift.generated.apiexec.GetSmartCodeResult;
 import com.credits.client.executor.thrift.generated.apiexec.SendTransactionResult;
 import com.credits.client.executor.thrift.generated.apiexec.SmartContractGetResult;
 import com.credits.client.node.pojo.TransactionFlowData;
@@ -62,10 +61,10 @@ public class NodeApiExecServiceImpl implements NodeApiExecService {
     }
 
     @Override
-    public void sendTransaction(TransactionFlowData transactionFlowData) throws ApiClientException {
+    public void sendTransaction(long accessId, TransactionFlowData transactionFlowData) throws ApiClientException {
         Validator.validate(transactionFlowData);
         LOGGER.debug("sendTransaction transactionFlowData -> {}", transactionFlowData);
-        SendTransactionResult result = nodeClient.sendTransaction(
+        SendTransactionResult result = nodeClient.sendTransaction(accessId,
                 transactionFlowDataToTransaction(transactionFlowData)
         );
         processApiResponse(result.getStatus());
@@ -83,9 +82,9 @@ public class NodeApiExecServiceImpl implements NodeApiExecService {
 
 
     @Override
-    public int getWalletId(String addressBase58) throws ApiClientException {
+    public int getWalletId(long accessId, String addressBase58) throws ApiClientException {
         LOGGER.debug(String.format("getWalletId: ---> addressBase58 = %s", addressBase58));
-        WalletIdGetResult result = nodeClient.getWalletId(decodeFromBASE58(addressBase58));
+        WalletIdGetResult result = nodeClient.getWalletId(accessId, decodeFromBASE58(addressBase58));
         processApiResponse(result.getStatus());
         LOGGER.debug(String.format("getWalletId: <--- walletId = %s", result.getWalletId()));
         return result.getWalletId();

@@ -10,9 +10,9 @@ public interface NodeApiExecInteractionService {
 
     GetSmartCodeResultData getSmartCode(long accessId, String addressBase58);
 
-    void sendTransaction(String source, String target, double amount, double fee, byte[] userData);
+    void sendTransaction(long accessId, String source, String target, double amount, double fee, byte[] userData);
 
-    int getWalletId(String addressBase58);
+    int getWalletId(long accessId, String addressBase58);
 
     SmartContractGetResultData getExternalSmartContractByteCode(long accessId, String addressBase58);
 }

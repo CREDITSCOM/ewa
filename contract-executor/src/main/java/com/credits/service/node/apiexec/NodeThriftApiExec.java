@@ -1,7 +1,6 @@
 package com.credits.service.node.apiexec;
 
 import com.credits.client.executor.thrift.generated.apiexec.GetSeedResult;
-import com.credits.client.executor.thrift.generated.apiexec.GetSmartCodeResult;
 import com.credits.client.executor.thrift.generated.apiexec.SendTransactionResult;
 import com.credits.client.executor.thrift.generated.apiexec.SmartContractGetResult;
 import com.credits.client.node.thrift.generated.Transaction;
@@ -13,7 +12,7 @@ interface NodeThriftApiExec {
 
     SmartContractGetResult getSmartContractBinary(long accessId, byte[] address) throws ApiClientException;
 
-    SendTransactionResult sendTransaction(Transaction transaction) throws ApiClientException;
+    SendTransactionResult sendTransaction(long accessId, Transaction transaction) throws ApiClientException;
 
-    WalletIdGetResult getWalletId(byte[] address) throws ApiClientException;
+    WalletIdGetResult getWalletId(long accessId, byte[] address) throws ApiClientException;
 }

@@ -42,18 +42,18 @@ public class NodeApiExecInteractionServiceThriftImpl implements NodeApiExecInter
     }
 
     @Override
-    public void sendTransaction(String source, String target, double amount, double fee, byte[] userData) {
+    public void sendTransaction(long accessId, String source, String target, double amount, double fee, byte[] userData) {
         BigDecimal decAmount = new BigDecimal(String.valueOf(amount));
 
         Pair<Double, Short> actualOfferedMaxFee = Utils.createActualOfferedMaxFee(fee);
 
         TransactionFlowData transactionFlowData =
                 new TransactionFlowData(0, GeneralConverter.decodeFromBASE58(source), GeneralConverter.decodeFromBASE58(target), decAmount, actualOfferedMaxFee.getRight(),  null, userData);
-        service.sendTransaction(transactionFlowData);
+        service.sendTransaction(accessId, transactionFlowData);
     }
 
     @Override
-    public int getWalletId(String addressBase58) {
-        return service.getWalletId(addressBase58);
+    public int getWalletId(long accessId, String addressBase58) {
+        return service.getWalletId(accessId, addressBase58);
     }
 }

@@ -302,6 +302,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 FutureTask<VariantData> invokeFunctionTask = new FutureTask<>(invokeFunction);
                 invokeFunctionThread = new Thread(invokeFunctionTask);
                 executorService.submit(invokeFunctionThread);
+                logger.info("Start execute smart contract {}", contractAddress);
                 if (executionTime != null) {
                     returnVariantDataList[i] = invokeFunctionTask.get(executionTime, TimeUnit.MILLISECONDS);
                 } else {
@@ -311,11 +312,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 returnStatuses[i] = new APIResponse(SUCCESS_CODE, "success");
             } catch (TimeoutException ex) {
                 returnVariantDataList[i] = null;
-                logger.info("Execute smart contract {} timeout exception", initiatorAddress);
+                logger.info("Execute smart contract {} has stopped with timeout exception", contractAddress);
                 invokeFunctionThread.stop();
-                returnStatuses[i] = new APIResponse(ERROR_CODE, "timeout exception");
+                returnStatuses[i] = new APIResponse(ERROR_CODE, "Smart contract execution has timeout exception");
                 if (amountParamRows == 1) {
-                    throw new ContractExecutorException("timeout exception. " + initiatorAddress);
+                    throw new ContractExecutorException(
+                        "Execute smart contract" + contractAddress + "has stopped with timeout exception");
                 }
             } catch (Throwable e) {
                 returnVariantDataList[i] = null;
