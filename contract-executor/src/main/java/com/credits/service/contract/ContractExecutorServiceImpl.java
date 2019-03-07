@@ -64,12 +64,16 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
     private ExecutorService executorService;
-
+    private PermissionManager permissionManager;
 
     public ContractExecutorServiceImpl(NodeApiExecInteractionService dbInteractionService) {
         executorService = Executors.newCachedThreadPool();
         INJECTOR.component.inject(this);
         try {
+            permissionManager = new PermissionManager();
+            permissionManager.createPermissionsForByteArrayClassLoaderConstructor();
+            permissionManager.createPermissionsForNodeApiExecService();
+
             Class<?> contract = Class.forName("SmartContract");
             initializeSmartContractField("service", dbInteractionService, contract, null);
             initializeSmartContractField("contractExecutorService", this, contract, null);
@@ -86,7 +90,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Variant[][] paramsTable, long executionTime) throws ContractExecutorException {
         String initiatorAddressBase58 = "unknown address";
         String contractAddressBase58;
-        PermissionManager permissionManager = new PermissionManager();
         try {
             if (byteCodeObjectDataList.size() == 0) {
                 throw new ContractExecutorException("Bytecode size is 0");
@@ -96,12 +99,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             initiatorAddressBase58 = Base58.encode(initiatorAddress);
             contractAddressBase58 = Base58.encode(contractAddress);
 
-            permissionManager.createPermissionsForByteArrayClassLoaderConstructor();
-            permissionManager.createPermissionsForNodeApiExecService();
 
 
-            ByteArrayContractClassLoader classLoader =
-                ByteArrayClassLoaderConstructor.getByteArrayContractClassLoader();
+            ByteArrayContractClassLoader classLoader = new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
+
             Class<?> contractClass =
                 ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
 
@@ -115,7 +116,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     deserializeInstance(accessId, initiatorAddressBase58, contractAddressBase58, contractState,
                         classLoader, contractClass, externalContractsStateByteCode);
 
-                return executeSmartContract(contractAddressBase58, methodName, paramsTable, contractAddressBase58,
+                return executeSmartContract(methodName, paramsTable, contractAddressBase58,
                     contractClass, instance, externalContractsStateByteCode, executionTime);
             } else {
                 return createNewSmartContractInstance(accessId, initiatorAddressBase58, contractAddressBase58,
@@ -164,7 +165,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     @Override
     public List<MethodDescriptionData> getContractsMethods(List<ByteCodeObjectData> byteCodeObjectDataList) {
         requireNonNull(byteCodeObjectDataList, "bytecode of contract class is null");
-        ByteArrayContractClassLoader classLoader = ByteArrayClassLoaderConstructor.getByteArrayContractClassLoader();
+        ByteArrayContractClassLoader classLoader = new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
+
         Class<?> contractClass =
             ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
         Set<String> objectMethods = new HashSet<>(
@@ -203,8 +205,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         requireNonNull(contractState, "contract state is null");
 
         if (contractState.length != 0) {
-            ByteArrayContractClassLoader classLoader =
-                ByteArrayClassLoaderConstructor.getByteArrayContractClassLoader();
+            ByteArrayContractClassLoader classLoader = new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
+
 
             Class<?> contractClass =
                 ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
@@ -238,7 +240,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         logger.info("Start execute method {} external smart contract {} from initiator {}",
             externalSmartContractAddress, initiatorAddress, externalSmartContractMethod);
 
-        ByteArrayContractClassLoader classLoader = ByteArrayClassLoaderConstructor.getByteArrayContractClassLoader();
+        ByteArrayContractClassLoader classLoader = new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
 
         Class<?> contractClass =
             ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
@@ -261,7 +263,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         variantsParams[0] = params;
 
 
-        ReturnValue returnValue = executeSmartContract(initiatorAddress, externalSmartContractMethod, variantsParams,
+        ReturnValue returnValue = executeSmartContract(externalSmartContractMethod, variantsParams,
             externalSmartContractAddress, contractClass, instance, externalContractsStateByteCode, null);
 
         logger.info("Stop execute method {} external smart contract {} from initiator {}", externalSmartContractAddress,
@@ -269,8 +271,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         return returnValue;
     }
 
-    private ReturnValue executeSmartContract(String initiatorAddress, String methodName, Variant[][] paramsTable,
-        String contractAddress, Class<?> contractClass, Object instance,
+    private ReturnValue executeSmartContract(String methodName, Variant[][] paramsTable, String contractAddress, Class<?> contractClass, Object instance,
         Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode, Long executionTime)
         throws InterruptedException, java.util.concurrent.ExecutionException {
 

@@ -54,7 +54,8 @@ public final class Sandbox {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Sandbox.class);
 
-    public static final Map<Class<?>, AccessControlContext> CHECKED_CLASSES = Collections.synchronizedMap(new WeakHashMap<>());
+    public static final Map<Class<?>, AccessControlContext> CHECKED_CLASSES =
+        Collections.synchronizedMap(new WeakHashMap<>());
 
     static {
         // Install our custom security manager.
@@ -71,19 +72,25 @@ public final class Sandbox {
                     // Check if an ACC was set for the class.
                     AccessControlContext acc = Sandbox.CHECKED_CLASSES.get(clasS);
                     if (acc != null) {
-                        try {
-                            acc.checkPermission(perm);
-                        } catch (AccessControlException e) {
-                            LOGGER.error("clasS = {}", clasS);
-                            LOGGER.error(e.getMessage());
-                            throw new AccessControlException(e.getMessage());
+                        if (clasS.getName()
+                            .equals("CallContract")) { //Если первый класс в стеке - колл контракт - чекаем разрешения
+
+                            try {
+                                acc.checkPermission(perm);
+                            } catch (AccessControlException e) {
+                                LOGGER.error("clasS = {}", clasS);
+                                LOGGER.error(e.getMessage());
+                                throw new AccessControlException(e.getMessage());
+                            }
+                        } else {
+                            break;
                         }
                     }
+
                 }
             }
         });
     }
-
 
 
     /**

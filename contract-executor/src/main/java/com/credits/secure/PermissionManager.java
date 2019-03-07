@@ -3,6 +3,7 @@ package com.credits.secure;
 import com.credits.ApplicationProperties;
 
 import javax.inject.Inject;
+import java.io.FilePermission;
 import java.lang.reflect.ReflectPermission;
 import java.net.NetPermission;
 import java.net.SocketPermission;
@@ -34,6 +35,7 @@ public class PermissionManager {
         Permissions permissions = createPermissions();
         permissions.add(
             new SocketPermission(properties.apiHost + ":" + properties.executorNodeApiPort, "connect,listen,resolve"));
+        permissions.add(new FilePermission("<<ALL FILES>>", "read"));
         Sandbox.confine(serviceClass, permissions);
     }
 
