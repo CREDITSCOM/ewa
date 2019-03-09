@@ -20,22 +20,26 @@ import com.credits.secure.Sandbox;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractExecutorUtils;
-import org.apache.commons.beanutils.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.ReflectPermission;
+import java.net.NetPermission;
+import java.net.SocketPermission;
 import java.nio.ByteBuffer;
+import java.security.Permissions;
+import java.security.SecurityPermission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.PropertyPermission;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -52,7 +56,7 @@ import static com.credits.thrift.ContractExecutorHandler.SUCCESS_CODE;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
 import static com.credits.thrift.utils.ContractExecutorUtils.mapObjectToVariant;
 import static com.credits.utils.ContractExecutorServiceUtils.castValues;
-import static com.credits.utils.ContractExecutorServiceUtils.getArgTypes;
+import static com.credits.utils.ContractExecutorServiceUtils.getMethodArgumentsValuesByNameAndParams;
 import static com.credits.utils.ContractExecutorServiceUtils.initializeField;
 import static com.credits.utils.ContractExecutorServiceUtils.initializeSmartContractField;
 import static com.credits.utils.ContractExecutorServiceUtils.parseAnnotationData;
@@ -60,7 +64,6 @@ import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
-import static com.credits.utils.ContractExecutorServiceUtils.writeLog;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
@@ -68,7 +71,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
     private ExecutorService executorService;
-    private PermissionManager permissionManager;
     private final Permissions smartContractPermissions;
 
     @Inject
@@ -79,10 +81,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         executorService = Executors.newCachedThreadPool();
         INJECTOR.component.inject(this);
         try {
-            permissionManager = new PermissionManager();
-            permissionManager.createPermissionsForByteArrayClassLoaderConstructor();
-            permissionManager.createPermissionsForNodeApiExecService();
-
             Class<?> contract = Class.forName("SmartContract");
             initializeSmartContractField("service", dbInteractionService, contract, null);
             initializeSmartContractField("contractExecutorService", this, contract, null);
@@ -132,7 +130,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     @Override
     public ReturnValue executeSmartContract(InvokeMethodSession session) throws ContractExecutorException {
 
-            permissionManager.createPermissionsForSmartContractClass(contractClass);
         try {
             BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
             Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader);
@@ -174,59 +171,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
     }
 
-    private SmartContractMethodResult invokeSmartContractMethod(
-        InvokeMethodSession session,
-        Object instance,
-        MethodData methodData) throws ContractExecutorException {
-
-        Thread invokeFunctionThread = null;
-        try {
-            final Object[] parameter = methodData.argTypes != null ? castValues(methodData.argTypes, methodData.argValues) : null;
-            final FutureTask<Variant> invokeMethodTask = new FutureTask<>(() -> mapObjectToVariant(methodData.method.invoke(instance, parameter)));
-            invokeFunctionThread = new Thread(invokeMethodTask);
-            initSessionSmartContractConstants(invokeFunctionThread.getId(), session.initiatorAddress, session.contractAddress, session.accessId);
-            executorService.submit(invokeFunctionThread);
-
-            return new SmartContractMethodResult(
-                new APIResponse(SUCCESS_CODE, "success"),
-                invokeMethodTask.get(session.executionTime, TimeUnit.MILLISECONDS));
-
-        } catch (TimeoutException ex) {
-            logger.info("timeout exception");
-            invokeFunctionThread.stop();
-            return new SmartContractMethodResult(new APIResponse(ERROR_CODE, "timeout exception"), null);
-
-        } catch (Throwable e) {
-            return new SmartContractMethodResult(new APIResponse(ERROR_CODE, e.getMessage()), null);
-        }
-    }
-
-    static MethodData getMethodArgumentsValuesByNameAndParams(
-        Class<?> contractClass, String methodName,
-        Variant[] params) {
-        if (params == null) {
-            throw new ContractExecutorException("Cannot find method params == null");
-        }
-
-        Class[] argTypes = getArgTypes(params);
-        Method method = MethodUtils.getMatchingAccessibleMethod(contractClass, methodName, argTypes);
-        if (method != null) {
-            return new MethodData(method, argTypes, params);
-        } else {
-            throw new ContractExecutorException("Cannot find a method by name and parameters specified");
-        }
-    }
-
-    private Callable<Variant> invokeMethod(Object instance, MethodData methodData, Object[] parameter) {
-        return () -> mapObjectToVariant(methodData.method.invoke(instance, parameter));
-    }
-
 
     @Override
     public List<MethodDescriptionData> getContractsMethods(List<ByteCodeObjectData> byteCodeObjectDataList) {
         requireNonNull(byteCodeObjectDataList, "bytecode of contract class is null");
-        ByteArrayContractClassLoader classLoader =
-            new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
 
         BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
         Class<?> contractClass =
@@ -292,43 +240,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
         CompilationPackage compilationPackage = InMemoryCompiler.compileSourceCode(sourceCode);
         return GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
-    }
-
-
-    private Permissions createServiceApiPermissions() {
-        Permissions permissions = new Permissions();
-        permissions.add(new ReflectPermission("suppressAccessChecks"));
-        permissions.add(new NetPermission("getProxySelector"));
-        permissions.add(new RuntimePermission("readFileDescriptor"));
-        permissions.add(new RuntimePermission("writeFileDescriptor"));
-        permissions.add(new RuntimePermission("accessDeclaredMembers"));
-        permissions.add(new RuntimePermission("accessClassInPackage.sun.security.ec"));
-        permissions.add(new RuntimePermission("accessClassInPackage.sun.security.rsa"));
-        permissions.add(new RuntimePermission("accessClassInPackage.sun.security.provider"));
-        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "loadLibrary.sunec"));
-        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "createClassLoader"));
-        permissions.add(new SecurityPermission("getProperty.networkaddress.cache.ttl", "read"));
-        permissions.add(new SecurityPermission("getProperty.networkaddress.cache.negative.ttl", "read"));
-        permissions.add(new SecurityPermission("getProperty.jdk.jar.disabledAlgorithms"));
-        permissions.add(new SecurityPermission("putProviderProperty.SunRsaSign"));
-        permissions.add(new SecurityPermission("putProviderProperty.SUN"));
-        permissions.add(new PropertyPermission("sun.net.inetaddr.ttl", "read"));
-        permissions.add(new PropertyPermission("socksProxyHost", "read"));
-        permissions.add(new PropertyPermission("java.net.useSystemProxies", "read"));
-        permissions.add(new PropertyPermission("java.home", "read"));
-        permissions.add(new PropertyPermission("com.sun.security.preserveOldDCEncoding", "read"));
-        permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
-        permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
-        permissions.add(new SocketPermission(properties.apiHost + ":" + properties.executorNodeApiPort, "connect,listen,resolve"));
-        return permissions;
-    }
-
-    private Permissions createSmartContactPermissions() {
-        Permissions permissions = new Permissions();
-        permissions.add(new ReflectPermission("suppressAccessChecks"));
-        permissions.add(new RuntimePermission("accessDeclaredMembers"));
-        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "createClassLoader"));
-        return permissions;
     }
 
     @Override
@@ -435,6 +346,69 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         //                "Cannot executeSmartContract the contract " + initiatorAddress + ". Reason: " + getRootCauseMessage(e));
         //        }
         return null;
+    }
+
+    private SmartContractMethodResult invokeSmartContractMethod(
+        InvokeMethodSession session,
+        Object instance,
+        MethodData methodData) throws ContractExecutorException {
+
+        Thread invokeFunctionThread = null;
+        try {
+            final Object[] parameter = methodData.argTypes != null ? castValues(methodData.argTypes, methodData.argValues) : null;
+            final FutureTask<Variant> invokeMethodTask = new FutureTask<>(() -> mapObjectToVariant(methodData.method.invoke(instance, parameter)));
+            invokeFunctionThread = new Thread(invokeMethodTask);
+            initSessionSmartContractConstants(invokeFunctionThread.getId(), session.initiatorAddress, session.contractAddress, session.accessId);
+            executorService.submit(invokeFunctionThread);
+
+            return new SmartContractMethodResult(
+                new APIResponse(SUCCESS_CODE, "success"),
+                invokeMethodTask.get(session.executionTime, TimeUnit.MILLISECONDS));
+
+        } catch (TimeoutException ex) {
+            logger.info("timeout exception");
+            invokeFunctionThread.stop();
+            return new SmartContractMethodResult(new APIResponse(ERROR_CODE, "timeout exception"), null);
+
+        } catch (Throwable e) {
+            return new SmartContractMethodResult(new APIResponse(ERROR_CODE, e.getMessage()), null);
+        }
+    }
+
+    private Permissions createServiceApiPermissions() {
+        Permissions permissions = new Permissions();
+        permissions.add(new ReflectPermission("suppressAccessChecks"));
+        permissions.add(new NetPermission("getProxySelector"));
+        permissions.add(new RuntimePermission("readFileDescriptor"));
+        permissions.add(new RuntimePermission("writeFileDescriptor"));
+        permissions.add(new RuntimePermission("accessDeclaredMembers"));
+        permissions.add(new RuntimePermission("accessClassInPackage.sun.security.ec"));
+        permissions.add(new RuntimePermission("accessClassInPackage.sun.security.rsa"));
+        permissions.add(new RuntimePermission("accessClassInPackage.sun.security.provider"));
+        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "loadLibrary.sunec"));
+        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "createClassLoader"));
+        permissions.add(new SecurityPermission("getProperty.networkaddress.cache.ttl", "read"));
+        permissions.add(new SecurityPermission("getProperty.networkaddress.cache.negative.ttl", "read"));
+        permissions.add(new SecurityPermission("getProperty.jdk.jar.disabledAlgorithms"));
+        permissions.add(new SecurityPermission("putProviderProperty.SunRsaSign"));
+        permissions.add(new SecurityPermission("putProviderProperty.SUN"));
+        permissions.add(new PropertyPermission("sun.net.inetaddr.ttl", "read"));
+        permissions.add(new PropertyPermission("socksProxyHost", "read"));
+        permissions.add(new PropertyPermission("java.net.useSystemProxies", "read"));
+        permissions.add(new PropertyPermission("java.home", "read"));
+        permissions.add(new PropertyPermission("com.sun.security.preserveOldDCEncoding", "read"));
+        permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
+        permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
+        permissions.add(new SocketPermission(properties.apiHost + ":" + properties.executorNodeApiPort, "connect,listen,resolve"));
+        return permissions;
+    }
+
+    private Permissions createSmartContactPermissions() {
+        Permissions permissions = new Permissions();
+        permissions.add(new ReflectPermission("suppressAccessChecks"));
+        permissions.add(new RuntimePermission("accessDeclaredMembers"));
+        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "createClassLoader"));
+        return permissions;
     }
 
 }

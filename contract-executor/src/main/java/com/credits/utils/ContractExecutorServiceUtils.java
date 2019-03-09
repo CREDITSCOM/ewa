@@ -1,12 +1,15 @@
 package com.credits.utils;
 
-import com.credits.general.pojo.AnnotationData;
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.pojo.AnnotationData;
 import com.credits.general.thrift.generated.Variant;
+import com.credits.pojo.MethodData;
+import org.apache.commons.beanutils.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -20,6 +23,21 @@ public class ContractExecutorServiceUtils {
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceUtils.class);
 
 
+    public static MethodData getMethodArgumentsValuesByNameAndParams(
+        Class<?> contractClass, String methodName,
+        Variant[] params) {
+        if (params == null) {
+            throw new ContractExecutorException("Cannot find method params == null");
+        }
+
+        Class[] argTypes = getArgTypes(params);
+        Method method = MethodUtils.getMatchingAccessibleMethod(contractClass, methodName, argTypes);
+        if (method != null) {
+            return new MethodData(method, argTypes, params);
+        } else {
+            throw new ContractExecutorException("Cannot find a method by name and parameters specified");
+        }
+    }
 
     public static Object[] castValues(Class<?>[] types, Variant[] params) throws ContractExecutorException {
         if (params == null || params.length != types.length) {

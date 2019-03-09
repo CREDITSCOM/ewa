@@ -25,6 +25,7 @@ import static com.credits.general.thrift.generated.Variant.v_string;
 import static com.credits.serialize.Serializer.deserialize;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
 import static com.credits.utils.ContractExecutorServiceUtils.castValues;
+import static com.credits.utils.ContractExecutorServiceUtils.getMethodArgumentsValuesByNameAndParams;
 import static java.util.Arrays.asList;
 
 public class MethodParametersTest extends ServiceTest {
@@ -50,7 +51,7 @@ public class MethodParametersTest extends ServiceTest {
     @Test
     public void findVoidMethod() throws InvocationTargetException, IllegalAccessException {
         Variant[] voidParams = {};
-        MethodData voidMethod = ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo", voidParams);
+        MethodData voidMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", voidParams);
 
         Assert.assertEquals(voidMethod.method.toString(), "public static java.lang.Integer MethodParametersTest.foo()");
 
@@ -64,8 +65,7 @@ public class MethodParametersTest extends ServiceTest {
     public void findSimpleMethod() throws InvocationTargetException, IllegalAccessException {
 
         Variant[] simpleParams = {v_double(3f), v_double_box(4f), v_int(1), v_int_box(2), v_double(200d), v_double_box(220d)};
-        MethodData simpleMethod =
-            ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo", simpleParams);
+        MethodData simpleMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", simpleParams);
         Assert.assertEquals(
             simpleMethod.method.toString(),
             "public java.lang.Integer MethodParametersTest.foo(double,java.lang.Double,int,java.lang.Integer,double,java.lang.Double)");
@@ -83,8 +83,7 @@ public class MethodParametersTest extends ServiceTest {
 
         Variant[] arrayList = {v_list(new ArrayList<>(asList(v_int(1), v_int(2), v_int(3))))};
 
-        MethodData arrayListMethod =
-            ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo", arrayList);
+        MethodData arrayListMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", arrayList);
         Assert.assertEquals(
             arrayListMethod.method.toString(),
             "public java.lang.Integer MethodParametersTest.foo(java.util.List)");
@@ -100,8 +99,7 @@ public class MethodParametersTest extends ServiceTest {
     public void findAnotherMethodWithArrayList() throws InvocationTargetException, IllegalAccessException {
 
         Variant[] arrayList = {v_list(new ArrayList<>(asList(v_int(1), v_int(2), v_int(3))))};
-        MethodData arrayListMethod =
-            ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "fooInteger",
+        MethodData arrayListMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "fooInteger",
                                                                                 arrayList);
         Assert.assertEquals(
             arrayListMethod.method.toString(),
@@ -127,8 +125,7 @@ public class MethodParametersTest extends ServiceTest {
         Variant[] simpleParamsWithList =
             {v_double(3f), v_double(4f), v_int(1), v_int(2), v_double(200d), v_double(220d), v_list(list)};
 
-        MethodData simpleAndArrayListMethod =
-            ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo",
+        MethodData simpleAndArrayListMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo",
                                                                                 simpleParamsWithList);
 
         Assert.assertEquals(
@@ -165,8 +162,7 @@ public class MethodParametersTest extends ServiceTest {
                 v_list(new ArrayList<>(asList(v_double(3f), v_double(.4f))))
             };
 
-        MethodData moreVariousParametersMethod =
-            ContractExecutorServiceImpl.getMethodArgumentsValuesByNameAndParams(contractClass, "foo", params);
+        MethodData moreVariousParametersMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", params);
         Assert.assertEquals(
             moreVariousParametersMethod.method.toString(),
             "public java.lang.Integer MethodParametersTest.foo(double,java.lang.Double,int,java.lang.Integer,double,java.lang.Double,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List)");
@@ -176,7 +172,6 @@ public class MethodParametersTest extends ServiceTest {
                 castValues(moreVariousParametersMethod.argTypes, moreVariousParametersMethod.argValues));
         Integer invokeResult = (Integer) invoke;
         Assert.assertEquals(new Integer(1), invokeResult);
-
     }
 
 }
