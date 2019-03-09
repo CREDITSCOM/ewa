@@ -62,7 +62,7 @@ public class ContractExecutorUtils {
         } catch (IllegalAccessException | NoSuchMethodException ignored) {
         } catch (InstantiationException | InvocationTargetException e) {
             throw new ContractExecutorException(
-                    "Cannot create new instance of the contract. Reason: " + getRootCauseMessage(e), e);
+                "Cannot create new instance of the contract. Reason: " + getRootCauseMessage(e), e);
         }
 
         try {
@@ -86,20 +86,19 @@ public class ContractExecutorUtils {
 
     public static Variant mapObjectToVariant(Object object) throws ContractExecutorException {
         return new ObjectMapper().apply(object)
-                .orElseThrow(() -> {
-                    UnsupportedTypeException e = new UnsupportedTypeException(
-                            "Unsupported type of the value {" + object.toString() + "}: " + object.getClass());
-                    return new ContractExecutorException(
-                            "Cannot executeSmartContract the contract: " + ". Reason: " + getRootCauseMessage(e), e);
-                });
+            .orElseThrow(() -> {
+                UnsupportedTypeException e = new UnsupportedTypeException(
+                    "Unsupported type of the value {" + object.toString() + "}: " + object.getClass());
+                return new ContractExecutorException(
+                    "Cannot executeSmartContract the contract: " + ". Reason: " + getRootCauseMessage(e), e);
+            });
     }
 
-    public static Class<?> compileSmartContractByteCode(List<ByteCodeObjectData> smartContractByteCodeData,
-        BytecodeContractClassLoader classLoader) {
+    public static Class<?> compileSmartContractByteCode(List<ByteCodeObjectData> smartContractByteCodeData, BytecodeContractClassLoader classLoader) {
         Class<?> contractClass = null;
         for (ByteCodeObjectData compilationUnit : smartContractByteCodeData) {
             Class<?> tempContractClass = classLoader.loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
-            if(!compilationUnit.getName().contains("$")) {
+            if (!compilationUnit.getName().contains("$")) {
                 contractClass = tempContractClass;
             }
         }

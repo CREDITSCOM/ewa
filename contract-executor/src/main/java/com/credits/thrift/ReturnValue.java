@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ReturnValue {
-    public final byte[] newContractState;
+    public byte[] newContractState;
     public final List<SmartContractMethodResult> executeResults;
     public final Map<ByteBuffer,ByteBuffer> externalContractStates;
 

@@ -1,14 +1,12 @@
 package com.credits.secure;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.ReflectPermission;
-import java.net.NetPermission;
-import java.security.*;
+import java.security.AccessControlContext;
+import java.security.AccessControlException;
+import java.security.Permission;
+import java.security.Permissions;
+import java.security.ProtectionDomain;
 import java.util.Collections;
 import java.util.Map;
-import java.util.PropertyPermission;
 import java.util.WeakHashMap;
 
 /**
@@ -52,10 +50,7 @@ public final class Sandbox {
     private Sandbox() {
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Sandbox.class);
-
-    public static final Map<Class<?>, AccessControlContext> CHECKED_CLASSES =
-        Collections.synchronizedMap(new WeakHashMap<>());
+    public static final Map<Class<?>, AccessControlContext> CHECKED_CLASSES = Collections.synchronizedMap(new WeakHashMap<>());
 
     static {
         // Install our custom security manager.
@@ -72,26 +67,16 @@ public final class Sandbox {
                     // Check if an ACC was set for the class.
                     AccessControlContext acc = Sandbox.CHECKED_CLASSES.get(clasS);
                     if (acc != null) {
-                        if (clasS.getName()
-                            .equals("CallContract")) { //Если первый класс в стеке - колл контракт - чекаем разрешения
-
-                            try {
-                                acc.checkPermission(perm);
-                            } catch (AccessControlException e) {
-                                LOGGER.error("clasS = {}", clasS);
-                                LOGGER.error(e.getMessage());
-                                throw new AccessControlException(e.getMessage());
-                            }
-                        } else {
-                            break;
+                        try {
+                            acc.checkPermission(perm);
+                        } catch (AccessControlException e) {
+                            throw new AccessControlException(e.getMessage());
                         }
                     }
-
                 }
             }
         });
     }
-
 
     /**
      * All future actions that are executed through the given {@code clasS} will be checked against the given {@code
@@ -100,9 +85,6 @@ public final class Sandbox {
      * @throws SecurityException Permissions are already confined for the {@code clasS}
      */
     public static void confine(Class<?> clasS, AccessControlContext accessControlContext) {
-        if (Sandbox.CHECKED_CLASSES.containsKey(clasS)) {
-            LOGGER.warn("Attempt to change the access control context for '" + clasS + "'");
-        }
         if (!Sandbox.CHECKED_CLASSES.containsKey(clasS)) {
             Sandbox.CHECKED_CLASSES.put(clasS, accessControlContext);
         }

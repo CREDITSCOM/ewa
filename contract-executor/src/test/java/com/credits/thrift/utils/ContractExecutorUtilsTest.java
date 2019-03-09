@@ -1,10 +1,13 @@
 package com.credits.thrift.utils;
 
+import com.credits.classload.BytecodeContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.InMemoryCompiler;
+import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.variant.VariantUtils;
 import com.credits.service.ServiceTest;
+import com.credits.service.contract.SmartContractConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +59,10 @@ public class ContractExecutorUtilsTest extends ServiceTest {
     private Object instanceWithVariables;
     private Object instanceWithoutVariables;
 
+    public ContractExecutorUtilsTest() {
+        super(null);
+    }
+
     @Before
     @Override
     public void setUp() throws Exception {
@@ -79,17 +86,12 @@ public class ContractExecutorUtilsTest extends ServiceTest {
 
         //Checks returning null if no public variables exist in the contract
         Assert.assertNull(ContractExecutorUtils.getContractVariables(instanceWithoutVariables));
-/*
-        Assert.assertEquals(new Variant(Variant._Fields.V_STRING,""),
-            ContractExecutorUtils.getContractVariables(instanceWithoutVariables).get("initiator"));
-*/
     }
 
     private Object getInstance(String source) throws Exception{
-        byte[] byteCode = InMemoryCompiler.compileSourceCode(source).getUnits().get(0).getByteCode();
-        //fixme
-//        Class<?> clazz = new BytecodeContractClassLoader().loadClass(byteCode);
-//        return clazz.newInstance();
-        return null;
+        CompilationUnit compilationUnit = InMemoryCompiler.compileSourceCode(source).getUnits().get(0);
+        SmartContractConstants.initSessionSmartContractConstants(Thread.currentThread().getId(),"123","123",0);
+        Class<?> clazz = new BytecodeContractClassLoader().loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
+        return clazz.newInstance();
     }
 }

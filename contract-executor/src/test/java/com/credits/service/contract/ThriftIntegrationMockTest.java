@@ -1,7 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
-import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.service.ServiceTest;
 import com.credits.service.node.api.NodeApiInteractionService;
 import org.apache.commons.io.FileUtils;
@@ -15,9 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.List;
 
 import static java.io.File.separator;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -26,15 +26,14 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     @Inject
     NodeApiInteractionService dbservice;
 
-    private List<ByteCodeObjectData> byteCodeObjectDataList;
     private byte[] contractState;
 
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        testComponent.inject(this);
+    public ThriftIntegrationMockTest() {
+        super("/thriftIntegrationTest/MySmartContract.java");
+    }
 
+    @Before
+    public void setUp() throws Exception {
         Field client = dbservice.getClass().getDeclaredField("service");
         client.setAccessible(true);
         client.set(dbservice, mockNodeApiService);
@@ -44,11 +43,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
         interactionService.setAccessible(true);
         interactionService.set(null, dbservice);
 
-        String sourceCode = readSourceCode("/thriftIntegrationTest/MySmartContract.java");
-        byteCodeObjectDataList = compileSourceCode(sourceCode);
-
-        //fixme
-//        contractState = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList, null, null, null,500L).getContractState();
+        contractState = deploySmartContract().newContractState;
     }
 
     @After
@@ -61,20 +56,18 @@ public class ThriftIntegrationMockTest extends ServiceTest {
     @Ignore("need resolve file permission for this test")
     public void execute_contract_using_bytecode_getBalance() throws Exception {
         when(mockNodeApiService.getBalance(any())).thenReturn(new BigDecimal(555));
-        //fixme
-//        String balance = (String) ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList,
-//            contractState, "balanceGet", new Variant[][] {{}},500L).getVariantsList().get(0).getFieldValue();
-//        assertEquals("555", balance);
+        String balance = executeSmartContract("balanceGet", contractState).executeResults.get(0).result.getV_string();
+        assertEquals("555", balance);
     }
 
     @Test
     @Ignore("need resolve file permission for this test")
     public void execute_contract_method_with_variant_parameters() throws ContractExecutorException {
-//        Integer newValue =
-            //fixme
-//        ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectDataList,
-//            contractState, "addValue", new Variant[][]{{new Variant(Variant._Fields.V_INT_BOX, 112233)}},500L).getVariantsList().get(0).getV_int_box();
-//        assertEquals(112233, newValue.intValue());
-//
+        Integer newValue =
+            executeSmartContract(
+                "addValue",
+                new Variant[][] {{new Variant(Variant._Fields.V_INT_BOX, 112233)}},
+                contractState).executeResults.get(0).result.getV_int_box();
+        assertEquals(112233, newValue.intValue());
     }
 }

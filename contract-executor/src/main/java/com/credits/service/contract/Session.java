@@ -24,12 +24,12 @@ public class Session {
         this.executionTime = executionTime;
     }
 
-    private void validateArguments(String initiatorAddress, String contractAddress,
-        List<ByteCodeObjectData> byteCodeObjectDataList) {
-        requireNonNull(initiatorAddress, "initiatorAddress is null");
-        requireNonNull(contractAddress, "contractAddress is null");
+    private void validateArguments(String initiatorAddress, String contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList) {
+        requireNonNull(initiatorAddress, "initiator address is null");
+        requireNonNull(contractAddress, "contract address is null");
+        requireNonNull(byteCodeObjectDataList, "byte code objects is null");
         if (byteCodeObjectDataList.isEmpty()) {
-            throw new ContractExecutorException("bytecode objects size is empty");
+            throw new ContractExecutorException("bytecode objects is empty");
         }
     }
 }

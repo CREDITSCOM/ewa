@@ -26,6 +26,11 @@ public class MySmartContract extends SmartContract {
         return this.total;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode()+total;
+    }
+
     public String getInitiatorAddress(){
         return initiator;
     }

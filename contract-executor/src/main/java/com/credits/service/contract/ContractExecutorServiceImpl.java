@@ -117,10 +117,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 session.contractAddress,
                 session.accessId);
 
-            Object instance = contractClass.newInstance();
-
             return new ReturnValue(
-                serialize(instance),
+                serialize(contractClass.newInstance()),
                 singletonList(new SmartContractMethodResult(new APIResponse(SUCCESS_CODE, "success"), null)), null);
 
         } catch (Throwable e) {
@@ -155,8 +153,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     return Stream.of(invokeSmartContractMethod(session, instance, methodData));
                 })
                 .reduce(
-                    new ReturnValue(serialize(instance), new ArrayList<>(), externalContractStates),
+                    new ReturnValue(null, new ArrayList<>(), externalContractStates),
                     (returnValue, smartContractMethodResult) -> {
+                        if (returnValue.newContractState == null) {
+                            returnValue.newContractState = serialize(instance);
+                        }
                         returnValue.executeResults.add(smartContractMethodResult);
                         return returnValue;
                     },
@@ -164,7 +165,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         } catch (Throwable e) {
             logger.debug(
-                "Cannot executeSmartContract the contract. Root cause message: {}\n{}",
+                "Cannot executeSmartContract the contract. Root cause message: {}\n",
                 getRootCauseMessage(e),
                 e);
             throw new ContractExecutorException(
@@ -178,13 +179,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Object instance,
         MethodData methodData) throws ContractExecutorException {
 
-        Object[] parameter = null;
         Thread invokeFunctionThread = null;
         try {
-            if (methodData.argTypes != null) {
-                parameter = castValues(methodData.argTypes, methodData.argValues);
-            }
-            FutureTask<Variant> invokeMethodTask = new FutureTask<>(invokeMethod(instance, methodData, parameter));
+            final Object[] parameter = methodData.argTypes != null ? castValues(methodData.argTypes, methodData.argValues) : null;
+            final FutureTask<Variant> invokeMethodTask = new FutureTask<>(() -> mapObjectToVariant(methodData.method.invoke(instance, parameter)));
             invokeFunctionThread = new Thread(invokeMethodTask);
             initSessionSmartContractConstants(invokeFunctionThread.getId(), session.initiatorAddress, session.contractAddress, session.accessId);
             executorService.submit(invokeFunctionThread);

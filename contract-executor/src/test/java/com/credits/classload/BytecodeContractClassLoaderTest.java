@@ -6,6 +6,8 @@ import com.credits.general.util.compiler.model.CompilationUnit;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
+
 
 public class BytecodeContractClassLoaderTest {
 
@@ -27,7 +29,7 @@ public class BytecodeContractClassLoaderTest {
     @Test
     public void buildClassTest() throws Exception {
         Class clazz = new BytecodeContractClassLoader().loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
-        clazz.newInstance();
+        assertNotNull(clazz.newInstance());
     }
 
     @Test(expected = LinkageError.class)

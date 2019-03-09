@@ -53,7 +53,6 @@ public abstract class SmartContract implements Serializable {
         initiator = contractConstants.initiator;
         accessId = contractConstants.accessId;
         contractAddress = contractConstants.contractAddress;
-        System.out.println(Thread.currentThread() + " smart init accessId " + accessId);
     }
 
     final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {
