@@ -90,7 +90,7 @@ public class ContractExecutorUtilsTest extends ServiceTest {
 
     private Object getInstance(String source) throws Exception{
         CompilationUnit compilationUnit = InMemoryCompiler.compileSourceCode(source).getUnits().get(0);
-        SmartContractConstants.initSessionSmartContractConstants(Thread.currentThread().getId(),"123","123",0);
+        SmartContractConstants.initSmartContractConstants(Thread.currentThread().getId(), "123", "123", 0);
         Class<?> clazz = new BytecodeContractClassLoader().loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
         return clazz.newInstance();
     }

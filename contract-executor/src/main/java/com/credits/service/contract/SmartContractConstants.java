@@ -1,5 +1,7 @@
 package com.credits.service.contract;
 
+import com.credits.service.contract.session.DeployContractSession;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -16,8 +18,8 @@ public class SmartContractConstants {
         this.accessId = accessId;
     }
 
-    public static void initSessionSmartContractConstants(long threadId, String initiator, String contractAddress, long accessId) {
-        sessions.put(threadId, new SmartContractConstants(initiator, contractAddress, accessId));
+    public static void initSmartContractConstants(long threadId, DeployContractSession session) {
+        sessions.put(threadId, new SmartContractConstants(session.initiatorAddress, session.contractAddress, session.accessId));
     }
 
 

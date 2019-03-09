@@ -7,6 +7,8 @@ import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.pojo.apiexec.SmartContractGetResultData;
+import com.credits.service.contract.session.DeployContractSession;
+import com.credits.service.contract.session.InvokeMethodSession;
 import com.credits.thrift.ReturnValue;
 
 import java.nio.ByteBuffer;
@@ -16,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 
 public interface ContractExecutorService {
 
-    ReturnValue deploySmartContract(Session session);
+    ReturnValue deploySmartContract(DeployContractSession session);
 
     ReturnValue executeSmartContract(InvokeMethodSession session) throws ContractExecutorException;
 

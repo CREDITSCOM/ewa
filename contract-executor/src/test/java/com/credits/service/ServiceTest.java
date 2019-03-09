@@ -12,8 +12,8 @@ import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import com.credits.service.contract.ContractExecutorService;
-import com.credits.service.contract.InvokeMethodSession;
-import com.credits.service.contract.Session;
+import com.credits.service.contract.session.DeployContractSession;
+import com.credits.service.contract.session.InvokeMethodSession;
 import com.credits.thrift.ReturnValue;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -139,7 +139,7 @@ public abstract class ServiceTest {
 
 
     protected ReturnValue deploySmartContract() {
-        return ceService.deploySmartContract(new Session(
+        return ceService.deploySmartContract(new DeployContractSession(
             0,
             encodeToBASE58(initiatorAddress),
             encodeToBASE58(contractAddress),

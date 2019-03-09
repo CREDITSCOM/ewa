@@ -16,8 +16,8 @@ import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
-import com.credits.service.contract.InvokeMethodSession;
-import com.credits.service.contract.Session;
+import com.credits.service.contract.session.DeployContractSession;
+import com.credits.service.contract.session.InvokeMethodSession;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import org.apache.thrift.TUnion;
 import org.slf4j.Logger;
@@ -77,7 +77,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         try {
             ReturnValue returnValue =
                 method.isEmpty() ?
-                    service.deploySmartContract(new Session(
+                    service.deploySmartContract(new DeployContractSession(
                         accessId,
                         encodeToBASE58(initiatorAddress.array()),
                         encodeToBASE58(invokedContract.contractAddress.array()),

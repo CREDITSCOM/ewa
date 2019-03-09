@@ -1,4 +1,4 @@
-package com.credits.service.contract;
+package com.credits.service.contract.session;
 
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.ByteCodeObjectData;
@@ -7,21 +7,21 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-public class Session {
-    final long accessId;
-    final String initiatorAddress;
-    final String contractAddress;
-    final List<ByteCodeObjectData> byteCodeObjectDataList;
-    final long executionTime;
+public class DeployContractSession extends Session {
+    public final List<ByteCodeObjectData> byteCodeObjectDataList;
+    public final String contractAddress;
 
-    public Session(long accessId, String initiatorAddress, String contractAddress,
-        List<ByteCodeObjectData> byteCodeObjectDataList, long executionTime) {
+    public DeployContractSession(
+        long accessId,
+        String initiatorAddress,
+        String contractAddress,
+        List<ByteCodeObjectData> byteCodeObjectDataList,
+        long executionTime) {
+
+        super(accessId, initiatorAddress, executionTime);
         validateArguments(initiatorAddress, contractAddress, byteCodeObjectDataList);
-        this.accessId = accessId;
-        this.initiatorAddress = initiatorAddress;
-        this.contractAddress = contractAddress;
         this.byteCodeObjectDataList = byteCodeObjectDataList;
-        this.executionTime = executionTime;
+        this.contractAddress = contractAddress;
     }
 
     private void validateArguments(String initiatorAddress, String contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList) {

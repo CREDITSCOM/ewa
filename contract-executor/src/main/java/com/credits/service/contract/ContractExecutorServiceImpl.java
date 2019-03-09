@@ -17,6 +17,8 @@ import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.pojo.MethodData;
 import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.secure.Sandbox;
+import com.credits.service.contract.session.DeployContractSession;
+import com.credits.service.contract.session.InvokeMethodSession;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractExecutorUtils;
@@ -50,7 +52,7 @@ import java.util.stream.Stream;
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialize.Serializer.deserialize;
 import static com.credits.serialize.Serializer.serialize;
-import static com.credits.service.contract.SmartContractConstants.initSessionSmartContractConstants;
+import static com.credits.service.contract.SmartContractConstants.initSmartContractConstants;
 import static com.credits.thrift.ContractExecutorHandler.ERROR_CODE;
 import static com.credits.thrift.ContractExecutorHandler.SUCCESS_CODE;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
@@ -102,25 +104,21 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue deploySmartContract(Session session) {
+    public ReturnValue deploySmartContract(DeployContractSession session) {
         try {
             BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
             Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader);
 
             Sandbox.confine(contractClass, smartContractPermissions);
 
-            initSessionSmartContractConstants(
-                currentThread().getId(),
-                session.initiatorAddress,
-                session.contractAddress,
-                session.accessId);
+            initSmartContractConstants(currentThread().getId(), session);
 
             return new ReturnValue(
                 serialize(contractClass.newInstance()),
                 singletonList(new SmartContractMethodResult(new APIResponse(SUCCESS_CODE, "success"), null)), null);
 
         } catch (Throwable e) {
-            logger.debug("Cannot invokeMethod the contract. Root cause message: {}\n{}", getRootCauseMessage(e), e);
+            logger.debug("Cannot deploy the contract. Root cause message: {}\n{}", getRootCauseMessage(e), e);
             throw new ContractExecutorException(
                 "Cannot deploy the contract " + session.contractAddress + ", accessId " + session.accessId + ". Reason: " +
                     getRootCauseMessage(e));
@@ -170,7 +168,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     ". Reason: " + getRootCauseMessage(e));
         }
     }
-
 
     @Override
     public List<MethodDescriptionData> getContractsMethods(List<ByteCodeObjectData> byteCodeObjectDataList) {
@@ -358,7 +355,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             final Object[] parameter = methodData.argTypes != null ? castValues(methodData.argTypes, methodData.argValues) : null;
             final FutureTask<Variant> invokeMethodTask = new FutureTask<>(() -> mapObjectToVariant(methodData.method.invoke(instance, parameter)));
             invokeFunctionThread = new Thread(invokeMethodTask);
-            initSessionSmartContractConstants(invokeFunctionThread.getId(), session.initiatorAddress, session.contractAddress, session.accessId);
+            initSmartContractConstants(invokeFunctionThread.getId(), session);
             executorService.submit(invokeFunctionThread);
 
             return new SmartContractMethodResult(
