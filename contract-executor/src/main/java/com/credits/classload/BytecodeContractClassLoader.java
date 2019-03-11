@@ -15,7 +15,7 @@ public class BytecodeContractClassLoader extends ClassLoader {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        return loadClass(name);
+        return super.findClass(name);
     }
 
     public byte[] lookupBytecode(String className) throws ClassNotFoundException {
