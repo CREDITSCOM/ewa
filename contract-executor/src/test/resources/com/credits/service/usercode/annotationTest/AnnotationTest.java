@@ -39,4 +39,18 @@ public class AnnotationTest extends SmartContract {
     public void testNotToken(@ContractMethod(id = 0) int amount) {
 
     }
+
+    @Contract(address = "test1", method = "notGet")
+    @Contract(address = "test2", method = "notGetBalance")
+    public void testMultiple1(int amount) {
+
+    }
+
+    @Contracts(value={
+        @Contract(address = "test3", method = "notGetA"),
+        @Contract(address = "test2", method = "notGetBalance")
+    })
+    public void testMultiple2(int amount) {
+
+    }
 }

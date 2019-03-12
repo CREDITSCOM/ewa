@@ -182,14 +182,14 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             ArrayList<MethodArgumentData> args = new ArrayList<>();
             List<AnnotationData> methodAnnotationDataList = new ArrayList<>();
             for (Annotation annotation : method.getAnnotations()) {
-                AnnotationData methodAnnotationData = parseAnnotationData(annotation.toString());
-                methodAnnotationDataList.add(methodAnnotationData);
+                List<AnnotationData> methodAnnotationData = parseAnnotationData(annotation.toString());
+                methodAnnotationDataList.addAll(methodAnnotationData);
             }
             for (Parameter parameter : method.getParameters()) {
                 List<AnnotationData> paramAnnotationDataList = new ArrayList<>();
                 for (Annotation annotation : parameter.getAnnotations()) {
-                    AnnotationData parameterAnnotationData = parseAnnotationData(annotation.toString());
-                    paramAnnotationDataList.add(parameterAnnotationData);
+                    List<AnnotationData> parameterAnnotationData = parseAnnotationData(annotation.toString());
+                    paramAnnotationDataList.addAll(parameterAnnotationData);
                 }
                 args.add(new MethodArgumentData(parameter.getType().getTypeName(), parameter.getName(),
                     paramAnnotationDataList));
