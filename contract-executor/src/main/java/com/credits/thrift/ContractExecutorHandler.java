@@ -56,10 +56,9 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         SmartContractBinary invokedContract, String method, List<Variant> params, long executionTime, byte version) {
         writeLog("Start execute bytecode");
         logger.debug("\n--> executeByteCode(" + "\naccessId = {}," + "\naddress = {}," + "\nbyteCode length= {}, " +
-                "\ncontractState length= {}, " + "\ncontractState hash= {} " + "\nmethod = {}, " + "\nparams = {}."
-            , accessId, encodeToBASE58(initiatorAddress.array()),
-            invokedContract.byteCodeObjects.size(), invokedContract.contractState.array().length,
-            invokedContract.contractState.hashCode(), method,
+                "\ncontractState length= {}, " + "\ncontractState hash= {} " + "\nmethod = {}, " + "\nparams = {}.",
+            accessId, encodeToBASE58(initiatorAddress.array()), invokedContract.byteCodeObjects.size(),
+            invokedContract.contractState.array().length, invokedContract.contractState.hashCode(), method,
             (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat)));
 
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
@@ -75,15 +74,19 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 result.ret_val = returnValue.getVariantsList().get(0);
             }
             result.externalContractsState = returnValue.getExternalContractsState();
-            logger.info("\n<--executeByteCode \ncontractState length= {}\ncontractState hash= {}\nresponse= {}" +
-                    "\n-------------------", result.invokedContractState.array().length,
-                result.invokedContractState.hashCode(), result);
+            logger.info(
+                "\n<--executeByteCode \ncontractState length= {}\ncontractState hash= {}" + "\n-------------------",
+                result.invokedContractState.array().length, result.invokedContractState.hashCode());
+            logger.info(
+                "\n<--Result: \nStatus {},\nReturn value:\nExternal contractState size {},\nInvokedContractStateHash",
+                result.status, result.ret_val, result.externalContractsState.size(),
+                result.invokedContractState.hashCode());
+                writeLog("End execute bytecode");
         } catch (ContractExecutorException e) {
             result.setStatus(new APIResponse(ERROR_CODE, e.getMessage()));
-            logger.info("\n<-- error executeByteCode  result \n{}", result);
+            logger.info("\n<-- Error executeByteCode  result \n{}", result.getStatus());
+            writeLog("End executeByteCode with ERROR");
         }
-        logger.debug("\n-->execute  contractStateHash {} {}", Arrays.hashCode(result.getInvokedContractState()), result);
-        writeLog("End execute bytecode");
         return result;
     }
 
@@ -155,8 +158,8 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     public GetContractVariablesResult getContractVariables(List<ByteCodeObject> compilationUnits,
         ByteBuffer contractState, byte version) {
         writeLog("Start get contract variables");
-        logger.debug("\n--> getContractVariables(\nbytecode = {} bytes,\n contractState = {} bytes)", compilationUnits.size(),
-            contractState.array().length);
+        logger.debug("\n--> getContractVariables(\nbytecode = {} bytes,\n contractState = {} bytes)",
+            compilationUnits.size(), contractState.array().length);
         GetContractVariablesResult result = new GetContractVariablesResult();
         try {
             result.setStatus(new APIResponse(SUCCESS_CODE, "success"));
