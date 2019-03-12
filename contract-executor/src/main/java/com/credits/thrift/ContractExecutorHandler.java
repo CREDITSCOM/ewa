@@ -78,7 +78,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 "\n<--executeByteCode \ncontractState length= {}\ncontractState hash= {}" + "\n-------------------",
                 result.invokedContractState.array().length, result.invokedContractState.hashCode());
             logger.info(
-                "\n<--Result: \nStatus {},\nReturn value:\nExternal contractState size {},\nInvokedContractStateHash",
+                "\n<--Result: \nStatus {},\nReturn value:{}\nExternal contractState size {},\nInvokedContractStateHash {}",
                 result.getStatus(), result.getRet_val(),
                 result.getExternalContractsState() == null ? 0 : result.getExternalContractsState().size(),
                 result.getInvokedContractState() == null ? null : Arrays.hashCode(result.getInvokedContractState()));
