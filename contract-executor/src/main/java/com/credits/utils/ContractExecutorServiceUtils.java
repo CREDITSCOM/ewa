@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.credits.general.util.variant.VariantConverter.variantToObject;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 
 public class ContractExecutorServiceUtils {
@@ -41,7 +42,7 @@ public class ContractExecutorServiceUtils {
 
     public static Object[] castValues(Class<?>[] types, Variant[] params) throws ContractExecutorException {
         if (params == null || params.length != types.length) {
-            throw new ContractExecutorException("Not enough arguments passed");
+            throw new ContractExecutorException("not enough arguments passed");
         }
         Object[] retVal = new Object[types.length];
         int i = 0;
@@ -50,26 +51,21 @@ public class ContractExecutorServiceUtils {
             param = params[i];
             if (type.isArray()) {
                 if (types.length > 1) {
-                    throw new ContractExecutorException("Having array with other parameter types is not supported");
+                    throw new ContractExecutorException("having array with other parameter types is not supported");
                 }
             }
 
             retVal[i] = variantToObject(param);
-            logger.debug(String.format("param[%s] = %s", i, retVal[i]));
+            logger.debug("casted param[{}] = {}", i, retVal[i]);
             i++;
         }
         return retVal;
     }
 
-    private static final String LINE = "-----------------------------------------------------";
-    public static void writeLog(String s) {
-        logger.info("\n{}\n-----------{}---------------\n{}\n", LINE, s, LINE);
-    }
-
-
     public static Class[] getArgTypes(Variant[] params) {
         Class[] argTypes = new Class[params.length];
 
+        //fixme problem with null param
         for (int i = 0; i < params.length; i++) {
             argTypes[i] = params[i].getFieldValue().getClass();
         }
@@ -82,7 +78,7 @@ public class ContractExecutorServiceUtils {
             field.setAccessible(true);
             field.set(instance, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Cannot initialize \"{}\" field. Reason:{}", fieldName, e.getMessage());
+            logger.error("Cannot initialize \"{}\" field. Reason:{}", fieldName, getRootCauseMessage(e));
         }
     }
 
@@ -92,7 +88,7 @@ public class ContractExecutorServiceUtils {
             field.setAccessible(true);
             field.set(instance, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Cannot initialize \"{}\" field. Reason:{}", fieldName, e.getMessage());
+            logger.error("Cannot initialize \"{}\" field. Reason:{}", fieldName, getRootCauseMessage(e));
         }
     }
 

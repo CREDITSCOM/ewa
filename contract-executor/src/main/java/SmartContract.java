@@ -1,51 +1,35 @@
-import com.credits.general.exception.CreditsException;
+import com.credits.exception.ContractExecutorException;
+import com.credits.general.thrift.generated.Variant;
+import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.service.contract.SmartContractConstants;
+import com.credits.service.contract.session.InvokeMethodSession;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
+import com.credits.thrift.ReturnValue;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+
+import static com.credits.general.util.variant.VariantConverter.objectToVariantData;
+import static com.credits.general.util.variant.VariantConverter.variantDataToVariant;
+import static com.credits.general.util.variant.VariantConverter.variantToObject;
+import static java.lang.Long.MAX_VALUE;
 
 public abstract class SmartContract implements Serializable {
 
     private static final long serialVersionUID = -7544650022718657167L;
 
-    protected static NodeApiExecInteractionService service;
-    protected static ContractExecutorServiceImpl contractExecutorService;
-    protected Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode = new HashMap<>();
-    protected static ExecutorService cachedPool;
+    private static NodeApiExecInteractionService nodeApiService;
+    private static ContractExecutorServiceImpl contractExecutorService;
+    private transient Map<String, ByteBuffer> externalContractsStates;
+
+    private static ExecutorService cachedPool;
     protected final transient long accessId;
     protected final transient String initiator;
     protected final String contractAddress;
-    //    final protected BigDecimal getBalance(String address) {
-    //        return callService(() -> {
-    //            byte currencyByte = (byte) 1;
-    //            return service.getBalance(address, currencyByte);
-    //        });
-    //    }
-    //
-    //    final protected TransactionData getTransaction(String transactionId) {
-    //        return callService(() -> service.getTransaction(transactionId));
-    //    }
-    //
-    //    final protected List<TransactionData> getTransactions(String address, long offset, long limit) {
-    //        return callService(() -> service.getTransactions(address, offset, limit));
-    //    }
-    //
-    //    final protected List<PoolData> getPoolList(long offset, long limit) {
-    //        return callService(() -> service.getPoolList(offset, limit));
-    //    }
-    //
-    //    final protected PoolData getPoolInfo(byte[] hash, long index) {
-    //        return callService(() -> service.getPoolInfo(hash, index));
-    //    }
 
     public SmartContract() {
         SmartContractConstants contractConstants =
@@ -57,38 +41,46 @@ public abstract class SmartContract implements Serializable {
 
     final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {
         callService(() -> {
-            service.sendTransaction(contractAddress, target, amount, fee, userData);
+            nodeApiService.sendTransaction(contractAddress, target, amount, fee, userData);
             return null;
         });
     }
 
-    //fixme add implementation
-    final protected Object invokeExternalContract(String externalSmartContractAddress,
-        String externalSmartContractMethod, List externalSmartContractParams) {
-//        SmartContractGetResultData externalSmartContractByteCode =
-//            callService(() -> service.getExternalSmartContractByteCode(accessId, externalSmartContractAddress));
-//
-//        ReturnValue returnValue =
-//            contractExecutorService.executeExternalSmartContract(accessId, initiator, externalSmartContractAddress,
-//                externalSmartContractMethod, externalSmartContractParams, externalSmartContractByteCode,externalContractsStateByteCode);
-//        if (!Arrays.equals(externalSmartContractByteCode.getContractState(), returnValue.getContractState()) &&
-//            !externalSmartContractByteCode.isStateCanModify()) {
-//            throw new ContractExecutorException("Contract state can not be modify");
-//        }
-//        this.externalContractsStateByteCode.put(
-//            ByteBuffer.wrap(GeneralConverter.decodeFromBASE64(externalSmartContractAddress)),
-//            ByteBuffer.wrap(returnValue.getContractState()));
-//        if (returnValue.getVariantsList() != null) {
-//            return variantToObject(returnValue.getVariantsList().get(0));
-//        } else {
-//            return null;
-//        }
-        return null;
+    final protected Object invokeExternalContract(String contractAddress, String method, Object... params) {
+        SmartContractGetResultData contractData = callService(() -> nodeApiService.getExternalSmartContractByteCode(accessId, contractAddress));
+
+        Variant[][] variantParams = null;
+        if(params != null) {
+            variantParams = new Variant[1][params.length];
+            for (int i = 0; i < variantParams.length; i++) {
+                variantParams[0][i] = variantDataToVariant(objectToVariantData(params[i]));
+            }
+        }
+
+        final Variant[][] finalVariantParams = variantParams;
+        final ReturnValue returnValue = callService(() -> contractExecutorService.executeExternalSmartContract(
+            new InvokeMethodSession(
+                accessId,
+                initiator,
+                contractAddress,
+                contractData.byteCodeObjects,
+                contractData.contractState,
+                method,
+                finalVariantParams,
+                MAX_VALUE),
+            externalContractsStates));
+
+        if (!contractData.stateCanModify && !Arrays.equals(contractData.contractState, returnValue.newContractState)) {
+            throw new ContractExecutorException("smart contract \"" + contractAddress + "\" can't be modify");
+        }
+        externalContractsStates.putIfAbsent(contractAddress, ByteBuffer.wrap(returnValue.newContractState));
+
+        return variantToObject(returnValue.executeResults.get(0).result);
     }
 
 
     final protected byte[] getSeed() {
-        return callService(() -> service.getSeed(accessId));
+        return callService(() -> nodeApiService.getSeed(accessId));
     }
 
     private interface Function<R> {
@@ -96,18 +88,10 @@ public abstract class SmartContract implements Serializable {
     }
 
     private <R> R callService(SmartContract.Function<R> method) {
-
-        Callable<R> callable = () -> {
-            try {
-                return method.apply();
-            } catch (CreditsException e) {
-                throw new RuntimeException(e);
-            }
-        };
-        Future<R> future = cachedPool.submit(callable);
         try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
+            return cachedPool.submit(method::apply).get();
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

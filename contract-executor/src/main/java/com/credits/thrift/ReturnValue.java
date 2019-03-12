@@ -9,9 +9,9 @@ import java.util.Map;
 public class ReturnValue {
     public byte[] newContractState;
     public final List<SmartContractMethodResult> executeResults;
-    public final Map<ByteBuffer,ByteBuffer> externalContractStates;
+    public final Map<String,ByteBuffer> externalContractStates;
 
-    public ReturnValue(byte[] newContractState, List<SmartContractMethodResult> executeResults, Map<ByteBuffer,ByteBuffer> externalContractStates) {
+    public ReturnValue(byte[] newContractState, List<SmartContractMethodResult> executeResults, Map<String,ByteBuffer> externalContractStates) {
         this.newContractState = newContractState;
         this.externalContractStates = externalContractStates;
         this.executeResults = executeResults;

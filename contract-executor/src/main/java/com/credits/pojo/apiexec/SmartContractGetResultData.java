@@ -10,9 +10,9 @@ public class SmartContractGetResultData extends ApiResponseData {
 
     private static final long serialVersionUID = 4691482244448740351L;
 
-    private final List<ByteCodeObjectData> byteCodeObjects;
-    private final byte[] contractState;
-    private final boolean stateCanModify;
+    public final List<ByteCodeObjectData> byteCodeObjects;
+    public final byte[] contractState;
+    public final boolean stateCanModify;
 
     public SmartContractGetResultData(ApiResponseData apiResponseData, List<ByteCodeObjectData> byteCodeObjects,
         byte[] contractState, boolean stateCanModify) {
@@ -52,21 +52,5 @@ public class SmartContractGetResultData extends ApiResponseData {
         result = 31 * result + Arrays.hashCode(contractState);
         result = 31 * result + (stateCanModify ? 1 : 0);
         return result;
-    }
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
-    public List<ByteCodeObjectData> getByteCodeObjects() {
-        return byteCodeObjects;
-    }
-
-    public byte[] getContractState() {
-        return contractState;
-    }
-
-    public boolean isStateCanModify() {
-        return stateCanModify;
     }
 }

@@ -15,10 +15,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.credits.general.thrift.generated.Variant.v_int;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -44,17 +45,17 @@ public class ContractExecutorTest extends ServiceTest {
         ReturnValue rvTotalInitialized = executeSmartContract("getTotal", contractState);
         assertEquals(1, rvTotalInitialized.executeResults.get(0).result.getV_int_box()); //fixme must be int
 
-        contractState = executeSmartContract("addTokens", new Variant[][] {{Variant.v_int(10)}}, contractState).newContractState;
+        contractState = executeSmartContract("addTokens", new Variant[][] {{v_int(10)}}, contractState).newContractState;
         ReturnValue rvTotalAfterSumming = executeSmartContract("getTotal", contractState);
         assertEquals(11, rvTotalAfterSumming.executeResults.get(0).result.getV_int_box());
 
-        contractState = executeSmartContract("addTokens", new Variant[][] {{Variant.v_int(-11)}}, contractState).newContractState;
+        contractState = executeSmartContract("addTokens", new Variant[][] {{v_int(-11)}}, contractState).newContractState;
         ReturnValue rvTotalAfterSubtraction = executeSmartContract("getTotal", contractState);
         assertEquals(0, rvTotalAfterSubtraction.executeResults.get(0).result.getV_int_box());
     }
 
     @Test
-    public void initiator_init() throws Exception {
+    public void initiator_init() {
         byte[] contractState = deploySmartContract().newContractState;
 
         ReturnValue result = executeSmartContract("getInitiatorAddress", contractState);
@@ -67,10 +68,11 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
 
+
     @Test
     public void get_methods_of_contract() {
 
-        List<MethodDescriptionData> expectedMethods = Arrays.asList(
+        List<MethodDescriptionData> expectedMethods = asList(
             new MethodDescriptionData("void", "initialize", new ArrayList<>(), new ArrayList<>()),
             new MethodDescriptionData(
                 "void",
@@ -97,15 +99,15 @@ public class ContractExecutorTest extends ServiceTest {
     public void multipleMethodCall() {
         byte[] contractState = deploySmartContract().newContractState;
 
-        ReturnValue singleCallResult = executeSmartContract("addTokens", new Variant[][] {{Variant.v_int(10)}}, contractState);
+        ReturnValue singleCallResult = executeSmartContract("addTokens", new Variant[][] {{v_int(10)}}, contractState);
 
         ReturnValue multiplyCallResult = executeSmartContract(
             "addTokens",
             new Variant[][] {
-                {Variant.v_int(10)},
-                {Variant.v_int(10)},
-                {Variant.v_int(10)},
-                {Variant.v_int(10)}
+                {v_int(10)},
+                {v_int(10)},
+                {v_int(10)},
+                {v_int(10)}
             },
             contractState);
 
@@ -120,5 +122,5 @@ public class ContractExecutorTest extends ServiceTest {
     public void compileClassCall() throws CompilationException, CompilationErrorException {
         ceService.compileClass(sourceCode);
     }
-
 }
+

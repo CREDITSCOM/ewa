@@ -8,10 +8,12 @@ import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.variant.VariantUtils;
 import com.credits.service.ServiceTest;
 import com.credits.service.contract.SmartContractConstants;
+import com.credits.service.contract.session.DeployContractSession;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -79,18 +81,20 @@ public class ContractExecutorUtilsTest extends ServiceTest {
         Assert.assertEquals(55, map.get("integerField").getFieldValue());
         Assert.assertEquals(5.55, map.get("doubleField").getFieldValue());
         Assert.assertEquals("some string value", map.get("stringField").getFieldValue());
-        Assert.assertEquals(5, ((Variant)((List)map.get("listIntegerField").getFieldValue()).get(0)).getFieldValue());
-        Assert.assertTrue(((Set)map.get("setIntegerField").getFieldValue()).contains(new Variant(Variant._Fields.V_INT_BOX, 5)));
-        Assert.assertEquals(new Variant(Variant._Fields.V_INT_BOX, 5),
-            ((Map)map.get("mapStringIntegerField").getFieldValue()).get(new Variant(Variant._Fields.V_STRING, "string key")));
+        Assert.assertEquals(5, ((Variant) ((List) map.get("listIntegerField").getFieldValue()).get(0)).getFieldValue());
+        Assert.assertTrue(((Set) map.get("setIntegerField").getFieldValue()).contains(new Variant(Variant._Fields.V_INT_BOX, 5)));
+        Assert.assertEquals(
+            new Variant(Variant._Fields.V_INT_BOX, 5),
+            ((Map) map.get("mapStringIntegerField").getFieldValue()).get(new Variant(Variant._Fields.V_STRING, "string key")));
 
         //Checks returning null if no public variables exist in the contract
         Assert.assertNull(ContractExecutorUtils.getContractVariables(instanceWithoutVariables));
     }
 
-    private Object getInstance(String source) throws Exception{
+    @SuppressWarnings("unchecked")
+    private Object getInstance(String source) throws Exception {
         CompilationUnit compilationUnit = InMemoryCompiler.compileSourceCode(source).getUnits().get(0);
-        SmartContractConstants.initSmartContractConstants(Thread.currentThread().getId(), "123", "123", 0);
+        SmartContractConstants.initSmartContractConstants(Thread.currentThread().getId(), new DeployContractSession(0, "123", "123", new ArrayList(){{add(null);}}, 0));
         Class<?> clazz = new BytecodeContractClassLoader().loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
         return clazz.newInstance();
     }
