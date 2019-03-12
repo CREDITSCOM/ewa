@@ -314,11 +314,11 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 } else {
                     returnVariantDataList[i] = invokeFunctionTask.get();
                 }
-                writeLog("Execute method " + methodName + " of smart contract" + contractAddress + " was successful");
+                writeLog("Execute method " + methodName + " of smart contract " + contractAddress + " was successful");
                 returnStatuses[i] = new APIResponse(SUCCESS_CODE, "success");
             } catch (TimeoutException ex) {
                 returnVariantDataList[i] = null;
-                String message = "Execute method " + methodName + " of smart contract" + contractAddress +
+                String message = "Execute method " + methodName + " of smart contract " + contractAddress +
                     " was stopped with timeout exception";
                 writeLog(message);
                 invokeFunctionThread.stop();
@@ -327,7 +327,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     throw new ContractExecutorException(message);
                 }
             } catch (Throwable e) {
-                writeLog("Execute method " + methodName + " of smart contract" + contractAddress +
+                writeLog("Execute method " + methodName + " of smart contract " + contractAddress +
                     " was stopped with exception" + e.getMessage());
                 returnVariantDataList[i] = null;
                 returnStatuses[i] = new APIResponse(ERROR_CODE, e.getMessage());
