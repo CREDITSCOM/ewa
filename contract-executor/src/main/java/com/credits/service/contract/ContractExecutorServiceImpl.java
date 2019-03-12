@@ -57,6 +57,7 @@ import static com.credits.utils.ContractExecutorServiceUtils.getArgTypes;
 import static com.credits.utils.ContractExecutorServiceUtils.initializeField;
 import static com.credits.utils.ContractExecutorServiceUtils.initializeSmartContractField;
 import static com.credits.utils.ContractExecutorServiceUtils.parseAnnotationData;
+import static com.credits.utils.ContractExecutorServiceUtils.writeLog;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
@@ -83,7 +84,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
     }
 
-
     @Override
     public ReturnValue execute(long accessId, byte[] initiatorAddress, byte[] contractAddress,
         List<ByteCodeObjectData> byteCodeObjectDataList, byte[] contractState, String methodName,
@@ -99,9 +99,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             initiatorAddressBase58 = Base58.encode(initiatorAddress);
             contractAddressBase58 = Base58.encode(contractAddress);
 
-
-
-            ByteArrayContractClassLoader classLoader = new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
+            ByteArrayContractClassLoader classLoader =
+                new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
 
             Class<?> contractClass =
                 ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
@@ -116,8 +115,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                     deserializeInstance(accessId, initiatorAddressBase58, contractAddressBase58, contractState,
                         classLoader, contractClass, externalContractsStateByteCode);
 
-                return executeSmartContract(methodName, paramsTable, contractAddressBase58,
-                    contractClass, instance, externalContractsStateByteCode, executionTime);
+                return executeSmartContract(methodName, paramsTable, contractAddressBase58, contractClass, instance,
+                    externalContractsStateByteCode, executionTime);
             } else {
                 return createNewSmartContractInstance(accessId, initiatorAddressBase58, contractAddressBase58,
                     contractClass);
@@ -132,12 +131,15 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private ReturnValue createNewSmartContractInstance(long accessId, String initiatorAddressBase58,
         String contractAddressBase58, Class<?> contractClass) throws InstantiationException, IllegalAccessException {
+        writeLog("Start create new Instance of smart contract " + contractAddressBase58);
         Object instance;
         initSessionSmartContractConstants(Thread.currentThread().getId(), initiatorAddressBase58, contractAddressBase58,
             accessId);
         instance = contractClass.newInstance();
-        return new ReturnValue(serialize(instance), null, null,
+        ReturnValue returnValue = new ReturnValue(serialize(instance), null, null,
             Collections.singletonList(new APIResponse(SUCCESS_CODE, "success")));
+        writeLog("End create new Instance of smart contract " + contractAddressBase58);
+        return returnValue;
     }
 
 
@@ -165,7 +167,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     @Override
     public List<MethodDescriptionData> getContractsMethods(List<ByteCodeObjectData> byteCodeObjectDataList) {
         requireNonNull(byteCodeObjectDataList, "bytecode of contract class is null");
-        ByteArrayContractClassLoader classLoader = new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
+        ByteArrayContractClassLoader classLoader =
+            new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
 
         Class<?> contractClass =
             ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
@@ -205,7 +208,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         requireNonNull(contractState, "contract state is null");
 
         if (contractState.length != 0) {
-            ByteArrayContractClassLoader classLoader = new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
+            ByteArrayContractClassLoader classLoader =
+                new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
 
 
             Class<?> contractClass =
@@ -240,7 +244,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         logger.info("Start execute method {} external smart contract {} from initiator {}",
             externalSmartContractAddress, initiatorAddress, externalSmartContractMethod);
 
-        ByteArrayContractClassLoader classLoader = new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
+        ByteArrayContractClassLoader classLoader =
+            new ByteArrayClassLoaderConstructor().getByteArrayContractClassLoader();
 
         Class<?> contractClass =
             ContractExecutorUtils.compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
@@ -263,18 +268,19 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         variantsParams[0] = params;
 
 
-        ReturnValue returnValue = executeSmartContract(externalSmartContractMethod, variantsParams,
-            externalSmartContractAddress, contractClass, instance, externalContractsStateByteCode, null);
+        ReturnValue returnValue =
+            executeSmartContract(externalSmartContractMethod, variantsParams, externalSmartContractAddress,
+                contractClass, instance, externalContractsStateByteCode, null);
 
         logger.info("Stop execute method {} external smart contract {} from initiator {}", externalSmartContractAddress,
             initiatorAddress, externalSmartContractMethod);
         return returnValue;
     }
 
-    private ReturnValue executeSmartContract(String methodName, Variant[][] paramsTable, String contractAddress, Class<?> contractClass, Object instance,
-        Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode, Long executionTime)
-        throws InterruptedException, java.util.concurrent.ExecutionException {
-
+    private ReturnValue executeSmartContract(String methodName, Variant[][] paramsTable, String contractAddress,
+        Class<?> contractClass, Object instance, Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode,
+        Long executionTime) throws InterruptedException, java.util.concurrent.ExecutionException {
+        writeLog("Start execute method " + methodName + " of smart contract" + contractAddress);
         int amountParamRows = 1;
         Variant[] params = null;
         if (paramsTable != null && paramsTable.length > 0) {
@@ -303,24 +309,26 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 FutureTask<VariantData> invokeFunctionTask = new FutureTask<>(invokeFunction);
                 invokeFunctionThread = new Thread(invokeFunctionTask);
                 executorService.submit(invokeFunctionThread);
-                logger.info("Start execute smart contract {}", contractAddress);
                 if (executionTime != null) {
                     returnVariantDataList[i] = invokeFunctionTask.get(executionTime, TimeUnit.MILLISECONDS);
                 } else {
                     returnVariantDataList[i] = invokeFunctionTask.get();
                 }
-                logger.info("Execute smart contract {} is ok", contractAddress);
+                writeLog("Execute method " + methodName + " of smart contract" + contractAddress + " was successful");
                 returnStatuses[i] = new APIResponse(SUCCESS_CODE, "success");
             } catch (TimeoutException ex) {
                 returnVariantDataList[i] = null;
-                logger.info("Execute smart contract {} has stopped with timeout exception", contractAddress);
+                String message = "Execute method " + methodName + " of smart contract" + contractAddress +
+                    " was stopped with timeout exception";
+                writeLog(message);
                 invokeFunctionThread.stop();
                 returnStatuses[i] = new APIResponse(ERROR_CODE, "Smart contract execution has timeout exception");
                 if (amountParamRows == 1) {
-                    throw new ContractExecutorException(
-                        "Execute smart contract" + contractAddress + "has stopped with timeout exception");
+                    throw new ContractExecutorException(message);
                 }
             } catch (Throwable e) {
+                writeLog("Execute method " + methodName + " of smart contract" + contractAddress +
+                    " was stopped with exception" + e.getMessage());
                 returnVariantDataList[i] = null;
                 returnStatuses[i] = new APIResponse(ERROR_CODE, e.getMessage());
                 if (amountParamRows == 1) {
@@ -337,12 +345,14 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     private Object deserializeInstance(long accessId, String initiatorAddressBase58, String contractAddressBase58,
         byte[] contractState, ByteArrayContractClassLoader classLoader, Class<?> contractClass,
         Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode) {
+        writeLog("Start deserialize smart contract with address " + contractAddressBase58);
         Object instance;
         instance = deserialize(contractState, classLoader);
         initializeField("initiator", initiatorAddressBase58, contractClass, instance);
         initializeField("externalContracts", externalContractsStateByteCode, contractClass, instance);
         initializeField("contractAddress", contractAddressBase58, contractClass, instance);
         initializeField("accessId", accessId, contractClass, instance);
+        writeLog("End deserialize smart contract with address " + contractAddressBase58);
         return instance;
     }
 

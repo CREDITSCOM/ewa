@@ -50,7 +50,7 @@ public class ContractExecutorHandlerTest {
 
     @BeforeClass
     public static void init() throws IOException, CompilationErrorException {
-        contractSourcecode = readSourceCode("com\\credits\\thrift\\Contract.java");
+        contractSourcecode = readSourceCode("com\\credits\\thrift\\MySmartContract.java");
 
         List<CompilationUnit> compilationUnits = compileSourceCode(contractSourcecode).getUnits();
         byteCodeObjects = compilationUnits.stream()
