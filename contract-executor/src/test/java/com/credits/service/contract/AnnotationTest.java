@@ -33,9 +33,9 @@ public class AnnotationTest extends ServiceTest {
         String getter = "@Getter()";
         String contractAnn = "@Contract(address=test2, method=notGetBalance)";
         String contractMethod = "@ContractMethod(id = 0)";
-        AnnotationData annotationData = parseAnnotationData(getter);
-        AnnotationData annotationData1 = parseAnnotationData(contractAnn);
-        AnnotationData annotationData2 = parseAnnotationData(contractMethod);
+        AnnotationData annotationData = parseAnnotationData(getter).get(0);
+        AnnotationData annotationData1 = parseAnnotationData(contractAnn).get(0);
+        AnnotationData annotationData2 = parseAnnotationData(contractMethod).get(0);
         Assert.assertEquals(annotationData, new AnnotationData("Getter", new HashMap<>()));
         Assert.assertEquals(annotationData1, new AnnotationData("Contract", new HashMap<String, String>() {{
             put("address", "test2");
@@ -53,6 +53,8 @@ public class AnnotationTest extends ServiceTest {
         MethodDescriptionData addToken = createAddTokenMethodDescriptionData(getterAnnotation);
         MethodDescriptionData testToken = createTestTokenMethodDescriptionData();
         MethodDescriptionData testNotToken = createTestNotTokenMethodDescriptionData();
+        MethodDescriptionData testMultiple1 = createTestMultiple1MethodDescriptionData();
+        MethodDescriptionData testMultiple2 = createTestMultiple2MethodDescriptionData();
 
 
         List<MethodDescriptionData> contractsMethods = ceService.getContractsMethods(byteCodeObjectDataList);
@@ -62,9 +64,46 @@ public class AnnotationTest extends ServiceTest {
         Assert.assertEquals(findmethod(contractsMethods, "addToken"), addToken);
         Assert.assertEquals(findmethod(contractsMethods, "testToken"), testToken);
         Assert.assertEquals(findmethod(contractsMethods, "testNotToken"), testNotToken);
+        Assert.assertEquals(findmethod(contractsMethods, "testMultiple1"), testMultiple1);
+        Assert.assertEquals(findmethod(contractsMethods, "testMultiple2"), testMultiple2);
 
 
     }
+
+    private MethodDescriptionData createTestMultiple1MethodDescriptionData() {
+        ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
+        addTokensAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
+            put("address", "test1");
+            put("method", "notGet");
+        }}));
+        addTokensAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
+            put("address", "test2");
+            put("method", "notGetBalance");
+        }}));
+
+
+        return new MethodDescriptionData("void", "testMultiple1",
+            Collections.singletonList(new MethodArgumentData("int", "amount", new ArrayList<>())),
+            addTokensAnnotationData);
+    }
+
+    private MethodDescriptionData createTestMultiple2MethodDescriptionData() {
+        ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
+        addTokensAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
+            put("address", "test3");
+            put("method", "notGetA");
+        }}));
+        addTokensAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
+            put("address", "test2");
+            put("method", "notGetBalance");
+        }}));
+
+
+        return new MethodDescriptionData("void", "testMultiple2",
+            Collections.singletonList(new MethodArgumentData("int", "amount", new ArrayList<>())),
+            addTokensAnnotationData);
+    }
+
 
     public MethodDescriptionData createInitializeMethodDescriptionData(AnnotationData getterAnnotation) {
         return new MethodDescriptionData("void", "initialize", new ArrayList<>(),

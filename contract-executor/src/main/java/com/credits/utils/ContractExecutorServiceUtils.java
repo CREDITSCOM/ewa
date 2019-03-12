@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,6 +64,12 @@ public class ContractExecutorServiceUtils {
         return retVal;
     }
 
+    private static final String LINE = "-----------------------------------------------------";
+    public static void writeLog(String s) {
+        logger.info("\n{}\n-----------{}---------------\n{}\n", LINE, s, LINE);
+    }
+
+
     public static Class[] getArgTypes(Variant[] params) {
         Class[] argTypes = new Class[params.length];
 
@@ -92,25 +100,38 @@ public class ContractExecutorServiceUtils {
         }
     }
 
-    public static AnnotationData parseAnnotationData(String annotation) {
-        String name = null;
-        Map<String, String> annotationArguments = new HashMap<>();
-        new AnnotationData(name, annotationArguments);
-
+    public static List<AnnotationData> parseAnnotationData(String annotation) {
+        List<AnnotationData> annotationDataList = new ArrayList<>();
         if (annotation.contains("@")) {
-            int paramIndex = annotation.indexOf("(");
-            name = annotation.substring(1, paramIndex);
-            annotation = annotation.substring(paramIndex+1,annotation.length()-1);
-            if(annotation.length()>0) {
-                String regex = "([A-Za-z0-9]+) *= *([A-Za-z0-9]+)";
-                Pattern pattern = Pattern.compile(regex);
-                Matcher matcher = pattern.matcher(annotation);
-                while (matcher.find()) {
-                    annotationArguments.put(matcher.group(1),matcher.group(2));
+            String[] splitArray = annotation.split("@");
+            if(splitArray.length==2) {
+                annotationDataList.addAll(parseAnnotation(splitArray[1]));
+            } else if(splitArray.length>2){
+                for (int i = 2; i < splitArray.length; i++) {
+                    annotationDataList.addAll(parseAnnotation(splitArray[i]));
                 }
             }
         }
-        return new AnnotationData(name,annotationArguments);
+        return annotationDataList;
+    }
+
+    private static List<AnnotationData> parseAnnotation(String annotation) {
+        List<AnnotationData> annotationDataList = new ArrayList<>();
+        Map<String, String> annotationArguments = new HashMap<>();
+        int paramIndex = annotation.indexOf("(");
+        String name = annotation.substring(0, paramIndex);
+        annotation = annotation.substring(paramIndex + 1, annotation.length() - 1);
+        if (annotation.length() > 0) {
+            String regex = "([A-Za-z0-9]+) *= *([A-Za-z0-9]+)";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(annotation);
+            while (matcher.find()) {
+                annotationArguments.put(matcher.group(1), matcher.group(2));
+            }
+        }
+        AnnotationData annotationData = new AnnotationData(name, annotationArguments);
+        annotationDataList.add(annotationData);
+        return annotationDataList;
     }
 
 }
