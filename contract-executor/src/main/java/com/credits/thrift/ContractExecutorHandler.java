@@ -73,7 +73,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             if (returnValue.getVariantsList() != null) {
                 result.ret_val = returnValue.getVariantsList().get(0);
             }
-            result.externalContractsState = returnValue.getExternalContractsState();
+            result.externalContractsState = returnValue.getExternalContractsStateForNode();
             logger.info(
                 "\n<--executeByteCode \ncontractState length= {}\ncontractState hash= {}" + "\n-------------------",
                 result.invokedContractState.array().length, result.invokedContractState.hashCode());
@@ -87,6 +87,9 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             result.setStatus(new APIResponse(ERROR_CODE, e.getMessage()));
             logger.info("\n<-- Error executeByteCode  result \n{}", result.getStatus());
             writeLog("End executeByteCode with ERROR");
+        }
+        if(Arrays.equals(invokedContract.getContractState(), result.getInvokedContractState())) {
+            logger.debug("Initial state is equal to received state");
         }
         return result;
     }

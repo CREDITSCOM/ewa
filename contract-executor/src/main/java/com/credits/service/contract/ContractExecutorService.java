@@ -38,5 +38,5 @@ public interface ContractExecutorService {
     ReturnValue executeExternalSmartContract(long accessId, String initiatorAddress,
         String externalSmartContractAddress, String externalSmartContractMethod,
         List<Object> externalSmartContractParams, List<ByteCodeObjectData> byteCodeObjectDataList, byte[] contractState,
-        Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode) throws ExecutionException, InterruptedException;
+        Map<String, SmartContractGetResultData> externalContractsStateByteCode) throws ExecutionException, InterruptedException;
 }

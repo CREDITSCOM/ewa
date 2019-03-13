@@ -18,6 +18,7 @@ import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.variant.VariantConverter;
 import com.credits.general.util.variant.VariantUtils;
 import com.credits.pojo.MethodArgumentsValuesData;
+import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.secure.PermissionManager;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
@@ -109,7 +110,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             if (contractState != null && contractState.length != 0) {
 
-                Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode = new HashMap<>();
+                Map<String, SmartContractGetResultData> externalContractsStateByteCode = new HashMap<>();
 
                 Object instance =
                     deserializeInstance(accessId, initiatorAddressBase58, contractAddressBase58, contractState,
@@ -235,7 +236,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public ReturnValue executeExternalSmartContract(long accessId, String initiatorAddress,
         String externalSmartContractAddress, String externalSmartContractMethod,
         List<Object> externalSmartContractParams, List<ByteCodeObjectData> byteCodeObjectDataList, byte[] contractState,
-        Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode) throws ExecutionException, InterruptedException {
+        Map<String, SmartContractGetResultData> externalContractsStateByteCode) throws ExecutionException, InterruptedException {
 
 
         if (byteCodeObjectDataList.size() == 0) {
@@ -278,7 +279,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     private ReturnValue executeSmartContract(String methodName, Variant[][] paramsTable, String contractAddress,
-        Class<?> contractClass, Object instance, Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode,
+        Class<?> contractClass, Object instance, Map<String, SmartContractGetResultData> externalContractsStateByteCode,
         Long executionTime) throws InterruptedException, java.util.concurrent.ExecutionException {
         writeLog("Start execute method " + methodName + " of smart contract" + contractAddress);
         int amountParamRows = 1;
@@ -344,7 +345,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private Object deserializeInstance(long accessId, String initiatorAddressBase58, String contractAddressBase58,
         byte[] contractState, ByteArrayContractClassLoader classLoader, Class<?> contractClass,
-        Map<ByteBuffer, ByteBuffer> externalContractsStateByteCode) {
+        Map<String, SmartContractGetResultData> externalContractsStateByteCode) {
         writeLog("Start deserialize smart contract with address " + contractAddressBase58);
         Object instance;
         instance = deserialize(contractState, classLoader);

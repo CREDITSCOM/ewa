@@ -25,7 +25,7 @@ public abstract class SmartContract implements Serializable {
 
     protected static NodeApiExecInteractionService service;
     protected static ContractExecutorServiceImpl contractExecutorService;
-    protected transient Map<ByteBuffer, ByteBuffer> externalContracts;
+    protected transient Map<String, SmartContractGetResultData> externalContracts;
     protected static ExecutorService cachedPool;
     protected final transient long accessId;
     protected final transient String initiator;
@@ -72,20 +72,24 @@ public abstract class SmartContract implements Serializable {
     final protected Object invokeExternalContract(String externalSmartContractAddress,
         String externalSmartContractMethod, List<Object> externalSmartContractParams)
         throws ExecutionException, InterruptedException {
-        SmartContractGetResultData externalSmartContractByteCode =
-            callService(() -> service.getExternalSmartContractByteCode(accessId, externalSmartContractAddress));
+        SmartContractGetResultData externalSmartContractData;
+        if (externalContracts.get(externalSmartContractAddress) == null) {
+            externalSmartContractData =
+                callService(() -> service.getExternalSmartContractByteCode(accessId, externalSmartContractAddress));
+        } else {
+            externalSmartContractData = externalContracts.get(externalSmartContractAddress);
+        }
 
         ReturnValue returnValue =
             contractExecutorService.executeExternalSmartContract(accessId, initiator, externalSmartContractAddress,
                 externalSmartContractMethod, externalSmartContractParams,
-                externalSmartContractByteCode.getByteCodeObjects(), externalSmartContractByteCode.getContractState(),
+                externalSmartContractData.getByteCodeObjects(), externalSmartContractData.getContractState(),
                 externalContracts);
-        if (!Arrays.equals(externalSmartContractByteCode.getContractState(), returnValue.getContractState()) &&
-            !externalSmartContractByteCode.isStateCanModify()) {
+        if (!Arrays.equals(externalSmartContractData.getContractState(), returnValue.getContractState()) &&
+            !externalSmartContractData.isStateCanModify()) {
             throw new ContractExecutorException("Contract state can not be modify");
         }
-        externalContracts.put(ByteBuffer.wrap(GeneralConverter.decodeFromBASE58(externalSmartContractAddress)),
-            ByteBuffer.wrap(returnValue.getContractState()));
+        externalContracts.put(externalSmartContractAddress, externalSmartContractData);
         if (returnValue.getVariantsList() != null) {
             return variantToObject(returnValue.getVariantsList().get(0));
         } else {
