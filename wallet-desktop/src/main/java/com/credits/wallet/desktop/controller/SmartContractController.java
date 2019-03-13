@@ -603,7 +603,7 @@ public class SmartContractController extends AbstractController {
                 ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(), //TODO uncomment
                         resultData.getLeft(), session);
                 TransactionFlowResultData transactionFlowResultData = resultData.getRight();
-                FormUtils.showPlatformInfo(transactionFlowResultData.getMessage());
+                FormUtils.showPlatformInfo(transactionFlowResultData.getCode().toString()+"\n"+transactionFlowResultData.getContractResult());
             }
 
             @Override
