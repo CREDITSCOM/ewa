@@ -6,6 +6,7 @@ import com.credits.client.executor.thrift.generated.ExecuteByteCodeMultipleResul
 import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
 import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
 import com.credits.client.executor.thrift.generated.GetContractVariablesResult;
+import com.credits.client.executor.thrift.generated.GetterMethodResult;
 import com.credits.client.executor.thrift.generated.SmartContractBinary;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
@@ -19,7 +20,6 @@ import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.service.contract.session.DeployContractSession;
 import com.credits.service.contract.session.InvokeMethodSession;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
-import org.apache.thrift.TException;
 import org.apache.thrift.TUnion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,10 +62,10 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         String method,
         List<Variant> params,
         long executionTime,
-        byte version) throws TException {
+        byte version) {
 
         logger.debug(
-            "<-- execute(" +
+            "\n<-- execute(" +
                 "\naccessId = {}," +
                 "\naddress = {}," +
                 "\nbyteCode length= {}, " +
@@ -104,7 +104,6 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                             executionTime));
 
 
-            //            ReturnValue returnValue = service.execute(accessId, initiatorAddress.array(), invokedContract.contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(invokedContract.byteCodeObjects), invokedContract.contractState.array(), method, new Variant[][] {paramsArray},executionTime);
             result.invokedContractState = ByteBuffer.wrap(returnValue.newContractState);
             if (returnValue.executeResults != null) {
                 result.ret_val = returnValue.executeResults.get(0).result;
@@ -118,57 +117,83 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 (map1, map2) -> map1);
 
 
-            logger.debug("executeByteCode -->\ncontractState length= {}\ncontractState hash= {}\nresponse= {}",
+            logger.debug("\nexecuteByteCode -->\ncontractState length= {}\ncontractState hash= {}\nresponse= {}",
                          result.invokedContractState.array().length, result.invokedContractState.hashCode(), result);
         } catch (ContractExecutorException e) {
             result.setStatus(new APIResponse(ERROR_CODE, e.getMessage()));
-            logger.debug("executeByteCode --> {}", result);
+            logger.debug("executeByteCode error --> {}", result);
         }
-        logger.debug("execute --> contractStateHash {} {}", Arrays.hashCode(result.getInvokedContractState()), result);
+        logger.debug("\nexecute --> contractStateHash {} {}", Arrays.hashCode(result.getInvokedContractState()), result);
         return result;
     }
 
     @Override
     public ExecuteByteCodeMultipleResult executeByteCodeMultiple(
-        long accessId, ByteBuffer initiatorAddress,
-        SmartContractBinary invokedContract, String method, List<List<Variant>> params, long executionTime,
+        long accessId,
+        ByteBuffer initiatorAddress,
+        SmartContractBinary invokedContract,
+        String method,
+        List<List<Variant>> params,
+        long executionTime,
         byte version) {
-        //        writeLog("Start execute code multiple");
-        //        Variant[][] paramsArray = null;
-        //        if (params != null) {
-        //            paramsArray = new Variant[params.size()][];
-        //            for (int i = 0; i < params.size(); i++) {
-        //                List<Variant> list = params.get(i);
-        //                paramsArray[i] = list.toArray(new Variant[0]);
-        //            }
-        //        }
-        //
-        //        logger.info(String.format(
-        //            "<-- executeByteCodeMultiple(\naddress = %s, \nbyteCode length= %d, \ncontractState length= %d, \ncontractState hash= %s \nmethod = %s, \nparams = %s.",
-        //            encodeToBASE58(initiatorAddress.array()), invokedContract.getByteCodeObjects().size(), invokedContract.contractState.array().length,
-        //            invokedContract.contractState.hashCode(), method, Arrays.toString(paramsArray)));
-        //
-        ExecuteByteCodeMultipleResult response = new ExecuteByteCodeMultipleResult();
-        //        try {
-        //            ReturnValue returnValue =
-        //                service.execute(accessId, initiatorAddress.array(), invokedContract.contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(invokedContract.getByteCodeObjects()), invokedContract.contractState.array(), method, paramsArray,
-        //                    executionTime);
-        //            List<GetterMethodResult> getterResults = new ArrayList<>(returnValue.getVariantsList().size());
-        //            List<Variant> variantsList = returnValue.getVariantsList();
-        //            List<APIResponse> statusesList = returnValue.getStatusesList();
-        //            for (int i = 0; i < variantsList.size(); i++) {
-        //                GetterMethodResult getterMethodResult = new GetterMethodResult(statusesList.get(i));
-        //                getterMethodResult.setRet_val(variantsList.get(i));
-        //                getterResults.add(getterMethodResult);
-        //            }
-        //            response.setResults(getterResults);
-        //            response.setStatus(new APIResponse(SUCCESS_CODE, "success"));
-        //        } catch (Throwable e) {
-        //            response.setStatus(new APIResponse(ERROR_CODE, e.getMessage()));
-        //        }
-        //        logger.info("executeByteCodeMultiple -->\nresponse= {}", response);
 
-        return response;
+        logger.debug(
+            "\n<-- executeByteCodeMultiple(" +
+                "\naccessId = {}," +
+                "\naddress = {}," +
+                "\nbyteCode length= {}, " +
+                "\ncontractState length= {}, " +
+                "\ncontractState hash= {} " +
+                "\nmethod = {}, " +
+                "\nparams = {}.",
+            accessId,
+            encodeToBASE58(initiatorAddress.array()),
+            invokedContract.byteCodeObjects.size(),
+            invokedContract.contractState.array().length,
+            invokedContract.contractState.hashCode(),
+            method,
+            params == null ? "no params" : params.toString());
+        Variant[][] paramsArray = null;
+        if (params != null) {
+            paramsArray = new Variant[params.size()][];
+            for (int i = 0; i < params.size(); i++) {
+                List<Variant> list = params.get(i);
+                paramsArray[i] = list.toArray(new Variant[0]);
+            }
+        }
+
+        ExecuteByteCodeMultipleResult byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(new APIResponse(SUCCESS_CODE, "success"), null);
+        try {
+            ReturnValue returnValue =
+                method.isEmpty() ?
+                    service.deploySmartContract(new DeployContractSession(
+                        accessId,
+                        encodeToBASE58(initiatorAddress.array()),
+                        encodeToBASE58(invokedContract.contractAddress.array()),
+                        byteCodeObjectsToByteCodeObjectsData(invokedContract.byteCodeObjects),
+                        executionTime))
+                    :
+                        service.executeSmartContract(new InvokeMethodSession(
+                            accessId,
+                            encodeToBASE58(initiatorAddress.array()),
+                            encodeToBASE58(invokedContract.contractAddress.array()),
+                            byteCodeObjectsToByteCodeObjectsData(invokedContract.byteCodeObjects),
+                            invokedContract.contractState.array(),
+                            method,
+                            paramsArray,
+                            executionTime));
+
+            byteCodeMultipleResult.results = returnValue.executeResults.stream().map(rv -> {
+                final GetterMethodResult getterMethodResult = new GetterMethodResult(rv.status);
+                getterMethodResult.ret_val = rv.result;
+                return getterMethodResult;
+            }).collect(Collectors.toList());
+        } catch (ContractExecutorException e) {
+            byteCodeMultipleResult.setStatus(new APIResponse(ERROR_CODE, e.getMessage()));
+            logger.debug("executeByteCodeMultiple error --> {}", byteCodeMultipleResult);
+        }
+        logger.debug("\nexecuteByteCodeMultiple --> {}", byteCodeMultipleResult);
+        return byteCodeMultipleResult;
     }
 
     @Override
