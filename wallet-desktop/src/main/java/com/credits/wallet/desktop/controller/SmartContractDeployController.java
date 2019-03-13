@@ -248,7 +248,8 @@ public class SmartContractDeployController extends AbstractController {
                 StringSelection selection = new StringSelection(target);
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selection, selection);
-                FormUtils.showPlatformInfo(String.format("%s%n%nSmart-contract address%n%n%s%n%ncopied to clipboard", target));
+                FormUtils.showPlatformInfo(String.format("%s%n%nSmart-contract address%n%n%s%n%ncopied to clipboard",
+                    transactionFlowResultData.getMessage(), target));
                 if (tokenInfoData != null) {
                     saveSmartInTokenList(session.coinsKeeper, tokenInfoData.name, tokenInfoData.balance,
                             tokenInfoData.address);
