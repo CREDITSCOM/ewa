@@ -26,10 +26,12 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.credits.general.util.GeneralConverter.byteCodeObjectsToByteCodeObjectsData;
+import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
 import static com.credits.ioc.Injector.INJECTOR;
 import static java.util.stream.Collectors.toList;
@@ -53,8 +55,14 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     @Override
     public ExecuteByteCodeResult executeByteCode(
-        long accessId, ByteBuffer initiatorAddress,
-        SmartContractBinary invokedContract, String method, List<Variant> params, long executionTime, byte version) throws TException {
+        long accessId,
+        ByteBuffer initiatorAddress,
+        SmartContractBinary invokedContract,
+        String method,
+        List<Variant> params,
+        long executionTime,
+        byte version) throws TException {
+
         logger.debug(
             "<-- execute(" +
                 "\naccessId = {}," +
@@ -100,7 +108,14 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             if (returnValue.executeResults != null) {
                 result.ret_val = returnValue.executeResults.get(0).result;
             }
-            result.externalContractsState = null; //fixme init external contract state
+            result.externalContractsState = returnValue.externalContractStates.keySet().stream().reduce(
+                new HashMap<>(),
+                (newMap, address) -> {
+                    newMap.put(ByteBuffer.wrap(decodeFromBASE58(address)), returnValue.externalContractStates.get(address));
+                    return newMap;
+                },
+                (map1, map2) -> map1);
+
 
             logger.debug("executeByteCode -->\ncontractState length= {}\ncontractState hash= {}\nresponse= {}",
                          result.invokedContractState.array().length, result.invokedContractState.hashCode(), result);
@@ -128,17 +143,15 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         //        }
         //
         //        logger.info(String.format(
-        //            "\n--> executeByteCodeMultiple(\naddress = %s, \nbyteCode length= %d, \ncontractState length= %d, \ncontractState hash= %s \nmethod = %s, \nparams = %s.",
-        //            encodeToBASE58(initiatorAddress.array()), invokedContract.getByteCodeObjects().size(),
-        //            invokedContract.contractState.array().length, invokedContract.contractState.hashCode(), method,
-        //            Arrays.toString(paramsArray)));
+        //            "<-- executeByteCodeMultiple(\naddress = %s, \nbyteCode length= %d, \ncontractState length= %d, \ncontractState hash= %s \nmethod = %s, \nparams = %s.",
+        //            encodeToBASE58(initiatorAddress.array()), invokedContract.getByteCodeObjects().size(), invokedContract.contractState.array().length,
+        //            invokedContract.contractState.hashCode(), method, Arrays.toString(paramsArray)));
         //
         ExecuteByteCodeMultipleResult response = new ExecuteByteCodeMultipleResult();
         //        try {
         //            ReturnValue returnValue =
-        //                service.execute(accessId, initiatorAddress.array(), invokedContract.contractAddress.array(),
-        //                    GeneralConverter.byteCodeObjectsToByteCodeObjectsData(invokedContract.getByteCodeObjects()),
-        //                    invokedContract.contractState.array(), method, paramsArray, executionTime);
+        //                service.execute(accessId, initiatorAddress.array(), invokedContract.contractAddress.array(), GeneralConverter.byteCodeObjectsToByteCodeObjectsData(invokedContract.getByteCodeObjects()), invokedContract.contractState.array(), method, paramsArray,
+        //                    executionTime);
         //            List<GetterMethodResult> getterResults = new ArrayList<>(returnValue.getVariantsList().size());
         //            List<Variant> variantsList = returnValue.getVariantsList();
         //            List<APIResponse> statusesList = returnValue.getStatusesList();
@@ -152,8 +165,8 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         //        } catch (Throwable e) {
         //            response.setStatus(new APIResponse(ERROR_CODE, e.getMessage()));
         //        }
-        //        logger.info("\n<--executeByteCodeMultiple\nresponse= {}", response);
-        //        writeLog("End execute code multiple");
+        //        logger.info("executeByteCodeMultiple -->\nresponse= {}", response);
+
         return response;
     }
 
