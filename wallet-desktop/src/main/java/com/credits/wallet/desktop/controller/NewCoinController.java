@@ -2,7 +2,9 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Callback;
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
+import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractsUtils;
 import javafx.fxml.FXML;
@@ -24,6 +26,7 @@ public class NewCoinController extends AbstractController {
     private static final String ERR_COIN = "You must enter coin mnemonic";
     private static final String ERR_TOKEN = "You must enter token";
     private static final String ERR_COIN_DUPLICATE = "Coin already exists";
+    private static final String THIS_NAME_IS_FORBIDDEN = "This name is forbidden";
 
     @FXML
     private TextField tokenField;
@@ -58,6 +61,10 @@ public class NewCoinController extends AbstractController {
             FormUtils.validateField(coinField, coinErrorLabel, ERR_COIN, isValidationSuccessful);
         }
 
+        if(coinName.toLowerCase().equals("credits") || coinName.toLowerCase().equals("cs")) {
+            FormUtils.validateField(coinField, coinErrorLabel, THIS_NAME_IS_FORBIDDEN, isValidationSuccessful);
+        }
+
         if (smartContractAddress.isEmpty()) {
             FormUtils.validateField(tokenField, tokenErrorLabel, ERR_TOKEN, isValidationSuccessful);
         }
@@ -82,7 +89,8 @@ public class NewCoinController extends AbstractController {
     }
 
     public void addSmartContractTokenBalance(String coinName, String smartContractAddress) {
-        session.contractInteractionService.getSmartContractBalance(smartContractAddress, new Callback<BigDecimal>() {
+/*
+        AppState.nodeApiService.getSmartContractBalance(smartContractAddress, new Callback<BigDecimal>() {
             @Override
             public void onSuccess(BigDecimal balance) throws CreditsException {
                 SmartContractsUtils.saveSmartInTokenList(session.coinsKeeper,coinName, balance, smartContractAddress);
@@ -96,6 +104,7 @@ public class NewCoinController extends AbstractController {
                 FormUtils.showError("Coin can't created. Reason: " + e.getMessage());
             }
         });
+*/
     }
 
     @Override
