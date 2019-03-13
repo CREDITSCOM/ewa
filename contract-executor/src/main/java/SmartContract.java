@@ -24,9 +24,9 @@ public abstract class SmartContract implements Serializable {
 
     private static NodeApiExecInteractionService nodeApiService;
     private static ContractExecutorServiceImpl contractExecutorService;
+    private static ExecutorService cachedPool;
     private transient Map<String, ByteBuffer> externalContractsStates;
 
-    private static ExecutorService cachedPool;
     protected final transient long accessId;
     protected final transient String initiator;
     protected final String contractAddress;
@@ -41,7 +41,7 @@ public abstract class SmartContract implements Serializable {
 
     final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {
         callService(() -> {
-            nodeApiService.sendTransaction(contractAddress, target, amount, fee, userData);
+            nodeApiService.sendTransaction(accessId, contractAddress, target, amount, fee, userData);
             return null;
         });
     }
