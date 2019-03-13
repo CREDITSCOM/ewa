@@ -11,7 +11,8 @@ public class SmartContractGetResultData extends ApiResponseData {
     private static final long serialVersionUID = 4691482244448740351L;
 
     private final List<ByteCodeObjectData> byteCodeObjects;
-    private final byte[] contractState;
+
+    private byte[] contractState;
     private final boolean stateCanModify;
 
     public SmartContractGetResultData(ApiResponseData apiResponseData, List<ByteCodeObjectData> byteCodeObjects,
@@ -20,6 +21,10 @@ public class SmartContractGetResultData extends ApiResponseData {
         this.byteCodeObjects = byteCodeObjects;
         this.contractState = contractState;
         this.stateCanModify = stateCanModify;
+    }
+
+    public void setContractState(byte[] contractState) {
+        this.contractState = contractState;
     }
 
     @Override
