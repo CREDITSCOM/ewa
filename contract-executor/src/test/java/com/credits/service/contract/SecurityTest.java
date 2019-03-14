@@ -1,7 +1,6 @@
 package com.credits.service.contract;
 
 import com.credits.exception.ContractExecutorException;
-import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.service.ServiceTest;
 import org.junit.Before;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import static com.credits.general.thrift.generated.Variant._Fields.V_INT;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
@@ -38,8 +36,8 @@ public class SecurityTest extends ServiceTest {
     @Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-//            {"getBalance", null, false},
-            {"openSocket",  new Variant(V_INT, 5555), false},
+            //            {"getBalance", null, false},
+            {"openSocket", new Variant(V_INT, 5555), false},
             {"setTotal", new Variant(V_INT, 1000), false},
             {"getTotal", null, false},
             {"createFile", null, false},
@@ -49,25 +47,26 @@ public class SecurityTest extends ServiceTest {
         });
     }
 
-    List<ByteCodeObjectData> byteCodeObjectData;
     byte[] contractState;
+
+    public SecurityTest() {
+        super("/securityTest/MySmartContract.java");
+    }
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        String sourceCode = "/securityTest/MySmartContract.java";
-        byteCodeObjectData = compileSourceCodeFromFile(sourceCode);
-
-        contractState = ceService.execute(0, initiatorAddress, contractAddress, byteCodeObjectData, null, null, null,500L).getContractState();
+        contractState = deploySmartContract().newContractState;
     }
 
     @Test
     public void test() {
         try {
-            ceService.execute(0, initiatorAddress, contractAddress,
-                byteCodeObjectData, contractState, methodName, arg != null ? new Variant[][] {{arg}} : new Variant[][]{{}},500L);
+            executeSmartContract(
+                methodName,
+                arg != null ? new Variant[][] {{arg}} : new Variant[][] {{}},
+                contractState);
         } catch (ContractExecutorException e) {
             LOGGER.error(e.getMessage());
             return;

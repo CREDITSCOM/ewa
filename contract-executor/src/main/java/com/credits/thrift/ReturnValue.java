@@ -1,78 +1,58 @@
 package com.credits.thrift;
 
-import com.credits.general.thrift.generated.APIResponse;
-import com.credits.general.thrift.generated.Variant;
-import com.credits.general.util.GeneralConverter;
-import com.credits.pojo.apiexec.SmartContractGetResultData;
+import com.credits.service.contract.SmartContractMethodResult;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class ReturnValue {
-    private byte[] contractState;
-    private List<Variant> variants;
-    private Map<String, SmartContractGetResultData> externalContracts;
-    private List<APIResponse> statuses;
+    public byte[] newContractState;
+    public final List<SmartContractMethodResult> executeResults;
+    public final Map<String,ByteBuffer> externalContractStates;
 
-    public ReturnValue(byte[] contractState, List<Variant> variant, Map<String, SmartContractGetResultData> externalContracts, List<APIResponse> statuses) {
-        this.externalContracts = externalContracts;
-        this.contractState = contractState;
-        this.variants = variant;
-        this.statuses = statuses;
+    public ReturnValue(byte[] newContractState, List<SmartContractMethodResult> executeResults, Map<String,ByteBuffer> externalContractStates) {
+        this.newContractState = newContractState;
+        this.externalContractStates = externalContractStates;
+        this.executeResults = executeResults;
     }
 
-    public void setVariants(List<Variant> variants) {
-        this.variants = variants;
-    }
-
-    public Map<String, SmartContractGetResultData> getExternalContracts() {
-        return externalContracts;
-    }
-
-    public Map<ByteBuffer, ByteBuffer> getExternalContractsStateForNode() {
-        if(externalContracts!=null) {
-            Map<ByteBuffer, ByteBuffer> externalContractStates = new HashMap<>();
-            externalContracts.forEach((key,value)->{
-                ByteBuffer contractAddress = ByteBuffer.wrap(GeneralConverter.decodeFromBASE58(key));
-                ByteBuffer contractState = ByteBuffer.wrap(value.getContractState());
-                externalContractStates.put(contractAddress,contractState);
-            });
-            return externalContractStates;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
         }
-        return null;
+        if (!(o instanceof ReturnValue)) {
+            return false;
+        }
+
+        ReturnValue that = (ReturnValue) o;
+
+        if (!Arrays.equals(newContractState, that.newContractState)) {
+            return false;
+        }
+        if (executeResults != null ? !executeResults.equals(that.executeResults) : that.executeResults != null) {
+            return false;
+        }
+        return externalContractStates != null ? externalContractStates.equals(that.externalContractStates) : that.externalContractStates == null;
     }
 
-    public void setExternalContracts(Map<String, SmartContractGetResultData> externalContracts) {
-        this.externalContracts = externalContracts;
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(newContractState);
+        result = 31 * result + (executeResults != null ? executeResults.hashCode() : 0);
+        result = 31 * result + (externalContractStates != null ? externalContractStates.hashCode() : 0);
+        return result;
     }
 
-    public List<APIResponse> getStatuses() {
-        return statuses;
-    }
-
-    public byte[] getContractState() {
-        return contractState;
-    }
-
-    public void setContractState(byte[] contractState) {
-        this.contractState = contractState;
-    }
-
-    public List<Variant> getVariantsList() {
-        return variants;
-    }
-
-    public void setVariant(List<Variant> variant) {
-        this.variants = variant;
-    }
-
-    public List<APIResponse> getStatusesList() {
-        return statuses;
-    }
-
-    public void setStatuses(List<APIResponse> statuses) {
-        this.statuses = statuses;
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ReturnValue{");
+        sb.append("newContractState=").append(Arrays.toString(newContractState));
+        sb.append(", executeResults=").append(executeResults);
+        sb.append(", externalContractStates=").append(externalContractStates);
+        sb.append('}');
+        return sb.toString();
     }
 }

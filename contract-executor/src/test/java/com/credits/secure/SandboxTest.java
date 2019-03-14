@@ -18,36 +18,40 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.fail;
 
 
+@Ignore
 public class SandboxTest {
 
-    @Test(expected = SecurityException.class)
+    @Test
     public void confineTest() throws IOException {
         UnsafeClass unsafeClass = new UnsafeClass();
+
+        unsafeClass.openSocket(1500);
+        Permissions permissions = new Permissions();
+        Sandbox.confine(unsafeClass.getClass(), permissions);
+
         try {
             unsafeClass.openSocket(1500);
         } catch (SecurityException ignored) {
-            fail();
+            return;
         }
-
-        Permissions permissions = new Permissions();
-        Sandbox.confine(unsafeClass.getClass(), permissions);
-        unsafeClass.openSocket(1500);
+        fail("UnsafeClass can use socket");
     }
 
-    @Test(expected = SecurityException.class)
-    @Ignore
+    @Test
     public void getPermission() {
         UnsafeClass unsafeClass = new UnsafeClass();
 
         Sandbox.confine(unsafeClass.getClass(), new Permissions());
-
-        Permissions permissions = new Permissions();
-        permissions.add(new AllPermission());
-        Sandbox.confine(unsafeClass.getClass(), permissions);
+        unsafeClass.setValue(10);
+        try {
+            unsafeClass.addMorePermissions();
+        } catch (SecurityException e) {
+            return;
+        }
+        fail("UnsafeClass add yourself permissions");
     }
 
     @Test
-    @Ignore
     public void callChildMethod() throws Exception {
         String appPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 
@@ -61,7 +65,6 @@ public class SandboxTest {
     }
 
     @Test(expected = SecurityException.class)
-    @Ignore
     public void reflectionUse() throws InstantiationException, IllegalAccessException {
         UnsafeClass unsafeClass = new UnsafeClass();
         Sandbox.confine(unsafeClass.getClass(), new Permissions());
@@ -85,7 +88,6 @@ public class SandboxTest {
     }
 
     @Test
-    @Ignore
     public void threadSafetyTest() throws InterruptedException {
         int amountThreads = 10_000;
         CountDownLatch count = new CountDownLatch(amountThreads);
@@ -120,7 +122,6 @@ public class SandboxTest {
     }
 
     @Test
-    @Ignore
     public void test() throws Exception {
         class SomeExternalClassLodaer extends ClassLoader {
             @Override
@@ -130,7 +131,7 @@ public class SandboxTest {
         }
         System.out.println(getClass().getClassLoader());
         UnsafeClass privelegedClass = (UnsafeClass) Class.forName("com.credits.secure.SandboxTest$UnsafeClass", false,
-            new SomeExternalClassLodaer()).newInstance();
+                                                                  new SomeExternalClassLodaer()).newInstance();
         //        new Sandbox().confine(privelegedClass.getClass(), new Permissions());
         System.out.println(privelegedClass.getClass().getClassLoader());
         privelegedClass.createInstance();
@@ -144,6 +145,12 @@ public class SandboxTest {
             System.out.println("opening socket...");
             new ServerSocket(port);
             System.out.println("success");
+        }
+
+        public void addMorePermissions() {
+            Permissions permissions = new Permissions();
+            permissions.add(new AllPermission());
+            Sandbox.confine(UnsafeClass.class, permissions);
         }
 
         public void setValue(int val) {

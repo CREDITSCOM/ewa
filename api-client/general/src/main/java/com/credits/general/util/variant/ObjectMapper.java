@@ -3,7 +3,11 @@ package com.credits.general.util.variant;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,6 +54,7 @@ public class ObjectMapper implements Function<Object, Optional<Variant>> {
      */
     public Variant mapSimpleType(Object object) {
         Variant variant;
+        //todo add processing primitive type
         if (object instanceof Boolean) {
             variant = new Variant(Variant._Fields.V_BOOLEAN_BOX, object);
         } else if (object instanceof Byte) {

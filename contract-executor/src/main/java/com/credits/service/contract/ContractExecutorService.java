@@ -6,27 +6,19 @@ import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.Variant;
-import com.credits.pojo.apiexec.SmartContractGetResultData;
+import com.credits.service.contract.session.DeployContractSession;
+import com.credits.service.contract.session.InvokeMethodSession;
 import com.credits.thrift.ReturnValue;
 
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public interface ContractExecutorService {
 
-    /**
-     * Executes a method by specified address, method name and parameters.
-     * It performs a default constructor to instantiate a class if necessary.
-     *
-     * @param accessId
-     * @param initiatorAddress    address of node that execute this method
-     * @param methodName A name of a method
-     * @param params     Parameters of a method
-     */
-    ReturnValue execute(long accessId, byte[] initiatorAddress, byte[] contractAddress, List<ByteCodeObjectData> byteCodeObjectDataList, byte[] contractState, String methodName, Variant[][] params,
-        long executionTime) throws ContractExecutorException;
+    ReturnValue deploySmartContract(DeployContractSession session);
+
+    ReturnValue executeSmartContract(InvokeMethodSession session) throws ContractExecutorException;
 
     List<MethodDescriptionData> getContractsMethods(List<ByteCodeObjectData> byteCodeObjectDataList) throws ContractExecutorException;
 
@@ -34,9 +26,5 @@ public interface ContractExecutorService {
 
     List<ByteCodeObjectData> compileClass(String sourceCode) throws CompilationErrorException, CompilationException, ContractExecutorException, CompilationErrorException;
 
-
-    ReturnValue executeExternalSmartContract(long accessId, String initiatorAddress,
-        String externalSmartContractAddress, String externalSmartContractMethod,
-        List<Object> externalSmartContractParams, List<ByteCodeObjectData> byteCodeObjectDataList, byte[] contractState,
-        Map<String, SmartContractGetResultData> externalContractsStateByteCode) throws ExecutionException, InterruptedException;
+    ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, ByteBuffer> contractsStates);
 }

@@ -3,7 +3,6 @@ package com.credits.service.contract;
 import com.credits.general.pojo.AnnotationData;
 import com.credits.general.pojo.MethodArgumentData;
 import com.credits.general.pojo.MethodDescriptionData;
-import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.service.ServiceTest;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,6 +17,10 @@ import static com.credits.utils.ContractExecutorServiceUtils.parseAnnotationData
 
 
 public class AnnotationTest extends ServiceTest {
+
+    public AnnotationTest() {
+        super("/annotationTest/AnnotationTest.java");
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -42,10 +45,6 @@ public class AnnotationTest extends ServiceTest {
 
     @Test
     public void get_methods_of_contract() throws Exception {
-        String sourceCode = readSourceCode("/annotationTest/AnnotationTest.java");
-        List<ByteCodeObjectData> byteCodeObjectDataList = compileSourceCode(sourceCode);
-
-
         AnnotationData getterAnnotation = new AnnotationData("Getter", new HashMap<>());
 
         MethodDescriptionData initialize = createInitializeMethodDescriptionData(getterAnnotation);

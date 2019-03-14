@@ -1,16 +1,19 @@
 package com.credits.service;
 
-import com.credits.client.node.pojo.SmartContractData;
-import com.credits.client.node.pojo.SmartContractDeployData;
-import com.credits.client.node.pojo.TokenStandartData;
-import com.credits.client.node.service.NodeApiService;
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
+import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.service.contract.ContractExecutorService;
+import com.credits.service.contract.session.DeployContractSession;
+import com.credits.service.contract.session.InvokeMethodSession;
+import com.credits.service.node.apiexec.NodeApiExecInteractionService;
+import com.credits.thrift.ReturnValue;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -26,41 +29,76 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
+import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
+import static com.credits.general.util.GeneralConverter.encodeToBASE58;
+import static com.credits.general.util.variant.VariantConverter.objectToVariantData;
+import static com.credits.general.util.variant.VariantConverter.variantDataToVariant;
 import static java.io.File.separator;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public abstract class ServiceTest {
 
     private final static Logger logger = LoggerFactory.getLogger(ServiceTest.class);
 
-    protected final byte[] initiatorAddress = "1a2b3c".getBytes();
-    protected final byte[] contractAddress = "4d5e6f".getBytes();
+    private final String sourCodePath;
+
+    protected final byte[] initiatorAddress = decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe");
+    protected final byte[] contractAddress = decodeFromBASE58("G2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZZ");
     protected TestComponent testComponent;
+    protected List<ByteCodeObjectData> byteCodeObjectDataList;
+    protected String sourceCode;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Inject
     protected ContractExecutorService ceService;
+
     @Mock
-    protected NodeApiService mockNodeApiService;
+    protected NodeApiExecInteractionService mockNodeApiExecService;
+
+    public ServiceTest(String sourceCodePath) {
+        this.sourCodePath = sourceCodePath;
+    }
 
     @Before
     public void setUp() throws Exception {
         testComponent = DaggerTestComponent.builder().testModule(new TestModule()).build();
         testComponent.inject(this);
+
+        sourceCode = readSourceCode(sourCodePath);
+        byteCodeObjectDataList = compileSourceCode(sourceCode);
+
+        injectMockServiceIntoSmartContract(mockNodeApiExecService);
     }
 
-    public static List<ByteCodeObjectData> compileSourceCode(String sourceCode) {
-        Map<String,String> classesToCompile = new HashMap<>();
+    private void injectMockServiceIntoSmartContract(Object instance) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+        Class<?> contract = Class.forName("SmartContract");
+        Field interactionService = contract.getDeclaredField("nodeApiService");
+        interactionService.setAccessible(true);
+        interactionService.set(null, instance);
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        String dir = System.getProperty("user.dir") + separator + "credits";
+        FileUtils.deleteDirectory(new File(dir));
+    }
+
+    private static List<ByteCodeObjectData> compileSourceCode(String sourceCode) {
+        Map<String, String> classesToCompile = new HashMap<>();
         String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
-        classesToCompile.put(className,sourceCode);
+        classesToCompile.put(className, sourceCode);
 
         CompilationPackage compilationPackage = new InMemoryCompiler().compile(classesToCompile);
         if (compilationPackage.isCompilationStatusSuccess()) {
@@ -75,28 +113,66 @@ public abstract class ServiceTest {
     }
 
 
-    protected List<ByteCodeObjectData> compileSourceCodeFromFile(String sourceCodePath) throws Exception {
-        String sourceCode = readSourceCode(sourceCodePath);
-        List<ByteCodeObjectData> byteCodeObjects = compileSourceCode(sourceCode);
-        when(mockNodeApiService.getSmartContract(GeneralConverter.encodeToBASE58(initiatorAddress))).thenReturn(new SmartContractData(
-                initiatorAddress,
-                initiatorAddress,
-                new SmartContractDeployData(sourceCode, byteCodeObjects, TokenStandartData.CreditsBasic),
-                null
-                )
-        );
-        return byteCodeObjects;
-    }
-
-
-    protected String readSourceCode(String resourcePath) throws IOException {
+    private String readSourceCode(String resourcePath) throws IOException {
         String sourceCodePath = String.format("%s/src/test/resources/com/credits/service/usercode/%s", Paths.get("").toAbsolutePath(), resourcePath);
         return new String(Files.readAllBytes(Paths.get(sourceCodePath)));
     }
 
-    @After
-    public void tearDown() throws IOException {
-        String dir = System.getProperty("user.dir") + separator + "credits";
-        FileUtils.deleteDirectory(new File(dir));
+    protected ReturnValue executeSmartContract(String methodName, byte[] contractState) {
+        return executeSmartContract(methodName, new Variant[][] {{}}, contractState);
+    }
+
+
+    protected ReturnValue executeExternalSmartContract(String methodName, byte[] contractState, Object... params) {
+        Variant[][] variantParams = null;
+        if(params != null) {
+            variantParams = new Variant[1][params.length];
+            for (int i = 0; i < variantParams[0].length; i++) {
+                variantParams[0][i] = variantDataToVariant(objectToVariantData(params[i]));
+            }
+        }
+        return ceService.executeExternalSmartContract(new InvokeMethodSession(
+            0,
+            encodeToBASE58(initiatorAddress),
+            encodeToBASE58(contractAddress),
+            byteCodeObjectDataList,
+            contractState,
+            methodName,
+            variantParams,
+            60_000L), new HashMap<>());
+    }
+
+    protected ReturnValue executeSmartContract(
+        String methodName,
+        Variant[][] params,
+        byte[] contractState) {
+        return ceService.executeSmartContract(new InvokeMethodSession(
+            0,
+            encodeToBASE58(initiatorAddress),
+            encodeToBASE58(contractAddress),
+            byteCodeObjectDataList,
+            contractState,
+            methodName,
+            params,
+            500L));
+    }
+
+
+    protected ReturnValue deploySmartContract() {
+        return ceService.deploySmartContract(new DeployContractSession(
+            0,
+            encodeToBASE58(initiatorAddress),
+            encodeToBASE58(contractAddress),
+            byteCodeObjectDataList,
+            500L));
+    }
+
+    protected void configureGetContractByteCodeNodeResponse(String contractAddress, byte[] contractState, boolean isCanModify) {
+        when(mockNodeApiExecService.getExternalSmartContractByteCode(anyLong(), eq(contractAddress)))
+            .thenReturn(new SmartContractGetResultData(
+                new ApiResponseData(SUCCESS, "success"),
+                byteCodeObjectDataList,
+                contractState,
+                isCanModify));
     }
 }
