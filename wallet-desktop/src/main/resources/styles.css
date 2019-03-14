@@ -525,6 +525,11 @@
     -fx-border-radius: 10 10 0 0;
 }
 
+.credits-tab-pane:focused > .tab-header-area > .headers-region .credits-bottom-tab:selected .focus-indicator {
+    -fx-border-radius: 0 0 10 10;
+}
+
+
 .credits-tab-pane > .tab-header-area > .tab-header-background {
     -fx-opacity: 0;
 }
@@ -534,30 +539,37 @@
     -fx-tab-min-width:90px;
 }
 
-.credits-tab-pane .credits-tab{
+.credits-tab-pane .credits-tab,
+.credits-tab-pane .credits-bottom-tab
+{
     -fx-background-radius: 10 10 0 0;
     -fx-border-radius: 10 10 0 0;
     -fx-background-insets: 0 1 0 1,0,0;
 }
-.credits-tab-pane .credits-tab
+.credits-tab-pane .credits-tab,
+.credits-tab-pane .credits-bottom-tab
 {
     -fx-background-color: #808080;
 
 }
 
-.credits-tab-pane .credits-tab:selected
+.credits-tab-pane .credits-tab:selected,
+.credits-tab-pane .credits-bottom-tab:selected
 {
     -fx-background-color: #3c3c3c;
 }
 
-.credits-tab-pane .credits-tab  .tab-label {
+.credits-tab-pane .credits-tab  .tab-label,
+.credits-tab-pane .credits-bottom-tab  .tab-label
+{
     -fx-alignment: CENTER;
     -fx-text-fill: white;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
 
-.credits-tab-pane .credits-tab:selected .tab-label {
+.credits-tab-pane .credits-tab:selected .tab-label,
+.credits-tab-pane .credits-bottom-tab:selected .tab-label{
     -fx-alignment: CENTER;
     -fx-text-fill: white;
 }
