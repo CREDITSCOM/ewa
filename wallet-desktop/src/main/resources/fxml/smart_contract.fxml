@@ -54,7 +54,7 @@
                <children>
                   <TabPane layoutY="35.0" maxHeight="320.0" minHeight="260.0" prefHeight="285.0" prefWidth="800.0" side="BOTTOM" style="-fx-border-radius: 15;" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
                      <tabs>
-                        <Tab styleClass="credits-tab" text="Approved">
+                        <Tab styleClass="credits-bottom-tab" text="Approved">
                            <content>
                               <VBox layoutX="20.0" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
                                  <children>
@@ -71,7 +71,7 @@
                               </VBox>
                            </content>
                         </Tab>
-                        <Tab styleClass="credits-tab" text="Unapproved">
+                        <Tab styleClass="credits-bottom-tab" text="Unapproved">
                            <content>
                               <VBox minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="credits-history-tab-pane">
                                  <children>
