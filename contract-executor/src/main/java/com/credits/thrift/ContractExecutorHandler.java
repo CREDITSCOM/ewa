@@ -65,7 +65,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         byte version) {
 
         logger.debug(
-            "\n<-- executeByteCodek(" +
+            "\n<-- executeByteCode(" +
                 "\naccessId = {}," +
                 "\naddress = {}," +
                 "\nbyteCode length= {}, " +
@@ -121,7 +121,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
         } catch (Throwable e) {
             result.setStatus(new APIResponse(ERROR_CODE, e.getMessage()));
-            logger.debug("executeByteCode error --> {}", result);
+            logger.debug("\nexecuteByteCode error --> {}", result);
         }
         logger.debug("\nexecuteByteCode success --> contractStateHash {} {}", Arrays.hashCode(result.getInvokedContractState()), result);
 
@@ -191,7 +191,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             }).collect(Collectors.toList());
         } catch (Throwable e) {
             byteCodeMultipleResult.setStatus(new APIResponse(ERROR_CODE, getRootCauseMessage(e)));
-            logger.debug("executeByteCodeMultiple error --> {}", byteCodeMultipleResult);
+            logger.debug("\nexecuteByteCodeMultiple error --> {}", byteCodeMultipleResult);
         }
         logger.debug("\nexecuteByteCodeMultiple success --> {}", byteCodeMultipleResult);
         return byteCodeMultipleResult;
