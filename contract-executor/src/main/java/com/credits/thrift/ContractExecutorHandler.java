@@ -109,7 +109,8 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 result.ret_val = returnValue.executeResults.get(0).result;
             }
 
-            if(result.externalContractsState != null) {
+
+            if (returnValue.externalContractStates != null) {
                 result.externalContractsState = returnValue.externalContractStates.keySet().stream().reduce(
                     new HashMap<>(),
                     (newMap, address) -> {
@@ -166,7 +167,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         ExecuteByteCodeMultipleResult byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(new APIResponse(SUCCESS_CODE, "success"), null);
         try {
             ReturnValue returnValue =
-                method.isEmpty() ?
+                method.isEmpty() && invokedContract.contractState == null || invokedContract.contractState.array().length == 0 ?
                     service.deploySmartContract(new DeployContractSession(
                         accessId,
                         encodeToBASE58(initiatorAddress.array()),
