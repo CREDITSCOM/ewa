@@ -85,16 +85,14 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             initializeSmartContractField("nodeApiService", dbInteractionService, contract, null);
             initializeSmartContractField("contractExecutorService", this, contract, null);
             initializeSmartContractField("cachedPool", Executors.newCachedThreadPool(), contract, null);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             logger.error("Cannot load smart contract's super class. Reason: ", e);
         }
 
         try {
             Class<?> serviceClass = Class.forName("com.credits.service.node.apiexec.NodeApiExecServiceImpl");
-            Permissions permissions = createServiceApiPermissions();
-            permissions.add(new SocketPermission(properties.apiHost + ":" + properties.executorNodeApiPort, "connect,listen,resolve"));
-            Sandbox.confine(serviceClass, permissions);
-        } catch (ClassNotFoundException e) {
+            Sandbox.confine(serviceClass, createServiceApiPermissions());
+        } catch (Exception e) {
             logger.error("Cannot add permissions api service. Reason: ", e);
         }
 

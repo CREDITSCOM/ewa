@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -30,7 +29,6 @@ import static com.credits.general.thrift.generated.Variant._Fields.V_BYTE;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.compiler.InMemoryCompiler.compileSourceCode;
 import static java.util.Collections.EMPTY_LIST;
-import static java.util.concurrent.CompletableFuture.runAsync;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -93,31 +91,10 @@ public class ContractExecutorHandlerTest {
     }
 
 
-    @Test(timeout = 8000)
-    public void parallelCallLongTimeExecutionContract() throws Exception {
-        ExecuteByteCodeResult executeByteCodeResult = deploySmartContract();
-        CompletableFuture.allOf(
-            runAsyncContractCall(1, executeByteCodeResult.invokedContractState, "waitFiveSec"),
-            runAsyncContractCall(2, executeByteCodeResult.invokedContractState, "waitFiveSec"),
-            runAsyncContractCall(3, executeByteCodeResult.invokedContractState, "waitFiveSec"),
-            runAsyncContractCall(4, executeByteCodeResult.invokedContractState, "waitFiveSec")).join();
-    }
-
-    private CompletableFuture runAsyncContractCall(int accessId, ByteBuffer contractState, String methodName) {
-        return runAsync(() -> {
-            try {
-                executeSmartContract(contractState, accessId, methodName, 10_000);
-            } catch (TException e) {
-                System.out.println(e.getMessage());
-            }
-        }, cachedThreadPool);
-    }
-
     @Test
     public void compileSourceCodeTest() throws Exception {
         CompileSourceCodeResult sourceCodeResult = contractExecutorHandler.compileSourceCode(contractSourcecode,(byte) 100);
         assertEquals(new APIResponse((byte) 0, "success"), sourceCodeResult.status);
-
     }
 
     @SuppressWarnings("unchecked")
