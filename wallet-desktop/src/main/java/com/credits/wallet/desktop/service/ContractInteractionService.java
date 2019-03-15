@@ -1,18 +1,24 @@
 package com.credits.wallet.desktop.service;
 
+import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.pojo.VariantData;
+import com.credits.general.pojo.VariantType;
 import com.credits.general.util.Callback;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Session;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
+import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.general.util.variant.VariantUtils.STRING_TYPE;
 import static com.credits.general.util.variant.VariantUtils.createVariantData;
@@ -74,26 +80,21 @@ public class ContractInteractionService {
 
 
     private String executeSmartContract(String initiatorAddress, SmartContractData sc, String methodName, VariantData... params) {
-        /*if (sc == null || sc.getObjectState().length == 0) {
+        if (sc == null || sc.getObjectState().length == 0) {
             throw new NodeClientException("SmartContract " + initiatorAddress + " not found");
         }
+        sc.setMethod(methodName);
+        sc.getParams().addAll(Arrays.asList(params));
+        byte[] objectState = new byte[]{};
+        sc.setObjectState(objectState);
+        TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
+            calcTransactionIdSourceTarget(AppState.nodeApiService, session.account, sc.getBase58Address(), true);
 
-
-
-        ExecuteByteCodeResult executeResponseData =
-            //todo add request to node accessId
-            contractExecutorService.executeContractMethod(0, GeneralConverter.decodeFromBASE58(initiatorAddress), sc.getAddress(),
-                GeneralConverter.byteCodeObjectsDataToByteCodeObjects(
-                    sc.getSmartContractDeployData().getByteCodeObjects()), sc.getObjectState(), methodName,
-                asList(params), AppState.DEFAULT_EXECUTION_TIME);
-        ExecuteResponseData response = ContractExecutorPojoConverter.executeByteCodeResultToExecuteResponseData(executeResponseData);
-
-        if (response.getCode() != SUCCESS) {
-            throw new NodeClientException("Failure. Node response: " + response.getMessage());
-        }
-
-        return response.getExecuteBytecodeResult().getV_string();*/
-        return null;
+        //todo Коммисию пофиксить надо С НУЛЕМ НЕ РАБОТАЕТ
+        Pair<Long, TransactionFlowResultData> smartContractTransaction =
+            createSmartContractTransaction(calcTransactionIdSourceTargetResult, (short) 20613, sc, new ArrayList<>(),
+                session);
+        return (String) smartContractTransaction.getValue().getContractResult().orElse(new VariantData(VariantType.STRING,"0")).getBoxedValue();
         //todo add request to node accessId
     }
 }
