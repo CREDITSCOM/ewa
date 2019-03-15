@@ -2,9 +2,7 @@ package com.credits.wallet.desktop.controller;
 
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.Callback;
-import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
-import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractsUtils;
 import javafx.fxml.FXML;
@@ -88,9 +86,9 @@ public class NewCoinController extends AbstractController {
         FormUtils.clearErrorOnField(coinField, coinErrorLabel);
     }
 
-    public void addSmartContractTokenBalance(String coinName, String smartContractAddress) {
-/*
-        AppState.nodeApiService.getSmartContractBalance(smartContractAddress, new Callback<BigDecimal>() {
+    private void addSmartContractTokenBalance(String coinName, String smartContractAddress) {
+
+        session.contractInteractionService.getSmartContractBalance(smartContractAddress, new Callback<BigDecimal>() {
             @Override
             public void onSuccess(BigDecimal balance) throws CreditsException {
                 SmartContractsUtils.saveSmartInTokenList(session.coinsKeeper,coinName, balance, smartContractAddress);
@@ -104,7 +102,6 @@ public class NewCoinController extends AbstractController {
                 FormUtils.showError("Coin can't created. Reason: " + e.getMessage());
             }
         });
-*/
     }
 
     @Override
