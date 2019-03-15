@@ -11,7 +11,25 @@ import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.pojo.TransactionIdData;
 import com.credits.client.node.pojo.TransactionsStateGetResultData;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.generated.*;
+import com.credits.client.node.thrift.generated.Amount;
+import com.credits.client.node.thrift.generated.Pool;
+import com.credits.client.node.thrift.generated.PoolInfoGetResult;
+import com.credits.client.node.thrift.generated.PoolListGetResult;
+import com.credits.client.node.thrift.generated.SealedTransaction;
+import com.credits.client.node.thrift.generated.SmartContract;
+import com.credits.client.node.thrift.generated.SmartContractAddressesListGetResult;
+import com.credits.client.node.thrift.generated.SmartContractGetResult;
+import com.credits.client.node.thrift.generated.SmartContractsListGetResult;
+import com.credits.client.node.thrift.generated.SyncStateResult;
+import com.credits.client.node.thrift.generated.Transaction;
+import com.credits.client.node.thrift.generated.TransactionFlowResult;
+import com.credits.client.node.thrift.generated.TransactionGetResult;
+import com.credits.client.node.thrift.generated.TransactionsGetResult;
+import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
+import com.credits.client.node.thrift.generated.WalletBalanceGetResult;
+import com.credits.client.node.thrift.generated.WalletDataGetResult;
+import com.credits.client.node.thrift.generated.WalletIdGetResult;
+import com.credits.client.node.thrift.generated.WalletTransactionsCountGetResult;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
@@ -128,7 +146,11 @@ public class NodeApiServiceImpl implements NodeApiService {
         processApiResponse(result.getStatus());
         List<SmartContractTransactionData> dataList = new ArrayList<>();
         for (SealedTransaction sealedTransaction : result.getTransactions()) {
-            dataList.add(createSmartContractTransactionData(sealedTransaction));
+            try {
+                dataList.add(createSmartContractTransactionData(sealedTransaction));
+            } catch (RuntimeException ignored) {
+                LOGGER.warn("Exception into createSmartContractTransactionData({})",sealedTransaction);
+            }
         }
         LOGGER.info(String.format("getTransactions: <--- address = %s, transactions count = %d", address,
                 dataList.size()));
