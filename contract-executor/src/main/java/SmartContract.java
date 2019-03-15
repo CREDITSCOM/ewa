@@ -39,9 +39,9 @@ public abstract class SmartContract implements Serializable {
         contractAddress = contractConstants.contractAddress;
     }
 
-    final protected void sendTransaction(String target, double amount, double fee, byte[] userData) {
+    final protected void sendTransaction(String from, String to, double amount, double fee, byte... userData) {
         callService(() -> {
-            nodeApiService.sendTransaction(accessId, contractAddress, target, amount, fee, userData);
+            nodeApiService.sendTransaction(accessId, from, to, amount, fee, userData);
             return null;
         });
     }
