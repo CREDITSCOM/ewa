@@ -47,7 +47,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.LoggingPermission;
 import java.util.stream.Stream;
 
 import static com.credits.ioc.Injector.INJECTOR;
@@ -316,6 +316,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new PropertyPermission("com.sun.security.preserveOldDCEncoding", "read"));
         permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
         permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
+        permissions.add(new LoggingPermission("control", null));
         permissions.add(new SocketPermission(properties.apiHost + ":" + properties.executorNodeApiPort, "connect,listen,resolve"));
         return permissions;
     }

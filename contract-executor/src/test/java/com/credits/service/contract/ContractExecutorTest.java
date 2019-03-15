@@ -20,11 +20,14 @@ import java.util.List;
 import java.util.Map;
 
 import static com.credits.general.thrift.generated.Variant.v_int;
+import static com.credits.general.thrift.generated.Variant.v_string;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 
 public class ContractExecutorTest extends ServiceTest {
 
@@ -68,6 +71,14 @@ public class ContractExecutorTest extends ServiceTest {
         //todo add tests
     }
 
+    @Test
+    public void send_transaction_into_contract(){
+        byte[] contractState = deploySmartContract().newContractState;
+
+
+        ReturnValue result = executeSmartContract("payable", new Variant[][] {{v_string("10"), v_string("CS")}}, contractState);
+        assertThat(result.executeResults.get(0).result.getV_boolean_box(), is(true));
+    }
 
 
     //fixme
