@@ -21,6 +21,7 @@ import com.credits.service.contract.session.InvokeMethodSession;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractExecutorUtils;
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.LoggingPermission;
 import java.util.stream.Stream;
 
 import static com.credits.ioc.Injector.INJECTOR;
@@ -243,16 +245,16 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         return stream(session.paramsTable)
             .flatMap(params -> {
                 MethodData methodData = getMethodArgumentsValuesByNameAndParams(contractClass, session.methodName, params);
-                return Stream.of(invokeMethod(session, instance, methodData));
+                return Stream.of(new Pair<>(methodData, invokeMethod(session, instance, methodData)));
             })
             .reduce(
                 new ReturnValue(null, new ArrayList<>(), externalContractStates),
-                (returnValue, smartContractMethodResult) -> {
+                (returnValue, methodAndResult) -> {
                     if (returnValue.newContractState == null) {
                         returnValue.newContractState = serialize(instance);
                     }
-                    System.out.println(smartContractMethodResult);
-                    returnValue.executeResults.add(smartContractMethodResult);
+                    logger.debug("stack trace: {} {}", methodAndResult.getKey(), methodAndResult.getValue());
+                    returnValue.executeResults.add(methodAndResult.getValue());
                     return returnValue;
                 },
                 (returnValue, returnValue2) -> returnValue);
@@ -314,6 +316,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new PropertyPermission("com.sun.security.preserveOldDCEncoding", "read"));
         permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
         permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
+        permissions.add(new LoggingPermission("control", null));
         permissions.add(new SocketPermission(properties.apiHost + ":" + properties.executorNodeApiPort, "connect,listen,resolve"));
         return permissions;
     }
