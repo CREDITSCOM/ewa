@@ -43,7 +43,7 @@ public class MethodParametersTest extends ServiceTest {
     public void setUp() throws Exception {
         super.setUp();
         classLoader = new BytecodeContractClassLoader();
-        contractClass = compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
+        contractClass = compileSmartContractByteCode(byteCodeObjectDataList, classLoader).get(0);
         contractState = deploySmartContract().newContractState;
     }
 

@@ -13,6 +13,7 @@ import com.credits.thrift.DeployReturnValue;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,14 +95,12 @@ public class ContractExecutorUtils {
             });
     }
 
-    public static Class<?> compileSmartContractByteCode(List<ByteCodeObjectData> smartContractByteCodeData, BytecodeContractClassLoader classLoader) {
+    public static List<Class<?>> compileSmartContractByteCode(List<ByteCodeObjectData> smartContractByteCodeData, BytecodeContractClassLoader classLoader) {
         Class<?> contractClass = null;
+        List<Class<?>> compiledClasses = new ArrayList<>(smartContractByteCodeData.size());
         for (ByteCodeObjectData compilationUnit : smartContractByteCodeData) {
-            Class<?> tempContractClass = classLoader.loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
-            if (!compilationUnit.getName().contains("$")) {
-                contractClass = tempContractClass;
-            }
+            compiledClasses.add(classLoader.loadClass(compilationUnit.getName(), compilationUnit.getByteCode()));
         }
-        return contractClass;
+        return compiledClasses;
     }
 }
