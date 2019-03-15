@@ -105,7 +105,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public ReturnValue deploySmartContract(DeployContractSession session) {
         try {
             BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
-            Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader);
+            List<Class<?>> compiledClasses = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader);
+            final Class<?> contractClass = compiledClasses.stream()
+                .peek(clazz -> Sandbox.confine(clazz, smartContractPermissions))
+                .filter(clazz -> !clazz.getName().contains("$"))
+                .findAny()
+                .orElseThrow(() -> new ClassNotFoundException("contract class not compiled"));
 
             Sandbox.confine(contractClass, smartContractPermissions);
 
@@ -128,9 +133,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         try {
             BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
-            Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader);
-
-            Sandbox.confine(contractClass, smartContractPermissions);
+            List<Class<?>> compiledClasses = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader);
+            final Class<?> contractClass = compiledClasses.stream()
+                .peek(clazz -> Sandbox.confine(clazz, smartContractPermissions))
+                .filter(clazz -> !clazz.getName().contains("$"))
+                .findAny()
+                .orElseThrow(() -> new ClassNotFoundException("contract class not compiled"));
 
             Object instance = deserialize(session.contractState, classLoader);
 
@@ -159,7 +167,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
         Class<?> contractClass =
-            compileSmartContractByteCode(byteCodeObjectDataList, classLoader);
+            compileSmartContractByteCode(byteCodeObjectDataList, classLoader).stream()
+                .filter(clazz -> !clazz.getName().contains("$"))
+                .findAny().get();
+
         Set<String> objectMethods = new HashSet<>(asList(
             "getClass",
             "hashCode",
@@ -226,7 +237,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, ByteBuffer> contractsStates) {
 
         BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
-        Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader);
+        Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader).stream()
+            .filter(clazz -> !clazz.getName().contains("$"))
+            .findAny()
+            .orElseThrow(() -> new ContractExecutorException("contract class not compiled"));
         Object instance = deserialize(session.contractState, classLoader);
 
         initializeField("initiator", session.initiatorAddress, contractClass, instance);

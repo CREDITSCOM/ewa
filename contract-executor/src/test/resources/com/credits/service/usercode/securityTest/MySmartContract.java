@@ -64,6 +64,12 @@ public class MySmartContract extends SmartContract {
 
     public void newThread() {
         new Thread(() -> {
+            try {
+                openSocket(5555);
+            }catch (Exception e){
+               e.printStackTrace();
+               return;
+            }
             System.out.println("new Thread");
         });
     }
