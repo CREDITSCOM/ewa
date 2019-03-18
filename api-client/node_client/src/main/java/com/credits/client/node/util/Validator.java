@@ -1,6 +1,5 @@
 package com.credits.client.node.util;
 
-import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionFlowData;
@@ -32,7 +31,6 @@ public class Validator {
         // Проверка: является ли toAddress правильным публичным ключом провайдера ED25519
         try {
             byte[] toAddressBytes = decodeFromBASE58(toAddress);
-            Ed25519.bytesToPublicKey(toAddressBytes);
         } catch (Exception e) {
             throw new NodeClientException("Invalid To address");
         }
