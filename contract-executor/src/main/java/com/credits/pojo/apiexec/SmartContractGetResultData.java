@@ -11,7 +11,7 @@ public class SmartContractGetResultData extends ApiResponseData {
     private static final long serialVersionUID = 4691482244448740351L;
 
     public final List<ByteCodeObjectData> byteCodeObjects;
-    public final byte[] contractState;
+    public byte[] contractState;
     public final boolean stateCanModify;
 
     public SmartContractGetResultData(ApiResponseData apiResponseData, List<ByteCodeObjectData> byteCodeObjects,

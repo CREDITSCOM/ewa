@@ -82,8 +82,9 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat)));
 
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
-        ExecuteByteCodeResult result = new ExecuteByteCodeResult(new APIResponse(SUCCESS_CODE, "success"), null, null);/*todo what ? ?*/
+        ExecuteByteCodeResult result = new ExecuteByteCodeResult(new APIResponse(SUCCESS_CODE, "success"), null, null);
         try {
+            // TODO: 3/18/2019 execute smart contract must be throw exception if contract state is empty or null
             ReturnValue returnValue =
                 method.isEmpty() && invokedContract.contractState == null || invokedContract.contractState.array().length == 0 ?
                     service.deploySmartContract(new DeployContractSession(
@@ -111,11 +112,11 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             }
 
 
-            if (returnValue.externalContractStates != null) {
-                result.externalContractsState = returnValue.externalContractStates.keySet().stream().reduce(
+            if (returnValue.externalSmartContracts != null) {
+                result.externalContractsState = returnValue.externalSmartContracts.keySet().stream().reduce(
                     new HashMap<>(),
                     (newMap, address) -> {
-                        newMap.put(ByteBuffer.wrap(decodeFromBASE58(address)), returnValue.externalContractStates.get(address));
+                        newMap.put(ByteBuffer.wrap(decodeFromBASE58(address)), ByteBuffer.wrap(returnValue.externalSmartContracts.get(address).contractState));
                         return newMap;
                     },
                     (map1, map2) -> map1);

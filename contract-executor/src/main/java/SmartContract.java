@@ -8,7 +8,6 @@ import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
 
 import java.io.Serializable;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -25,7 +24,7 @@ public abstract class SmartContract implements Serializable {
     private static NodeApiExecInteractionService nodeApiService;
     private static ContractExecutorServiceImpl contractExecutorService;
     private static ExecutorService cachedPool;
-    private transient Map<String, ByteBuffer> externalContractsStates;
+    private transient Map<String, SmartContractGetResultData> externalContracts;
 
     protected final transient long accessId;
     protected final transient String initiator;
@@ -47,10 +46,12 @@ public abstract class SmartContract implements Serializable {
     }
 
     final protected Object invokeExternalContract(String contractAddress, String method, Object... params) {
-        SmartContractGetResultData contractData = callService(() -> nodeApiService.getExternalSmartContractByteCode(accessId, contractAddress));
+        SmartContractGetResultData contractData = externalContracts.containsKey(contractAddress)
+            ? externalContracts.get(contractAddress)
+            : callService(() -> nodeApiService.getExternalSmartContractByteCode(accessId, contractAddress));
 
         Variant[][] variantParams = null;
-        if(params != null) {
+        if (params != null) {
             variantParams = new Variant[1][params.length];
             for (int i = 0; i < variantParams.length; i++) {
                 variantParams[0][i] = variantDataToVariant(objectToVariantData(params[i]));
@@ -68,12 +69,13 @@ public abstract class SmartContract implements Serializable {
                 method,
                 finalVariantParams,
                 MAX_VALUE),
-            externalContractsStates));
+            externalContracts));
 
         if (!contractData.stateCanModify && !Arrays.equals(contractData.contractState, returnValue.newContractState)) {
             throw new ContractExecutorException("smart contract \"" + contractAddress + "\" can't be modify");
         }
-        externalContractsStates.putIfAbsent(contractAddress, ByteBuffer.wrap(returnValue.newContractState));
+        contractData.contractState = returnValue.newContractState;
+        externalContracts.putIfAbsent(contractAddress, contractData);
 
         return variantToObject(returnValue.executeResults.get(0).result);
     }

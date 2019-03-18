@@ -64,12 +64,6 @@ public class ContractExecutorServiceUtils {
         return retVal;
     }
 
-    private static final String LINE = "-----------------------------------------------------";
-    public static void writeLog(String s) {
-        logger.info("\n{}\n-----------{}---------------\n{}\n", LINE, s, LINE);
-    }
-
-
     public static Class[] getArgTypes(Variant[] params) {
         Class[] argTypes = new Class[params.length];
 

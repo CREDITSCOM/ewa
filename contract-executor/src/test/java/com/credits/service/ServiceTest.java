@@ -43,7 +43,7 @@ import static com.credits.general.util.variant.VariantConverter.objectToVariantD
 import static com.credits.general.util.variant.VariantConverter.variantDataToVariant;
 import static java.io.File.separator;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 public abstract class ServiceTest {
@@ -167,8 +167,8 @@ public abstract class ServiceTest {
             500L));
     }
 
-    protected void configureGetContractByteCodeNodeResponse(String contractAddress, byte[] contractState, boolean isCanModify) {
-        when(mockNodeApiExecService.getExternalSmartContractByteCode(anyLong(), eq(contractAddress)))
+    protected void configureGetContractByteCodeNodeResponse(byte[] contractState, boolean isCanModify) {
+        when(mockNodeApiExecService.getExternalSmartContractByteCode(anyLong(), anyString()))
             .thenReturn(new SmartContractGetResultData(
                 new ApiResponseData(SUCCESS, "success"),
                 byteCodeObjectDataList,

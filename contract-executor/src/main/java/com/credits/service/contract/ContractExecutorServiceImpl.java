@@ -15,6 +15,7 @@ import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.pojo.MethodData;
+import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.secure.Sandbox;
 import com.credits.service.contract.session.DeployContractSession;
 import com.credits.service.contract.session.InvokeMethodSession;
@@ -32,7 +33,6 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.ReflectPermission;
 import java.net.NetPermission;
 import java.net.SocketPermission;
-import java.nio.ByteBuffer;
 import java.security.Permissions;
 import java.security.SecurityPermission;
 import java.util.ArrayList;
@@ -142,13 +142,13 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             Object instance = deserialize(session.contractState, classLoader);
 
-            final Map<String, ByteBuffer> externalContractStates = new HashMap<>();
+            final Map<String, SmartContractGetResultData> externalSmartContracts = new HashMap<>();
             initializeField("initiator", session.initiatorAddress, contractClass, instance);
             initializeField("accessId", session.accessId, contractClass, instance);
-            initializeField("externalContractsStates", externalContractStates, contractClass, instance);
+            initializeField("externalContractsStates", externalSmartContracts, contractClass, instance);
 
             //todo add "void" type to Variant
-            return invokeMultipleMethod(session, contractClass, instance, externalContractStates);
+            return invokeMultipleMethod(session, contractClass, instance, externalSmartContracts);
 
         } catch (Throwable e) {
             logger.debug(
@@ -234,7 +234,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, ByteBuffer> contractsStates) {
+    public ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, SmartContractGetResultData> externalSmartContracts) {
 
         BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
         Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader).stream()
@@ -245,9 +245,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         initializeField("initiator", session.initiatorAddress, contractClass, instance);
         initializeField("accessId", session.accessId, contractClass, instance);
-        initializeField("externalContractsStates", contractsStates, contractClass, instance);
+        initializeField("externalContracts", externalSmartContracts, contractClass, instance);
 
-        return invokeMultipleMethod(session, contractClass, instance, contractsStates);
+        return invokeMultipleMethod(session, contractClass, instance, externalSmartContracts);
 
     }
 
@@ -255,14 +255,14 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         InvokeMethodSession session,
         Class<?> contractClass,
         Object instance,
-        Map<String, ByteBuffer> externalContractStates) {
+        Map<String, SmartContractGetResultData> externalSmartContracts) {
         return stream(session.paramsTable)
             .flatMap(params -> {
                 MethodData methodData = getMethodArgumentsValuesByNameAndParams(contractClass, session.methodName, params);
                 return Stream.of(new Pair<>(methodData, invokeMethod(session, instance, methodData)));
             })
             .reduce(
-                new ReturnValue(null, new ArrayList<>(), externalContractStates),
+                new ReturnValue(null, new ArrayList<>(), externalSmartContracts),
                 (returnValue, methodAndResult) -> {
                     if (returnValue.newContractState == null) {
                         returnValue.newContractState = serialize(instance);

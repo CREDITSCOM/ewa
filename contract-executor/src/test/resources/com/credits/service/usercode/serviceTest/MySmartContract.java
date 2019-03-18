@@ -38,12 +38,21 @@ public class MySmartContract extends SmartContract {
    }
 	
     public int externalCall(@ContractAddress(id = 0) String address, @ContractMethod(id = 0) String method) {
-        return (int) invokeExternalContract(address, method, null);
+        return (int) invokeExternalContract(address, method);
     }
 
 	@Contract(address = "FTWo7QNzweb7JMNL1kuFC32pdkTeQ716mhKThbzXQ9wK", method = "addTokens")
     public void externalCallChangeState(@ContractAddress(id = 0) String address, @ContractMethod(id = 0) String method, Integer value) {
         invokeExternalContract(address, method, value);
+    }
+
+    public Integer recursionExternalContractSetterCall(int count) {
+        System.out.println("count = " + count);
+        if (count-- > 0) {
+            addTokens(count);
+            return (int) invokeExternalContract(contractAddress, "recursionExternalContractSetterCall", count);
+        }
+        return getTotal();
     }
 
     @Override
