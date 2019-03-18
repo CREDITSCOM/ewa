@@ -106,6 +106,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
             result.invokedContractState = ByteBuffer.wrap(returnValue.newContractState);
             if (returnValue.executeResults != null) {
+                result.status = returnValue.executeResults.get(0).status;
                 result.ret_val = returnValue.executeResults.get(0).result;
             }
 
@@ -120,11 +121,11 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                     (map1, map2) -> map1);
             }
 
+            logger.debug("\nexecuteByteCode success --> contractStateHash {} {}", Arrays.hashCode(result.getInvokedContractState()), result);
         } catch (Throwable e) {
             result.setStatus(new APIResponse(ERROR_CODE, e.getMessage()));
             logger.debug("\nexecuteByteCode error --> {}", result);
         }
-        logger.debug("\nexecuteByteCode success --> contractStateHash {} {}", Arrays.hashCode(result.getInvokedContractState()), result);
 
         return result;
     }
