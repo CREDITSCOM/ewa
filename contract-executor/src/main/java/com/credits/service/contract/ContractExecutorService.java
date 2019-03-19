@@ -6,7 +6,7 @@ import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.Variant;
-import com.credits.pojo.apiexec.SmartContractGetResultData;
+import com.credits.pojo.ExternalSmartContract;
 import com.credits.service.contract.session.DeployContractSession;
 import com.credits.service.contract.session.InvokeMethodSession;
 import com.credits.thrift.ReturnValue;
@@ -16,9 +16,9 @@ import java.util.Map;
 
 public interface ContractExecutorService {
 
-    ReturnValue deploySmartContract(DeployContractSession session);
+    ReturnValue deploySmartContract(DeployContractSession session) throws Exception;
 
-    ReturnValue executeSmartContract(InvokeMethodSession session) throws ContractExecutorException;
+    ReturnValue executeSmartContract(InvokeMethodSession session) throws ContractExecutorException, Exception;
 
     List<MethodDescriptionData> getContractsMethods(List<ByteCodeObjectData> byteCodeObjectDataList) throws ContractExecutorException;
 
@@ -26,5 +26,5 @@ public interface ContractExecutorService {
 
     List<ByteCodeObjectData> compileClass(String sourceCode) throws CompilationErrorException, CompilationException, ContractExecutorException, CompilationErrorException;
 
-    ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, SmartContractGetResultData> externalSmartContracts);
+    ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, ExternalSmartContract> usedContracts);
 }

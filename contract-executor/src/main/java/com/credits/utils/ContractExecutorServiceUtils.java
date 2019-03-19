@@ -2,6 +2,7 @@ package com.credits.utils;
 
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.AnnotationData;
+import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.pojo.MethodData;
 import org.apache.commons.beanutils.MethodUtils;
@@ -17,6 +18,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.credits.general.pojo.ApiResponseCode.FAILURE;
+import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.variant.VariantConverter.variantToObject;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
@@ -25,6 +28,7 @@ public class ContractExecutorServiceUtils {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceUtils.class);
 
+    public final static APIResponse SUCCESS_API_RESPONSE = new APIResponse(SUCCESS.code, "success");
 
     public static MethodData getMethodArgumentsValuesByNameAndParams(
         Class<?> contractClass, String methodName,
@@ -35,11 +39,16 @@ public class ContractExecutorServiceUtils {
 
         Class[] argTypes = getArgTypes(params);
         Method method = MethodUtils.getMatchingAccessibleMethod(contractClass, methodName, argTypes);
+        Object[] argValues = argTypes != null ? castValues(argTypes, params) : null;
         if (method != null) {
-            return new MethodData(method, argTypes, params);
+            return new MethodData(method, argTypes, argValues);
         } else {
             throw new ContractExecutorException("Cannot find a method by name and parameters specified");
         }
+    }
+
+    public static APIResponse failureApiResponse(Throwable e) {
+        return new APIResponse(FAILURE.code, getRootCauseMessage(e));
     }
 
     public static Object[] castValues(Class<?>[] types, Variant[] params) throws ContractExecutorException {
@@ -98,9 +107,9 @@ public class ContractExecutorServiceUtils {
         List<AnnotationData> annotationDataList = new ArrayList<>();
         if (annotation.contains("@")) {
             String[] splitArray = annotation.split("@");
-            if(splitArray.length==2) {
+            if (splitArray.length == 2) {
                 annotationDataList.addAll(parseAnnotation(splitArray[1]));
-            } else if(splitArray.length>2){
+            } else if (splitArray.length > 2) {
                 for (int i = 2; i < splitArray.length; i++) {
                     annotationDataList.addAll(parseAnnotation(splitArray[i]));
                 }

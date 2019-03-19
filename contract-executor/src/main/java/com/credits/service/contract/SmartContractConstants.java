@@ -1,5 +1,6 @@
 package com.credits.service.contract;
 
+import com.credits.pojo.ExternalSmartContract;
 import com.credits.service.contract.session.DeployContractSession;
 
 import java.util.Collections;
@@ -11,15 +12,17 @@ public class SmartContractConstants {
     public final String initiator;
     public final String contractAddress;
     public final long accessId;
+    public final Map<String, ExternalSmartContract> usedContracts;
 
-    private SmartContractConstants(String initiator, String contractAddress, long accessId) {
+    private SmartContractConstants(String initiator, String contractAddress, long accessId, Map<String, ExternalSmartContract> usedContracts) {
         this.initiator = initiator;
         this.contractAddress = contractAddress;
         this.accessId = accessId;
+        this.usedContracts = usedContracts;
     }
 
     public static void initSmartContractConstants(long threadId, DeployContractSession session) {
-        sessions.put(threadId, new SmartContractConstants(session.initiatorAddress, session.contractAddress, session.accessId));
+        sessions.put(threadId, new SmartContractConstants(session.initiatorAddress, session.contractAddress, session.accessId, session.usedContracts));
     }
 
 

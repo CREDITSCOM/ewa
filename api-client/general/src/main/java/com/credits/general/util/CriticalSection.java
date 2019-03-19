@@ -3,7 +3,7 @@ package com.credits.general.util;
 import java.util.concurrent.locks.Lock;
 
 public interface CriticalSection {
-    static <R> R doSafe(Function<R> content, Lock lock){
+    static <R> R doSafe(Function<R> content, Lock lock) {
         try{
             lock.lock();
             return content.apply();

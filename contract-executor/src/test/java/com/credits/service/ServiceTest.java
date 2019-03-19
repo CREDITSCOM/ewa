@@ -8,6 +8,7 @@ import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
+import com.credits.pojo.ExternalSmartContract;
 import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.session.DeployContractSession;
@@ -67,6 +68,8 @@ public abstract class ServiceTest {
     @Mock
     protected NodeApiExecInteractionService mockNodeApiExecService;
 
+    protected HashMap<String, ExternalSmartContract> usedContracts;
+
     public ServiceTest(String sourceCodePath) {
         this.sourCodePath = sourceCodePath;
     }
@@ -79,14 +82,15 @@ public abstract class ServiceTest {
         sourceCode = readSourceCode(sourCodePath);
         byteCodeObjectDataList = compileSourceCode(sourceCode);
 
-        injectMockServiceIntoSmartContract(mockNodeApiExecService);
+        initSmartContractStaticField(null, "nodeApiService", mockNodeApiExecService);
     }
 
-    private void injectMockServiceIntoSmartContract(Object instance) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+    private void initSmartContractStaticField(Object smartContractInstance, String fieldName, Object value)
+        throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
         Class<?> contract = Class.forName("SmartContract");
-        Field interactionService = contract.getDeclaredField("nodeApiService");
+        Field interactionService = contract.getDeclaredField(fieldName);
         interactionService.setAccessible(true);
-        interactionService.set(null, instance);
+        interactionService.set(smartContractInstance, value);
     }
 
     @After
@@ -118,19 +122,28 @@ public abstract class ServiceTest {
         return new String(Files.readAllBytes(Paths.get(sourceCodePath)));
     }
 
-    protected ReturnValue executeSmartContract(String methodName, byte[] contractState) {
+    protected ReturnValue executeSmartContract(String methodName, byte[] contractState) throws Exception {
         return executeSmartContract(methodName, new Variant[][] {{}}, contractState);
     }
 
 
     protected ReturnValue executeExternalSmartContract(String methodName, byte[] contractState, Object... params) {
         Variant[][] variantParams = null;
-        if(params != null) {
+        if (params != null) {
             variantParams = new Variant[1][params.length];
             for (int i = 0; i < variantParams[0].length; i++) {
                 variantParams[0][i] = variantDataToVariant(objectToVariantData(params[i]));
             }
         }
+        Map<String, ExternalSmartContract> usedContracts = new HashMap<>();
+        usedContracts.putIfAbsent(
+            encodeToBASE58(contractAddress),
+            new ExternalSmartContract(new SmartContractGetResultData(
+                new ApiResponseData(SUCCESS, ""),
+                byteCodeObjectDataList,
+                contractState,
+                true)));
+
         return ceService.executeExternalSmartContract(new InvokeMethodSession(
             0,
             encodeToBASE58(initiatorAddress),
@@ -139,13 +152,14 @@ public abstract class ServiceTest {
             contractState,
             methodName,
             variantParams,
-            60_000L), new HashMap<>());
+            60_000L), usedContracts);
     }
 
     protected ReturnValue executeSmartContract(
         String methodName,
         Variant[][] params,
-        byte[] contractState) {
+        byte[] contractState) throws Exception {
+
         return ceService.executeSmartContract(new InvokeMethodSession(
             0,
             encodeToBASE58(initiatorAddress),
@@ -158,7 +172,7 @@ public abstract class ServiceTest {
     }
 
 
-    protected ReturnValue deploySmartContract() {
+    protected ReturnValue deploySmartContract() throws Exception {
         return ceService.deploySmartContract(new DeployContractSession(
             0,
             encodeToBASE58(initiatorAddress),

@@ -57,7 +57,7 @@ public class MethodParametersTest extends ServiceTest {
 
         Integer invokeResult = (Integer) voidMethod.method.invoke(
             deserialize(contractState, classLoader),
-            castValues(voidMethod.argTypes, voidMethod.argValues));
+            castValues(voidMethod.argTypes, voidParams));
         Assert.assertEquals(new Integer(1), invokeResult);
     }
 
@@ -72,7 +72,7 @@ public class MethodParametersTest extends ServiceTest {
         Object invoke = simpleMethod.method
             .invoke(
                 deserialize(contractState, classLoader),
-                castValues(simpleMethod.argTypes, simpleMethod.argValues));
+                castValues(simpleMethod.argTypes, simpleParams));
         Integer invokeResult = (Integer) invoke;
         Assert.assertEquals(new Integer(1), invokeResult);
 
@@ -90,7 +90,7 @@ public class MethodParametersTest extends ServiceTest {
         Object invoke = arrayListMethod.method
             .invoke(
                 deserialize(contractState, classLoader),
-                castValues(arrayListMethod.argTypes, arrayListMethod.argValues));
+                castValues(arrayListMethod.argTypes, arrayList));
         Integer invokeResult = (Integer) invoke;
         Assert.assertEquals(new Integer(1), invokeResult);
     }
@@ -107,7 +107,7 @@ public class MethodParametersTest extends ServiceTest {
         Object invoke = arrayListMethod.method
             .invoke(
                 deserialize(contractState, classLoader),
-                castValues(arrayListMethod.argTypes, arrayListMethod.argValues));
+                castValues(arrayListMethod.argTypes, arrayList));
         Integer invokeResult = (Integer) invoke;
         Assert.assertEquals(new Integer(1), invokeResult);
 
@@ -134,7 +134,7 @@ public class MethodParametersTest extends ServiceTest {
         Object invoke = simpleAndArrayListMethod.method
             .invoke(
                 deserialize(contractState, classLoader),
-                castValues(simpleAndArrayListMethod.argTypes, simpleAndArrayListMethod.argValues));
+                castValues(simpleAndArrayListMethod.argTypes, simpleParamsWithList));
         Integer invokeResult = (Integer) invoke;
         Assert.assertEquals(new Integer(1), invokeResult);
     }
@@ -169,7 +169,7 @@ public class MethodParametersTest extends ServiceTest {
         Object invoke = moreVariousParametersMethod.method
             .invoke(
                 deserialize(contractState, classLoader),
-                castValues(moreVariousParametersMethod.argTypes, moreVariousParametersMethod.argValues));
+                castValues(moreVariousParametersMethod.argTypes, params));
         Integer invokeResult = (Integer) invoke;
         Assert.assertEquals(new Integer(1), invokeResult);
     }

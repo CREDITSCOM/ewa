@@ -14,8 +14,10 @@ public class SmartContractGetResultData extends ApiResponseData {
     public byte[] contractState;
     public final boolean stateCanModify;
 
-    public SmartContractGetResultData(ApiResponseData apiResponseData, List<ByteCodeObjectData> byteCodeObjects,
+    public SmartContractGetResultData(
+        ApiResponseData apiResponseData, List<ByteCodeObjectData> byteCodeObjects,
         byte[] contractState, boolean stateCanModify) {
+
         super(apiResponseData);
         this.byteCodeObjects = byteCodeObjects;
         this.contractState = contractState;

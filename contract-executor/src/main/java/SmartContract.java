@@ -1,6 +1,7 @@
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
-import com.credits.pojo.apiexec.SmartContractGetResultData;
+import com.credits.general.util.Function;
+import com.credits.pojo.ExternalSmartContract;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.service.contract.SmartContractConstants;
 import com.credits.service.contract.session.InvokeMethodSession;
@@ -24,7 +25,7 @@ public abstract class SmartContract implements Serializable {
     private static NodeApiExecInteractionService nodeApiService;
     private static ContractExecutorServiceImpl contractExecutorService;
     private static ExecutorService cachedPool;
-    private transient Map<String, SmartContractGetResultData> externalContracts;
+    private transient Map<String, ExternalSmartContract> usedContracts;
 
     protected final transient long accessId;
     protected final transient String initiator;
@@ -36,6 +37,7 @@ public abstract class SmartContract implements Serializable {
         initiator = contractConstants.initiator;
         accessId = contractConstants.accessId;
         contractAddress = contractConstants.contractAddress;
+        usedContracts = contractConstants.usedContracts;
     }
 
     final protected void sendTransaction(String from, String to, double amount, double fee, byte... userData) {
@@ -46,14 +48,15 @@ public abstract class SmartContract implements Serializable {
     }
 
     final protected Object invokeExternalContract(String contractAddress, String method, Object... params) {
-        SmartContractGetResultData contractData = externalContracts.containsKey(contractAddress)
-            ? externalContracts.get(contractAddress)
-            : callService(() -> nodeApiService.getExternalSmartContractByteCode(accessId, contractAddress));
+        ExternalSmartContract usedContract = usedContracts.containsKey(contractAddress)
+            ? usedContracts.get(contractAddress)
+            : new ExternalSmartContract(callService(() -> nodeApiService.getExternalSmartContractByteCode(accessId, contractAddress)));
+        usedContracts.put(contractAddress, usedContract);
 
         Variant[][] variantParams = null;
         if (params != null) {
             variantParams = new Variant[1][params.length];
-            for (int i = 0; i < variantParams.length; i++) {
+            for (int i = 0; i < params.length; i++) {
                 variantParams[0][i] = variantDataToVariant(objectToVariantData(params[i]));
             }
         }
@@ -64,36 +67,31 @@ public abstract class SmartContract implements Serializable {
                 accessId,
                 initiator,
                 contractAddress,
-                contractData.byteCodeObjects,
-                contractData.contractState,
+                usedContract.contractData.byteCodeObjects,
+                usedContract.contractData.contractState,
                 method,
                 finalVariantParams,
                 MAX_VALUE),
-            externalContracts));
+            usedContracts));
 
-        if (!contractData.stateCanModify && !Arrays.equals(contractData.contractState, returnValue.newContractState)) {
+        if (!usedContract.contractData.stateCanModify && !Arrays.equals(
+            usedContract.contractData.contractState,
+            returnValue.newContractState)) {
             throw new ContractExecutorException("smart contract \"" + contractAddress + "\" can't be modify");
         }
-        contractData.contractState = returnValue.newContractState;
-        externalContracts.putIfAbsent(contractAddress, contractData);
+        usedContract.contractData.contractState = returnValue.newContractState;
 
         return variantToObject(returnValue.executeResults.get(0).result);
     }
-
 
     final protected byte[] getSeed() {
         return callService(() -> nodeApiService.getSeed(accessId));
     }
 
-    private interface Function<R> {
-        R apply();
-    }
-
-    private <R> R callService(SmartContract.Function<R> method) {
+    private <R> R callService(Function<R> method) {
         try {
             return cachedPool.submit(method::apply).get();
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

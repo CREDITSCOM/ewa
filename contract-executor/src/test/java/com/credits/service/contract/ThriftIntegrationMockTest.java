@@ -1,6 +1,5 @@
 package com.credits.service.contract;
 
-import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.service.ServiceTest;
 import com.credits.service.node.api.NodeApiInteractionService;
@@ -60,7 +59,7 @@ public class ThriftIntegrationMockTest extends ServiceTest {
 
     @Test
     @Ignore("need resolve file permission for this test")
-    public void execute_contract_method_with_variant_parameters() throws ContractExecutorException {
+    public void execute_contract_method_with_variant_parameters() throws Exception {
         Integer newValue =
             executeSmartContract(
                 "addValue",

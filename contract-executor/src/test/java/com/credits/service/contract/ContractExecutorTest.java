@@ -41,7 +41,7 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
     @Test
-    public void save_state_smart_contract() {
+    public void save_state_smart_contract() throws Exception {
         byte[] contractState = deploySmartContract().newContractState;
 
         contractState = executeSmartContract("initialize", contractState).newContractState;
@@ -59,7 +59,7 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
     @Test
-    public void initiator_init() {
+    public void initiator_init() throws Exception {
         byte[] contractState = deploySmartContract().newContractState;
 
         ReturnValue result = executeSmartContract("getInitiatorAddress", contractState);
@@ -72,7 +72,7 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
     @Test
-    public void send_transaction_into_contract(){
+    public void send_transaction_into_contract() throws Exception {
         byte[] contractState = deploySmartContract().newContractState;
 
 
@@ -104,7 +104,7 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
     @Test
-    public void get_contract_variables() {
+    public void get_contract_variables() throws Exception {
         byte[] contractState = deploySmartContract().newContractState;
         Map<String, Variant> contractVariables = ceService.getContractVariables(byteCodeObjectDataList, contractState);
         Assert.assertTrue(contractVariables.containsKey("total"));
@@ -112,7 +112,7 @@ public class ContractExecutorTest extends ServiceTest {
 
 
     @Test
-    public void multipleMethodCall() {
+    public void multipleMethodCall() throws Exception {
         byte[] contractState = deploySmartContract().newContractState;
 
         ReturnValue singleCallResult = executeSmartContract("addTokens", new Variant[][] {{v_int(10)}}, contractState);

@@ -1,6 +1,5 @@
 package com.credits.service.contract;
 
-import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.service.ServiceTest;
 import org.junit.Before;
@@ -67,7 +66,7 @@ public class SecurityTest extends ServiceTest {
                 methodName,
                 arg != null ? new Variant[][] {{arg}} : new Variant[][] {{}},
                 contractState);
-        } catch (ContractExecutorException e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return;
         }

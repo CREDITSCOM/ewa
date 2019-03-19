@@ -3,6 +3,7 @@ package com.credits.service.contract.session;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.ByteCodeObjectData;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -18,7 +19,7 @@ public class DeployContractSession extends Session {
         List<ByteCodeObjectData> byteCodeObjectDataList,
         long executionTime) {
 
-        super(accessId, initiatorAddress, executionTime);
+        super(accessId, initiatorAddress, executionTime, new HashMap<>());
         validateArguments(initiatorAddress, contractAddress, byteCodeObjectDataList);
         this.byteCodeObjectDataList = byteCodeObjectDataList;
         this.contractAddress = contractAddress;

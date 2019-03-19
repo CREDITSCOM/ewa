@@ -6,14 +6,16 @@ import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.exception.CompilationException;
 import com.credits.general.pojo.AnnotationData;
+import com.credits.general.pojo.ApiResponseCode;
+import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.MethodArgumentData;
 import com.credits.general.pojo.MethodDescriptionData;
-import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
+import com.credits.pojo.ExternalSmartContract;
 import com.credits.pojo.MethodData;
 import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.secure.Sandbox;
@@ -22,7 +24,6 @@ import com.credits.service.contract.session.InvokeMethodSession;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractExecutorUtils;
-import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,10 +43,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.PropertyPermission;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.LoggingPermission;
 import java.util.stream.Stream;
@@ -54,21 +55,19 @@ import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.serialize.Serializer.deserialize;
 import static com.credits.serialize.Serializer.serialize;
 import static com.credits.service.contract.SmartContractConstants.initSmartContractConstants;
-import static com.credits.thrift.ContractExecutorHandler.ERROR_CODE;
-import static com.credits.thrift.ContractExecutorHandler.SUCCESS_CODE;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
 import static com.credits.thrift.utils.ContractExecutorUtils.mapObjectToVariant;
-import static com.credits.utils.ContractExecutorServiceUtils.castValues;
+import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
+import static com.credits.utils.ContractExecutorServiceUtils.failureApiResponse;
 import static com.credits.utils.ContractExecutorServiceUtils.getMethodArgumentsValuesByNameAndParams;
 import static com.credits.utils.ContractExecutorServiceUtils.initializeField;
 import static com.credits.utils.ContractExecutorServiceUtils.initializeSmartContractField;
 import static com.credits.utils.ContractExecutorServiceUtils.parseAnnotationData;
-import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ContractExecutorServiceImpl implements ContractExecutorService {
 
@@ -102,63 +101,50 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue deploySmartContract(DeployContractSession session) {
-        try {
-            BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
-            List<Class<?>> compiledClasses = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader);
-            final Class<?> contractClass = compiledClasses.stream()
-                .peek(clazz -> Sandbox.confine(clazz, smartContractPermissions))
-                .filter(clazz -> !clazz.getName().contains("$"))
-                .findAny()
-                .orElseThrow(() -> new ClassNotFoundException("contract class not compiled"));
+    public ReturnValue deploySmartContract(DeployContractSession session) throws Exception {
+        final BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
+        final List<Class<?>> compiledClasses = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader);
+        final Class<?> contractClass = compiledClasses.stream()
+            .peek(clazz -> Sandbox.confine(clazz, smartContractPermissions))
+            .filter(clazz -> !clazz.getName().contains("$"))
+            .findAny()
+            .orElseThrow(() -> new ClassNotFoundException("contract class not compiled"));
 
-            Sandbox.confine(contractClass, smartContractPermissions);
-
-            initSmartContractConstants(currentThread().getId(), session);
-
-            return new ReturnValue(
-                serialize(contractClass.newInstance()),
-                singletonList(new SmartContractMethodResult(new APIResponse(SUCCESS_CODE, "success"), null)), null);
-
-        } catch (Throwable e) {
-            logger.debug("Cannot deploy the contract. Root cause message: {}\n{}", getRootCauseMessage(e), e);
-            throw new ContractExecutorException(
-                "Cannot deploy the contract " + session.contractAddress + ", accessId " + session.accessId + ". Reason: " +
-                    getRootCauseMessage(e));
-        }
+        return new ReturnValue(
+            runForLimitTime(session, () -> serialize(contractClass.newInstance())),
+            singletonList(new SmartContractMethodResult(SUCCESS_API_RESPONSE, null)), null);
     }
 
     @Override
-    public ReturnValue executeSmartContract(InvokeMethodSession session) throws ContractExecutorException {
+    public ReturnValue executeSmartContract(InvokeMethodSession session) throws Exception {
 
-        try {
-            BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
-            List<Class<?>> compiledClasses = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader);
-            final Class<?> contractClass = compiledClasses.stream()
-                .peek(clazz -> Sandbox.confine(clazz, smartContractPermissions))
-                .filter(clazz -> !clazz.getName().contains("$"))
-                .findAny()
-                .orElseThrow(() -> new ClassNotFoundException("contract class not compiled"));
+        final BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
+        final List<Class<?>> compiledClasses = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader);
+        final Class<?> contractClass = compiledClasses.stream()
+            .peek(clazz -> Sandbox.confine(clazz, smartContractPermissions))
+            .filter(clazz -> !clazz.getName().contains("$"))
+            .findAny()
+            .orElseThrow(() -> new ClassNotFoundException("contract class not compiled"));
 
-            Object instance = deserialize(session.contractState, classLoader);
+        final Object instance = deserialize(session.contractState, classLoader);
 
-            final Map<String, SmartContractGetResultData> externalSmartContracts = new HashMap<>();
-            initializeField("initiator", session.initiatorAddress, contractClass, instance);
-            initializeField("accessId", session.accessId, contractClass, instance);
-            initializeField("externalContractsStates", externalSmartContracts, contractClass, instance);
+        final Map<String, ExternalSmartContract> usedSmartContracts = new HashMap<>();
+        initializeField("initiator", session.initiatorAddress, contractClass, instance);
+        initializeField("accessId", session.accessId, contractClass, instance);
+        initializeField("usedContracts", usedSmartContracts, contractClass, instance);
 
-            //todo add "void" type to Variant
-            return invokeMultipleMethod(session, contractClass, instance, externalSmartContracts);
+        ExternalSmartContract usedContract = new ExternalSmartContract(
+            new SmartContractGetResultData(
+                new ApiResponseData(ApiResponseCode.SUCCESS, ""),
+                session.byteCodeObjectDataList,
+                session.contractState,
+                true));
+        usedContract.instance = instance;
+        usedSmartContracts.put(session.contractAddress, usedContract);
 
-        } catch (Throwable e) {
-            logger.debug(
-                "Cannot execute SmartContract the contract. Root cause message: {}\n",
-                getRootCauseMessage(e),
-                e);
-            throw new ContractExecutorException(
-                "Cannot execute the SmartContract " + session.contractAddress + ", accessId " + session.accessId +
-                    ". Reason: " + getRootCauseMessage(e));
-        }
+        return session.paramsTable.length < 2
+            ? invokeSingleMethod(session, instance, usedSmartContracts)
+            : invokeMultipleMethod(session, instance, usedSmartContracts);
     }
 
     @Override
@@ -234,75 +220,77 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, SmartContractGetResultData> externalSmartContracts) {
+    public ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, ExternalSmartContract> usedContracts) {
 
-        BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
-        Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader).stream()
-            .filter(clazz -> !clazz.getName().contains("$"))
-            .findAny()
-            .orElseThrow(() -> new ContractExecutorException("contract class not compiled"));
-        Object instance = deserialize(session.contractState, classLoader);
+        Object instance = usedContracts.get(session.contractAddress).instance;
 
-        initializeField("initiator", session.initiatorAddress, contractClass, instance);
-        initializeField("accessId", session.accessId, contractClass, instance);
-        initializeField("externalContracts", externalSmartContracts, contractClass, instance);
+        if (instance == null) {
+            final BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
+            final Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader).stream()
+                .filter(clazz -> !clazz.getName().contains("$"))
+                .findAny()
+                .orElseThrow(() -> new ContractExecutorException("contract class not compiled"));
+            instance = deserialize(session.contractState, classLoader);
 
-        return invokeMultipleMethod(session, contractClass, instance, externalSmartContracts);
+            initializeField("initiator", session.initiatorAddress, contractClass, instance);
+            initializeField("accessId", session.accessId, contractClass, instance);
+            initializeField("usedContracts", usedContracts, contractClass, instance);
+            usedContracts.get(session.contractAddress).instance = instance;
+        }
 
+        return invokeSingleMethod(session, instance, usedContracts);
+    }
+
+    private ReturnValue invokeSingleMethod(
+        InvokeMethodSession session,
+        Object instance,
+        Map<String, ExternalSmartContract> usedContracts) {
+        final SmartContractMethodResult result = invokeMethodAndCatchErrors(session, instance, session.paramsTable[0]);
+        return new ReturnValue(serialize(instance), singletonList(result), usedContracts);
     }
 
     private ReturnValue invokeMultipleMethod(
         InvokeMethodSession session,
-        Class<?> contractClass,
         Object instance,
-        Map<String, SmartContractGetResultData> externalSmartContracts) {
+        Map<String, ExternalSmartContract> usedContracts) {
         return stream(session.paramsTable)
-            .flatMap(params -> {
-                MethodData methodData = getMethodArgumentsValuesByNameAndParams(contractClass, session.methodName, params);
-                return Stream.of(new Pair<>(methodData, invokeMethod(session, instance, methodData)));
-            })
+            .flatMap(params -> Stream.of(invokeMethodAndCatchErrors(session, instance, params)))
             .reduce(
-                new ReturnValue(null, new ArrayList<>(), externalSmartContracts),
-                (returnValue, methodAndResult) -> {
-                    if (returnValue.newContractState == null) {
-                        returnValue.newContractState = serialize(instance);
-                    }
-                    logger.debug("stack trace: {} {}", methodAndResult.getKey(), methodAndResult.getValue());
-                    returnValue.executeResults.add(methodAndResult.getValue());
+                new ReturnValue(null, new ArrayList<>(), usedContracts),
+                (returnValue, result) -> {
+                    returnValue.newContractState = returnValue.newContractState == null ? serialize(instance) : returnValue.newContractState;
+                    returnValue.executeResults.add(result);
                     return returnValue;
                 },
                 (returnValue, returnValue2) -> returnValue);
     }
 
-    private SmartContractMethodResult invokeMethod(
-        InvokeMethodSession session,
-        Object instance,
-        MethodData methodData) throws ContractExecutorException {
-
-        Thread invokeFunctionThread = null;
+    private SmartContractMethodResult invokeMethodAndCatchErrors(InvokeMethodSession session, Object instance, Variant[] params) {
         try {
-            final Object[] parameter = methodData.argTypes != null ? castValues(methodData.argTypes, methodData.argValues) : null;
-            final FutureTask<SmartContractMethodResult> invokeMethodTask = new FutureTask<>(() -> {
-                try {
-                    return new SmartContractMethodResult(
-                        new APIResponse(SUCCESS_CODE, "success"),
-                        mapObjectToVariant(methodData.method.invoke(instance, parameter)));
-                } catch (Throwable e) {
-                    return new SmartContractMethodResult(new APIResponse(ERROR_CODE, getRootCauseMessage(e)), null);
-                }
-            });
-            invokeFunctionThread = new Thread(invokeMethodTask);
-            initSmartContractConstants(invokeFunctionThread.getId(), session);
-            executorService.submit(invokeFunctionThread);
-
-            return invokeMethodTask.get(session.executionTime, TimeUnit.MILLISECONDS);
-
-        } catch (TimeoutException ex) {
-            logger.info("timeout exception");
-            invokeFunctionThread.stop();
-            return new SmartContractMethodResult(new APIResponse(ERROR_CODE, "timeout exception"), null);
+            return new SmartContractMethodResult(SUCCESS_API_RESPONSE, mapObjectToVariant(invoke(session, instance, params)));
         } catch (Throwable e) {
-            return new SmartContractMethodResult(new APIResponse(ERROR_CODE, e.getMessage()), null);
+            return new SmartContractMethodResult(failureApiResponse(e), null);
+        }
+    }
+
+    private Object invoke(InvokeMethodSession session, Object instance, Variant[] params) throws Exception {
+        MethodData methodData = getMethodArgumentsValuesByNameAndParams(instance.getClass(), session.methodName, params);
+        return runForLimitTime(session, () -> methodData.method.invoke(instance, methodData.argValues));
+    }
+
+    private <R> R runForLimitTime(DeployContractSession session, Callable<R> block) throws Exception {
+        Thread limitedTimeThread = null;
+        try {
+            FutureTask<R> task = new FutureTask<>(block);
+            limitedTimeThread = new Thread(task);
+            initSmartContractConstants(limitedTimeThread.getId(), session);
+            //            executorService.submit(limitedTimeThread);
+            limitedTimeThread.start();
+            return task.get(session.executionTime, MILLISECONDS);
+        } catch (TimeoutException e) {
+            // TODO: 3/19/2019 create thread wrapper for correct stop thread
+            limitedTimeThread.stop();
+            throw new TimeoutException(e.getMessage());
         }
     }
 

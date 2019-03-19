@@ -1,6 +1,6 @@
 package com.credits.thrift;
 
-import com.credits.pojo.apiexec.SmartContractGetResultData;
+import com.credits.pojo.ExternalSmartContract;
 import com.credits.service.contract.SmartContractMethodResult;
 
 import java.util.Arrays;
@@ -10,12 +10,12 @@ import java.util.Map;
 public class ReturnValue {
     public byte[] newContractState;
     public final List<SmartContractMethodResult> executeResults;
-    public final Map<String, SmartContractGetResultData> externalSmartContracts;
+    public final Map<String, ExternalSmartContract> externalSmartContracts;
 
     public ReturnValue(
         byte[] newContractState,
         List<SmartContractMethodResult> executeResults,
-        Map<String, SmartContractGetResultData> externalSmartContracts) {
+        Map<String, ExternalSmartContract> externalSmartContracts) {
         this.newContractState = newContractState;
         this.externalSmartContracts = externalSmartContracts;
         this.executeResults = executeResults;

@@ -1,7 +1,5 @@
 package com.credits.pojo;
 
-import com.credits.general.thrift.generated.Variant;
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -9,9 +7,9 @@ public class MethodData {
 
     public final Method method;
     public final Class<?>[] argTypes;
-    public final Variant[] argValues;
+    public final Object[] argValues;
 
-    public MethodData(Method methodName, Class<?>[] argTypes, Variant[] argValues) {
+    public MethodData(Method methodName, Class<?>[] argTypes, Object[] argValues) {
         this.method = methodName;
         this.argTypes = argTypes;
         this.argValues = argValues;

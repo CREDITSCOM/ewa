@@ -9,6 +9,7 @@ import com.credits.client.executor.thrift.generated.GetContractVariablesResult;
 import com.credits.client.executor.thrift.generated.GetterMethodResult;
 import com.credits.client.executor.thrift.generated.SmartContractBinary;
 import com.credits.general.exception.CompilationErrorException;
+import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
@@ -34,14 +35,13 @@ import static com.credits.general.util.GeneralConverter.byteCodeObjectsToByteCod
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
 import static com.credits.ioc.Injector.INJECTOR;
+import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
+import static com.credits.utils.ContractExecutorServiceUtils.failureApiResponse;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorHandler.class);
-    public final static byte ERROR_CODE = (byte) 1;
-    public final static byte SUCCESS_CODE = (byte) 0;
 
     ContractExecutorService service;
 
@@ -82,7 +82,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat)));
 
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
-        ExecuteByteCodeResult result = new ExecuteByteCodeResult(new APIResponse(SUCCESS_CODE, "success"), null, null);
+        ExecuteByteCodeResult result = new ExecuteByteCodeResult(null, null, null);
         try {
             // TODO: 3/18/2019 execute smart contract must be throw exception if contract state is empty or null
             ReturnValue returnValue =
@@ -111,23 +111,24 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 result.ret_val = returnValue.executeResults.get(0).result;
             }
 
-
             if (returnValue.externalSmartContracts != null) {
                 result.externalContractsState = returnValue.externalSmartContracts.keySet().stream().reduce(
                     new HashMap<>(),
                     (newMap, address) -> {
-                        newMap.put(ByteBuffer.wrap(decodeFromBASE58(address)), ByteBuffer.wrap(returnValue.externalSmartContracts.get(address).contractState));
+                        newMap.put(
+                            ByteBuffer.wrap(decodeFromBASE58(address)),
+                            ByteBuffer.wrap(returnValue.externalSmartContracts.get(address).contractData.contractState));
                         return newMap;
                     },
                     (map1, map2) -> map1);
             }
 
             logger.debug("\nexecuteByteCode success --> contractStateHash {} {}", Arrays.hashCode(result.getInvokedContractState()), result);
+
         } catch (Throwable e) {
-            result.setStatus(new APIResponse(ERROR_CODE, e.getMessage()));
+            result.status = failureApiResponse(e);
             logger.debug("\nexecuteByteCode error --> {}", result);
         }
-
         return result;
     }
 
@@ -166,7 +167,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             }
         }
 
-        ExecuteByteCodeMultipleResult byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(new APIResponse(SUCCESS_CODE, "success"), null);
+        ExecuteByteCodeMultipleResult byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(SUCCESS_API_RESPONSE, null);
         try {
             ReturnValue returnValue =
                 method.isEmpty() && invokedContract.contractState == null || invokedContract.contractState.array().length == 0 ?
@@ -193,7 +194,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 return getterMethodResult;
             }).collect(Collectors.toList());
         } catch (Throwable e) {
-            byteCodeMultipleResult.setStatus(new APIResponse(ERROR_CODE, getRootCauseMessage(e)));
+            byteCodeMultipleResult.setStatus(failureApiResponse(e));
             logger.debug("\nexecuteByteCodeMultiple error --> {}", byteCodeMultipleResult);
         }
         logger.debug("\nexecuteByteCodeMultiple success --> {}", byteCodeMultipleResult);
@@ -209,9 +210,9 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 service.getContractsMethods(GeneralConverter.byteCodeObjectTobyteCodeObjectData(compilationUnits));
             result.methods =
                 contractsMethods.stream().map(GeneralConverter::convertMethodDataToMethodDescription).collect(toList());
-            result.setStatus(new APIResponse(SUCCESS_CODE, "success"));
+            result.setStatus(SUCCESS_API_RESPONSE);
         } catch (Throwable e) {
-            result.setStatus(getErrorState(getRootCauseMessage(e)));
+            result.setStatus(failureApiResponse(e));
             logger.debug("\ngetContractMethods error --> {}", result);
         }
         logger.debug("\ngetContractMethods success --> {}", result);
@@ -227,12 +228,12 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                      compilationUnits.size(), contractState.array().length);
         GetContractVariablesResult result = new GetContractVariablesResult();
         try {
-            result.setStatus(new APIResponse(SUCCESS_CODE, "success"));
+            result.setStatus(SUCCESS_API_RESPONSE);
             result.setContractVariables(service.getContractVariables(
                 GeneralConverter.byteCodeObjectTobyteCodeObjectData(compilationUnits),
                 contractState.array()));
         } catch (Throwable e) {
-            result.setStatus(getErrorState(getRootCauseMessage(e)));
+            result.setStatus(failureApiResponse(e));
             logger.debug("\ngetContractVariables error --> {}", result);
         }
         logger.debug("\ngetContractVariables success --> {}", result);
@@ -245,24 +246,21 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         logger.debug("\n<-- compileBytecode(sourceCode = {})", sourceCode);
         CompileSourceCodeResult result = new CompileSourceCodeResult();
         try {
-            result.setStatus(new APIResponse(SUCCESS_CODE, "success"));
+            result.setStatus(SUCCESS_API_RESPONSE);
             result.setByteCodeObjects(
                 GeneralConverter.byteCodeObjectsDataToByteCodeObjects(service.compileClass(sourceCode)));
         } catch (CompilationErrorException exception) {
-            result.setStatus(getErrorState(
+            result.setStatus(new APIResponse(
+                ApiResponseCode.FAILURE.code,
                 exception.getErrors()
                     .stream()
                     .map(e -> "Error on line " + e.getLineNumber() + ": " + e.getErrorMessage())
                     .collect(Collectors.joining("\n"))));
         } catch (Throwable e) {
-            result.setStatus(getErrorState(getRootCauseMessage(e)));
+            result.setStatus(failureApiResponse(e));
             logger.debug("\ncompileByteCode error --> {}", result);
         }
         logger.debug("\ncompileByteCode success --> {}", result);
         return result;
-    }
-
-    private APIResponse getErrorState(String errorMessage) {
-        return new APIResponse(ERROR_CODE, errorMessage);
     }
 }

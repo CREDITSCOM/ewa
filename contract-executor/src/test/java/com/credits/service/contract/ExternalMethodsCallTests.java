@@ -42,30 +42,13 @@ public class ExternalMethodsCallTests extends ServiceTest {
         assertThat(methodResult.status.message, is("success"));
         assertThat(methodResult.result.getV_int_box(), is(0));
         assertThat(returnValue.newContractState, equalTo(deployContractState));
-        assertThat(returnValue.newContractState, equalTo(returnValue.externalSmartContracts.get(calledSmartContractAddress).contractState));
+        assertThat(
+            returnValue.newContractState,
+            equalTo(returnValue.externalSmartContracts.get(calledSmartContractAddress).contractData.contractState));
     }
 
     @Test
     public void setter_method_must_return_new_states() {
-        configureGetContractByteCodeNodeResponse(deployContractState, true);
-
-        final ReturnValue returnValue = executeExternalSmartContract(
-            "recursionExternalContractSetterCall",
-            deployContractState,
-            10);
-
-        final SmartContractMethodResult methodResult = returnValue.executeResults.get(0);
-
-        assertThat(methodResult.status.message, is("success"));
-        assertThat(methodResult.result.getV_int_box(), is(11));
-        assertThat(returnValue.newContractState, not(equalTo(deployContractState)));
-        assertThat(returnValue.newContractState, not(equalTo(returnValue.externalSmartContracts.get(calledSmartContractAddress).contractState)));
-        assertThat(returnValue.externalSmartContracts.size(), is(0));
-    }
-
-    @Test
-    public void recursion_contract_call(){
-
         configureGetContractByteCodeNodeResponse(deployContractState, true);
 
         final ReturnValue returnValue = executeExternalSmartContract(
@@ -77,6 +60,28 @@ public class ExternalMethodsCallTests extends ServiceTest {
 
         final SmartContractMethodResult methodResult = returnValue.executeResults.get(0);
 
+        assertThat(methodResult.status.message, is("success"));
+        assertThat(returnValue.newContractState, equalTo(deployContractState));
+        assertThat(
+            returnValue.newContractState,
+            not(equalTo(returnValue.externalSmartContracts.get(calledSmartContractAddress).contractData.contractState)));
+    }
+
+    @Test
+    public void recursion_contract_call() {
+        configureGetContractByteCodeNodeResponse(deployContractState, true);
+
+        final ReturnValue returnValue = executeExternalSmartContract(
+            "recursionExternalContractSetterCall",
+            deployContractState,
+            10);
+
+        final SmartContractMethodResult methodResult = returnValue.executeResults.get(0);
+
+        assertThat(methodResult.status.message, is("success"));
+        assertThat(methodResult.result.getV_int_box(), is(45));
+        assertThat(returnValue.newContractState, not(equalTo(deployContractState)));
+        assertThat(returnValue.externalSmartContracts.size(), is(1));
     }
 
     @Test

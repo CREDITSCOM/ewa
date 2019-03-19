@@ -10,19 +10,24 @@ public enum ApiResponseCode {
     NOT_FOUND(3),
     UNKNOWN(-1);
 
-    public final int code;
+    public final byte code;
 
     ApiResponseCode(int code) {
-        this.code = code;
+        this.code = (byte) code;
     }
 
-    public static ApiResponseCode valueOf(int code){
-       switch (code){
-           case 0: return SUCCESS;
-           case 1: return FAILURE;
-           case 2: return NOT_IMPLEMENTED;
-           case 3: return NOT_FOUND;
-           default: return UNKNOWN;
-       }
+    public static ApiResponseCode valueOf(int code) {
+        switch (code) {
+            case 0:
+                return SUCCESS;
+            case 1:
+                return FAILURE;
+            case 2:
+                return NOT_IMPLEMENTED;
+            case 3:
+                return NOT_FOUND;
+            default:
+                return UNKNOWN;
+        }
     }
 }
