@@ -7,6 +7,11 @@ public class AnnotationData {
     public String name;
     public Map<String, String> arguments;
 
+    public AnnotationData(String name, Map<String, String> arguments) {
+        this.name = name;
+        this.arguments = arguments;
+    }
+
     public AnnotationData(AnnotationData annotationData1) {
         this.name = annotationData1.name;
         this.arguments = new HashMap<>(annotationData1.arguments);
@@ -36,9 +41,10 @@ public class AnnotationData {
         return result;
     }
 
-    public AnnotationData(String name, Map<String, String> arguments) {
-        this.name = name;
-        this.arguments = arguments;
+    @Override
+    public String toString() {
+        return "AnnotationData{" + "name='" + name + '\'' +
+            ", arguments=" + arguments +
+            '}';
     }
-
 }
