@@ -98,7 +98,7 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>wallet-desktop-${version}.${buildNumber}</finalName>
+                            <finalName>wallet-desktop-${project.version}.${buildNumber}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>

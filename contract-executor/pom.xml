@@ -76,7 +76,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>contract-executor-${version}.${buildNumber}</finalName>
+                            <finalName>contract-executor-${project.version}.${buildNumber}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
