@@ -4,6 +4,7 @@ import com.credits.wallet.desktop.AppState;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.control.TextField;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +21,11 @@ public class NumberUtilsTest {
 
     @Before
     public void setUp() {
-        new JFXPanel();
+        try {
+            new JFXPanel();
+        } catch (Exception e) {
+            Assume.assumeNoException("Unable to open DISPLAY", e);
+        }
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         char separator = symbols.getDecimalSeparator();
         AppState.decimalSeparator = Character.toString(separator);
