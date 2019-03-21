@@ -40,4 +40,14 @@ public class MethodArgumentData {
         result = 31 * result + (annotations != null ? annotations.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("MethodArgumentData{");
+        sb.append("returnType='").append(returnType).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", annotations=").append(annotations);
+        sb.append('}');
+        return sb.toString();
+    }
 }
