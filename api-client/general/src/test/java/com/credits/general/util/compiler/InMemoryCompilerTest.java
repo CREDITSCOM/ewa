@@ -5,7 +5,7 @@ import com.credits.general.util.PrintOut;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
-import org.junit.Assert;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +15,9 @@ import javax.tools.DiagnosticCollector;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class InMemoryCompilerTest {
 
@@ -28,9 +31,9 @@ public class InMemoryCompilerTest {
             String sourceCode =
                 "public class Contract extends SmartContract { \n" + "public Contract() { \n" + "total = 0;wqwe \n" +
                     "} \n" + "}";
-            Map<String,String> classesToCompile = new HashMap<>();
+            Map<String, String> classesToCompile = new HashMap<>();
             String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
-            classesToCompile.put(className,sourceCode);
+            classesToCompile.put(className, sourceCode);
 
             compilationPackage = compiler.compile(
                 classesToCompile);
@@ -38,7 +41,7 @@ public class InMemoryCompilerTest {
             e.printStackTrace();
         }
         if (compilationPackage.isCompilationStatusSuccess()) {
-            List<CompilationUnit>  compilationUnits = compilationPackage.getUnits();
+            List<CompilationUnit> compilationUnits = compilationPackage.getUnits();
             CompilationUnit compilationUnit = compilationUnits.get(0);
             byte[] byteCode = compilationUnit.getByteCode();
             PrintOut.printBytes(byteCode);
@@ -46,7 +49,7 @@ public class InMemoryCompilerTest {
             DiagnosticCollector collector = compilationPackage.getCollector();
             List<Diagnostic> diagnostics = collector.getDiagnostics();
             diagnostics.forEach(action -> {
-                Assert.assertEquals(action.getLineNumber(), 3);
+                assertEquals(action.getLineNumber(), 3);
             });
         }
 
@@ -55,10 +58,11 @@ public class InMemoryCompilerTest {
     @Test
     public void loadJdkPathFromEnvironmentVariablesTest() {
         InMemoryCompiler compiler = new InMemoryCompiler();
-        try {
-            Assert.assertNotNull(compiler.loadJdkPathFromEnvironmentVariables());
-        } catch (CompilationException e) {
-            e.printStackTrace();
+        final String path = compiler.loadJdkPathFromEnvironmentVariables();
+        if(SystemUtils.OS_NAME.toLowerCase().contains("windows")){
+            assertNotNull(path);
         }
+        else assertEquals("", path);
+
     }
 }

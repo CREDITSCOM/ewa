@@ -7,6 +7,7 @@ import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.compiler.model.JavaSourceFromString;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -86,12 +87,15 @@ public class InMemoryCompiler {
 	}
 
 	String loadJdkPathFromEnvironmentVariables() throws CompilationException {
-		Pattern regexpJdkPath = Pattern.compile("jdk[\\d]\\.[\\d]\\.[\\d]([\\d._])");
-		String jdkBinPath = Arrays.stream(System.getenv("Path").split(";"))
-			.filter(it -> regexpJdkPath.matcher(it).find())
-			.findFirst()
-			.orElseThrow(() -> new CompilationException("Cannot compile the file. The java compiler has not been found, Java Development Kit should be installed."));
-		return jdkBinPath.substring(0, jdkBinPath.length() - 4); // remove last 4 symbols "\bin"
+        if(SystemUtils.OS_NAME.toLowerCase().contains("win")) {
+            Pattern regexpJdkPath = Pattern.compile("jdk[\\d]\\.[\\d]\\.[\\d]([\\d._])");
+            String jdkBinPath = Arrays.stream(System.getenv("Path").split(";"))
+                .filter(it -> regexpJdkPath.matcher(it).find())
+                .findFirst()
+                .orElseThrow(() -> new CompilationException(
+                    "Cannot compile the file. The java compiler has not been found, Java Development Kit should be installed."));
+            return jdkBinPath.substring(0, jdkBinPath.length() - 4); // remove last 4 symbols "\bin"
+        } else return "";
 	}
 
 	String loadClasspath() throws UnsupportedEncodingException {
