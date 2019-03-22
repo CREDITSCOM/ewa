@@ -1,11 +1,14 @@
 package com.credits.general.util.variant;
 
+import com.credits.general.thrift.generated.ByteCodeObject;
+import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 
 @RunWith(Parameterized.class)
@@ -60,7 +63,11 @@ public class ObjectToVariantToObjectTest {
                     put("One", 1);
                     put("Two", 2);
                     put("Three", 3);
-                }}
+                }},
+                new ClassObject(new ArrayList<ByteCodeObject>(){{
+                    add(new ByteCodeObject("name01", ByteBuffer.wrap(new byte[3])));
+                    add(new ByteCodeObject("name02", ByteBuffer.wrap(new byte[2])));
+                }}, ByteBuffer.wrap(new byte[1]))
         );
     }
 

@@ -29,6 +29,8 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
   private static final org.apache.thrift.protocol.TField V_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("v_set", org.apache.thrift.protocol.TType.SET, (short)18);
   private static final org.apache.thrift.protocol.TField V_MAP_FIELD_DESC = new org.apache.thrift.protocol.TField("v_map", org.apache.thrift.protocol.TType.MAP, (short)19);
   private static final org.apache.thrift.protocol.TField V_ARRAY_FIELD_DESC = new org.apache.thrift.protocol.TField("v_array", org.apache.thrift.protocol.TType.LIST, (short)20);
+  private static final org.apache.thrift.protocol.TField V_OBJECT_FIELD_DESC = new org.apache.thrift.protocol.TField("v_object", org.apache.thrift.protocol.TType.STRUCT, (short)21);
+  private static final org.apache.thrift.protocol.TField V_VOID_FIELD_DESC = new org.apache.thrift.protocol.TField("v_void", org.apache.thrift.protocol.TType.BYTE, (short)22);
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -51,9 +53,11 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     V_LIST((short)17, "v_list"),
     V_SET((short)18, "v_set"),
     V_MAP((short)19, "v_map"),
-    V_ARRAY((short)20, "v_array");
+    V_ARRAY((short)20, "v_array"),
+    V_OBJECT((short)21, "v_object"),
+    V_VOID((short)22, "v_void");
 
-    private static final java.util.Map<String, _Fields> byName = new java.util.HashMap<String, _Fields>();
+    private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
 
     static {
       for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -106,6 +110,10 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           return V_MAP;
         case 20: // V_ARRAY
           return V_ARRAY;
+        case 21: // V_OBJECT
+          return V_OBJECT;
+        case 22: // V_VOID
+          return V_VOID;
         default:
           return null;
       }
@@ -117,21 +125,21 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
      */
     public static _Fields findByThriftIdOrThrow(int fieldId) {
       _Fields fields = findByThriftId(fieldId);
-      if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+      if (fields == null) throw new java.lang.IllegalArgumentException("Field " + fieldId + " doesn't exist!");
       return fields;
     }
 
     /**
      * Find the _Fields constant that matches name, or null if its not found.
      */
-    public static _Fields findByName(String name) {
+    public static _Fields findByName(java.lang.String name) {
       return byName.get(name);
     }
 
     private final short _thriftId;
-    private final String _fieldName;
+    private final java.lang.String _fieldName;
 
-    _Fields(short thriftId, String fieldName) {
+    _Fields(short thriftId, java.lang.String fieldName) {
       _thriftId = thriftId;
       _fieldName = fieldName;
     }
@@ -140,7 +148,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
       return _thriftId;
     }
 
-    public String getFieldName() {
+    public java.lang.String getFieldName() {
       return _fieldName;
     }
   }
@@ -193,6 +201,10 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     tmpMap.put(_Fields.V_ARRAY, new org.apache.thrift.meta_data.FieldMetaData("v_array", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"))));
+    tmpMap.put(_Fields.V_OBJECT, new org.apache.thrift.meta_data.FieldMetaData("v_object", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT        , "ClassObject")));
+    tmpMap.put(_Fields.V_VOID, new org.apache.thrift.meta_data.FieldMetaData("v_void", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BYTE)));
     metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Variant.class, metaDataMap);
   }
@@ -201,7 +213,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     super();
   }
 
-  public Variant(_Fields setField, Object value) {
+  public Variant(_Fields setField, java.lang.Object value) {
     super(setField, value);
   }
 
@@ -302,7 +314,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     return x;
   }
 
-  public static Variant v_string(String value) {
+  public static Variant v_string(java.lang.String value) {
     Variant x = new Variant();
     x.setV_string(value);
     return x;
@@ -332,123 +344,145 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     return x;
   }
 
+  public static Variant v_object(ClassObject value) {
+    Variant x = new Variant();
+    x.setV_object(value);
+    return x;
+  }
+
+  public static Variant v_void(byte value) {
+    Variant x = new Variant();
+    x.setV_void(value);
+    return x;
+  }
+
 
   @Override
-  protected void checkType(_Fields setField, Object value) throws ClassCastException {
+  protected void checkType(_Fields setField, java.lang.Object value) throws java.lang.ClassCastException {
     switch (setField) {
       case V_NULL:
-        if (value instanceof Byte) {
+        if (value instanceof java.lang.Byte) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Byte for field 'v_null', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Byte for field 'v_null', but got " + value.getClass().getSimpleName());
       case V_BOOLEAN:
-        if (value instanceof Boolean) {
+        if (value instanceof java.lang.Boolean) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Boolean for field 'v_boolean', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Boolean for field 'v_boolean', but got " + value.getClass().getSimpleName());
       case V_BOOLEAN_BOX:
-        if (value instanceof Boolean) {
+        if (value instanceof java.lang.Boolean) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Boolean for field 'v_boolean_box', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Boolean for field 'v_boolean_box', but got " + value.getClass().getSimpleName());
       case V_BYTE:
-        if (value instanceof Byte) {
+        if (value instanceof java.lang.Byte) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Byte for field 'v_byte', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Byte for field 'v_byte', but got " + value.getClass().getSimpleName());
       case V_BYTE_BOX:
-        if (value instanceof Byte) {
+        if (value instanceof java.lang.Byte) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Byte for field 'v_byte_box', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Byte for field 'v_byte_box', but got " + value.getClass().getSimpleName());
       case V_SHORT:
-        if (value instanceof Short) {
+        if (value instanceof java.lang.Short) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Short for field 'v_short', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Short for field 'v_short', but got " + value.getClass().getSimpleName());
       case V_SHORT_BOX:
-        if (value instanceof Short) {
+        if (value instanceof java.lang.Short) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Short for field 'v_short_box', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Short for field 'v_short_box', but got " + value.getClass().getSimpleName());
       case V_INT:
-        if (value instanceof Integer) {
+        if (value instanceof java.lang.Integer) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Integer for field 'v_int', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Integer for field 'v_int', but got " + value.getClass().getSimpleName());
       case V_INT_BOX:
-        if (value instanceof Integer) {
+        if (value instanceof java.lang.Integer) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Integer for field 'v_int_box', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Integer for field 'v_int_box', but got " + value.getClass().getSimpleName());
       case V_LONG:
-        if (value instanceof Long) {
+        if (value instanceof java.lang.Long) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Long for field 'v_long', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Long for field 'v_long', but got " + value.getClass().getSimpleName());
       case V_LONG_BOX:
-        if (value instanceof Long) {
+        if (value instanceof java.lang.Long) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Long for field 'v_long_box', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Long for field 'v_long_box', but got " + value.getClass().getSimpleName());
       case V_FLOAT:
-        if (value instanceof Double) {
+        if (value instanceof java.lang.Double) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Double for field 'v_float', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Double for field 'v_float', but got " + value.getClass().getSimpleName());
       case V_FLOAT_BOX:
-        if (value instanceof Double) {
+        if (value instanceof java.lang.Double) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Double for field 'v_float_box', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Double for field 'v_float_box', but got " + value.getClass().getSimpleName());
       case V_DOUBLE:
-        if (value instanceof Double) {
+        if (value instanceof java.lang.Double) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Double for field 'v_double', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Double for field 'v_double', but got " + value.getClass().getSimpleName());
       case V_DOUBLE_BOX:
-        if (value instanceof Double) {
+        if (value instanceof java.lang.Double) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.Double for field 'v_double_box', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Double for field 'v_double_box', but got " + value.getClass().getSimpleName());
       case V_STRING:
-        if (value instanceof String) {
+        if (value instanceof java.lang.String) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.lang.String for field 'v_string', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.String for field 'v_string', but got " + value.getClass().getSimpleName());
       case V_LIST:
         if (value instanceof java.util.List) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.util.List<Variant> for field 'v_list', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.util.List<Variant> for field 'v_list', but got " + value.getClass().getSimpleName());
       case V_SET:
         if (value instanceof java.util.Set) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.util.Set<Variant> for field 'v_set', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.util.Set<Variant> for field 'v_set', but got " + value.getClass().getSimpleName());
       case V_MAP:
         if (value instanceof java.util.Map) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.util.Map<Variant,Variant> for field 'v_map', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.util.Map<Variant,Variant> for field 'v_map', but got " + value.getClass().getSimpleName());
       case V_ARRAY:
         if (value instanceof java.util.List) {
           break;
         }
-        throw new ClassCastException("Was expecting value of type java.util.List<Variant> for field 'v_array', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.util.List<Variant> for field 'v_array', but got " + value.getClass().getSimpleName());
+      case V_OBJECT:
+        if (value instanceof ClassObject) {
+          break;
+        }
+        throw new java.lang.ClassCastException("Was expecting value of type ClassObject for field 'v_object', but got " + value.getClass().getSimpleName());
+      case V_VOID:
+        if (value instanceof java.lang.Byte) {
+          break;
+        }
+        throw new java.lang.ClassCastException("Was expecting value of type java.lang.Byte for field 'v_void', but got " + value.getClass().getSimpleName());
       default:
-        throw new IllegalArgumentException("Unknown field id " + setField);
+        throw new java.lang.IllegalArgumentException("Unknown field id " + setField);
     }
   }
 
   @Override
-  protected Object standardSchemeReadValue(org.apache.thrift.protocol.TProtocol iprot, org.apache.thrift.protocol.TField field) throws org.apache.thrift.TException {
+  protected java.lang.Object standardSchemeReadValue(org.apache.thrift.protocol.TProtocol iprot, org.apache.thrift.protocol.TField field) throws org.apache.thrift.TException {
     _Fields setField = _Fields.findByThriftId(field.id);
     if (setField != null) {
       switch (setField) {
         case V_NULL:
           if (field.type == V_NULL_FIELD_DESC.type) {
-            Byte v_null;
+            java.lang.Byte v_null;
             v_null = iprot.readByte();
             return v_null;
           } else {
@@ -457,7 +491,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_BOOLEAN:
           if (field.type == V_BOOLEAN_FIELD_DESC.type) {
-            Boolean v_boolean;
+            java.lang.Boolean v_boolean;
             v_boolean = iprot.readBool();
             return v_boolean;
           } else {
@@ -466,7 +500,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_BOOLEAN_BOX:
           if (field.type == V_BOOLEAN_BOX_FIELD_DESC.type) {
-            Boolean v_boolean_box;
+            java.lang.Boolean v_boolean_box;
             v_boolean_box = iprot.readBool();
             return v_boolean_box;
           } else {
@@ -475,7 +509,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_BYTE:
           if (field.type == V_BYTE_FIELD_DESC.type) {
-            Byte v_byte;
+            java.lang.Byte v_byte;
             v_byte = iprot.readByte();
             return v_byte;
           } else {
@@ -484,7 +518,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_BYTE_BOX:
           if (field.type == V_BYTE_BOX_FIELD_DESC.type) {
-            Byte v_byte_box;
+            java.lang.Byte v_byte_box;
             v_byte_box = iprot.readByte();
             return v_byte_box;
           } else {
@@ -493,7 +527,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_SHORT:
           if (field.type == V_SHORT_FIELD_DESC.type) {
-            Short v_short;
+            java.lang.Short v_short;
             v_short = iprot.readI16();
             return v_short;
           } else {
@@ -502,7 +536,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_SHORT_BOX:
           if (field.type == V_SHORT_BOX_FIELD_DESC.type) {
-            Short v_short_box;
+            java.lang.Short v_short_box;
             v_short_box = iprot.readI16();
             return v_short_box;
           } else {
@@ -511,7 +545,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_INT:
           if (field.type == V_INT_FIELD_DESC.type) {
-            Integer v_int;
+            java.lang.Integer v_int;
             v_int = iprot.readI32();
             return v_int;
           } else {
@@ -520,7 +554,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_INT_BOX:
           if (field.type == V_INT_BOX_FIELD_DESC.type) {
-            Integer v_int_box;
+            java.lang.Integer v_int_box;
             v_int_box = iprot.readI32();
             return v_int_box;
           } else {
@@ -529,7 +563,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_LONG:
           if (field.type == V_LONG_FIELD_DESC.type) {
-            Long v_long;
+            java.lang.Long v_long;
             v_long = iprot.readI64();
             return v_long;
           } else {
@@ -538,7 +572,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_LONG_BOX:
           if (field.type == V_LONG_BOX_FIELD_DESC.type) {
-            Long v_long_box;
+            java.lang.Long v_long_box;
             v_long_box = iprot.readI64();
             return v_long_box;
           } else {
@@ -547,7 +581,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_FLOAT:
           if (field.type == V_FLOAT_FIELD_DESC.type) {
-            Double v_float;
+            java.lang.Double v_float;
             v_float = iprot.readDouble();
             return v_float;
           } else {
@@ -556,7 +590,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_FLOAT_BOX:
           if (field.type == V_FLOAT_BOX_FIELD_DESC.type) {
-            Double v_float_box;
+            java.lang.Double v_float_box;
             v_float_box = iprot.readDouble();
             return v_float_box;
           } else {
@@ -565,7 +599,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_DOUBLE:
           if (field.type == V_DOUBLE_FIELD_DESC.type) {
-            Double v_double;
+            java.lang.Double v_double;
             v_double = iprot.readDouble();
             return v_double;
           } else {
@@ -574,7 +608,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_DOUBLE_BOX:
           if (field.type == V_DOUBLE_BOX_FIELD_DESC.type) {
-            Double v_double_box;
+            java.lang.Double v_double_box;
             v_double_box = iprot.readDouble();
             return v_double_box;
           } else {
@@ -583,7 +617,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_STRING:
           if (field.type == V_STRING_FIELD_DESC.type) {
-            String v_string;
+            java.lang.String v_string;
             v_string = iprot.readString();
             return v_string;
           } else {
@@ -673,8 +707,27 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
             return null;
           }
+        case V_OBJECT:
+          if (field.type == V_OBJECT_FIELD_DESC.type) {
+            ClassObject v_object;
+            v_object = new ClassObject();
+            v_object.read(iprot);
+            return v_object;
+          } else {
+            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
+            return null;
+          }
+        case V_VOID:
+          if (field.type == V_VOID_FIELD_DESC.type) {
+            java.lang.Byte v_void;
+            v_void = iprot.readByte();
+            return v_void;
+          } else {
+            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
+            return null;
+          }
         default:
-          throw new IllegalStateException("setField wasn't null, but didn't match any of the case statements!");
+          throw new java.lang.IllegalStateException("setField wasn't null, but didn't match any of the case statements!");
       }
     } else {
       org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
@@ -686,67 +739,67 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
   protected void standardSchemeWriteValue(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
     switch (setField_) {
       case V_NULL:
-        Byte v_null = (Byte)value_;
+        java.lang.Byte v_null = (java.lang.Byte)value_;
         oprot.writeByte(v_null);
         return;
       case V_BOOLEAN:
-        Boolean v_boolean = (Boolean)value_;
+        java.lang.Boolean v_boolean = (java.lang.Boolean)value_;
         oprot.writeBool(v_boolean);
         return;
       case V_BOOLEAN_BOX:
-        Boolean v_boolean_box = (Boolean)value_;
+        java.lang.Boolean v_boolean_box = (java.lang.Boolean)value_;
         oprot.writeBool(v_boolean_box);
         return;
       case V_BYTE:
-        Byte v_byte = (Byte)value_;
+        java.lang.Byte v_byte = (java.lang.Byte)value_;
         oprot.writeByte(v_byte);
         return;
       case V_BYTE_BOX:
-        Byte v_byte_box = (Byte)value_;
+        java.lang.Byte v_byte_box = (java.lang.Byte)value_;
         oprot.writeByte(v_byte_box);
         return;
       case V_SHORT:
-        Short v_short = (Short)value_;
+        java.lang.Short v_short = (java.lang.Short)value_;
         oprot.writeI16(v_short);
         return;
       case V_SHORT_BOX:
-        Short v_short_box = (Short)value_;
+        java.lang.Short v_short_box = (java.lang.Short)value_;
         oprot.writeI16(v_short_box);
         return;
       case V_INT:
-        Integer v_int = (Integer)value_;
+        java.lang.Integer v_int = (java.lang.Integer)value_;
         oprot.writeI32(v_int);
         return;
       case V_INT_BOX:
-        Integer v_int_box = (Integer)value_;
+        java.lang.Integer v_int_box = (java.lang.Integer)value_;
         oprot.writeI32(v_int_box);
         return;
       case V_LONG:
-        Long v_long = (Long)value_;
+        java.lang.Long v_long = (java.lang.Long)value_;
         oprot.writeI64(v_long);
         return;
       case V_LONG_BOX:
-        Long v_long_box = (Long)value_;
+        java.lang.Long v_long_box = (java.lang.Long)value_;
         oprot.writeI64(v_long_box);
         return;
       case V_FLOAT:
-        Double v_float = (Double)value_;
+        java.lang.Double v_float = (java.lang.Double)value_;
         oprot.writeDouble(v_float);
         return;
       case V_FLOAT_BOX:
-        Double v_float_box = (Double)value_;
+        java.lang.Double v_float_box = (java.lang.Double)value_;
         oprot.writeDouble(v_float_box);
         return;
       case V_DOUBLE:
-        Double v_double = (Double)value_;
+        java.lang.Double v_double = (java.lang.Double)value_;
         oprot.writeDouble(v_double);
         return;
       case V_DOUBLE_BOX:
-        Double v_double_box = (Double)value_;
+        java.lang.Double v_double_box = (java.lang.Double)value_;
         oprot.writeDouble(v_double_box);
         return;
       case V_STRING:
-        String v_string = (String)value_;
+        java.lang.String v_string = (java.lang.String)value_;
         oprot.writeString(v_string);
         return;
       case V_LIST:
@@ -794,78 +847,86 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           oprot.writeListEnd();
         }
         return;
+      case V_OBJECT:
+        ClassObject v_object = (ClassObject)value_;
+        v_object.write(oprot);
+        return;
+      case V_VOID:
+        java.lang.Byte v_void = (java.lang.Byte)value_;
+        oprot.writeByte(v_void);
+        return;
       default:
-        throw new IllegalStateException("Cannot write union with unknown field " + setField_);
+        throw new java.lang.IllegalStateException("Cannot write union with unknown field " + setField_);
     }
   }
 
   @Override
-  protected Object tupleSchemeReadValue(org.apache.thrift.protocol.TProtocol iprot, short fieldID) throws org.apache.thrift.TException {
+  protected java.lang.Object tupleSchemeReadValue(org.apache.thrift.protocol.TProtocol iprot, short fieldID) throws org.apache.thrift.TException {
     _Fields setField = _Fields.findByThriftId(fieldID);
     if (setField != null) {
       switch (setField) {
         case V_NULL:
-          Byte v_null;
+          java.lang.Byte v_null;
           v_null = iprot.readByte();
           return v_null;
         case V_BOOLEAN:
-          Boolean v_boolean;
+          java.lang.Boolean v_boolean;
           v_boolean = iprot.readBool();
           return v_boolean;
         case V_BOOLEAN_BOX:
-          Boolean v_boolean_box;
+          java.lang.Boolean v_boolean_box;
           v_boolean_box = iprot.readBool();
           return v_boolean_box;
         case V_BYTE:
-          Byte v_byte;
+          java.lang.Byte v_byte;
           v_byte = iprot.readByte();
           return v_byte;
         case V_BYTE_BOX:
-          Byte v_byte_box;
+          java.lang.Byte v_byte_box;
           v_byte_box = iprot.readByte();
           return v_byte_box;
         case V_SHORT:
-          Short v_short;
+          java.lang.Short v_short;
           v_short = iprot.readI16();
           return v_short;
         case V_SHORT_BOX:
-          Short v_short_box;
+          java.lang.Short v_short_box;
           v_short_box = iprot.readI16();
           return v_short_box;
         case V_INT:
-          Integer v_int;
+          java.lang.Integer v_int;
           v_int = iprot.readI32();
           return v_int;
         case V_INT_BOX:
-          Integer v_int_box;
+          java.lang.Integer v_int_box;
           v_int_box = iprot.readI32();
           return v_int_box;
         case V_LONG:
-          Long v_long;
+          java.lang.Long v_long;
           v_long = iprot.readI64();
           return v_long;
         case V_LONG_BOX:
-          Long v_long_box;
+          java.lang.Long v_long_box;
           v_long_box = iprot.readI64();
           return v_long_box;
         case V_FLOAT:
-          Double v_float;
+          java.lang.Double v_float;
           v_float = iprot.readDouble();
           return v_float;
         case V_FLOAT_BOX:
-          Double v_float_box;
+          java.lang.Double v_float_box;
           v_float_box = iprot.readDouble();
           return v_float_box;
         case V_DOUBLE:
-          Double v_double;
+          java.lang.Double v_double;
           v_double = iprot.readDouble();
           return v_double;
         case V_DOUBLE_BOX:
-          Double v_double_box;
+          java.lang.Double v_double_box;
           v_double_box = iprot.readDouble();
           return v_double_box;
         case V_STRING:
-          String v_string;
+          java.lang.String v_string;
           v_string = iprot.readString();
           return v_string;
         case V_LIST:
@@ -931,8 +992,17 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
             iprot.readListEnd();
           }
           return v_array;
+        case V_OBJECT:
+          ClassObject v_object;
+          v_object = new ClassObject();
+          v_object.read(iprot);
+          return v_object;
+        case V_VOID:
+          java.lang.Byte v_void;
+          v_void = iprot.readByte();
+          return v_void;
         default:
-          throw new IllegalStateException("setField wasn't null, but didn't match any of the case statements!");
+          throw new java.lang.IllegalStateException("setField wasn't null, but didn't match any of the case statements!");
       }
     } else {
       throw new org.apache.thrift.protocol.TProtocolException("Couldn't find a field with field id " + fieldID);
@@ -943,67 +1013,67 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
   protected void tupleSchemeWriteValue(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
     switch (setField_) {
       case V_NULL:
-        Byte v_null = (Byte)value_;
+        java.lang.Byte v_null = (java.lang.Byte)value_;
         oprot.writeByte(v_null);
         return;
       case V_BOOLEAN:
-        Boolean v_boolean = (Boolean)value_;
+        java.lang.Boolean v_boolean = (java.lang.Boolean)value_;
         oprot.writeBool(v_boolean);
         return;
       case V_BOOLEAN_BOX:
-        Boolean v_boolean_box = (Boolean)value_;
+        java.lang.Boolean v_boolean_box = (java.lang.Boolean)value_;
         oprot.writeBool(v_boolean_box);
         return;
       case V_BYTE:
-        Byte v_byte = (Byte)value_;
+        java.lang.Byte v_byte = (java.lang.Byte)value_;
         oprot.writeByte(v_byte);
         return;
       case V_BYTE_BOX:
-        Byte v_byte_box = (Byte)value_;
+        java.lang.Byte v_byte_box = (java.lang.Byte)value_;
         oprot.writeByte(v_byte_box);
         return;
       case V_SHORT:
-        Short v_short = (Short)value_;
+        java.lang.Short v_short = (java.lang.Short)value_;
         oprot.writeI16(v_short);
         return;
       case V_SHORT_BOX:
-        Short v_short_box = (Short)value_;
+        java.lang.Short v_short_box = (java.lang.Short)value_;
         oprot.writeI16(v_short_box);
         return;
       case V_INT:
-        Integer v_int = (Integer)value_;
+        java.lang.Integer v_int = (java.lang.Integer)value_;
         oprot.writeI32(v_int);
         return;
       case V_INT_BOX:
-        Integer v_int_box = (Integer)value_;
+        java.lang.Integer v_int_box = (java.lang.Integer)value_;
         oprot.writeI32(v_int_box);
         return;
       case V_LONG:
-        Long v_long = (Long)value_;
+        java.lang.Long v_long = (java.lang.Long)value_;
         oprot.writeI64(v_long);
         return;
       case V_LONG_BOX:
-        Long v_long_box = (Long)value_;
+        java.lang.Long v_long_box = (java.lang.Long)value_;
         oprot.writeI64(v_long_box);
         return;
       case V_FLOAT:
-        Double v_float = (Double)value_;
+        java.lang.Double v_float = (java.lang.Double)value_;
         oprot.writeDouble(v_float);
         return;
       case V_FLOAT_BOX:
-        Double v_float_box = (Double)value_;
+        java.lang.Double v_float_box = (java.lang.Double)value_;
         oprot.writeDouble(v_float_box);
         return;
       case V_DOUBLE:
-        Double v_double = (Double)value_;
+        java.lang.Double v_double = (java.lang.Double)value_;
         oprot.writeDouble(v_double);
         return;
       case V_DOUBLE_BOX:
-        Double v_double_box = (Double)value_;
+        java.lang.Double v_double_box = (java.lang.Double)value_;
         oprot.writeDouble(v_double_box);
         return;
       case V_STRING:
-        String v_string = (String)value_;
+        java.lang.String v_string = (java.lang.String)value_;
         oprot.writeString(v_string);
         return;
       case V_LIST:
@@ -1051,8 +1121,16 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           oprot.writeListEnd();
         }
         return;
+      case V_OBJECT:
+        ClassObject v_object = (ClassObject)value_;
+        v_object.write(oprot);
+        return;
+      case V_VOID:
+        java.lang.Byte v_void = (java.lang.Byte)value_;
+        oprot.writeByte(v_void);
+        return;
       default:
-        throw new IllegalStateException("Cannot write union with unknown field " + setField_);
+        throw new java.lang.IllegalStateException("Cannot write union with unknown field " + setField_);
     }
   }
 
@@ -1099,8 +1177,12 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
         return V_MAP_FIELD_DESC;
       case V_ARRAY:
         return V_ARRAY_FIELD_DESC;
+      case V_OBJECT:
+        return V_OBJECT_FIELD_DESC;
+      case V_VOID:
+        return V_VOID_FIELD_DESC;
       default:
-        throw new IllegalArgumentException("Unknown field id " + setField);
+        throw new java.lang.IllegalArgumentException("Unknown field id " + setField);
     }
   }
 
@@ -1121,9 +1203,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public byte getV_null() {
     if (getSetField() == _Fields.V_NULL) {
-      return (Byte)getFieldValue();
+      return (java.lang.Byte)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_null' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_null' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1134,9 +1216,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public boolean getV_boolean() {
     if (getSetField() == _Fields.V_BOOLEAN) {
-      return (Boolean)getFieldValue();
+      return (java.lang.Boolean)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_boolean' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_boolean' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1147,9 +1229,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public boolean getV_boolean_box() {
     if (getSetField() == _Fields.V_BOOLEAN_BOX) {
-      return (Boolean)getFieldValue();
+      return (java.lang.Boolean)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_boolean_box' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_boolean_box' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1160,9 +1242,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public byte getV_byte() {
     if (getSetField() == _Fields.V_BYTE) {
-      return (Byte)getFieldValue();
+      return (java.lang.Byte)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_byte' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_byte' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1173,9 +1255,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public byte getV_byte_box() {
     if (getSetField() == _Fields.V_BYTE_BOX) {
-      return (Byte)getFieldValue();
+      return (java.lang.Byte)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_byte_box' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_byte_box' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1186,9 +1268,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public short getV_short() {
     if (getSetField() == _Fields.V_SHORT) {
-      return (Short)getFieldValue();
+      return (java.lang.Short)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_short' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_short' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1199,9 +1281,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public short getV_short_box() {
     if (getSetField() == _Fields.V_SHORT_BOX) {
-      return (Short)getFieldValue();
+      return (java.lang.Short)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_short_box' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_short_box' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1212,9 +1294,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public int getV_int() {
     if (getSetField() == _Fields.V_INT) {
-      return (Integer)getFieldValue();
+      return (java.lang.Integer)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_int' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_int' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1225,9 +1307,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public int getV_int_box() {
     if (getSetField() == _Fields.V_INT_BOX) {
-      return (Integer)getFieldValue();
+      return (java.lang.Integer)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_int_box' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_int_box' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1238,9 +1320,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public long getV_long() {
     if (getSetField() == _Fields.V_LONG) {
-      return (Long)getFieldValue();
+      return (java.lang.Long)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_long' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_long' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1251,9 +1333,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public long getV_long_box() {
     if (getSetField() == _Fields.V_LONG_BOX) {
-      return (Long)getFieldValue();
+      return (java.lang.Long)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_long_box' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_long_box' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1264,9 +1346,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public double getV_float() {
     if (getSetField() == _Fields.V_FLOAT) {
-      return (Double)getFieldValue();
+      return (java.lang.Double)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_float' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_float' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1277,9 +1359,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public double getV_float_box() {
     if (getSetField() == _Fields.V_FLOAT_BOX) {
-      return (Double)getFieldValue();
+      return (java.lang.Double)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_float_box' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_float_box' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1290,9 +1372,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public double getV_double() {
     if (getSetField() == _Fields.V_DOUBLE) {
-      return (Double)getFieldValue();
+      return (java.lang.Double)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_double' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_double' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1303,9 +1385,9 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   public double getV_double_box() {
     if (getSetField() == _Fields.V_DOUBLE_BOX) {
-      return (Double)getFieldValue();
+      return (java.lang.Double)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_double_box' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_double_box' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
@@ -1314,16 +1396,16 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     value_ = value;
   }
 
-  public String getV_string() {
+  public java.lang.String getV_string() {
     if (getSetField() == _Fields.V_STRING) {
-      return (String)getFieldValue();
+      return (java.lang.String)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_string' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_string' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
-  public void setV_string(String value) {
-    if (value == null) throw new NullPointerException();
+  public void setV_string(java.lang.String value) {
+    if (value == null) throw new java.lang.NullPointerException();
     setField_ = _Fields.V_STRING;
     value_ = value;
   }
@@ -1332,12 +1414,12 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_LIST) {
       return (java.util.List<Variant>)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_list' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_list' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
   public void setV_list(java.util.List<Variant> value) {
-    if (value == null) throw new NullPointerException();
+    if (value == null) throw new java.lang.NullPointerException();
     setField_ = _Fields.V_LIST;
     value_ = value;
   }
@@ -1346,12 +1428,12 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_SET) {
       return (java.util.Set<Variant>)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_set' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_set' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
   public void setV_set(java.util.Set<Variant> value) {
-    if (value == null) throw new NullPointerException();
+    if (value == null) throw new java.lang.NullPointerException();
     setField_ = _Fields.V_SET;
     value_ = value;
   }
@@ -1360,12 +1442,12 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_MAP) {
       return (java.util.Map<Variant,Variant>)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_map' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_map' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
   public void setV_map(java.util.Map<Variant,Variant> value) {
-    if (value == null) throw new NullPointerException();
+    if (value == null) throw new java.lang.NullPointerException();
     setField_ = _Fields.V_MAP;
     value_ = value;
   }
@@ -1374,13 +1456,40 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     if (getSetField() == _Fields.V_ARRAY) {
       return (java.util.List<Variant>)getFieldValue();
     } else {
-      throw new RuntimeException("Cannot get field 'v_array' because union is currently set to " + getFieldDesc(getSetField()).name);
+      throw new java.lang.RuntimeException("Cannot get field 'v_array' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
   public void setV_array(java.util.List<Variant> value) {
-    if (value == null) throw new NullPointerException();
+    if (value == null) throw new java.lang.NullPointerException();
     setField_ = _Fields.V_ARRAY;
+    value_ = value;
+  }
+
+  public ClassObject getV_object() {
+    if (getSetField() == _Fields.V_OBJECT) {
+      return (ClassObject)getFieldValue();
+    } else {
+      throw new java.lang.RuntimeException("Cannot get field 'v_object' because union is currently set to " + getFieldDesc(getSetField()).name);
+    }
+  }
+
+  public void setV_object(ClassObject value) {
+    if (value == null) throw new java.lang.NullPointerException();
+    setField_ = _Fields.V_OBJECT;
+    value_ = value;
+  }
+
+  public byte getV_void() {
+    if (getSetField() == _Fields.V_VOID) {
+      return (java.lang.Byte)getFieldValue();
+    } else {
+      throw new java.lang.RuntimeException("Cannot get field 'v_void' because union is currently set to " + getFieldDesc(getSetField()).name);
+    }
+  }
+
+  public void setV_void(byte value) {
+    setField_ = _Fields.V_VOID;
     value_ = value;
   }
 
@@ -1484,7 +1593,17 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
   }
 
 
-  public boolean equals(Object other) {
+  public boolean isSetV_object() {
+    return setField_ == _Fields.V_OBJECT;
+  }
+
+
+  public boolean isSetV_void() {
+    return setField_ == _Fields.V_VOID;
+  }
+
+
+  public boolean equals(java.lang.Object other) {
     if (other instanceof Variant) {
       return equals((Variant)other);
     } else {
@@ -1508,12 +1627,12 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
 
   @Override
   public int hashCode() {
-    java.util.List<Object> list = new java.util.ArrayList<Object>();
+    java.util.List<java.lang.Object> list = new java.util.ArrayList<java.lang.Object>();
     list.add(this.getClass().getName());
     org.apache.thrift.TFieldIdEnum setField = getSetField();
     if (setField != null) {
       list.add(setField.getThriftFieldId());
-      Object value = getFieldValue();
+      java.lang.Object value = getFieldValue();
       if (value instanceof org.apache.thrift.TEnum) {
         list.add(((org.apache.thrift.TEnum)getFieldValue()).getValue());
       } else {
@@ -1531,7 +1650,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
   }
 
 
-  private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+  private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, java.lang.ClassNotFoundException {
     try {
       read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
     } catch (org.apache.thrift.TException te) {

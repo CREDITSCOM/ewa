@@ -1,6 +1,7 @@
 package com.credits.general.util.variant;
 
 import com.credits.general.exception.CreditsException;
+import com.credits.general.pojo.ClassObjectData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.pojo.VariantType;
 import com.credits.general.util.GeneralConverter;
@@ -16,6 +17,9 @@ public class VariantUtils {
     public static final String NULL_TYPE = "Null";
     public static final String STRING_TYPE = "String";
     public static final Byte NULL_TYPE_VALUE = 0;
+    public static final Byte VOID_TYPE_VALUE = 0;
+    public static final String OBJECT_TYPE = "Object";
+    public static final String VOID_TYPE = "Void";
 
     private static final String INVALID_VARIANT_DATA_MESSAGE = "Invalid VariantData fields";
 
@@ -24,11 +28,11 @@ public class VariantUtils {
             throw new CreditsException("variantType is null");
         }
         if (variantType == VariantType.OBJECT) {
-            return;
-        }
-        if (variantType == VariantType.NULL) {
-            if (boxedValue != null)
+            if (!(boxedValue instanceof ClassObjectData))
                 throw new CreditsException(INVALID_VARIANT_DATA_MESSAGE);
+        } else if (variantType == VariantType.NULL || variantType == VariantType.VOID) {
+            if (boxedValue != null)
+                throw new CreditsException("Variant VOID value must be null");
         } else if (variantType == VariantType.BOOL || variantType == VariantType.BOOL_BOX) {
             if (!(boxedValue instanceof Boolean))
                 throw new CreditsException(INVALID_VARIANT_DATA_MESSAGE);
@@ -113,11 +117,19 @@ public class VariantUtils {
         // collections values
         String[] collectionsValues = null;
         if (variantType.isCollection()) {
+            if (!isGenericExists) {
+                throw new CreditsException("Collections without generics is not supported");
+            }
             collectionsValues = valueAsString.split(COLLECTION_VALUES_DELIMITER);
         }
 
         switch (variantType) {
-            case OBJECT: boxedValue = valueAsString; break;
+            case VOID:
+                if (valueAsString != null) {
+                    throw new CreditsException("Value of Variant VOID type must be null");
+                }
+                boxedValue = null;
+                break;
             case STRING: boxedValue = valueAsString; break;
             case BYTE_BOX: boxedValue = GeneralConverter.toByte(valueAsString); break;
             case BYTE: boxedValue = GeneralConverter.toByte(valueAsString); break;
@@ -142,55 +154,30 @@ public class VariantUtils {
                 break;
             case LIST:
                 List<VariantData> variantDataList = new ArrayList<>();
-                if (isGenericExists) {
-                    for (String collectionsValue : collectionsValues) {
-                        variantDataList.add(
-                                VariantUtils.createVariantData(genericName, collectionsValue.trim())
-                        );
-                    }
-                } else {
-                    for (String collectionsValue : collectionsValues) {
-                        variantDataList.add(
-                                VariantUtils.createVariantData("Object", collectionsValue.trim())
-                        );
-                    }
+                for (String collectionsValue : collectionsValues) {
+                    variantDataList.add(
+                            VariantUtils.createVariantData(genericName, collectionsValue.trim())
+                    );
                 }
                 boxedValue = variantDataList;
                 break;
             case MAP:
                 Map<VariantData, VariantData> variantDataMap = new HashMap<>();
-                if (isGenericExists) {
-                    String[] keyValueGenerincnamePair = genericName.split(", ");
-                    for (String collectionsValue : collectionsValues) {
-                        String[] keyValuePair = collectionsValue.split(MAP_KEY_VALUE_DELIMITER);
-                        VariantData keyVariantData = VariantUtils.createVariantData(keyValueGenerincnamePair[0], keyValuePair[0]);
-                        VariantData valueVariantData = VariantUtils.createVariantData(keyValueGenerincnamePair[1], keyValuePair[1]);
-                        variantDataMap.put(keyVariantData, valueVariantData);
-                    }
-                } else {
-                    for (String collectionsValue : collectionsValues) {
-                        String[] keyValuePair = collectionsValue.split(MAP_KEY_VALUE_DELIMITER);
-                        VariantData keyVariantData = VariantUtils.createVariantData("Object", keyValuePair[0]);
-                        VariantData valueVariantData = VariantUtils.createVariantData("Object", keyValuePair[1]);
-                        variantDataMap.put(keyVariantData, valueVariantData);
-                    }
+                String[] keyValueGenerincnamePair = genericName.split(", ");
+                for (String collectionsValue : collectionsValues) {
+                    String[] keyValuePair = collectionsValue.split(MAP_KEY_VALUE_DELIMITER);
+                    VariantData keyVariantData = VariantUtils.createVariantData(keyValueGenerincnamePair[0], keyValuePair[0]);
+                    VariantData valueVariantData = VariantUtils.createVariantData(keyValueGenerincnamePair[1], keyValuePair[1]);
+                    variantDataMap.put(keyVariantData, valueVariantData);
                 }
                 boxedValue = variantDataMap;
                 break;
             case SET:
                 Set<VariantData> variantDataSet = new HashSet<>();
-                if (isGenericExists) {
-                    for (String collectionsValue : collectionsValues) {
-                        variantDataSet.add(
-                                VariantUtils.createVariantData(genericName, collectionsValue.trim())
-                        );
-                    }
-                } else {
-                    for (String collectionsValue : collectionsValues) {
-                        variantDataSet.add(
-                                VariantUtils.createVariantData("Object", collectionsValue.trim())
-                        );
-                    }
+                for (String collectionsValue : collectionsValues) {
+                    variantDataSet.add(
+                            VariantUtils.createVariantData(genericName, collectionsValue.trim())
+                    );
                 }
                 boxedValue = variantDataSet;
                 break;

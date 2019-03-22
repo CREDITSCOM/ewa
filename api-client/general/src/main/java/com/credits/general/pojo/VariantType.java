@@ -4,7 +4,7 @@ import com.credits.general.exception.CreditsException;
 import com.credits.general.util.variant.VariantUtils;
 
 public enum VariantType {
-    OBJECT("Object"),
+    OBJECT(VariantUtils.OBJECT_TYPE),
     NULL(VariantUtils.NULL_TYPE),
     STRING(VariantUtils.STRING_TYPE),
     BYTE("byte"),
@@ -24,7 +24,8 @@ public enum VariantType {
     LIST("List"),
     SET("Set"),
     MAP("Map"),
-    ARRAY(VariantUtils.ARRAY_TYPE);
+    ARRAY(VariantUtils.ARRAY_TYPE),
+    VOID(VariantUtils.VOID_TYPE);
 
     public final String name;
 

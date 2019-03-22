@@ -1,17 +1,14 @@
 package com.credits.general.util.variant;
 
+import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.general.pojo.ClassObjectData;
 import com.credits.general.pojo.VariantData;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.runners.Parameterized.Parameter;
 import static org.junit.runners.Parameterized.Parameters;
@@ -80,7 +77,11 @@ public class ObjectToVariantDataToObjectTest {
                     put("One", 1);
                     put("Two", 2);
                     put("Three", 3);
-                }}
+                }},
+                new ClassObjectData(new ArrayList<ByteCodeObjectData>(){{
+                    add(new ByteCodeObjectData("name01", new byte[3]));
+                    add(new ByteCodeObjectData("name02", new byte[2]));
+                }}, new byte[1])
         );
     }
 

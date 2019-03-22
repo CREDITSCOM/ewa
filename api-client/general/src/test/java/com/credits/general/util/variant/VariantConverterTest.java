@@ -49,7 +49,7 @@ public class VariantConverterTest {
                         MAP_KEY_VALUE_DELIMITER,
                         COLLECTION_VALUES_DELIMITER,
                         MAP_KEY_VALUE_DELIMITER
-                )},
+                )}
         });
     }
 

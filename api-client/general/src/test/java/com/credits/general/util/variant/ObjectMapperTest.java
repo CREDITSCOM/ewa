@@ -1,5 +1,6 @@
 package com.credits.general.util.variant;
 
+import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,6 +33,7 @@ public class ObjectMapperTest {
             {"Float", 5},
             {"Double", 1.1D},
             {"String", "test string"},
+            {VariantUtils.OBJECT_TYPE, new ClassObject()},
         });
     }
 

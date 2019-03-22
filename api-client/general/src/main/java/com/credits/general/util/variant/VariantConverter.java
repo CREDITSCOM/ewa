@@ -1,20 +1,18 @@
 package com.credits.general.util.variant;
 
+import com.credits.general.pojo.ClassObjectData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.pojo.VariantType;
+import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.credits.general.util.GeneralPojoConverter.createClassObjectData;
 
 public class VariantConverter {
 
@@ -49,6 +47,9 @@ public class VariantConverter {
         Object boxedValue;
         if (variant.isSetV_null()) {
             variantType = VariantType.NULL;
+            boxedValue = null;
+        } else if (variant.isSetV_void()) {
+            variantType = VariantType.VOID;
             boxedValue = null;
         } else if (variant.isSetV_string()) {
             variantType = VariantType.STRING;
@@ -102,6 +103,11 @@ public class VariantConverter {
             variantType = VariantType.LONG_BOX;
             boxedValue = variant.getV_long_box();
 
+        } else if (variant.isSetV_object()) {
+            variantType = VariantType.OBJECT;
+            ClassObject classObject = variant.getV_object();
+            boxedValue = createClassObjectData(classObject);
+
         } else if (variant.isSetV_list()) {
             variantType = VariantType.LIST;
             List<VariantData> variantDataList = new ArrayList<>();
@@ -142,6 +148,8 @@ public class VariantConverter {
         Object object;
         if (variant.isSetV_null()) {
             object = null;
+        } else if (variant.isSetV_void()) {
+            object = null;
         } else if (variant.isSetV_string()) {
             object = variant.getV_string();
         } else if (variant.isSetV_boolean()) {
@@ -172,6 +180,8 @@ public class VariantConverter {
             object = variant.getV_long();
         } else if (variant.isSetV_long_box()) {
             object = variant.getV_long_box();
+        } else if (variant.isSetV_object()) {
+            object = variant.getV_object();
         } else if (variant.isSetV_array()) {
             List<Variant> variantList = variant.getV_array();
             object = variantList.stream().map(
@@ -222,6 +232,8 @@ public class VariantConverter {
                 .collect(Collectors.toMap(entry -> VariantConverter.objectToVariantData(entry.getKey()),
                     entry -> VariantConverter.objectToVariantData((entry.getValue()))));
             variantData = new VariantData(VariantType.MAP, variantDataMap);
+        } else if (object instanceof ClassObjectData) {
+            variantData = new VariantData(VariantType.OBJECT, object);
         } else if (object instanceof Boolean) {
             variantData = new VariantData(VariantType.BOOL_BOX, object);
         } else if (object instanceof Byte) {

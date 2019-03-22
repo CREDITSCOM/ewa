@@ -1,5 +1,6 @@
 package com.credits.general.util.variant;
 
+import com.credits.general.pojo.ClassObjectData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.pojo.VariantType;
 import com.credits.general.thrift.generated.Variant;
@@ -9,6 +10,8 @@ import com.credits.general.util.exception.UnsupportedTypeException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.credits.general.util.GeneralPojoConverter.createClassObject;
 
 public class VariantDataMapper implements Function<VariantData, Optional<Variant>> {
 
@@ -93,6 +96,9 @@ public class VariantDataMapper implements Function<VariantData, Optional<Variant
             case NULL:
                 variant = new Variant(Variant._Fields.V_NULL, VariantUtils.NULL_TYPE_VALUE);
                 break;
+            case VOID:
+                variant = new Variant(Variant._Fields.V_VOID, VariantUtils.VOID_TYPE_VALUE);
+                break;
             case BOOL:
                 variant = new Variant(Variant._Fields.V_BOOLEAN, boxedValue);
                 break;
@@ -137,6 +143,10 @@ public class VariantDataMapper implements Function<VariantData, Optional<Variant
                 break;
             case STRING:
                 variant = new Variant(Variant._Fields.V_STRING, boxedValue);
+                break;
+            case OBJECT:
+                ClassObjectData classObjectData = (ClassObjectData) boxedValue;
+                variant = new Variant(Variant._Fields.V_OBJECT, createClassObject(classObjectData));
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Unsupported variant type: %s", variantType.name));

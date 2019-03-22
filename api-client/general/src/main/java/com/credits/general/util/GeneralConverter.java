@@ -245,7 +245,7 @@ public class GeneralConverter {
         return compilationUnits;
     }
 
-    public static List<ByteCodeObjectData> byteCodeObjectTobyteCodeObjectData(List<ByteCodeObject> thriftByteCodeObjects) {
+    public static List<ByteCodeObjectData> byteCodeObjectToByteCodeObjectData(List<ByteCodeObject> thriftByteCodeObjects) {
         List<ByteCodeObjectData> compilationUnits = new ArrayList<>();
         thriftByteCodeObjects.forEach(unit->compilationUnits.add(new ByteCodeObjectData(unit.getName(),unit.getByteCode())));
         return compilationUnits;

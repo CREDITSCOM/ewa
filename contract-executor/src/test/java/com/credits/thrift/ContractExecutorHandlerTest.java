@@ -6,6 +6,7 @@ import com.credits.client.executor.thrift.generated.SmartContractBinary;
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
+import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.service.contract.ContractExecutorServiceImpl;
@@ -100,7 +101,7 @@ public class ContractExecutorHandlerTest {
     @SuppressWarnings("unchecked")
     private ExecuteByteCodeResult executeSmartContract(ByteBuffer contractState, int accessId, String methodName, int executiontime)
         throws TException {
-        SmartContractBinary smartContractBinary = new SmartContractBinary(contractAddress,byteCodeObjects,contractState, true);
+        SmartContractBinary smartContractBinary = new SmartContractBinary(contractAddress, new ClassObject(byteCodeObjects, contractState), true);
         return contractExecutorHandler.executeByteCode(accessId, initiatorAddress, smartContractBinary, methodName, EMPTY_LIST, executiontime,
             (byte) 100);
     }

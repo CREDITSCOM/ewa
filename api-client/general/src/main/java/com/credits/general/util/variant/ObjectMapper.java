@@ -1,5 +1,6 @@
 package com.credits.general.util.variant;
 
+import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 
@@ -71,6 +72,8 @@ public class ObjectMapper implements Function<Object, Optional<Variant>> {
             variant = new Variant(Variant._Fields.V_DOUBLE_BOX, object);
         } else if (object instanceof String) {
             variant = new Variant(Variant._Fields.V_STRING, object);
+        } else if (object instanceof ClassObject) {
+            variant = new Variant(Variant._Fields.V_OBJECT, object);
         } else {
             return null;
         }

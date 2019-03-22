@@ -13,6 +13,7 @@ import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
+import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.contract.ContractExecutorService;
@@ -64,20 +65,23 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         long executionTime,
         byte version) {
 
+        ClassObject classObject = invokedContract.object;
+        boolean isClassObjectNull = classObject == null;
+
         logger.debug(
             "\n<-- executeByteCode(" +
                 "\naccessId = {}," +
                 "\naddress = {}," +
-                "\nbyteCode length= {}, " +
-                "\ncontractState length= {}, " +
-                "\ncontractState hash= {} " +
+                "\nobject.byteCodeObjects length= {}, " +
+                "\nobject.instance length= {}, " +
+                "\nobject.instance hash= {} " +
                 "\nmethod = {}, " +
                 "\nparams = {}.",
             accessId,
             encodeToBASE58(initiatorAddress.array()),
-            invokedContract.byteCodeObjects.size(),
-            invokedContract.contractState.array().length,
-            invokedContract.contractState.hashCode(),
+            (isClassObjectNull && classObject.byteCodeObjects == null ? "null" : classObject.byteCodeObjects.size()),
+            (isClassObjectNull && classObject.instance == null ? "null" : classObject.instance.array().length),
+            (isClassObjectNull && classObject.instance == null ? "null" : classObject.instance.hashCode()),
             method,
             (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat)));
 
@@ -86,20 +90,20 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         try {
             // TODO: 3/18/2019 execute smart contract must be throw exception if contract state is empty or null
             ReturnValue returnValue =
-                method.isEmpty() && invokedContract.contractState == null || invokedContract.contractState.array().length == 0 ?
+                method.isEmpty() && classObject.instance == null || classObject.instance.array().length == 0 ?
                     service.deploySmartContract(new DeployContractSession(
                         accessId,
                         encodeToBASE58(initiatorAddress.array()),
                         encodeToBASE58(invokedContract.contractAddress.array()),
-                        byteCodeObjectsToByteCodeObjectsData(invokedContract.byteCodeObjects),
+                        byteCodeObjectsToByteCodeObjectsData(classObject.byteCodeObjects),
                         executionTime))
                     :
                         service.executeSmartContract(new InvokeMethodSession(
                             accessId,
                             encodeToBASE58(initiatorAddress.array()),
                             encodeToBASE58(invokedContract.contractAddress.array()),
-                            byteCodeObjectsToByteCodeObjectsData(invokedContract.byteCodeObjects),
-                            invokedContract.contractState.array(),
+                            byteCodeObjectsToByteCodeObjectsData(classObject.byteCodeObjects),
+                            classObject.instance.array(),
                             method,
                             new Variant[][] {paramsArray},
                             executionTime));
@@ -142,22 +146,26 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         long executionTime,
         byte version) {
 
+        ClassObject classObject = invokedContract.object;
+        boolean isClassObjectNull = classObject == null;
+
         logger.debug(
             "\n<-- executeByteCodeMultiple(" +
                 "\naccessId = {}," +
                 "\naddress = {}," +
-                "\nbyteCode length= {}, " +
-                "\ncontractState length= {}, " +
-                "\ncontractState hash= {} " +
+                "\nobject.byteCodeObjects length= {}, " +
+                "\nobject.instance length= {}, " +
+                "\nobject.instance hash= {} " +
                 "\nmethod = {}, " +
                 "\nparams = {}.",
             accessId,
             encodeToBASE58(initiatorAddress.array()),
-            invokedContract.byteCodeObjects.size(),
-            invokedContract.contractState.array().length,
-            invokedContract.contractState.hashCode(),
+            (isClassObjectNull && classObject.byteCodeObjects == null ? "null" : classObject.byteCodeObjects.size()),
+            (isClassObjectNull && classObject.instance == null ? "null" : classObject.instance.array().length),
+            (isClassObjectNull && classObject.instance == null ? "null" : classObject.instance.hashCode()),
             method,
             params == null ? "no params" : params.toString());
+
         Variant[][] paramsArray = null;
         if (params != null) {
             paramsArray = new Variant[params.size()][];
@@ -170,20 +178,20 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         ExecuteByteCodeMultipleResult byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(SUCCESS_API_RESPONSE, null);
         try {
             ReturnValue returnValue =
-                method.isEmpty() && invokedContract.contractState == null || invokedContract.contractState.array().length == 0 ?
+                method.isEmpty() && classObject.instance == null || classObject.instance.array().length == 0 ?
                     service.deploySmartContract(new DeployContractSession(
                         accessId,
                         encodeToBASE58(initiatorAddress.array()),
                         encodeToBASE58(invokedContract.contractAddress.array()),
-                        byteCodeObjectsToByteCodeObjectsData(invokedContract.byteCodeObjects),
+                        byteCodeObjectsToByteCodeObjectsData(classObject.byteCodeObjects),
                         executionTime))
                     :
                         service.executeSmartContract(new InvokeMethodSession(
                             accessId,
                             encodeToBASE58(initiatorAddress.array()),
                             encodeToBASE58(invokedContract.contractAddress.array()),
-                            byteCodeObjectsToByteCodeObjectsData(invokedContract.byteCodeObjects),
-                            invokedContract.contractState.array(),
+                            byteCodeObjectsToByteCodeObjectsData(classObject.byteCodeObjects),
+                            classObject.instance.array(),
                             method,
                             paramsArray,
                             executionTime));
@@ -207,7 +215,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         GetContractMethodsResult result = new GetContractMethodsResult();
         try {
             List<MethodDescriptionData> contractsMethods =
-                service.getContractsMethods(GeneralConverter.byteCodeObjectTobyteCodeObjectData(compilationUnits));
+                service.getContractsMethods(GeneralConverter.byteCodeObjectToByteCodeObjectData(compilationUnits));
             result.methods =
                 contractsMethods.stream().map(GeneralConverter::convertMethodDataToMethodDescription).collect(toList());
             result.setStatus(SUCCESS_API_RESPONSE);
@@ -230,7 +238,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         try {
             result.setStatus(SUCCESS_API_RESPONSE);
             result.setContractVariables(service.getContractVariables(
-                GeneralConverter.byteCodeObjectTobyteCodeObjectData(compilationUnits),
+                GeneralConverter.byteCodeObjectToByteCodeObjectData(compilationUnits),
                 contractState.array()));
         } catch (Throwable e) {
             result.setStatus(failureApiResponse(e));
