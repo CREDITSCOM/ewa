@@ -55,7 +55,6 @@ public abstract class ServiceTest {
 
     protected final byte[] initiatorAddress = decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe");
     protected final byte[] contractAddress = decodeFromBASE58("G2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZZ");
-    protected TestComponent testComponent;
     protected List<ByteCodeObjectData> byteCodeObjectDataList;
     protected String sourceCode;
 
@@ -68,16 +67,13 @@ public abstract class ServiceTest {
     @Mock
     protected NodeApiExecInteractionService mockNodeApiExecService;
 
-    protected HashMap<String, ExternalSmartContract> usedContracts;
-
     public ServiceTest(String sourceCodePath) {
         this.sourCodePath = sourceCodePath;
     }
 
     @Before
     public void setUp() throws Exception {
-        testComponent = DaggerTestComponent.builder().testModule(new TestModule()).build();
-        testComponent.inject(this);
+        DaggerTestComponent.builder().testModule(new TestModule()).build().inject(this);
 
         sourceCode = readSourceCode(sourCodePath);
         byteCodeObjectDataList = compileSourceCode(sourceCode);

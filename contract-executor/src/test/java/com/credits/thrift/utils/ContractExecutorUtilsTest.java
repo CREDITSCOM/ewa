@@ -6,7 +6,6 @@ import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.variant.VariantUtils;
-import com.credits.service.ServiceTest;
 import com.credits.service.contract.SmartContractConstants;
 import com.credits.service.contract.session.DeployContractSession;
 import org.junit.Assert;
@@ -19,56 +18,49 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class ContractExecutorUtilsTest extends ServiceTest {
-
-    private String sourceCodeWithVariables = "import java.util.ArrayList;\n" +
-        "import java.util.HashMap;\n" +
-        "import java.util.HashSet;\n" +
-        "import java.util.List;\n" +
-        "import java.util.Map;\n" +
-        "import java.util.Set;\n" +
-        "\n" +
-        "public class MySmartContract extends SmartContract {\n" +
-        "    public String nullField;\n" +
-        "    public int intField;\n" +
-        "    public Integer integerField;\n" +
-        "    public Double doubleField;\n" +
-        "    public String stringField;\n" +
-        "    public List<Integer> listIntegerField;\n" +
-        "    public Set<Integer> setIntegerField;\n" +
-        "    public Map<String, Integer> mapStringIntegerField;\n" +
-        "\n" +
-        "    public MySmartContract() {\n" +
-        "        this.nullField = null;\n" +
-        "        this.intField = 5;\n" +
-        "        this.integerField = 55;\n" +
-        "        this.doubleField = 5.55;\n" +
-        "        this.stringField = \"some string value\";\n" +
-        "        this.listIntegerField = new ArrayList<>();\n" +
-        "        this.listIntegerField.add(5);\n" +
-        "        this.setIntegerField = new HashSet<>();\n" +
-        "        this.setIntegerField.add(5);\n" +
-        "        this.mapStringIntegerField = new HashMap<>();\n" +
-        "        this.mapStringIntegerField.put(\"string key\", 5);\n" +
-        "    }\n" +
-        "}";
-
-    private String sourceCodeWithoutVariables = "public class MySmartContract extends SmartContract {\n" +
-        "    public MySmartContract() {\n" +
-        "    }\n" +
-        "}";
+public class ContractExecutorUtilsTest {
 
     private Object instanceWithVariables;
     private Object instanceWithoutVariables;
 
-    public ContractExecutorUtilsTest() {
-        super(null);
-    }
-
     @Before
-    @Override
     public void setUp() throws Exception {
+        String sourceCodeWithVariables = "import java.util.ArrayList;\n" +
+            "import java.util.HashMap;\n" +
+            "import java.util.HashSet;\n" +
+            "import java.util.List;\n" +
+            "import java.util.Map;\n" +
+            "import java.util.Set;\n" +
+            "\n" +
+            "public class MySmartContract extends SmartContract {\n" +
+            "    public String nullField;\n" +
+            "    public int intField;\n" +
+            "    public Integer integerField;\n" +
+            "    public Double doubleField;\n" +
+            "    public String stringField;\n" +
+            "    public List<Integer> listIntegerField;\n" +
+            "    public Set<Integer> setIntegerField;\n" +
+            "    public Map<String, Integer> mapStringIntegerField;\n" +
+            "\n" +
+            "    public MySmartContract() {\n" +
+            "        this.nullField = null;\n" +
+            "        this.intField = 5;\n" +
+            "        this.integerField = 55;\n" +
+            "        this.doubleField = 5.55;\n" +
+            "        this.stringField = \"some string value\";\n" +
+            "        this.listIntegerField = new ArrayList<>();\n" +
+            "        this.listIntegerField.add(5);\n" +
+            "        this.setIntegerField = new HashSet<>();\n" +
+            "        this.setIntegerField.add(5);\n" +
+            "        this.mapStringIntegerField = new HashMap<>();\n" +
+            "        this.mapStringIntegerField.put(\"string key\", 5);\n" +
+            "    }\n" +
+            "}";
         instanceWithVariables = getInstance(sourceCodeWithVariables);
+        String sourceCodeWithoutVariables = "public class MySmartContract extends SmartContract {\n" +
+            "    public MySmartContract() {\n" +
+            "    }\n" +
+            "}";
         instanceWithoutVariables = getInstance(sourceCodeWithoutVariables);
     }
 
