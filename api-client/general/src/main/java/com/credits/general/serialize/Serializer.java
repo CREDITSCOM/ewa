@@ -1,4 +1,4 @@
-package com.credits.serialize;
+package com.credits.general.serialize;
 
 import com.credits.exception.ContractExecutorException;
 

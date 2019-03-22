@@ -16,7 +16,7 @@ import java.util.Collection;
 public class ObjectMapperTest {
 
     @Parameter
-    public String name;
+    public String testName;
 
     @Parameter(1)
     public Object input;

@@ -1,17 +1,24 @@
 package com.credits.general.util.variant;
 
-import com.credits.general.pojo.ClassObjectData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.pojo.VariantType;
 import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.credits.general.serialize.Serializer.serialize;
 import static com.credits.general.util.GeneralPojoConverter.createClassObjectData;
 
 public class VariantConverter {
@@ -232,8 +239,6 @@ public class VariantConverter {
                 .collect(Collectors.toMap(entry -> VariantConverter.objectToVariantData(entry.getKey()),
                     entry -> VariantConverter.objectToVariantData((entry.getValue()))));
             variantData = new VariantData(VariantType.MAP, variantDataMap);
-        } else if (object instanceof ClassObjectData) {
-            variantData = new VariantData(VariantType.OBJECT, object);
         } else if (object instanceof Boolean) {
             variantData = new VariantData(VariantType.BOOL_BOX, object);
         } else if (object instanceof Byte) {
@@ -250,6 +255,12 @@ public class VariantConverter {
             variantData = new VariantData(VariantType.DOUBLE_BOX, object);
         } else if (object instanceof String) {
             variantData = new VariantData(VariantType.STRING, object);
+        } else {
+            final byte[] binaryInstance = serialize(object);
+            final Class<?> clazz = object.getClass();
+            InMemoryCompiler
+
+            variantData = new VariantData(VariantType.OBJECT, object);
         }
         if (variantData == null) {
             throw new ConverterException(

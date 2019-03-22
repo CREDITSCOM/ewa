@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.credits.general.serialize.Serializer.deserialize;
 import static com.credits.general.thrift.generated.Variant.v_boolean;
 import static com.credits.general.thrift.generated.Variant.v_double;
 import static com.credits.general.thrift.generated.Variant.v_double_box;
@@ -22,7 +23,6 @@ import static com.credits.general.thrift.generated.Variant.v_int_box;
 import static com.credits.general.thrift.generated.Variant.v_list;
 import static com.credits.general.thrift.generated.Variant.v_long;
 import static com.credits.general.thrift.generated.Variant.v_string;
-import static com.credits.serialize.Serializer.deserialize;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
 import static com.credits.utils.ContractExecutorServiceUtils.castValues;
 import static com.credits.utils.ContractExecutorServiceUtils.getMethodArgumentsValuesByNameAndParams;

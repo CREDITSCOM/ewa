@@ -8,7 +8,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.runners.Parameterized.Parameter;
 import static org.junit.runners.Parameterized.Parameters;
@@ -81,7 +86,8 @@ public class ObjectToVariantDataToObjectTest {
                 new ClassObjectData(new ArrayList<ByteCodeObjectData>(){{
                     add(new ByteCodeObjectData("name01", new byte[3]));
                     add(new ByteCodeObjectData("name02", new byte[2]));
-                }}, new byte[1])
+                }}, new byte[1]),
+                new ObjectToVariantDataToObjectTest()
         );
     }
 

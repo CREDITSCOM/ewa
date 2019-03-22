@@ -51,9 +51,9 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.LoggingPermission;
 import java.util.stream.Stream;
 
+import static com.credits.general.serialize.Serializer.deserialize;
+import static com.credits.general.serialize.Serializer.serialize;
 import static com.credits.ioc.Injector.INJECTOR;
-import static com.credits.serialize.Serializer.deserialize;
-import static com.credits.serialize.Serializer.serialize;
 import static com.credits.service.contract.SmartContractConstants.initSmartContractConstants;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
 import static com.credits.thrift.utils.ContractExecutorUtils.mapObjectToVariant;
