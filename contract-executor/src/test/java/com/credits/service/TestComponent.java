@@ -1,7 +1,6 @@
 package com.credits.service;
 
 import com.credits.ioc.AppComponent;
-import com.credits.service.contract.ThriftIntegrationMockTest;
 import dagger.Component;
 
 import javax.inject.Singleton;
@@ -13,5 +12,4 @@ import javax.inject.Singleton;
 @Component(modules = {TestModule.class})
 public interface TestComponent extends AppComponent {
     void inject(ServiceTest serviceTest);
-    void inject(ThriftIntegrationMockTest thriftIntegrationMockTest);
 }
