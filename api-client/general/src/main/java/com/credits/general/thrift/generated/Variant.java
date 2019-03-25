@@ -26,7 +26,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
   private static final org.apache.thrift.protocol.TField V_DOUBLE_FIELD_DESC = new org.apache.thrift.protocol.TField("v_double", org.apache.thrift.protocol.TType.DOUBLE, (short)15);
   private static final org.apache.thrift.protocol.TField V_DOUBLE_BOX_FIELD_DESC = new org.apache.thrift.protocol.TField("v_double_box", org.apache.thrift.protocol.TType.DOUBLE, (short)16);
   private static final org.apache.thrift.protocol.TField V_STRING_FIELD_DESC = new org.apache.thrift.protocol.TField("v_string", org.apache.thrift.protocol.TType.STRING, (short)17);
-  private static final org.apache.thrift.protocol.TField V_OBJECT_FIELD_DESC = new org.apache.thrift.protocol.TField("v_object", org.apache.thrift.protocol.TType.STRUCT, (short)18);
+  private static final org.apache.thrift.protocol.TField V_OBJECT_FIELD_DESC = new org.apache.thrift.protocol.TField("v_object", org.apache.thrift.protocol.TType.STRING, (short)18);
   private static final org.apache.thrift.protocol.TField V_ARRAY_FIELD_DESC = new org.apache.thrift.protocol.TField("v_array", org.apache.thrift.protocol.TType.LIST, (short)19);
   private static final org.apache.thrift.protocol.TField V_LIST_FIELD_DESC = new org.apache.thrift.protocol.TField("v_list", org.apache.thrift.protocol.TType.LIST, (short)20);
   private static final org.apache.thrift.protocol.TField V_SET_FIELD_DESC = new org.apache.thrift.protocol.TField("v_set", org.apache.thrift.protocol.TType.SET, (short)21);
@@ -191,7 +191,7 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     tmpMap.put(_Fields.V_STRING, new org.apache.thrift.meta_data.FieldMetaData("v_string", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.V_OBJECT, new org.apache.thrift.meta_data.FieldMetaData("v_object", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
-        new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Any.class)));
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING        , true)));
     tmpMap.put(_Fields.V_ARRAY, new org.apache.thrift.meta_data.FieldMetaData("v_array", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
         new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, 
             new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT            , "Variant"))));
@@ -326,9 +326,15 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     return x;
   }
 
-  public static Variant v_object(Any value) {
+  public static Variant v_object(java.nio.ByteBuffer value) {
     Variant x = new Variant();
     x.setV_object(value);
+    return x;
+  }
+
+  public static Variant v_object(byte[] value) {
+    Variant x = new Variant();
+    x.setV_object(java.nio.ByteBuffer.wrap(value.clone()));
     return x;
   }
 
@@ -446,10 +452,10 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
         }
         throw new java.lang.ClassCastException("Was expecting value of type java.lang.String for field 'v_string', but got " + value.getClass().getSimpleName());
       case V_OBJECT:
-        if (value instanceof Any) {
+        if (value instanceof java.nio.ByteBuffer) {
           break;
         }
-        throw new java.lang.ClassCastException("Was expecting value of type Any for field 'v_object', but got " + value.getClass().getSimpleName());
+        throw new java.lang.ClassCastException("Was expecting value of type java.nio.ByteBuffer for field 'v_object', but got " + value.getClass().getSimpleName());
       case V_ARRAY:
         if (value instanceof java.util.List) {
           break;
@@ -635,9 +641,8 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           }
         case V_OBJECT:
           if (field.type == V_OBJECT_FIELD_DESC.type) {
-            Any v_object;
-            v_object = new Any();
-            v_object.read(iprot);
+            java.nio.ByteBuffer v_object;
+            v_object = iprot.readBinary();
             return v_object;
           } else {
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
@@ -807,8 +812,8 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
         oprot.writeString(v_string);
         return;
       case V_OBJECT:
-        Any v_object = (Any)value_;
-        v_object.write(oprot);
+        java.nio.ByteBuffer v_object = (java.nio.ByteBuffer)value_;
+        oprot.writeBinary(v_object);
         return;
       case V_ARRAY:
         java.util.List<Variant> v_array = (java.util.List<Variant>)value_;
@@ -934,9 +939,8 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
           v_string = iprot.readString();
           return v_string;
         case V_OBJECT:
-          Any v_object;
-          v_object = new Any();
-          v_object.read(iprot);
+          java.nio.ByteBuffer v_object;
+          v_object = iprot.readBinary();
           return v_object;
         case V_ARRAY:
           java.util.List<Variant> v_array;
@@ -1081,8 +1085,8 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
         oprot.writeString(v_string);
         return;
       case V_OBJECT:
-        Any v_object = (Any)value_;
-        v_object.write(oprot);
+        java.nio.ByteBuffer v_object = (java.nio.ByteBuffer)value_;
+        oprot.writeBinary(v_object);
         return;
       case V_ARRAY:
         java.util.List<Variant> v_array = (java.util.List<Variant>)value_;
@@ -1423,15 +1427,25 @@ public class Variant extends org.apache.thrift.TUnion<Variant, Variant._Fields> 
     value_ = value;
   }
 
-  public Any getV_object() {
+  public byte[] getV_object() {
+    setV_object(org.apache.thrift.TBaseHelper.rightSize(bufferForV_object()));
+    java.nio.ByteBuffer b = bufferForV_object();
+    return b == null ? null : b.array();
+  }
+
+  public java.nio.ByteBuffer bufferForV_object() {
     if (getSetField() == _Fields.V_OBJECT) {
-      return (Any)getFieldValue();
+      return org.apache.thrift.TBaseHelper.copyBinary((java.nio.ByteBuffer)getFieldValue());
     } else {
       throw new java.lang.RuntimeException("Cannot get field 'v_object' because union is currently set to " + getFieldDesc(getSetField()).name);
     }
   }
 
-  public void setV_object(Any value) {
+  public void setV_object(byte[] value) {
+    setV_object(java.nio.ByteBuffer.wrap(value.clone()));
+  }
+
+  public void setV_object(java.nio.ByteBuffer value) {
     if (value == null) throw new java.lang.NullPointerException();
     setField_ = _Fields.V_OBJECT;
     value_ = value;

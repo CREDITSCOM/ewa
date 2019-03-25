@@ -23,7 +23,7 @@ public class GeneralConverterTest {
         Assert.assertEquals("1000000001", GeneralConverter.toString(1000000001));
         Assert.assertEquals("111111111111111111", GeneralConverter.toString(111111111111111111L));
         Assert.assertEquals("2222222222222222222", GeneralConverter.toString(new BigDecimal(2222222222222222222L)));
-        Assert.assertEquals("1", GeneralConverter.toString((byte)1));
+        Assert.assertEquals("1", GeneralConverter.toString((byte) 1));
     }
 
     @Test
@@ -116,55 +116,55 @@ public class GeneralConverterTest {
 
     @Test
     public void toIntegerTest() {
-        Long value = (long)Integer.MAX_VALUE;
-        Assert.assertEquals(GeneralConverter.toInteger(value), (Integer)Integer.MAX_VALUE);
+        Long value = (long) Integer.MAX_VALUE;
+        Assert.assertEquals(GeneralConverter.toInteger(value), (Integer) Integer.MAX_VALUE);
     }
 
     @Test
     public void toFloatTest() {
         String value = "1";
-        Assert.assertEquals(GeneralConverter.toFloat(value), (Float)1F);
+        Assert.assertEquals(GeneralConverter.toFloat(value), (Float) 1F);
     }
 
     @Test
     public void toByteTest() {
         String value = "1";
-        Assert.assertEquals(GeneralConverter.toByte(value), (Byte)(byte)1);
+        Assert.assertEquals(GeneralConverter.toByte(value), (Byte) (byte) 1);
     }
 
     @Test
     public void toShortTest() {
         String value = "1";
-        Assert.assertEquals(GeneralConverter.toShort(value), (Short)(short)1);
+        Assert.assertEquals(GeneralConverter.toShort(value), (Short) (short) 1);
     }
 
     @Test
     public void toLongTest() {
         String value = "1";
-        Assert.assertEquals(GeneralConverter.toLong(value), (Long)1L);
+        Assert.assertEquals(GeneralConverter.toLong(value), (Long) 1L);
     }
 
     @Test
     public void toCharacterTest() {
         String value = "1";
-        Assert.assertEquals(GeneralConverter.toCharacter(value), (Character)'1');
+        Assert.assertEquals(GeneralConverter.toCharacter(value), (Character) '1');
     }
 
     @Test
     public void toDoubleTest01() {
         String value = "1";
-        Assert.assertEquals(GeneralConverter.toDouble(value), (Double)1D);
+        Assert.assertEquals(GeneralConverter.toDouble(value), (Double) 1D);
     }
 
     @Test
     public void toDoubleTest02() {
         String value = "1" + DECIMAL_SEPARATOR + "2";
-        Assert.assertEquals(GeneralConverter.toDouble(value, Constants.LOCALE, GeneralConverter.DOUBLE_FORMAT), (Double)1.2D);
+        Assert.assertEquals(GeneralConverter.toDouble(value, Constants.LOCALE, GeneralConverter.DOUBLE_FORMAT), (Double) 1.2D);
     }
+
     @Test
     public void toDoubleTest03() {
         Float value = 1.2F;
-        Assert.assertEquals(GeneralConverter.toDouble(value), (Double)1.2D);
+        Assert.assertEquals(GeneralConverter.toDouble(value), (Double) 1.2D);
     }
-
 }

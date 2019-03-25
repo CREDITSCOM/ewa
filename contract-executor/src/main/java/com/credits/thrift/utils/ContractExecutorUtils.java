@@ -6,8 +6,8 @@ import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.exception.UnsupportedTypeException;
-import com.credits.general.util.variant.ObjectMapper;
 import com.credits.general.util.variant.VariantDataMapper;
+import com.credits.general.util.variant.VariantMapper;
 import com.credits.thrift.DeployReturnValue;
 
 import java.lang.reflect.Constructor;
@@ -86,7 +86,7 @@ public class ContractExecutorUtils {
     }
 
     public static Variant mapObjectToVariant(Object object) throws ContractExecutorException {
-        return new ObjectMapper().apply(object)
+        return new VariantMapper.ObjectToVariant().apply(object)
             .orElseThrow(() -> {
                 UnsupportedTypeException e = new UnsupportedTypeException(
                     "Unsupported type of the value {" + object.toString() + "}: " + object.getClass());

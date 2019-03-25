@@ -12,11 +12,16 @@ import org.junit.runners.Parameterized.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.credits.general.util.variant.VariantUtils.COLLECTION_VALUES_DELIMITER;
 import static com.credits.general.util.variant.VariantUtils.MAP_KEY_VALUE_DELIMITER;
 
+@Deprecated
 @RunWith(Parameterized.class)
 public class VariantUtilsTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(VariantUtilsTest.class);

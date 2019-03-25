@@ -3,7 +3,6 @@ package com.credits.general.util.variant;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.pojo.VariantType;
-import com.credits.general.thrift.generated.Any;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,7 +33,7 @@ public class VariantUtils {
             throw new CreditsException("variantType is null");
         }
         if (variantType == VariantType.OBJECT) {
-            if (!(boxedValue instanceof Any))
+            if (!(boxedValue instanceof Object))
                 throw new CreditsException(INVALID_VARIANT_DATA_MESSAGE);
         } else if (variantType == VariantType.NULL || variantType == VariantType.VOID) {
             if (boxedValue != null)

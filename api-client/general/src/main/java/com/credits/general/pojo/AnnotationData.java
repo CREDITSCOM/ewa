@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class AnnotationData {
     public String name;
-    public Map<String,String> arguments;
+    public Map<String, String> arguments;
 
     public AnnotationData(AnnotationData annotationData1) {
         this.name = annotationData1.name;
