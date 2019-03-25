@@ -1,14 +1,20 @@
 package com.credits.general.util.variant;
 
 import com.credits.general.exception.CreditsException;
-import com.credits.general.pojo.ClassObjectData;
 import com.credits.general.pojo.VariantData;
 import com.credits.general.pojo.VariantType;
+import com.credits.general.thrift.generated.Any;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class VariantUtils {
     public static final String COLLECTION_VALUES_DELIMITER = ",";
@@ -28,7 +34,7 @@ public class VariantUtils {
             throw new CreditsException("variantType is null");
         }
         if (variantType == VariantType.OBJECT) {
-            if (!(boxedValue instanceof ClassObjectData))
+            if (!(boxedValue instanceof Any))
                 throw new CreditsException(INVALID_VARIANT_DATA_MESSAGE);
         } else if (variantType == VariantType.NULL || variantType == VariantType.VOID) {
             if (boxedValue != null)

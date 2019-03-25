@@ -1,48 +1,81 @@
 package com.credits.general.util.variant;
 
-import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.stream.Stream;
 
-@RunWith(Parameterized.class)
+import static com.credits.general.thrift.generated.Variant._Fields.V_INT_BOX;
+import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 public class ObjectMapperTest {
 
-    @Parameter
-    public String testName;
+    @SuppressWarnings("unchecked")
+    static Stream<Object> provideObjectsForMapping() {
+        return Stream.of(
+            Arguments.of(null, (byte) 0),
+            Arguments.of(Boolean.TRUE, Boolean.TRUE),
+            Arguments.of(Integer.MAX_VALUE, Integer.MAX_VALUE),
+            Arguments.of(Long.MAX_VALUE, Long.MAX_VALUE),
+            Arguments.of(Float.MAX_VALUE, (double) Float.MAX_VALUE),
+            Arguments.of(Double.MAX_VALUE, Double.MAX_VALUE),
+            Arguments.of("String", "String"),
 
-    @Parameter(1)
-    public Object input;
+            Arguments.of(
+                new ArrayList() {{
+                    add("object");
+                }},
+                new ArrayList() {{
+                    add(new Variant(V_STRING, "object"));
+                }}),
 
-    @Parameters(name = "{0}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-            {"Boolean", ""},
-            {"Boolean", true},
-            {"Byte", (byte)1},
-            {"Short", (short)2},
-            {"Integer", 3},
-            {"Long", 4L},
-            {"Float", 5},
-            {"Double", 1.1D},
-            {"String", "test string"},
-            {VariantUtils.OBJECT_TYPE, new ClassObject()},
-        });
+            Arguments.of(
+                new HashMap() {{
+                    put("one", 1);
+                }},
+                new HashMap() {{
+                    put(new Variant(V_STRING, "one"), new Variant(V_INT_BOX, 1));
+                }}),
+
+            Arguments.of(
+                new HashSet() {{
+                    add("object");
+                }},
+                new HashSet() {{
+                    add(new Variant(V_STRING, "object"));
+                }}),
+
+            Arguments.of(
+                new String[] {"str", "str"},
+                new ArrayList() {{
+                    add(new Variant(V_STRING, "str"));
+                    add(new Variant(V_STRING, "str"));
+                }}
+            ));
+
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("provideObjectsForMapping")
+    public void objectsMap(Object inputObject, Object expected) {
+        Object variantValue = new ObjectMapper()
+            .apply(inputObject).orElseThrow(null)
+            .getFieldValue();
+
+        assertEquals(expected, variantValue);
     }
 
     @Test
-    public void mapSuccessfulTest() {
-        Variant variant = new ObjectMapper()
-            .apply(input)
-            .orElse(new Variant());
+    public void primitiveMap() {
 
-        Assert.assertEquals(input, variant.getFieldValue());
     }
 }

@@ -2,7 +2,6 @@ package com.credits.general.util.variant;
 
 import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
-import com.credits.general.util.GeneralConverter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,20 +25,20 @@ public class ObjectMapper implements Function<Object, Optional<Variant>> {
             return new Variant(Variant._Fields.V_NULL, VariantUtils.NULL_TYPE_VALUE);
         } else if (object.getClass().isArray()) {
             List<Variant> variantCollection =
-                    Arrays.stream((Object[]) object).map(this::map).collect(Collectors.toList());
+                Arrays.stream((Object[]) object).map(this::map).collect(Collectors.toList());
             variant = new Variant(Variant._Fields.V_ARRAY, variantCollection);
         } else if (object instanceof List) {
             List<Variant> variantCollection =
-                    ((List<Object>) object).stream().map(this::map).collect(Collectors.toList());
+                ((List<Object>) object).stream().map(this::map).collect(Collectors.toList());
             variant = new Variant(Variant._Fields.V_LIST, variantCollection);
         } else if (object instanceof Set) {
             Set<Variant> variantCollection =
-                    ((Set<Object>) object).stream().map(this::mapSimpleType).collect(Collectors.toSet());
+                ((Set<Object>) object).stream().map(this::mapSimpleType).collect(Collectors.toSet());
             variant = new Variant(Variant._Fields.V_SET, variantCollection);
         } else if (object instanceof Map) {
             Map<Variant, Variant> variantMap = ((Map<Object, Object>) object).entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(entry -> mapSimpleType(entry.getKey()), entry -> mapSimpleType(entry.getValue())));
+                .stream()
+                .collect(Collectors.toMap(entry -> mapSimpleType(entry.getKey()), entry -> mapSimpleType(entry.getValue())));
             variant = new Variant(Variant._Fields.V_MAP, variantMap);
         } else {
             variant = mapSimpleType(object);
@@ -67,7 +66,7 @@ public class ObjectMapper implements Function<Object, Optional<Variant>> {
         } else if (object instanceof Long) {
             variant = new Variant(Variant._Fields.V_LONG_BOX, object);
         } else if (object instanceof Float) {
-            variant = new Variant(Variant._Fields.V_FLOAT_BOX, GeneralConverter.toDouble(object));
+            variant = new Variant(Variant._Fields.V_FLOAT_BOX, (double) (float) object);
         } else if (object instanceof Double) {
             variant = new Variant(Variant._Fields.V_DOUBLE_BOX, object);
         } else if (object instanceof String) {

@@ -1,7 +1,5 @@
 package com.credits.general.serialize;
 
-import com.credits.exception.ContractExecutorException;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,24 +14,24 @@ public class Serializer {
     private static final String serFileName = "Contract.out";
     private final static String SER_SOURCE_FOLDER_PATH = System.getProperty("user.dir") + separator + "credits" + separator;
 
-    public static Object deserialize(byte[] contractState, ClassLoader classLoader) throws ContractExecutorException {
+    public static Object deserialize(byte[] contractState, ClassLoader classLoader) throws RuntimeException {
         Object instance;
 
         try (ObjectInputStream ous = new ObjectInputStreamWithClassLoader(new ByteArrayInputStream(contractState), classLoader)) {
             instance = ous.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new ContractExecutorException("Cannot getObject smart contract instance. " + e);
+            throw new RuntimeException("Cannot getObject smart contract instance. " + e);
         }
         return instance;
     }
 
-    public static byte[] serialize(Object instance) throws ContractExecutorException {
+    public static byte[] serialize(Object instance) throws RuntimeException {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ObjectOutputStream ous = new ObjectOutputStream(baos)) {
             ous.writeObject(instance);
         } catch (IOException e) {
-            throw new ContractExecutorException("Cannot serialize smart contract instance. " + e);
+            throw new RuntimeException("Cannot serialize smart contract instance. " + e);
         }
         return baos.toByteArray();
     }

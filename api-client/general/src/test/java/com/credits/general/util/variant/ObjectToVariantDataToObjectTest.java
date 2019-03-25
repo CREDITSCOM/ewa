@@ -1,7 +1,5 @@
 package com.credits.general.util.variant;
 
-import com.credits.general.pojo.ByteCodeObjectData;
-import com.credits.general.pojo.ClassObjectData;
 import com.credits.general.pojo.VariantData;
 import org.junit.Assert;
 import org.junit.Test;
@@ -83,10 +81,10 @@ public class ObjectToVariantDataToObjectTest {
                     put("Two", 2);
                     put("Three", 3);
                 }},
-                new ClassObjectData(new ArrayList<ByteCodeObjectData>(){{
-                    add(new ByteCodeObjectData("name01", new byte[3]));
-                    add(new ByteCodeObjectData("name02", new byte[2]));
-                }}, new byte[1]),
+//                new ClassObjectData(new ArrayList<ByteCodeObjectData>(){{
+//                    add(new ByteCodeObjectData("name01", new byte[3]));
+//                    add(new ByteCodeObjectData("name02", new byte[2]));
+//                }}, new byte[1]),
                 new ObjectToVariantDataToObjectTest()
         );
     }

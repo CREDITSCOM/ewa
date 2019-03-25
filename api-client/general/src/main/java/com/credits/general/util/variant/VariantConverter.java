@@ -2,10 +2,8 @@ package com.credits.general.util.variant;
 
 import com.credits.general.pojo.VariantData;
 import com.credits.general.pojo.VariantType;
-import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.exception.ConverterException;
 
 import java.math.BigDecimal;
@@ -19,15 +17,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.credits.general.serialize.Serializer.serialize;
-import static com.credits.general.util.GeneralPojoConverter.createClassObjectData;
 
 public class VariantConverter {
 
     public static Variant variantDataToVariant(VariantData variantData) {
         return new VariantDataMapper().apply(variantData)
-                .orElseThrow(() -> {
-                    return new IllegalArgumentException("Unsupported type of the value {" + variantData.getBoxedValue().toString() + "}: " + variantData.getVariantType().name);
-                });
+            .orElseThrow(() -> {
+                return new IllegalArgumentException(
+                    "Unsupported type of the value {" + variantData.getBoxedValue().toString() + "}: " + variantData.getVariantType().name);
+            });
     }
 
     public static BigDecimal getBigDecimalFromVariant(Variant variant) throws ConverterException {
@@ -51,7 +49,7 @@ public class VariantConverter {
 
     public static VariantData variantToVariantData(Variant variant) throws ConverterException {
         VariantType variantType;
-        Object boxedValue;
+        Object boxedValue = null;
         if (variant.isSetV_null()) {
             variantType = VariantType.NULL;
             boxedValue = null;
@@ -112,8 +110,9 @@ public class VariantConverter {
 
         } else if (variant.isSetV_object()) {
             variantType = VariantType.OBJECT;
-            ClassObject classObject = variant.getV_object();
-            boxedValue = createClassObjectData(classObject);
+            // FIXME: 3/25/2019
+//            String className = variant.getV_object().name;
+//            boxedValue = createAnyData(classObject);
 
         } else if (variant.isSetV_list()) {
             variantType = VariantType.LIST;
@@ -148,6 +147,7 @@ public class VariantConverter {
         } else {
             throw new ConverterException("Unsupported variant type");
         }
+        // FIXME: 3/25/2019 null
         return new VariantData(variantType, boxedValue);
     }
 
@@ -192,15 +192,15 @@ public class VariantConverter {
         } else if (variant.isSetV_array()) {
             List<Variant> variantList = variant.getV_array();
             object = variantList.stream().map(
-                    VariantConverter::variantToObject
+                VariantConverter::variantToObject
             ).toArray();
         } else if (variant.isSetV_list()) {
             object = variant.getV_list().stream().map(
-                    VariantConverter::variantToObject
+                VariantConverter::variantToObject
             ).collect(Collectors.toList());
         } else if (variant.isSetV_set()) {
             object = variant.getV_set().stream().map(
-                    VariantConverter::variantToObject
+                VariantConverter::variantToObject
             ).collect(Collectors.toSet());
         } else if (variant.isSetV_map()) {
             Map<Object, Object> objectMap = new HashMap<>();
@@ -236,7 +236,8 @@ public class VariantConverter {
         } else if (object instanceof Map) {
             Map<VariantData, VariantData> variantDataMap = ((Map<Object, Object>) object).entrySet()
                 .stream()
-                .collect(Collectors.toMap(entry -> VariantConverter.objectToVariantData(entry.getKey()),
+                .collect(Collectors.toMap(
+                    entry -> VariantConverter.objectToVariantData(entry.getKey()),
                     entry -> VariantConverter.objectToVariantData((entry.getValue()))));
             variantData = new VariantData(VariantType.MAP, variantDataMap);
         } else if (object instanceof Boolean) {
@@ -257,10 +258,9 @@ public class VariantConverter {
             variantData = new VariantData(VariantType.STRING, object);
         } else {
             final byte[] binaryInstance = serialize(object);
-            final Class<?> clazz = object.getClass();
-            InMemoryCompiler
-
-            variantData = new VariantData(VariantType.OBJECT, object);
+            final String className = object.getClass().getName();
+            // FIXME: 3/25/2019 implementation
+            variantData = new VariantData(VariantType.OBJECT, binaryInstance);
         }
         if (variantData == null) {
             throw new ConverterException(
@@ -325,7 +325,7 @@ public class VariantConverter {
             }
         }
 
-        if(variantDataCollection.isEmpty()) {
+        if (variantDataCollection.isEmpty()) {
             throw new ConverterException(
                 String.format("Unsupported object type: %s", object.getClass().getSimpleName()));
         }
@@ -349,7 +349,8 @@ public class VariantConverter {
                 Map<VariantData, VariantData> variantDataMap = (Map<VariantData, VariantData>) boxedValue;
                 return variantDataMap.entrySet()
                     .stream()
-                    .collect(Collectors.toMap(e -> VariantConverter.variantDataToObject(e.getKey()),
+                    .collect(Collectors.toMap(
+                        e -> VariantConverter.variantDataToObject(e.getKey()),
                         e -> VariantConverter.variantDataToObject(e.getValue())));
             default:
                 return boxedValue;
