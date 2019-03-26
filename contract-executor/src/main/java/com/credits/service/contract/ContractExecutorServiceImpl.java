@@ -269,6 +269,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             return new SmartContractMethodResult(SUCCESS_API_RESPONSE, mapObjectToVariant(invoke(session, instance, params)));
         } catch (Throwable e) {
+            e.printStackTrace();
             return new SmartContractMethodResult(failureApiResponse(e), null);
         }
     }
@@ -304,8 +305,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new RuntimePermission("accessClassInPackage.sun.security.ec"));
         permissions.add(new RuntimePermission("accessClassInPackage.sun.security.rsa"));
         permissions.add(new RuntimePermission("accessClassInPackage.sun.security.provider"));
-        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "loadLibrary.sunec"));
-        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "createClassLoader"));
+        permissions.add(new RuntimePermission("loadLibrary.sunec"));
+        permissions.add(new RuntimePermission("createClassLoader"));
         permissions.add(new SecurityPermission("getProperty.networkaddress.cache.ttl", "read"));
         permissions.add(new SecurityPermission("getProperty.networkaddress.cache.negative.ttl", "read"));
         permissions.add(new SecurityPermission("getProperty.jdk.jar.disabledAlgorithms"));
@@ -327,7 +328,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Permissions permissions = new Permissions();
         permissions.add(new ReflectPermission("suppressAccessChecks"));
         permissions.add(new RuntimePermission("accessDeclaredMembers"));
-        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "createClassLoader"));
+        permissions.add(new RuntimePermission("createClassLoader"));
         return permissions;
     }
 
