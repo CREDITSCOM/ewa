@@ -119,9 +119,11 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 result.externalContractsState = returnValue.externalSmartContracts.keySet().stream().reduce(
                     new HashMap<>(),
                     (newMap, address) -> {
-                        newMap.put(
-                            ByteBuffer.wrap(decodeFromBASE58(address)),
-                            ByteBuffer.wrap(returnValue.externalSmartContracts.get(address).contractData.contractState));
+                        if(!Arrays.equals(decodeFromBASE58(address), invokedContract.contractAddress.array())) {
+                            newMap.put(
+                                ByteBuffer.wrap(decodeFromBASE58(address)),
+                                ByteBuffer.wrap(returnValue.externalSmartContracts.get(address).contractData.contractState));
+                        }
                         return newMap;
                     },
                     (map1, map2) -> map1);
