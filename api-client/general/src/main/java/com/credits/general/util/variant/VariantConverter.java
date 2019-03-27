@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static com.credits.general.serialize.Serializer.serialize;
 
+@Deprecated
 public class VariantConverter {
 
     public static Variant variantDataToVariant(VariantData variantData) {

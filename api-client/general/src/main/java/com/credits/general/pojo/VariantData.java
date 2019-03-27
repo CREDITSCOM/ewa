@@ -2,10 +2,12 @@ package com.credits.general.pojo;
 
 import com.credits.general.util.variant.VariantUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Objects;
 
 import static com.credits.general.pojo.VariantType.ARRAY;
 
+@Deprecated
 public class VariantData {
     private VariantType variantType;
     private Object boxedValue;

@@ -3,7 +3,6 @@ package com.credits.client.node.pojo;
 /**
  * Created by Rustem.Saidaliyev on 30.08.2018.
  */
-@Deprecated
 public class TransactionIdData {
 
     public byte[] poolHash;

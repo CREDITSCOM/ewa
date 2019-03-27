@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Deprecated
 public class VariantUtils {
     public static final String COLLECTION_VALUES_DELIMITER = ",";
     public static final String MAP_KEY_VALUE_DELIMITER = ":";

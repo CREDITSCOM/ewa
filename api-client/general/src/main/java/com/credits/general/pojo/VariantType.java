@@ -3,6 +3,7 @@ package com.credits.general.pojo;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.variant.VariantUtils;
 
+@Deprecated
 public enum VariantType {
     OBJECT(VariantUtils.OBJECT_TYPE),
     NULL(VariantUtils.NULL_TYPE),
