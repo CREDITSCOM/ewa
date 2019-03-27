@@ -297,6 +297,10 @@ public class SmartContractController extends AbstractController {
 
                     SmartTransInfoData smartInfo = transactionData.getSmartInfo();
 
+                    if (smartInfo == null) {
+                        throw new CreditsException("Transaction smartInfo is null");
+                    }
+
                     SmartContractTransactionTabRow tableRow = new SmartContractTransactionTabRow();
                     tableRow.setAmount(GeneralConverter.toString(transactionData.getAmount()));
                     tableRow.setSource(GeneralConverter.encodeToBASE58(transactionData.getSource()));
