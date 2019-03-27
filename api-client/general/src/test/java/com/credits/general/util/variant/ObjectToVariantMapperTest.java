@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.stream.Stream;
 
+import static com.credits.general.TestHelper.ExampleClass;
 import static com.credits.general.serialize.Serializer.serialize;
 import static com.credits.general.thrift.generated.Variant._Fields.V_ARRAY;
 import static com.credits.general.thrift.generated.Variant._Fields.V_BOOLEAN_BOX;
@@ -76,11 +77,11 @@ public class ObjectToVariantMapperTest {
                 }}),
 
             Arguments.of(
-                new Object[] {null, new Random(23)},
+                new Object[] {null, new ExampleClass(23)},
                 V_ARRAY,
                 new ArrayList() {{
                     add(new Variant(V_NULL, NULL_TYPE_VALUE));
-                    add(new Variant(V_OBJECT, "str"));
+                    add(new Variant(V_OBJECT, ByteBuffer.wrap(serialize(new ExampleClass(23)))));
                 }}
             ),
 

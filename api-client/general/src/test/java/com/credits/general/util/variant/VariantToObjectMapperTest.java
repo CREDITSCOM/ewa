@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import static com.credits.general.TestHelper.ExampleClass;
 import static com.credits.general.serialize.Serializer.serialize;
+import static com.credits.general.thrift.generated.Variant._Fields.V_ARRAY;
 import static com.credits.general.thrift.generated.Variant._Fields.V_DOUBLE;
 import static com.credits.general.thrift.generated.Variant._Fields.V_DOUBLE_BOX;
 import static com.credits.general.thrift.generated.Variant._Fields.V_FLOAT;
@@ -32,6 +33,7 @@ import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
 import static com.credits.general.util.variant.VariantUtils.NULL_TYPE_VALUE;
 import static com.credits.general.util.variant.VariantUtils.VOID_TYPE_VALUE;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class VariantToObjectMapperTest {
@@ -52,6 +54,16 @@ class VariantToObjectMapperTest {
             Arguments.of(new Variant(V_DOUBLE, Double.MAX_VALUE), Double.MAX_VALUE),
             Arguments.of(new Variant(V_DOUBLE_BOX, Double.MAX_VALUE), Double.MAX_VALUE),
             Arguments.of(new Variant(V_STRING, "string"), "string"),
+
+            Arguments.of(
+                new Variant(
+                    V_ARRAY,
+                    new ArrayList() {{
+                        add(new Variant(V_STRING, "value1"));
+                        add(new Variant(V_STRING, "value2"));
+                    }}),
+                new Object[] {"value1", "value2"}),
+
 
             Arguments.of(
                 new Variant(
@@ -93,16 +105,27 @@ class VariantToObjectMapperTest {
 
             Arguments.of(
                 new Variant(V_OBJECT, ByteBuffer.wrap(serialize(new ExampleClass(23)))),
-                new ExampleClass(23)));
+                new ExampleClass(23)),
+
+            Arguments.of(
+                new Variant(V_ARRAY, new ArrayList() {{
+                    add(new Variant(V_OBJECT, ByteBuffer.wrap(serialize(new ExampleClass(23)))));
+                    add(new Variant(V_OBJECT, ByteBuffer.wrap(serialize(new ExampleClass(23)))));
+                }}),
+                new Object[] {new ExampleClass(23), new ExampleClass(23)}));
     }
 
 
     @ParameterizedTest
     @MethodSource("provideObjectsForMapping")
     public void objectsMap(Variant inputVariant, Object expectedObject) {
-        Object object = new VariantMapper.VariantToObject().apply(inputVariant);
-
-        assertEquals(expectedObject, object);
+        if (expectedObject != null && expectedObject.getClass().isArray()) {
+            Object[] objects = (Object[]) new VariantMapper.VariantToObject().apply(inputVariant);
+            assertArrayEquals((Object[]) expectedObject, objects);
+        } else {
+            Object object = new VariantMapper.VariantToObject().apply(inputVariant);
+            assertEquals(expectedObject, object);
+        }
     }
 
 

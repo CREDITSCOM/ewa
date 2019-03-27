@@ -189,6 +189,8 @@ public class VariantMapper {
                 case V_FLOAT:
                 case V_FLOAT_BOX:
                     return (float) (double) variant.getFieldValue();
+                case V_ARRAY:
+                    return ((Collection<Variant>) variant.getFieldValue()).stream().map(this::map).toArray(Object[]::new);
                 case V_LIST:
                     return ((Collection<Variant>) variant.getFieldValue()).stream().map(this::map).collect(toList());
                 case V_SET:
@@ -201,7 +203,6 @@ public class VariantMapper {
                     return objectMap;
                 case V_OBJECT:
                     return deserialize(variant.getV_object(), classLoader.length > 0 ? classLoader[0] : getClass().getClassLoader());
-
                 default:
                     return variant.getFieldValue();
             }
