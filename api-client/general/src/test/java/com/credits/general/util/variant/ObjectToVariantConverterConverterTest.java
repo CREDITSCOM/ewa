@@ -29,17 +29,20 @@ import static com.credits.general.thrift.generated.Variant._Fields.V_OBJECT;
 import static com.credits.general.thrift.generated.Variant._Fields.V_SET;
 import static com.credits.general.thrift.generated.Variant._Fields.V_SHORT_BOX;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
-import static com.credits.general.util.variant.VariantUtils.NULL_TYPE_VALUE;
+import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
+import static com.credits.general.util.variant.VariantConverter.NULL_TYPE_VALUE;
+import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class ObjectToVariantMapperTest {
+public class ObjectToVariantConverterConverterTest {
 
     @SuppressWarnings("unchecked")
     static Stream<Object> provideObjectsForMapping() {
         return Stream.of(
-            Arguments.of(null, V_NULL, (byte) 0),
+            Arguments.of(null, V_NULL, NULL_TYPE_VALUE),
+            Arguments.of(Void.TYPE, V_VOID, VOID_TYPE_VALUE),
             Arguments.of(Boolean.TRUE, V_BOOLEAN_BOX, Boolean.TRUE),
             Arguments.of(Integer.MAX_VALUE, V_INT_BOX, Integer.MAX_VALUE),
             Arguments.of(Short.MAX_VALUE, V_SHORT_BOX, Short.MAX_VALUE),
@@ -108,33 +111,32 @@ public class ObjectToVariantMapperTest {
     @ParameterizedTest
     @MethodSource("provideObjectsForMapping")
     public void objectsMap(Object inputObject, Variant._Fields expectedType, Object expectedValue) {
-        Variant variant = new VariantMapper.ObjectToVariant()
-            .apply(inputObject).orElseThrow(null);
+        Variant variant = VariantConverter.toVariant(inputObject);
 
         assertAll(() -> {
-            assertEquals(variant.getSetField(), expectedType);
+            assertEquals(expectedType, variant.getSetField());
             assertEquals(expectedValue, variant.getFieldValue());
         });
     }
 
     @Test
     public void primitiveMap() {
-        Variant variantValue = new VariantMapper.ObjectToVariant().apply(Integer.MAX_VALUE).orElseThrow(null);
+        Variant variantValue = VariantConverter.toVariant(Integer.MAX_VALUE);
         assertEquals(Integer.MAX_VALUE, variantValue.getV_int());
 
-        variantValue = new VariantMapper.ObjectToVariant().apply(Short.MAX_VALUE).orElseThrow(null);
+        variantValue = VariantConverter.toVariant(Short.MAX_VALUE);
         assertEquals(Short.MAX_VALUE, variantValue.getV_short());
 
-        variantValue = new VariantMapper.ObjectToVariant().apply(Long.MAX_VALUE).orElseThrow(null);
+        variantValue = VariantConverter.toVariant(Long.MAX_VALUE);
         assertEquals(Long.MAX_VALUE, variantValue.getV_long());
 
-        variantValue = new VariantMapper.ObjectToVariant().apply(Float.MAX_VALUE).orElseThrow(null);
+        variantValue = VariantConverter.toVariant(Float.MAX_VALUE);
         assertEquals(Float.MAX_VALUE, variantValue.getV_float());
 
-        variantValue = new VariantMapper.ObjectToVariant().apply(Double.MAX_VALUE).orElseThrow(null);
+        variantValue = VariantConverter.toVariant(Double.MAX_VALUE);
         assertEquals(Double.MAX_VALUE, variantValue.getV_double());
 
-        variantValue = new VariantMapper.ObjectToVariant().apply(Byte.MAX_VALUE).orElseThrow(null);
+        variantValue = VariantConverter.toVariant(Byte.MAX_VALUE);
         assertEquals(Byte.MAX_VALUE, variantValue.getV_byte());
     }
 }

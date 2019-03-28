@@ -18,8 +18,7 @@ import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.TransactionRoundData;
-import com.credits.general.pojo.VariantData;
-import com.credits.general.pojo.VariantType;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 
 import java.math.BigDecimal;
@@ -29,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 
 
@@ -68,14 +68,14 @@ public class FakeData {
             TransactionData transactionData01 = new TransactionData(1L, byteAddress, decodeFromBASE58("CRs6AbAdR8XpsJVLNGRC8yFubPgvZmPwHeiBNMHK7tMV"), new BigDecimal(1.0), null);
             transactionData01.setParams(
                     Arrays.asList(
-                            new VariantData(VariantType.STRING, "value01"),
-                            new VariantData(VariantType.STRING, "value02")
+                            new Variant(V_STRING, "value01"),
+                            new Variant(V_STRING, "value02")
                     )
             );
             SmartStateTransInfoData smartInfo01 = new SmartStateTransInfoData(
                     true,
                     new BigDecimal("0"),
-                    new VariantData(VariantType.STRING, "returnValue"),
+                    new Variant(V_STRING, "returnValue"),
                     new TransactionIdData("".getBytes(), 0)
             );
             transactionData01.setMethod("method01");
@@ -92,8 +92,8 @@ public class FakeData {
             TransactionData transactionData02 = new TransactionData(1L, byteAddress, decodeFromBASE58("777EN2pQ4wh9XuGneMD1h2Lme2TZmzNv7rUa9uZLz8CM"), null, null);
             transactionData02.setParams(
                     Arrays.asList(
-                            new VariantData(VariantType.STRING, "value01"),
-                            new VariantData(VariantType.STRING, "value02")
+                            new Variant(V_STRING, "value01"),
+                            new Variant(V_STRING, "value02")
                     )
             );
             transactionData02.setMethod("method01");

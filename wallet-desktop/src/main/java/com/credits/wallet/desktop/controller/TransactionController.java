@@ -53,7 +53,7 @@ public class TransactionController extends AbstractController{
         labState.setText(selectedTransactionRow.getState());
         labMethod.setText(selectedTransactionRow.getMethod());
         ObservableList<String> items = FXCollections.observableArrayList();
-        selectedTransactionRow.getParams().forEach(item -> items.add(item.getBoxedValue().toString()));
+        selectedTransactionRow.getParams().forEach(item -> items.add(item.getV_string()));
         listParams.setItems(items);
         int value = items.size() * ROW_HEIGHT + 2 > MAX_HEIGHT ? MAX_HEIGHT : items.size() * ROW_HEIGHT + 2;
         listContainer.setPrefHeight(value);

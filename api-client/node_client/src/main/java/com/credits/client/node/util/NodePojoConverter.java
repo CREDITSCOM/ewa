@@ -43,24 +43,19 @@ import com.credits.client.node.thrift.generated.TransactionId;
 import com.credits.client.node.thrift.generated.TransactionState;
 import com.credits.client.node.thrift.generated.TransactionType;
 import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
-import com.credits.general.pojo.VariantData;
-import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.exception.ConverterException;
-import com.credits.general.util.variant.VariantConverter;
 import org.apache.commons.codec.binary.Hex;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
 import static com.credits.general.util.GeneralConverter.byteArrayToByteBuffer;
 import static com.credits.general.util.GeneralPojoConverter.createApiResponseData;
-import static com.credits.general.util.variant.VariantConverter.variantToVariantData;
 
 /**
  * Created by Rustem.Saidaliyev on 01.02.2018.
@@ -127,19 +122,13 @@ public class NodePojoConverter {
         data.setCommentBytes(transaction.getUserFields());
         if (transaction.getSmartContract() != null) {
             data.setMethod(transaction.getSmartContract().getMethod());
-            data.setParams(variantListToVariantDataList(transaction.getSmartContract().getParams()));
+            data.setParams(transaction.getSmartContract().getParams());
         }
         if (transaction.getSmartInfo() != null) {
             data.setSmartInfo(NodePojoConverter.createSmartTransInfoData(transaction.getSmartInfo()));
         }
         data.setType(createTransactionTypeData(transaction.getType()));
         return data;
-    }
-
-    private static List<VariantData> variantListToVariantDataList(List<Variant> params) {
-        ArrayList<VariantData> objectParams = new ArrayList<>();
-        params.forEach(object -> objectParams.add(variantToVariantData(object)));
-        return objectParams;
     }
 
     public static TransactionData createTransactionData(Transaction transaction) {
@@ -260,14 +249,14 @@ public class NodePojoConverter {
 
 
         return new SmartExecutionTransInfoData(thriftStruct.getMethod(),
-            variantListToVariantDataList(thriftStruct.getParams()),
+            thriftStruct.getParams(),
             createSmartOperationStateData(thriftStruct.getState()),
             stateTransaction);
     }
 
     public static SmartStateTransInfoData createSmartStateTransInfoData(SmartStateTransInfo thriftStruct) {
         return new SmartStateTransInfoData(thriftStruct.isSuccess(), amountToBigDecimal(thriftStruct.getExecutionFee()),
-            thriftStruct.getReturnValue() == null ? null : variantToVariantData(thriftStruct.getReturnValue()),
+            thriftStruct.getReturnValue(),
             createTransactionIdData(thriftStruct.getStartTransaction()));
     }
 
@@ -316,13 +305,8 @@ public class NodePojoConverter {
     public static SmartContractInvocation createSmartContractInvocation(
         SmartContractInvocationData smartContractInvocationData) {
 
-        List<Variant> params = new ArrayList<>();
-
-        smartContractInvocationData.getParams()
-            .forEach(variantData -> params.add(VariantConverter.variantDataToVariant(variantData)));
-
         SmartContractInvocation thriftStruct =
-            new SmartContractInvocation(smartContractInvocationData.getMethod(), params, new ArrayList<>(),
+            new SmartContractInvocation(smartContractInvocationData.getMethod(), smartContractInvocationData.getParams(), new ArrayList<>(),
                 smartContractInvocationData.isForgetNewState());//todo add "надо будет передавать потом поля с форм"
         SmartContractDeployData smartContractDeployData = smartContractInvocationData.getSmartContractDeployData();
         if (smartContractDeployData != null) {
@@ -337,7 +321,7 @@ public class NodePojoConverter {
 
         return new SmartContractInvocationData(createSmartContractDeployData(thriftStruct.getSmartContractDeploy()),
             thriftStruct.getMethod(),
-            thriftStruct.getParams().stream().map(VariantConverter::variantToVariantData).collect(Collectors.toList()),
+            thriftStruct.getParams(),
             thriftStruct.getUsedContracts(), thriftStruct.forgetNewState);
     }
 
@@ -371,7 +355,7 @@ public class NodePojoConverter {
         TransactionFlowResult result, byte[] source, byte[] target) {
         return new TransactionFlowResultData(createApiResponseData(result.getStatus()), result.getRoundNum(), source,
             target,
-            result.getSmart_contract_result() == null ? null : variantToVariantData(result.getSmart_contract_result()));
+            result.getSmart_contract_result());
     }
 
     public static Transaction transactionFlowDataToTransaction(TransactionFlowData transactionData) {

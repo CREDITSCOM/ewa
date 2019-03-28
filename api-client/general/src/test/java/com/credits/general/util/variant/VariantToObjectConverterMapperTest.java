@@ -31,12 +31,12 @@ import static com.credits.general.thrift.generated.Variant._Fields.V_SHORT;
 import static com.credits.general.thrift.generated.Variant._Fields.V_SHORT_BOX;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
-import static com.credits.general.util.variant.VariantUtils.NULL_TYPE_VALUE;
-import static com.credits.general.util.variant.VariantUtils.VOID_TYPE_VALUE;
+import static com.credits.general.util.variant.VariantConverter.NULL_TYPE_VALUE;
+import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class VariantToObjectMapperTest {
+class VariantToObjectConverterMapperTest {
 
     @SuppressWarnings("unchecked")
     static Stream<Object> provideObjectsForMapping() {
@@ -120,10 +120,10 @@ class VariantToObjectMapperTest {
     @MethodSource("provideObjectsForMapping")
     public void objectsMap(Variant inputVariant, Object expectedObject) {
         if (expectedObject != null && expectedObject.getClass().isArray()) {
-            Object[] objects = (Object[]) new VariantMapper.VariantToObject().apply(inputVariant);
+            Object[] objects = (Object[]) VariantConverter.toObject(inputVariant);
             assertArrayEquals((Object[]) expectedObject, objects);
         } else {
-            Object object = new VariantMapper.VariantToObject().apply(inputVariant);
+            Object object = VariantConverter.toObject(inputVariant);
             assertEquals(expectedObject, object);
         }
     }

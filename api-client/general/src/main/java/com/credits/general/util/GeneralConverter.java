@@ -10,6 +10,7 @@ import com.credits.general.thrift.generated.MethodArgument;
 import com.credits.general.thrift.generated.MethodDescription;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.exception.ConverterException;
+import com.github.drapostolos.typeparser.TypeParser;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 
 import java.math.BigDecimal;
@@ -470,5 +471,8 @@ public class GeneralConverter {
         return annotationList;
     }
 
-
+    private static TypeParser typeParser = TypeParser.newBuilder().build();
+    public static Object createObjectFromString(String value, Class<?> classType){
+        return typeParser.parse(value, classType);
+    }
 }

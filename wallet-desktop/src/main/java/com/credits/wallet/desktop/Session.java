@@ -1,6 +1,6 @@
 package com.credits.wallet.desktop;
 
-import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.CompiledSmartContract;
 import com.credits.client.node.pojo.SmartContractTransactionData;
 import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.pojo.TransactionRoundData;
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Session {
     public int lastSmartIndex;
     public ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper;
-    public ObjectKeeper<HashMap<String, SmartContractData>> favoriteContractsKeeper;
+    public ObjectKeeper<HashMap<String, CompiledSmartContract>> favoriteContractsKeeper;
     public ObjectKeeper<ArrayList<DeploySmartListItem>> deployContractsKeeper;
     public ObjectKeeper<HashMap<String, List<SmartContractTransactionData>>> contractsTransactionsKeeper;
     public String account;

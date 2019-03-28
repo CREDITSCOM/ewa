@@ -4,6 +4,7 @@ import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.AnnotationData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
+import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodData;
 import org.apache.commons.beanutils.MethodUtils;
 import org.slf4j.Logger;
@@ -20,7 +21,6 @@ import java.util.regex.Pattern;
 
 import static com.credits.general.pojo.ApiResponseCode.FAILURE;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
-import static com.credits.general.util.variant.VariantConverter.variantToObject;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 
@@ -66,7 +66,7 @@ public class ContractExecutorServiceUtils {
                 }
             }
 
-            retVal[i] = variantToObject(param);
+            retVal[i] = VariantConverter.toObject(param);
             logger.debug("casted param[{}] = {}", i, retVal[i]);
             i++;
         }

@@ -1,32 +1,35 @@
 package com.credits.general.pojo;
 
 import com.credits.general.exception.CreditsException;
-import com.credits.general.util.variant.VariantUtils;
 
-@Deprecated
+import java.lang.reflect.Array;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 public enum VariantType {
-    OBJECT(VariantUtils.OBJECT_TYPE),
-    NULL(VariantUtils.NULL_TYPE),
-    STRING(VariantUtils.STRING_TYPE),
-    BYTE("byte"),
-    BYTE_BOX("Byte"),
-    SHORT("short"),
-    SHORT_BOX("Short"),
-    INT("int"),
-    INT_BOX("Integer"),
-    LONG("long"),
-    LONG_BOX("Long"),
-    FLOAT("float"),
-    FLOAT_BOX("Float"),
-    DOUBLE("double"),
-    DOUBLE_BOX("Double"),
-    BOOL("boolean"),
-    BOOL_BOX("Boolean"),
-    LIST("List"),
-    SET("Set"),
-    MAP("Map"),
-    ARRAY(VariantUtils.ARRAY_TYPE),
-    VOID(VariantUtils.VOID_TYPE);
+    OBJECT(Object.class.getSimpleName()),
+    NULL("null"),
+    STRING(String.class.getSimpleName()),
+    BYTE(byte.class.getSimpleName()),
+    BYTE_BOX(Byte.class.getSimpleName()),
+    SHORT(short.class.getSimpleName()),
+    SHORT_BOX(Short.class.getSimpleName()),
+    INT(int.class.getSimpleName()),
+    INT_BOX(Integer.class.getSimpleName()),
+    LONG(long.class.getSimpleName()),
+    LONG_BOX(Long.class.getSimpleName()),
+    FLOAT(float.class.getSimpleName()),
+    FLOAT_BOX(Float.class.getSimpleName()),
+    DOUBLE(double.class.getSimpleName()),
+    DOUBLE_BOX(Double.class.getSimpleName()),
+    BOOL(boolean.class.getSimpleName()),
+    BOOL_BOX(Boolean.class.getSimpleName()),
+    LIST(List.class.getSimpleName()),
+    SET(Set.class.getSimpleName()),
+    MAP(Map.class.getSimpleName()),
+    ARRAY(Array.class.getSimpleName()),
+    VOID(Void.class.getSimpleName());
 
     public final String name;
 

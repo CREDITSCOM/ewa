@@ -1,7 +1,7 @@
 package com.credits.client.node.pojo;
 
 import com.credits.general.pojo.ApiResponseData;
-import com.credits.general.pojo.VariantData;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 
 import java.util.Optional;
@@ -10,10 +10,10 @@ public class TransactionFlowResultData extends ApiResponseData {
     private static final long serialVersionUID = -3897102320852926355L;
     private final String source;
     private final String target;
-    private final VariantData contractResult;
+    private final Variant contractResult;
     private final int roundNumber;
 
-    public TransactionFlowResultData(ApiResponseData apiResponseData, int roundNumber, byte[] source, byte[] target, VariantData contractResult) {
+    public TransactionFlowResultData(ApiResponseData apiResponseData, int roundNumber, byte[] source, byte[] target, Variant contractResult) {
         super(apiResponseData);
         this.contractResult = contractResult;
         this.roundNumber = roundNumber;
@@ -33,7 +33,7 @@ public class TransactionFlowResultData extends ApiResponseData {
         return target;
     }
 
-    public Optional<VariantData> getContractResult() {
+    public Optional<Variant> getContractResult() {
         return Optional.ofNullable(contractResult);
     }
 

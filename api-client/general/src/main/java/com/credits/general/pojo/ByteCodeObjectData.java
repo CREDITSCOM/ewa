@@ -1,8 +1,10 @@
 package com.credits.general.pojo;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class ByteCodeObjectData {
+public class ByteCodeObjectData implements Serializable {
+    private static final long serialVersionUID = 7326747876941637997L;
     private final String name;
     private final byte[] byteCode;
 

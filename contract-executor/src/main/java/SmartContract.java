@@ -1,6 +1,7 @@
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Function;
+import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.ExternalSmartContract;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.service.contract.SmartContractConstants;
@@ -13,9 +14,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-import static com.credits.general.util.variant.VariantConverter.objectToVariantData;
-import static com.credits.general.util.variant.VariantConverter.variantDataToVariant;
-import static com.credits.general.util.variant.VariantConverter.variantToObject;
 import static java.lang.Long.MAX_VALUE;
 
 public abstract class SmartContract implements Serializable {
@@ -57,7 +55,8 @@ public abstract class SmartContract implements Serializable {
         if (params != null) {
             variantParams = new Variant[1][params.length];
             for (int i = 0; i < params.length; i++) {
-                variantParams[0][i] = variantDataToVariant(objectToVariantData(params[i]));
+                final Object param = params[i];
+                variantParams[0][i] = VariantConverter.toVariant(param);
             }
         }
 
@@ -81,7 +80,7 @@ public abstract class SmartContract implements Serializable {
         }
         usedContract.contractData.contractState = returnValue.newContractState;
 
-        return variantToObject(returnValue.executeResults.get(0).result);
+        return VariantConverter.toObject(returnValue.executeResults.get(0).result);
     }
 
     final protected byte[] getSeed() {

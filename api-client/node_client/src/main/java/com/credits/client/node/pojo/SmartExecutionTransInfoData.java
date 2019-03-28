@@ -1,16 +1,16 @@
 package com.credits.client.node.pojo;
 
-import com.credits.general.pojo.VariantData;
+import com.credits.general.thrift.generated.Variant;
 
 import java.util.List;
 
 public class SmartExecutionTransInfoData extends SmartTransInfoData {
     public String method;
-    public List<VariantData> params;
+    public List<Variant> params;
     public SmartOperationStateData state;
     public TransactionIdData stateTransaction;
 
-    public SmartExecutionTransInfoData(String method, List<VariantData> params, SmartOperationStateData state, TransactionIdData stateTransaction) {
+    public SmartExecutionTransInfoData(String method, List<Variant> params, SmartOperationStateData state, TransactionIdData stateTransaction) {
         this.method = method;
         this.params = params;
         this.state = state;
@@ -25,11 +25,11 @@ public class SmartExecutionTransInfoData extends SmartTransInfoData {
         this.method = method;
     }
 
-    public List<VariantData> getParams() {
+    public List<Variant> getParams() {
         return params;
     }
 
-    public void setParams(List<VariantData> params) {
+    public void setParams(List<Variant> params) {
         this.params = params;
     }
 

@@ -61,6 +61,7 @@ import static com.credits.client.node.util.NodePojoConverter.transactionFlowResu
 import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
 import static com.credits.general.util.GeneralConverter.byteArrayToByteBuffer;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
+import static com.credits.general.util.GeneralConverter.encodeToBASE58;
 import static com.credits.general.util.Utils.threadPool;
 
 public class NodeApiServiceImpl implements NodeApiService {
@@ -112,12 +113,12 @@ public class NodeApiServiceImpl implements NodeApiService {
         }
         int i = (int) ((lastBlock * 100.0f) / currRound);
         if (i > 100) {
-            return Pair.of(0,currRound);
+            return Pair.of(0, currRound);
         }
-        if(i==99) {
-            return Pair.of(100,currRound);
+        if (i == 99) {
+            return Pair.of(100, currRound);
         }
-        return Pair.of(i,currRound);
+        return Pair.of(i, currRound);
     }
 
 
@@ -133,15 +134,15 @@ public class NodeApiServiceImpl implements NodeApiService {
             transactionDataList.add(createTransactionData(sealedTransaction));
         }
         LOGGER.info(String.format("getTransactions: <--- address = %s, transactions count = %d", address,
-            transactionDataList.size()));
+                                  transactionDataList.size()));
         return transactionDataList;
     }
 
     @Override
     public List<SmartContractTransactionData> getSmartContractTransactions(String address, long offset, long limit)
-            throws NodeClientException, ConverterException {
+        throws NodeClientException, ConverterException {
         LOGGER.info(
-                String.format("getTransactions: ---> address = %s, offset = %d, limit = %d", address, offset, limit));
+            String.format("getTransactions: ---> address = %s, offset = %d, limit = %d", address, offset, limit));
         TransactionsGetResult result = nodeClient.getTransactions(decodeFromBASE58(address), offset, limit);
         processApiResponse(result.getStatus());
         List<SmartContractTransactionData> dataList = new ArrayList<>();
@@ -149,11 +150,11 @@ public class NodeApiServiceImpl implements NodeApiService {
             try {
                 dataList.add(createSmartContractTransactionData(sealedTransaction));
             } catch (RuntimeException ignored) {
-                LOGGER.warn("Exception into createSmartContractTransactionData({})",sealedTransaction);
+                LOGGER.warn("Exception into createSmartContractTransactionData({})", sealedTransaction);
             }
         }
         LOGGER.info(String.format("getTransactions: <--- address = %s, transactions count = %d", address,
-                dataList.size()));
+                                  dataList.size()));
         return dataList;
     }
 
@@ -202,9 +203,21 @@ public class NodeApiServiceImpl implements NodeApiService {
         throws NodeClientException, ConverterException {
         Validator.validate(scTransaction);
         Transaction transaction = smartContractTransactionFlowDataToTransaction(scTransaction);
-        LOGGER.debug("smartContractTransactionFlow -> {}", transaction);
+        LOGGER.debug(
+            "smartContractTransactionFlow -> \nsource - {} \ntarget - {} \ninnerId - {} \namount - {} \nscMethod - {} \nscParams - {}",
+            encodeToBASE58(transaction.source.array()),
+            encodeToBASE58(transaction.target.array()),
+            transaction.getId(),
+            transaction.getAmount(),
+            transaction.smartContract.getMethod(),
+            transaction.smartContract.getParams());
         TransactionFlowResultData response = callTransactionFlow(transaction);
-        LOGGER.debug("smartContractTransactionFlow <- {}", response);
+        LOGGER.debug("smartContractTransactionFlow <- \nsource - {} \ntarget - {} \ncode - {}, \nmessage - {}, \nscResult - {}",
+                     response.getSource(),
+                     response.getTarget(),
+                     response.getCode(),
+                     response.getMessage(),
+                     response.getContractResult());
         return response;
     }
 
@@ -212,18 +225,27 @@ public class NodeApiServiceImpl implements NodeApiService {
     public TransactionFlowResultData transactionFlow(TransactionFlowData transactionFlowData) {
         Validator.validate(transactionFlowData);
         Transaction transaction = transactionFlowDataToTransaction(transactionFlowData);
-        LOGGER.debug("transaction flow -> {}", transactionFlowData);
+        LOGGER.debug(
+            "smartContractTransactionFlow -> \nsource - {} \ntarget - {} \ninnerId - {} \namount - {}",
+            encodeToBASE58(transaction.source.array()),
+            encodeToBASE58(transaction.target.array()),
+            transaction.getId(),
+            transaction.getAmount());
         TransactionFlowResultData response = callTransactionFlow(transaction);
-        LOGGER.debug("transaction flow <- {}", response);
+                LOGGER.debug("smartContractTransactionFlow <- \nsource - {} \ntarget - {} \ncode - {}, \nmessage - {}",
+                     response.getSource(),
+                     response.getTarget(),
+                     response.getCode(),
+                     response.getMessage());
         return response;
     }
 
     private TransactionFlowResultData callTransactionFlow(Transaction transaction) {
         TransactionFlowResult result = nodeClient.transactionFlow(transaction);
-        logApiResponse(result.getStatus());
+//        logApiResponse(result.getStatus());
         processApiResponse(result.getStatus());
         return transactionFlowResultToTransactionFlowResultData(result, transaction.getSource(),
-            transaction.getTarget());
+                                                                transaction.getTarget());
     }
 
 
@@ -235,7 +257,8 @@ public class NodeApiServiceImpl implements NodeApiService {
         processApiResponse(result.getStatus());
         SmartContract smartContract = result.getSmartContract();
         SmartContractData smartContractData = smartContractToSmartContractData(smartContract);
-        LOGGER.info(String.format("<--- smart contract hashState = %s",
+        LOGGER.info(String.format(
+            "<--- smart contract hashState = %s",
             smartContractData.getSmartContractDeployData().getHashState()));
         return smartContractData;
     }
@@ -301,7 +324,6 @@ public class NodeApiServiceImpl implements NodeApiService {
             if (error == null) {
                 callback.onSuccess(result);
             } else {
-                LOGGER.error(error.getLocalizedMessage());
                 callback.onError(error);
             }
         };

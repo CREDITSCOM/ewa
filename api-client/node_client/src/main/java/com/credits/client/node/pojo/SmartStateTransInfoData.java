@@ -1,6 +1,6 @@
 package com.credits.client.node.pojo;
 
-import com.credits.general.pojo.VariantData;
+import com.credits.general.thrift.generated.Variant;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -11,10 +11,10 @@ public class SmartStateTransInfoData extends SmartTransInfoData implements Seria
 
     public boolean success;
     public BigDecimal executionFee;
-    public VariantData returnValue;
+    public Variant returnValue;
     public TransactionIdData startTransaction;
 
-    public SmartStateTransInfoData(boolean success, BigDecimal executionFee, VariantData returnValue, TransactionIdData startTransaction) {
+    public SmartStateTransInfoData(boolean success, BigDecimal executionFee, Variant returnValue, TransactionIdData startTransaction) {
         this.success = success;
         this.executionFee = executionFee;
         this.returnValue = returnValue;
@@ -37,11 +37,11 @@ public class SmartStateTransInfoData extends SmartTransInfoData implements Seria
         this.executionFee = executionFee;
     }
 
-    public VariantData getReturnValue() {
+    public Variant getReturnValue() {
         return returnValue;
     }
 
-    public void setReturnValue(VariantData returnValue) {
+    public void setReturnValue(Variant returnValue) {
         this.returnValue = returnValue;
     }
 

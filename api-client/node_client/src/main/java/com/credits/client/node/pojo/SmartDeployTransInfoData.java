@@ -1,7 +1,10 @@
 package com.credits.client.node.pojo;
 
-public class SmartDeployTransInfoData extends SmartTransInfoData {
+import java.io.Serializable;
 
+public class SmartDeployTransInfoData extends SmartTransInfoData implements Serializable {
+
+    private static final long serialVersionUID = -8735671478802406797L;
     private SmartOperationStateData state;
     private TransactionIdData stateTransaction;
 

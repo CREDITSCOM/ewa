@@ -1,10 +1,14 @@
 package com.credits.general.pojo;
 
-import com.credits.general.thrift.generated.Variant;
 import org.junit.Test;
 
-import static com.credits.general.pojo.VariantType.*;
-import static org.junit.Assert.*;
+import static com.credits.general.pojo.VariantType.BYTE_BOX;
+import static com.credits.general.pojo.VariantType.DOUBLE;
+import static com.credits.general.pojo.VariantType.DOUBLE_BOX;
+import static com.credits.general.pojo.VariantType.LIST;
+import static com.credits.general.pojo.VariantType.MAP;
+import static com.credits.general.pojo.VariantType.parseVariant;
+import static org.junit.Assert.assertEquals;
 
 public class VariantTypeTest {
 

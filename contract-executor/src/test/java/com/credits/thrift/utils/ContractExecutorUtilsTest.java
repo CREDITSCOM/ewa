@@ -5,7 +5,6 @@ import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationUnit;
-import com.credits.general.util.variant.VariantUtils;
 import com.credits.service.ServiceTest;
 import com.credits.service.contract.SmartContractConstants;
 import com.credits.service.contract.session.DeployContractSession;
@@ -17,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.credits.general.util.variant.VariantConverter.NULL_TYPE_VALUE;
 
 
 public class ContractExecutorUtilsTest extends ServiceTest {
@@ -76,7 +77,7 @@ public class ContractExecutorUtilsTest extends ServiceTest {
     public void getContractVariablesTest() throws ContractExecutorException {
         Map<String, Variant> map = ContractExecutorUtils.getContractVariables(instanceWithVariables);
         Assert.assertNotNull(map);
-        Assert.assertEquals(VariantUtils.NULL_TYPE_VALUE, map.get("nullField").getFieldValue());
+        Assert.assertEquals(NULL_TYPE_VALUE, map.get("nullField").getFieldValue());
         Assert.assertEquals(5, map.get("intField").getFieldValue());
         Assert.assertEquals(55, map.get("integerField").getFieldValue());
         Assert.assertEquals(5.55, map.get("doubleField").getFieldValue());

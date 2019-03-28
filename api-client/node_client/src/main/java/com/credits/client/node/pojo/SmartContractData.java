@@ -1,12 +1,13 @@
 package com.credits.client.node.pojo;
 
-import com.credits.general.pojo.VariantData;
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Rustem Saidaliyev on 16.05.2018.
@@ -20,7 +21,7 @@ public class SmartContractData implements Serializable {
     private byte[] objectState;
     private SmartContractDeployData smartContractDeployData;
     private String method;
-    private List<VariantData> params;
+    private List<Variant> params;
     private String base58Address;
     private int hashCode;
 
@@ -42,11 +43,11 @@ public class SmartContractData implements Serializable {
         this.method = method;
     }
 
-    public List<VariantData> getParams() {
+    public List<Variant> getParams() {
         return params;
     }
 
-    public void setParams(List<VariantData> params) {
+    public void setParams(List<Variant> params) {
         this.params = params;
     }
 
@@ -115,10 +116,10 @@ public class SmartContractData implements Serializable {
         if (!Arrays.equals(objectState, that.objectState)) {
             return false;
         }
-        if (method != null ? !method.equals(that.method) : that.method != null) {
+        if (!Objects.equals(method, that.method)) {
             return false;
         }
-        return params != null ? params.equals(that.params) : that.params == null;
+        return Objects.equals(params, that.params);
     }
 
     public String getBase58Address() {

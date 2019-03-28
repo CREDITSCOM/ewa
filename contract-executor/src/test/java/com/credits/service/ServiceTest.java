@@ -8,6 +8,7 @@ import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
+import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.ExternalSmartContract;
 import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.service.contract.ContractExecutorService;
@@ -40,8 +41,6 @@ import java.util.Map;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
-import static com.credits.general.util.variant.VariantConverter.objectToVariantData;
-import static com.credits.general.util.variant.VariantConverter.variantDataToVariant;
 import static java.io.File.separator;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -132,7 +131,8 @@ public abstract class ServiceTest {
         if (params != null) {
             variantParams = new Variant[1][params.length];
             for (int i = 0; i < variantParams[0].length; i++) {
-                variantParams[0][i] = variantDataToVariant(objectToVariantData(params[i]));
+                final Object param = params[i];
+                variantParams[0][i] = VariantConverter.toVariant(param);
             }
         }
         Map<String, ExternalSmartContract> usedContracts = new HashMap<>();

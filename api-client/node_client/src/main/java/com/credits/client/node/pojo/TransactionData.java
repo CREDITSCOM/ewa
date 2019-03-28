@@ -1,6 +1,6 @@
 package com.credits.client.node.pojo;
 
-import com.credits.general.pojo.VariantData;
+import com.credits.general.thrift.generated.Variant;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -20,7 +20,7 @@ public class TransactionData implements Serializable {
     protected byte currency = (byte) 1;
     protected byte[] commentBytes;
     protected String method;
-    protected List<VariantData> params;
+    protected List<Variant> params;
     protected TransactionTypeData type;
     protected SmartTransInfoData smartInfo;
 
@@ -100,11 +100,11 @@ public class TransactionData implements Serializable {
         this.method = method;
     }
 
-    public List<VariantData> getParams() {
+    public List<Variant> getParams() {
         return params;
     }
 
-    public void setParams(List<VariantData> params) {
+    public void setParams(List<Variant> params) {
         this.params = params;
     }
 

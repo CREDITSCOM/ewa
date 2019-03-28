@@ -1,6 +1,10 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.client.node.pojo.*;
+import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartDeployTransInfoData;
+import com.credits.client.node.pojo.SmartExecutionTransInfoData;
+import com.credits.client.node.pojo.SmartStateTransInfoData;
+import com.credits.client.node.pojo.SmartTransInfoData;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTransactionTabRow;
 import javafx.collections.FXCollections;
@@ -63,7 +67,7 @@ public class SmartContractTransactionController extends AbstractController{
         labMethod.setText(selectedTransactionRow.getMethod());
         ObservableList<String> items = FXCollections.observableArrayList();
         if (selectedTransactionRow.getParams() != null) {
-            selectedTransactionRow.getParams().forEach(item -> items.add(item.getBoxedValue().toString()));
+            selectedTransactionRow.getParams().forEach(item -> items.add(item.getV_string()));
         }
         listParams.setItems(items);
 
@@ -78,7 +82,7 @@ public class SmartContractTransactionController extends AbstractController{
             smartInfoItems.add(String.format("State: %s", data.getState().toString()));
             smartInfoItems.add(String.format("Method: %s", data.getMethod()));
             StringBuilder params = new StringBuilder();
-            data.getParams().forEach(variantData -> params.append(variantData.getBoxedValue().toString() + "\n"));
+            data.getParams().forEach(variant-> params.append(variant.getV_string() + "\n"));
             smartInfoItems.add(String.format("Params: %s", params.toString()));
         } else if (smartInfo.isSmartState()) {
             SmartStateTransInfoData data = smartInfo.getSmartStateTransInfoData();

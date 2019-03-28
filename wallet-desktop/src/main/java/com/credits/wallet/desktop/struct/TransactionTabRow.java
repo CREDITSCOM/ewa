@@ -1,6 +1,6 @@
 package com.credits.wallet.desktop.struct;
 
-import com.credits.general.pojo.VariantData;
+import com.credits.general.thrift.generated.Variant;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class TransactionTabRow {
     private String amount;
     private String state;
     private String method;
-    private List<VariantData> params;
+    private List<Variant> params;
 
     public String getSource() {
         return source;
@@ -82,11 +82,11 @@ public class TransactionTabRow {
         this.method = method;
     }
 
-    public List<VariantData> getParams() {
+    public List<Variant> getParams() {
         return params;
     }
 
-    public void setParams(List<VariantData> params) {
+    public void setParams(List<Variant> params) {
         this.params = params;
     }
 }

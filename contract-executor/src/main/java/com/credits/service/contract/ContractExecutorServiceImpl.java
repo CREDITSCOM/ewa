@@ -53,10 +53,10 @@ import java.util.stream.Stream;
 
 import static com.credits.general.serialize.Serializer.deserialize;
 import static com.credits.general.serialize.Serializer.serialize;
+import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.service.contract.SmartContractConstants.initSmartContractConstants;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
-import static com.credits.thrift.utils.ContractExecutorUtils.mapObjectToVariant;
 import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
 import static com.credits.utils.ContractExecutorServiceUtils.failureApiResponse;
 import static com.credits.utils.ContractExecutorServiceUtils.getMethodArgumentsValuesByNameAndParams;
@@ -267,7 +267,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private SmartContractMethodResult invokeMethodAndCatchErrors(InvokeMethodSession session, Object instance, Variant[] params) {
         try {
-            return new SmartContractMethodResult(SUCCESS_API_RESPONSE, mapObjectToVariant(invoke(session, instance, params)));
+            final Object result = invoke(session, instance, params);
+            return new SmartContractMethodResult(SUCCESS_API_RESPONSE, toVariant(result));
         } catch (Throwable e) {
             return new SmartContractMethodResult(failureApiResponse(e), null);
         }
