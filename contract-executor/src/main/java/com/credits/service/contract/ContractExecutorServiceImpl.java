@@ -12,6 +12,7 @@ import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.MethodArgumentData;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.Variant;
+import com.credits.general.util.ByteArrayContractClassLoader;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
@@ -51,13 +52,12 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.LoggingPermission;
 import java.util.stream.Stream;
 
-import static com.credits.general.serialize.Serializer.deserialize;
-import static com.credits.general.serialize.Serializer.serialize;
-import static com.credits.general.util.Utils.getClassType;
-import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.ioc.Injector.INJECTOR;
+import static com.credits.serialize.Serializer.deserialize;
+import static com.credits.serialize.Serializer.serialize;
 import static com.credits.service.contract.SmartContractConstants.initSmartContractConstants;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
+import static com.credits.thrift.utils.ContractExecutorUtils.mapObjectToVariant;
 import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
 import static com.credits.utils.ContractExecutorServiceUtils.failureApiResponse;
 import static com.credits.utils.ContractExecutorServiceUtils.getMethodArgumentsValuesByNameAndParams;
@@ -253,9 +253,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     private ReturnValue invokeMultipleMethod(
         InvokeMethodSession session,
         Object instance,
-        BytecodeContractClassLoader classLoader, Map<String, ExternalSmartContract> usedContracts) {
+        BytecodeContractClassLoader classLoader,
+        Map<String, ExternalSmartContract> usedContracts) {
         return stream(session.paramsTable)
-            .flatMap(params -> Stream.of(invokeMethodAndCatchErrors(session, instance, classLoader, params)))
+            .flatMap(params -> Stream.of(invokeMethodAndCatchErrors(session, instance, params, classLoader)))
             .reduce(
                 new ReturnValue(null, new ArrayList<>(), usedContracts),
                 (returnValue, result) -> {
@@ -269,24 +270,26 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     private SmartContractMethodResult invokeMethodAndCatchErrors(
         InvokeMethodSession session,
         Object instance,
-        BytecodeContractClassLoader classLoader,
-        Variant[] params) {
+        Variant[] params,
+        BytecodeContractClassLoader classLoader) {
         try {
-            final Object result = invoke(session, instance, classLoader, params);
-            return new SmartContractMethodResult(SUCCESS_API_RESPONSE, toVariant(getClassType(result), result));
+            return new SmartContractMethodResult(SUCCESS_API_RESPONSE, invoke(session, instance, params));
         } catch (Throwable e) {
-            e.printStackTrace();
             return new SmartContractMethodResult(failureApiResponse(e), null);
         }
     }
 
-    private Object invoke(
-        InvokeMethodSession session,
-        Object instance,
-        BytecodeContractClassLoader classLoader,
-        Variant[] params) throws Exception {
-        MethodData methodData = getMethodArgumentsValuesByNameAndParams(instance.getClass(), session.methodName, params, classLoader);
-        return runForLimitTime(session, () -> methodData.method.invoke(instance, methodData.argValues));
+    private Variant invoke(InvokeMethodSession session, Object instance, ByteArrayContractClassLoader classLoader, Variant[] params)
+        throws Exception {
+        MethodData methodData = getMethodArgumentsValuesByNameAndParams(instance.getClass(), session.methodName, params);
+        return runForLimitTime(session, () -> {
+            Object returnObject = methodData.method.invoke(instance, methodData.argValues);
+            if (methodData.method.getReturnType().equals(Void.TYPE)) {
+                return new Variant(Variant._Fields.V_VOID, new Byte("0"));
+            } else {
+                return mapObjectToVariant(returnObject);
+            }
+        });
     }
 
     private <R> R runForLimitTime(DeployContractSession session, Callable<R> block) throws Exception {
@@ -315,8 +318,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         permissions.add(new RuntimePermission("accessClassInPackage.sun.security.ec"));
         permissions.add(new RuntimePermission("accessClassInPackage.sun.security.rsa"));
         permissions.add(new RuntimePermission("accessClassInPackage.sun.security.provider"));
-        permissions.add(new RuntimePermission("loadLibrary.sunec"));
-        permissions.add(new RuntimePermission("createClassLoader"));
+        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "loadLibrary.sunec"));
+        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "createClassLoader"));
         permissions.add(new SecurityPermission("getProperty.networkaddress.cache.ttl", "read"));
         permissions.add(new SecurityPermission("getProperty.networkaddress.cache.negative.ttl", "read"));
         permissions.add(new SecurityPermission("getProperty.jdk.jar.disabledAlgorithms"));
@@ -338,7 +341,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Permissions permissions = new Permissions();
         permissions.add(new ReflectPermission("suppressAccessChecks"));
         permissions.add(new RuntimePermission("accessDeclaredMembers"));
-        permissions.add(new RuntimePermission("createClassLoader"));
+        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "createClassLoader"));
         return permissions;
     }
 
