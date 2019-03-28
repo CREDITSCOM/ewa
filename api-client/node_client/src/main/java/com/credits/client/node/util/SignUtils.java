@@ -26,28 +26,8 @@ public class SignUtils {
     public static void signTransaction(TransactionFlowData tStruct, PrivateKey privateKey) {
         ByteBuffer signature;
         try {
-            byte[] tArr = getBytes(tStruct);
-
-            LOGGER.debug("Smart contract length = " + smartContractLen);
-            LOGGER.debug("Transaction structure length = " + tArr.length);
-            LOGGER.debug("Transaction structure ^^^^^ ");
-            StringBuilder arrStr = new StringBuilder();
-            for (int i = 0; i < tArr.length; i++) {
-                arrStr.append(i == 0 ? "" : " ").append(tArr[i]);
-            }
-            LOGGER.debug(arrStr.toString());
-            LOGGER.debug("--------------------- vvvvv ");
-
+            byte[] tArr = printBytes("Transaction structure", getBytes(tStruct));
             byte[] signatureArr = Ed25519.sign(tArr, privateKey);
-
-            LOGGER.debug("Signature ^^^^^ ");
-            arrStr = new StringBuilder();
-            for (int i = 0; i < signatureArr.length; i++) {
-                arrStr.append(i == 0 ? "" : ", ").append(signatureArr[i]);
-            }
-            LOGGER.debug(arrStr.toString());
-            LOGGER.debug("--------- vvvvv ");
-
             signature = ByteBuffer.wrap(signatureArr);
 
         } catch (Exception e) {
@@ -55,6 +35,22 @@ public class SignUtils {
             throw e;
         }
         tStruct.setSignature(signature.array());
+    }
+
+    private static byte[] printBytes(String message, byte[] bytes) {
+        if(bytes != null) {
+            StringBuilder arrStr = new StringBuilder();
+            LOGGER.debug("");
+            LOGGER.debug("----- {} -----", message);
+            LOGGER.debug("{} bytes", bytes.length);
+
+            for (byte b : bytes) {
+                arrStr.append(String.format("%02X", b));
+            }
+            LOGGER.debug(arrStr.toString());
+            LOGGER.debug("--------------------------");
+        }
+        return bytes;
     }
 
     private static byte[] getBytes(TransactionFlowData tStruct) {
@@ -83,21 +79,21 @@ public class SignUtils {
             byte[] idBytes = GeneralConverter.toByteArrayLittleEndian(tStruct.getId(), 8);
             idBytes = ArrayUtils.remove(idBytes, 7); // delete two last bytes
             idBytes = ArrayUtils.remove(idBytes, 6);
-            os.write(idBytes);
-            os.write(tStruct.getSource());
-            os.write(tStruct.getTarget());
-            os.write(GeneralConverter.toByteArrayLittleEndian(amountInt, 4));
-            os.write(GeneralConverter.toByteArrayLittleEndian(amountFrac, 8));
-            os.write(GeneralConverter.toByteArrayLittleEndian(tStruct.getOfferedMaxFee16Bits(), 2));
-            os.write(GeneralConverter.toByteArrayLittleEndian(tStruct.getCurrency(), 1));
-            os.write(GeneralConverter.toByteArrayLittleEndian(ufNum, 1));
-            if (tStruct.getSmartContractBytes()!= null) {
-                os.write(GeneralConverter.toByteArrayLittleEndian(smartContractLen, 4));
-                os.write(GeneralConverter.toByteArrayLittleEndian(tStruct.getSmartContractBytes(), smartContractLen));
+            os.write(printBytes("id", idBytes));
+            os.write(printBytes("source", tStruct.getSource()));
+            os.write(printBytes("target", tStruct.getTarget()));
+            os.write(printBytes("amountInt", GeneralConverter.toByteArrayLittleEndian(amountInt, 4)));
+            os.write(printBytes("amountFrac", GeneralConverter.toByteArrayLittleEndian(amountFrac, 8)));
+            os.write(printBytes("fee", GeneralConverter.toByteArrayLittleEndian(tStruct.getOfferedMaxFee16Bits(), 2)));
+            os.write(printBytes("currency", GeneralConverter.toByteArrayLittleEndian(tStruct.getCurrency(), 1)));
+            os.write(printBytes("ufNum", GeneralConverter.toByteArrayLittleEndian(ufNum, 1)));
+            if (tStruct.getSmartContractBytes() != null) {
+                os.write(printBytes("smartContractLen", GeneralConverter.toByteArrayLittleEndian(smartContractLen, 4)));
+                os.write(printBytes("smartContract", GeneralConverter.toByteArrayLittleEndian(tStruct.getSmartContractBytes(), smartContractLen)));
             }
             if (isCommentBytesExists) {
-                os.write(GeneralConverter.toByteArrayLittleEndian(commentBytes.length, 4));
-                os.write(GeneralConverter.toByteArrayLittleEndian(commentBytes, commentBytes.length));
+                os.write(printBytes("commentLen", GeneralConverter.toByteArrayLittleEndian(commentBytes.length, 4)));
+                os.write(printBytes("comment", GeneralConverter.toByteArrayLittleEndian(commentBytes, commentBytes.length)));
             }
         } catch (IOException e) {
             // do nothing - never happen
