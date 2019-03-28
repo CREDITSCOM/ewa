@@ -267,16 +267,23 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private SmartContractMethodResult invokeMethodAndCatchErrors(InvokeMethodSession session, Object instance, Variant[] params) {
         try {
-            return new SmartContractMethodResult(SUCCESS_API_RESPONSE, mapObjectToVariant(invoke(session, instance, params)));
+            return new SmartContractMethodResult(SUCCESS_API_RESPONSE, invoke(session, instance, params));
         } catch (Throwable e) {
             e.printStackTrace();
             return new SmartContractMethodResult(failureApiResponse(e), null);
         }
     }
 
-    private Object invoke(InvokeMethodSession session, Object instance, Variant[] params) throws Exception {
+    private Variant invoke(InvokeMethodSession session, Object instance, Variant[] params) throws Exception {
         MethodData methodData = getMethodArgumentsValuesByNameAndParams(instance.getClass(), session.methodName, params);
-        return runForLimitTime(session, () -> methodData.method.invoke(instance, methodData.argValues));
+        return runForLimitTime(session, () -> {
+            Object returnObject = methodData.method.invoke(instance, methodData.argValues);
+            if (methodData.method.getReturnType().equals(Void.TYPE)) {
+                return new Variant(Variant._Fields.V_VOID, new Byte("0"));
+            } else {
+                return mapObjectToVariant(returnObject);
+            }
+        });
     }
 
     private <R> R runForLimitTime(DeployContractSession session, Callable<R> block) throws Exception {
