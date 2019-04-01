@@ -42,7 +42,7 @@ public class Utils {
     }
 
     public static String getClassType(Object object){
-        return object.getClass().getTypeName();
+        return object == null ? "" : object.getClass().getTypeName();
     }
     public static String randomAlphaLowerCaseNumeric(int count) {
         StringBuilder builder = new StringBuilder();

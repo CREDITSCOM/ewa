@@ -2,9 +2,11 @@ package com.credits.client.node.pojo;
 
 import com.credits.general.thrift.generated.Variant;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class SmartExecutionTransInfoData extends SmartTransInfoData {
+public class SmartExecutionTransInfoData extends SmartTransInfoData implements Serializable {
+    private static final long serialVersionUID = 2722063850625055198L;
     public String method;
     public List<Variant> params;
     public SmartOperationStateData state;

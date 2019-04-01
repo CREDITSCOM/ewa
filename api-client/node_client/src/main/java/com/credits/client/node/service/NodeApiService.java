@@ -30,7 +30,6 @@ public interface NodeApiService {
     List<SmartContractTransactionData> getSmartContractTransactions(String address, long offset, long limit)
             throws NodeClientException, ConverterException;
 
-    @Deprecated
     TransactionData getTransaction(TransactionIdData transactionIdData) throws NodeClientException;
 
     PoolData getPoolInfo(byte[] hash, long index) throws NodeClientException;

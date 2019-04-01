@@ -5,6 +5,7 @@ import com.credits.thrift.ReturnValue;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -40,7 +41,7 @@ public class ExternalMethodsCallTests extends ServiceTest {
         final SmartContractMethodResult methodResult = returnValue.executeResults.get(0);
 
         assertThat(methodResult.status.message, is("success"));
-        assertThat(methodResult.result.getV_int_box(), is(0));
+        assertThat(methodResult.result.getV_int(), is(0));
         assertThat(returnValue.newContractState, equalTo(deployContractState));
         assertThat(
             returnValue.newContractState,
@@ -82,6 +83,22 @@ public class ExternalMethodsCallTests extends ServiceTest {
         assertThat(methodResult.result.getV_int_box(), is(45));
         assertThat(returnValue.newContractState, not(equalTo(deployContractState)));
         assertThat(returnValue.externalSmartContracts.size(), is(1));
+    }
+
+
+    @Test
+    public void passObjectToExternalCall() {
+        configureGetContractByteCodeNodeResponse(deployContractState, true);
+
+        final ReturnValue returnValue = executeExternalSmartContract(
+            "useObjectIntoParams",
+            deployContractState);
+
+        final SmartContractMethodResult methodResult = returnValue.executeResults.get(0);
+
+        assertThat(methodResult.status.message, is("success"));
+        assertThat(methodResult.result.getFieldValue(), is(VOID_TYPE_VALUE));
+        assertThat(returnValue.newContractState, equalTo(deployContractState));
     }
 
     @Test

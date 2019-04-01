@@ -9,6 +9,8 @@ import com.credits.general.thrift.generated.ByteCodeObject;
 import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.model.CompilationUnit;
+import com.credits.secure.PermissionsManager;
+import com.credits.service.DaggerTestComponent;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import org.apache.thrift.TException;
@@ -17,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -43,6 +46,9 @@ public class ContractExecutorHandlerTest {
     private static ByteBuffer initiatorAddress;
     private static ByteBuffer contractAddress;
 
+    @Inject
+    PermissionsManager permissionsManager;
+
     private ContractExecutorHandler contractExecutorHandler;
     private NodeApiExecInteractionService mockApiExecInteractionService;
     ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
@@ -62,9 +68,10 @@ public class ContractExecutorHandlerTest {
 
     @Before
     public void setUp(){
+        DaggerTestComponent.builder().build().inject(this);
         mockApiExecInteractionService = mock(NodeApiExecInteractionService.class);
         contractExecutorHandler = new ContractExecutorHandler();
-        contractExecutorHandler.service = new ContractExecutorServiceImpl(mockApiExecInteractionService);
+        contractExecutorHandler.service = new ContractExecutorServiceImpl(mockApiExecInteractionService, permissionsManager);
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.credits.thrift.utils;
 
-import com.credits.classload.BytecodeContractClassLoader;
+import com.credits.classload.ByteCodeContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
@@ -51,10 +51,11 @@ public class ContractExecutorUtils {
 
     public static List<Class<?>> compileSmartContractByteCode(
         List<ByteCodeObjectData> smartContractByteCodeData,
-        BytecodeContractClassLoader classLoader) {
+        ByteCodeContractClassLoader byteCodeContractClassLoader) {
+
         List<Class<?>> compiledClasses = new ArrayList<>(smartContractByteCodeData.size());
         for (ByteCodeObjectData compilationUnit : smartContractByteCodeData) {
-            compiledClasses.add(classLoader.loadClass(compilationUnit.getName(), compilationUnit.getByteCode()));
+            compiledClasses.add(byteCodeContractClassLoader.loadClass(compilationUnit.getName(), compilationUnit.getByteCode()));
         }
         return compiledClasses;
     }

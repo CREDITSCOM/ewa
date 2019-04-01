@@ -44,7 +44,7 @@ public class CompiledSmartContract extends SmartContractData implements Serializ
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("FavoriteSmartContract{");
+        final StringBuilder sb = new StringBuilder("CompiledSmartContract{");
         sb.append("contractClass=").append(contractClass);
         sb.append('}');
         return sb.toString();

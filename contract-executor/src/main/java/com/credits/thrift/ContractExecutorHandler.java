@@ -17,10 +17,8 @@ import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.service.contract.ContractExecutorService;
-import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.service.contract.session.DeployContractSession;
 import com.credits.service.contract.session.InvokeMethodSession;
-import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import org.apache.thrift.TUnion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,14 +42,11 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorHandler.class);
 
-    ContractExecutorService service;
-
     @Inject
-    public NodeApiExecInteractionService dbInteractionService;
+    ContractExecutorService service;
 
     ContractExecutorHandler() {
         INJECTOR.component.inject(this);
-        service = new ContractExecutorServiceImpl(dbInteractionService);
     }
 
 

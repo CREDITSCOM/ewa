@@ -59,9 +59,12 @@ import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -79,6 +82,7 @@ import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.getSmartsListFromField;
+import static java.util.Arrays.asList;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -297,9 +301,9 @@ public class SmartContractController extends AbstractController {
 
                     SmartTransInfoData smartInfo = transactionData.getSmartInfo();
 
-//                    if (smartInfo == null) {
-//                        throw new CreditsException("Transaction smartInfo is null");
-//                    }
+                    //                    if (smartInfo == null) {
+                    //                        throw new CreditsException("Transaction smartInfo is null");
+                    //                    }
 
                     SmartContractTransactionTabRow tableRow = new SmartContractTransactionTabRow();
                     tableRow.setAmount(GeneralConverter.toString(transactionData.getAmount()));
@@ -487,6 +491,16 @@ public class SmartContractController extends AbstractController {
         return new CompiledSmartContract(smartContractData, new SmartContractClass(contractClass, innerContractClasses));
     }
 
+    private final static Set<String> objectMethods = new HashSet<>(asList(
+        "getClass",
+        "hashCode",
+        "equals",
+        "toString",
+        "notify",
+        "notifyAll",
+        "wait",
+        "finalize"));
+
     private void refreshFormState(CompiledSmartContract compiledSmartContract) {
         if (compiledSmartContract == null || compiledSmartContract.getSmartContractDeployData().getByteCodeObjects().size() == 0 ||
             compiledSmartContract.getAddress().length == 0) {
@@ -506,11 +520,9 @@ public class SmartContractController extends AbstractController {
 
             String sourceCode = compiledSmartContract.getSmartContractDeployData().getSourceCode();
             tfAddress.setText(compiledSmartContract.getBase58Address());
-            //            ParseResultStruct build =
-            //                new ParseResultStruct.Builder(sourceCode).methods().build();
-
-            Method[] methods = compiledSmartContract.getContractClass().getRootClass().getMethods();
-            cbMethods.getItems().clear();
+            Method[] methods = Arrays.stream(compiledSmartContract.getContractClass().getRootClass().getMethods())
+                .filter(m -> !objectMethods.contains(m.getName()))
+                .toArray(Method[]::new);
             cbMethods.getItems().addAll(methods);
 
             codeArea.clear();

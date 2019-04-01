@@ -1,11 +1,11 @@
 package com.credits.service;
 
+import com.credits.classload.ByteCodeContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.Utils;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
@@ -42,9 +42,11 @@ import java.util.Map;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
+import static com.credits.general.util.Utils.getClassType;
 import static java.io.File.separator;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public abstract class ServiceTest {
@@ -57,6 +59,7 @@ public abstract class ServiceTest {
     protected final byte[] contractAddress = decodeFromBASE58("G2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZZ");
     protected List<ByteCodeObjectData> byteCodeObjectDataList;
     protected String sourceCode;
+    private final ByteCodeContractClassLoader byteCodeContractClassLoader = new ByteCodeContractClassLoader();
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -78,7 +81,10 @@ public abstract class ServiceTest {
         sourceCode = readSourceCode(sourCodePath);
         byteCodeObjectDataList = compileSourceCode(sourceCode);
 
+        ceService = spy(ceService);
         initSmartContractStaticField(null, "nodeApiService", mockNodeApiExecService);
+        initSmartContractStaticField(null, "contractExecutorService", ceService);
+        when(ceService.getSmartContractClassLoader()).thenReturn(byteCodeContractClassLoader);
     }
 
     private void initSmartContractStaticField(Object smartContractInstance, String fieldName, Object value)
@@ -129,7 +135,7 @@ public abstract class ServiceTest {
             variantParams = new Variant[1][params.length];
             for (int i = 0; i < variantParams[0].length; i++) {
                 final Object param = params[i];
-                variantParams[0][i] = VariantConverter.toVariant(Utils.getClassType(param), param);
+                variantParams[0][i] = VariantConverter.toVariant(getClassType(param), param);
             }
         }
         Map<String, ExternalSmartContract> usedContracts = new HashMap<>();
@@ -149,7 +155,7 @@ public abstract class ServiceTest {
             contractState,
             methodName,
             variantParams,
-            60_000L), usedContracts);
+            Long.MAX_VALUE), usedContracts);
     }
 
     protected ReturnValue executeSmartContract(
@@ -165,7 +171,7 @@ public abstract class ServiceTest {
             contractState,
             methodName,
             params,
-            500L));
+            Long.MAX_VALUE));
     }
 
 
@@ -175,7 +181,7 @@ public abstract class ServiceTest {
             encodeToBASE58(initiatorAddress),
             encodeToBASE58(contractAddress),
             byteCodeObjectDataList,
-            500L));
+            Long.MAX_VALUE));
     }
 
     protected void configureGetContractByteCodeNodeResponse(byte[] contractState, boolean isCanModify) {

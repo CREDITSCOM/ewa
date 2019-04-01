@@ -1,10 +1,13 @@
 package com.credits.client.node.pojo;
 
+import java.io.Serializable;
+
 /**
  * Created by Rustem.Saidaliyev on 30.08.2018.
  */
-public class TransactionIdData {
+public class TransactionIdData implements Serializable {
 
+    private static final long serialVersionUID = -4240471143007475693L;
     public byte[] poolHash;
     public int index;
 

@@ -1,6 +1,10 @@
 package com.credits.client.node.pojo;
 
-public abstract class SmartTransInfoData {
+import java.io.Serializable;
+
+public abstract class SmartTransInfoData implements Serializable {
+    private static final long serialVersionUID = -8194301255165588832L;
+
     public boolean isSmartDeploy() {
         return this instanceof SmartDeployTransInfoData;
     }

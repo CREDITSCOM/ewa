@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 
 
-public class BytecodeContractClassLoaderTest {
+public class BytecodeContractByteCodeContractClassLoaderTest {
 
     String sourceCode;
     CompilationUnit compilationUnit;
@@ -28,13 +28,13 @@ public class BytecodeContractClassLoaderTest {
 
     @Test
     public void buildClassTest() throws Exception {
-        Class clazz = new BytecodeContractClassLoader().loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
+        Class clazz = new ByteCodeContractClassLoader().loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
         assertNotNull(clazz.newInstance());
     }
 
-    @Test(expected = LinkageError.class)
-    public void buildClassTwice() throws CompilationErrorException {
-        BytecodeContractClassLoader loader = new BytecodeContractClassLoader();
+    @Test
+    public void buildClassTwice() {
+        ByteCodeContractClassLoader loader = new ByteCodeContractClassLoader();
         loader.loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
         loader.loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
     }
@@ -54,7 +54,7 @@ public class BytecodeContractClassLoaderTest {
             "}";
 
         compilationUnit = InMemoryCompiler.compileSourceCode(sourceCode).getUnits().get(0);
-        BytecodeContractClassLoader loader = new BytecodeContractClassLoader();
+        ByteCodeContractClassLoader loader = new ByteCodeContractClassLoader();
         loader.loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
     }
 }

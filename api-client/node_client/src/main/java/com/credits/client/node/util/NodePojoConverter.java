@@ -374,7 +374,6 @@ public class NodePojoConverter {
         return transaction;
     }
 
-    @Deprecated
     public static TransactionId transactionIdDataToTransactionId(TransactionIdData transactionIdData) {
         TransactionId transactionId = new TransactionId();
         transactionId.setPoolHash(byteArrayToByteBuffer(transactionIdData.getPoolHash()));

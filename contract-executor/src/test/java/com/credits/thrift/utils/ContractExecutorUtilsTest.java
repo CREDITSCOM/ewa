@@ -1,6 +1,6 @@
 package com.credits.thrift.utils;
 
-import com.credits.classload.BytecodeContractClassLoader;
+import com.credits.classload.ByteCodeContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.InMemoryCompiler;
@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static com.credits.general.util.variant.VariantConverter.NULL_TYPE_VALUE;
 
 
 public class ContractExecutorUtilsTest extends ServiceTest {
@@ -77,7 +75,7 @@ public class ContractExecutorUtilsTest extends ServiceTest {
     public void getContractVariablesTest() throws ContractExecutorException {
         Map<String, Variant> map = ContractExecutorUtils.getContractVariables(instanceWithVariables);
         Assert.assertNotNull(map);
-        Assert.assertEquals(NULL_TYPE_VALUE, map.get("nullField").getFieldValue());
+        Assert.assertEquals("", map.get("nullField").getFieldValue());
         Assert.assertEquals(5, map.get("intField").getFieldValue());
         Assert.assertEquals(55, map.get("integerField").getFieldValue());
         Assert.assertEquals(5.55, map.get("doubleField").getFieldValue());
@@ -96,7 +94,7 @@ public class ContractExecutorUtilsTest extends ServiceTest {
     private Object getInstance(String source) throws Exception {
         CompilationUnit compilationUnit = InMemoryCompiler.compileSourceCode(source).getUnits().get(0);
         SmartContractConstants.initSmartContractConstants(Thread.currentThread().getId(), new DeployContractSession(0, "123", "123", new ArrayList(){{add(null);}}, 0));
-        Class<?> clazz = new BytecodeContractClassLoader().loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
+        Class<?> clazz = new ByteCodeContractClassLoader().loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
         return clazz.newInstance();
     }
 }

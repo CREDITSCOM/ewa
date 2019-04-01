@@ -52,8 +52,8 @@ public class VariantConverter {
         return new ObjectToVariantConverter().apply(requireNonNull(classType, "classType can't be null"), object);
     }
 
-    public static Object toObject(@Nonnull Variant variant) {
-        return new VariantToObjectConverter().apply(requireNonNull(variant, "variant can't be null"));
+    public static Object toObject(@Nonnull Variant variant, ClassLoader... classLoader) {
+        return new VariantToObjectConverter().apply(requireNonNull(variant, "variant can't be null"), classLoader);
     }
 
     private static class ObjectToVariantConverter implements BiFunction<String, Object, Variant> {
@@ -67,7 +67,9 @@ public class VariantConverter {
         private Variant map(String classType, Object object) {
             Variant variant;
             if (object == null) {
-                return new Variant(V_NULL, classType);
+                return classType.equals(Void.TYPE.getTypeName())
+                    ? new Variant(V_VOID, VOID_TYPE_VALUE)
+                    : new Variant(V_NULL, classType);
             } else if (object.getClass().isArray()) {
                 variant = mapArray(classType, object);
             } else if (object instanceof List) {

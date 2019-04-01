@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.Arrays;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -62,5 +63,37 @@ public class MySmartContract extends SmartContract {
 
     public String getInitiatorAddress(){
         return initiator;
+    }
+
+    public void printGeo(Geo geo){
+        System.out.println("print geo = " + geo);
+    }
+
+    public void useObjectIntoParams(){
+		Geo geo = new Geo(1,"44.0","63.23");
+		System.out.println("init geo" + geo);
+        invokeExternalContract(contractAddress, "printGeo", geo);
+    }
+
+    public static class Geo implements Serializable {
+        private final int productId;
+        private final String latitude;
+        private final String longitude;
+
+        public Geo(int productId, String latitude, String longitude) {
+            this.productId = productId;
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("Geo{");
+            sb.append("productId=").append(productId);
+            sb.append(", latitude='").append(latitude).append('\'');
+            sb.append(", longitude='").append(longitude).append('\'');
+            sb.append('}');
+            return sb.toString();
+        }
     }
 }

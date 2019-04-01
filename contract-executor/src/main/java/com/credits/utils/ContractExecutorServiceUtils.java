@@ -42,7 +42,7 @@ public class ContractExecutorServiceUtils {
 
         Class<?>[] argTypes = getArgTypes(params, classLoader);
         Method method = MethodUtils.getMatchingAccessibleMethod(contractClass, methodName, argTypes);
-        Object[] argValues = argTypes != null ? castValues(argTypes, params) : null;
+        Object[] argValues = argTypes != null ? castValues(argTypes, params, classLoader) : null;
         if (method != null) {
             return new MethodData(method, argTypes, argValues);
         } else {
@@ -54,7 +54,7 @@ public class ContractExecutorServiceUtils {
         return new APIResponse(FAILURE.code, getRootCauseMessage(e));
     }
 
-    public static Object[] castValues(Class<?>[] types, Variant[] params) throws ContractExecutorException {
+    public static Object[] castValues(Class<?>[] types, Variant[] params, ClassLoader classLoader) throws ContractExecutorException {
         if (params == null || params.length != types.length) {
             throw new ContractExecutorException("not enough arguments passed");
         }
@@ -69,7 +69,7 @@ public class ContractExecutorServiceUtils {
                 }
             }
 
-            retVal[i] = VariantConverter.toObject(param);
+            retVal[i] = VariantConverter.toObject(param, classLoader);
             logger.debug("casted param[{}] = {}", i, retVal[i]);
             i++;
         }
@@ -83,12 +83,16 @@ public class ContractExecutorServiceUtils {
             switch (variant.getSetField()) {
                 case V_OBJECT:
                     classes[i] = Class.forName(variant.getV_object().className, false, classLoader);
+                    break;
                 case V_VOID:
                     classes[i] = Void.TYPE;
+                    break;
                 case V_NULL:
                     classes[i] = Class.forName(variant.getV_null(), false, classLoader);
+                    break;
                 default:
                     classes[i] = variant.getFieldValue().getClass();
+                    break;
             }
         }
         return classes;

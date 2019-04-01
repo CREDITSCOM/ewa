@@ -1,6 +1,6 @@
 package com.credits.ioc;
 
-import com.credits.secure.PermissionManager;
+import com.credits.secure.PermissionsManager;
 import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.service.node.api.NodeApiInteractionServiceThriftImpl;
 import com.credits.service.node.apiexec.NodeApiExecInteractionServiceThriftImpl;
@@ -13,7 +13,7 @@ import javax.inject.Singleton;
 @Singleton
 @Component(modules = {AppModule.class})
 public interface AppComponent {
-    void inject(PermissionManager permissionManager);
+    void inject(PermissionsManager permissionManager);
     void inject(ContractExecutorServiceImpl contractExecutorService);
     void inject(NodeApiInteractionServiceThriftImpl levelDbInteractionServiceThrift);
     void inject(NodeApiExecInteractionServiceThriftImpl nodeApiExecInteractionServiceThriftImpl);

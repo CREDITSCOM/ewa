@@ -1,6 +1,6 @@
 package com.credits.service.contract;
 
-import com.credits.classload.BytecodeContractClassLoader;
+import com.credits.classload.ByteCodeContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.pojo.MethodData;
@@ -30,7 +30,7 @@ import static java.util.Arrays.asList;
 
 public class MethodParametersTest extends ServiceTest {
 
-    private BytecodeContractClassLoader classLoader;
+    private ByteCodeContractClassLoader byteCodeContractClassLoader;
     private Class<?> contractClass;
     private byte[] contractState;
 
@@ -42,8 +42,8 @@ public class MethodParametersTest extends ServiceTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        classLoader = new BytecodeContractClassLoader();
-        contractClass = compileSmartContractByteCode(byteCodeObjectDataList, classLoader).get(0);
+        byteCodeContractClassLoader = new ByteCodeContractClassLoader();
+        contractClass = compileSmartContractByteCode(byteCodeObjectDataList, byteCodeContractClassLoader).get(0);
         contractState = deploySmartContract().newContractState;
     }
 
@@ -56,8 +56,8 @@ public class MethodParametersTest extends ServiceTest {
         Assert.assertEquals(voidMethod.method.toString(), "public static java.lang.Integer MethodParametersTest.foo()");
 
         Integer invokeResult = (Integer) voidMethod.method.invoke(
-            deserialize(contractState, classLoader),
-            castValues(voidMethod.argTypes, voidParams));
+            deserialize(contractState, byteCodeContractClassLoader),
+            castValues(voidMethod.argTypes, voidParams, getClass().getClassLoader()));
         Assert.assertEquals(new Integer(1), invokeResult);
     }
 
@@ -71,8 +71,8 @@ public class MethodParametersTest extends ServiceTest {
             "public java.lang.Integer MethodParametersTest.foo(double,java.lang.Double,int,java.lang.Integer,double,java.lang.Double)");
         Object invoke = simpleMethod.method
             .invoke(
-                deserialize(contractState, classLoader),
-                castValues(simpleMethod.argTypes, simpleParams));
+                deserialize(contractState, byteCodeContractClassLoader),
+                castValues(simpleMethod.argTypes, simpleParams, getClass().getClassLoader()));
         Integer invokeResult = (Integer) invoke;
         Assert.assertEquals(new Integer(1), invokeResult);
 
@@ -89,8 +89,8 @@ public class MethodParametersTest extends ServiceTest {
             "public java.lang.Integer MethodParametersTest.foo(java.util.List)");
         Object invoke = arrayListMethod.method
             .invoke(
-                deserialize(contractState, classLoader),
-                castValues(arrayListMethod.argTypes, arrayList));
+                deserialize(contractState, byteCodeContractClassLoader),
+                castValues(arrayListMethod.argTypes, arrayList, getClass().getClassLoader()));
         Integer invokeResult = (Integer) invoke;
         Assert.assertEquals(new Integer(1), invokeResult);
     }
@@ -106,8 +106,8 @@ public class MethodParametersTest extends ServiceTest {
             "public java.lang.Integer MethodParametersTest.fooInteger(java.util.List)");
         Object invoke = arrayListMethod.method
             .invoke(
-                deserialize(contractState, classLoader),
-                castValues(arrayListMethod.argTypes, arrayList));
+                deserialize(contractState, byteCodeContractClassLoader),
+                castValues(arrayListMethod.argTypes, arrayList, getClass().getClassLoader()));
         Integer invokeResult = (Integer) invoke;
         Assert.assertEquals(new Integer(1), invokeResult);
 
@@ -132,8 +132,8 @@ public class MethodParametersTest extends ServiceTest {
             "public java.lang.Integer MethodParametersTest.foo(double,java.lang.Double,int,java.lang.Integer,double,java.lang.Double,java.util.ArrayList)");
         Object invoke = simpleAndArrayListMethod.method
             .invoke(
-                deserialize(contractState, classLoader),
-                castValues(simpleAndArrayListMethod.argTypes, simpleParamsWithList));
+                deserialize(contractState, byteCodeContractClassLoader),
+                castValues(simpleAndArrayListMethod.argTypes, simpleParamsWithList, getClass().getClassLoader()));
         Integer invokeResult = (Integer) invoke;
         Assert.assertEquals(new Integer(1), invokeResult);
     }
@@ -167,8 +167,8 @@ public class MethodParametersTest extends ServiceTest {
             "public java.lang.Integer MethodParametersTest.foo(double,java.lang.Double,int,java.lang.Integer,double,java.lang.Double,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List)");
         Object invoke = moreVariousParametersMethod.method
             .invoke(
-                deserialize(contractState, classLoader),
-                castValues(moreVariousParametersMethod.argTypes, params));
+                deserialize(contractState, byteCodeContractClassLoader),
+                castValues(moreVariousParametersMethod.argTypes, params, getClass().getClassLoader()));
         Integer invokeResult = (Integer) invoke;
         Assert.assertEquals(new Integer(1), invokeResult);
     }

@@ -83,7 +83,6 @@ public class ObjectKeeper<T extends Serializable> {
 
             try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(serObjectFile.toString()))) {
                 oos.writeObject(object);
-                storedObject = object;
             }
         }catch (SecurityException | IOException e) {
             LOGGER.error("Object can't serialized. Reason: {}", e.getMessage());
@@ -95,7 +94,7 @@ public class ObjectKeeper<T extends Serializable> {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getSerializedObjectPath().toString()))) {
             return storedObject = (T) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-                LOGGER.error(e.getMessage());
+                LOGGER.error(e.toString());
             return null;
         }
     }

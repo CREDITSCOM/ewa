@@ -3,6 +3,9 @@ package com.credits.ioc;
 import com.credits.ApplicationProperties;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
+import com.credits.secure.PermissionsManager;
+import com.credits.service.contract.ContractExecutorService;
+import com.credits.service.contract.ContractExecutorServiceImpl;
 import com.credits.service.node.api.NodeApiInteractionService;
 import com.credits.service.node.api.NodeApiInteractionServiceThriftImpl;
 import com.credits.service.node.apiexec.NodeApiExecInteractionService;
@@ -20,13 +23,22 @@ public class AppModule {
 
     @Inject
     ApplicationProperties properties;
+    @Inject
+    NodeApiExecInteractionService nodeApiExecService;
+    @Inject
+    PermissionsManager permissionsManager;
 
     @Singleton
     @Provides
-    public NodeApiInteractionService provideLevelDbInteractionService() {
+    public NodeApiInteractionService provideNodeApiInteractionService() {
         return new NodeApiInteractionServiceThriftImpl();
     }
 
+    @Singleton
+    @Provides
+    public ContractExecutorService provideContractExecutorService(NodeApiExecInteractionService nodeApiExecService, PermissionsManager permissionManager){
+        return new ContractExecutorServiceImpl(nodeApiExecService, permissionManager);
+    }
 
     @Singleton
     @Provides
@@ -51,4 +63,11 @@ public class AppModule {
     public NodeApiExecInteractionService provideNodeApiExecInteractionService() {
         return new NodeApiExecInteractionServiceThriftImpl();
     }
+
+    @Singleton
+    @Provides
+    public PermissionsManager providesPermissionsManager() {
+        return new PermissionsManager();
+    }
+
 }

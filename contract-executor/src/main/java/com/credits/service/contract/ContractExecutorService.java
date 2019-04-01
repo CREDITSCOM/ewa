@@ -1,5 +1,6 @@
 package com.credits.service.contract;
 
+import com.credits.classload.ByteCodeContractClassLoader;
 import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
@@ -24,7 +25,13 @@ public interface ContractExecutorService {
 
     Map<String, Variant> getContractVariables(List<ByteCodeObjectData> contractBytecode, byte[] contractState) throws ContractExecutorException;
 
-    List<ByteCodeObjectData> compileClass(String sourceCode) throws CompilationErrorException, CompilationException, ContractExecutorException, CompilationErrorException;
+    List<ByteCodeObjectData> compileClass(String sourceCode) throws ContractExecutorException, CompilationException, CompilationErrorException;
 
     ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, ExternalSmartContract> usedContracts);
+
+    default ByteCodeContractClassLoader getSmartContractClassLoader() {
+        return getClass().getClassLoader() instanceof ByteCodeContractClassLoader
+            ? (ByteCodeContractClassLoader) getClass().getClassLoader()
+            : new ByteCodeContractClassLoader();
+    }
 }

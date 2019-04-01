@@ -70,7 +70,7 @@ public final class Sandbox {
                         try {
                             acc.checkPermission(perm);
                         } catch (AccessControlException e) {
-                            throw new AccessControlException(e.getMessage());
+                            throw new AccessControlException("class " + clasS.getTypeName() + " " + e.getMessage());
                         }
                     }
                 }

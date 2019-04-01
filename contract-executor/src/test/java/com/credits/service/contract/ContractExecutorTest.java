@@ -14,8 +14,11 @@ import org.junit.Test;
 
 import java.util.Map;
 
+import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
 import static com.credits.general.thrift.generated.Variant.v_int;
 import static com.credits.general.thrift.generated.Variant.v_string;
+import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -33,21 +36,37 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
     @Test
+    public void return_void_type() throws Exception {
+        byte[] contractState = deploySmartContract().newContractState;
+
+        ReturnValue returnValue = executeSmartContract("initialize", contractState);
+        assertEquals(new Variant(V_VOID, VOID_TYPE_VALUE), returnValue.executeResults.get(0).result);
+    }
+
+    @Test
+    public void getter_method_have_not_change_contract_state() throws Exception {
+        byte[] initContractState = deploySmartContract().newContractState;
+
+        ReturnValue rv = executeSmartContract("getTotal", initContractState);
+        assertThat(initContractState, equalTo(rv.newContractState));
+    }
+
+    @Test
     public void save_state_smart_contract() throws Exception {
         byte[] contractState = deploySmartContract().newContractState;
 
         contractState = executeSmartContract("initialize", contractState).newContractState;
 
         ReturnValue rvTotalInitialized = executeSmartContract("getTotal", contractState);
-        assertEquals(1, rvTotalInitialized.executeResults.get(0).result.getV_int_box()); //fixme must be int
+        assertEquals(1, rvTotalInitialized.executeResults.get(0).result.getV_int());
 
         contractState = executeSmartContract("addTokens", new Variant[][] {{v_int(10)}}, contractState).newContractState;
         ReturnValue rvTotalAfterSumming = executeSmartContract("getTotal", contractState);
-        assertEquals(11, rvTotalAfterSumming.executeResults.get(0).result.getV_int_box());
+        assertEquals(11, rvTotalAfterSumming.executeResults.get(0).result.getV_int());
 
         contractState = executeSmartContract("addTokens", new Variant[][] {{v_int(-11)}}, contractState).newContractState;
         ReturnValue rvTotalAfterSubtraction = executeSmartContract("getTotal", contractState);
-        assertEquals(0, rvTotalAfterSubtraction.executeResults.get(0).result.getV_int_box());
+        assertEquals(0, rvTotalAfterSubtraction.executeResults.get(0).result.getV_int());
     }
 
     @Test
@@ -59,17 +78,11 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
     @Test
-    public void use_inner_structures() {
-        //todo add tests
-    }
-
-    @Test
     public void send_transaction_into_contract() throws Exception {
         byte[] contractState = deploySmartContract().newContractState;
 
-
         ReturnValue result = executeSmartContract("payable", new Variant[][] {{v_string("10"), v_string("CS")}}, contractState);
-        assertThat(result.executeResults.get(0).result.getV_boolean_box(), is(true));
+        assertThat(result.executeResults.get(0).result.getV_boolean(), is(true));
     }
 
     @Test
@@ -100,7 +113,7 @@ public class ContractExecutorTest extends ServiceTest {
 
         singleCallResult = executeSmartContract("getTotal", contractState);
 
-        TestCase.assertEquals(0, singleCallResult.executeResults.get(0).result.getV_int_box()); //fixme must be int
+        TestCase.assertEquals(0, singleCallResult.executeResults.get(0).result.getV_int()); //fixme must be int
     }
 
     @Test
