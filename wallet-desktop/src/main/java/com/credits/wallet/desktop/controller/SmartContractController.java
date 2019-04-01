@@ -272,9 +272,9 @@ public class SmartContractController extends AbstractController {
 
                     SmartTransInfoData smartInfo = transactionData.getSmartInfo();
 
-                    if (smartInfo == null) {
-                        throw new CreditsException("Transaction smartInfo is null");
-                    }
+//                    if (smartInfo == null) {
+//                        throw new CreditsException("Transaction smartInfo is null");
+//                    }
 
                     SmartContractTransactionTabRow tableRow = new SmartContractTransactionTabRow();
                     tableRow.setAmount(GeneralConverter.toString(transactionData.getAmount()));
@@ -286,7 +286,9 @@ public class SmartContractController extends AbstractController {
                     tableRow.setParams(transactionData.getParams());
                     tableRow.setSmartInfo(smartInfo);
 
-                    if (smartInfo.isSmartDeploy()) {
+                    if (smartInfo == null) {
+                        approvedList.add(tableRow);
+                    } else if (smartInfo.isSmartDeploy()) {
                         SmartDeployTransInfoData smartDeployTransInfoData = smartInfo.getSmartDeployTransInfoData();
                         if (smartDeployTransInfoData.getState() == SmartOperationStateData.SOS_Success) {
                             approvedList.add(tableRow);

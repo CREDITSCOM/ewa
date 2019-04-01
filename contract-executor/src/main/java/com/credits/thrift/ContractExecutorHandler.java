@@ -69,14 +69,15 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         boolean isClassObjectNull = classObject == null;
 
         logger.debug(
+            "\n" +
             "\n<-- executeByteCode(" +
-                "\naccessId = {}," +
-                "\naddress = {}," +
-                "\nobject.byteCodeObjects length= {}, " +
-                "\nobject.instance length= {}, " +
-                "\nobject.instance hash= {} " +
-                "\nmethod = {}, " +
-                "\nparams = {}.",
+            "\naccessId = {}," +
+            "\naddress = {}," +
+            "\nobject.byteCodeObjects length= {}, " +
+            "\nobject.instance length= {}, " +
+            "\nobject.instance hash= {} " +
+            "\nmethod = {}, " +
+            "\nparams = {}.",
             accessId,
             encodeToBASE58(initiatorAddress.array()),
             (isClassObjectNull && classObject.byteCodeObjects == null ? "null" : classObject.byteCodeObjects.size()),
