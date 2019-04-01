@@ -620,7 +620,7 @@ public class SmartContractController extends AbstractController {
                 if (node instanceof TextField) {
                     String paramValue = ((TextField) node).getText();
                     Parameter parameter = currentMethodParams[i];
-                    params.add(toVariant(createObjectFromString(paramValue, parameter.getType())));
+                    params.add(toVariant(parameter.getType().getTypeName(), createObjectFromString(paramValue, parameter.getType())));
                     ++i;
                 }
             }

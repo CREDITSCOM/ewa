@@ -1,7 +1,10 @@
 package com.credits.general.util.variant;
 
 import com.credits.general.thrift.generated.Variant;
+import com.credits.general.thrift.generated.object;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,12 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.credits.general.serialize.Serializer.deserialize;
 import static com.credits.general.serialize.Serializer.serialize;
 import static com.credits.general.thrift.generated.Variant._Fields.V_ARRAY;
+import static com.credits.general.thrift.generated.Variant._Fields.V_BOOLEAN;
 import static com.credits.general.thrift.generated.Variant._Fields.V_BOOLEAN_BOX;
 import static com.credits.general.thrift.generated.Variant._Fields.V_BYTE;
 import static com.credits.general.thrift.generated.Variant._Fields.V_BYTE_BOX;
@@ -37,6 +40,7 @@ import static com.credits.general.thrift.generated.Variant._Fields.V_SHORT;
 import static com.credits.general.thrift.generated.Variant._Fields.V_SHORT_BOX;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -44,108 +48,81 @@ public class VariantConverter {
     public static final Byte NULL_TYPE_VALUE = 0;
     public static final Byte VOID_TYPE_VALUE = 0;
 
-    public static Variant toVariant(Object object){
-       return new ObjectToVariantConverter().apply(object);
+    public static Variant toVariant(@Nonnull String classType, @Nullable Object object) {
+        return new ObjectToVariantConverter().apply(requireNonNull(classType, "classType can't be null"), object);
     }
 
-    public static Object toObject(Variant variant){
-        return new VariantToObjectConverter().apply(variant);
+    public static Object toObject(@Nonnull Variant variant) {
+        return new VariantToObjectConverter().apply(requireNonNull(variant, "variant can't be null"));
     }
 
-    private static class ObjectToVariantConverter implements Function<Object, Variant> {
+    private static class ObjectToVariantConverter implements BiFunction<String, Object, Variant> {
 
         @Override
-        public Variant apply(Object o) {
-            return map(o);
-        }
-
-        public Variant apply(byte val) {
-            return new Variant(V_BYTE, val);
-        }
-
-        public Variant apply(int val) {
-            return new Variant(V_INT, val);
-        }
-
-        public Variant apply(short val) {
-            return new Variant(V_SHORT, val);
-        }
-
-        public Variant apply(long val) {
-            return new Variant(V_LONG, val);
-        }
-
-        public Variant apply(float val) {
-            return new Variant(V_FLOAT, (double) val);
-        }
-
-        public Variant apply(double val) {
-            return new Variant(V_DOUBLE, val);
+        public Variant apply(String classType, Object object) {
+            return map(classType, object);
         }
 
         @SuppressWarnings("unchecked")
-        private Variant map(Object object) {
+        private Variant map(String classType, Object object) {
             Variant variant;
             if (object == null) {
-                return new Variant(V_NULL, NULL_TYPE_VALUE);
+                return new Variant(V_NULL, classType);
             } else if (object.getClass().isArray()) {
-                variant = mapArray(object);
+                variant = mapArray(classType, object);
             } else if (object instanceof List) {
                 List<Variant> variantCollection =
                     ((List<Object>) object).stream().map(this::map).collect(Collectors.toList());
                 variant = new Variant(V_LIST, variantCollection);
             } else if (object instanceof Set) {
                 Set<Variant> variantCollection =
-                    ((Set<Object>) object).stream().map(this::mapObject).collect(Collectors.toSet());
+                    ((Set<Object>) object).stream().map(this::map).collect(Collectors.toSet());
                 variant = new Variant(V_SET, variantCollection);
             } else if (object instanceof Map) {
                 Map<Variant, Variant> variantMap = ((Map<Object, Object>) object).entrySet()
                     .stream()
-                    .collect(Collectors.toMap(entry -> mapObject(entry.getKey()), entry -> mapObject(entry.getValue())));
+                    .collect(Collectors.toMap(entry -> map(entry.getKey()), entry -> map(entry.getValue())));
                 variant = new Variant(V_MAP, variantMap);
             } else {
-                variant = mapObject(object);
+                variant = mapObject(classType, object);
             }
             return variant;
         }
 
-        /**
-         * Returns null for unsupported
-         *
-         * @param object an object to map
-         * @return Thrift custom type defined as Variant
-         */
-        private Variant mapObject(Object object) {
-            Variant variant;
+        private Variant map(Object object) {
+            return map("", object);
+        }
+
+        private Variant mapObject(String classType, Object object) {
             if (object == Void.TYPE) {
-                variant = new Variant(V_VOID, VOID_TYPE_VALUE);
+                return new Variant(V_VOID, VOID_TYPE_VALUE);
             } else if (object instanceof Boolean) {
-                variant = new Variant(V_BOOLEAN_BOX, object);
+                return new Variant(classType.equals("boolean") ? V_BOOLEAN : V_BOOLEAN_BOX, object);
             } else if (object instanceof Byte) {
-                variant = new Variant(V_BYTE_BOX, object);
+                return new Variant(classType.equals("byte") ? V_BYTE : V_BYTE_BOX, object);
             } else if (object instanceof Short) {
-                variant = new Variant(V_SHORT_BOX, object);
+                return new Variant(classType.equals("short") ? V_SHORT : V_SHORT_BOX, object);
             } else if (object instanceof Integer) {
-                variant = new Variant(V_INT_BOX, object);
+                return new Variant(classType.equals("int") ? V_INT : V_INT_BOX, object);
             } else if (object instanceof Long) {
-                variant = new Variant(V_LONG_BOX, object);
+                return new Variant(classType.equals("long") ? V_LONG : V_LONG_BOX, object);
             } else if (object instanceof Float) {
-                variant = new Variant(V_FLOAT_BOX, (double) (float) object);
+                return new Variant(classType.equals("float") ? V_FLOAT : V_FLOAT_BOX, (double) (float) object);
             } else if (object instanceof Double) {
-                variant = new Variant(V_DOUBLE_BOX, object);
+                return new Variant(classType.equals("double") ? V_DOUBLE : V_DOUBLE_BOX, object);
             } else if (object instanceof String) {
-                variant = new Variant(V_STRING, object);
+                return new Variant(V_STRING, object);
             } else {
-                variant = new Variant(V_OBJECT, ByteBuffer.wrap(serialize(object)));
+                return new Variant(V_OBJECT, new object(classType, ByteBuffer.wrap(serialize(object))));
             }
-            return variant;
         }
 
-        private Variant mapArray(Object object) {
+        private Variant mapArray(String classType, Object object) {
             List<Variant> variantCollection = new ArrayList<>();
             if (object instanceof Object[]) {
-                variantCollection =
-                    Arrays.stream((Object[]) object).map(this::map).collect(Collectors.toList());
+                variantCollection = Arrays.stream((Object[]) object)
+                    .map(obj -> map(classType != null ? object.getClass().getTypeName().replace("[]", "") : "", obj))
+                    .collect(Collectors.toList());
             } else if (object instanceof byte[]) {
                 for (byte b : (byte[]) object) {
                     variantCollection.add(new Variant(V_BYTE, b));
@@ -206,7 +183,7 @@ public class VariantConverter {
                     }
                     return objectMap;
                 case V_OBJECT:
-                    return deserialize(variant.getV_object(), classLoader.length > 0 ? classLoader[0] : getClass().getClassLoader());
+                    return deserialize(variant.getV_object().instance.array(), classLoader.length > 0 ? classLoader[0] : getClass().getClassLoader());
                 default:
                     return variant.getFieldValue();
             }

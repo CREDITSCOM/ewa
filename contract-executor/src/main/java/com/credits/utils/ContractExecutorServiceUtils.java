@@ -31,13 +31,16 @@ public class ContractExecutorServiceUtils {
     public final static APIResponse SUCCESS_API_RESPONSE = new APIResponse(SUCCESS.code, "success");
 
     public static MethodData getMethodArgumentsValuesByNameAndParams(
-        Class<?> contractClass, String methodName,
-        Variant[] params) {
+        Class<?> contractClass,
+        String methodName,
+        Variant[] params,
+        ClassLoader classLoader) throws ClassNotFoundException {
+
         if (params == null) {
             throw new ContractExecutorException("Cannot find method params == null");
         }
 
-        Class[] argTypes = getArgTypes(params);
+        Class<?>[] argTypes = getArgTypes(params, classLoader);
         Method method = MethodUtils.getMatchingAccessibleMethod(contractClass, methodName, argTypes);
         Object[] argValues = argTypes != null ? castValues(argTypes, params) : null;
         if (method != null) {
@@ -73,14 +76,22 @@ public class ContractExecutorServiceUtils {
         return retVal;
     }
 
-    public static Class[] getArgTypes(Variant[] params) {
-        Class[] argTypes = new Class[params.length];
-
-        //fixme problem with null param
+    private static Class<?>[] getArgTypes(Variant[] params, ClassLoader classLoader) throws ClassNotFoundException {
+        Class<?>[] classes = new Class[params.length];
         for (int i = 0; i < params.length; i++) {
-            argTypes[i] = params[i].getFieldValue().getClass();
+            Variant variant = params[i];
+            switch (variant.getSetField()) {
+                case V_OBJECT:
+                    classes[i] = Class.forName(variant.getV_object().className, false, classLoader);
+                case V_VOID:
+                    classes[i] = Void.TYPE;
+                case V_NULL:
+                    classes[i] = Class.forName(variant.getV_null(), false, classLoader);
+                default:
+                    classes[i] = variant.getFieldValue().getClass();
+            }
         }
-        return argTypes;
+        return classes;
     }
 
     public static void initializeField(String fieldName, Object value, Class<?> clazz, Object instance) {

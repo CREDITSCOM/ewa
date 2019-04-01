@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import static com.credits.general.util.Utils.getClassType;
 import static java.lang.Long.MAX_VALUE;
 
 public abstract class SmartContract implements Serializable {
@@ -56,7 +57,7 @@ public abstract class SmartContract implements Serializable {
             variantParams = new Variant[1][params.length];
             for (int i = 0; i < params.length; i++) {
                 final Object param = params[i];
-                variantParams[0][i] = VariantConverter.toVariant(param);
+                variantParams[0][i] = VariantConverter.toVariant(getClassType(param), param);
             }
         }
 

@@ -53,6 +53,7 @@ import java.util.stream.Stream;
 
 import static com.credits.general.serialize.Serializer.deserialize;
 import static com.credits.general.serialize.Serializer.serialize;
+import static com.credits.general.util.Utils.getClassType;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.service.contract.SmartContractConstants.initSmartContractConstants;
@@ -143,8 +144,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         usedSmartContracts.put(session.contractAddress, usedContract);
 
         return session.paramsTable.length < 2
-            ? invokeSingleMethod(session, instance, usedSmartContracts)
-            : invokeMultipleMethod(session, instance, usedSmartContracts);
+            ? invokeSingleMethod(session, instance, classLoader, usedSmartContracts)
+            : invokeMultipleMethod(session, instance, classLoader, usedSmartContracts);
     }
 
     @Override
@@ -224,8 +225,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         Object instance = usedContracts.get(session.contractAddress).instance;
 
+        final BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
         if (instance == null) {
-            final BytecodeContractClassLoader classLoader = new BytecodeContractClassLoader();
             final Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader).stream()
                 .filter(clazz -> !clazz.getName().contains("$"))
                 .findAny()
@@ -238,23 +239,23 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             usedContracts.get(session.contractAddress).instance = instance;
         }
 
-        return invokeSingleMethod(session, instance, usedContracts);
+        return invokeSingleMethod(session, instance, classLoader, usedContracts);
     }
 
     private ReturnValue invokeSingleMethod(
         InvokeMethodSession session,
         Object instance,
-        Map<String, ExternalSmartContract> usedContracts) {
-        final SmartContractMethodResult result = invokeMethodAndCatchErrors(session, instance, session.paramsTable[0]);
+        BytecodeContractClassLoader classLoader, Map<String, ExternalSmartContract> usedContracts) {
+        final SmartContractMethodResult result = invokeMethodAndCatchErrors(session, instance, classLoader, session.paramsTable[0]);
         return new ReturnValue(serialize(instance), singletonList(result), usedContracts);
     }
 
     private ReturnValue invokeMultipleMethod(
         InvokeMethodSession session,
         Object instance,
-        Map<String, ExternalSmartContract> usedContracts) {
+        BytecodeContractClassLoader classLoader, Map<String, ExternalSmartContract> usedContracts) {
         return stream(session.paramsTable)
-            .flatMap(params -> Stream.of(invokeMethodAndCatchErrors(session, instance, params)))
+            .flatMap(params -> Stream.of(invokeMethodAndCatchErrors(session, instance, classLoader, params)))
             .reduce(
                 new ReturnValue(null, new ArrayList<>(), usedContracts),
                 (returnValue, result) -> {
@@ -265,17 +266,25 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 (returnValue, returnValue2) -> returnValue);
     }
 
-    private SmartContractMethodResult invokeMethodAndCatchErrors(InvokeMethodSession session, Object instance, Variant[] params) {
+    private SmartContractMethodResult invokeMethodAndCatchErrors(
+        InvokeMethodSession session,
+        Object instance,
+        BytecodeContractClassLoader classLoader,
+        Variant[] params) {
         try {
-            final Object result = invoke(session, instance, params);
-            return new SmartContractMethodResult(SUCCESS_API_RESPONSE, toVariant(result));
+            final Object result = invoke(session, instance, classLoader, params);
+            return new SmartContractMethodResult(SUCCESS_API_RESPONSE, toVariant(getClassType(result), result));
         } catch (Throwable e) {
             return new SmartContractMethodResult(failureApiResponse(e), null);
         }
     }
 
-    private Object invoke(InvokeMethodSession session, Object instance, Variant[] params) throws Exception {
-        MethodData methodData = getMethodArgumentsValuesByNameAndParams(instance.getClass(), session.methodName, params);
+    private Object invoke(
+        InvokeMethodSession session,
+        Object instance,
+        BytecodeContractClassLoader classLoader,
+        Variant[] params) throws Exception {
+        MethodData methodData = getMethodArgumentsValuesByNameAndParams(instance.getClass(), session.methodName, params, classLoader);
         return runForLimitTime(session, () -> methodData.method.invoke(instance, methodData.argValues));
     }
 

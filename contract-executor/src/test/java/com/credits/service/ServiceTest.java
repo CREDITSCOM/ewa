@@ -5,6 +5,7 @@ import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.Utils;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
@@ -132,7 +133,7 @@ public abstract class ServiceTest {
             variantParams = new Variant[1][params.length];
             for (int i = 0; i < variantParams[0].length; i++) {
                 final Object param = params[i];
-                variantParams[0][i] = VariantConverter.toVariant(param);
+                variantParams[0][i] = VariantConverter.toVariant(Utils.getClassType(param), param);
             }
         }
         Map<String, ExternalSmartContract> usedContracts = new HashMap<>();

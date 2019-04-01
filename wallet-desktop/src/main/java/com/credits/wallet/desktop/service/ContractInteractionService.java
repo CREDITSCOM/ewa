@@ -21,6 +21,7 @@ import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.general.util.GeneralConverter.createObjectFromString;
+import static com.credits.general.util.Utils.getClassType;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
@@ -53,7 +54,7 @@ public class ContractInteractionService {
             session.account,
             sc,
             BALANCE_OF_METHOD,
-            toVariant(createObjectFromString(session.account, String.class))));
+            toVariant(getClassType(session.account), createObjectFromString(session.account, String.class))));
     }
 
     private String getName(SmartContractData sc) {
@@ -74,8 +75,8 @@ public class ContractInteractionService {
             .thenApply((sc) -> {
                 sc.setMethod(TRANSFER_METHOD);
                 sc.setParams(asList(
-                    VariantConverter.toVariant(createObjectFromString(target, String.class)),
-                    VariantConverter.toVariant(createObjectFromString(amount.toString(), String.class))));
+                    VariantConverter.toVariant(getClassType(target), createObjectFromString(target, String.class)),
+                    VariantConverter.toVariant(String.class.getTypeName(), createObjectFromString(amount.toString(), String.class))));
                 TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData =
                     TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService, session.account,
                                                                               sc.getBase58Address(), true);

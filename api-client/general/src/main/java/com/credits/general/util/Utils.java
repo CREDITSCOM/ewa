@@ -41,6 +41,9 @@ public class Utils {
         return buf;
     }
 
+    public static String getClassType(Object object){
+        return object.getClass().getTypeName();
+    }
     public static String randomAlphaLowerCaseNumeric(int count) {
         StringBuilder builder = new StringBuilder();
         while (count-- != 0) {

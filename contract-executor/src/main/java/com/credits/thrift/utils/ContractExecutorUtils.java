@@ -4,7 +4,6 @@ import com.credits.classload.BytecodeContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
-import com.credits.general.util.variant.VariantConverter;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -12,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.credits.general.util.Utils.getClassType;
+import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 public class ContractExecutorUtils {
@@ -41,7 +42,7 @@ public class ContractExecutorUtils {
                         "Cannot getObject access to field: " + name + ". Reason: " + getRootCauseMessage(e), e);
                 }
 
-                variant = VariantConverter.toVariant(fieldValue);
+                variant = toVariant(getClassType(fieldValue), fieldValue);
                 contractVariables.put(name, variant);
             }
         }

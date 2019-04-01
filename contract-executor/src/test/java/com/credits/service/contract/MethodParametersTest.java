@@ -49,9 +49,9 @@ public class MethodParametersTest extends ServiceTest {
 
 
     @Test
-    public void findVoidMethod() throws InvocationTargetException, IllegalAccessException {
+    public void findVoidMethod() throws InvocationTargetException, IllegalAccessException, ClassNotFoundException {
         Variant[] voidParams = {};
-        MethodData voidMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", voidParams);
+        MethodData voidMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", voidParams, getClass().getClassLoader());
 
         Assert.assertEquals(voidMethod.method.toString(), "public static java.lang.Integer MethodParametersTest.foo()");
 
@@ -62,10 +62,10 @@ public class MethodParametersTest extends ServiceTest {
     }
 
     @Test
-    public void findSimpleMethod() throws InvocationTargetException, IllegalAccessException {
+    public void findSimpleMethod() throws InvocationTargetException, IllegalAccessException, ClassNotFoundException {
 
         Variant[] simpleParams = {v_double(3f), v_double_box(4f), v_int(1), v_int_box(2), v_double(200d), v_double_box(220d)};
-        MethodData simpleMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", simpleParams);
+        MethodData simpleMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", simpleParams, getClass().getClassLoader());
         Assert.assertEquals(
             simpleMethod.method.toString(),
             "public java.lang.Integer MethodParametersTest.foo(double,java.lang.Double,int,java.lang.Integer,double,java.lang.Double)");
@@ -79,11 +79,11 @@ public class MethodParametersTest extends ServiceTest {
     }
 
     @Test
-    public void findMethodWithArrayList() throws InvocationTargetException, IllegalAccessException {
+    public void findMethodWithArrayList() throws InvocationTargetException, IllegalAccessException, ClassNotFoundException {
 
         Variant[] arrayList = {v_list(new ArrayList<>(asList(v_int(1), v_int(2), v_int(3))))};
 
-        MethodData arrayListMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", arrayList);
+        MethodData arrayListMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", arrayList, getClass().getClassLoader());
         Assert.assertEquals(
             arrayListMethod.method.toString(),
             "public java.lang.Integer MethodParametersTest.foo(java.util.List)");
@@ -96,11 +96,11 @@ public class MethodParametersTest extends ServiceTest {
     }
 
     @Test
-    public void findAnotherMethodWithArrayList() throws InvocationTargetException, IllegalAccessException {
+    public void findAnotherMethodWithArrayList() throws InvocationTargetException, IllegalAccessException, ClassNotFoundException {
 
         Variant[] arrayList = {v_list(new ArrayList<>(asList(v_int(1), v_int(2), v_int(3))))};
         MethodData arrayListMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "fooInteger",
-                                                                                arrayList);
+                                                                             arrayList, getClass().getClassLoader());
         Assert.assertEquals(
             arrayListMethod.method.toString(),
             "public java.lang.Integer MethodParametersTest.fooInteger(java.util.List)");
@@ -115,7 +115,7 @@ public class MethodParametersTest extends ServiceTest {
 
 
     @Test
-    public void findMethodWithSimpleParamsAndArrayList() throws InvocationTargetException, IllegalAccessException {
+    public void findMethodWithSimpleParamsAndArrayList() throws InvocationTargetException, IllegalAccessException, ClassNotFoundException {
 
         List<Variant> list = new ArrayList<>();
         list.add(v_string("string01"));
@@ -125,8 +125,7 @@ public class MethodParametersTest extends ServiceTest {
         Variant[] simpleParamsWithList =
             {v_double(3f), v_double(4f), v_int(1), v_int(2), v_double(200d), v_double(220d), v_list(list)};
 
-        MethodData simpleAndArrayListMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo",
-                                                                                simpleParamsWithList);
+        MethodData simpleAndArrayListMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", simpleParamsWithList, getClass().getClassLoader());
 
         Assert.assertEquals(
             simpleAndArrayListMethod.method.toString(),
@@ -141,7 +140,7 @@ public class MethodParametersTest extends ServiceTest {
 
     @Test
     public void moreVariousParameters()
-        throws ContractExecutorException, InvocationTargetException, IllegalAccessException {
+        throws ContractExecutorException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
         List<Variant> list = new LinkedList<>();
         list.add(v_string("string01"));
         list.add(v_string("string01"));
@@ -162,7 +161,7 @@ public class MethodParametersTest extends ServiceTest {
                 v_list(new ArrayList<>(asList(v_double(3f), v_double(.4f))))
             };
 
-        MethodData moreVariousParametersMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", params);
+        MethodData moreVariousParametersMethod = getMethodArgumentsValuesByNameAndParams(contractClass, "foo", params, getClass().getClassLoader());
         Assert.assertEquals(
             moreVariousParametersMethod.method.toString(),
             "public java.lang.Integer MethodParametersTest.foo(double,java.lang.Double,int,java.lang.Integer,double,java.lang.Double,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List,java.util.List)");
