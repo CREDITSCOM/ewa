@@ -284,10 +284,6 @@ public class WalletController extends AbstractController {
 
         amountField.textProperty().addListener((observable, oldValue, newValue) -> {
             newValue = NumberUtils.getCorrectNum(newValue);
-            if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
-                setFieldValue(amountField, oldValue);
-                return;
-            }
             setFieldValue(amountField, newValue);
         });
 
