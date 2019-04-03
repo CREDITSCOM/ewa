@@ -22,6 +22,7 @@ import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
+import com.credits.wallet.desktop.struct.MethodData;
 import com.credits.wallet.desktop.struct.SmartContractTabRow;
 import com.credits.wallet.desktop.struct.SmartContractTransactionTabRow;
 import com.credits.wallet.desktop.utils.ApiUtils;
@@ -121,7 +122,7 @@ public class SmartContractController extends AbstractController {
     @FXML
     private TextField tfAddress;
     @FXML
-    private ComboBox<Method> cbMethods;
+    private ComboBox<MethodData> cbMethods;
     @FXML
     TableView<SmartContractTabRow> smartContractTableView;
     @FXML
@@ -520,9 +521,11 @@ public class SmartContractController extends AbstractController {
 
             String sourceCode = compiledSmartContract.getSmartContractDeployData().getSourceCode();
             tfAddress.setText(compiledSmartContract.getBase58Address());
-            Method[] methods = Arrays.stream(compiledSmartContract.getContractClass().getRootClass().getMethods())
+            MethodData[] methods = Arrays.stream(compiledSmartContract.getContractClass().getRootClass().getMethods())
                 .filter(m -> !objectMethods.contains(m.getName()))
-                .toArray(Method[]::new);
+                .map(MethodData::new)
+                .toArray(MethodData[]::new);
+            cbMethods.getItems().clear();
             cbMethods.getItems().addAll(methods);
 
             codeArea.clear();
@@ -587,7 +590,7 @@ public class SmartContractController extends AbstractController {
     @FXML
     private void cbMethodsOnAction() {
         this.pParams.setVisible(false);
-        this.currentMethod = this.cbMethods.getSelectionModel().getSelectedItem();
+        this.currentMethod = this.cbMethods.getSelectionModel().getSelectedItem().getMethod();
         if (this.currentMethod == null) {
             return;
         }
@@ -603,7 +606,7 @@ public class SmartContractController extends AbstractController {
                 paramValueTextField.setStyle(
                     "-fx-background-color:  #fff; -fx-border-radius:15; -fx-border-width: 1; -fx-border-color:  #000; -fx-font-size: 16px");
                 paramValueTextField.setPrefSize(500, 30);
-                Label paramNameLabel = new Label(param.toString());
+                Label paramNameLabel = new Label(param.getType().getSimpleName());
                 paramNameLabel.setLayoutX(10);
                 paramNameLabel.setLayoutY(layoutY + 5);
                 paramNameLabel.setStyle("-fx-font-size: 18px");
@@ -629,7 +632,7 @@ public class SmartContractController extends AbstractController {
             if (!isValidationSuccessful.get()) {
                 return;
             }
-            Method method = cbMethods.getSelectionModel().getSelectedItem();
+            Method method = cbMethods.getSelectionModel().getSelectedItem().getMethod();
             List<Variant> params = new ArrayList<>();
             Parameter[] currentMethodParams = this.currentMethod.getParameters();
             ObservableList<Node> paramsContainerChildren = this.pParamsContainer.getChildren();
