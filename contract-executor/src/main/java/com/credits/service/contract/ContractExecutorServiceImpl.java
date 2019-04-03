@@ -32,24 +32,17 @@ import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.ReflectPermission;
-import java.net.NetPermission;
-import java.net.SocketPermission;
-import java.security.Permissions;
-import java.security.SecurityPermission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PropertyPermission;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.LoggingPermission;
 import java.util.stream.Stream;
 
 import static com.credits.general.serialize.Serializer.deserialize;
@@ -300,34 +293,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         }
     }
 
-    private Permissions createServiceApiPermissions() {
-        Permissions permissions = new Permissions();
-        permissions.add(new ReflectPermission("suppressAccessChecks"));
-        permissions.add(new NetPermission("getProxySelector"));
-        permissions.add(new RuntimePermission("readFileDescriptor"));
-        permissions.add(new RuntimePermission("writeFileDescriptor"));
-        permissions.add(new RuntimePermission("accessDeclaredMembers"));
-        permissions.add(new RuntimePermission("accessClassInPackage.sun.security.ec"));
-        permissions.add(new RuntimePermission("accessClassInPackage.sun.security.rsa"));
-        permissions.add(new RuntimePermission("accessClassInPackage.sun.security.provider"));
-        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "loadLibrary.sunec"));
-        permissions.add(new RuntimePermission("java.lang.RuntimePermission", "createClassLoader"));
-        permissions.add(new SecurityPermission("getProperty.networkaddress.cache.ttl", "read"));
-        permissions.add(new SecurityPermission("getProperty.networkaddress.cache.negative.ttl", "read"));
-        permissions.add(new SecurityPermission("getProperty.jdk.jar.disabledAlgorithms"));
-        permissions.add(new SecurityPermission("putProviderProperty.SunRsaSign"));
-        permissions.add(new SecurityPermission("putProviderProperty.SUN"));
-        permissions.add(new PropertyPermission("sun.net.inetaddr.ttl", "read"));
-        permissions.add(new PropertyPermission("socksProxyHost", "read"));
-        permissions.add(new PropertyPermission("java.net.useSystemProxies", "read"));
-        permissions.add(new PropertyPermission("java.home", "read"));
-        permissions.add(new PropertyPermission("com.sun.security.preserveOldDCEncoding", "read"));
-        permissions.add(new PropertyPermission("sun.security.key.serial.interop", "read"));
-        permissions.add(new PropertyPermission("sun.security.rsa.restrictRSAExponent", "read"));
-        permissions.add(new LoggingPermission("control", null));
-        permissions.add(new SocketPermission(properties.apiHost + ":" + properties.executorNodeApiPort, "connect,listen,resolve"));
-        return permissions;
-    }
 
 
 }
