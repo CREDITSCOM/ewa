@@ -1,25 +1,36 @@
 package com.credits.client.node.pojo;
 
 
+import com.credits.general.pojo.ByteCodeObjectData;
+
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 public class CompiledSmartContract extends SmartContractData implements Serializable {
     private static final long serialVersionUID = 2675022641135493952L;
+    private transient SmartContractClass contractClass;
+    private final List<ByteCodeObjectData> byteCodeObjects;
 
-    private final SmartContractClass contractClass;
-
-    public CompiledSmartContract(SmartContractData smartContractData, SmartContractClass contractClass) {
+    public CompiledSmartContract(
+        SmartContractData smartContractData,
+        SmartContractClass contractClass,
+        List<ByteCodeObjectData> byteCodeObjectsData) {
         super(
             smartContractData.getAddress(),
             smartContractData.getDeployer(),
             smartContractData.getSmartContractDeployData(),
             smartContractData.getObjectState());
         this.contractClass = contractClass;
+        this.byteCodeObjects = byteCodeObjectsData;
     }
 
     public SmartContractClass getContractClass() {
         return contractClass;
+    }
+
+    public void setContractClass(SmartContractClass contractClass) {
+        this.contractClass = contractClass;
     }
 
     @Override

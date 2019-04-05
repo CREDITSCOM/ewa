@@ -147,15 +147,18 @@ public abstract class ServiceTest {
                 contractState,
                 true)));
 
-        return ceService.executeExternalSmartContract(new InvokeMethodSession(
-            0,
-            encodeToBASE58(initiatorAddress),
-            encodeToBASE58(contractAddress),
-            byteCodeObjectDataList,
-            contractState,
-            methodName,
-            variantParams,
-            Long.MAX_VALUE), usedContracts);
+        return ceService.executeExternalSmartContract(
+            new InvokeMethodSession(
+                0,
+                encodeToBASE58(initiatorAddress),
+                encodeToBASE58(contractAddress),
+                byteCodeObjectDataList,
+                contractState,
+                methodName,
+                variantParams,
+                Long.MAX_VALUE),
+            usedContracts,
+            byteCodeContractClassLoader);
     }
 
     protected ReturnValue executeSmartContract(

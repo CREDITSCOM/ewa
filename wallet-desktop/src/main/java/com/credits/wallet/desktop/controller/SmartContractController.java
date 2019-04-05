@@ -190,6 +190,8 @@ public class SmartContractController extends AbstractController {
         codeArea.setEditable(false);
         codeArea.copy();
         favoriteContracts = session.favoriteContractsKeeper.getKeptObject().orElseGet(HashMap::new);
+        favoriteContracts.forEach((key, value) -> value
+            .setContractClass(compileContractClass(value.getSmartContractDeployData().getByteCodeObjects())));
         initializeTable(smartContractTableView);
         initializeTable(favoriteContractTableView);
         refreshFavoriteContractsTab();
@@ -474,9 +476,16 @@ public class SmartContractController extends AbstractController {
 
 
     private CompiledSmartContract compileSmartContract(SmartContractData smartContractData) {
+        return new CompiledSmartContract(
+            smartContractData,
+            compileContractClass(smartContractData.getSmartContractDeployData().getByteCodeObjects()),
+            smartContractData.getSmartContractDeployData().getByteCodeObjects());
+    }
+
+    private SmartContractClass compileContractClass(List<ByteCodeObjectData> byteCodeObjects) {
         Class<?> contractClass = null;
         List<Class<?>> innerContractClasses = new ArrayList<>();
-        for (ByteCodeObjectData byteCodeObject : smartContractData.getSmartContractDeployData().getByteCodeObjects()) {
+        for (ByteCodeObjectData byteCodeObject : byteCodeObjects) {
             Class<?> clazz;
             try {
                 clazz = contractClassLoader.findClass(byteCodeObject.getName());
@@ -489,7 +498,7 @@ public class SmartContractController extends AbstractController {
                 contractClass = clazz;
             }
         }
-        return new CompiledSmartContract(smartContractData, new SmartContractClass(contractClass, innerContractClasses));
+        return new SmartContractClass(contractClass, innerContractClasses);
     }
 
     private final static Set<String> objectMethods = new HashSet<>(asList(

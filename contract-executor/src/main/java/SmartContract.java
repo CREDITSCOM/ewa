@@ -1,3 +1,4 @@
+import com.credits.classload.ByteCodeContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.exception.ExternalSmartContractException;
 import com.credits.general.thrift.generated.APIResponse;
@@ -75,11 +76,13 @@ public abstract class SmartContract implements Serializable {
                 method,
                 variantParams,
                 MAX_VALUE),
-            usedContracts);
+            usedContracts,
+            (ByteCodeContractClassLoader) getClass().getClassLoader());
 
         final APIResponse returnStatus = returnValue.executeResults.get(0).status;
         if (returnStatus.code == FAILURE.code) {
-            throw new ExternalSmartContractException(returnStatus.message + ". Contract address: " + contractAddress + ". Method: " + method + ". Args: " + Arrays.toString(params));
+            throw new ExternalSmartContractException(
+                returnStatus.message + ". Contract address: " + contractAddress + ". Method: " + method + ". Args: " + Arrays.toString(params));
         }
 
         if (!usedContract.contractData.stateCanModify && !Arrays.equals(

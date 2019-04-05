@@ -209,17 +209,16 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, ExternalSmartContract> usedContracts) {
+    public ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, ExternalSmartContract> usedContracts, ByteCodeContractClassLoader classLoader) {
 
         Object instance = usedContracts.get(session.contractAddress).instance;
 
-        final ByteCodeContractClassLoader byteCodeContractClassLoader = getSmartContractClassLoader();
         if (instance == null) {
-            final Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, byteCodeContractClassLoader).stream()
+            final Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader).stream()
                 .filter(clazz -> !clazz.getName().contains("$"))
                 .findAny()
                 .orElseThrow(() -> new ContractExecutorException("contract class not compiled"));
-            instance = deserialize(session.contractState, byteCodeContractClassLoader);
+            instance = deserialize(session.contractState, classLoader);
 
             initializeField("initiator", session.initiatorAddress, contractClass, instance);
             initializeField("accessId", session.accessId, contractClass, instance);
@@ -227,7 +226,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             usedContracts.get(session.contractAddress).instance = instance;
         }
 
-        return invokeSingleMethod(session, instance, byteCodeContractClassLoader, usedContracts);
+        return invokeSingleMethod(session, instance, classLoader, usedContracts);
     }
 
     private ReturnValue invokeSingleMethod(

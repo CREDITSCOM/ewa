@@ -17,13 +17,13 @@ public class PermissionsManager {
     }
 
     public void dropSmartContractRights(Class<?> contractClass) {
-//        Sandbox.confine(contractClass, getSmartContractPermissions());
+        Sandbox.confine(contractClass, getSmartContractPermissions());
     }
 
     public void grantAllPermissions(Class<?> clazz) {
         final Permissions permissions = new Permissions();
         permissions.add(new AllPermission());
-//        Sandbox.confine(clazz, permissions);
+        Sandbox.confine(clazz, permissions);
     }
 
     public Permissions getSmartContractPermissions() {

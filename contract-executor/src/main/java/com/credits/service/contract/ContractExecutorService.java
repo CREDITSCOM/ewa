@@ -27,7 +27,7 @@ public interface ContractExecutorService {
 
     List<ByteCodeObjectData> compileClass(String sourceCode) throws ContractExecutorException, CompilationException, CompilationErrorException;
 
-    ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, ExternalSmartContract> usedContracts);
+    ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, ExternalSmartContract> usedContracts, ByteCodeContractClassLoader classLoader);
 
     default ByteCodeContractClassLoader getSmartContractClassLoader() {
         return getClass().getClassLoader() instanceof ByteCodeContractClassLoader
