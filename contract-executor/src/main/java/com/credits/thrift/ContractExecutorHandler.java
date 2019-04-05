@@ -34,6 +34,7 @@ import static com.credits.general.util.GeneralConverter.byteCodeObjectsToByteCod
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
 import static com.credits.ioc.Injector.INJECTOR;
+import static com.credits.thrift.utils.ContractExecutorUtils.validateVersion;
 import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
 import static com.credits.utils.ContractExecutorServiceUtils.failureApiResponse;
 import static java.util.stream.Collectors.toList;
@@ -59,6 +60,8 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         List<Variant> params,
         long executionTime,
         byte version) {
+
+        validateVersion(version);
 
         ClassObject classObject = invokedContract.object;
         boolean isClassObjectNull = classObject == null;
@@ -144,6 +147,8 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         long executionTime,
         byte version) {
 
+        validateVersion(version);
+
         ClassObject classObject = invokedContract.object;
         boolean isClassObjectNull = classObject == null;
 
@@ -209,6 +214,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     @Override
     public GetContractMethodsResult getContractMethods(List<ByteCodeObject> compilationUnits, byte version) {
+        validateVersion(version);
         logger.debug("\n<-- getContractMethods(\nbytecode = {} bytes)", compilationUnits.size());
         GetContractMethodsResult result = new GetContractMethodsResult();
         try {
@@ -230,6 +236,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         List<ByteCodeObject> compilationUnits,
         ByteBuffer contractState,
         byte version) {
+        validateVersion(version);
         logger.debug("\n<-- getContractVariables(\nbytecode = {} bytes,\n contractState = {} bytes)",
                      compilationUnits.size(), contractState.array().length);
         GetContractVariablesResult result = new GetContractVariablesResult();
@@ -249,6 +256,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     @Override
     public CompileSourceCodeResult compileSourceCode(String sourceCode, byte version) {
+        validateVersion(version);
         logger.debug("\n<-- compileBytecode(sourceCode = {})", sourceCode);
         CompileSourceCodeResult result = new CompileSourceCodeResult();
         try {

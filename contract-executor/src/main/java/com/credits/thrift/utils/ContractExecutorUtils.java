@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.credits.ApplicationProperties.APP_VERSION;
 import static com.credits.general.util.Utils.getClassType;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
@@ -58,5 +59,11 @@ public class ContractExecutorUtils {
             compiledClasses.add(byteCodeContractClassLoader.loadClass(compilationUnit.getName(), compilationUnit.getByteCode()));
         }
         return compiledClasses;
+    }
+
+    public static void validateVersion(byte version) {
+        if (version != APP_VERSION) {
+            throw new ContractExecutorException(String.format("Invalid version %s, %s expected", version, APP_VERSION));
+        }
     }
 }

@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class ApplicationProperties {
+
+    public static byte APP_VERSION = 1;
+
     public String apiHost = "localhost";
     public int apiPort = 9090;
     public int executorPort = 9080;

@@ -51,6 +51,7 @@ import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.service.contract.SmartContractConstants.initSmartContractConstants;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
+import static com.credits.utils.Consts.TOKEN_NAME_RESERVED_ERROR;
 import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
 import static com.credits.utils.ContractExecutorServiceUtils.failureApiResponse;
 import static com.credits.utils.ContractExecutorServiceUtils.getMethodArgumentsValuesByNameAndParams;
@@ -99,6 +100,23 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             .findAny()
             .orElseThrow(() -> new ClassNotFoundException("contract class not compiled"));
 
+        for (Class iface : contractClass.getInterfaces()) {
+            if (iface.getTypeName().equals("BasicStandard")) {
+                for(Method method: contractClass.getMethods()) {
+                    if (method.getName().equals("getName")) {
+                        if (((String)method.invoke(contractClass.newInstance())).equalsIgnoreCase("CS Credits")) {
+                            throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
+                        }
+                    }
+                    if (method.getName().equals("getSymbol")) {
+                        if (((String)method.invoke(contractClass.newInstance())).equalsIgnoreCase("CS")) {
+                            throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
+                        }
+                    }
+                }
+                break;
+            }
+        }
         return new ReturnValue(
             runForLimitTime(session, byteCodeContractClassLoader, () -> serialize(contractClass.newInstance())),
             singletonList(new SmartContractMethodResult(SUCCESS_API_RESPONSE, null)), null);
