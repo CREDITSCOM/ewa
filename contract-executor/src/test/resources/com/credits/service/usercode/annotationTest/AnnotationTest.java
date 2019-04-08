@@ -14,7 +14,7 @@ public class AnnotationTest extends SmartContract {
     }
 
     @Getter
-    @ContractUsing(address = "test2", method = "notGetBalance")
+    @UsingContract(address = "test2", method = "notGetBalance")
     public void addTokens(int amount) {
         total += amount;
         System.out.println(java.lang.Integer.toString(amount) + " tokens were added to total");
@@ -26,7 +26,7 @@ public class AnnotationTest extends SmartContract {
     }
 
 
-    @ContractUsing(address = "test1", method = "getBalance")
+    @UsingContract(address = "test1", method = "getBalance")
     public void addToken(@Getter int amount) {
         total += amount;
         System.out.println(java.lang.Integer.toString(amount) + " tokens were added to total");
@@ -40,15 +40,15 @@ public class AnnotationTest extends SmartContract {
 
     }
 
-    @ContractUsing(address = "test1", method = "notGet")
-    @ContractUsing(address = "test2", method = "notGetBalance")
+    @UsingContract(address = "test1", method = "notGet")
+    @UsingContract(address = "test2", method = "notGetBalance")
     public void testMultiple1(int amount) {
 
     }
 
-    @ContractsUsing(value={
-        @ContractUsing(address = "test3", method = "notGetA"),
-        @ContractUsing(address = "test2", method = "notGetBalance")
+    @UsingContracts(value={
+        @UsingContract(address = "test3", method = "notGetA"),
+        @UsingContract(address = "test2", method = "notGetBalance")
     })
     public void testMultiple2(int amount) {
 

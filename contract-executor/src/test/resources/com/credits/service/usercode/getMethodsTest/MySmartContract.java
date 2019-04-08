@@ -21,8 +21,8 @@ public class MySmartContract extends SmartContract {
        return true;
    }
 
-    @ContractUsing(address = "address", method = "method")
-    @ContractUsing(address = "address", method = "method")
+    @UsingContract(address = "address", method = "method")
+    @UsingContract(address = "address", method = "method")
     public int externalCall(@ContractAddress(id = 0) String address, @ContractMethod(id = 0) String method) {
         return 0;
     }

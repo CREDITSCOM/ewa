@@ -5,6 +5,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface ContractsUsing {
-    ContractUsing[] value() default {};
+public @interface UsingContracts {
+    UsingContract[] value() default {};
 }

@@ -281,6 +281,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             return new SmartContractMethodResult(SUCCESS_API_RESPONSE, invoke(session, instance, params, byteCodeContractClassLoader));
         } catch (Throwable e) {
+            logger.debug("execution error:\ncontract address {},\nmethod {}\n", session.contractAddress, session.methodName, e);
             return new SmartContractMethodResult(failureApiResponse(e), null);
         }
     }

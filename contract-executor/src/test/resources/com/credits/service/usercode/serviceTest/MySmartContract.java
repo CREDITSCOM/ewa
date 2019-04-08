@@ -41,7 +41,7 @@ public class MySmartContract extends SmartContract {
         return (int) invokeExternalContract(address, method);
     }
 
-	@ContractUsing(address = "FTWo7QNzweb7JMNL1kuFC32pdkTeQ716mhKThbzXQ9wK", method = "addTokens")
+	@UsingContract(address = "FTWo7QNzweb7JMNL1kuFC32pdkTeQ716mhKThbzXQ9wK", method = "addTokens")
     public void externalCallChangeState(@ContractAddress(id = 0) String address, @ContractMethod(id = 0) String method, Integer value) {
         invokeExternalContract(address, method, value);
     }

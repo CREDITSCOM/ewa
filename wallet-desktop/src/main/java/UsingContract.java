@@ -7,8 +7,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@Repeatable( value = ContractsUsing.class )
-public @interface ContractUsing {
+@Repeatable( value = UsingContracts.class )
+public @interface UsingContract {
     String address();
     String method();
 }

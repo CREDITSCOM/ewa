@@ -67,13 +67,13 @@ public class GetMethodOfContractTest extends ServiceTest {
                 asList(
                     new AnnotationData(
                         new AnnotationData(
-                            "ContractUsing",
+                            "UsingContract",
                             new HashMap() {{
                                 put("address", "address");
                                 put("method", "method");
                             }})),
                     new AnnotationData(
-                        "ContractUsing",
+                        "UsingContract",
                         new HashMap() {{
                             put("address", "address");
                             put("method", "method");
