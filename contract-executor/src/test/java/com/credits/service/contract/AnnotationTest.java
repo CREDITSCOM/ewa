@@ -31,13 +31,13 @@ public class AnnotationTest extends ServiceTest {
     @Test
     public void main() {
         String getter = "@Getter()";
-        String contractAnn = "@Contract(address=test2, method=notGetBalance)";
+        String contractAnn = "@ContractUsing(address=test2, method=notGetBalance)";
         String contractMethod = "@ContractMethod(id = 0)";
         AnnotationData annotationData = parseAnnotationData(getter).get(0);
         AnnotationData annotationData1 = parseAnnotationData(contractAnn).get(0);
         AnnotationData annotationData2 = parseAnnotationData(contractMethod).get(0);
         Assert.assertEquals(annotationData, new AnnotationData("Getter", new HashMap<>()));
-        Assert.assertEquals(annotationData1, new AnnotationData("Contract", new HashMap<String, String>() {{
+        Assert.assertEquals(annotationData1, new AnnotationData("ContractUsing", new HashMap<String, String>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -72,11 +72,11 @@ public class AnnotationTest extends ServiceTest {
 
     private MethodDescriptionData createTestMultiple1MethodDescriptionData() {
         ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
-        addTokensAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("ContractUsing", new HashMap<String, String>() {{
             put("address", "test1");
             put("method", "notGet");
         }}));
-        addTokensAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("ContractUsing", new HashMap<String, String>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -89,11 +89,11 @@ public class AnnotationTest extends ServiceTest {
 
     private MethodDescriptionData createTestMultiple2MethodDescriptionData() {
         ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
-        addTokensAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("ContractUsing", new HashMap<String, String>() {{
             put("address", "test3");
             put("method", "notGetA");
         }}));
-        addTokensAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("ContractUsing", new HashMap<String, String>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -113,7 +113,7 @@ public class AnnotationTest extends ServiceTest {
     public MethodDescriptionData createAddTokensMethodDescriptionData(AnnotationData getterAnnotation) {
         ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
         addTokensAnnotationData.add(getterAnnotation);
-        addTokensAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("ContractUsing", new HashMap<String, String>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -130,7 +130,7 @@ public class AnnotationTest extends ServiceTest {
 
     public MethodDescriptionData createAddTokenMethodDescriptionData(AnnotationData getterAnnotation) {
         ArrayList<AnnotationData> addTokenAnnotationData = new ArrayList<>();
-        addTokenAnnotationData.add(new AnnotationData("Contract", new HashMap<String, String>() {{
+        addTokenAnnotationData.add(new AnnotationData("ContractUsing", new HashMap<String, String>() {{
             put("address", "test1");
             put("method", "getBalance");
         }}));

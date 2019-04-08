@@ -1,7 +1,3 @@
-import java.util.Arrays;
-import java.math.BigDecimal;
-import java.text.NumberFormat;
-
 public class MySmartContract extends SmartContract {
 
     public int total;
@@ -25,8 +21,8 @@ public class MySmartContract extends SmartContract {
        return true;
    }
 
-    @Contract(address = "address", method = "method")
-    @Contract(address = "address", method = "method")
+    @ContractUsing(address = "address", method = "method")
+    @ContractUsing(address = "address", method = "method")
     public int externalCall(@ContractAddress(id = 0) String address, @ContractMethod(id = 0) String method) {
         return 0;
     }
