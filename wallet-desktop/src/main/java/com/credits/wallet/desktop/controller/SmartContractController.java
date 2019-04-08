@@ -20,6 +20,7 @@ import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.ByteArrayContractClassLoader;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.variant.VariantConverter;
 import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.MethodData;
@@ -689,7 +690,15 @@ public class SmartContractController extends AbstractController {
                 ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(), //TODO uncomment
                                                            resultData.getLeft(), session);
                 TransactionFlowResultData transactionFlowResultData = resultData.getRight();
-                FormUtils.showPlatformInfo(transactionFlowResultData.getMessage());
+                Variant contractResult = transactionFlowResultData.getContractResult().get();
+                String message = transactionFlowResultData.getMessage();
+
+                if (!contractResult.isSetV_void()) {
+                    Object resultObj = VariantConverter.toObject(contractResult);
+                    message += "\n\nResult: " + resultObj.toString();
+                }
+
+                FormUtils.showPlatformInfo(message);
             }
 
             @Override
