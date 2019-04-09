@@ -74,7 +74,7 @@ public class GenerateTransactionController extends AbstractController {
                     .whenComplete(handleCallback(handleTransactionResult()));
             } else {
                 session.coinsKeeper.getKeptObject().ifPresent(coinsMap ->
-                    Optional.ofNullable(coinsMap.get(coinType)).ifPresent(
+                    Optional.ofNullable(coinsMap.get(coinType.getText())).ifPresent(
                         coin -> session.contractInteractionService.transferTo(coin, toAddress, GeneralConverter.toBigDecimal(
                             transactionAmount.getText()), actualOfferedMaxFee16Bits, handleTransferTokenResult())));
             }

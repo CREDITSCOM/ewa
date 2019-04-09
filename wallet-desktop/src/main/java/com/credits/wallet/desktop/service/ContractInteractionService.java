@@ -3,11 +3,8 @@ package com.credits.wallet.desktop.service;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
-import com.credits.client.node.util.TransactionIdCalculateUtils;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
-import com.credits.general.util.variant.VariantConverter;
-import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Session;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -18,12 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
+import static com.credits.client.node.util.TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
-import static com.credits.general.util.GeneralConverter.createObjectFromString;
-import static com.credits.general.util.Utils.getClassType;
 import static com.credits.general.util.Utils.threadPool;
-import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static java.util.Arrays.asList;
@@ -54,7 +49,7 @@ public class ContractInteractionService {
             session.account,
             sc,
             BALANCE_OF_METHOD,
-            toVariant(getClassType(session.account), createObjectFromString(session.account, String.class))));
+            new Variant(V_STRING, session.account)));
     }
 
     private String getName(SmartContractData sc) {
@@ -74,12 +69,12 @@ public class ContractInteractionService {
         supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
             .thenApply((sc) -> {
                 sc.setMethod(TRANSFER_METHOD);
-                sc.setParams(asList(
-                    VariantConverter.toVariant(getClassType(target), createObjectFromString(target, String.class)),
-                    VariantConverter.toVariant(String.class.getTypeName(), createObjectFromString(amount.toString(), String.class))));
-                TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult transactionData =
-                    TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService, session.account,
-                                                                              sc.getBase58Address(), true);
+                sc.setParams(asList(new Variant(V_STRING, target), new Variant(V_STRING, amount.toString())));
+                CalcTransactionIdSourceTargetResult transactionData = calcTransactionIdSourceTarget(
+                    nodeApiService,
+                    session.account,
+                    sc.getBase58Address(),
+                    true);
                 return createSmartContractTransaction(transactionData, offeredMaxFee, sc, new ArrayList<>(), session).getRight().getCode().name();
             })
             .whenComplete(handleCallback(callback));
@@ -92,10 +87,9 @@ public class ContractInteractionService {
         }
         sc.setMethod(methodName);
         sc.getParams().addAll(Arrays.asList(params));
-        byte[] objectState = new byte[] {};
-        sc.setObjectState(objectState);
-        TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
-            calcTransactionIdSourceTarget(AppState.nodeApiService, session.account, sc.getBase58Address(), true);
+        sc.setObjectState(new byte[] {});
+        CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
+            calcTransactionIdSourceTarget(nodeApiService, session.account, sc.getBase58Address(), true);
 
         //todo Коммисию пофиксить надо С НУЛЕМ НЕ РАБОТАЕТ
         Pair<Long, TransactionFlowResultData> smartContractTransaction =
