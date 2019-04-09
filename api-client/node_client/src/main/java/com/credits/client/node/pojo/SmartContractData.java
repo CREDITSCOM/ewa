@@ -20,6 +20,16 @@ public class SmartContractData implements Serializable {
     private byte[] deployer;
     private byte[] objectState;
     private SmartContractDeployData smartContractDeployData;
+
+    public boolean isGetterMethod() {
+        return isGetterMethod;
+    }
+
+    public void setGetterMethod(boolean getterMethod) {
+        isGetterMethod = getterMethod;
+    }
+
+    private boolean isGetterMethod;
     private String method;
     private List<Variant> params;
     private String base58Address;
@@ -91,37 +101,6 @@ public class SmartContractData implements Serializable {
 //        this.favorite = favorite;
 //    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        SmartContractData that = (SmartContractData) o;
-
-        if (!Arrays.equals(address, that.address)) {
-            return false;
-        }
-        if (!Arrays.equals(deployer, that.deployer)) {
-            return false;
-        }
-
-        if (smartContractDeployData != null && !smartContractDeployData.equals(that.smartContractDeployData)) {
-            return false;
-        }
-
-        if (!Arrays.equals(objectState, that.objectState)) {
-            return false;
-        }
-        if (!Objects.equals(method, that.method)) {
-            return false;
-        }
-        return Objects.equals(params, that.params);
-    }
-
     public String getBase58Address() {
         if(base58Address == null) {
             base58Address = GeneralConverter.encodeToBASE58(address);
@@ -130,13 +109,31 @@ public class SmartContractData implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SmartContractData)) {
+            return false;
+        }
+        SmartContractData that = (SmartContractData) o;
+        return isGetterMethod == that.isGetterMethod &&
+            hashCode == that.hashCode &&
+            Arrays.equals(address, that.address) &&
+            Arrays.equals(deployer, that.deployer) &&
+            Arrays.equals(objectState, that.objectState) &&
+            Objects.equals(smartContractDeployData, that.smartContractDeployData) &&
+            Objects.equals(method, that.method) &&
+            Objects.equals(params, that.params) &&
+            Objects.equals(base58Address, that.base58Address);
+    }
+
+    @Override
     public int hashCode() {
-        int result = Arrays.hashCode(address);
+        int result = Objects.hash(smartContractDeployData, isGetterMethod, method, params, base58Address, hashCode);
+        result = 31 * result + Arrays.hashCode(address);
         result = 31 * result + Arrays.hashCode(deployer);
-        result = 31 * result + (smartContractDeployData != null ? smartContractDeployData.hashCode() : 0);
         result = 31 * result + Arrays.hashCode(objectState);
-        result = 31 * result + (method != null ? method.hashCode() : 0);
-        result = 31 * result + (params != null ? params.hashCode() : 0);
         return result;
     }
 }

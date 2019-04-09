@@ -45,6 +45,7 @@ public class ContractInteractionService {
     }
 
     private BigDecimal getBalance(SmartContractData sc) {
+        sc.setGetterMethod(true);
         return new BigDecimal(executeSmartContract(
             session.account,
             sc,

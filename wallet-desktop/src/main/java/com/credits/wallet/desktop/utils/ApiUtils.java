@@ -39,30 +39,39 @@ public class ApiUtils {
     public static Pair<Long, TransactionFlowResultData> createTransaction(
         CalcTransactionIdSourceTargetResult transactionData, BigDecimal amount, short offeredMaxFee16Bits, String text, Session session)
         throws NodeClientException, ConverterException {
-        return Pair.of(transactionData.getTransactionId(),
+        return Pair.of(
+            transactionData.getTransactionId(),
             nodeApiService.transactionFlow(getTransactionFlowData(transactionData, amount, offeredMaxFee16Bits, null, text, session)));
     }
 
     public static Pair<Long, TransactionFlowResultData> createSmartContractTransaction(
-        CalcTransactionIdSourceTargetResult transactionData, short offeredMaxFee, SmartContractData smartContractData, List<ByteBuffer> usedSmartContracts, Session session)
+        CalcTransactionIdSourceTargetResult transactionData,
+        short offeredMaxFee,
+        SmartContractData smartContractData,
+        List<ByteBuffer> usedSmartContracts,
+        Session session)
         throws NodeClientException, ConverterException {
 
         smartContractData.setAddress(
             generateSmartContractAddress(transactionData.getByteSource(), transactionData.getTransactionId(),
-                smartContractData.getSmartContractDeployData().getByteCodeObjects()));
+                                         smartContractData.getSmartContractDeployData().getByteCodeObjects()));
 
         SmartContractInvocationData smartContractInvocationData =
             new SmartContractInvocationData(smartContractData.getSmartContractDeployData(),
-                smartContractData.getMethod(), smartContractData.getParams(), usedSmartContracts,false);
+                                            smartContractData.getMethod(),
+                                            smartContractData.getParams(),
+                                            usedSmartContracts,
+                                            smartContractData.isGetterMethod());
 
         SmartContractTransactionFlowData scData = new SmartContractTransactionFlowData(
             getTransactionFlowData(transactionData, ZERO, offeredMaxFee, serializeByThrift(smartContractInvocationData), null,
-                session), smartContractInvocationData);
+                                   session), smartContractInvocationData);
 
         return Pair.of(transactionData.getTransactionId(), nodeApiService.smartContractTransactionFlow(scData));
     }
 
-    private static TransactionFlowData getTransactionFlowData(CalcTransactionIdSourceTargetResult transactionData,
+    private static TransactionFlowData getTransactionFlowData(
+        CalcTransactionIdSourceTargetResult transactionData,
         BigDecimal amount, short offeredMaxFee16Bits, byte[] smartContractBytes, String text, Session session) {
         long id = transactionData.getTransactionId();
         byte[] source = transactionData.getByteSource();
@@ -82,7 +91,8 @@ public class ApiUtils {
     }
 
 
-    private static void saveTransactionIntoMap(CalcTransactionIdSourceTargetResult transactionData, String amount,
+    private static void saveTransactionIntoMap(
+        CalcTransactionIdSourceTargetResult transactionData, String amount,
         String currency, Session session) {
         if (session.sourceMap == null) {
             session.sourceMap = new ConcurrentHashMap<>();
@@ -90,7 +100,7 @@ public class ApiUtils {
         long shortTransactionId = NodePojoConverter.getShortTransactionId(transactionData.getTransactionId());
         TransactionRoundData transactionRoundData =
             new TransactionRoundData(String.valueOf(shortTransactionId), transactionData.getWideSource(),
-                transactionData.getWideTarget(), amount, currency);
+                                     transactionData.getWideTarget(), amount, currency);
         session.sourceMap.put(shortTransactionId, transactionRoundData);
     }
 

@@ -17,6 +17,7 @@ import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.thrift.generated.Variant;
+import com.credits.general.thrift.generated.Variant._Fields;
 import com.credits.general.util.ByteArrayContractClassLoader;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
@@ -77,6 +78,7 @@ import static com.credits.client.node.thrift.generated.TransactionState.INPROGRE
 import static com.credits.client.node.thrift.generated.TransactionState.INVALID;
 import static com.credits.client.node.thrift.generated.TransactionState.VALID;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
+import static com.credits.general.thrift.generated.Variant._Fields.*;
 import static com.credits.general.util.GeneralConverter.createObjectFromString;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
@@ -689,8 +691,9 @@ public class SmartContractController extends AbstractController {
                 ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(), //TODO uncomment
                                                            resultData.getLeft(), session);
                 TransactionFlowResultData transactionFlowResultData = resultData.getRight();
-                Variant contractResult = transactionFlowResultData.getContractResult().get();
+                Variant contractResult = transactionFlowResultData.getContractResult().orElseGet(() -> new Variant(V_STRING, "unknown result"));
                 String message = transactionFlowResultData.getMessage();
+                if(message.length() > 200) message = message.substring(0, 100) + "...";
 
                 if (!contractResult.isSetV_void()) {
                     Object resultObj = VariantConverter.toObject(contractResult);

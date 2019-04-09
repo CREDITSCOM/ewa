@@ -47,6 +47,7 @@ import java.util.stream.Stream;
 
 import static com.credits.general.serialize.Serializer.deserialize;
 import static com.credits.general.serialize.Serializer.serialize;
+import static com.credits.general.thrift.generated.Variant._Fields.*;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.service.contract.SmartContractConstants.initSmartContractConstants;
@@ -282,7 +283,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             return new SmartContractMethodResult(SUCCESS_API_RESPONSE, invoke(session, instance, params, byteCodeContractClassLoader));
         } catch (Throwable e) {
             logger.debug("execution error:\ncontract address {},\nmethod {}\n", session.contractAddress, session.methodName, e);
-            return new SmartContractMethodResult(failureApiResponse(e), null);
+            return new SmartContractMethodResult(failureApiResponse(e), new Variant(V_STRING, e.getMessage()));
         }
     }
 
