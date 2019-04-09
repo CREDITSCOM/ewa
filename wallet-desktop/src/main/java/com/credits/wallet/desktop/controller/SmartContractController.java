@@ -519,7 +519,6 @@ public class SmartContractController extends AbstractController {
             pControls.setVisible(false);
             pCodePanel.setVisible(false);
         } else {
-
             selectedContract = compiledSmartContract;
 
             pControls.setVisible(true);
@@ -616,7 +615,7 @@ public class SmartContractController extends AbstractController {
                 paramValueTextField.setStyle(
                     "-fx-background-color:  #fff; -fx-border-radius:15; -fx-border-width: 1; -fx-border-color:  #000; -fx-font-size: 16px");
                 paramValueTextField.setPrefSize(500, 30);
-                Label paramNameLabel = new Label(param.getType().getSimpleName());
+                Label paramNameLabel = new Label(param.getType().getSimpleName() + " " + param.getName());
                 paramNameLabel.setLayoutX(10);
                 paramNameLabel.setLayoutY(layoutY + 5);
                 paramNameLabel.setStyle("-fx-font-size: 18px");
