@@ -1,4 +1,4 @@
-package com.credits.classload;
+package com.credits.general.classload;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -71,12 +71,10 @@ public class ByteCodeContractClassLoader extends ClassLoader {
 
         @Override
         public String toString() {
-            final StringBuilder sb = new StringBuilder("ClassObject{");
-            sb.append("className='").append(className).append('\'');
-            sb.append(", bytecode=").append(Arrays.toString(bytecode));
-            sb.append(", clazz=").append(clazz);
-            sb.append('}');
-            return sb.toString();
+            return "ClassObject{" + "className='" + className + '\'' +
+                ", bytecode=" + Arrays.toString(bytecode) +
+                ", clazz=" + clazz +
+                '}';
         }
     }
 }

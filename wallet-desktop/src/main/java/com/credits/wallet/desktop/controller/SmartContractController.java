@@ -13,12 +13,11 @@ import com.credits.client.node.pojo.SmartTransInfoData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.pojo.TransactionStateData;
 import com.credits.client.node.pojo.TransactionsStateGetResultData;
+import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.thrift.generated.Variant;
-import com.credits.general.thrift.generated.Variant._Fields;
-import com.credits.general.util.ByteArrayContractClassLoader;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.variant.VariantConverter;
@@ -109,7 +108,7 @@ public class SmartContractController extends AbstractController {
     private final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
     private final List<SmartContractTransactionTabRow> unapprovedList = new ArrayList<>();
     private final List<SmartContractTransactionTabRow> approvedList = new ArrayList<>();
-    private final ByteArrayContractClassLoader contractClassLoader = new ByteArrayContractClassLoader();
+    private final ByteCodeContractClassLoader contractClassLoader = new ByteCodeContractClassLoader();
     private CompiledSmartContract selectedContract;
 
     @FXML
@@ -489,12 +488,7 @@ public class SmartContractController extends AbstractController {
         Class<?> contractClass = null;
         List<Class<?>> innerContractClasses = new ArrayList<>();
         for (ByteCodeObjectData byteCodeObject : byteCodeObjects) {
-            Class<?> clazz;
-            try {
-                clazz = contractClassLoader.findClass(byteCodeObject.getName());
-            } catch (ClassNotFoundException e) {
-                clazz = contractClassLoader.buildClass(byteCodeObject.getName(), byteCodeObject.getByteCode());
-            }
+            Class<?> clazz = contractClassLoader.loadClass(byteCodeObject.getName(), byteCodeObject.getByteCode());
             if (clazz.getName().contains("$")) {
                 innerContractClasses.add(clazz);
             } else {

@@ -1,6 +1,6 @@
 package com.credits.thrift.utils;
 
-import com.credits.classload.ByteCodeContractClassLoader;
+import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.InMemoryCompiler;

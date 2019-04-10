@@ -1,4 +1,4 @@
-import com.credits.classload.ByteCodeContractClassLoader;
+import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.exception.ExternalSmartContractException;
 import com.credits.general.thrift.generated.APIResponse;

@@ -1,8 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
-import com.credits.general.util.ByteArrayContractClassLoader;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.model.CompilationPackage;
@@ -444,12 +444,13 @@ public class DeployTabController extends AbstractController {
     }
 
 
-    private static Class<?> compileSmartContractByteCode(ByteArrayContractClassLoader classLoader,
+    private static Class<?> compileSmartContractByteCode(
+        ByteCodeContractClassLoader classLoader,
         List<ByteCodeObjectData> smartContractByteCodeData) {
         Class<?> testClass = null;
         for (ByteCodeObjectData compilationUnit : smartContractByteCodeData) {
             Class<?> tempContractClass =
-                classLoader.buildClass(compilationUnit.getName(), compilationUnit.getByteCode());
+                classLoader.loadClass(compilationUnit.getName(), compilationUnit.getByteCode());
             if (compilationUnit.getName().contains("Test")) {
                 testClass = tempContractClass;
             }
@@ -463,7 +464,7 @@ public class DeployTabController extends AbstractController {
         List<String> sourceCodes = new ArrayList<>();
         sourceCodes.add(contractSourceCode);
         sourceCodes.add(testSourceCode);
-        ByteArrayContractClassLoader classLoader = new ByteArrayContractClassLoader();
+        ByteCodeContractClassLoader classLoader = new ByteCodeContractClassLoader();
         CompilationResult compilationResult = SourceCodeBuilder.compileSourceCode(sourceCodes);
         if (parentController.checkNotError(testErrorPane1, testErrorTableView, compilationResult, testBottomTabPane,
             testBottomErrorTab)) {

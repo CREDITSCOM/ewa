@@ -1,4 +1,4 @@
-package com.credits.classload;
+package com.credits.general.classload;
 
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.util.compiler.InMemoryCompiler;

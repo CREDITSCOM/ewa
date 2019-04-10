@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 
-public class ObjectInputStreamWithClassLoader extends ObjectInputStream {
+class ObjectInputStreamWithClassLoader extends ObjectInputStream {
 
     private ClassLoader customLoader;
 

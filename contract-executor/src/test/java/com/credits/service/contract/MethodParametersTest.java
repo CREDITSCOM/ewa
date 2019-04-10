@@ -1,6 +1,6 @@
 package com.credits.service.contract;
 
-import com.credits.classload.ByteCodeContractClassLoader;
+import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.pojo.MethodData;

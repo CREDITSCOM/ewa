@@ -1,6 +1,6 @@
 package com.credits.service.contract;
 
-import com.credits.classload.ByteCodeContractClassLoader;
+import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.exception.CompilationException;
 import com.credits.exception.ContractExecutorException;
 import com.credits.general.exception.CompilationErrorException;
