@@ -1,10 +1,8 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.client.node.pojo.SmartContractData;
-import com.credits.client.node.pojo.SmartDeployTransInfoData;
-import com.credits.client.node.pojo.SmartExecutionTransInfoData;
-import com.credits.client.node.pojo.SmartStateTransInfoData;
-import com.credits.client.node.pojo.SmartTransInfoData;
+import com.credits.client.node.pojo.*;
+import com.credits.general.thrift.generated.Variant;
+import com.credits.general.util.variant.VariantConverter;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTransactionTabRow;
 import javafx.collections.FXCollections;
@@ -73,24 +71,29 @@ public class SmartContractTransactionController extends AbstractController{
 
         SmartTransInfoData smartInfo = selectedTransactionRow.getSmartInfo();
 
-        ObservableList<String> smartInfoItems = FXCollections.observableArrayList();
-        if (smartInfo.isSmartDeploy()) {
-            SmartDeployTransInfoData data = smartInfo.getSmartDeployTransInfoData();
-            smartInfoItems.add(String.format("State: %s", data.getState().toString()));
-        } else if (smartInfo.isSmartExecution()) {
-            SmartExecutionTransInfoData data = smartInfo.getSmartExecutionTransInfoData();
-            smartInfoItems.add(String.format("State: %s", data.getState().toString()));
-            smartInfoItems.add(String.format("Method: %s", data.getMethod()));
-            StringBuilder params = new StringBuilder();
-            data.getParams().forEach(variant-> params.append(variant.getV_string() + "\n"));
-            smartInfoItems.add(String.format("Params: %s", params.toString()));
-        } else if (smartInfo.isSmartState()) {
-            SmartStateTransInfoData data = smartInfo.getSmartStateTransInfoData();
-            smartInfoItems.add(String.format("Is success: %s", data.isSuccess()));
-            smartInfoItems.add(String.format("Execution fee: %s", data.getExecutionFee()));
-            smartInfoItems.add(String.format("Return value: %s", data.getReturnValue() == null ? null : data.getReturnValue().toString()));
+        if (smartInfo != null) {
+            ObservableList<String> smartInfoItems = FXCollections.observableArrayList();
+            if (smartInfo.isSmartDeploy()) {
+                SmartDeployTransInfoData data = smartInfo.getSmartDeployTransInfoData();
+                smartInfoItems.add(String.format("State: %s", data.getState().toString()));
+            } else if (smartInfo.isSmartExecution()) {
+                SmartExecutionTransInfoData data = smartInfo.getSmartExecutionTransInfoData();
+                smartInfoItems.add(String.format("State: %s", data.getState().toString()));
+                smartInfoItems.add(String.format("Method: %s", data.getMethod()));
+                StringBuilder params = new StringBuilder();
+                data.getParams().forEach(variant -> params.append(variant.getV_string() + "\n"));
+                smartInfoItems.add(String.format("Params: %s", params.toString()));
+            } else if (smartInfo.isSmartState()) {
+                SmartStateTransInfoData data = smartInfo.getSmartStateTransInfoData();
+                smartInfoItems.add(String.format("Is success: %s", data.isSuccess()));
+                smartInfoItems.add(String.format("Execution fee: %s", data.getExecutionFee()));
+                Variant returnedValue = data.getReturnValue();
+                if (returnedValue != null && !returnedValue.isSetV_void()) {
+                    smartInfoItems.add(String.format("Return value: %s", VariantConverter.toObject(returnedValue).toString()));
+                }
+            }
+            listSmartInfo.setItems(smartInfoItems);
         }
-        listSmartInfo.setItems(smartInfoItems);
         int value = items.size() * ROW_HEIGHT + 2 > MAX_HEIGHT ? MAX_HEIGHT : items.size() * ROW_HEIGHT + 2;
         listContainer.setPrefHeight(value);
 

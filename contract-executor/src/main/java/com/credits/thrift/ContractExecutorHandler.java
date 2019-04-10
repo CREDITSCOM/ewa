@@ -134,6 +134,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             logger.debug("\nexecuteByteCode success --> contractStateHash {} {}", Arrays.hashCode(result.getInvokedContractState()), result);
 
         } catch (Throwable e) {
+//            return null;
             result.status = failureApiResponse(e);
             logger.debug("\nexecuteByteCode error --> {}", result);
         }
