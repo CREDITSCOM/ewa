@@ -65,6 +65,7 @@
                                           <TableColumn prefWidth="400.0" text="Target" />
                                           <TableColumn prefWidth="210.0" text="Amount" />
                                           <TableColumn prefWidth="140.0" text="State" />
+                                          <TableColumn prefWidth="95.0" text="Type" />
                                        </columns>
                                     </TableView>
                                  </children>
@@ -82,6 +83,7 @@
                                           <TableColumn prefWidth="400.0" text="Target" />
                                           <TableColumn prefWidth="210.0" text="Amount" />
                                           <TableColumn prefWidth="140.0" text="State" />
+                                          <TableColumn prefWidth="95.0" text="Type" />
                                        </columns>
                                     </TableView>
                                  </children>

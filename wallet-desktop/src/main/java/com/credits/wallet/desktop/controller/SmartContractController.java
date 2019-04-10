@@ -228,7 +228,6 @@ public class SmartContractController extends AbstractController {
         }
 
         List<SmartContractTransactionData> contractTransactions = getKeptContractsTransactions().getOrDefault(base58Address, new ArrayList<>());
-
         async(
             () -> nodeApiService.getSmartContractTransactions(base58Address, contractTransactions.size(), INIT_PAGE_SIZE),
             handleGetTransactionsResult());
@@ -306,10 +305,6 @@ public class SmartContractController extends AbstractController {
 
                     SmartTransInfoData smartInfo = transactionData.getSmartInfo();
 
-                    //                    if (smartInfo == null) {
-                    //                        throw new CreditsException("Transaction smartInfo is null");
-                    //                    }
-
                     SmartContractTransactionTabRow tableRow = new SmartContractTransactionTabRow();
                     tableRow.setAmount(GeneralConverter.toString(transactionData.getAmount()));
                     tableRow.setSource(GeneralConverter.encodeToBASE58(transactionData.getSource()));
@@ -319,6 +314,7 @@ public class SmartContractController extends AbstractController {
                     tableRow.setMethod(transactionData.getMethod());
                     tableRow.setParams(transactionData.getParams());
                     tableRow.setSmartInfo(smartInfo);
+                    tableRow.setType(transactionData.getType().getName());
 
                     if (smartInfo == null) {
                         approvedList.add(tableRow);
@@ -371,6 +367,7 @@ public class SmartContractController extends AbstractController {
         tableView.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("target"));
         tableView.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("amount"));
         tableView.getColumns().get(4).setCellValueFactory(new PropertyValueFactory<>("state"));
+        tableView.getColumns().get(5).setCellValueFactory(new PropertyValueFactory<>("type"));
         tableView.setOnMousePressed(event -> {
             if ((event.isPrimaryButtonDown() || event.getButton() == MouseButton.PRIMARY) && event.getClickCount() == 2) {
                 SmartContractTransactionTabRow tabRow = tableView.getSelectionModel().getSelectedItem();
