@@ -28,6 +28,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.credits.general.util.GeneralConverter.byteCodeObjectsToByteCodeObjectsData;
@@ -62,29 +63,29 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         byte version) {
 
         ClassObject classObject = invokedContract.object;
-        boolean isClassObjectNull = classObject == null;
 
         logger.debug(
             "\n" +
-            "\n<-- executeByteCode(" +
-            "\naccessId = {}," +
-            "\naddress = {}," +
-            "\nobject.byteCodeObjects length= {}, " +
-            "\nobject.instance length= {}, " +
-            "\nobject.instance hash= {} " +
-            "\nmethod = {}, " +
-            "\nparams = {}, " +
-            "\nversion = {}.",
+                "\n<-- executeByteCode(" +
+                "\naccessId = {}," +
+                "\naddress = {}," +
+                "\nobject.byteCodeObjects length= {}, " +
+                "\nobject.instance length= {}, " +
+                "\nobject.instance hash= {} " +
+                "\nmethod = {}, " +
+                "\nparams = {}, " +
+                "\nversion = {}.",
             accessId,
             encodeToBASE58(initiatorAddress.array()),
-            (isClassObjectNull && classObject.byteCodeObjects == null ? "null" : classObject.byteCodeObjects.size()),
-            (isClassObjectNull && classObject.instance == null ? "null" : classObject.instance.array().length),
-            (isClassObjectNull && classObject.instance == null ? "null" : classObject.instance.hashCode()),
+            (classObject != null && classObject.byteCodeObjects != null ? classObject.byteCodeObjects.size() : "null"),
+            (classObject != null && classObject.instance != null ? classObject.instance.position() : "null"),
+            (classObject != null && classObject.instance != null ? classObject.instance.hashCode() : "null"),
             method,
             (params == null ? "no params" : params.stream().map(TUnion::toString).reduce("", String::concat)),
             version
         );
 
+        Objects.requireNonNull(classObject, "class object can't be null");
         validateVersion(version);
 
         Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
@@ -92,7 +93,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         try {
             // TODO: 3/18/2019 execute smart contract must be throw exception if contract state is empty or null
             ReturnValue returnValue =
-                method.isEmpty() && classObject.instance == null || classObject.instance.array().length == 0 ?
+                isDeployTransaction(classObject, method) ?
                     service.deploySmartContract(new DeployContractSession(
                         accessId,
                         encodeToBASE58(initiatorAddress.array()),
@@ -121,7 +122,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 result.externalContractsState = returnValue.externalSmartContracts.keySet().stream().reduce(
                     new HashMap<>(),
                     (newMap, address) -> {
-                        if(!Arrays.equals(decodeFromBASE58(address), invokedContract.contractAddress.array())) {
+                        if (!Arrays.equals(decodeFromBASE58(address), invokedContract.contractAddress.array())) {
                             newMap.put(
                                 ByteBuffer.wrap(decodeFromBASE58(address)),
                                 ByteBuffer.wrap(returnValue.externalSmartContracts.get(address).contractData.contractState));
@@ -151,7 +152,6 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         byte version) {
 
         ClassObject classObject = invokedContract.object;
-        boolean isClassObjectNull = classObject == null;
 
         logger.debug(
             "\n<-- executeByteCodeMultiple(" +
@@ -165,14 +165,15 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 "\nversion = {}.",
             accessId,
             encodeToBASE58(initiatorAddress.array()),
-            (isClassObjectNull && classObject.byteCodeObjects == null ? "null" : classObject.byteCodeObjects.size()),
-            (isClassObjectNull && classObject.instance == null ? "null" : classObject.instance.array().length),
-            (isClassObjectNull && classObject.instance == null ? "null" : classObject.instance.hashCode()),
+            (classObject != null && classObject.byteCodeObjects != null ? classObject.byteCodeObjects.size() : "null"),
+            (classObject != null && classObject.instance != null ? classObject.instance.position() : "null"),
+            (classObject != null && classObject.instance != null ? classObject.instance.hashCode() : "null"),
             method,
             params == null ? "no params" : params.toString(),
             version
         );
 
+        Objects.requireNonNull(classObject, "class object can't be null");
         validateVersion(version);
 
         Variant[][] paramsArray = null;
@@ -187,7 +188,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         ExecuteByteCodeMultipleResult byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(SUCCESS_API_RESPONSE, null);
         try {
             ReturnValue returnValue =
-                method.isEmpty() && classObject.instance == null || classObject.instance.array().length == 0 ?
+                isDeployTransaction(classObject, method) ?
                     service.deploySmartContract(new DeployContractSession(
                         accessId,
                         encodeToBASE58(initiatorAddress.array()),
@@ -282,5 +283,9 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         }
         logger.debug("\ncompileByteCode success --> {}", result);
         return result;
+    }
+
+    private boolean isDeployTransaction(ClassObject classObject, String method) {
+        return method.isEmpty() && (classObject == null || classObject.instance == null || classObject.instance.position() == 0);
     }
 }
