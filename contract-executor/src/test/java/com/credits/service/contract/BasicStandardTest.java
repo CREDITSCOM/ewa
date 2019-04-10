@@ -6,7 +6,7 @@ import com.credits.service.ServiceTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.credits.utils.Consts.TOKEN_NAME_RESERVED_ERROR;
+import static com.credits.utils.Constants.TOKEN_NAME_RESERVED_ERROR;
 
 public class BasicStandardTest extends ServiceTest {
 

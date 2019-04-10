@@ -1,8 +1,8 @@
 package com.credits.service.contract;
 
 import com.credits.ApplicationProperties;
-import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.exception.ContractExecutorException;
+import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.exception.CompilationException;
 import com.credits.general.pojo.AnnotationData;
@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -47,12 +48,14 @@ import java.util.stream.Stream;
 
 import static com.credits.general.serialize.Serializer.deserialize;
 import static com.credits.general.serialize.Serializer.serialize;
-import static com.credits.general.thrift.generated.Variant._Fields.*;
+import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.service.contract.SmartContractConstants.initSmartContractConstants;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
-import static com.credits.utils.Consts.TOKEN_NAME_RESERVED_ERROR;
+import static com.credits.utils.Constants.CREDITS_TOKEN_NAME;
+import static com.credits.utils.Constants.CREDITS_TOKEN_SYMBOL;
+import static com.credits.utils.Constants.TOKEN_NAME_RESERVED_ERROR;
 import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
 import static com.credits.utils.ContractExecutorServiceUtils.failureApiResponse;
 import static com.credits.utils.ContractExecutorServiceUtils.getMethodArgumentsValuesByNameAndParams;
@@ -101,23 +104,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             .findAny()
             .orElseThrow(() -> new ClassNotFoundException("contract class not compiled"));
 
-        for (Class iface : contractClass.getInterfaces()) {
-            if (iface.getTypeName().equals("BasicStandard")) {
-                for(Method method: contractClass.getMethods()) {
-                    if (method.getName().equals("getName")) {
-                        if (((String)method.invoke(contractClass.newInstance())).equalsIgnoreCase("CS Credits")) {
-                            throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
-                        }
-                    }
-                    if (method.getName().equals("getSymbol")) {
-                        if (((String)method.invoke(contractClass.newInstance())).equalsIgnoreCase("CS")) {
-                            throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
-                        }
-                    }
-                }
-                break;
-            }
-        }
+        checkThatIsNotCreditsToken(contractClass);
+
         return new ReturnValue(
             runForLimitTime(session, byteCodeContractClassLoader, () -> serialize(contractClass.newInstance())),
             singletonList(new SmartContractMethodResult(SUCCESS_API_RESPONSE, null)), null);
@@ -228,7 +216,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue executeExternalSmartContract(InvokeMethodSession session, Map<String, ExternalSmartContract> usedContracts, ByteCodeContractClassLoader classLoader) {
+    public ReturnValue executeExternalSmartContract(
+        InvokeMethodSession session,
+        Map<String, ExternalSmartContract> usedContracts,
+        ByteCodeContractClassLoader classLoader) {
 
         Object instance = usedContracts.get(session.contractAddress).instance;
 
@@ -313,6 +304,25 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
 
+    private void checkThatIsNotCreditsToken(Class<?> contractClass) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        for (Class iface : contractClass.getInterfaces()) {
+            if (iface.getTypeName().equals("BasicStandard")) {
+                for (Method method : contractClass.getMethods()) {
+                    if (method.getName().equals("getName")) {
+                        if (((String) method.invoke(contractClass.newInstance())).equalsIgnoreCase(CREDITS_TOKEN_NAME)) {
+                            throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
+                        }
+                    }
+                    if (method.getName().equals("getSymbol")) {
+                        if (((String) method.invoke(contractClass.newInstance())).equalsIgnoreCase(CREDITS_TOKEN_SYMBOL)) {
+                            throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
 
 }
 
