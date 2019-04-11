@@ -30,14 +30,14 @@ public class AnnotationTest extends ServiceTest {
 
     @Test
     public void main() {
-        String getter = "@Getter()";
-        String contractAnn = "@UsingContract(address=test2, method=notGetBalance)";
-        String contractMethod = "@ContractMethod(id = 0)";
+        String getter = "@com.credits.scapi.annotations.Getter()";
+        String contractAnn = "@com.credits.scapi.annotations.UsingContract(address=test2, method=notGetBalance)";
+        String contractMethod = "@com.credits.scapi.annotations.ContractMethod(id = 0)";
         AnnotationData annotationData = parseAnnotationData(getter).get(0);
         AnnotationData annotationData1 = parseAnnotationData(contractAnn).get(0);
         AnnotationData annotationData2 = parseAnnotationData(contractMethod).get(0);
-        Assert.assertEquals(annotationData, new AnnotationData("Getter", new HashMap<>()));
-        Assert.assertEquals(annotationData1, new AnnotationData("UsingContract", new HashMap<String, String>() {{
+        Assert.assertEquals(annotationData, new AnnotationData("com.credits.scapi.annotations.Getter", new HashMap<>()));
+        Assert.assertEquals(annotationData1, new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -45,7 +45,7 @@ public class AnnotationTest extends ServiceTest {
 
     @Test
     public void get_methods_of_contract() throws Exception {
-        AnnotationData getterAnnotation = new AnnotationData("Getter", new HashMap<>());
+        AnnotationData getterAnnotation = new AnnotationData("com.credits.scapi.annotations.Getter", new HashMap<>());
 
         MethodDescriptionData initialize = createInitializeMethodDescriptionData(getterAnnotation);
         MethodDescriptionData addTokens = createAddTokensMethodDescriptionData(getterAnnotation);
@@ -72,11 +72,11 @@ public class AnnotationTest extends ServiceTest {
 
     private MethodDescriptionData createTestMultiple1MethodDescriptionData() {
         ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
-        addTokensAnnotationData.add(new AnnotationData("UsingContract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
             put("address", "test1");
             put("method", "notGet");
         }}));
-        addTokensAnnotationData.add(new AnnotationData("UsingContract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -89,11 +89,11 @@ public class AnnotationTest extends ServiceTest {
 
     private MethodDescriptionData createTestMultiple2MethodDescriptionData() {
         ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
-        addTokensAnnotationData.add(new AnnotationData("UsingContract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
             put("address", "test3");
             put("method", "notGetA");
         }}));
-        addTokensAnnotationData.add(new AnnotationData("UsingContract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -113,7 +113,7 @@ public class AnnotationTest extends ServiceTest {
     public MethodDescriptionData createAddTokensMethodDescriptionData(AnnotationData getterAnnotation) {
         ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
         addTokensAnnotationData.add(getterAnnotation);
-        addTokensAnnotationData.add(new AnnotationData("UsingContract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -130,7 +130,7 @@ public class AnnotationTest extends ServiceTest {
 
     public MethodDescriptionData createAddTokenMethodDescriptionData(AnnotationData getterAnnotation) {
         ArrayList<AnnotationData> addTokenAnnotationData = new ArrayList<>();
-        addTokenAnnotationData.add(new AnnotationData("UsingContract", new HashMap<String, String>() {{
+        addTokenAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
             put("address", "test1");
             put("method", "getBalance");
         }}));
@@ -142,7 +142,7 @@ public class AnnotationTest extends ServiceTest {
 
     public MethodDescriptionData createTestTokenMethodDescriptionData() {
         ArrayList<AnnotationData> testTokenAnnotationData = new ArrayList<>();
-        testTokenAnnotationData.add(new AnnotationData("ContractAddress", new HashMap<String, String>() {{
+        testTokenAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.ContractAddress", new HashMap<String, String>() {{
             put("id", "0");
         }}));
         return new MethodDescriptionData("void", "testToken",
@@ -151,7 +151,7 @@ public class AnnotationTest extends ServiceTest {
 
     public MethodDescriptionData createTestNotTokenMethodDescriptionData() {
         ArrayList<AnnotationData> testNotTokenAnnotationData = new ArrayList<>();
-        testNotTokenAnnotationData.add(new AnnotationData("ContractMethod", new HashMap<String, String>() {{
+        testNotTokenAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.ContractMethod", new HashMap<String, String>() {{
             put("id", "0");
         }}));
 

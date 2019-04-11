@@ -2,11 +2,11 @@ package com.credits.service;
 
 import com.credits.secure.PermissionsManager;
 import com.credits.secure.Sandbox;
-import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
-import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import dagger.Module;
 import dagger.Provides;
+import service.executor.ContractExecutorService;
+import service.node.NodeApiExecInteractionService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

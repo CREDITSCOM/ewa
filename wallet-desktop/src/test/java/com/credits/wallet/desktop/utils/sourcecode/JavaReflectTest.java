@@ -15,7 +15,7 @@ public class JavaReflectTest {
     @Test
     public void getSignatureTest01() {
         try {
-            Class<?> clazz = Class.forName("SmartContract");
+            Class<?> clazz = Class.forName("com.credits.scapi.v0.SmartContract");
             Map<Method, String> methods = JavaReflect.getDeclaredMethods(clazz);
             methods.forEach((k, v) -> {
                 LOGGER.info(v);

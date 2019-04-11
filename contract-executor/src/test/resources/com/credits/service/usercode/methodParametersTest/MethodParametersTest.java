@@ -1,3 +1,5 @@
+import com.credits.scapi.v0.SmartContract;
+
 import java.util.List;
 import java.util.ArrayList;
 

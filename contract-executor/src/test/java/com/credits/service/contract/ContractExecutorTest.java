@@ -1,16 +1,15 @@
 package com.credits.service.contract;
 
 
-import com.credits.exception.CompilationException;
-import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
+import com.credits.general.util.compiler.CompilationException;
 import com.credits.service.ServiceTest;
-import com.credits.thrift.ReturnValue;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import pojo.ReturnValue;
 
 import java.util.Map;
 
@@ -117,7 +116,7 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
     @Test
-    public void compileClassCall() throws CompilationException, CompilationErrorException {
+    public void compileClassCall() throws CompilationException {
         ceService.compileClass(sourceCode);
     }
 }

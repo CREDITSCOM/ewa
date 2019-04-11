@@ -15,6 +15,7 @@
         <module>contract-executor</module>
         <module>wallet-desktop</module>
         <module>sc-api</module>
+        <module>general-structures</module>
     </modules>
 
     <properties>

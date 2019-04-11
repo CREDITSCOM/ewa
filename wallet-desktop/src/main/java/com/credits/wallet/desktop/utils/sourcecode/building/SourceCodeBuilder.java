@@ -68,7 +68,7 @@ public class SourceCodeBuilder {
 
     public static CompilationResult compileSmartSourceCode(String sourceCode) {
         List<BuildSourceCodeError> errorsList = new ArrayList<>();
-        errorsList.addAll(checkSuperClassNames(sourceCode,errorsList));
+//        errorsList.addAll(checkSuperClassNames(sourceCode,errorsList));
         return compileSourceCode(Collections.singletonList(sourceCode),errorsList);
     }
 

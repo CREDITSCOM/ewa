@@ -4,8 +4,8 @@ package com.credits.service.node.apiexec;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.exception.ApiClientException;
-import com.credits.pojo.apiexec.GetSmartCodeResultData;
-import com.credits.pojo.apiexec.SmartContractGetResultData;
+import pojo.apiexec.GetSmartCodeResultData;
+import pojo.apiexec.SmartContractGetResultData;
 
 public interface NodeApiExecService {
 

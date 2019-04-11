@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.credits.scapi.v0.SmartContract;
 
 public class MySmartContract extends SmartContract {
     int counterTaskId;

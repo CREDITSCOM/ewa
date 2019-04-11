@@ -1,11 +1,11 @@
 package com.credits.utils;
 
-import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.AnnotationData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodData;
+import exception.ContractExecutorException;
 import org.apache.commons.beanutils.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,9 @@ import java.util.regex.Pattern;
 
 import static com.credits.general.pojo.ApiResponseCode.FAILURE;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
+import static com.credits.general.util.Utils.rethrowUnchecked;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static org.apache.commons.lang3.reflect.FieldUtils.getAllFieldsList;
 
 
 public class ContractExecutorServiceUtils {
@@ -109,13 +111,13 @@ public class ContractExecutorServiceUtils {
     }
 
     public static void initializeSmartContractField(String fieldName, Object value, Class<?> clazz, Object instance) {
-        try {
-            Field field = clazz.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(instance, value);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Cannot initialize \"{}\" field. Reason:{}", fieldName, getRootCauseMessage(e));
-        }
+        getAllFieldsList(clazz).stream()
+            .filter(field -> field.getName().equals(fieldName))
+            .findAny()
+            .ifPresent(field -> rethrowUnchecked(() -> {
+                field.setAccessible(true);
+                field.set(instance, value);
+            }));
     }
 
     public static List<AnnotationData> parseAnnotationData(String annotation) {

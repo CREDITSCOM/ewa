@@ -1,10 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.ApplicationProperties;
-import com.credits.exception.ContractExecutorException;
 import com.credits.general.classload.ByteCodeContractClassLoader;
-import com.credits.general.exception.CompilationErrorException;
-import com.credits.general.exception.CompilationException;
 import com.credits.general.pojo.AnnotationData;
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.ApiResponseData;
@@ -13,24 +10,27 @@ import com.credits.general.pojo.MethodArgumentData;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
+import com.credits.general.util.compiler.CompilationException;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
-import com.credits.pojo.ExternalSmartContract;
 import com.credits.pojo.MethodData;
-import com.credits.pojo.apiexec.SmartContractGetResultData;
 import com.credits.secure.PermissionsManager;
-import com.credits.service.contract.session.DeployContractSession;
-import com.credits.service.contract.session.InvokeMethodSession;
-import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.service.node.apiexec.NodeApiExecServiceImpl;
-import com.credits.thrift.ReturnValue;
 import com.credits.thrift.utils.ContractExecutorUtils;
+import exception.ContractExecutorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pojo.ExternalSmartContract;
+import pojo.ReturnValue;
+import pojo.SmartContractMethodResult;
+import pojo.apiexec.SmartContractGetResultData;
+import pojo.session.DeployContractSession;
+import pojo.session.InvokeMethodSession;
+import service.executor.ContractExecutorService;
+import service.node.NodeApiExecInteractionService;
 
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
@@ -51,7 +51,8 @@ import static com.credits.general.serialize.Serializer.serialize;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.ioc.Injector.INJECTOR;
-import static com.credits.service.contract.SmartContractConstants.initSmartContractConstants;
+import static com.credits.service.BackwardCompatibilityService.allVersionsBasicStandardClass;
+import static com.credits.service.BackwardCompatibilityService.allVersionsSmartContractClass;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
 import static com.credits.utils.Constants.CREDITS_TOKEN_NAME;
 import static com.credits.utils.Constants.CREDITS_TOKEN_SYMBOL;
@@ -67,11 +68,13 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.apache.commons.lang3.exception.ExceptionUtils.rethrow;
+import static pojo.SmartContractConstants.initSmartContractConstants;
+
 
 public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServiceImpl.class);
-    private ExecutorService executorService;
 
     private final PermissionsManager permissionManager;
 
@@ -80,12 +83,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     public ContractExecutorServiceImpl(NodeApiExecInteractionService nodeApiExecService, PermissionsManager permissionManager) {
         INJECTOR.component.inject(this);
-        executorService = Executors.newCachedThreadPool();
         try {
-            Class<?> contract = Class.forName("SmartContract");
-            initializeSmartContractField("nodeApiService", nodeApiExecService, contract, null);
-            initializeSmartContractField("contractExecutorService", this, contract, null);
-            initializeSmartContractField("cachedPool", Executors.newCachedThreadPool(), contract, null);
+            allVersionsSmartContractClass.forEach(contract -> {
+                initializeSmartContractField("nodeApiService", nodeApiExecService, contract, null);
+                initializeSmartContractField("contractExecutorService", this, contract, null);
+                initializeSmartContractField("cachedPool", Executors.newCachedThreadPool(), contract, null);
+            });
         } catch (Exception e) {
             logger.error("Cannot load smart contract's super class. Reason: ", e);
         }
@@ -95,33 +98,19 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public ReturnValue deploySmartContract(DeployContractSession session) throws Exception {
+    public ReturnValue deploySmartContract(DeployContractSession session) throws ContractExecutorException {
         final ByteCodeContractClassLoader byteCodeContractClassLoader = getSmartContractClassLoader();
-        final List<Class<?>> compiledClasses = compileSmartContractByteCode(session.byteCodeObjectDataList, byteCodeContractClassLoader);
-        final Class<?> contractClass = compiledClasses.stream()
-            .peek(permissionManager::dropSmartContractRights)
-            .filter(clazz -> !clazz.getName().contains("$"))
-            .findAny()
-            .orElseThrow(() -> new ClassNotFoundException("contract class not compiled"));
+        final Class<?> contractClass = compileClassAndDropPermissions(session.byteCodeObjectDataList, byteCodeContractClassLoader);
+        final Object instance = runForLimitTime(session, byteCodeContractClassLoader, contractClass::newInstance);
 
-        checkThatIsNotCreditsToken(contractClass);
-
-        return new ReturnValue(
-            runForLimitTime(session, byteCodeContractClassLoader, () -> serialize(contractClass.newInstance())),
-            singletonList(new SmartContractMethodResult(SUCCESS_API_RESPONSE, null)), null);
+        checkThatIsNotCreditsToken(contractClass, instance);
+        return new ReturnValue(serialize(instance), singletonList(new SmartContractMethodResult(SUCCESS_API_RESPONSE, null)), null);
     }
 
     @Override
-    public ReturnValue executeSmartContract(InvokeMethodSession session) throws Exception {
-
+    public ReturnValue executeSmartContract(InvokeMethodSession session) throws ContractExecutorException {
         final ByteCodeContractClassLoader byteCodeContractClassLoader = getSmartContractClassLoader();
-        final List<Class<?>> compiledClasses = compileSmartContractByteCode(session.byteCodeObjectDataList, byteCodeContractClassLoader);
-        final Class<?> contractClass = compiledClasses.stream()
-            .peek(permissionManager::dropSmartContractRights)
-            .filter(clazz -> !clazz.getName().contains("$"))
-            .findAny()
-            .orElseThrow(() -> new ClassNotFoundException("contract class not compiled"));
-
+        final Class<?> contractClass = compileClassAndDropPermissions(session.byteCodeObjectDataList, byteCodeContractClassLoader);
         final Object instance = deserialize(session.contractState, byteCodeContractClassLoader);
 
         final Map<String, ExternalSmartContract> usedSmartContracts = new HashMap<>();
@@ -148,10 +137,10 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         requireNonNull(byteCodeObjectDataList, "bytecode of contract class is null");
 
         ByteCodeContractClassLoader byteCodeContractClassLoader = getSmartContractClassLoader();
-        Class<?> contractClass =
-            compileSmartContractByteCode(byteCodeObjectDataList, byteCodeContractClassLoader).stream()
-                .filter(clazz -> !clazz.getName().contains("$"))
-                .findAny().get();
+        Class<?> contractClass = compileSmartContractByteCode(byteCodeObjectDataList, byteCodeContractClassLoader).stream()
+            .filter(clazz -> !clazz.getName().contains("$"))
+            .findAny()
+            .orElseThrow(() -> new ContractExecutorException("contract class not compiled"));
 
         Set<String> objectMethods = new HashSet<>(asList(
             "getClass",
@@ -205,8 +194,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     @Override
-    public List<ByteCodeObjectData> compileClass(String sourceCode)
-        throws ContractExecutorException, CompilationErrorException, CompilationException {
+    public List<ByteCodeObjectData> compileClass(String sourceCode) throws ContractExecutorException, CompilationException {
         requireNonNull(sourceCode, "sourceCode of contract class is null");
         if (sourceCode.isEmpty()) {
             throw new ContractExecutorException("sourceCode of contract class is empty");
@@ -287,7 +275,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         return toVariant(returnTypeName, runForLimitTime(session, classLoader, () -> method.invoke(instance, methodData.argValues)));
     }
 
-    private <R> R runForLimitTime(DeployContractSession session, ClassLoader classLoader, Callable<R> block) throws Exception {
+    private <R> R runForLimitTime(DeployContractSession session, ClassLoader classLoader, Callable<R> block) {
         Thread limitedTimeThread = null;
         try {
             FutureTask<R> task = new FutureTask<>(block);
@@ -299,30 +287,47 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         } catch (TimeoutException e) {
             // TODO: 3/19/2019 create thread wrapper for correct stop thread
             limitedTimeThread.stop();
-            throw new TimeoutException(e.getMessage());
+            throw new ContractExecutorException(e.getMessage(), e);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new ContractExecutorException(e.getMessage(), e);
         }
     }
 
 
-    private void checkThatIsNotCreditsToken(Class<?> contractClass) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        for (Class iface : contractClass.getInterfaces()) {
-            if (iface.getTypeName().equals("BasicStandard")) {
-                for (Method method : contractClass.getMethods()) {
-                    if (method.getName().equals("getName")) {
-                        if (((String) method.invoke(contractClass.newInstance())).equalsIgnoreCase(CREDITS_TOKEN_NAME)) {
-                            throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
-                        }
-                    }
-                    if (method.getName().equals("getSymbol")) {
-                        if (((String) method.invoke(contractClass.newInstance())).equalsIgnoreCase(CREDITS_TOKEN_SYMBOL)) {
-                            throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
-                        }
-                    }
-                }
-                break;
-            }
-        }
+    private Class<?> compileClassAndDropPermissions(
+        List<ByteCodeObjectData> byteCodeObjectList,
+        ByteCodeContractClassLoader byteCodeContractClassLoader)
+        throws ContractExecutorException {
+        return compileSmartContractByteCode(byteCodeObjectList, byteCodeContractClassLoader).stream()
+            .peek(permissionManager::dropSmartContractRights)
+            .filter(clazz -> !clazz.getName().contains("$"))
+            .findAny()
+            .orElseThrow(() -> new CompilationException("contract class not compiled"));
     }
 
+    private void checkThatIsNotCreditsToken(Class<?> contractClass, Object instance) {
+        stream(contractClass.getInterfaces())
+            .filter(allVersionsBasicStandardClass::contains)
+            .findAny()
+            .ifPresent(ignore -> stream(contractClass.getMethods())
+                .filter(m -> m.getName().equals("getName") || m.getName().equals("getSymbol") && m.getParameters().length == 0)
+                .forEach(method -> {
+                    try {
+                        String methodName = method.getName();
+                        if (methodName.equals("getName")) {
+                            if (((String) method.invoke(instance)).equalsIgnoreCase(CREDITS_TOKEN_NAME)) {
+                                throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
+                            }
+                        } else if (methodName.equals("getSymbol")) {
+                            if (((String) method.invoke(instance)).equalsIgnoreCase(CREDITS_TOKEN_SYMBOL)) {
+                                throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
+                            }
+                        }
+                    } catch (ContractExecutorException e) {
+                        rethrow(e);
+                    } catch (Throwable ignored) {
+                    }
+                }));
+    }
 }
 

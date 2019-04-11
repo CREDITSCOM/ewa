@@ -27,7 +27,7 @@
             styleClass="credits-button" text="SAVE"/>
     <HBox alignment="TOP_RIGHT" layoutX="20.0" layoutY="120.0" prefHeight="90.0" prefWidth="885.0">
         <VBox prefHeight="83.0" prefWidth="500.0">
-            <Label styleClass="credits-label" text="Put SmartContract token">
+            <Label styleClass="credits-label" text="Put com.credits.scapi.annotations.SmartContract token">
             </Label>
             <TextField fx:id="tokenField" maxHeight="45.0" prefHeight="45.0" promptText="put token here"
                        styleClass="credits-textFieldGray"/>

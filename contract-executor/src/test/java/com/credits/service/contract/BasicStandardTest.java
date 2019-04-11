@@ -1,8 +1,8 @@
 package com.credits.service.contract;
 
 
-import com.credits.exception.ContractExecutorException;
 import com.credits.service.ServiceTest;
+import exception.ContractExecutorException;
 import org.junit.Before;
 import org.junit.Test;
 

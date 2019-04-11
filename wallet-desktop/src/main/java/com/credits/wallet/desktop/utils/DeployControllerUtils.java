@@ -32,8 +32,8 @@ public class DeployControllerUtils {
         try {
             Class<?>[] interfaces = contractClass.getInterfaces();
             if (interfaces.length > 0) {
-                Class<?> basicStandard = Class.forName("BasicStandard");
-                Class<?> extendedStandard = Class.forName("ExtensionStandard");
+                Class<?> basicStandard = Class.forName("com.credits.scapi.v0.BasicStandard");
+                Class<?> extendedStandard = Class.forName("com.credits.scapi.v0.ExtensionStandard");
                 for (Class<?> _interface : interfaces) {
                     if (_interface.equals(basicStandard)) {
                         tokenStandart = TokenStandartData.CreditsBasic;

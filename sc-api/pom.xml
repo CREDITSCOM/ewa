@@ -2,14 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.credits.sc-api</groupId>
+    <artifactId>sc-api</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0</version>
+
     <parent>
         <artifactId>external_node_applications</artifactId>
         <groupId>com.credits</groupId>
         <version>1.0</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>sc-api</artifactId>
 
     <dependencies>
         <dependency>
@@ -20,13 +25,19 @@
         </dependency>
         <dependency>
             <groupId>com.credits.client</groupId>
+            <artifactId>general</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.credits.client</groupId>
             <artifactId>executor_client</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.credits.executor</groupId>
-            <artifactId>contract-executor</artifactId>
+            <groupId>com.credits.general-structures</groupId>
+            <artifactId>general-structures</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>

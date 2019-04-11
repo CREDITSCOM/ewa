@@ -16,9 +16,9 @@ public class SmartContractsUtilsTest {
 
     @Test
     public void generateSmartContractHashStateTest() throws CreditsException {
-        String source = "public class Contract extends SmartContract { public Contract() { total = 0; } }";
+        String source = "public class Contract extends com.credits.scapi.v0.SmartContract { public Contract() { total = 0; } }";
         String actual = SmartContractsUtils.generateSmartContractHashState(source.getBytes());
-        assertEquals("A2CDBFDF50500999AEE29823F7D284D7", actual);
+        assertEquals("F456FD839AE84091678D3C3A79C7C4B3", actual);
     }
 
 

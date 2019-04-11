@@ -1,7 +1,6 @@
 package com.credits.service;
 
 import com.credits.general.classload.ByteCodeContractClassLoader;
-import com.credits.exception.ContractExecutorException;
 import com.credits.general.pojo.ApiResponseData;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
@@ -10,13 +9,8 @@ import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
 import com.credits.general.util.variant.VariantConverter;
-import com.credits.pojo.ExternalSmartContract;
-import com.credits.pojo.apiexec.SmartContractGetResultData;
-import com.credits.service.contract.ContractExecutorService;
-import com.credits.service.contract.session.DeployContractSession;
-import com.credits.service.contract.session.InvokeMethodSession;
-import com.credits.service.node.apiexec.NodeApiExecInteractionService;
-import com.credits.thrift.ReturnValue;
+import com.credits.scapi.v0.SmartContract;
+import exception.ContractExecutorException;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -26,6 +20,13 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pojo.ExternalSmartContract;
+import pojo.ReturnValue;
+import pojo.apiexec.SmartContractGetResultData;
+import pojo.session.DeployContractSession;
+import pojo.session.InvokeMethodSession;
+import service.executor.ContractExecutorService;
+import service.node.NodeApiExecInteractionService;
 
 import javax.inject.Inject;
 import javax.tools.Diagnostic;
@@ -89,7 +90,7 @@ public abstract class ServiceTest {
 
     private void initSmartContractStaticField(Object smartContractInstance, String fieldName, Object value)
         throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
-        Class<?> contract = Class.forName("SmartContract");
+        Class<?> contract = SmartContract.class;
         Field interactionService = contract.getDeclaredField(fieldName);
         interactionService.setAccessible(true);
         interactionService.set(smartContractInstance, value);

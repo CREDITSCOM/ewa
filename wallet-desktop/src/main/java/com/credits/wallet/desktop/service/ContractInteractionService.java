@@ -84,7 +84,7 @@ public class ContractInteractionService {
 
     private String executeSmartContract(String initiatorAddress, SmartContractData sc, String methodName, Variant... params) {
         if (sc == null || sc.getObjectState().length == 0) {
-            throw new NodeClientException("SmartContract " + initiatorAddress + " not found");
+            throw new NodeClientException("com.credits.scapi.annotations.SmartContract " + initiatorAddress + " not found");
         }
         sc.setMethod(methodName);
         sc.getParams().addAll(Arrays.asList(params));

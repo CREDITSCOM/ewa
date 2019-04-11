@@ -51,7 +51,7 @@ public class GetMethodOfContractTest extends ServiceTest {
                         "address",
                         singletonList(
                             new AnnotationData(
-                                "ContractAddress",
+                                "com.credits.scapi.annotations.ContractAddress",
                                 new HashMap() {{
                                     put("id", "0");
                                 }}))),
@@ -60,20 +60,20 @@ public class GetMethodOfContractTest extends ServiceTest {
                         "method",
                         singletonList(
                             new AnnotationData(
-                                "ContractMethod",
+                                "com.credits.scapi.annotations.ContractMethod",
                                 new HashMap() {{
                                     put("id", "0");
                                 }})))),
                 asList(
                     new AnnotationData(
                         new AnnotationData(
-                            "UsingContract",
+                            "com.credits.scapi.annotations.UsingContract",
                             new HashMap() {{
                                 put("address", "address");
                                 put("method", "method");
                             }})),
                     new AnnotationData(
-                        "UsingContract",
+                        "com.credits.scapi.annotations.UsingContract",
                         new HashMap() {{
                             put("address", "address");
                             put("method", "method");

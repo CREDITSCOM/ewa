@@ -1,3 +1,6 @@
+import com.credits.scapi.v0.SmartContract;
+
+
 public class MySmartContract extends SmartContract {
     Integer value = new Integer(0);
 

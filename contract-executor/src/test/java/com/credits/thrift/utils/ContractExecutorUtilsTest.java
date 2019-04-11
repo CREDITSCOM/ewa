@@ -1,16 +1,16 @@
 package com.credits.thrift.utils;
 
 import com.credits.general.classload.ByteCodeContractClassLoader;
-import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.service.ServiceTest;
-import com.credits.service.contract.SmartContractConstants;
-import com.credits.service.contract.session.DeployContractSession;
+import exception.ContractExecutorException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import pojo.SmartContractConstants;
+import pojo.session.DeployContractSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class ContractExecutorUtilsTest extends ServiceTest {
         "import java.util.Map;\n" +
         "import java.util.Set;\n" +
         "\n" +
-        "public class MySmartContract extends SmartContract {\n" +
+        "public class MySmartContract extends com.credits.scapi.v0.SmartContract {\n" +
         "    public String nullField;\n" +
         "    public int intField;\n" +
         "    public Integer integerField;\n" +
@@ -52,7 +52,7 @@ public class ContractExecutorUtilsTest extends ServiceTest {
         "    }\n" +
         "}";
 
-    private String sourceCodeWithoutVariables = "public class MySmartContract extends SmartContract {\n" +
+    private String sourceCodeWithoutVariables = "public class MySmartContract extends com.credits.scapi.v0.SmartContract {\n" +
         "    public MySmartContract() {\n" +
         "    }\n" +
         "}";

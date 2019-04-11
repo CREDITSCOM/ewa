@@ -1,5 +1,6 @@
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
+import com.credits.scapi.v0.SmartContract;
+
+
 import java.net.ServerSocket;
 
 public class MySmartContract extends SmartContract {

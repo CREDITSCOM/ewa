@@ -7,10 +7,10 @@ import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.thrift.generated.WalletIdGetResult;
 import com.credits.client.node.util.Validator;
 import com.credits.exception.ApiClientException;
-import com.credits.pojo.apiexec.GetSmartCodeResultData;
-import com.credits.pojo.apiexec.SmartContractGetResultData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pojo.apiexec.GetSmartCodeResultData;
+import pojo.apiexec.SmartContractGetResultData;
 
 import static com.credits.client.node.util.NodeClientUtils.processApiResponse;
 import static com.credits.client.node.util.NodePojoConverter.transactionFlowDataToTransaction;

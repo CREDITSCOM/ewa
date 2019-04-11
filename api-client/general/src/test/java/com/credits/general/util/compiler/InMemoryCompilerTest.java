@@ -1,6 +1,5 @@
 package com.credits.general.util.compiler;
 
-import com.credits.general.exception.CompilationException;
 import com.credits.general.util.PrintOut;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;

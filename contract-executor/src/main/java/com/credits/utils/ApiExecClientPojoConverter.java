@@ -3,8 +3,8 @@ package com.credits.utils;
 import com.credits.client.executor.thrift.generated.apiexec.SmartContractGetResult;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.ByteCodeObject;
-import com.credits.pojo.apiexec.GetSmartCodeResultData;
-import com.credits.pojo.apiexec.SmartContractGetResultData;
+import pojo.apiexec.GetSmartCodeResultData;
+import pojo.apiexec.SmartContractGetResultData;
 
 import java.util.stream.Collectors;
 

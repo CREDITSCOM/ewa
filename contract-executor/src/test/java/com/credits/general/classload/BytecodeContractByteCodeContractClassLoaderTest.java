@@ -1,6 +1,6 @@
 package com.credits.general.classload;
 
-import com.credits.general.exception.CompilationErrorException;
+import com.credits.general.util.compiler.CompilationException;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import org.junit.Before;
@@ -40,7 +40,7 @@ public class BytecodeContractByteCodeContractClassLoaderTest {
     }
 
     @Test
-    public void loadOtherClass() throws CompilationErrorException {
+    public void loadOtherClass() throws CompilationException {
         sourceCode =
             "public class MySmartContract {\n" +
             "\n" +

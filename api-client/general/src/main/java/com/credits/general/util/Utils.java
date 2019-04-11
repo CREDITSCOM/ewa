@@ -5,8 +5,11 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.apache.commons.lang3.exception.ExceptionUtils.rethrow;
 
 /**
  * Created by goncharov-eg on 26.01.2018.
@@ -36,18 +39,20 @@ public class Utils {
         // We could use the XOR trick here but it's easier to understand if we don't. If we find this is really a
         // performance issue the matter can be revisited.
         byte[] buf = new byte[bytes.length];
-        for (int i = 0; i < bytes.length; i++)
+        for (int i = 0; i < bytes.length; i++) {
             buf[i] = bytes[bytes.length - 1 - i];
+        }
         return buf;
     }
 
-    public static String getClassType(Object object){
+    public static String getClassType(Object object) {
         return object == null ? "" : object.getClass().getTypeName();
     }
+
     public static String randomAlphaLowerCaseNumeric(int count) {
         StringBuilder builder = new StringBuilder();
         while (count-- != 0) {
-            int character = (int)(Math.random()* ALPHA_LOWER_CASE_NUMERIC_STRING.length());
+            int character = (int) (Math.random() * ALPHA_LOWER_CASE_NUMERIC_STRING.length());
             builder.append(ALPHA_LOWER_CASE_NUMERIC_STRING.charAt(character));
         }
         return builder.toString();
@@ -56,7 +61,7 @@ public class Utils {
     public static String randomAlphaNumeric(int count) {
         StringBuilder builder = new StringBuilder();
         while (count-- != 0) {
-            int character = (int)(Math.random() * ALPHA_NUMERIC_STRING.length());
+            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
             builder.append(ALPHA_NUMERIC_STRING.charAt(character));
         }
         return builder.toString();
@@ -64,7 +69,7 @@ public class Utils {
 
     public static boolean isEmpty(final Object object) {
         if (object instanceof String) {
-            String objectString = (String)object;
+            String objectString = (String) object;
             return (objectString == null || objectString.trim().isEmpty());
         } else if (object instanceof ByteBuffer) {
             return ((ByteBuffer) object).position() == 0;
@@ -87,6 +92,7 @@ public class Utils {
      * Возвращает пару:
      * - Отображаемое значение в десятичной системе счисления
      * - Значение, помещенное в 16 бит в объекте Short
+     *
      * @param value
      * @return
      */
@@ -110,5 +116,27 @@ public class Utils {
         double actualValue = (sign != 0 ? -1.0 : 1.0) * frac / 1024D * Math.pow(10.0, exp - 18);
         short actualValue16Bit = (short) (sign * 32768 + exp * 1024 + frac);
         return Pair.of(actualValue, actualValue16Bit);
+    }
+
+
+    public static void rethrowUnchecked(CheckedRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            rethrow(e);
+        }
+    }
+
+    public interface CheckedRunnable {
+        void run() throws Exception;
+    }
+
+    public static <R> R rethrowUnchecked(Callable<R> callable) {
+        try {
+            return callable.call();
+        } catch (Exception e) {
+            rethrow(e);
+        }
+        return null; //unreachable code
     }
 }

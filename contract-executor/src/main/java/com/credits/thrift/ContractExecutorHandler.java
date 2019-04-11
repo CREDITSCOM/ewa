@@ -8,7 +8,6 @@ import com.credits.client.executor.thrift.generated.GetContractMethodsResult;
 import com.credits.client.executor.thrift.generated.GetContractVariablesResult;
 import com.credits.client.executor.thrift.generated.GetterMethodResult;
 import com.credits.client.executor.thrift.generated.SmartContractBinary;
-import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.APIResponse;
@@ -16,12 +15,14 @@ import com.credits.general.thrift.generated.ByteCodeObject;
 import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
-import com.credits.service.contract.ContractExecutorService;
-import com.credits.service.contract.session.DeployContractSession;
-import com.credits.service.contract.session.InvokeMethodSession;
+import com.credits.general.util.compiler.CompilationException;
 import org.apache.thrift.TUnion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pojo.ReturnValue;
+import pojo.session.DeployContractSession;
+import pojo.session.InvokeMethodSession;
+import service.executor.ContractExecutorService;
 
 import javax.inject.Inject;
 import java.nio.ByteBuffer;
@@ -270,7 +271,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             result.setStatus(SUCCESS_API_RESPONSE);
             result.setByteCodeObjects(
                 GeneralConverter.byteCodeObjectsDataToByteCodeObjects(service.compileClass(sourceCode)));
-        } catch (CompilationErrorException exception) {
+        } catch (CompilationException exception) {
             result.setStatus(new APIResponse(
                 ApiResponseCode.FAILURE.code,
                 exception.getErrors()

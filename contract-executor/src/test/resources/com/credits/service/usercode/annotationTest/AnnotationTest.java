@@ -1,3 +1,10 @@
+import com.credits.scapi.annotations.ContractAddress;
+import com.credits.scapi.annotations.ContractMethod;
+import com.credits.scapi.annotations.Getter;
+import com.credits.scapi.annotations.UsingContract;
+import com.credits.scapi.annotations.UsingContracts;
+import com.credits.scapi.v0.SmartContract;
+
 public class AnnotationTest extends SmartContract {
 
     public int total;

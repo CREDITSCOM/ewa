@@ -1,3 +1,8 @@
+import com.credits.scapi.annotations.ContractAddress;
+import com.credits.scapi.annotations.ContractMethod;
+import com.credits.scapi.annotations.UsingContract;
+import com.credits.scapi.v0.SmartContract;
+
 public class MySmartContract extends SmartContract {
 
     public int total;

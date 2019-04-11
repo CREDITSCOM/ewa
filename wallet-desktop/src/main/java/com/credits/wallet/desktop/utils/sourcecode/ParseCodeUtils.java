@@ -15,7 +15,7 @@ import java.util.List;
 
 public class ParseCodeUtils {
 
-    private static final String SUPERCLASS_NAME = "SmartContract";
+    private static final String SUPERCLASS_NAME = "com.credits.scapi.annotations.SmartContract";
 
     public static int getLineNumber(String sourceCode, BodyDeclaration bodyDeclaration) {
         CompilationUnit compilationUnit = EclipseJdt.createCompilationUnit(sourceCode);

@@ -44,7 +44,7 @@ public class CreditsCodeArea extends CodeArea {
     private static final String NEW_LINE_SYMBOL = "\n";
     private static final String TAB_STRING = StringUtils.repeat(" ", TAB_SIZE);
     public static final String DEFAULT_SOURCE_CODE =
-            "public class Contract extends SmartContract {\n" + "\n" + TAB_STRING + "public Contract() {\n" + TAB_STRING + TAB_STRING + "\n}" + "\n" + "}";
+            "public class Contract extends com.credits.scapi.annotations.SmartContract {\n" + "\n" + TAB_STRING + "public Contract() {\n" + TAB_STRING + TAB_STRING + "\n}" + "\n" + "}";
 
     private static int tabCount;
     private ExecutorService codeAreaHighlightExecutor = Executors.newSingleThreadExecutor();

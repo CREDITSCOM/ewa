@@ -4,16 +4,14 @@ import com.credits.ApplicationProperties;
 import com.credits.client.node.service.NodeApiService;
 import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.secure.PermissionsManager;
-import com.credits.service.contract.ContractExecutorService;
 import com.credits.service.contract.ContractExecutorServiceImpl;
-import com.credits.service.node.api.NodeApiInteractionService;
-import com.credits.service.node.api.NodeApiInteractionServiceThriftImpl;
-import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import com.credits.service.node.apiexec.NodeApiExecInteractionServiceThriftImpl;
 import com.credits.service.node.apiexec.NodeApiExecService;
 import com.credits.service.node.apiexec.NodeApiExecServiceImpl;
 import dagger.Module;
 import dagger.Provides;
+import service.executor.ContractExecutorService;
+import service.node.NodeApiExecInteractionService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,12 +25,6 @@ public class AppModule {
     NodeApiExecInteractionService nodeApiExecService;
     @Inject
     PermissionsManager permissionsManager;
-
-    @Singleton
-    @Provides
-    public NodeApiInteractionService provideNodeApiInteractionService() {
-        return new NodeApiInteractionServiceThriftImpl();
-    }
 
     @Singleton
     @Provides

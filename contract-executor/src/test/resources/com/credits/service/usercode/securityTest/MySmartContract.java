@@ -1,21 +1,12 @@
-import com.credits.general.exception.CreditsException;
+import com.credits.scapi.v0.SmartContract;
 
-import javax.sound.midi.Soundbank;
-import java.math.BigDecimal;
 import java.net.*;
 import java.lang.String;
 import java.nio.file.Paths;
 import java.net.URI;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.io.File;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.concurrent.*;
-
-import static java.io.File.*;
 
 public class MySmartContract extends SmartContract {
 

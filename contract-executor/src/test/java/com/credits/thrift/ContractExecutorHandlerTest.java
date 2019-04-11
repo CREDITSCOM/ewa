@@ -3,21 +3,21 @@ package com.credits.thrift;
 import com.credits.client.executor.thrift.generated.CompileSourceCodeResult;
 import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
 import com.credits.client.executor.thrift.generated.SmartContractBinary;
-import com.credits.general.exception.CompilationErrorException;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
 import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
+import com.credits.general.util.compiler.CompilationException;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.secure.PermissionsManager;
 import com.credits.service.DaggerTestComponent;
 import com.credits.service.contract.ContractExecutorServiceImpl;
-import com.credits.service.node.apiexec.NodeApiExecInteractionService;
 import org.apache.thrift.TException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import service.node.NodeApiExecInteractionService;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class ContractExecutorHandlerTest {
     ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
 
     @BeforeClass
-    public static void init() throws IOException, CompilationErrorException {
+    public static void init() throws IOException, CompilationException {
         contractSourcecode = readSourceCode("com\\credits\\thrift\\MySmartContract.java");
 
         List<CompilationUnit> compilationUnits = compileSourceCode(contractSourcecode).getUnits();

@@ -1,10 +1,10 @@
 package com.credits.service.contract;
 
 import com.credits.general.classload.ByteCodeContractClassLoader;
-import com.credits.exception.ContractExecutorException;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.pojo.MethodData;
 import com.credits.service.ServiceTest;
+import exception.ContractExecutorException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

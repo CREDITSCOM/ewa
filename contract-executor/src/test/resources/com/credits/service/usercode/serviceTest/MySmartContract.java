@@ -1,3 +1,9 @@
+import com.credits.scapi.annotations.ContractAddress;
+import com.credits.scapi.annotations.ContractMethod;
+import com.credits.scapi.annotations.UsingContract;
+import com.credits.scapi.v0.SmartContract;
+
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.NumberFormat;

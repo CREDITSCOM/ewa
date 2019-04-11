@@ -1,6 +1,6 @@
 package com.credits.serialise;
 
-import com.credits.exception.ContractExecutorException;
+import exception.ContractExecutorException;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-public class %s extends SmartContract {
+public class %s extends com.credits.scapi.annotations.SmartContract {
 
     public %s() {
     }
