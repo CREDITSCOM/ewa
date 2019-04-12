@@ -18,8 +18,8 @@ import java.util.Map;
 
 public class CreditsProposalsPopup extends Popup {
     public static final String DEFAULT_STANDARD_CLASS = "Default";
-    public static final String BASIC_STANDARD_CLASS = "com.credits.scapi.v0.BasicStandard";
-    public static final String EXTENSION_STANDARD_CLASS = "com.credits.scapi.v0.ExtensionStandard";
+    public static final String BASIC_STANDARD_CLASS = "BasicStandard";
+    public static final String EXTENSION_STANDARD_CLASS = "ExtensionStandard";
 
     private ListView<ProposalItem> listView = new ListView();
 

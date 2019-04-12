@@ -1,4 +1,8 @@
-public class %s extends com.credits.scapi.annotations.SmartContract implements com.credits.scapi.v0.ExtensionStandard {
+import com.credits.scapi.annotations.*;
+import com.credits.scapi.v0.*;
+
+
+public class %s extends SmartContract implements ExtensionStandard {
 
     public %s() {
     }

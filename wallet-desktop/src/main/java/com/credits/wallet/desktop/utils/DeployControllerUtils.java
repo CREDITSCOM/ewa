@@ -1,6 +1,8 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.client.node.pojo.TokenStandartData;
+import com.credits.scapi.v0.BasicStandard;
+import com.credits.scapi.v0.ExtensionStandard;
 import com.credits.wallet.desktop.controller.DeployTabController;
 import com.credits.wallet.desktop.controller.SmartContractDeployController;
 import com.credits.wallet.desktop.controller.TreeViewController;
@@ -29,22 +31,18 @@ public class DeployControllerUtils {
 
     public static TokenStandartData getTokenStandard(Class<?> contractClass) {
         TokenStandartData tokenStandart = TokenStandartData.NotAToken;
-        try {
-            Class<?>[] interfaces = contractClass.getInterfaces();
-            if (interfaces.length > 0) {
-                Class<?> basicStandard = Class.forName("com.credits.scapi.v0.BasicStandard");
-                Class<?> extendedStandard = Class.forName("com.credits.scapi.v0.ExtensionStandard");
-                for (Class<?> _interface : interfaces) {
-                    if (_interface.equals(basicStandard)) {
-                        tokenStandart = TokenStandartData.CreditsBasic;
-                    }
-                    if (_interface.equals(extendedStandard)) {
-                        tokenStandart = TokenStandartData.CreditsExtended;
-                    }
+        Class<?>[] interfaces = contractClass.getInterfaces();
+        if (interfaces.length > 0) {
+            Class<?> basicStandard = BasicStandard.class;
+            Class<?> extendedStandard = ExtensionStandard.class;
+            for (Class<?> _interface : interfaces) {
+                if (_interface.equals(basicStandard)) {
+                    tokenStandart = TokenStandartData.CreditsBasic;
+                }
+                if (_interface.equals(extendedStandard)) {
+                    tokenStandart = TokenStandartData.CreditsExtended;
                 }
             }
-        } catch (ClassNotFoundException e) {
-            LOGGER.debug("can't find standard classes. Reason {}", e.getMessage());
         }
         return tokenStandart;
     }
