@@ -68,6 +68,8 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static org.apache.commons.lang3.exception.ExceptionUtils.rethrow;
 import static pojo.SmartContractConstants.initSmartContractConstants;
 
@@ -114,9 +116,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         final Object instance = deserialize(session.contractState, byteCodeContractClassLoader);
 
         final Map<String, ExternalSmartContract> usedSmartContracts = new HashMap<>();
-        initializeField("initiator", session.initiatorAddress, contractClass, instance);
-        initializeField("accessId", session.accessId, contractClass, instance);
-        initializeField("usedContracts", usedSmartContracts, contractClass, instance);
+        initializeSmartContractField("initiator", session.initiatorAddress, contractClass, instance);
+        initializeSmartContractField("accessId", session.accessId, contractClass, instance);
+        initializeSmartContractField("usedContracts", usedSmartContracts, contractClass, instance);
 
         ExternalSmartContract usedContract = new ExternalSmartContract(
             new SmartContractGetResultData(
@@ -262,7 +264,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             return new SmartContractMethodResult(SUCCESS_API_RESPONSE, invoke(session, instance, params, byteCodeContractClassLoader));
         } catch (Throwable e) {
             logger.debug("execution error:\ncontract address {},\nmethod {}\n", session.contractAddress, session.methodName, e);
-            return new SmartContractMethodResult(failureApiResponse(e), new Variant(V_STRING, e.getMessage()));
+            return new SmartContractMethodResult(failureApiResponse(e), new Variant(V_STRING, getStackTrace(getRootCause(e))));
         }
     }
 
