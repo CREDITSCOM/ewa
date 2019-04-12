@@ -4,6 +4,8 @@ package service.node;
 import pojo.apiexec.GetSmartCodeResultData;
 import pojo.apiexec.SmartContractGetResultData;
 
+import java.math.BigDecimal;
+
 public interface NodeApiExecInteractionService {
 
     byte[] getSeed(long accessId);
@@ -15,4 +17,6 @@ public interface NodeApiExecInteractionService {
     int getWalletId(long accessId, String addressBase58);
 
     SmartContractGetResultData getExternalSmartContractByteCode(long accessId, String addressBase58);
+
+    BigDecimal getBalance(String addressBase58);
 }

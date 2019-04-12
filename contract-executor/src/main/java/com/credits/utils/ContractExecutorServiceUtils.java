@@ -84,7 +84,7 @@ public class ContractExecutorServiceUtils {
             Variant variant = params[i];
             switch (variant.getSetField()) {
                 case V_OBJECT:
-                    classes[i] = Class.forName(variant.getV_object().className, false, classLoader);
+                    classes[i] = Class.forName(variant.getV_object().nameClass, false, classLoader);
                     break;
                 case V_VOID:
                     classes[i] = Void.TYPE;

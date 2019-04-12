@@ -311,6 +311,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             .findAny()
             .ifPresent(ignore -> stream(contractClass.getMethods())
                 .filter(m -> m.getName().equals("getName") || m.getName().equals("getSymbol") && m.getParameters().length == 0)
+
                 .forEach(method -> {
                     try {
                         String methodName = method.getName();

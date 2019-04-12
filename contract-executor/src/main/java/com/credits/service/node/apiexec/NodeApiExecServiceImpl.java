@@ -3,16 +3,23 @@ package com.credits.service.node.apiexec;
 import com.credits.client.executor.thrift.generated.apiexec.GetSeedResult;
 import com.credits.client.executor.thrift.generated.apiexec.SendTransactionResult;
 import com.credits.client.executor.thrift.generated.apiexec.SmartContractGetResult;
+import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionFlowData;
+import com.credits.client.node.thrift.generated.Amount;
+import com.credits.client.node.thrift.generated.WalletBalanceGetResult;
 import com.credits.client.node.thrift.generated.WalletIdGetResult;
 import com.credits.client.node.util.Validator;
 import com.credits.exception.ApiClientException;
+import com.credits.general.util.exception.ConverterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pojo.apiexec.GetSmartCodeResultData;
 import pojo.apiexec.SmartContractGetResultData;
 
+import java.math.BigDecimal;
+
 import static com.credits.client.node.util.NodeClientUtils.processApiResponse;
+import static com.credits.client.node.util.NodePojoConverter.amountToBigDecimal;
 import static com.credits.client.node.util.NodePojoConverter.transactionFlowDataToTransaction;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.utils.ApiExecClientPojoConverter.createGetSmartCodeResultData;
@@ -89,6 +96,18 @@ public class NodeApiExecServiceImpl implements NodeApiExecService {
         LOGGER.debug(String.format("getWalletId: <--- walletId = %s", result.getWalletId()));
         return result.getWalletId();
     }
+
+    @Override
+    public BigDecimal getBalance(String address) throws NodeClientException, ConverterException {
+        LOGGER.info(String.format("getBalance: ---> address = %s", address));
+        WalletBalanceGetResult result = nodeClient.getBalance(decodeFromBASE58(address));
+        processApiResponse(result.getStatus());
+        Amount amount = result.getBalance();
+        BigDecimal balance = amountToBigDecimal(amount);
+        LOGGER.info(String.format("getBalance: <--- balance = %s", balance));
+        return balance;
+    }
+
 
 //    public static <R> void async(Function<R> apiCall, Callback<R> callback) {
 //        CompletableFuture.supplyAsync(apiCall::apply, threadPool).whenComplete(handleCallback(callback));

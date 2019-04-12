@@ -116,7 +116,7 @@ public class VariantConverterTest {
 
         assertEquals(variantType, variant.getSetField());
         if (variantType == V_OBJECT) {
-            assertEquals(inputClassName, variant.getV_object().className);
+            assertEquals(inputClassName, variant.getV_object().nameClass);
             assertEquals(variantValue, variant.getV_object().instance);
         } else {
             assertEquals(variantValue, variant.getFieldValue());

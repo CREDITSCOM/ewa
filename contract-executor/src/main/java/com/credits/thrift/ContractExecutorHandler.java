@@ -52,7 +52,6 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         INJECTOR.component.inject(this);
     }
 
-
     @Override
     public ExecuteByteCodeResult executeByteCode(
         long accessId,
@@ -61,7 +60,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         String method,
         List<Variant> params,
         long executionTime,
-        byte version) {
+            short version) {
 
         ClassObject classObject = invokedContract.object;
 
@@ -151,7 +150,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         String method,
         List<List<Variant>> params,
         long executionTime,
-        byte version) {
+        short version) {
 
         ClassObject classObject = invokedContract.object;
 
@@ -222,7 +221,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     }
 
     @Override
-    public GetContractMethodsResult getContractMethods(List<ByteCodeObject> compilationUnits, byte version) {
+    public GetContractMethodsResult getContractMethods(List<ByteCodeObject> compilationUnits, short version) {
         logger.debug("\n<-- getContractMethods(\nbytecode = {} bytes, \nversion = {})", compilationUnits.size(), version);
         validateVersion(version);
         GetContractMethodsResult result = new GetContractMethodsResult();
@@ -244,7 +243,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     public GetContractVariablesResult getContractVariables(
         List<ByteCodeObject> compilationUnits,
         ByteBuffer contractState,
-        byte version) {
+        short version) {
         logger.debug("\n<-- getContractVariables(\nbytecode = {} bytes, \ncontractState = {} bytes, \nversion = {})",
                      compilationUnits.size(), contractState.array().length, version);
         validateVersion(version);
@@ -264,7 +263,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
 
     @Override
-    public CompileSourceCodeResult compileSourceCode(String sourceCode, byte version) {
+    public CompileSourceCodeResult compileSourceCode(String sourceCode, short version) {
         logger.debug("\n<-- compileBytecode(sourceCode = {}, \nversion = {})", sourceCode, version);
         validateVersion(version);
         CompileSourceCodeResult result = new CompileSourceCodeResult();

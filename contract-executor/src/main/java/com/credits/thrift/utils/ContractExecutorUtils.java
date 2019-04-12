@@ -61,7 +61,7 @@ public class ContractExecutorUtils {
         return compiledClasses;
     }
 
-    public static void validateVersion(byte version) {
+    public static void validateVersion(short version) {
         if (version != APP_VERSION) {
             throw new ContractExecutorException(String.format("Invalid version %s, %s expected", version, APP_VERSION));
         }

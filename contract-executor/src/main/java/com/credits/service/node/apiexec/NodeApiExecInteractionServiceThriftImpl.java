@@ -57,4 +57,9 @@ public class NodeApiExecInteractionServiceThriftImpl implements NodeApiExecInter
     public int getWalletId(long accessId, String addressBase58) {
         return service.getWalletId(accessId, addressBase58);
     }
+
+    @Override
+    public BigDecimal getBalance(String addressBase58) {
+        return service.getBalance(addressBase58);
+    }
 }
