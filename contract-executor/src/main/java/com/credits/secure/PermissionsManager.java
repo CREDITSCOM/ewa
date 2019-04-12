@@ -3,6 +3,7 @@ package com.credits.secure;
 import java.lang.reflect.ReflectPermission;
 import java.security.AllPermission;
 import java.security.Permissions;
+import java.util.PropertyPermission;
 
 public class PermissionsManager {
     private final Permissions smartContractPermissions;
@@ -14,6 +15,7 @@ public class PermissionsManager {
         smartContractPermissions.add(new RuntimePermission("createClassLoader"));
         smartContractPermissions.add(new RuntimePermission("getProtectionDomain"));
         smartContractPermissions.add(new RuntimePermission("setContextClassLoader"));
+        smartContractPermissions.add(new PropertyPermission("sun.io.serialization.extendedDebugInfo","read"));
     }
 
     public void dropSmartContractRights(Class<?> contractClass) {
