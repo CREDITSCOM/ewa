@@ -2,6 +2,7 @@ package com.credits.service.contract;
 
 
 import com.credits.general.thrift.generated.Variant;
+import com.credits.general.thrift.generated.object;
 import com.credits.general.util.Base58;
 import com.credits.general.util.compiler.CompilationException;
 import com.credits.service.ServiceTest;
@@ -11,17 +12,21 @@ import org.junit.Before;
 import org.junit.Test;
 import pojo.ReturnValue;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
 import static com.credits.general.thrift.generated.Variant.v_int;
 import static com.credits.general.thrift.generated.Variant.v_string;
 import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
+import static org.apache.commons.lang3.SerializationUtils.deserialize;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 public class ContractExecutorTest extends ServiceTest {
 
@@ -91,6 +96,17 @@ public class ContractExecutorTest extends ServiceTest {
         Assert.assertTrue(contractVariables.containsKey("total"));
     }
 
+
+    @Test
+    public void get_balance_return_big_decimal() throws Exception {
+        when(mockNodeApiExecService.getBalance(anyString())).thenReturn(new BigDecimal("19.5"));
+
+        byte[] contractState = deploySmartContract().newContractState;
+        ReturnValue rvBalance = executeSmartContract("getBalanceTest", new Variant[][] {{v_string("qwerty")}}, contractState);
+        final object object = rvBalance.executeResults.get(0).result.getV_object();
+        BigDecimal bigDecimal = deserialize(object.getInstance());
+        Assert.assertEquals(new BigDecimal("19.5"), bigDecimal);
+    }
 
     @Test
     public void multipleMethodCall() throws Exception {

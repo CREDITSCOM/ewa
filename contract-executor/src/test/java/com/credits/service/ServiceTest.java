@@ -179,7 +179,7 @@ public abstract class ServiceTest {
     }
 
 
-    protected ReturnValue deploySmartContract() throws Exception {
+    protected ReturnValue deploySmartContract() {
         return ceService.deploySmartContract(new DeployContractSession(
             0,
             encodeToBASE58(initiatorAddress),

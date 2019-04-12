@@ -15,6 +15,7 @@ import service.executor.ContractExecutorService;
 import service.node.NodeApiExecInteractionService;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -100,6 +101,10 @@ public abstract class SmartContract implements Serializable {
 
     final protected byte[] getSeed() {
         return callService(() -> nodeApiService.getSeed(accessId));
+    }
+
+    final protected BigDecimal getBalance(String addressBase58) {
+        return callService(() -> nodeApiService.getBalance(addressBase58));
     }
 
     private <R> R callService(Function<R> method) {

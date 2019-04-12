@@ -27,6 +27,10 @@ public class MySmartContract extends SmartContract {
         System.out.println(java.lang.Integer.toString(amount) + " tokens were added to total");
     }
 
+    public BigDecimal getBalanceTest(String addressBase58) {
+        return super.getBalance(addressBase58);
+    }
+
     public void printTotal() {
         System.out.println("total = " + total);
     }
