@@ -126,7 +126,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 session.byteCodeObjectDataList,
                 session.contractState,
                 true));
-        usedContract.instance = instance;
+        usedContract.setInstance(instance);
         usedSmartContracts.put(session.contractAddress, usedContract);
 
         return session.paramsTable.length < 2
@@ -211,7 +211,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         Map<String, ExternalSmartContract> usedContracts,
         ByteCodeContractClassLoader classLoader) {
 
-        Object instance = usedContracts.get(session.contractAddress).instance;
+        Object instance = usedContracts.get(session.contractAddress).getInstance();
 
         if (instance == null) {
             final Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader).stream()
@@ -223,7 +223,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             initializeField("initiator", session.initiatorAddress, contractClass, instance);
             initializeField("accessId", session.accessId, contractClass, instance);
             initializeField("usedContracts", usedContracts, contractClass, instance);
-            usedContracts.get(session.contractAddress).instance = instance;
+            usedContracts.get(session.contractAddress).setInstance(instance);
         }
 
         return invokeSingleMethod(session, instance, classLoader, usedContracts);

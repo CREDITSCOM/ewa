@@ -125,7 +125,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                         if (!Arrays.equals(decodeFromBASE58(address), invokedContract.contractAddress.array())) {
                             newMap.put(
                                 ByteBuffer.wrap(decodeFromBASE58(address)),
-                                ByteBuffer.wrap(returnValue.externalSmartContracts.get(address).contractData.contractState));
+                                ByteBuffer.wrap(returnValue.externalSmartContracts.get(address).getContractData().getContractState()));
                         }
                         return newMap;
                     },

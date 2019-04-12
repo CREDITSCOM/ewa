@@ -74,8 +74,8 @@ public abstract class SmartContract implements Serializable {
                 accessId,
                 initiator,
                 contractAddress,
-                usedContract.contractData.byteCodeObjects,
-                usedContract.contractData.contractState,
+                usedContract.getContractData().getByteCodeObjects(),
+                usedContract.getContractData().getContractState(),
                 method,
                 variantParams,
                 MAX_VALUE),
@@ -88,12 +88,12 @@ public abstract class SmartContract implements Serializable {
                 returnStatus.message + ". Contract address: " + contractAddress + ". Method: " + method + ". Args: " + Arrays.toString(params));
         }
 
-        if (!usedContract.contractData.stateCanModify && !Arrays.equals(
-            usedContract.contractData.contractState,
+        if (!usedContract.getContractData().isStateCanModify() && !Arrays.equals(
+            usedContract.getContractData().getContractState(),
             returnValue.newContractState)) {
             throw new ContractExecutorException("smart contract \"" + contractAddress + "\" can't be modify");
         }
-        usedContract.contractData.contractState = returnValue.newContractState;
+        usedContract.getContractData().setContractState(returnValue.newContractState);
 
         Variant result = returnValue.executeResults.get(0).result;
         return result == null ? toVariant("", Void.TYPE) : VariantConverter.toObject(result);

@@ -46,7 +46,7 @@ public class ExternalMethodsCallTests extends ServiceTest {
         assertThat(returnValue.newContractState, equalTo(deployContractState));
         assertThat(
             returnValue.newContractState,
-            equalTo(returnValue.externalSmartContracts.get(calledSmartContractAddress).contractData.contractState));
+            equalTo(returnValue.externalSmartContracts.get(calledSmartContractAddress).getContractData().getContractState()));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ExternalMethodsCallTests extends ServiceTest {
         assertThat(returnValue.newContractState, equalTo(deployContractState));
         assertThat(
             returnValue.newContractState,
-            not(equalTo(returnValue.externalSmartContracts.get(calledSmartContractAddress).contractData.contractState)));
+            not(equalTo(returnValue.externalSmartContracts.get(calledSmartContractAddress).getContractData().getContractState())));
     }
 
     @Test
