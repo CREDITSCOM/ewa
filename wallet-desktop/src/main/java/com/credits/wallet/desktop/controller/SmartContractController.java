@@ -77,8 +77,9 @@ import static com.credits.client.node.thrift.generated.TransactionState.INPROGRE
 import static com.credits.client.node.thrift.generated.TransactionState.INVALID;
 import static com.credits.client.node.thrift.generated.TransactionState.VALID;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
-import static com.credits.general.thrift.generated.Variant._Fields.*;
+import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.general.util.GeneralConverter.createObjectFromString;
+import static com.credits.general.util.Utils.rethrowUnchecked;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
@@ -86,6 +87,7 @@ import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.getSmartsListFromField;
 import static java.util.Arrays.asList;
+import static org.apache.commons.io.FileUtils.deleteDirectory;
 
 /**
  * Created by goncharov-eg on 30.01.2018.
@@ -192,8 +194,16 @@ public class SmartContractController extends AbstractController {
         codeArea.setEditable(false);
         codeArea.copy();
         favoriteContracts = session.favoriteContractsKeeper.getKeptObject().orElseGet(HashMap::new);
-        favoriteContracts.forEach((key, value) -> value
-            .setContractClass(compileContractClass(value.getSmartContractDeployData().getByteCodeObjects())));
+        favoriteContracts.forEach((key, value) -> {
+            SmartContractClass contractClass;
+            try {
+                contractClass = compileContractClass(value.getSmartContractDeployData().getByteCodeObjects());
+            } catch (Throwable e) {
+                rethrowUnchecked(() -> deleteDirectory(session.favoriteContractsKeeper.getAccountDirectory().toFile()));
+                return;
+            }
+            value.setContractClass(contractClass);
+        });
         initializeTable(smartContractTableView);
         initializeTable(favoriteContractTableView);
         refreshFavoriteContractsTab();
@@ -684,7 +694,9 @@ public class SmartContractController extends AbstractController {
                 TransactionFlowResultData transactionFlowResultData = resultData.getRight();
                 Variant contractResult = transactionFlowResultData.getContractResult().orElseGet(() -> new Variant(V_STRING, "unknown result"));
                 String message = transactionFlowResultData.getMessage();
-                if(message.length() > 200) message = message.substring(0, 100) + "...";
+                if (message.length() > 200) {
+                    message = message.substring(0, 100) + "...";
+                }
 
                 if (!contractResult.isSetV_void()) {
                     Object resultObj = VariantConverter.toObject(contractResult);

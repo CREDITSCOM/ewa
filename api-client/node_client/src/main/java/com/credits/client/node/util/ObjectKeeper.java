@@ -66,7 +66,7 @@ public class ObjectKeeper<T extends Serializable> {
         return Paths.get(getAccountDirectory() + separator + objectFileName);
     }
 
-    private Path getAccountDirectory() {
+    public Path getAccountDirectory() {
         return Paths.get(cacheDirectory + separator + account);
     }
 
