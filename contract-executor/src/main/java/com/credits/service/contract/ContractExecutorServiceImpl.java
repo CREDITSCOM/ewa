@@ -282,7 +282,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             FutureTask<R> task = new FutureTask<>(block);
             limitedTimeThread = new Thread(task);
-            limitedTimeThread.setContextClassLoader(classLoader);
             initSmartContractConstants(limitedTimeThread.getId(), session);
             limitedTimeThread.start();
             return task.get(session.executionTime, MILLISECONDS);
