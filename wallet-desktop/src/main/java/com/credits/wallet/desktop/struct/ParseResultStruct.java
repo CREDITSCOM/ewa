@@ -15,13 +15,14 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ParseResultStruct {
 
 
-    public List<MethodDeclaration> methods=new ArrayList<>();
+    public List<MethodSimpleDeclaration> methods=new ArrayList<>();
     public List<FieldDeclaration> fields=new ArrayList<>();
-    public List<MethodDeclaration> constructors = new ArrayList<>();
+    public List<MethodSimpleDeclaration> constructors = new ArrayList<>();
     public List<String> interfaces = new ArrayList<>();
     public String superClass;
     public String currentClass;
@@ -137,7 +138,7 @@ public class ParseResultStruct {
         }
 
 
-        private static List<MethodDeclaration> getConstructors(TypeDeclaration typeNote) {
+        private static List<MethodSimpleDeclaration> getConstructors(TypeDeclaration typeNote) {
             List<MethodDeclaration> list = new ArrayList<>();
             MethodDeclaration[] notes = typeNote.getMethods();
             for (MethodDeclaration note : notes) {
@@ -147,11 +148,11 @@ public class ParseResultStruct {
                     list.add(note);
                 }
             }
-            return list;
+            return list.stream().map(MethodSimpleDeclaration::new).collect(Collectors.toList());
         }
 
 
-        private static List<MethodDeclaration> getMethods(TypeDeclaration typeNote) {
+        private static List<MethodSimpleDeclaration> getMethods(TypeDeclaration typeNote) {
             List<MethodDeclaration> list = new ArrayList<>();
             MethodDeclaration[] notes = typeNote.getMethods();
             for (MethodDeclaration note : notes) {
@@ -162,8 +163,10 @@ public class ParseResultStruct {
                 note.setBody(null);
                 note.setJavadoc(null);
                 list.add(note);
+
             }
-            return list;
+
+            return list.stream().map(MethodSimpleDeclaration::new).collect(Collectors.toList());
         }
 
     }

@@ -1,11 +1,12 @@
 package com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete;
 
+import com.credits.scapi.v0.SmartContract;
+import com.credits.wallet.desktop.struct.MethodSimpleDeclaration;
 import com.credits.wallet.desktop.struct.ParseResultStruct;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import java.util.ArrayList;
@@ -23,20 +24,20 @@ public class AutocompleteHelper {
 
     public static final List<String> TYPE_KEYWORDS =
         Arrays.asList("void", "String", "int", "Integer", "boolean", "Boolean", "byte", "Byte", "float", "long", "Long",
-            "Float", "double", "Double", "char", "Character", "short", "Short", "enum");
+                      "Float", "double", "Double", "char", "Character", "short", "Short", "enum");
 
     public static final List<String> LANGUAGE_KEYWORDS =
         Arrays.asList("public", "private", "if", "else", "this", "new", "for", "while", "break", "final", "static",
-            "return", "switch", "case", "super", "throws", "throw", "true", "false", "try", "catch", "class",
-            "implements", "extends", "protected", "abstract", "assert", "const", "interface", "continue", "default",
-            "do", "finally", "goto", "import", "instanceof", "native", "package", "strictfp", "synchronized",
-            "transient", "volatile");
+                      "return", "switch", "case", "super", "throws", "throw", "true", "false", "try", "catch", "class",
+                      "implements", "extends", "protected", "abstract", "assert", "const", "interface", "continue", "default",
+                      "do", "finally", "goto", "import", "instanceof", "native", "package", "strictfp", "synchronized",
+                      "transient", "volatile");
 
     public static final List<String> INTERFACES_KEYWORDS =
         Arrays.asList(BASIC_STANDARD_CLASS, EXTENSION_STANDARD_CLASS);
     private CreditsCodeArea codeArea;
 
-    private Map<MethodDeclaration, String> classMethods = new HashMap<>();
+    private Map<MethodSimpleDeclaration, String> classMethods = new HashMap<>();
     private Map<FieldDeclaration, String> classFields = new HashMap<>();
     private List<String> interfaces;
     String superClassName;
@@ -51,10 +52,12 @@ public class AutocompleteHelper {
     private void updateDynamicProposals() {
         ParseResultStruct build =
             new ParseResultStruct.Builder(codeArea.getText()).fields().superClassName().interfaces().methods().build();
-        superClassName = build.superClass;
+        superClassName = SmartContract.class.getName();
         interfaces = new ArrayList<>();
         interfaces.addAll(build.interfaces);
+        classMethods.clear();
         build.methods.forEach(method -> classMethods.put(method, method.toString()));
+        classFields.clear();
         build.fields.forEach(field -> classFields.put(field, field.toString()));
     }
 
@@ -87,8 +90,10 @@ public class AutocompleteHelper {
             if (!autoCompletedWord.isEmpty()) {
 
                 INTERFACES_KEYWORDS.forEach(curInterface -> {
-                    if (curInterface.toUpperCase().startsWith(autoCompletedWord)) {
-                        addProposal(curInterface, curInterface, this::handleAutoCompleteWord);
+                    final String[] partsName = curInterface.split("\\.");
+                    String interfaceName = partsName[partsName.length - 1];
+                    if (interfaceName.toUpperCase().startsWith(autoCompletedWord)) {
+                        addProposal(interfaceName, interfaceName, this::handleAutoCompleteWord);
                     }
                 });
 
@@ -133,9 +138,9 @@ public class AutocompleteHelper {
                 });
 
                 classMethods.forEach((method, v) -> {
-                    String methodName = method.getName().getIdentifier();
+                    String methodName = method.getMethodDeclaration().getName().getIdentifier();
                     if (methodName.toUpperCase().startsWith(autoCompletedWord)) {
-                        addProposal(method.getName().getIdentifier(), v, this::handleAutoCompleteMethod);
+                        addProposal(method.getMethodDeclaration().getName().getIdentifier(), v, this::handleAutoCompleteMethod);
                     }
                 });
 

@@ -1,7 +1,10 @@
 package com.credits.wallet.desktop.utils.sourcecode;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,15 +22,15 @@ public class JavaReflect {
             methodString.append(method.getReturnType().equals(Void.class) ? "void" : method.getReturnType().getSimpleName());
 
             methodString.append(" ")
-                    .append(method.getName())
-                    .append("(");
+                .append(method.getName())
+                .append("(");
 
             Parameter[] parameters = method.getParameters();
             for (int i = 0; i < parameters.length; i++) {
                 Parameter parameter = parameters[i];
                 methodString.append(parameter.getType().getSimpleName())
-                        .append(" ")
-                        .append(parameter.getName());
+                    .append(" ")
+                    .append(parameter.getName());
                 if (i < parameters.length - 1) {
                     methodString.append(", ");
                 }
@@ -37,7 +40,7 @@ public class JavaReflect {
 
             if (method.getExceptionTypes().length > 0) {
                 methodString.append(" throws ")
-                        .append(Arrays.stream(method.getExceptionTypes()).map(Class::getSimpleName).collect(Collectors.joining(", ")));
+                    .append(Arrays.stream(method.getExceptionTypes()).map(Class::getSimpleName).collect(Collectors.joining(", ")));
             }
             res.put(method, methodString.toString());
         }
@@ -47,7 +50,7 @@ public class JavaReflect {
     public static Map<Field, String> getDeclaredFields(Class clazz) {
         Map<Field, String> res = new HashMap<>();
 
-        Field[] fields = clazz.getDeclaredFields();
+        Field[] fields = FieldUtils.getAllFieldsList(clazz).stream().filter(f -> Modifier.isProtected(f.getModifiers())).toArray(Field[]::new);
         for (Field field : fields) {
 
             String fieldString = field.getType().getSimpleName() + " " + field.getName();

@@ -1,7 +1,7 @@
 package com.credits.wallet.desktop.utils.sourcecode;
 
+import com.credits.wallet.desktop.struct.MethodSimpleDeclaration;
 import com.credits.wallet.desktop.struct.ParseResultStruct;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -20,8 +20,8 @@ public class ParseCodeUtilsTest {
         ParseResultStruct build =
             new ParseResultStruct.Builder(sourceCode).fields().constructors().methods().build();
 
-        List<MethodDeclaration> methods = build.methods;
-        List<SingleVariableDeclaration> methodParams = methods.get(0).parameters();
+        List<MethodSimpleDeclaration> methods = build.methods;
+        List<SingleVariableDeclaration> methodParams = methods.get(0).getMethodDeclaration().parameters();
         methodParams.forEach(methodParam -> {
             LOGGER.info(build.currentClass);
         });

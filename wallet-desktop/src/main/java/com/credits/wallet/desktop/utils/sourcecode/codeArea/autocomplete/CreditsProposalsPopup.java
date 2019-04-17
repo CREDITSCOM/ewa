@@ -1,5 +1,7 @@
 package com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete;
 
+import com.credits.scapi.v0.BasicStandard;
+import com.credits.scapi.v0.ExtensionStandard;
 import com.credits.wallet.desktop.utils.sourcecode.JavaReflect;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
@@ -18,8 +20,8 @@ import java.util.Map;
 
 public class CreditsProposalsPopup extends Popup {
     public static final String DEFAULT_STANDARD_CLASS = "Default";
-    public static final String BASIC_STANDARD_CLASS = "BasicStandard";
-    public static final String EXTENSION_STANDARD_CLASS = "ExtensionStandard";
+    public static final String BASIC_STANDARD_CLASS = BasicStandard.class.getName();
+    public static final String EXTENSION_STANDARD_CLASS = ExtensionStandard.class.getName();
 
     private ListView<ProposalItem> listView = new ListView();
 
@@ -40,7 +42,8 @@ public class CreditsProposalsPopup extends Popup {
         super();
         this.setAutoHide(true);
         listView.setStyle("-fx-border-color: blue; -fx-background-insets: 1");
-        listView.setMaxHeight(110);
+        listView.setMinHeight(200);
+        listView.setMinWidth(700);
 
 
         this.focusedProperty().addListener((observable, old, newPropertyValue) -> {

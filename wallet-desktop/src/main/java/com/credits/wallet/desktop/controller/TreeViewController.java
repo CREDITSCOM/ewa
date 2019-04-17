@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.wallet.desktop.struct.MethodSimpleDeclaration;
 import com.credits.wallet.desktop.struct.ParseResultStruct;
 import com.credits.wallet.desktop.utils.sourcecode.ParseCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TreeViewController extends AbstractController {
 
@@ -46,8 +48,8 @@ public class TreeViewController extends AbstractController {
 
             List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
             bodyDeclarations.addAll(build.fields);
-            bodyDeclarations.addAll(build.constructors);
-            bodyDeclarations.addAll(build.methods);
+            bodyDeclarations.addAll(build.constructors.stream().map(MethodSimpleDeclaration::getMethodDeclaration).collect(Collectors.toList()));
+            bodyDeclarations.addAll(build.methods.stream().map(MethodSimpleDeclaration::getMethodDeclaration).collect(Collectors.toList()));
 
             //String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
 
@@ -64,19 +66,18 @@ public class TreeViewController extends AbstractController {
                                 isTest = true;
                                 break;
                             }
-                            ;
                         }
                     }
                     if (isTest) {
                         ImageView icon = new ImageView(new Image(getClass().getResourceAsStream("/img/play2.png")));
                         Button button = new Button();
-                        button.setMaxSize(20,20);
+                        button.setMaxSize(20, 20);
                         button.setCursor(Cursor.HAND);
                         button.setPickOnBounds(false);
                         button.setText(((MethodDeclaration) classMember).getName().toString());
                         button.setStyle("-fx-text-fill:transparent;-fx-background-color: transparent");
                         button.setOnMouseClicked(event -> {
-                            parentController.doTestMethod(((Button)event.getTarget()).getText());
+                            parentController.doTestMethod(((Button) event.getTarget()).getText());
                         });
                         button.setGraphic(icon);
                         treeItem = new TreeItem<>(classMember.toString(), button);
@@ -85,8 +86,10 @@ public class TreeViewController extends AbstractController {
                 if (treeItem == null) {
                     treeItem = new TreeItem<>(classMember.toString());
                 }
+                treeItem.setValue(treeItem.getValue().replaceAll("(@\\w*)|((^)? ?public )", ""));
                 treeRoot.getChildren().add(treeItem);
             });
+
 
             treeRoot.setExpanded(true);
             treeView.setRoot(treeRoot);
