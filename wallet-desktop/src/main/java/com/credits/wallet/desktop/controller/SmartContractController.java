@@ -110,7 +110,6 @@ public class SmartContractController extends AbstractController {
     private final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
     private final List<SmartContractTransactionTabRow> unapprovedList = new ArrayList<>();
     private final List<SmartContractTransactionTabRow> approvedList = new ArrayList<>();
-    private final ByteCodeContractClassLoader contractClassLoader = new ByteCodeContractClassLoader();
     private CompiledSmartContract selectedContract;
 
     @FXML
@@ -174,7 +173,7 @@ public class SmartContractController extends AbstractController {
         return new Callback<SmartContractData>() {
             @Override
             public void onSuccess(SmartContractData contractData) throws CreditsException {
-                refreshFormState(compileSmartContract(contractData));
+                refreshSmartContractForm(compileSmartContract(contractData));
             }
 
             @Override
@@ -204,12 +203,12 @@ public class SmartContractController extends AbstractController {
             }
             value.setContractClass(contractClass);
         });
-        initializeTable(smartContractTableView);
-        initializeTable(favoriteContractTableView);
+        initializeContractsTable(smartContractTableView);
+        initializeContractsTable(favoriteContractTableView);
         refreshFavoriteContractsTab();
         FormUtils.initFeeField(feeField, actualOfferedMaxFeeLabel);
-        initTable(approvedTableView);
-        initTable(unapprovedTableView);
+        initTransactionHistoryTable(approvedTableView);
+        initTransactionHistoryTable(unapprovedTableView);
 
         if (objects != null) {
             selectedContract = (CompiledSmartContract) objects.get(SELECTED_CONTRACT_KEY);
@@ -371,7 +370,7 @@ public class SmartContractController extends AbstractController {
         };
     }
 
-    private void initTable(TableView<SmartContractTransactionTabRow> tableView) {
+    private void initTransactionHistoryTable(TableView<SmartContractTransactionTabRow> tableView) {
         tableView.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("blockId"));
         tableView.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("source"));
         tableView.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("target"));
@@ -406,7 +405,7 @@ public class SmartContractController extends AbstractController {
         }
     }
 
-    private void initializeTable(TableView<SmartContractTabRow> tableView) {
+    private void initializeContractsTable(TableView<SmartContractTabRow> tableView) {
         initializeRowFactory(tableView);
         initializeColumns(tableView);
     }
@@ -436,7 +435,7 @@ public class SmartContractController extends AbstractController {
     private EventHandler<MouseEvent> getMouseEventRowHandler(TableRow<SmartContractTabRow> row) {
         return event -> {
             if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                refreshFormState(row.getItem().getCompiledSmartContract());
+                refreshSmartContractForm(row.getItem().getCompiledSmartContract());
             }
         };
     }
@@ -495,7 +494,7 @@ public class SmartContractController extends AbstractController {
         Class<?> contractClass = null;
         List<Class<?>> innerContractClasses = new ArrayList<>();
         for (ByteCodeObjectData byteCodeObject : byteCodeObjects) {
-            Class<?> clazz = contractClassLoader.loadClass(byteCodeObject.getName(), byteCodeObject.getByteCode());
+            Class<?> clazz = new ByteCodeContractClassLoader().loadClass(byteCodeObject.getName(), byteCodeObject.getByteCode());
             if (clazz.getName().contains("$")) {
                 innerContractClasses.add(clazz);
             } else {
@@ -515,7 +514,7 @@ public class SmartContractController extends AbstractController {
         "wait",
         "finalize"));
 
-    private void refreshFormState(CompiledSmartContract compiledSmartContract) {
+    private void refreshSmartContractForm(CompiledSmartContract compiledSmartContract) {
         if (compiledSmartContract == null || compiledSmartContract.getSmartContractDeployData().getByteCodeObjects().size() == 0 ||
             compiledSmartContract.getAddress().length == 0) {
             tbFavorite.setVisible(false);
@@ -584,7 +583,7 @@ public class SmartContractController extends AbstractController {
                             if (smartContractTabRow.getCompiledSmartContract().equals(selectedContract)) {
                                 smartContractTableView.requestFocus();
                                 smartContractTableView.getSelectionModel().select(smartContractTabRow);
-                                refreshFormState(selectedContract);
+                                refreshSmartContractForm(selectedContract);
                             }
                         });
                     }
