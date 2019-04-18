@@ -54,7 +54,7 @@ public class UtilsTest {
     @Ignore
     public void createActualOfferedMaxFeeTest() {
         double value = 0.0000000000001023D;
-        Pair<Double, Short> actualOfferedMaxFeePair = Utils.createActualOfferedMaxFee(value);
+        Pair<Double, Short> actualOfferedMaxFeePair = Utils.calculateActualFee(value);
         LOGGER.info(actualOfferedMaxFeePair.getLeft() + "");
         LOGGER.info(actualOfferedMaxFeePair.getRight() + "");
     }
