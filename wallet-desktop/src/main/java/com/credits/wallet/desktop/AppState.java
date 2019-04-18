@@ -29,6 +29,5 @@ public class AppState {
 
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
-
-
+    public static String pwd;
 }

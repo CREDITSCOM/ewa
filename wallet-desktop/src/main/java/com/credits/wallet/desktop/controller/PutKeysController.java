@@ -4,10 +4,11 @@ import com.credits.client.node.crypto.Ed25519;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.util.GeneralConverter;
 import com.credits.wallet.desktop.AppState;
-import com.credits.wallet.desktop.Session;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.credits.wallet.desktop.utils.FormUtils;
+import com.credits.wallet.desktop.utils.crypto.sodium.SodiumLibrary;
+import com.credits.wallet.desktop.utils.crypto.sodium.SodiumLibraryException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import javafx.fxml.FXML;
@@ -18,12 +19,9 @@ import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.credits.wallet.desktop.AppState.privateKey;
@@ -37,6 +35,11 @@ public class PutKeysController extends AbstractController {
 
     private static final String ERROR_EMPTY_PUBLIC = "Public key is empty";
     private static final String ERROR_EMPTY_PRIVATE = "Private key is empty";
+
+    static final String NONCE_KEY = "nonce";
+    static final String SALT_KEY = "salt";
+    static final String ENCRYPTED_PRIVKEY_KEY = "encryptedPrivKey";
+    static final String PUBKEY_KEY = "pubKey";
 
     @FXML
     private Button btnBack;
@@ -76,16 +79,34 @@ public class PutKeysController extends AbstractController {
         File file = fileChooser.showSaveDialog(null);
 
         if (file != null) {
+            SodiumLibrary.initSodium();
+            byte[] salt = SodiumLibrary.randomBytes(SodiumLibrary.cryptoPwhashSaltBytes());
+
+            // create salt for derive key from pass phrase
+            byte[] key = new byte[0];
+            try {
+                key = SodiumLibrary.cryptoPwhashArgon2i(AppState.pwd.getBytes("UTF8"), salt);
+            } catch (SodiumLibraryException | UnsupportedEncodingException e) {
+                FormUtils.showError(e.getMessage());
+            }
+            // create nonce for encrypting private key
+            byte[] nonce = SodiumLibrary.randomBytes(SodiumLibrary.cryptoSecretBoxNonceBytes().intValue());
+
             PrintWriter writer;
             try {
+                // encrypt the private key with nonce and key
+                byte[] encryptedPrivateKey = SodiumLibrary.cryptoSecretBoxEasy(Ed25519.privateKeyToBytes(privateKey), nonce, key);
+
                 writer = new PrintWriter(file.getAbsolutePath(), "UTF-8");
-                String json = String.format("{\"key\":{\"public\":\"%s\",\"private\":\"%s\"}}",
-                    GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)),
-                    GeneralConverter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
+                String json = String.format("{\"key\":{\"public\":\"%s\",\"private\":\"%s\", \"nonce\":\"%s\",\"salt\":\"%s\"}}",
+                        GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)),
+                        GeneralConverter.encodeToBASE58(encryptedPrivateKey),
+                        GeneralConverter.encodeToBASE58(nonce),
+                        GeneralConverter.encodeToBASE58(salt));
                 writer.println(json);
                 writer.close();
                 FormUtils.showInfo(String.format("Keys successfully saved in %n%n%s", file.getAbsolutePath()));
-            } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            } catch (FileNotFoundException | UnsupportedEncodingException | SodiumLibraryException e) {
                 throw new WalletDesktopException(e);
             }
         }
@@ -116,7 +137,21 @@ public class PutKeysController extends AbstractController {
             String pubKey = key.get("public").getAsString();
             String privKey = key.get("private").getAsString();
 
-            open(pubKey, privKey);
+            byte[] privKeyBytes = GeneralConverter.decodeFromBASE58(privKey);
+
+            if (privKeyBytes.length != 64) {
+                String nonce = key.get("nonce").getAsString();
+                String salt = key.get("salt").getAsString();
+
+                Map<String, Object> params = new HashMap<>();
+                params.put(PutKeysController.NONCE_KEY, nonce);
+                params.put(PutKeysController.SALT_KEY, salt);
+                params.put(PutKeysController.ENCRYPTED_PRIVKEY_KEY, privKey);
+                params.put(PutKeysController.PUBKEY_KEY, pubKey);
+                VistaNavigator.loadVista(VistaNavigator.CHECK_PRIVKEY_PWD, params);
+            } else {
+                open(pubKey, privKey);
+            }
         }
     }
 
@@ -197,14 +232,6 @@ public class PutKeysController extends AbstractController {
         }
     }
 
-    private void setSession(String pubKey) {
-        if(AppState.sessionMap.get(pubKey)!=null) {
-             this.session = AppState.sessionMap.get(pubKey);
-        } else {
-            this.session = new Session(pubKey);
-        }
-    }
-
     private boolean validateKeys(String publicKey, String privateKey) {
         byte[] publicKeyByteArr;
         byte[] privateKeyByteArr;
@@ -225,7 +252,6 @@ public class PutKeysController extends AbstractController {
                 return false;
             }
         }
-
         return true;
     }
 
