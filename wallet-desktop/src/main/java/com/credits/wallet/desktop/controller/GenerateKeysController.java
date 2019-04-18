@@ -34,7 +34,7 @@ public class GenerateKeysController extends AbstractController {
         KeyPair keyPair = Ed25519.generateKeyPair();
         AppState.publicKey = keyPair.getPublic();
         AppState.privateKey = keyPair.getPrivate();
-
+        AppState.pwd = txPassword.getText();
         VistaNavigator.loadVista(VistaNavigator.FORM_4);
     }
 
