@@ -73,6 +73,7 @@ public class WalletApp extends Application {
             Platform.exit();
             System.exit(0);
         });
+        AppState.primaryStage = stage;
         stage.show();
     }
 

@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop;
 
 import com.credits.client.node.service.NodeApiService;
+import javafx.stage.Stage;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -30,4 +31,6 @@ public class AppState {
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
     public static String pwd;
+
+    public static Stage primaryStage;
 }

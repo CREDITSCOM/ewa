@@ -1,6 +1,5 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,11 +35,6 @@ public class TransactionController extends AbstractController{
     private TextField labMethod;
     @FXML
     private ListView listParams;
-
-    @FXML
-    private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.HISTORY);
-    }
 
     @Override
     public void initializeForm(Map<String, Object> objects) {

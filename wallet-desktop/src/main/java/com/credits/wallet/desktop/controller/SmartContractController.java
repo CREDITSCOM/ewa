@@ -1,18 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.CompiledSmartContract;
-import com.credits.client.node.pojo.SmartContractClass;
-import com.credits.client.node.pojo.SmartContractData;
-import com.credits.client.node.pojo.SmartContractTransactionData;
-import com.credits.client.node.pojo.SmartDeployTransInfoData;
-import com.credits.client.node.pojo.SmartExecutionTransInfoData;
-import com.credits.client.node.pojo.SmartOperationStateData;
-import com.credits.client.node.pojo.SmartStateTransInfoData;
-import com.credits.client.node.pojo.SmartTransInfoData;
-import com.credits.client.node.pojo.TransactionFlowResultData;
-import com.credits.client.node.pojo.TransactionStateData;
-import com.credits.client.node.pojo.TransactionsStateGetResultData;
+import com.credits.client.node.pojo.*;
 import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
@@ -36,15 +25,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -60,22 +41,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
-import static com.credits.client.node.thrift.generated.TransactionState.INPROGRESS;
-import static com.credits.client.node.thrift.generated.TransactionState.INVALID;
-import static com.credits.client.node.thrift.generated.TransactionState.VALID;
+import static com.credits.client.node.thrift.generated.TransactionState.*;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.general.util.GeneralConverter.createObjectFromString;
@@ -96,10 +69,6 @@ public class SmartContractController extends AbstractController {
 
     private static final String ERR_FEE = "Fee must be greater than 0";
     private static Logger LOGGER = LoggerFactory.getLogger(SmartContractController.class);
-    public static final String SELECTED_CONTRACT_KEY = "selectedContract";
-    public static final String SELECTED_CONTRACTS_TAB_KEY = "selectedContractsTab";
-    public static final String SELECTED_CONTRACTS_TAB_MY_SMART_CONTRACTS = "my-contracts";
-    public static final String SELECTED_CONTRACTS_TAB_FAVORITES_CONTRACTS = "favorites-contracts";
 
     private CodeArea codeArea;
     private Method currentMethod;
@@ -148,8 +117,6 @@ public class SmartContractController extends AbstractController {
     private TableView<SmartContractTransactionTabRow> approvedTableView;
     @FXML
     private TableView<SmartContractTransactionTabRow> unapprovedTableView;
-    @FXML
-    private TabPane contractsTabPane;
 
 
     @FXML
@@ -209,14 +176,6 @@ public class SmartContractController extends AbstractController {
         FormUtils.initFeeField(feeField, actualOfferedMaxFeeLabel);
         initTransactionHistoryTable(approvedTableView);
         initTransactionHistoryTable(unapprovedTableView);
-
-        if (objects != null) {
-            selectedContract = (CompiledSmartContract) objects.get(SELECTED_CONTRACT_KEY);
-            String selectedContractsTab = (String) objects.get(SELECTED_CONTRACTS_TAB_KEY);
-            if (selectedContractsTab.equals(SELECTED_CONTRACTS_TAB_MY_SMART_CONTRACTS)) {
-                contractsTabPane.getSelectionModel().select(1);
-            }
-        }
     }
 
     private HashMap<String, List<SmartContractTransactionData>> getKeptContractsTransactions() {
@@ -383,14 +342,7 @@ public class SmartContractController extends AbstractController {
                 if (tabRow != null) {
                     HashMap<String, Object> params = new HashMap<>();
                     params.put("selectedTransactionRow", tabRow);
-                    params.put(SELECTED_CONTRACT_KEY, selectedContract);
-                    if (contractsTabPane.getSelectionModel().isSelected(0)) {
-                        params.put(SELECTED_CONTRACTS_TAB_KEY, SELECTED_CONTRACTS_TAB_FAVORITES_CONTRACTS);
-                    } else if (contractsTabPane.getSelectionModel().isSelected(1)) {
-                        params.put(SELECTED_CONTRACTS_TAB_KEY, SELECTED_CONTRACTS_TAB_MY_SMART_CONTRACTS);
-                    }
-
-                    VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT_TRANSACTION, params);
+                    VistaNavigator.showFormModal(VistaNavigator.SMART_CONTRACT_TRANSACTION, params);
                 }
             }
         });

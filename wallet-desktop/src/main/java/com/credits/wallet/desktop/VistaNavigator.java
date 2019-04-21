@@ -6,8 +6,12 @@ import com.credits.wallet.desktop.controller.HeaderController;
 import com.credits.wallet.desktop.controller.MainController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +62,31 @@ public class VistaNavigator {
         changeVista(fxml, params);
     }
 
+    public static void showFormModal(String fxml, Map<String, Object> params) {
+
+        FXMLLoader loader = new FXMLLoader(VistaNavigator.class.getResource(fxml));
+        Scene scene;
+        try {
+            scene = new Scene(loader.load());
+        } catch (IOException ex) {
+            // TODO: handle error
+            return;
+        }
+        scene.getStylesheets().setAll(WalletApp.class.getResource("/styles.css").toExternalForm());
+        AbstractController controller = loader.getController();
+        controller.initializeForm(params);
+        Stage stage = new Stage();
+        stage.initOwner(AppState.primaryStage);
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.getIcons().add(new Image(WalletApp.class.getResourceAsStream("/img/icon.png")));
+        stage.setTitle("Credits");
+        stage.setOnCloseRequest(event -> {
+            controller.formDeinitialize();
+        });
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
     public static void loadVista(String fxml) {
         changeVista(fxml, null);
     }
@@ -69,7 +98,6 @@ public class VistaNavigator {
         headerController = headerLoader.getController();
         VistaNavigator.loadVista(form, null);
     }
-
 
     private static void changeVista(String fxml, Map<String, Object> params) {
         try {
