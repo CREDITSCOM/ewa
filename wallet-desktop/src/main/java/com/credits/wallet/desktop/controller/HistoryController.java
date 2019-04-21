@@ -70,7 +70,7 @@ public class HistoryController extends AbstractController {
                 if (tabRow != null) {
                     HashMap<String, Object> params = new HashMap<>();
                     params.put("selectedTransactionRow",tabRow);
-                    VistaNavigator.loadVista(VistaNavigator.TRANSACTION, params);
+                    VistaNavigator.showFormModal(VistaNavigator.TRANSACTION, params);
                 }
             }
         });

@@ -3,7 +3,6 @@ package com.credits.wallet.desktop.controller;
 import com.credits.client.node.pojo.*;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.variant.VariantConverter;
-import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.SmartContractTransactionTabRow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,7 +11,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class SmartContractTransactionController extends AbstractController{
@@ -43,18 +41,8 @@ public class SmartContractTransactionController extends AbstractController{
     @FXML
     private ListView listSmartInfo;
 
-    @FXML
-    private void handleBack() {
-        Map<String, Object> params = new HashMap<>();
-        params.put(SmartContractController.SELECTED_CONTRACT_KEY, selectedContract);
-        params.put(SmartContractController.SELECTED_CONTRACTS_TAB_KEY, selectedContractsTab);
-        VistaNavigator.loadVista(VistaNavigator.SMART_CONTRACT, params);
-    }
-
     @Override
     public void initializeForm(Map<String, Object> objects) {
-        selectedContract = (SmartContractData)objects.get(SmartContractController.SELECTED_CONTRACT_KEY);
-        selectedContractsTab = (String)objects.get(SmartContractController.SELECTED_CONTRACTS_TAB_KEY);
         SmartContractTransactionTabRow selectedTransactionRow = (SmartContractTransactionTabRow) objects.get("selectedTransactionRow");
 
         labInnerId.setText(selectedTransactionRow.getBlockId());
@@ -96,7 +84,6 @@ public class SmartContractTransactionController extends AbstractController{
         }
         int value = items.size() * ROW_HEIGHT + 2 > MAX_HEIGHT ? MAX_HEIGHT : items.size() * ROW_HEIGHT + 2;
         listContainer.setPrefHeight(value);
-
     }
 
     @Override
