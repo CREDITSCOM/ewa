@@ -6,6 +6,8 @@ import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.model.CompilationPackage;
+import com.credits.scapi.v0.BasicStandard;
+import com.credits.scapi.v0.ExtensionStandard;
 import com.credits.wallet.desktop.struct.DeploySmartListItem;
 import com.credits.wallet.desktop.utils.DeployControllerUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -59,9 +61,7 @@ import static com.credits.wallet.desktop.utils.DeployControllerUtils.getContract
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.initErrorTableView;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.initSplitPane;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.initTabCodeArea;
-import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.BASIC_STANDARD_CLASS;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.DEFAULT_STANDARD_CLASS;
-import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.EXTENSION_STANDARD_CLASS;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class DeployTabController extends AbstractController {
@@ -187,8 +187,8 @@ public class DeployTabController extends AbstractController {
         ObservableList<String> items = cbContractType.getItems();
         items.clear();
         items.add(DEFAULT_STANDARD_CLASS);
-        items.add(BASIC_STANDARD_CLASS);
-        items.add(EXTENSION_STANDARD_CLASS);
+        items.add(BasicStandard.class.getSimpleName());
+        items.add(ExtensionStandard.class.getSimpleName());
         cbContractType.getSelectionModel().select(0);
         tabPane.getTabs().remove(newSmartTab);
     }

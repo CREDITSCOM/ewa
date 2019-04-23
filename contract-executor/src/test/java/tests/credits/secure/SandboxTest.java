@@ -1,5 +1,6 @@
-package com.credits.secure;
+package tests.credits.secure;
 
+import com.credits.secure.Sandbox;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.Ignore;
 import org.junit.Test;

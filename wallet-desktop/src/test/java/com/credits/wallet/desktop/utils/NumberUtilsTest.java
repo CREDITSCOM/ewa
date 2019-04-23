@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.wallet.desktop.AppState;
-import javafx.embed.swing.JFXPanel;
 import javafx.scene.control.TextField;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -22,7 +21,6 @@ public class NumberUtilsTest {
     @Before
     public void setUp() {
         try {
-            new JFXPanel();
         } catch (Exception e) {
             Assume.assumeNoException("Unable to open DISPLAY", e);
         }

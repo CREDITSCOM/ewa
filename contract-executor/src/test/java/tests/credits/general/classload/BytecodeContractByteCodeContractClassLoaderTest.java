@@ -1,5 +1,6 @@
-package com.credits.general.classload;
+package tests.credits.general.classload;
 
+import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.general.util.compiler.CompilationException;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationUnit;

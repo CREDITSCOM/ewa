@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.BitSet;
 
 import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
@@ -80,7 +81,7 @@ public class GeneralConverterTest {
         String doubleString = "1" + DECIMAL_SEPARATOR + "1111111111111111";
         long longValue = GeneralConverter.toBigDecimal(longString).longValue();
         int integerValue = GeneralConverter.toBigDecimal(intString).intValue();
-        double doubleValue = GeneralConverter.toBigDecimal(doubleString).setScale(13, BigDecimal.ROUND_DOWN).doubleValue();
+        double doubleValue = GeneralConverter.toBigDecimal(doubleString).setScale(13, RoundingMode.DOWN).doubleValue();
         Assert.assertEquals(111111111111111111L, (Object) longValue);
         Assert.assertEquals(1111111111, (Object) integerValue);
         Assert.assertEquals(1.1111111111111, (Object) doubleValue);

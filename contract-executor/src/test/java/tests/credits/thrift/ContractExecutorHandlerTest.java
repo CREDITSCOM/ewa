@@ -1,4 +1,4 @@
-package com.credits.thrift;
+package tests.credits.thrift;
 
 import com.credits.client.executor.thrift.generated.CompileSourceCodeResult;
 import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
@@ -10,14 +10,14 @@ import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.CompilationException;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.secure.PermissionsManager;
-import com.credits.service.DaggerTestComponent;
-import com.credits.service.contract.ContractExecutorServiceImpl;
+import com.credits.thrift.ContractExecutorHandler;
 import org.apache.thrift.TException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import service.node.NodeApiExecInteractionService;
+import tests.credits.service.DaggerTestComponent;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static com.credits.TestUtils.readSourceCode;
 import static com.credits.general.thrift.generated.Variant._Fields.V_BYTE;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.compiler.InMemoryCompiler.compileSourceCode;
@@ -37,6 +36,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static tests.credits.TestUtils.readSourceCode;
 
 @Ignore("unable access to FS")
 public class ContractExecutorHandlerTest {
@@ -70,8 +70,9 @@ public class ContractExecutorHandlerTest {
     public void setUp(){
         DaggerTestComponent.builder().build().inject(this);
         mockApiExecInteractionService = mock(NodeApiExecInteractionService.class);
-        contractExecutorHandler = new ContractExecutorHandler();
-        contractExecutorHandler.service = new ContractExecutorServiceImpl(mockApiExecInteractionService, permissionsManager);
+        //todo fix it
+//        contractExecutorHandler = new ContractExecutorHandler();
+//        contractExecutorHandler.service = new ContractExecutorServiceImpl(mockApiExecInteractionService, permissionsManager);
     }
 
     @Test

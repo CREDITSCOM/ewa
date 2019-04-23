@@ -5,15 +5,16 @@ package com.credits.wallet.desktop.utils.sourcecode.building;
  */
 public class BuildSourceCodeError {
 
+    private String className;
+    private String text;
+    private Integer line;
+
     public BuildSourceCodeError(String className, Integer line, String text) {
         this.className = className;
         this.text = text;
         this.line = line;
     }
 
-    private String className;
-    private String text;
-    private Integer line;
     public Integer getLine() {
         return line;
     }

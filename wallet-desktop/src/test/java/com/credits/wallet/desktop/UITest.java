@@ -8,7 +8,6 @@ import com.credits.wallet.desktop.controller.WelcomeController;
 import com.credits.wallet.desktop.service.ContractInteractionService;
 import com.credits.wallet.desktop.testUtils.FakeData;
 import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -25,7 +24,9 @@ import java.util.Properties;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Igor Goryunov on 29.09.2018
@@ -144,7 +145,6 @@ public class UITest {
     }
 
     private void runApp() throws InterruptedException {
-        new JFXPanel();
         Platform.runLater(() -> {
             try {
                 mockWalletApp.start(new Stage());

@@ -1,10 +1,10 @@
-package com.credits.service.contract;
+package tests.credits.service.contract;
 
 import com.credits.general.pojo.AnnotationData;
 import com.credits.general.pojo.MethodArgumentData;
 import com.credits.general.pojo.MethodDescriptionData;
-import com.credits.service.ServiceTest;
 import org.junit.Test;
+import tests.credits.service.ServiceTest;
 
 import java.util.ArrayList;
 import java.util.HashMap;

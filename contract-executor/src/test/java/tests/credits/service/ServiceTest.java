@@ -1,4 +1,4 @@
-package com.credits.service;
+package tests.credits.service;
 
 import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.general.pojo.ApiResponseData;

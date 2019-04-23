@@ -1,16 +1,17 @@
-package com.credits.thrift.utils;
+package tests.credits.thrift.utils;
 
 import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationUnit;
-import com.credits.service.ServiceTest;
+import com.credits.thrift.utils.ContractExecutorUtils;
 import exception.ContractExecutorException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pojo.SmartContractConstants;
 import pojo.session.DeployContractSession;
+import tests.credits.service.ServiceTest;
 
 import java.util.ArrayList;
 import java.util.List;

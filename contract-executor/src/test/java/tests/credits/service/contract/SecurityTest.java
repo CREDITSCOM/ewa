@@ -1,13 +1,13 @@
-package com.credits.service.contract;
+package tests.credits.service.contract;
 
 import com.credits.general.thrift.generated.Variant;
-import com.credits.service.ServiceTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tests.credits.service.ServiceTest;
 
 import java.util.Arrays;
 import java.util.Collection;

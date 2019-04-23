@@ -3,8 +3,6 @@ package com.credits.general.util.variant;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.thrift.generated.object;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,11 +46,11 @@ public class VariantConverter {
     public static final Byte NULL_TYPE_VALUE = 0;
     public static final Byte VOID_TYPE_VALUE = 0;
 
-    public static Variant toVariant(@Nonnull String classType, @Nullable Object object) {
+    public static Variant toVariant(String classType,  Object object) {
         return new ObjectToVariantConverter().apply(requireNonNull(classType, "classType can't be null"), object);
     }
 
-    public static Object toObject(@Nonnull Variant variant, ClassLoader... classLoader) {
+    public static Object toObject(Variant variant, ClassLoader... classLoader) {
         return new VariantToObjectConverter().apply(requireNonNull(variant, "variant can't be null"), classLoader);
     }
 

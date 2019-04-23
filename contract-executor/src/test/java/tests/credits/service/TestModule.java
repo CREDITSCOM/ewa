@@ -1,4 +1,4 @@
-package com.credits.service;
+package tests.credits.service;
 
 import com.credits.secure.PermissionsManager;
 import com.credits.secure.Sandbox;

@@ -1,4 +1,4 @@
-package com.credits;
+package tests.credits;
 
 import com.credits.general.exception.CreditsException;
 

@@ -5,7 +5,6 @@ import com.credits.client.node.service.NodeApiServiceImpl;
 import com.credits.client.node.service.NodeThriftApiClient;
 import com.credits.client.node.util.ObjectKeeper;
 import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -84,7 +83,7 @@ public class SaveNodeApiQueriesTest {
     }
 
     private void runApp() throws InterruptedException {
-        new JFXPanel();
+//        new JFXPanel();
         Platform.runLater(() -> {
             try {
                 walletApp.start(new Stage());

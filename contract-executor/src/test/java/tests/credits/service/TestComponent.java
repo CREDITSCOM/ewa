@@ -1,7 +1,7 @@
-package com.credits.service;
+package tests.credits.service;
 
-import com.credits.thrift.ContractExecutorHandlerTest;
 import dagger.Component;
+import tests.credits.thrift.ContractExecutorHandlerTest;
 
 import javax.inject.Singleton;
 

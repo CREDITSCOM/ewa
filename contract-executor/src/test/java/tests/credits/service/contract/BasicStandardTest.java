@@ -1,10 +1,10 @@
-package com.credits.service.contract;
+package tests.credits.service.contract;
 
 
-import com.credits.service.ServiceTest;
 import exception.ContractExecutorException;
 import org.junit.Before;
 import org.junit.Test;
+import tests.credits.service.ServiceTest;
 
 import static com.credits.utils.Constants.TOKEN_NAME_RESERVED_ERROR;
 

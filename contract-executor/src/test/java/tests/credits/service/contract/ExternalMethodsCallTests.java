@@ -1,10 +1,10 @@
-package com.credits.service.contract;
+package tests.credits.service.contract;
 
-import com.credits.service.ServiceTest;
 import org.junit.Before;
 import org.junit.Test;
 import pojo.ReturnValue;
 import pojo.SmartContractMethodResult;
+import tests.credits.service.ServiceTest;
 
 import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
 import static org.hamcrest.MatcherAssert.assertThat;

@@ -8,7 +8,6 @@ import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.Callback;
-import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.wallet.desktop.struct.TokenInfoData;
 import com.credits.wallet.desktop.utils.ApiUtils;
@@ -16,7 +15,6 @@ import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.sourcecode.SourceCodeUtils;
 import com.credits.wallet.desktop.utils.sourcecode.building.BuildSourceCodeError;
 import com.credits.wallet.desktop.utils.sourcecode.building.CompilationResult;
-import com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.CreditsCodeArea;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -41,8 +39,10 @@ import java.util.Map;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getCalcTransactionIdSourceTargetResult;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getIdWithoutFirstTwoBits;
+import static com.credits.general.util.GeneralConverter.compilationPackageToByteCodeObjects;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
+import static com.credits.general.util.GeneralConverter.toBigDecimal;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
@@ -54,6 +54,7 @@ import static com.credits.wallet.desktop.utils.DeployControllerUtils.getTokenSta
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.getSmartsListFromField;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.saveSmartInTokenList;
+import static com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder.compileSmartSourceCode;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
@@ -93,8 +94,8 @@ public class SmartContractDeployController extends AbstractController {
         errorTableView.setVisible(false);
         codeArea.setDisable(true);
         setFocusOnFeeField();
-        supplyAsync(() -> SourceCodeBuilder.compileSmartSourceCode(codeArea.getText())).whenComplete(
-            handleCallback(handleBuildResult(codeArea, errorTableView, bottomPane, bottomTabPane, bottomErrorTab)));
+        supplyAsync(() -> compileSmartSourceCode(codeArea.getText()))
+            .whenComplete(handleCallback(handleBuildResult(codeArea, errorTableView, bottomPane, bottomTabPane, bottomErrorTab)));
     }
 
     public void setFocusOnFeeField() {
@@ -157,7 +158,7 @@ public class SmartContractDeployController extends AbstractController {
     public void handleDeploy() {
         clearLabErr();
         String transactionFee = deployTabController.feeField.getText();
-        if (GeneralConverter.toBigDecimal(transactionFee).compareTo(BigDecimal.ZERO) <= 0) {
+        if (toBigDecimal(transactionFee).compareTo(BigDecimal.ZERO) <= 0) {
             FormUtils.setErrorStyle(deployTabController.feeField);
             setFocusOnFeeField();
             return;
@@ -170,34 +171,32 @@ public class SmartContractDeployController extends AbstractController {
                 deployTabController.smartDeployButton.setDisable(true);
                 throw new CreditsException("Source code is not compiled");
             } else {
-                if (compilationPackage.isCompilationStatusSuccess()) {
-                    List<ByteCodeObjectData> byteCodeObjectDataList =
-                        GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
+                List<ByteCodeObjectData> byteCodeObjectDataList = compilationPackageToByteCodeObjects(compilationPackage);
 
-                    Class<?> contractClass = compileSmartContractByteCode(byteCodeObjectDataList);
-                    TokenStandartData tokenStandartData = getTokenStandard(contractClass);
+                Class<?> contractClass = compileSmartContractByteCode(byteCodeObjectDataList);
+                TokenStandartData tokenStandartData = getTokenStandard(contractClass);
 
-                    SmartContractDeployData smartContractDeployData =
-                        new SmartContractDeployData(javaCode, byteCodeObjectDataList, tokenStandartData);
+                SmartContractDeployData smartContractDeployData =
+                    new SmartContractDeployData(javaCode, byteCodeObjectDataList, tokenStandartData);
 
-                    long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, session.account, true);
+                long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, session.account, true);
 
-                    SmartContractData smartContractData = new SmartContractData(
-                        generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits,
-                                                     byteCodeObjectDataList), decodeFromBASE58(session.account), smartContractDeployData, null);
+                SmartContractData smartContractData = new SmartContractData(
+                    generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits,
+                                                 byteCodeObjectDataList), decodeFromBASE58(session.account), smartContractDeployData, null);
 
-                    supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService, session.account,
-                                                                             smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool)
-                        .thenApply(
-                            (transactionData) -> createSmartContractTransaction(transactionData,
-                                                                                FormUtils.getActualOfferedMaxFee16Bits(deployTabController.feeField),
-                                                                                smartContractData,
-                                                                                usedSmartsListFromField,
-                                                                                session))
-                        .whenComplete(
-                            handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
-                    loadVista(WALLET);
-                }
+                supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService, session.account,
+                                                                         smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool)
+                    .thenApply(
+                        (transactionData) -> createSmartContractTransaction(
+                            transactionData,
+                            FormUtils.getActualOfferedMaxFee16Bits(deployTabController.feeField),
+                            smartContractData,
+                            usedSmartsListFromField,
+                            session))
+                    .whenComplete(
+                        handleCallback(handleDeployResult(getTokenInfo(contractClass, smartContractData))));
+                loadVista(WALLET);
             }
         } catch (Exception e) {
             LOGGER.error("failed!", e);

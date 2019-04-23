@@ -1,16 +1,16 @@
-package com.credits.service.contract;
+package tests.credits.service.contract;
 
 
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.thrift.generated.object;
 import com.credits.general.util.Base58;
 import com.credits.general.util.compiler.CompilationException;
-import com.credits.service.ServiceTest;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import pojo.ReturnValue;
+import tests.credits.service.ServiceTest;
 
 import java.math.BigDecimal;
 import java.util.Map;

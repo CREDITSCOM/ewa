@@ -1,13 +1,13 @@
-package com.credits.service.contract;
+package tests.credits.service.contract;
 
 import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.pojo.MethodData;
-import com.credits.service.ServiceTest;
 import exception.ContractExecutorException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import tests.credits.service.ServiceTest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
