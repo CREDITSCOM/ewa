@@ -1,6 +1,7 @@
 package tests.credits.service.contract;
 
 
+import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.thrift.generated.object;
 import com.credits.general.util.Base58;
@@ -13,6 +14,7 @@ import pojo.ReturnValue;
 import tests.credits.service.ServiceTest;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
@@ -23,6 +25,7 @@ import static org.apache.commons.lang3.SerializationUtils.deserialize;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -133,7 +136,9 @@ public class ContractExecutorTest extends ServiceTest {
 
     @Test
     public void compileClassCall() throws CompilationException {
-        ceService.compileClass(sourceCode);
+        final List<ByteCodeObjectData> byteCodeObjectData = ceService.compileClass(sourceCode);
+        Assert.assertNotNull(byteCodeObjectData);
+        assertFalse(byteCodeObjectData.isEmpty());
     }
 }
 

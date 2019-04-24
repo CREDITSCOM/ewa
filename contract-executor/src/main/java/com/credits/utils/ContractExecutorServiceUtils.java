@@ -5,23 +5,28 @@ import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodData;
+import com.credits.scapi.annotations.ContractAddress;
+import com.credits.scapi.annotations.ContractMethod;
+import com.credits.scapi.annotations.UsingContract;
+import com.credits.scapi.annotations.UsingContracts;
 import exception.ContractExecutorException;
 import org.apache.commons.beanutils.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.credits.general.pojo.ApiResponseCode.FAILURE;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Utils.rethrowUnchecked;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.apache.commons.lang3.reflect.FieldUtils.getAllFieldsList;
 
@@ -119,39 +124,31 @@ public class ContractExecutorServiceUtils {
                 field.set(instance, value);
             }));
     }
+    public static List<AnnotationData> readAnnotation(Annotation annotation) {
+        if (annotation instanceof UsingContract) {
+            UsingContract usingContract = ((UsingContract) annotation);
+            return singletonList(new AnnotationData(
+                UsingContract.class.getName(),
+                Map.of("address", usingContract.address(), "method", usingContract.method())));
 
-    public static List<AnnotationData> parseAnnotationData(String annotation) {
-        List<AnnotationData> annotationDataList = new ArrayList<>();
-        if (annotation.contains("@")) {
-            String[] splitArray = annotation.split("@");
-            if (splitArray.length == 2) {
-                annotationDataList.addAll(parseAnnotation(splitArray[1]));
-            } else if (splitArray.length > 2) {
-                for (int i = 2; i < splitArray.length; i++) {
-                    annotationDataList.addAll(parseAnnotation(splitArray[i]));
-                }
-            }
+        } else if (annotation instanceof UsingContracts) {
+            return Arrays.stream(((UsingContracts) annotation).value())
+                .flatMap(a -> readAnnotation(a).stream())
+                .collect(Collectors.toList());
+        } else if (annotation instanceof ContractAddress) {
+            ContractAddress contractAddress = ((ContractAddress) annotation);
+            return singletonList(new AnnotationData(
+                ContractAddress.class.getName(),
+                Map.of("id", Integer.toString(contractAddress.id()))));
+
+        } else if (annotation instanceof ContractMethod) {
+            ContractMethod contractMethod = ((ContractMethod) annotation);
+            return singletonList(new AnnotationData(
+                ContractMethod.class.getName(),
+                Map.of("id", Integer.toString(contractMethod.id()))));
+
+        } else {
+            return singletonList(new AnnotationData(annotation.annotationType().getName(), emptyMap()));
         }
-        return annotationDataList;
     }
-
-    private static List<AnnotationData> parseAnnotation(String annotation) {
-        List<AnnotationData> annotationDataList = new ArrayList<>();
-        Map<String, String> annotationArguments = new HashMap<>();
-        int paramIndex = annotation.indexOf("(");
-        String name = annotation.substring(0, paramIndex);
-        annotation = annotation.substring(paramIndex + 1, annotation.length() - 1);
-        if (annotation.length() > 0) {
-            String regex = "([A-Za-z0-9]+) *= *([A-Za-z0-9]+)";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(annotation);
-            while (matcher.find()) {
-                annotationArguments.put(matcher.group(1), matcher.group(2));
-            }
-        }
-        AnnotationData annotationData = new AnnotationData(name, annotationArguments);
-        annotationDataList.add(annotationData);
-        return annotationDataList;
-    }
-
 }

@@ -62,7 +62,7 @@ import static com.credits.utils.ContractExecutorServiceUtils.failureApiResponse;
 import static com.credits.utils.ContractExecutorServiceUtils.getMethodArgumentsValuesByNameAndParams;
 import static com.credits.utils.ContractExecutorServiceUtils.initializeField;
 import static com.credits.utils.ContractExecutorServiceUtils.initializeSmartContractField;
-import static com.credits.utils.ContractExecutorServiceUtils.parseAnnotationData;
+import static com.credits.utils.ContractExecutorServiceUtils.readAnnotation;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
@@ -161,13 +161,12 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             ArrayList<MethodArgumentData> args = new ArrayList<>();
             List<AnnotationData> methodAnnotationDataList = new ArrayList<>();
             for (Annotation annotation : method.getAnnotations()) {
-                List<AnnotationData> methodAnnotationData = parseAnnotationData(annotation.toString());
-                methodAnnotationDataList.addAll(methodAnnotationData);
+                methodAnnotationDataList.addAll(readAnnotation(annotation));
             }
             for (Parameter parameter : method.getParameters()) {
                 List<AnnotationData> paramAnnotationDataList = new ArrayList<>();
                 for (Annotation annotation : parameter.getAnnotations()) {
-                    List<AnnotationData> parameterAnnotationData = parseAnnotationData(annotation.toString());
+                    List<AnnotationData> parameterAnnotationData = readAnnotation(annotation);
                     paramAnnotationDataList.addAll(parameterAnnotationData);
                 }
                 args.add(new MethodArgumentData(parameter.getType().getTypeName(), parameter.getName(),

@@ -11,4 +11,5 @@ module contract.executor {
     requires libthrift;
     requires java.compiler;
     requires error.prone.annotations;
+    requires commons.beanutils.core;
 }

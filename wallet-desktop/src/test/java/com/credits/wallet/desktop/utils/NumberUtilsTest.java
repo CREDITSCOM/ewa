@@ -1,12 +1,14 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.wallet.desktop.AppState;
+import javafx.embed.swing.JFXPanel;
 import javafx.scene.control.TextField;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.swing.*;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
@@ -15,20 +17,30 @@ import java.util.Locale;
 public class NumberUtilsTest {
 
     private TextField textField;
-    private List<Character> notDigits = Arrays.asList('!', '@' , '#', '$', '%', '^', '&', '*', '(', ')', '_', '+',
-        '!', '\"', '№', ';', '%', ':', '?', '*', 'a', 'k', 'z', 'а', 'к', 'я');
+    private List<Character> notDigits = Arrays.asList('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+',
+                                                      '!', '\"', '№', ';', '%', ':', '?', '*', 'a', 'k', 'z', 'а', 'к', 'я');
 
     @Before
     public void setUp() {
         try {
+            JFrame frame = new JFrame("FX");
+            final JFXPanel fxPanel = new JFXPanel();
+            frame.add(fxPanel);
+            frame.setVisible(true);
+
         } catch (Exception e) {
             Assume.assumeNoException("Unable to open DISPLAY", e);
         }
+
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         char separator = symbols.getDecimalSeparator();
         AppState.decimalSeparator = Character.toString(separator);
-        textField = new TextField();
+        textField = new
+
+            TextField();
+
     }
+
 
     @Test
     public void correctNumTest() {

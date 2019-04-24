@@ -23,24 +23,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FormUtils {
 
     public static void showError(String text) {
-        Platform.runLater(()-> {
+        Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initStyle(StageStyle.UTILITY);
             alert.setTitle("Error");
             alert.setHeaderText("Error!");
-            alert.setContentText(text);
+            alert.setContentText(cutMessage(text));
             alert.showAndWait();
         });
     }
 
     public static void showInfo(String text) {
-        Platform.runLater(()->{
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.initStyle(StageStyle.UTILITY);
-        alert.setTitle("Information");
-        alert.setHeaderText("Information");
-        alert.setContentText(text);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.initStyle(StageStyle.UTILITY);
+            alert.setTitle("Information");
+            alert.setHeaderText("Information");
+            alert.setContentText(cutMessage(text));
+            alert.showAndWait();
         });
     }
 
@@ -50,31 +50,38 @@ public class FormUtils {
             alert.initStyle(StageStyle.UTILITY);
             alert.setTitle("Warning");
             alert.setHeaderText("Warning");
-            alert.setContentText(content);
+            alert.setContentText(cutMessage(content));
             alert.showAndWait();
         });
     }
 
-    public static void showPlatformError(String content) {
+    public static void showPlatformError(String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initStyle(StageStyle.UTILITY);
             alert.setTitle("Error");
             alert.setHeaderText("Error");
-            alert.setContentText(content);
+            alert.setContentText(cutMessage(message));
             alert.showAndWait();
         });
     }
 
-    public static void showPlatformInfo(String content) {
+    public static void showPlatformInfo(String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.initStyle(StageStyle.UTILITY);
             alert.setTitle("Info");
             alert.setHeaderText("Info");
-            alert.setContentText(content);
+            alert.setContentText(cutMessage(message));
             alert.showAndWait();
         });
+    }
+
+    private static String cutMessage(String message) {
+        if (message.trim().length() > 250) {
+            message = message.substring(0, 250) + "...";
+        }
+        return message;
     }
 
     public static <V, T> void addTooltipToColumnCells(TableColumn<V, T> column) {
@@ -91,7 +98,8 @@ public class FormUtils {
     }
 
 
-    public static void validateField(TextField textField, Label errorLabel, String errorText,
+    public static void validateField(
+        TextField textField, Label errorLabel, String errorText,
         AtomicBoolean validationFlag) {
         errorLabel.setText(errorText);
         setErrorStyle(textField);
@@ -102,7 +110,8 @@ public class FormUtils {
         textField.setStyle(textField.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
     }
 
-    public static void validateTable(TableView<CoinTabRow> tableView, Label errorLabel, String errorText,
+    public static void validateTable(
+        TableView<CoinTabRow> tableView, Label errorLabel, String errorText,
         AtomicBoolean validationFlag) {
         errorLabel.setText(errorText);
         tableView.getStyleClass().add("credits-border-red");
@@ -126,7 +135,7 @@ public class FormUtils {
     public static short getActualOfferedMaxFee16Bits(TextField feeField) {
         Pair<Double, Short> actualOfferedMaxFeePair =
             Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(feeField.getText()));
-        return  actualOfferedMaxFeePair.getRight();
+        return actualOfferedMaxFeePair.getRight();
     }
 
     public static void initFeeField(TextField feeField, Label actualOfferedMaxFeeLabel) {
@@ -134,13 +143,13 @@ public class FormUtils {
             try {
                 newValue = NumberUtils.getCorrectNum(newValue);
                 if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue) && !newValue.isEmpty()) {
-                    refreshOfferedMaxFeeValues(feeField,actualOfferedMaxFeeLabel,oldValue);
+                    refreshOfferedMaxFeeValues(feeField, actualOfferedMaxFeeLabel, oldValue);
                     return;
                 }
-                refreshOfferedMaxFeeValues(feeField,actualOfferedMaxFeeLabel,newValue);
+                refreshOfferedMaxFeeValues(feeField, actualOfferedMaxFeeLabel, newValue);
             } catch (Exception e) {
                 //FormUtils.showError("Error. Reason: " + e.getMessage());
-                refreshOfferedMaxFeeValues(feeField,actualOfferedMaxFeeLabel,oldValue);
+                refreshOfferedMaxFeeValues(feeField, actualOfferedMaxFeeLabel, oldValue);
             }
         });
     }

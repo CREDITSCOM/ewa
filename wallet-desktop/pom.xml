@@ -124,11 +124,11 @@
             <artifactId>javafx-graphics</artifactId>
             <version>11</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.github.MrChebik</groupId>-->
-<!--            <artifactId>RichTextFX</artifactId>-->
-<!--            <version>cabee30961</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>11.0.2</version>
+        </dependency>
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>

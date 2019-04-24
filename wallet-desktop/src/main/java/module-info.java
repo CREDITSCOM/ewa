@@ -26,6 +26,7 @@ module wallet.desktop {
     requires transitive java.instrument;
 
     requires transitive richtextfx;
+    requires jna;
 
     opens com.credits.wallet.desktop;
 }

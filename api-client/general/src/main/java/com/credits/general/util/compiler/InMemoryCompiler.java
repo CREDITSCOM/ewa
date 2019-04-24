@@ -85,7 +85,7 @@ public class InMemoryCompiler {
         return compiler;
     }
 
-    String loadJdkPathFromEnvironmentVariables() throws CompilationException {
+    public String loadJdkPathFromEnvironmentVariables() throws CompilationException {
         if (SystemUtils.OS_NAME.toLowerCase().contains("win")) {
             Pattern regexpJdkPath = Pattern.compile("jdk[\\d]\\.[\\d]\\.[\\d]([\\d._])");
             String jdkBinPath = Arrays.stream(System.getenv("Path").split(";"))

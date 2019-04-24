@@ -21,7 +21,7 @@ import static java.io.File.separator;
 
 public class ObjectKeeper<T extends Serializable> {
 
-    static final Path cacheDirectory = Paths.get(System.getProperty("user.dir") + separator + "cache");
+    public static final Path cacheDirectory = Paths.get(System.getProperty("user.dir") + separator + "cache");
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectKeeper.class);
     private final String objectFileName;
     private final String account;
@@ -62,7 +62,7 @@ public class ObjectKeeper<T extends Serializable> {
         doSafe(() -> getKeptObject().ifPresent(oldObject -> keepObject(modifyFunction.modify(oldObject))), lock);
     }
 
-    Path getSerializedObjectPath() {
+    public Path getSerializedObjectPath() {
         return Paths.get(getAccountDirectory() + separator + objectFileName);
     }
 

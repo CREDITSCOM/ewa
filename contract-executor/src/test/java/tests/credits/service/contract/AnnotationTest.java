@@ -13,9 +13,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.credits.utils.ContractExecutorServiceUtils.parseAnnotationData;
-
-
 public class AnnotationTest extends ServiceTest {
 
     public AnnotationTest() {
@@ -27,21 +24,6 @@ public class AnnotationTest extends ServiceTest {
         super.setUp();
     }
 
-
-    @Test
-    public void main() {
-        String getter = "@com.credits.scapi.annotations.Getter()";
-        String contractAnn = "@com.credits.scapi.annotations.UsingContract(address=test2, method=notGetBalance)";
-        String contractMethod = "@com.credits.scapi.annotations.ContractMethod(id = 0)";
-        AnnotationData annotationData = parseAnnotationData(getter).get(0);
-        AnnotationData annotationData1 = parseAnnotationData(contractAnn).get(0);
-        AnnotationData annotationData2 = parseAnnotationData(contractMethod).get(0);
-        Assert.assertEquals(annotationData, new AnnotationData("com.credits.scapi.annotations.Getter", new HashMap<>()));
-        Assert.assertEquals(annotationData1, new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
-            put("address", "test2");
-            put("method", "notGetBalance");
-        }}));
-    }
 
     @Test
     public void get_methods_of_contract() throws Exception {
@@ -58,25 +40,25 @@ public class AnnotationTest extends ServiceTest {
 
 
         List<MethodDescriptionData> contractsMethods = ceService.getContractsMethods(byteCodeObjectDataList);
-        Assert.assertEquals(findmethod(contractsMethods, "initialize"), initialize);
-        Assert.assertEquals(findmethod(contractsMethods, "addTokens"), addTokens);
-        Assert.assertEquals(findmethod(contractsMethods, "getTotal"), getTotal);
-        Assert.assertEquals(findmethod(contractsMethods, "addToken"), addToken);
-        Assert.assertEquals(findmethod(contractsMethods, "testToken"), testToken);
-        Assert.assertEquals(findmethod(contractsMethods, "testNotToken"), testNotToken);
-        Assert.assertEquals(findmethod(contractsMethods, "testMultiple1"), testMultiple1);
-        Assert.assertEquals(findmethod(contractsMethods, "testMultiple2"), testMultiple2);
+        Assert.assertEquals(initialize, findMethod(contractsMethods, "initialize"));
+        Assert.assertEquals(addTokens, findMethod(contractsMethods, "addTokens"));
+        Assert.assertEquals(getTotal, findMethod(contractsMethods, "getTotal"));
+        Assert.assertEquals(addToken, findMethod(contractsMethods, "addToken"));
+        Assert.assertEquals(testToken, findMethod(contractsMethods, "testToken"));
+        Assert.assertEquals(testNotToken, findMethod(contractsMethods, "testNotToken"));
+        Assert.assertEquals(testMultiple1, findMethod(contractsMethods, "testMultiple1"));
+        Assert.assertEquals(testMultiple2, findMethod(contractsMethods, "testMultiple2"));
 
 
     }
 
     private MethodDescriptionData createTestMultiple1MethodDescriptionData() {
         ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
-        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<>() {{
             put("address", "test1");
             put("method", "notGet");
         }}));
-        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -89,11 +71,11 @@ public class AnnotationTest extends ServiceTest {
 
     private MethodDescriptionData createTestMultiple2MethodDescriptionData() {
         ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
-        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<>() {{
             put("address", "test3");
             put("method", "notGetA");
         }}));
-        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -113,7 +95,7 @@ public class AnnotationTest extends ServiceTest {
     public MethodDescriptionData createAddTokensMethodDescriptionData(AnnotationData getterAnnotation) {
         ArrayList<AnnotationData> addTokensAnnotationData = new ArrayList<>();
         addTokensAnnotationData.add(getterAnnotation);
-        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
+        addTokensAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<>() {{
             put("address", "test2");
             put("method", "notGetBalance");
         }}));
@@ -130,7 +112,7 @@ public class AnnotationTest extends ServiceTest {
 
     public MethodDescriptionData createAddTokenMethodDescriptionData(AnnotationData getterAnnotation) {
         ArrayList<AnnotationData> addTokenAnnotationData = new ArrayList<>();
-        addTokenAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<String, String>() {{
+        addTokenAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.UsingContract", new HashMap<>() {{
             put("address", "test1");
             put("method", "getBalance");
         }}));
@@ -142,7 +124,7 @@ public class AnnotationTest extends ServiceTest {
 
     public MethodDescriptionData createTestTokenMethodDescriptionData() {
         ArrayList<AnnotationData> testTokenAnnotationData = new ArrayList<>();
-        testTokenAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.ContractAddress", new HashMap<String, String>() {{
+        testTokenAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.ContractAddress", new HashMap<>() {{
             put("id", "0");
         }}));
         return new MethodDescriptionData("void", "testToken",
@@ -151,7 +133,7 @@ public class AnnotationTest extends ServiceTest {
 
     public MethodDescriptionData createTestNotTokenMethodDescriptionData() {
         ArrayList<AnnotationData> testNotTokenAnnotationData = new ArrayList<>();
-        testNotTokenAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.ContractMethod", new HashMap<String, String>() {{
+        testNotTokenAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.ContractMethod", new HashMap<>() {{
             put("id", "0");
         }}));
 
@@ -159,7 +141,7 @@ public class AnnotationTest extends ServiceTest {
             Collections.singletonList(new MethodArgumentData("int", "amount", testNotTokenAnnotationData)), new ArrayList<>());
     }
 
-    private MethodDescriptionData findmethod(List<MethodDescriptionData> contractsMethods, String name) {
+    private MethodDescriptionData findMethod(List<MethodDescriptionData> contractsMethods, String name) {
         for (MethodDescriptionData contractsMethod : contractsMethods) {
             if (contractsMethod.name.equals(name)) {
                 return contractsMethod;

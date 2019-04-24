@@ -5,7 +5,6 @@ import com.credits.general.crypto.Md5;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.GeneralConverter;
-import com.credits.wallet.desktop.exception.WalletDesktopException;
 import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
@@ -20,7 +19,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.general.crypto.Blake2S.generateHash;
-import static com.credits.general.util.GeneralConverter.*;
+import static com.credits.general.util.GeneralConverter.byteArrayToHex;
+import static com.credits.general.util.GeneralConverter.toByteArray;
+import static com.credits.general.util.GeneralConverter.toByteArrayLittleEndian;
 import static org.apache.commons.lang3.ArrayUtils.addAll;
 
 public class SmartContractsUtils {
