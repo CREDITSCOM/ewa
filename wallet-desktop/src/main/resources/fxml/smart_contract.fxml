@@ -106,7 +106,7 @@
          </content>
       </Tab>
     </TabPane>
-    <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contracts from blockhain" />
+    <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contracts from blockchain" />
     <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button">
         <graphic>
             <ImageView fitHeight="26.0" fitWidth="26.0">

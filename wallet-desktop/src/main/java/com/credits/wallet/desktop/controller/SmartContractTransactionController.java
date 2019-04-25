@@ -14,13 +14,10 @@ import javafx.scene.layout.HBox;
 import java.util.Map;
 
 public class SmartContractTransactionController extends AbstractController{
-    private static final String ERR_GETTING_TRANSACTION = "Error getting transaction details";
     public static final int MAX_HEIGHT = 300;
 
-    final int ROW_HEIGHT = 24;
+    private final int ROW_HEIGHT = 24;
 
-    private SmartContractData selectedContract;
-    private String selectedContractsTab;
     @FXML
     public HBox listContainer;
 
@@ -53,7 +50,7 @@ public class SmartContractTransactionController extends AbstractController{
         labMethod.setText(selectedTransactionRow.getMethod());
         ObservableList<String> items = FXCollections.observableArrayList();
         if (selectedTransactionRow.getParams() != null) {
-            selectedTransactionRow.getParams().forEach(item -> items.add(item.getV_string()));
+            selectedTransactionRow.getParams().forEach(item -> items.add(VariantConverter.toObject(item).toString()));
         }
         listParams.setItems(items);
 
@@ -67,10 +64,6 @@ public class SmartContractTransactionController extends AbstractController{
             } else if (smartInfo.isSmartExecution()) {
                 SmartExecutionTransInfoData data = smartInfo.getSmartExecutionTransInfoData();
                 smartInfoItems.add(String.format("State: %s", data.getState().toString()));
-                smartInfoItems.add(String.format("Method: %s", data.getMethod()));
-                StringBuilder params = new StringBuilder();
-                data.getParams().forEach(variant -> params.append(variant.getV_string() + "\n"));
-                smartInfoItems.add(String.format("Params: %s", params.toString()));
             } else if (smartInfo.isSmartState()) {
                 SmartStateTransInfoData data = smartInfo.getSmartStateTransInfoData();
                 smartInfoItems.add(String.format("Is success: %s", data.isSuccess()));
