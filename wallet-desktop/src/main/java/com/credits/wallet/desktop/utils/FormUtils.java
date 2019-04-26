@@ -1,7 +1,6 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.Utils;
 import com.credits.wallet.desktop.struct.CoinTabRow;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -13,9 +12,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.credits.general.util.Utils.calculateActualFee;
 
 /**
  * Created by goncharov-eg on 26.01.2018.
@@ -133,8 +133,7 @@ public class FormUtils {
     }
 
     public static short getActualOfferedMaxFee16Bits(TextField feeField) {
-        Pair<Double, Short> actualOfferedMaxFeePair =
-            Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(feeField.getText()));
+        var actualOfferedMaxFeePair = calculateActualFee(GeneralConverter.toDouble(feeField.getText()));
         return actualOfferedMaxFeePair.getRight();
     }
 
@@ -159,8 +158,7 @@ public class FormUtils {
             actualOfferedMaxFeeLabel.setText("");
             feeField.setText("");
         } else {
-            Pair<Double, Short> actualOfferedMaxFeePair =
-                Utils.createActualOfferedMaxFee(GeneralConverter.toDouble(value));
+            var actualOfferedMaxFeePair = calculateActualFee(GeneralConverter.toDouble(value));
             actualOfferedMaxFeeLabel.setText(GeneralConverter.toString(actualOfferedMaxFeePair.getLeft()));
             feeField.setText(value);
         }

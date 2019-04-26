@@ -1,9 +1,7 @@
-import com.credits.scapi.annotations.ContractAddress;
-import com.credits.scapi.annotations.ContractMethod;
-import com.credits.scapi.annotations.Getter;
-import com.credits.scapi.annotations.UsingContract;
-import com.credits.scapi.annotations.UsingContracts;
+import com.credits.scapi.annotations.*;
 import com.credits.scapi.v0.SmartContract;
+
+import java.math.BigDecimal;
 
 public class AnnotationTest extends SmartContract {
 
@@ -37,6 +35,11 @@ public class AnnotationTest extends SmartContract {
     public void addToken(@Getter int amount) {
         total += amount;
         System.out.println(java.lang.Integer.toString(amount) + " tokens were added to total");
+    }
+
+    @Payable
+    public void payable(@PayableAmount BigDecimal amount) {
+
     }
 
     public void testToken(@ContractAddress(id = 0) int amount) {
