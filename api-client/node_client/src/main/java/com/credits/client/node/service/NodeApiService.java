@@ -4,14 +4,16 @@ package com.credits.client.node.service;
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.PoolData;
 import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.SmartContractTransactionData;
 import com.credits.client.node.pojo.SmartContractTransactionFlowData;
 import com.credits.client.node.pojo.TransactionData;
 import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.client.node.pojo.TransactionIdData;
+import com.credits.client.node.pojo.TransactionsStateGetResultData;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
 import com.credits.general.util.exception.ConverterException;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -21,9 +23,13 @@ public interface NodeApiService {
 
     BigDecimal getBalance(String address) throws NodeClientException, ConverterException;
 
+    Pair<Integer, Long> getBlockAndSynchronizePercent() throws NodeClientException, ConverterException;
+
     List<TransactionData> getTransactions(String address, long offset, long limit) throws NodeClientException, ConverterException;
 
-    @Deprecated
+    List<SmartContractTransactionData> getSmartContractTransactions(String address, long offset, long limit)
+            throws NodeClientException, ConverterException;
+
     TransactionData getTransaction(TransactionIdData transactionIdData) throws NodeClientException;
 
     PoolData getPoolInfo(byte[] hash, long index) throws NodeClientException;
@@ -46,5 +52,5 @@ public interface NodeApiService {
 
     Long getWalletTransactionsCount(String address) throws NodeClientException, ConverterException;
 
-    TransactionsStateGetResult getTransactionsState(String address, List<Long> transactionIdList) throws NodeClientException, ConverterException;
+    TransactionsStateGetResultData getTransactionsState(String address, List<Long> transactionIdList) throws NodeClientException, ConverterException;
 }

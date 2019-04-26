@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.TreeView?>
+<TreeView fx:id="treeView" prefHeight="498.0" prefWidth="427.0"
+          style="-fx-border-radius: 0 15 0 0; -fx-background-radius: 0 15 0 0; -fx-padding: 15 0 0 0;"
+          xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.credits.wallet.desktop.controller.TreeViewController">
+</TreeView>

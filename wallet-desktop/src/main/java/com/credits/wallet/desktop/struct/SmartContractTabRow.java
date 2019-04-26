@@ -1,18 +1,18 @@
 package com.credits.wallet.desktop.struct;
 
-import com.credits.client.node.pojo.SmartContractData;
+import com.credits.client.node.pojo.CompiledSmartContract;
 import javafx.scene.control.ToggleButton;
 
 public class SmartContractTabRow {
 
     private String id;
     private ToggleButton fav;
-    private SmartContractData smartContractData;
+    private CompiledSmartContract compiledSmartContract;
 
-    public SmartContractTabRow(String id, ToggleButton fav, SmartContractData smartContractData) {
+    public SmartContractTabRow(String id, ToggleButton fav, CompiledSmartContract smartContract) {
         this.id = id;
         this.fav = fav;
-        this.smartContractData = smartContractData;
+        this.compiledSmartContract = smartContract;
     }
 
     public SmartContractTabRow(String label, ToggleButton fav1) {
@@ -20,12 +20,12 @@ public class SmartContractTabRow {
         this.fav = fav1;
     }
 
-    public SmartContractData getSmartContractData() {
-        return smartContractData;
+    public CompiledSmartContract getCompiledSmartContract() {
+        return compiledSmartContract;
     }
 
-    public void setSmartContractData(SmartContractData smartContractData) {
-        this.smartContractData = smartContractData;
+    public void setCompiledSmartContract(CompiledSmartContract compiledSmartContract) {
+        this.compiledSmartContract = compiledSmartContract;
     }
 
     public String getId() {

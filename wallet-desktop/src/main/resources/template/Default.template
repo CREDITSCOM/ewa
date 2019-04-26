@@ -1,0 +1,8 @@
+import com.credits.scapi.annotations.*;
+import com.credits.scapi.v0.*;
+
+public class %s extends SmartContract {
+
+    public %s() {
+    }
+}

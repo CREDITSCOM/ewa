@@ -1,12 +1,11 @@
 package com.credits.general.util.compiler;
 
 
-import com.credits.general.exception.CompilationErrorException;
-import com.credits.general.exception.CompilationException;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.compiler.model.CompilationUnit;
 import com.credits.general.util.compiler.model.JavaSourceFromString;
 import com.credits.general.util.sourceCode.GeneralSourceCodeUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -20,8 +19,12 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
+
+import static java.util.Collections.singletonList;
 
 /**
  * The dynamic compiler uses the JavaCompiler with custom implementations of a JavaFileManager and
@@ -32,99 +35,104 @@ import java.util.regex.Pattern;
  */
 public class InMemoryCompiler {
 
-	/**
-	 * Compiles a single class.
-	 *
-	 * @param className class name
-	 * @param code class code
-	 * @return Compilation package
-	 */
-	public CompilationPackage compile(String className, String code) throws CompilationException {
-		JavaCompiler compiler = getSystemJavaCompiler();
+    /**
+     * Compiles a single class.
+     *
+     * @return Compilation package
+     */
+    public CompilationPackage compile(Map<String, String> classesToCompile) {
+        JavaCompiler compiler = getSystemJavaCompiler();
 
-		DiagnosticCollector<JavaFileObject> collector = getDiagnosticCollector();
-		InMemoryClassManager manager = getClassManager(compiler);
+        DiagnosticCollector<JavaFileObject> collector = getDiagnosticCollector();
+        InMemoryClassManager manager = getClassManager(compiler);
 
-		// defining classpath
-		String classpath;
-		try {
-			classpath = loadClasspath();
-		} catch (UnsupportedEncodingException e) {
-			throw new CompilationException(e);
-		}
+        // java source from string
+        List<JavaSourceFromString> strFiles = new ArrayList<>();
+        for (String className : classesToCompile.keySet()) {
+            String classCode = classesToCompile.get(className);
+            strFiles.add(new JavaSourceFromString(className, classCode));
+        }
 
-		// add classpath to options
-		List<String> options = Arrays.asList("-parameters", "-classpath", classpath);
+        // add classpath to options
+        List<String> options = singletonList("-parameters");
 
-		// java source from string
-		List<JavaSourceFromString> strFiles = new ArrayList<>();
-		strFiles.add(new JavaSourceFromString(className, code) );
 
-		// compile
-		CompilationTask task = compiler.getTask(null, manager, collector, options, null, strFiles);
-		boolean status = task.call();
+        // compile
+        CompilationTask task = compiler.getTask(null, manager, collector, options, null, strFiles);
 
-		List<CompilationUnit> compilationUnits = manager.getAllClasses();
-		return new CompilationPackage(compilationUnits, collector, status);
-	}
+        boolean status = task.call();
 
-	DiagnosticCollector<JavaFileObject> getDiagnosticCollector() {
-		return new DiagnosticCollector<>();
-	}
+        List<CompilationUnit> compilationUnits = manager.getAllClasses();
+        return new CompilationPackage(compilationUnits, collector, status);
+    }
 
-	InMemoryClassManager getClassManager(JavaCompiler compiler) {
-		return new InMemoryClassManager(compiler.getStandardFileManager(null, null, null));
-	}
+    DiagnosticCollector<JavaFileObject> getDiagnosticCollector() {
+        return new DiagnosticCollector<>();
+    }
 
-	JavaCompiler getSystemJavaCompiler() throws CompilationException {
+    InMemoryClassManager getClassManager(JavaCompiler compiler) {
+        return new InMemoryClassManager(compiler.getStandardFileManager(null, null, null));
+    }
 
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		if (compiler == null) {
-			String jdkPath = this.loadJdkPathFromEnvironmentVariables();
-			System.setProperty("java.home", jdkPath);
-			compiler = ToolProvider.getSystemJavaCompiler();
-		}
-		return compiler;
-	}
+    JavaCompiler getSystemJavaCompiler() throws CompilationException {
 
-	String loadJdkPathFromEnvironmentVariables() throws CompilationException {
-		Pattern regexpJdkPath = Pattern.compile("jdk[\\d]\\.[\\d]\\.[\\d]([\\d._])");
-		String jdkBinPath = Arrays.stream(System.getenv("Path").split(";"))
-			.filter(it -> regexpJdkPath.matcher(it).find())
-			.findFirst()
-			.orElseThrow(() -> new CompilationException("Cannot compile the file. The java compiler has not been found, Java Development Kit should be installed."));
-		return jdkBinPath.substring(0, jdkBinPath.length() - 4); // remove last 4 symbols "\bin"
-	}
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        if (compiler == null) {
+            String jdkPath = this.loadJdkPathFromEnvironmentVariables();
+            System.setProperty("java.home", jdkPath);
+            compiler = ToolProvider.getSystemJavaCompiler();
+        }
+        return compiler;
+    }
 
-	String loadClasspath() throws UnsupportedEncodingException {
-		StringBuilder sb = new StringBuilder();
-		URLClassLoader urlClassLoader = (URLClassLoader) Thread
-			.currentThread().getContextClassLoader();
-		for (URL url : urlClassLoader.getURLs()) {
-			sb.append(URLDecoder.decode(url.getFile(), "UTF-8")).append(
-				System.getProperty("path.separator"));
-		}
-		return sb.toString();
-	}
+    public String loadJdkPathFromEnvironmentVariables() throws CompilationException {
+        if (SystemUtils.OS_NAME.toLowerCase().contains("win")) {
+            Pattern regexpJdkPath = Pattern.compile("jdk[\\d]\\.[\\d]\\.[\\d]([\\d._])");
+            String jdkBinPath = Arrays.stream(System.getenv("Path").split(";"))
+                .filter(it -> regexpJdkPath.matcher(it).find())
+                .findFirst()
+                .orElseThrow(() -> new CompilationException(
+                    "Cannot compile the file. The java compiler has not been found, Java Development Kit should be installed."));
+            return jdkBinPath.substring(0, jdkBinPath.length() - 4); // remove last 4 symbols "\bin"
+        } else {
+            return "";
+        }
+    }
 
-	public static CompilationPackage compileSourceCode(String sourceCode) throws CompilationException, CompilationErrorException {
-		String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
-		CompilationPackage compilationPackage = new InMemoryCompiler().compile(className, sourceCode);
+    String loadClasspath() throws UnsupportedEncodingException {
+        StringBuilder sb = new StringBuilder();
+        URLClassLoader urlClassLoader = (URLClassLoader) Thread
+            .currentThread().getContextClassLoader();
+        for (URL url : urlClassLoader.getURLs()) {
+            sb.append(URLDecoder.decode(url.getFile(), "UTF-8")).append(
+                System.getProperty("path.separator"));
+        }
+        return sb.toString();
+    }
 
-		if (!compilationPackage.isCompilationStatusSuccess()) {
-			DiagnosticCollector collector = compilationPackage.getCollector();
-			List<Diagnostic> diagnostics = collector.getDiagnostics();
-			List<CompilationErrorException.Error> errors = new ArrayList<>();
-			diagnostics.forEach(action -> {
-				CompilationErrorException.Error error = new CompilationErrorException.Error(
-					action.getLineNumber(),
-					action.getMessage(null)
-				);
-				errors.add(error);
-			});
-			throw new CompilationErrorException(errors);
-		}
-		return compilationPackage;
-	}
+    @SuppressWarnings("unchecked")
+    public static CompilationPackage compileSourceCode(String sourceCode) throws CompilationException {
+        Map<String, String> classesToCompile = new HashMap<>();
+        String className = GeneralSourceCodeUtils.parseClassName(sourceCode);
+        classesToCompile.put(className, sourceCode);
+
+        CompilationPackage compilationPackage = new InMemoryCompiler().compile(classesToCompile);
+
+        if (!compilationPackage.isCompilationStatusSuccess()) {
+            DiagnosticCollector collector = compilationPackage.getCollector();
+            List<Diagnostic> diagnostics = collector.getDiagnostics();
+            List<CompilationException.Error> errors = new ArrayList<>();
+            diagnostics.forEach(action -> {
+                CompilationException.Error error = new CompilationException.Error(
+                    action.getLineNumber(),
+                    action.getMessage(null)
+                );
+                errors.add(error);
+            });
+            throw new CompilationException(errors);
+        }
+        return compilationPackage;
+    }
+
 
 }

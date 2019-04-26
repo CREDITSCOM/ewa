@@ -1,9 +1,16 @@
 package com.credits.general.util;
 
-import com.credits.general.pojo.ApiResponseCode;
-import com.credits.general.pojo.ApiResponseData;
-import com.credits.general.thrift.generated.APIResponse;
+import com.credits.general.pojo.AnnotationData;
+import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.general.pojo.MethodArgumentData;
+import com.credits.general.pojo.MethodDescriptionData;
+import com.credits.general.thrift.generated.Annotation;
+import com.credits.general.thrift.generated.ByteCodeObject;
+import com.credits.general.thrift.generated.MethodArgument;
+import com.credits.general.thrift.generated.MethodDescription;
+import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.exception.ConverterException;
+import com.github.drapostolos.typeparser.TypeParser;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
 
 import java.math.BigDecimal;
@@ -14,10 +21,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Base64;
-import java.util.BitSet;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.Arrays.stream;
 
@@ -29,14 +33,23 @@ public class GeneralConverter {
     public static final String DOUBLE_FORMAT = "#.##################";
 
     public static String toString(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof String) {
+            return (String)value;
+        }
         if (value instanceof Double) {
             NumberFormat nf = NumberFormat.getNumberInstance(Constants.LOCALE);
             DecimalFormat df = (DecimalFormat) nf;
             df.applyPattern(DOUBLE_FORMAT);
             return df.format(value);
         }
-        if (value instanceof Integer) {
+        if (value instanceof Float) {
             return String.valueOf(value);
+        }
+        if (value instanceof Integer) {
+             return String.valueOf(value);
         }
         if (value instanceof Long) {
             return String.valueOf(value);
@@ -47,11 +60,22 @@ public class GeneralConverter {
             bigDecimalConverter.setPattern("#.##################");
             return (String) bigDecimalConverter.convert(String.class, value);
         }
-        // TODO Добавить Date и т.д.
+        if (value instanceof Boolean) {
+            return String.valueOf(value);
+        }
+        if (value instanceof Byte) {
+            return String.valueOf(value);
+        }
+        if (value instanceof Short) {
+            return String.valueOf(value);
+        }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
     public static Boolean toBoolean(Object value) {
+        if (value == null) {
+            return null;
+        }
         if (value instanceof String) {
             String stringValue = (String)value;
             if (stringValue.equalsIgnoreCase("true")) {
@@ -72,49 +96,106 @@ public class GeneralConverter {
                 throw new IllegalArgumentException(String.format("Invalid int value: %s", intValue));
             }
         }
-        // TODO Добавить Byte, Short, Float, Long, Character, Double, BigDecimal, Date и т.д.
+        if (value instanceof Byte) {
+            Byte byteValue = (Byte)value;
+            if (byteValue == 1) {
+                return true;
+            } else if (byteValue == 0) {
+                return false;
+            } else {
+                throw new IllegalArgumentException(String.format("Invalid byte value: %s", byteValue));
+            }
+        }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
     public static Integer toInteger(Object value) {
+        if (value == null) {
+            return null;
+        }
         if (value instanceof String) {
             return Integer.parseInt((String)value);
         }
         if (value instanceof Double) {
-            return ((Double) value).intValue();
+            final Double doubleValue = (Double)value;
+            if (Math.abs(doubleValue) < (double) Integer.MIN_VALUE || Math.abs(doubleValue) > (double) Integer.MAX_VALUE) {
+                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Integer [%s %s]", Math.abs(doubleValue), Integer.MIN_VALUE, Integer.MAX_VALUE));
+            }
+            return ((Double)value).intValue();
         }
-        // TODO Добавить Byte, Short, Long, Character, Float, Double, Float, BigDecimal, Boolean, Date и т.д.
+        if (value instanceof Byte) {
+            return Integer.valueOf((Byte)value);
+        }
+        if (value instanceof Short) {
+            return Integer.valueOf((Short)value);
+        }
+        if (value instanceof Long) {
+            final Long longValue = (Long)value;
+            if (Math.abs(longValue) < (long) Integer.MIN_VALUE || Math.abs(longValue) > (long) Integer.MAX_VALUE) {
+                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Integer [%s %s]", Math.abs(longValue), Integer.MIN_VALUE, Integer.MAX_VALUE));
+            }
+            return ((Long)value).intValue();
+        }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
     public static Float toFloat(Object value) {
-        if (value instanceof String) {
-            return Float.parseFloat((String)value);
+        if (value == null) {
+            return null;
         }
-        // TODO Добавить Byte, Short, Integer, Long, Character, Double, BigDecimal, Boolean, Date и т.д.
+        if (value instanceof String) {
+            return Float.parseFloat((String) value);
+        }
+        if (value instanceof Double) {
+            Double doubleValue = (Double)value;
+            if (Math.abs(doubleValue) < (double) Float.MIN_NORMAL || Math.abs(doubleValue) > (double)  Float.MAX_VALUE) {
+                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Float [%s %s]", Math.abs(doubleValue), Float.MIN_NORMAL, Float.MAX_VALUE));
+            }
+            return (float)(double)value;
+        }
+        if (value instanceof Byte) {
+            return (float)(byte)value;
+        }
+        if (value instanceof Short) {
+            return (float)(short)value;
+        }
+        if (value instanceof Integer) {
+            return (float)(int)value;
+        }
+        if (value instanceof Integer) {
+            return (float)(int)value;
+        }
+
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
     public static Byte toByte(Object value) {
+        if (value == null) {
+            return null;
+        }
         if (value instanceof String) {
             return Byte.parseByte((String)value);
         }
-        // TODO Добавить Short, Integer, Long, Character, Float, Double, BigDecimal, Boolean, Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
     public static Short toShort(Object value) {
+        if (value == null) {
+            return null;
+        }
         if (value instanceof String) {
             return Short.parseShort((String)value);
         } else if (value instanceof BigDecimal) {
             BigDecimal bigDecimal = (BigDecimal)value;
             return bigDecimal.shortValueExact();
         }
-        // TODO Добавить Byte, Integer, Long, Character, Float, Double, Boolean, Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
     public static Long toLong(Object value) {
+        if (value == null) {
+            return null;
+        }
         if (value instanceof String) {
             return Long.parseLong((String)value);
         } else if (value instanceof BitSet) {
@@ -133,11 +214,45 @@ public class GeneralConverter {
         } else if (value instanceof Double) {
             return ((Double)value).longValue();
         }
-        // TODO Добавить Byte, Short, Integer, Float, Double, Character, BigDecimal, Boolean, Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
+    public static List<ByteCodeObjectData> compilationPackageToByteCodeObjects(
+        CompilationPackage compilationPackage) {
+        List<ByteCodeObjectData> compilationUnits = new ArrayList<>();
+        compilationPackage.getUnits().forEach(unit->compilationUnits.add(new ByteCodeObjectData(unit.getName(),unit.getByteCode())));
+        return compilationUnits;
+    }
+
+    public static  List<ByteCodeObject> byteCodeObjectsDataToByteCodeObjects(List<ByteCodeObjectData> byteCodeObjects) {
+        if (byteCodeObjects == null) {
+            return null;
+        }
+        List<ByteCodeObject> compilationUnits = new ArrayList<>();
+        byteCodeObjects.forEach(unit->compilationUnits.add(new ByteCodeObject(unit.getName(),ByteBuffer.wrap(unit.getByteCode()))));
+        return compilationUnits;
+    }
+
+
+    public static List<ByteCodeObjectData> byteCodeObjectsToByteCodeObjectsData(
+        List<ByteCodeObject> thriftByteCodeObjects) {
+        List<ByteCodeObjectData> compilationUnits = new ArrayList<>();
+        thriftByteCodeObjects.forEach(unit->compilationUnits.add(new ByteCodeObjectData(unit.getName(),unit.getByteCode())));
+        return compilationUnits;
+    }
+
+    public static List<ByteCodeObjectData> byteCodeObjectToByteCodeObjectData(List<ByteCodeObject> thriftByteCodeObjects) {
+        List<ByteCodeObjectData> compilationUnits = new ArrayList<>();
+        thriftByteCodeObjects.forEach(unit->compilationUnits.add(new ByteCodeObjectData(unit.getName(),unit.getByteCode())));
+        return compilationUnits;
+    }
+
+
+
     public static Character toCharacter(Object value) {
+        if (value == null) {
+            return null;
+        }
         if (value instanceof String) {
             String stringValue = (String) value;
             if (stringValue.length() > 1) {
@@ -145,19 +260,28 @@ public class GeneralConverter {
             }
             return stringValue.charAt(0);
         }
-        // TODO Добавить Byte, Short, Integer, Float, Long, Double, BigDecimal, Date и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
     public static Double toDouble(Object value) {
+        if (value == null) {
+            return null;
+        }
         if (value instanceof String) {
             return Double.parseDouble((String)value);
+        } else if (value instanceof Float) {
+            String stringValue = GeneralConverter.toString(value);
+            return GeneralConverter.toDouble(stringValue);
+        } else if (value instanceof Integer) {
+            return ((Integer)value).doubleValue();
         }
-        // TODO Добавить Byte, Short, Integer, Long, Float, BigDecimal, Boolean, Date и т.д.
         return null;
     }
 
     public static Double toDouble(Object value, Locale locale, String doubleFormat) throws ConverterException {
+        if (value == null) {
+            return null;
+        }
         if (value instanceof String) {
             NumberFormat nf = NumberFormat.getNumberInstance(locale);
             DecimalFormat df = (DecimalFormat) nf;
@@ -168,12 +292,10 @@ public class GeneralConverter {
                 throw new ConverterException(e);
             }
         }
-        // TODO Добавить Byte, Short, Integer, Long, Float, BigDecimal, Boolean, Date и т.д.
         return null;
     }
 
     public static BigDecimal toBigDecimal(Object value) {
-
         if (value == null) {
             return BigDecimal.ZERO;
         }
@@ -209,9 +331,6 @@ public class GeneralConverter {
         if (value instanceof Long) {
             return new BigDecimal((Long) value);
         }
-
-
-        // TODO Добавить Integer и т.д.
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
@@ -287,7 +406,6 @@ public class GeneralConverter {
             buffer.putLong((Long)value);
             return buffer.array();
         }
-        // TODO Добавить String, Byte, Short, Integer, Float, Double, BigDecimal, Date и т.д.
         throw new ConverterException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
 
     }
@@ -329,7 +447,27 @@ public class GeneralConverter {
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
-    public static ApiResponseData apiResponseToApiResponseData(APIResponse apiResponse) {
-        return new ApiResponseData(ApiResponseCode.valueOf(apiResponse.getCode()),apiResponse.getMessage());
+
+    public static MethodDescription convertMethodDataToMethodDescription(MethodDescriptionData data) {
+        List<MethodArgument> methodArgumentList = new ArrayList<>();
+        for (MethodArgumentData arg : data.args) {
+            List<Annotation> annotationList = getAnnotations(arg.annotations);
+            methodArgumentList.add(new MethodArgument(arg.returnType,arg.name,annotationList));
+
+        }
+        return new MethodDescription(data.returnType,data.name,methodArgumentList,getAnnotations(data.annotations));
+    }
+
+    public static List<Annotation> getAnnotations(List<AnnotationData> annotations) {
+        List<Annotation> annotationList = new ArrayList<>();
+        for (AnnotationData annotation : annotations) {
+            annotationList.add(new Annotation(annotation.name,annotation.arguments));
+        }
+        return annotationList;
+    }
+
+    private static TypeParser typeParser = TypeParser.newBuilder().build();
+    public static Object createObjectFromString(String value, Class<?> classType){
+        return typeParser.parse(value, classType);
     }
 }

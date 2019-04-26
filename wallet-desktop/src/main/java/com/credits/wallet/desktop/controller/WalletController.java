@@ -1,12 +1,9 @@
 package com.credits.wallet.desktop.controller;
 
-import com.credits.client.node.service.NodeApiServiceImpl;
+import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
-import com.credits.general.util.MathUtils;
-import com.credits.general.util.exception.ConverterException;
-import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.CoinTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -15,7 +12,6 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -26,7 +22,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,30 +29,24 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ResourceBundle;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.amount;
-import static com.credits.wallet.desktop.AppState.coin;
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
-import static com.credits.wallet.desktop.AppState.contractInteractionService;
-import static com.credits.wallet.desktop.AppState.noClearForm6;
+import static com.credits.wallet.desktop.AppState.CREDITS_TOKEN_NAME;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
-import static com.credits.wallet.desktop.AppState.toAddress;
-import static com.credits.wallet.desktop.AppState.transactionFeeValue;
-import static com.credits.wallet.desktop.AppState.transactionText;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 /**
  * Created by goncharov-eg on 18.01.2018.
  */
-public class WalletController implements Initializable {
+public class WalletController extends AbstractController {
 
+    private static final String ERR_FEE = "Fee must be greater than 0";
     private static final String ERR_COIN = "Coin must be selected";
     private static final String ERR_AMOUNT = "Amount must be greater than 0";
     private static final String ERR_TO_ADDRESS = "To address must not be empty";
@@ -65,47 +54,45 @@ public class WalletController implements Initializable {
     private final String WAITING_STATE_MESSAGE = "processing...";
     private final String ERROR_STATE_MESSAGE = "not available";
     private final DecimalFormat creditsDecimalFormat = new DecimalFormat("##0." + repeat('0', CREDITS_DECIMAL));
-    public final String CREDITS_TOKEN_NAME = "CS";
     ContextMenu contextMenu = new ContextMenu();
 
     @FXML
-    BorderPane bp;
+    private Label publicWalletID;
     @FXML
-    private Label wallet;
+    private Label coinsErrorLabel;
     @FXML
-    private Label labErrorCoin;
+    private Label addressErrorLabel;
     @FXML
-    private Label labErrorKey;
+    private Label amountErrorLabel;
     @FXML
-    private Label labErrorAmount;
+    private Label feeErrorLabel;
     @FXML
-    private Label labErrorFee;
+    private TextField addressField;
     @FXML
-    private TextField txKey;
+    private TextField amountField;
     @FXML
-    private TextField numAmount;
-    @FXML
-    private TextField numFee;
+    private TextField feeField;
     @FXML
     private TextField transText;
     @FXML
     private volatile TableView<CoinTabRow> coinsTableView;
     @FXML
-    private Label actualFeeLabel;
+    private Label actualOfferedMaxFeeLabel;
 
     @FXML
     private void handleLogout() {
-        VistaNavigator.loadVista(VistaNavigator.WELCOME,this);
+        closeSession();
+        VistaNavigator.loadVista(VistaNavigator.WELCOME);
     }
 
     @FXML
     private void handleAddCoin() {
-        VistaNavigator.loadVista(VistaNavigator.NEW_COIN,this);
+        VistaNavigator.loadVista(VistaNavigator.NEW_COIN);
     }
 
     @FXML
     private void handleCopy() {
-        StringSelection selection = new StringSelection(wallet.getText());
+        StringSelection selection = new StringSelection(publicWalletID.getText());
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, selection);
     }
@@ -117,59 +104,58 @@ public class WalletController implements Initializable {
 
     @FXML
     private void handleGenerate() {
-        amount = GeneralConverter.toBigDecimal(numAmount.getText());
-        toAddress = txKey.getText();
-        transactionText = transText.getText();
+        String transactionAmount = amountField.getText();
+        String transactionFee = feeField.getText();
+        String transactionToAddress = addressField.getText();
+        String transactionText = transText.getText();
 
         // VALIDATE
-        boolean isValidationSuccessful = true;
+        AtomicBoolean isValidationSuccessful = new AtomicBoolean(true);
         clearLabErr();
-        if (coinsTableView.getSelectionModel().getSelectedItem() == null || coinsTableView.getSelectionModel().getSelectedItem().getName().isEmpty()) {
-            labErrorCoin.setText(ERR_COIN);
-            coinsTableView.getStyleClass().add("credits-border-red");
-            isValidationSuccessful = false;
-        } else {
-            coin = coinsTableView.getSelectionModel().getSelectedItem().getName();
+        if (coinsTableView.getSelectionModel().getSelectedItem() == null ||
+            coinsTableView.getSelectionModel().getSelectedItem().getName().isEmpty()) {
+            FormUtils.validateTable(coinsTableView, coinsErrorLabel, ERR_COIN, isValidationSuccessful);
         }
-        if (toAddress == null || toAddress.isEmpty()) {
-            labErrorKey.setText(ERR_TO_ADDRESS);
-            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful = false;
+        if (transactionToAddress == null || transactionToAddress.isEmpty()) {
+            FormUtils.validateField(addressField, addressErrorLabel, ERR_TO_ADDRESS, isValidationSuccessful);
         }
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            labErrorAmount.setText(ERR_AMOUNT);
-            numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful = false;
+        if (GeneralConverter.toBigDecimal(transactionAmount).compareTo(BigDecimal.ZERO) <= 0) {
+            FormUtils.validateField(amountField, amountErrorLabel, ERR_AMOUNT, isValidationSuccessful);
         }
-        /*
-        if (AppState.transactionFeeValue.compareTo(BigDecimal.ZERO) <= 0) {
-            labErrorFee.setText(ERR_FEE);
-            numFee.setStyle(numFee.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful = false;
+        if (GeneralConverter.toBigDecimal(transactionFee).compareTo(BigDecimal.ZERO) <= 0) {
+            FormUtils.validateField(feeField, feeErrorLabel, ERR_FEE, isValidationSuccessful);
         }
-        */
         try {
-            Validator.validateToAddress(toAddress);
-        } catch (ConverterException e) {
-            labErrorKey.setText("Invalid Address");
-            txKey.setStyle(txKey.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful = false;
+            Validator.validateToAddress(transactionToAddress);
+        } catch (NodeClientException e) {
+            FormUtils.validateField(addressField, addressErrorLabel, "Invalid Address", isValidationSuccessful);
         }
 
-        if (isValidationSuccessful) {
-            VistaNavigator.loadVista(VistaNavigator.FORM_7,this);
+        if (isValidationSuccessful.get()) {
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("coinType", coinsTableView.getSelectionModel().getSelectedItem().getName());
+            params.put("transactionToAddress", transactionToAddress);
+            params.put("transactionAmount", transactionAmount);
+            params.put("transactionFee", transactionFee);
+            params.put("transactionText", transactionText);
+            params.put("actualOfferedMaxFee16Bits", FormUtils.getActualOfferedMaxFee16Bits(feeField));
+
+            VistaNavigator.loadVista(VistaNavigator.FORM_7, params);
         }
     }
 
     private void updateCoins(TableView<CoinTabRow> tableView) {
         ObservableList<CoinTabRow> tableViewItems = tableView.getItems();
         addOrUpdateCsCoinRow(tableViewItems);
-        coinsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new).forEach((coinName, contractAddress) -> addOrUpdateUserCoinRow(tableViewItems, coinName, contractAddress));
+        session.coinsKeeper.getKeptObject()
+            .orElseGet(ConcurrentHashMap::new)
+            .forEach((coinName, contractAddress) -> addOrUpdateUserCoinRow(tableViewItems, coinName, contractAddress));
     }
 
     private EventHandler<MouseEvent> handleDeleteToken(TableRow<CoinTabRow> row) {
         return event -> {
-            if ((!row.isEmpty()) && !row.getItem().getName().equals("") && !row.getItem().getName().equals(CREDITS_TOKEN_NAME)) {
+            if ((!row.isEmpty()) && !row.getItem().getName().equals("") &&
+                !row.getItem().getName().equals(CREDITS_TOKEN_NAME)) {
                 row.addEventHandler(MouseEvent.MOUSE_CLICKED, t -> {
                     if (t.getButton() == MouseButton.SECONDARY) {
                         Platform.runLater(() -> {
@@ -180,9 +166,10 @@ public class WalletController implements Initializable {
 
                             removeItem.setOnAction(event1 -> {
                                 coinsTableView.getItems().remove(row.getItem());
-                                coinsKeeper.modify(coinsKeeper.new Modifier() {
+                                session.coinsKeeper.modify(session.coinsKeeper.new Modifier() {
                                     @Override
-                                    public ConcurrentHashMap<String, String> modify(ConcurrentHashMap<String, String> restoredObject) {
+                                    public ConcurrentHashMap<String, String> modify(
+                                        ConcurrentHashMap<String, String> restoredObject) {
                                         restoredObject.remove(row.getItem().getName());
                                         return restoredObject;
                                     }
@@ -199,15 +186,18 @@ public class WalletController implements Initializable {
     private void addOrUpdateCsCoinRow(ObservableList<CoinTabRow> tableViewItems) {
         CoinTabRow coinRow = getCoinTabRow(tableViewItems, CREDITS_TOKEN_NAME, null);
         changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
-        async(() -> nodeApiService.getBalance(account), handleUpdateCoinValue(coinRow, creditsDecimalFormat));
+        async(() -> nodeApiService.getBalance(session.account), handleUpdateCoinValue(coinRow, creditsDecimalFormat));
     }
 
-    private void addOrUpdateUserCoinRow(ObservableList<CoinTabRow> tableViewItems, String coinName, String smartContractAddress) {
+    private void addOrUpdateUserCoinRow(ObservableList<CoinTabRow> tableViewItems, String coinName,
+        String smartContractAddress) {
         CoinTabRow coinRow = getCoinTabRow(tableViewItems, coinName, smartContractAddress);
-        if(coinRow.getLock().tryLock()) {
+        if (coinRow.getLock().tryLock()) {
             changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
-            DecimalFormat decimalFormat = new DecimalFormat("##0.000000000000000000"); // fixme must use the method "tokenContract.decimal()"
-            contractInteractionService.getSmartContractBalance(smartContractAddress, handleUpdateCoinValue(coinRow, decimalFormat));
+            DecimalFormat decimalFormat =
+                new DecimalFormat("##0.000000000000000000"); // todo must use the method "tokenContract.decimal()"
+            session.contractInteractionService.getSmartContractBalance(smartContractAddress,
+                handleUpdateCoinValue(coinRow, decimalFormat));
         }
     }
 
@@ -216,7 +206,8 @@ public class WalletController implements Initializable {
         coinRow.setValue(value);
     }
 
-    private CoinTabRow getCoinTabRow(ObservableList<CoinTabRow> tableViewItems, String tokenName, String contractAddress) {
+    private CoinTabRow getCoinTabRow(ObservableList<CoinTabRow> tableViewItems, String tokenName,
+        String contractAddress) {
         CoinTabRow coinRow = new CoinTabRow(tokenName, WAITING_STATE_MESSAGE, contractAddress);
         return tableViewItems.stream()
             .filter(foundCoinRow -> foundCoinRow.getName().equals(coinRow.getName()))
@@ -245,16 +236,10 @@ public class WalletController implements Initializable {
     }
 
     private void clearLabErr() {
-        coinsTableView.getStyleClass().remove("credits-border-red");
-        labErrorCoin.setText("");
-        labErrorAmount.setText("");
-        labErrorFee.setText("");
-        labErrorKey.setText("");
-
-        /*cbCoin.setStyle(cbCoin.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));*/
-        txKey.setStyle(txKey.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
-        numAmount.setStyle(numAmount.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
-        numFee.setStyle(numFee.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
+        FormUtils.clearErrorOnTable(coinsTableView, coinsErrorLabel);
+        FormUtils.clearErrorOnField(addressField, addressErrorLabel);
+        FormUtils.clearErrorOnField(amountField, amountErrorLabel);
+        FormUtils.clearErrorOnField(feeField, feeErrorLabel);
     }
 
     private void initializeTable(TableView<CoinTabRow> tableView) {
@@ -287,46 +272,47 @@ public class WalletController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        FormUtils.resizeForm(bp);
+    public void initializeForm(Map<String, Object> objects) {
+        clearLabErr();
 
         initializeTable(coinsTableView);
         updateCoins(coinsTableView);
 
-        NodeApiServiceImpl.account = account;
-        wallet.setText(account);
+        publicWalletID.setText(session.account);
 
-        clearLabErr();
+        FormUtils.initFeeField(feeField,actualOfferedMaxFeeLabel);
 
-        numFee.textProperty().addListener(
-            (observable, oldValue, newValue) -> {
-                if(AppState.decimalSeparator.equals(",")) {
-                    newValue = newValue.replace(',','.');
-                }
-                if (!org.apache.commons.lang3.math.NumberUtils.isCreatable(newValue)) { // check newValue is number
-                    return;
-                }
-                double actualFee = MathUtils.calcActualFee(GeneralConverter.toDouble(newValue));
-                this.actualFeeLabel.setText(GeneralConverter.toString(actualFee));
-            }
-        );
-
-        numAmount.setOnKeyReleased(event -> NumberUtils.correctNum(event.getText(), numAmount));
-
-        numFee.setOnKeyReleased(event -> {
-            try {
-                NumberUtils.correctNum(event.getText(), numFee);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-            }
+        amountField.textProperty().addListener((observable, oldValue, newValue) -> {
+            newValue = NumberUtils.getCorrectNum(newValue);
+            setFieldValue(amountField, newValue);
         });
 
-        if (noClearForm6) {
-            txKey.setText(toAddress);
-            numAmount.setText(GeneralConverter.toString(amount));
-            numFee.setText(GeneralConverter.toString(transactionFeeValue));
-
-            noClearForm6 = false;
+        if (objects != null) {
+            addressField.setText(objects.get("transactionToAddress").toString());
+            amountField.setText(objects.get("transactionAmount").toString());
+            feeField.setText(objects.get("transactionFee").toString());
+            transText.setText(objects.get("transactionText").toString());
+            int i = 0;
+            for (CoinTabRow item : coinsTableView.getItems()) {
+                if (item.getName().equals(objects.get("coinType").toString())) {
+                    coinsTableView.getSelectionModel().select(i);
+                    break;
+                }
+                i++;
+            }
         }
+    }
+
+    private void setFieldValue(TextField tf, String newValue) {
+        if(newValue.isEmpty()) {
+            tf.setText("");
+        } else {
+            tf.setText(newValue);
+        }
+    }
+
+
+    @Override
+    public void formDeinitialize() {
     }
 }

@@ -6,93 +6,92 @@ import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.FormUtils;
 import com.credits.wallet.desktop.utils.SmartContractsUtils;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
-import static com.credits.wallet.desktop.AppState.contractInteractionService;
 
 /**
  * Created by goncharov-eg on 07.02.2018.
  */
-//TODO need refactoring
-public class NewCoinController implements Initializable {
+public class NewCoinController extends AbstractController {
     private final static Logger LOGGER = LoggerFactory.getLogger(NewCoinController.class);
 
     private static final String ERR_COIN = "You must enter coin mnemonic";
     private static final String ERR_TOKEN = "You must enter token";
     private static final String ERR_COIN_DUPLICATE = "Coin already exists";
+    private static final String THIS_NAME_IS_FORBIDDEN = "This name is forbidden";
 
     @FXML
-    BorderPane bp;
-
+    private TextField tokenField;
     @FXML
-    private TextField txToken;
+    private TextField coinField;
     @FXML
-    private TextField txCoin;
-
+    private Label tokenErrorLabel;
     @FXML
-    private Label labelErrorToken;
-    @FXML
-    private Label labelErrorCoin;
+    private Label coinErrorLabel;
 
     @FXML
     private void handleBack() {
-        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+        VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
     @FXML
     private void handleSave(){
+        clearFormErrors();
 
-        clearLabErr();
+        String coinName = coinField.getText().replace(";", "");
+        String smartContractAddress = tokenField.getText().replace(";", "");
 
-        String coinName = txCoin.getText().replace(";", "");
-        String smartContractAddress = txToken.getText().replace(";", "");
+        if (checkValidData(coinName, smartContractAddress)) {
+            addSmartContractTokenBalance(coinName, smartContractAddress);
+            VistaNavigator.loadVista(VistaNavigator.WALLET);
+        }
+    }
 
-        // VALIDATE
+    private boolean checkValidData(String coinName, String smartContractAddress) {
         AtomicBoolean isValidationSuccessful = new AtomicBoolean(true);
         if (coinName.isEmpty()) {
-            labelErrorCoin.setText(ERR_COIN);
-            txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful.set(false);
+            FormUtils.validateField(coinField, coinErrorLabel, ERR_COIN, isValidationSuccessful);
+        }
+
+        if(coinName.toLowerCase().equals("credits") || coinName.toLowerCase().equals("cs")) {
+            FormUtils.validateField(coinField, coinErrorLabel, THIS_NAME_IS_FORBIDDEN, isValidationSuccessful);
         }
 
         if (smartContractAddress.isEmpty()) {
-            labelErrorToken.setText(ERR_TOKEN);
-            txToken.setStyle(txToken.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-            isValidationSuccessful.set(false);
+            FormUtils.validateField(tokenField, tokenErrorLabel, ERR_TOKEN, isValidationSuccessful);
         }
 
-        coinsKeeper.getKeptObject().ifPresent(coinsMap -> {
+        session.coinsKeeper.getKeptObject().ifPresent(coinsMap -> {
             if(coinsMap.containsKey(coinName)) {
-                labelErrorCoin.setText(ERR_COIN_DUPLICATE);
-                txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: #ececec", "-fx-border-color: red"));
-                isValidationSuccessful.set(false);
+                FormUtils.validateField(coinField, coinErrorLabel, ERR_COIN_DUPLICATE, isValidationSuccessful);
             }
         });
 
-        if (!isValidationSuccessful.get()) {
-                return;
-        }
-
-        addSmartContractTockenBalance(coinName, smartContractAddress);
-        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+        return isValidationSuccessful.get();
     }
 
-    public static void addSmartContractTockenBalance(String coinName, String smartContractAddress) {
-        contractInteractionService.getSmartContractBalance(smartContractAddress, new Callback<BigDecimal>() {
+    @Override
+    public void initializeForm(Map<String, Object> objects) {
+        clearFormErrors();
+    }
+
+    private void clearFormErrors() {
+        FormUtils.clearErrorOnField(tokenField, tokenErrorLabel);
+        FormUtils.clearErrorOnField(coinField, coinErrorLabel);
+    }
+
+    private void addSmartContractTokenBalance(String coinName, String smartContractAddress) {
+
+        session.contractInteractionService.getSmartContractBalance(smartContractAddress, new Callback<BigDecimal>() {
             @Override
             public void onSuccess(BigDecimal balance) throws CreditsException {
-                    SmartContractsUtils.saveSmartInTokenList(coinName, balance, smartContractAddress);
+                SmartContractsUtils.saveSmartInTokenList(session.coinsKeeper,coinName, balance, smartContractAddress);
                 if(balance != null){
                     FormUtils.showPlatformInfo("Coin \"" + coinName + "\" was created successfully");
                 }
@@ -106,16 +105,7 @@ public class NewCoinController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        FormUtils.resizeForm(bp);
-        clearLabErr();
-    }
+    public void formDeinitialize() {
 
-    private void clearLabErr() {
-        labelErrorToken.setText("");
-        labelErrorCoin.setText("");
-
-        txToken.setStyle(txToken.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
-        txCoin.setStyle(txCoin.getStyle().replace("-fx-border-color: red", "-fx-border-color: #ececec"));
     }
 }

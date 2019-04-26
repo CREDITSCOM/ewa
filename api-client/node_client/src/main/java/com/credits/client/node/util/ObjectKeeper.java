@@ -21,7 +21,7 @@ import static java.io.File.separator;
 
 public class ObjectKeeper<T extends Serializable> {
 
-    static final Path cacheDirectory = Paths.get(System.getProperty("user.dir") + separator + "cache");
+    public static final Path cacheDirectory = Paths.get(System.getProperty("user.dir") + separator + "cache");
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectKeeper.class);
     private final String objectFileName;
     private final String account;
@@ -62,11 +62,11 @@ public class ObjectKeeper<T extends Serializable> {
         doSafe(() -> getKeptObject().ifPresent(oldObject -> keepObject(modifyFunction.modify(oldObject))), lock);
     }
 
-    Path getSerializedObjectPath() {
+    public Path getSerializedObjectPath() {
         return Paths.get(getAccountDirectory() + separator + objectFileName);
     }
 
-    private Path getAccountDirectory() {
+    public Path getAccountDirectory() {
         return Paths.get(cacheDirectory + separator + account);
     }
 
@@ -83,7 +83,6 @@ public class ObjectKeeper<T extends Serializable> {
 
             try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(serObjectFile.toString()))) {
                 oos.writeObject(object);
-                storedObject = object;
             }
         }catch (SecurityException | IOException e) {
             LOGGER.error("Object can't serialized. Reason: {}", e.getMessage());
@@ -95,7 +94,7 @@ public class ObjectKeeper<T extends Serializable> {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getSerializedObjectPath().toString()))) {
             return storedObject = (T) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-                LOGGER.error(e.getMessage());
+                LOGGER.error(e.toString());
             return null;
         }
     }

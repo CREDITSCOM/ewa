@@ -23,7 +23,7 @@ public class ContractExecutorServer implements Runnable {
     ApplicationProperties property;
 
     @SuppressWarnings("unchecked")
-    public ContractExecutorServer(){
+    public ContractExecutorServer() {
         INJECTOR.component.inject(this);
         processor = new ContractExecutor.Processor(new ContractExecutorHandler());
         new Thread(this).start();
@@ -37,8 +37,10 @@ public class ContractExecutorServer implements Runnable {
     private void serverStart(ContractExecutor.Processor processor) {
         try {
             TServerTransport serverTransport = new TServerSocket(property.executorPort);
-            TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
-
+            TServer server = new TThreadPoolServer(
+                new TThreadPoolServer.Args(serverTransport)
+//                    .executorService(Executors.newCachedThreadPool())
+                    .processor(processor));
             logger.info("Starting the Thrift server on port {}...", property.executorPort);
             server.serve();
         } catch (TTransportException e) {

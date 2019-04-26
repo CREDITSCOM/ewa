@@ -8,5 +8,5 @@ import java.util.Locale;
  */
 public class Constants {
     public static final Locale LOCALE = Locale.getDefault();
-    public static final String ds = Character.toString(new DecimalFormatSymbols(Locale.getDefault()).getDecimalSeparator()); //decimal separator
+    public static final String DECIMAL_SEPARATOR = Character.toString(new DecimalFormatSymbols(LOCALE).getDecimalSeparator());
 }

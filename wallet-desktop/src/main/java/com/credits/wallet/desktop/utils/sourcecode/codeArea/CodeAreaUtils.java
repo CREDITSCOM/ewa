@@ -24,16 +24,12 @@ public class CodeAreaUtils {
             "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch",
             "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while"};
 
-    public static final String[] DATA_TYPES_KEYWORDS =
-        new String[] {"String", "Boolean", "Integer", "Float", "Byte", "Short", "Long", "Character", "Double"};
-
-
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
     private static final String PAREN_PATTERN = "[()]";
     private static final String BRACE_PATTERN = "[{}]";
     private static final String BRACKET_PATTERN = "[\\[]]";
     private static final String SEMICOLON_PATTERN = ";";
-    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
+    private static final String STRING_PATTERN = "\"([^\"\\\\\\r\\n]|\\\\.)*\"";
     private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
 
     private static final Pattern PATTERN = Pattern.compile(

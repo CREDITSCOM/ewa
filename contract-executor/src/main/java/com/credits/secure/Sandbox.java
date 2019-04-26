@@ -1,9 +1,10 @@
 package com.credits.secure;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.security.*;
+import java.security.AccessControlContext;
+import java.security.AccessControlException;
+import java.security.Permission;
+import java.security.Permissions;
+import java.security.ProtectionDomain;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -49,8 +50,6 @@ public final class Sandbox {
     private Sandbox() {
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Sandbox.class);
-
     public static final Map<Class<?>, AccessControlContext> CHECKED_CLASSES = Collections.synchronizedMap(new WeakHashMap<>());
 
     static {
@@ -71,9 +70,7 @@ public final class Sandbox {
                         try {
                             acc.checkPermission(perm);
                         } catch (AccessControlException e) {
-                            LOGGER.error("clasS = {}", clasS);
-                            LOGGER.error(e.getMessage());
-                            throw new AccessControlException(e.getMessage());
+                            throw new AccessControlException("class " + clasS.getTypeName() + " " + e.getMessage());
                         }
                     }
                 }
@@ -88,9 +85,6 @@ public final class Sandbox {
      * @throws SecurityException Permissions are already confined for the {@code clasS}
      */
     public static void confine(Class<?> clasS, AccessControlContext accessControlContext) {
-        if (Sandbox.CHECKED_CLASSES.containsKey(clasS)) {
-            LOGGER.warn("Attempt to change the access control context for '" + clasS + "'");
-        }
         if (!Sandbox.CHECKED_CLASSES.containsKey(clasS)) {
             Sandbox.CHECKED_CLASSES.put(clasS, accessControlContext);
         }

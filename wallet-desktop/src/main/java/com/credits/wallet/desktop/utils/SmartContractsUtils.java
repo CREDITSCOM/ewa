@@ -1,21 +1,27 @@
 package com.credits.wallet.desktop.utils;
 
+import com.credits.client.node.util.ObjectKeeper;
 import com.credits.general.crypto.Md5;
 import com.credits.general.exception.CreditsException;
+import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.general.util.GeneralConverter;
+import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.general.crypto.Blake2S.generateHash;
 import static com.credits.general.util.GeneralConverter.byteArrayToHex;
 import static com.credits.general.util.GeneralConverter.toByteArray;
 import static com.credits.general.util.GeneralConverter.toByteArrayLittleEndian;
-import static com.credits.wallet.desktop.AppState.coin;
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
 import static org.apache.commons.lang3.ArrayUtils.addAll;
 
 public class SmartContractsUtils {
@@ -24,7 +30,27 @@ public class SmartContractsUtils {
     private static byte[] bytes;
 
 
-    public static byte[] generateSmartContractAddress(byte[] deployerAddress, long transactionId, byte[] bytecode) {
+    public static List<ByteBuffer> getSmartsListFromField(String field) {
+        try {
+            List<ByteBuffer> myList = new ArrayList<>();
+            if (!field.isEmpty()) {
+                String[] split = field.split(",");
+                for (String aSplit : split) {
+                    String contractAddress = CharMatcher.is('\"').trimFrom(aSplit);
+                    if (!contractAddress.isEmpty()) {
+                        byte[] bytes = GeneralConverter.decodeFromBASE58(contractAddress);
+                        myList.add(ByteBuffer.wrap(bytes));
+
+                    }
+                }
+            }
+            return myList;
+        } catch (Exception e) {
+            throw new CreditsException("Cannot parse used smart contracts");
+        }
+    }
+
+    public static byte[] generateSmartContractAddress(byte[] deployerAddress, long transactionId, List<ByteCodeObjectData> byteCodeObjects) {
 
         bytes = toByteArray(transactionId);
 
@@ -32,7 +58,9 @@ public class SmartContractsUtils {
         ArrayUtils.reverse(sliceId);
 
         byte[] seed = addAll(deployerAddress, toByteArrayLittleEndian(sliceId,sliceId.length));
-        seed = addAll(seed, bytecode);
+        for (ByteCodeObjectData unit: byteCodeObjects) {
+            seed = addAll(seed, unit.getByteCode());
+        }
         seed = toByteArrayLittleEndian(seed, seed.length);
         LOGGER.info("Generate smart contract address:\n");
 
@@ -43,7 +71,7 @@ public class SmartContractsUtils {
         return bytes;
     }
 
-    public static void saveSmartInTokenList(String coinName, BigDecimal balance, String smartContractAddress) {
+    public static void saveSmartInTokenList(ObjectKeeper<ConcurrentHashMap<String, String>> coinsKeeper, String coinName, BigDecimal balance, String smartContractAddress) {
         if(balance != null) {
             ConcurrentHashMap<String, String> coins = coinsKeeper.getKeptObject().orElseGet(ConcurrentHashMap::new);
             coinName = checkCoinNameExist(coinName, coins);
@@ -53,21 +81,22 @@ public class SmartContractsUtils {
         }
     }
 
-    private static String checkCoinNameExist(String coinName, ConcurrentHashMap<String, String> coins) {
+    static String checkCoinNameExist(String coinName, Map<String, String> coins) {
         if(coins.containsKey(coinName)) {
             String nameWithBrace = coinName + "(";
+            int number = 0;
             for (String existingName : coins.keySet()){
                if(existingName.contains(nameWithBrace)){
-                   int number = parseNumberOfDuplicateName(nameWithBrace.length(), existingName);
-                   if (number != 0) return coinName + "(" + ++number + ")";
+                   int parsedNumber = parseNumberOfDuplicateName(nameWithBrace.length(), existingName);
+                   if(parsedNumber > number) number = parsedNumber;
                }
             }
-            return coinName + "(1)";
+            return coinName + "(" + ++number + ")";
         }
         return coinName;
     }
 
-    private static int parseNumberOfDuplicateName(int identityPieceIndex, String coinName) {
+    public static int parseNumberOfDuplicateName(int identityPieceIndex, String coinName) {
         StringBuilder sb = new StringBuilder(coinName);
         sb.replace(0, identityPieceIndex, "");
         sb.deleteCharAt(sb.length() - 1);

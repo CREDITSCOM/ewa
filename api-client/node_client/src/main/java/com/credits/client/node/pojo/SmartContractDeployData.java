@@ -1,9 +1,8 @@
 package com.credits.client.node.pojo;
 
-import com.credits.client.node.thrift.generated.TokenStandart;
-
+import com.credits.general.pojo.ByteCodeObjectData;
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Rustem Saidaliyev on 16.05.2018.
@@ -12,14 +11,14 @@ public class SmartContractDeployData implements Serializable {
 
     private static final long serialVersionUID = -6187425771734674520L;
     private final String sourceCode;
-    private final byte[] byteCode;
+    private final List<ByteCodeObjectData> byteCodeObjectDataList;
     private final String hashState; //unused
-    private final TokenStandart tokenStandard;
+    private final TokenStandartData tokenStandardData;
 
-    public SmartContractDeployData(String sourceCode, byte[] byteCode,  TokenStandart tokenStandard) {
+    public SmartContractDeployData(String sourceCode, List<ByteCodeObjectData> byteCodeObjectDataList,  TokenStandartData tokenStandardData) {
         this.sourceCode = sourceCode;
-        this.byteCode = byteCode;
-        this.tokenStandard = tokenStandard;
+        this.byteCodeObjectDataList = byteCodeObjectDataList;
+        this.tokenStandardData = tokenStandardData;
         this.hashState="";
     }
 
@@ -27,16 +26,16 @@ public class SmartContractDeployData implements Serializable {
         return sourceCode;
     }
 
-    public byte[] getByteCode() {
-        return byteCode;
+    public List<ByteCodeObjectData> getByteCodeObjects() {
+        return byteCodeObjectDataList;
     }
 
     public String getHashState() {
         return hashState;
     }
 
-    public TokenStandart getTokenStandard() {
-        return tokenStandard;
+    public TokenStandartData getTokenStandardData() {
+        return tokenStandardData;
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -54,22 +53,22 @@ public class SmartContractDeployData implements Serializable {
         if (sourceCode != null ? !sourceCode.equals(that.sourceCode) : that.sourceCode != null) {
             return false;
         }
-        if (!Arrays.equals(byteCode, that.byteCode)) {
+        if (byteCodeObjectDataList.equals(that.byteCodeObjectDataList)) {
             return false;
         }
         if (hashState != null ? !hashState.equals(that.hashState) : that.hashState != null) {
             return false;
         }
-        return tokenStandard == that.tokenStandard;
+        return tokenStandardData == that.tokenStandardData;
     }
 
     @SuppressWarnings("ConstantConditions")
     @Override
     public int hashCode() {
         int result = (sourceCode != null ? sourceCode.hashCode() : 0);
-        result = 31 * result + Arrays.hashCode(byteCode);
+        result = 31 * result + byteCodeObjectDataList.hashCode();
         result = 31 * result + (hashState != null ? hashState.hashCode() : 0);
-        result = 31 * result + tokenStandard.hashCode();
+        result = 31 * result + tokenStandardData.hashCode();
         return result;
     }
 }

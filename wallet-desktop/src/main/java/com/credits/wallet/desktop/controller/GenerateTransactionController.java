@@ -11,69 +11,72 @@ import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.general.util.Utils.threadPool;
+import static com.credits.wallet.desktop.AppState.CREDITS_TOKEN_NAME;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
-import static com.credits.wallet.desktop.AppState.account;
-import static com.credits.wallet.desktop.AppState.amount;
-import static com.credits.wallet.desktop.AppState.coin;
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
-import static com.credits.wallet.desktop.AppState.contractInteractionService;
-import static com.credits.wallet.desktop.AppState.noClearForm6;
 import static com.credits.wallet.desktop.utils.ApiUtils.createTransaction;
 
 /**
  * Created by Rustem.Saidaliyev on 26.01.2018.
  */
-public class GenerateTransactionController implements Initializable {
+public class GenerateTransactionController extends AbstractController {
     private final static Logger LOGGER = LoggerFactory.getLogger(GenerateTransactionController.class);
-    private final static String CREDITS_SYMBOL = "CS";
 
     @FXML
-    BorderPane bp;
+    public Label coinType;
 
     @FXML
-    private TextField toAddress; //todo remove global variable
+    private TextField transactionToAddress;
 
     @FXML TextField transactionText;
 
     @FXML
-    private TextField amountInCs;
+    private TextField transactionAmount;
 
     @FXML
     private TextField transactionFeeValue;
 
+    private short actualOfferedMaxFee16Bits;
+
     @FXML
     private void handleBack() {
-        noClearForm6 = true;
-        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+        Map<String, Object> params = new HashMap<>();
+        params.put("transactionFee",transactionFeeValue.getText());
+        params.put("transactionToAddress",transactionToAddress.getText());
+        params.put("transactionAmount",transactionAmount.getText());
+        params.put("transactionText",transactionText.getText());
+        params.put("coinType", coinType.getText());
+        VistaNavigator.loadVista(VistaNavigator.WALLET, params);
     }
 
     @FXML
     private void handleGenerate() {
+        String toAddress = transactionToAddress.getText();
         try {
-            if(coin.equals(CREDITS_SYMBOL)) {
+            if(coinType.getText().equals(CREDITS_TOKEN_NAME)) {
                 CompletableFuture
-                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,account,toAddress.getText(),
+                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,session.account,toAddress,
                         true),threadPool)
-                    .thenApply((transactionData) -> createTransaction(transactionData, AppState.amount, AppState.transactionText))
+                    .thenApply((transactionData) -> createTransaction(transactionData, GeneralConverter.toBigDecimal(
+                        transactionAmount.getText()), actualOfferedMaxFee16Bits, transactionText.getText(),session))
                     .whenComplete(handleCallback(handleTransactionResult()));
             } else {
-                coinsKeeper.getKeptObject().ifPresent(coinsMap ->
-                    Optional.ofNullable(coinsMap.get(coin)).ifPresent(
-                        coin -> contractInteractionService.transferTo(coin, AppState.toAddress, amount, handleTransferTokenResult())));
+                session.coinsKeeper.getKeptObject().ifPresent(coinsMap ->
+                    Optional.ofNullable(coinsMap.get(coinType.getText())).ifPresent(
+                        coin -> session.contractInteractionService.transferTo(coin, toAddress, GeneralConverter.toBigDecimal(
+                            transactionAmount.getText()), actualOfferedMaxFee16Bits, handleTransferTokenResult())));
             }
         } catch (CreditsException e) {
             LOGGER.error(NODE_ERROR + ": " + e.getMessage(), e);
@@ -81,7 +84,7 @@ public class GenerateTransactionController implements Initializable {
             return;
         }
 
-        VistaNavigator.loadVista(VistaNavigator.WALLET,this);
+        VistaNavigator.loadVista(VistaNavigator.WALLET);
     }
 
     private Callback<String> handleTransferTokenResult() {
@@ -103,7 +106,7 @@ public class GenerateTransactionController implements Initializable {
             @Override
             public void onSuccess(Pair<Long, TransactionFlowResultData> resultData) {
                 ApiUtils.saveTransactionRoundNumberIntoMap(resultData.getRight().getRoundNumber(),
-                    resultData.getLeft());
+                    resultData.getLeft(),session);
                 FormUtils.showPlatformInfo("Transaction created");
             }
 
@@ -116,11 +119,18 @@ public class GenerateTransactionController implements Initializable {
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        FormUtils.resizeForm(bp);
-        this.toAddress.setText(AppState.toAddress);
-        this.amountInCs.setText(GeneralConverter.toString(amount) + " " + coin);
-        this.transactionText.setText(AppState.transactionText);
+    public void initializeForm(Map<String,Object> objects) {
+        transactionToAddress.setText(objects.get("transactionToAddress").toString());
+        transactionFeeValue.setText(objects.get("transactionFee").toString());
+        transactionAmount.setText(objects.get("transactionAmount").toString());
+        transactionText.setText(objects.get("transactionText").toString());
+        coinType.setText(objects.get("coinType").toString());
+        actualOfferedMaxFee16Bits = (Short)objects.get("actualOfferedMaxFee16Bits");
+
     }
 
+    @Override
+    public void formDeinitialize() {
+
+    }
 }

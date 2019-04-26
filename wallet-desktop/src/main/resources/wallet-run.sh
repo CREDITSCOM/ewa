@@ -1,1 +1,1 @@
-start call java -jar wallet-desktop-${version}-${buildNumber}.jar
+java -jar wallet-desktop-${project.version}-${buildNumber}.jar

@@ -1,9 +1,9 @@
 package com.credits.wallet.desktop.utils.sourcecode.codeArea;
 
-import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.AutocompleteHelper;
 import com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup;
 import javafx.concurrent.Task;
+import javafx.scene.control.IndexRange;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import static com.credits.wallet.desktop.utils.sourcecode.codeArea.CodeAreaUtils.computeHighlighting;
 import static javafx.scene.input.KeyCode.INSERT;
 import static javafx.scene.input.KeyCode.PASTE;
+import static javafx.scene.input.KeyCode.SHIFT;
 import static javafx.scene.input.KeyCode.V;
 import static javafx.scene.input.KeyCode.Y;
 import static javafx.scene.input.KeyCode.Z;
@@ -36,19 +37,17 @@ import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
 
 public class CreditsCodeArea extends CodeArea {
 
-
-    private static int tabCount;
-
-    private static final String DEFAULT_SOURCE_CODE =
-        "public class Contract extends SmartContract {\n" + "\n" + "    public Contract(String initiator) {\n\tsuper(initiator);\n    }" + "\n" + "}";
-    private ExecutorService codeAreaHighlightExecutor = Executors.newSingleThreadExecutor();
-
+    private static final int TAB_SIZE = 4;
     private static final String SPACE_SYMBOL = " ";
     private static final String CURLY_BRACKET_SYMBOL = "{";
     private static final String ROUND_BRACKET_SYMBOL = "(";
     private static final String NEW_LINE_SYMBOL = "\n";
+    private static final String TAB_STRING = StringUtils.repeat(" ", TAB_SIZE);
 
+    private static int tabCount;
+    private ExecutorService codeAreaHighlightExecutor = Executors.newSingleThreadExecutor();
 
+    private long lastTimeStampOfSavedText;
     private CreditsToolboxPopup popup;
     private AutocompleteHelper autocompleteHelper;
     private CreditsProposalsPopup creditsProposalsPopup;
@@ -64,22 +63,14 @@ public class CreditsCodeArea extends CodeArea {
     }
 
     private void initCodeAreaLogic() {
-
-        this.sceneProperty().addListener((observable, old, newPropertyValue) -> {
-            if (newPropertyValue == null) {
-                this.cleanAll();
-            }
-        });
-
         initKeyPressedLogic();
         initRichTextLogic();
-        fillDefaultCodeSource();
     }
 
     private void initRichTextLogic() {
         this.setParagraphGraphicFactory(LineNumberFactory.get(this));
         this.richChanges().filter(ch -> !ch.getInserted().equals(ch.getRemoved())) // XXX
-            .successionEnds(Duration.ofMillis(500)).supplyTask(() -> {
+                .successionEnds(Duration.ofMillis(500)).supplyTask(() -> {
             String sourceCode = this.getText();
             Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
                 @Override
@@ -109,13 +100,16 @@ public class CreditsCodeArea extends CodeArea {
 
         this.addEventHandler(KeyEvent.KEY_PRESSED, (k) -> {
             KeyCode code = k.getCode();
-            if (code != KeyCode.TAB) {
-                if (code.isLetterKey() || code.isDigitKey() || code.isNavigationKey() || code.isWhitespaceKey()) {
-                    tabCount = 0;
+            if (code != SHIFT) {
+                if (code != KeyCode.TAB) {
+                    if (code.isLetterKey() || code.isDigitKey() || code.isNavigationKey() || code.isWhitespaceKey()) {
+                        tabCount = 0;
+                    }
                 }
+                this.autocompleteHelper.handleKeyPressEvent(k);
             }
-            this.autocompleteHelper.handleKeyPressEvent(k);
         });
+
 
         Nodes.addInputMap(this, InputMap.consume(keyPressed(Z, SHORTCUT_DOWN), e -> {
             this.undo();
@@ -130,26 +124,83 @@ public class CreditsCodeArea extends CodeArea {
 
         Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.TAB), e -> {
             tabCount++;
-            this.replaceSelection(StringUtils.repeat(" ", 4));
+            this.replaceSelection(TAB_STRING);
+        }));
+
+        Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.ENTER), e -> {
+            String currentLine = getText().split("\n")[getCaretPositionOnLines().lineNumber];
+            tabCount = countTabsNumberAtBeginLine(currentLine);
+            int caretPosition = getCaretPositionOnLines().position;
+            if (currentLine.length() > 0) {
+                if (getCharBeforeCaret(currentLine, caretPosition) == '{' && isBraceRequired()) {
+                    tabCount += 1;
+                    replaceSelection("\n\n" + StringUtils.repeat(TAB_STRING, tabCount - 1) + "}");
+                    setCaretPositionOnLine(getCaretPositionOnLines().lineNumber);
+                    replaceSelection(StringUtils.repeat(TAB_STRING, tabCount));
+                } else {
+                    if (getCharBeforeCaret(currentLine, caretPosition) == '{') {
+                        tabCount += 1;
+                    }
+                    replaceSelection("\n" + StringUtils.repeat(TAB_STRING, tabCount));
+                }
+            } else {
+                replaceSelection("\n");
+            }
         }));
 
         Nodes.addInputMap(this,
-            InputMap.consume(anyOf(keyPressed(PASTE), keyPressed(V, SHORTCUT_DOWN), keyPressed(INSERT, SHIFT_DOWN)),
-                e -> {
-                    replaceTabSymbolInClipboard();
-                }));
+                InputMap.consume(anyOf(keyPressed(PASTE), keyPressed(V, SHORTCUT_DOWN), keyPressed(INSERT, SHIFT_DOWN)),
+                        e -> replaceTabSymbolInClipboard()));
 
         Nodes.addInputMap(this, InputMap.consume(keyPressed(KeyCode.BACK_SPACE), e -> {
             if (tabCount > 0) {
-                for (int i = 0; i < 4; i++) {
-                    this.deletePreviousChar();
+                for (int i = 0; i < TAB_SIZE; i++) {
+                    deletePreviousChar();
                 }
                 tabCount--;
             } else {
-                this.deletePreviousChar();
+                IndexRange selectedTextRange = getSelection();
+                if(selectedTextRange.getLength() > 0){
+                    deleteText(selectedTextRange);
+                }else {
+                    deletePreviousChar();
+                }
             }
         }));
     }
+
+    private char getCharBeforeCaret(String currentLine, int caretPosition) {
+        return currentLine.charAt(caretPosition > 0 ? caretPosition - 1 : 0);
+    }
+
+
+    private boolean isBraceRequired() {
+        int[] chars = getText().chars().toArray();
+        int unclosedBraces = 0;
+        for (int aChar : chars) {
+            if (aChar == '{') {
+                unclosedBraces++;
+            } else if (aChar == '}') {
+                unclosedBraces--;
+            }
+        }
+        return unclosedBraces > 0;
+    }
+
+    private int countTabsNumberAtBeginLine(String currentLine) {
+        StringBuilder sb = new StringBuilder(currentLine);
+        for (int i = 0; i < sb.length(); i++) {
+            if(sb.charAt(i) == '\t') {
+                i += TAB_SIZE - 1;
+                continue;
+            }
+            if (sb.charAt(i) != ' ') {
+                return (i + 1) / TAB_SIZE;
+            }
+        }
+        return sb.length() / TAB_SIZE;
+    }
+
     void replaceTabSymbolInClipboard() {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         if (clipboard.hasString()) {
@@ -176,23 +227,23 @@ public class CreditsCodeArea extends CodeArea {
 
     public CaretLinePosition getCaretPositionOnLines() {
         int caretPosition = this.getCaretPosition();
-        int length = 0;
-        int i=0;
+        int amountCharsBeforeCaretInLine = 0;
+        int i = 0;
         String[] lines = this.getText().split("\n");
         for (String line : lines) {
-            length += line.length();
-            if(caretPosition<=length) {
-               return new CaretLinePosition(i,lines,i==0?caretPosition:line.length()-(length-caretPosition));
+            amountCharsBeforeCaretInLine += line.length();
+            if (caretPosition <= amountCharsBeforeCaretInLine) {
+                return new CaretLinePosition(i, lines, i == 0 ? caretPosition : line.length() - (amountCharsBeforeCaretInLine - caretPosition));
             }
-            length = length+1;
+            amountCharsBeforeCaretInLine = amountCharsBeforeCaretInLine + 1;
             i++;
         }
-        return new CaretLinePosition(0,lines,caretPosition);
+        return new CaretLinePosition(0, lines, lines.length > 0 ? lines[lines.length - 1].length() : 0);
     }
 
     public void setCaretPositionOnLine(int lineNumber) {
         this.positionCursorToLine(lineNumber);
-        CreditsCodeArea.CaretLinePosition caretLinePosition = this.getCaretPositionOnLines();
+        CreditsCodeArea.CaretLinePosition caretLinePosition = getCaretPositionOnLines();
         String currentLine = caretLinePosition.lines[caretLinePosition.lineNumber];
         this.fixCaretPosition(this.getCaretPosition() + this.getPositionFirstNotSpecialCharacter(
             currentLine));
@@ -245,14 +296,6 @@ public class CreditsCodeArea extends CodeArea {
 
     public void fixCaretPosition(int caretPosition) {
         this.selectRange(caretPosition,caretPosition);
-    }
-
-    public void fillDefaultCodeSource() {
-        if (AppState.lastSmartContract == null) {
-            this.replaceText(0, 0, DEFAULT_SOURCE_CODE);
-        } else {
-            this.replaceText(AppState.lastSmartContract);
-        }
     }
 
     public void cleanAll() {

@@ -3,10 +3,12 @@ package com.credits.wallet.desktop;
 
 import com.credits.wallet.desktop.controller.MainController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
@@ -17,10 +19,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
-
-import static com.credits.wallet.desktop.AppState.coinsKeeper;
-import static com.credits.wallet.desktop.AppState.executor;
-import static com.credits.wallet.desktop.AppState.favoriteContractsKeeper;
 
 /**
  * Created by goncharov-eg on 23.11.2017.
@@ -47,7 +45,7 @@ public class WalletApp extends Application {
         }
         LOGGER.info("\n\n\n");
         LOGGER.info("---------------------------------------------------------------------------");
-        LOGGER.info("Starting Wallet app {}-{}",commit,author);
+        LOGGER.info("Starting Wallet app {}-{}", commit, author);
         LOGGER.info("---------------------------------------------------------------------------\n\n\n");
         appStateInitializer = appStateInitializer != null ? appStateInitializer : new AppStateInitializer();
         LOGGER.info("Initializing application state");
@@ -57,8 +55,6 @@ public class WalletApp extends Application {
         stage.getIcons().add(new Image(WalletApp.class.getResourceAsStream("/img/icon.png")));
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
-        AppState.screenHeight = bounds.getHeight();
-        AppState.screenWidth = bounds.getWidth();
 
         stage.setX(bounds.getMinX());
         stage.setY(bounds.getMinY());
@@ -68,73 +64,59 @@ public class WalletApp extends Application {
 
         stage.setTitle("Credits");
 
-        stage.setScene(
-            createScene(
-                loadMainPane()
-            )
-        );
+        stage.setScene(createScene(loadMainPane()));
+        loadFirstForm(VistaNavigator.WELCOME);
         //ScenicView.show(stage.getScene());
+        stage.setOnCloseRequest(event -> {
+            VistaNavigator.getCurrentVistaController().formDeinitialize();
+            AppState.sessionMap.forEach((account, session) -> session.close());
+            Platform.exit();
+            System.exit(0);
+        });
+        AppState.primaryStage = stage;
         stage.show();
     }
 
+    void loadFirstForm(String form) throws IOException {
+        VistaNavigator.loadFirstForm(form);
+    }
 
     private Pane loadMainPane() throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        Pane mainPane = loader.load(
-            WalletApp.class.getResourceAsStream(VistaNavigator.MAIN)
-        );
+        BorderPane mainPane = loader.load(WalletApp.class.getResourceAsStream(VistaNavigator.MAIN));
         MainController mainController = loader.getController();
-
-        VistaNavigator.setMainController(mainController);
-        VistaNavigator.loadVista(appStateInitializer.startForm,null);
-
+        VistaNavigator.saveMainController(mainController);
         return mainPane;
     }
 
 
     private Scene createScene(Pane mainPane) {
-        Scene scene = new Scene(
-            mainPane
-        );
+        Scene scene = new Scene(mainPane);
         addFonts();
-        scene.getStylesheets().setAll(
-            WalletApp.class.getResource("/styles.css").toExternalForm()
-        );
+        scene.getStylesheets().setAll(WalletApp.class.getResource("/styles.css").toExternalForm());
         return scene;
     }
 
-    @Override
-    public void stop() {
-        if (executor != null) {
-            executor.shutdown();
-        }
-        if(favoriteContractsKeeper != null){
-            favoriteContractsKeeper.flush();
-        }
-        if(coinsKeeper != null){
-            coinsKeeper.flush();
-        }
-    }
 
     private void addFonts() {
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Black.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-BlackItalic.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Bold.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-BoldItalic.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-ExtraBold.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-ExtraBoldItalic.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-ExtraLight.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-ExtraLightItalic.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Italic.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Light.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-LightItalic.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Medium.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-MediumItalic.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Regular.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-SemiBold.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-SemiBoldItalic.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Thin.otf").toExternalForm(),14);
-        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-ThinItalic.otf").toExternalForm(),14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Black.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-BlackItalic.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Bold.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-BoldItalic.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-ExtraBold.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-ExtraBoldItalic.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-ExtraLight.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-ExtraLightItalic.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Italic.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Light.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-LightItalic.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Medium.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-MediumItalic.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Regular.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-SemiBold.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-SemiBoldItalic.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-Thin.otf").toExternalForm(), 14);
+        Font.loadFont(WalletApp.class.getResource("/fonts/Montserrat-ThinItalic.otf").toExternalForm(), 14);
     }
 
 }
