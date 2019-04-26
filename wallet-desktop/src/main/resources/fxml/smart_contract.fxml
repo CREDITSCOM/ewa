@@ -4,9 +4,9 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
@@ -17,7 +17,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-
 <Pane prefWidth="1300.0" styleClass="credits-borderWhitePane" BorderPane.alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.credits.wallet.desktop.controller.SmartContractController">
     <TabPane fx:id="contractsTabPane" layoutX="20.0" layoutY="220.0" maxHeight="360.0" minHeight="360.0" prefHeight="360.0" prefWidth="430.0" styleClass="credits-tab-pane" tabClosingPolicy="UNAVAILABLE">
         <Tab fx:id="favoriteContractsTab" onSelectionChanged="#updateSelectedTab" styleClass="credits-tab" text="Favorites">
@@ -106,7 +105,7 @@
          </content>
       </Tab>
     </TabPane>
-    <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contracts from blockhain" />
+    <Label layoutX="20.0" styleClass="credits-topLabelText" text="Smart contracts from blockchain" />
     <Button layoutX="20.0" layoutY="590.0" onAction="#handleBack" prefHeight="60.0" prefWidth="60.0" style="-fx-font-size: 22;" styleClass="credits-button">
         <graphic>
             <ImageView fitHeight="26.0" fitWidth="26.0">
