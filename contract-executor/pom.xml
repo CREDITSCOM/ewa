@@ -162,6 +162,18 @@
             <artifactId>dagger</artifactId>
             <version>2.22.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.credits.sc-api</groupId>
+            <artifactId>sc-api</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.credits.sc-api</groupId>
+            <artifactId>sc-api</artifactId>
+            <version>1.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

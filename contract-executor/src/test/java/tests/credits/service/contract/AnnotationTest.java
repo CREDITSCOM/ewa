@@ -3,15 +3,19 @@ package tests.credits.service.contract;
 import com.credits.general.pojo.AnnotationData;
 import com.credits.general.pojo.MethodArgumentData;
 import com.credits.general.pojo.MethodDescriptionData;
+import com.credits.scapi.annotations.Payable;
+import com.credits.scapi.annotations.PayableAmount;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import tests.credits.service.ServiceTest;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AnnotationTest extends ServiceTest {
 
@@ -29,14 +33,15 @@ public class AnnotationTest extends ServiceTest {
     public void get_methods_of_contract() throws Exception {
         AnnotationData getterAnnotation = new AnnotationData("com.credits.scapi.annotations.Getter", new HashMap<>());
 
-        MethodDescriptionData initialize = createInitializeMethodDescriptionData(getterAnnotation);
-        MethodDescriptionData addTokens = createAddTokensMethodDescriptionData(getterAnnotation);
-        MethodDescriptionData getTotal = createGetTotalMethodDescriptionData();
-        MethodDescriptionData addToken = createAddTokenMethodDescriptionData(getterAnnotation);
-        MethodDescriptionData testToken = createTestTokenMethodDescriptionData();
-        MethodDescriptionData testNotToken = createTestNotTokenMethodDescriptionData();
-        MethodDescriptionData testMultiple1 = createTestMultiple1MethodDescriptionData();
-        MethodDescriptionData testMultiple2 = createTestMultiple2MethodDescriptionData();
+        var initialize = createInitializeMethodDescriptionData(getterAnnotation);
+        var addTokens = createAddTokensMethodDescriptionData(getterAnnotation);
+        var getTotal = createGetTotalMethodDescriptionData();
+        var addToken = createAddTokenMethodDescriptionData(getterAnnotation);
+        var testToken = createTestTokenMethodDescriptionData();
+        var testNotToken = createTestNotTokenMethodDescriptionData();
+        var testMultiple1 = createTestMultiple1MethodDescriptionData();
+        var testMultiple2 = createTestMultiple2MethodDescriptionData();
+        var payable = createTestPayableDescriptionData();
 
 
         List<MethodDescriptionData> contractsMethods = ceService.getContractsMethods(byteCodeObjectDataList);
@@ -48,8 +53,17 @@ public class AnnotationTest extends ServiceTest {
         Assert.assertEquals(testNotToken, findMethod(contractsMethods, "testNotToken"));
         Assert.assertEquals(testMultiple1, findMethod(contractsMethods, "testMultiple1"));
         Assert.assertEquals(testMultiple2, findMethod(contractsMethods, "testMultiple2"));
+        Assert.assertEquals(payable, findMethod(contractsMethods, "payable"));
+    }
 
+    private MethodDescriptionData createTestPayableDescriptionData() {
+        var annotationData = new ArrayList<AnnotationData>();
+        annotationData.add(new AnnotationData(Payable.class.getName(), Map.of("amount", "23.32")));
+        var argumentData = new MethodArgumentData(
+            BigDecimal.class.getTypeName(), "amount",
+            List.of(new AnnotationData(PayableAmount.class.getName(), Collections.emptyMap())));
 
+        return new MethodDescriptionData("void", "payable", List.of(argumentData), annotationData);
     }
 
     private MethodDescriptionData createTestMultiple1MethodDescriptionData() {
@@ -65,8 +79,8 @@ public class AnnotationTest extends ServiceTest {
 
 
         return new MethodDescriptionData("void", "testMultiple1",
-            Collections.singletonList(new MethodArgumentData("int", "amount", new ArrayList<>())),
-            addTokensAnnotationData);
+                                         Collections.singletonList(new MethodArgumentData("int", "amount", new ArrayList<>())),
+                                         addTokensAnnotationData);
     }
 
     private MethodDescriptionData createTestMultiple2MethodDescriptionData() {
@@ -82,14 +96,14 @@ public class AnnotationTest extends ServiceTest {
 
 
         return new MethodDescriptionData("void", "testMultiple2",
-            Collections.singletonList(new MethodArgumentData("int", "amount", new ArrayList<>())),
-            addTokensAnnotationData);
+                                         Collections.singletonList(new MethodArgumentData("int", "amount", new ArrayList<>())),
+                                         addTokensAnnotationData);
     }
 
 
     public MethodDescriptionData createInitializeMethodDescriptionData(AnnotationData getterAnnotation) {
         return new MethodDescriptionData("void", "initialize", new ArrayList<>(),
-                Collections.singletonList(getterAnnotation));
+                                         Collections.singletonList(getterAnnotation));
     }
 
     public MethodDescriptionData createAddTokensMethodDescriptionData(AnnotationData getterAnnotation) {
@@ -102,8 +116,8 @@ public class AnnotationTest extends ServiceTest {
 
 
         return new MethodDescriptionData("void", "addTokens",
-            Collections.singletonList(new MethodArgumentData("int", "amount", new ArrayList<>())),
-            addTokensAnnotationData);
+                                         Collections.singletonList(new MethodArgumentData("int", "amount", new ArrayList<>())),
+                                         addTokensAnnotationData);
     }
 
     public MethodDescriptionData createGetTotalMethodDescriptionData() {
@@ -118,8 +132,11 @@ public class AnnotationTest extends ServiceTest {
         }}));
 
         return new MethodDescriptionData("void", "addToken",
-            Collections.singletonList(new MethodArgumentData("int", "amount", Collections.singletonList(getterAnnotation))),
-            addTokenAnnotationData);
+                                         Collections.singletonList(new MethodArgumentData(
+                                             "int",
+                                             "amount",
+                                             Collections.singletonList(getterAnnotation))),
+                                         addTokenAnnotationData);
     }
 
     public MethodDescriptionData createTestTokenMethodDescriptionData() {
@@ -127,8 +144,11 @@ public class AnnotationTest extends ServiceTest {
         testTokenAnnotationData.add(new AnnotationData("com.credits.scapi.annotations.ContractAddress", new HashMap<>() {{
             put("id", "0");
         }}));
-        return new MethodDescriptionData("void", "testToken",
-            Collections.singletonList(new MethodArgumentData("int", "amount", testTokenAnnotationData)), new ArrayList<>());
+        return new MethodDescriptionData(
+            "void",
+            "testToken",
+            Collections.singletonList(new MethodArgumentData("int", "amount", testTokenAnnotationData)),
+            new ArrayList<>());
     }
 
     public MethodDescriptionData createTestNotTokenMethodDescriptionData() {
@@ -137,8 +157,11 @@ public class AnnotationTest extends ServiceTest {
             put("id", "0");
         }}));
 
-        return new MethodDescriptionData("void", "testNotToken",
-            Collections.singletonList(new MethodArgumentData("int", "amount", testNotTokenAnnotationData)), new ArrayList<>());
+        return new MethodDescriptionData(
+            "void",
+            "testNotToken",
+            Collections.singletonList(new MethodArgumentData("int", "amount", testNotTokenAnnotationData)),
+            new ArrayList<>());
     }
 
     private MethodDescriptionData findMethod(List<MethodDescriptionData> contractsMethods, String name) {
