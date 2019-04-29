@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.general.util.variant.VariantConverter;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -47,7 +48,7 @@ public class TransactionController extends AbstractController{
         labState.setText(selectedTransactionRow.getState());
         labMethod.setText(selectedTransactionRow.getMethod());
         ObservableList<String> items = FXCollections.observableArrayList();
-        selectedTransactionRow.getParams().forEach(item -> items.add(item.getV_string()));
+        selectedTransactionRow.getParams().forEach(item -> items.add(VariantConverter.toObject(item).toString()));
         listParams.setItems(items);
         int value = items.size() * ROW_HEIGHT + 2 > MAX_HEIGHT ? MAX_HEIGHT : items.size() * ROW_HEIGHT + 2;
         listContainer.setPrefHeight(value);
