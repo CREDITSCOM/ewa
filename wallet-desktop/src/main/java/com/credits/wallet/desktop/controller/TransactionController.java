@@ -1,5 +1,6 @@
 package com.credits.wallet.desktop.controller;
 
+import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.variant.VariantConverter;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import javafx.collections.FXCollections;
@@ -9,6 +10,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,8 +50,11 @@ public class TransactionController extends AbstractController{
         labState.setText(selectedTransactionRow.getState());
         labMethod.setText(selectedTransactionRow.getMethod());
         ObservableList<String> items = FXCollections.observableArrayList();
-        selectedTransactionRow.getParams().forEach(item -> items.add(VariantConverter.toObject(item).toString()));
-        listParams.setItems(items);
+        List<Variant> params = selectedTransactionRow.getParams();
+        if (params != null) {
+            params.forEach(item -> items.add(VariantConverter.toObject(item).toString()));
+            listParams.setItems(items);
+        }
         int value = items.size() * ROW_HEIGHT + 2 > MAX_HEIGHT ? MAX_HEIGHT : items.size() * ROW_HEIGHT + 2;
         listContainer.setPrefHeight(value);
 
