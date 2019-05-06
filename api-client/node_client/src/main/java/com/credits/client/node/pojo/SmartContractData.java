@@ -20,6 +20,7 @@ public class SmartContractData implements Serializable {
     private byte[] deployer;
     private byte[] objectState;
     private SmartContractDeployData smartContractDeployData;
+    private Integer transactionsCount;
 
     public boolean isGetterMethod() {
         return isGetterMethod;
@@ -36,13 +37,14 @@ public class SmartContractData implements Serializable {
     private int hashCode;
 
     public SmartContractData(byte[] address, byte[] deployer, SmartContractDeployData smartContractDeployData,
-        byte[] objectState) {
+        byte[] objectState, Integer transactionsCount) {
         this.address = address;
         this.deployer = deployer;
         this.smartContractDeployData = smartContractDeployData;
         this.objectState = objectState;
         this.params = new ArrayList<>();
         this.method="";
+        this.transactionsCount = transactionsCount;
     }
 
     public String getMethod() {
@@ -106,6 +108,14 @@ public class SmartContractData implements Serializable {
             base58Address = GeneralConverter.encodeToBASE58(address);
         }
         return base58Address;
+    }
+
+    public Integer getTransactionsCount() {
+        return transactionsCount;
+    }
+
+    public void setTransactionsCount(Integer transactionsCount) {
+        this.transactionsCount = transactionsCount;
     }
 
     @Override

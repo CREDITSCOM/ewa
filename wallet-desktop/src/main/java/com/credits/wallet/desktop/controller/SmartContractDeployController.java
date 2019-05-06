@@ -183,7 +183,7 @@ public class SmartContractDeployController extends AbstractController {
 
                 SmartContractData smartContractData = new SmartContractData(
                     generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits,
-                                                 byteCodeObjectDataList), decodeFromBASE58(session.account), smartContractDeployData, null);
+                                                 byteCodeObjectDataList), decodeFromBASE58(session.account), smartContractDeployData, null, null);
 
                 supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService, session.account,
                                                                          smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool)

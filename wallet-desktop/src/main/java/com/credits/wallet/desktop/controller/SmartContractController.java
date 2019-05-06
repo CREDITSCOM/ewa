@@ -221,11 +221,13 @@ public class SmartContractController extends AbstractController {
                 handleGetTransactionsStateResult(sourceTransactionMap));
         }
 
-//        List<SmartContractTransactionData> contractTransactions = getKeptContractsTransactions().getOrDefault(base58Address, new ArrayList<>());
+        List<SmartContractTransactionData> contractTransactions = getKeptContractsTransactions().getOrDefault(base58Address, new ArrayList<>());
         async(
             () -> {
 //                long transactionCount = nodeApiService.getWalletTransactionsCount(base58Address);
-                return nodeApiService.getSmartContractTransactions(base58Address, 0, 100 /* TODO transactionCount - contractTransactions.size()*/);
+                SmartContractData smartContractData = nodeApiService.getSmartContract(base58Address);
+                long transactionCount = smartContractData.getTransactionsCount();
+                return nodeApiService.getSmartContractTransactions(base58Address, 0, transactionCount - contractTransactions.size() /* TODO transactionCount - contractTransactions.size()*/);
             },
             handleGetTransactionsResult());
     }
@@ -296,10 +298,10 @@ public class SmartContractController extends AbstractController {
             @Override
             public void onSuccess(List<SmartContractTransactionData> transactionList) throws CreditsException {
 
-//                keepTransactions(selectedContract.getBase58Address(), transactionList);
-                List<SmartContractTransactionData> smartContractTransactionDataList = transactionList;
-//                List<SmartContractTransactionData> smartContractTransactionDataList =
-//                    getKeptContractsTransactions().getOrDefault(selectedContract.getBase58Address(), new ArrayList<>());
+                keepTransactions(selectedContract.getBase58Address(), transactionList);
+//                List<SmartContractTransactionData> smartContractTransactionDataList = transactionList;
+                List<SmartContractTransactionData> smartContractTransactionDataList =
+                    getKeptContractsTransactions().getOrDefault(selectedContract.getBase58Address(), new ArrayList<>());
 
                 smartContractTransactionDataList.forEach(transactionData -> {
 

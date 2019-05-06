@@ -22,7 +22,8 @@ public class NodeClientUtilsTest {
             "address".getBytes(),
             "deployer".getBytes(),
             smartContractDeployData,
-            null
+            null,
+                null
         );
 
         byte[] smartContractBytes = NodeClientUtils.serializeByThrift(smartContractData);

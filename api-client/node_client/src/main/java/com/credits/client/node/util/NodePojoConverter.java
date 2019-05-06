@@ -202,7 +202,7 @@ public class NodePojoConverter {
 
         return new SmartContractData(smartContract.getAddress(), smartContract.getDeployer(),
             NodePojoConverter.createSmartContractDeployData(smartContract.getSmartContractDeploy()),
-            smartContract.getObjectState());
+            smartContract.getObjectState(), smartContract.getTransactionsCount());
     }
 
     public static SmartContractDeployData createSmartContractDeployData(SmartContractDeploy thriftStruct) {

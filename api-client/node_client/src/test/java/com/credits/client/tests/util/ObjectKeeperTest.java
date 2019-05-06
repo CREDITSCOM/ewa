@@ -29,7 +29,7 @@ public class ObjectKeeperTest {
         objectKeeper = new ObjectKeeper<>(account, "obj");
         deleteCacheDirectory();
         SmartContractDeployData smartContractDeployData = new SmartContractDeployData("aaa", null, TokenStandartData.CreditsBasic);
-        someData.put("1",new SmartContractData(null, null, smartContractDeployData,null));
+        someData.put("1",new SmartContractData(null, null, smartContractDeployData,null, null));
     }
 
 
@@ -58,7 +58,7 @@ public class ObjectKeeperTest {
                 public HashMap<String, SmartContractData> modify(HashMap<String, SmartContractData> keptObject) {
                     if (keptObject != null) {
                         SmartContractDeployData smartContractDeployData = new SmartContractDeployData("BBB", null, TokenStandartData.CreditsBasic);
-                        keptObject.put("2", new SmartContractData(null, null, smartContractDeployData, null));
+                        keptObject.put("2", new SmartContractData(null, null, smartContractDeployData, null, null));
                     }
                     return keptObject;
                 }
@@ -71,7 +71,7 @@ public class ObjectKeeperTest {
         objectKeeper.keepObject(someData);
         HashMap<String, SmartContractData> restoredObject = objectKeeper.getKeptObject().get();
         SmartContractDeployData smartContractDeployData = new SmartContractDeployData("BBB", null, TokenStandartData.CreditsBasic);
-        restoredObject.put("2", new SmartContractData(null, null, smartContractDeployData, null));
+        restoredObject.put("2", new SmartContractData(null, null, smartContractDeployData, null, null));
         objectKeeper.keepObject(restoredObject);
         restoredObject = objectKeeper.getKeptObject().get();
         Assert.assertEquals(2, restoredObject.size());
