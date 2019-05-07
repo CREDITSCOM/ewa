@@ -1,6 +1,7 @@
-package tests.credits.service;
+package tests.credits;
 
 import dagger.Component;
+import tests.credits.service.ServiceTest;
 import tests.credits.thrift.ContractExecutorHandlerTest;
 
 import javax.inject.Singleton;

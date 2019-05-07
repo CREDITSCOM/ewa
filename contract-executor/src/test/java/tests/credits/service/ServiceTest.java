@@ -27,6 +27,8 @@ import pojo.session.DeployContractSession;
 import pojo.session.InvokeMethodSession;
 import service.executor.ContractExecutorService;
 import service.node.NodeApiExecInteractionService;
+import tests.credits.DaggerTestComponent;
+import tests.credits.TestModule;
 
 import javax.inject.Inject;
 import javax.tools.Diagnostic;
@@ -88,8 +90,7 @@ public abstract class ServiceTest {
         when(ceService.getSmartContractClassLoader()).thenReturn(byteCodeContractClassLoader);
     }
 
-    private void initSmartContractStaticField(Object smartContractInstance, String fieldName, Object value)
-        throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+    private void initSmartContractStaticField(Object smartContractInstance, String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {
         Class<?> contract = SmartContract.class;
         Field interactionService = contract.getDeclaredField(fieldName);
         interactionService.setAccessible(true);

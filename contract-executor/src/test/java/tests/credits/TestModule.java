@@ -1,4 +1,4 @@
-package tests.credits.service;
+package tests.credits;
 
 import com.credits.secure.PermissionsManager;
 import com.credits.secure.Sandbox;
@@ -16,9 +16,7 @@ import java.security.Permissions;
 import java.util.Enumeration;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 @Module
 public class TestModule {
