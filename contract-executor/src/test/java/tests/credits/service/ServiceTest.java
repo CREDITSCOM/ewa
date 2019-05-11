@@ -28,7 +28,6 @@ import pojo.session.InvokeMethodSession;
 import service.executor.ContractExecutorService;
 import service.node.NodeApiExecInteractionService;
 import tests.credits.DaggerTestComponent;
-import tests.credits.TestModule;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -78,7 +77,7 @@ public abstract class ServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        DaggerTestComponent.builder().testModule(new TestModule()).build().inject(this);
+        DaggerTestComponent.builder().build().inject(this);
 
         sourceCode = readSourceCode(sourCodePath);
         byteCodeObjectDataList = compileSourceCode(sourceCode);

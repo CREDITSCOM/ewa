@@ -22,8 +22,14 @@ public class TestModule {
 
     @Provides
     @Singleton
-    public ContractExecutorService provideContractExecutorService(PermissionsManager permissionsManager) {
-        return new ContractExecutorServiceImpl(mock(NodeApiExecInteractionService.class), permissionsManager);
+    public ContractExecutorService provideContractExecutorService(NodeApiExecInteractionService nodeApi, PermissionsManager permissionsManager) {
+        return new ContractExecutorServiceImpl(nodeApi, permissionsManager);
+    }
+
+    @Provides
+    @Singleton
+    public NodeApiExecInteractionService provideMockNodeApiInteractionService(){
+       return mock(NodeApiExecInteractionService.class);
     }
 
     @Singleton
