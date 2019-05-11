@@ -30,11 +30,12 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorHandler.class);
 
-    @Inject
-    ContractExecutorService service;
+    private final ContractExecutorService ceService;
 
-    public ContractExecutorHandler() {
+    @Inject
+    public ContractExecutorHandler(ContractExecutorService contractExecutorService) {
         INJECTOR.component.inject(this);
+        ceService = contractExecutorService;
     }
 
     @Override
@@ -218,7 +219,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         GetContractMethodsResult result = new GetContractMethodsResult();
         try {
             List<MethodDescriptionData> contractsMethods =
-                    service.getContractsMethods(GeneralConverter.byteCodeObjectToByteCodeObjectData(compilationUnits));
+                    ceService.getContractsMethods(GeneralConverter.byteCodeObjectToByteCodeObjectData(compilationUnits));
             result.methods =
                     contractsMethods.stream().map(GeneralConverter::convertMethodDataToMethodDescription).collect(toList());
             result.setStatus(SUCCESS_API_RESPONSE);
@@ -241,7 +242,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         GetContractVariablesResult result = new GetContractVariablesResult();
         try {
             result.setStatus(SUCCESS_API_RESPONSE);
-            result.setContractVariables(service.getContractVariables(
+            result.setContractVariables(ceService.getContractVariables(
                     GeneralConverter.byteCodeObjectToByteCodeObjectData(compilationUnits),
                     contractState.array()));
         } catch (Throwable e) {
@@ -261,7 +262,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         try {
             result.setStatus(SUCCESS_API_RESPONSE);
             result.setByteCodeObjects(
-                    GeneralConverter.byteCodeObjectsDataToByteCodeObjects(service.compileClass(sourceCode)));
+                    GeneralConverter.byteCodeObjectsDataToByteCodeObjects(ceService.compileClass(sourceCode)));
         } catch (CompilationException exception) {
             result.setStatus(new APIResponse(
                     ApiResponseCode.FAILURE.code,

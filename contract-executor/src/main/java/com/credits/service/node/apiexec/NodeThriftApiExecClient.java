@@ -19,26 +19,12 @@ import java.util.concurrent.Executors;
  * Created by Rustem.Saidaliyev on 01.02.2018.
  */
 public class NodeThriftApiExecClient implements NodeThriftApiExec {
-    private static volatile NodeThriftApiExecClient instance;
     private final ExecutorService threadPoolExecutor;
     private final ThriftClientPool<APIEXEC.Client> pool;
 
-    private NodeThriftApiExecClient(String apiServerHost, Integer apiServerPort) {
+    public NodeThriftApiExecClient(String apiServerHost, Integer apiServerPort) {
         pool = new ThriftClientPool<>(APIEXEC.Client::new, apiServerHost, apiServerPort);
         threadPoolExecutor = Executors.newCachedThreadPool();
-    }
-
-    public static NodeThriftApiExecClient getInstance(String host, Integer port) {
-        NodeThriftApiExecClient localInstance = instance;
-        if (localInstance == null) {
-            synchronized (NodeThriftApiExecClient.class) {
-                localInstance = instance;
-                if (localInstance == null) {
-                    instance = localInstance = new NodeThriftApiExecClient(host, port);
-                }
-            }
-        }
-        return localInstance;
     }
 
     public ThriftClientPool<APIEXEC.Client> getPool() {

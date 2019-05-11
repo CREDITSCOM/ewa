@@ -10,7 +10,7 @@ import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.pojo.MethodData;
 import com.credits.secure.PermissionsManager;
-import com.credits.service.node.apiexec.NodeApiExecServiceImpl;
+import com.credits.service.node.apiexec.NodeApiExecInteractionServiceImpl;
 import com.credits.thrift.utils.ContractExecutorUtils;
 import exception.ContractExecutorException;
 import org.slf4j.Logger;
@@ -72,7 +72,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             logger.error("Cannot load smart contract's super class. Reason: ", e);
         }
 
-        permissionManager.grantAllPermissions(NodeApiExecServiceImpl.class);
+        permissionManager.grantAllPermissions(NodeApiExecInteractionServiceImpl.class);
         this.permissionManager = permissionManager;
     }
 
