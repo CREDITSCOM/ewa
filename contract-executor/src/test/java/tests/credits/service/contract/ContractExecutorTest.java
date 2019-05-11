@@ -137,5 +137,27 @@ public class ContractExecutorTest extends ServiceTest {
         Assert.assertNotNull(byteCodeObjectData);
         assertFalse(byteCodeObjectData.isEmpty());
     }
+
+
+    // TODO: 2019-05-08 implement getSeed test move from ContractExecutorHandler
+//    @Test
+//    @DisplayName("getSeed must be return expectedValue")
+//    public void getSeedCallIntoSmartContract() throws Exception {
+//        var expectedValue = new byte[]{0xB, 0xA, 0xB, 0xE};
+//
+//        ExecuteByteCodeResult executeByteCodeResult = deploySmartContract();
+//        assertEquals(new APIResponse((byte) 0, "success"), executeByteCodeResult.status);
+//
+//        when(mockApiExecInteractionService.getSeed(anyLong())).thenReturn(expectedValue);
+//        executeByteCodeResult = executeSmartContract(ByteBuffer.wrap(executeByteCodeResult.getResults().get(0).getInvokedContractState()),
+//                                                     1,
+//                                                     "testGetSeed",
+//                                                     5000);
+//        assertEquals(Arrays.asList(
+//                new Variant(V_BYTE, (byte) 0xB),
+//                new Variant(V_BYTE, (byte) 0xA),
+//                new Variant(V_BYTE, (byte) 0xB),
+//                new Variant(V_BYTE, (byte) 0xE)), executeByteCodeResult.getResults().get(0).getRet_val().getV_array());
+//    }
 }
 

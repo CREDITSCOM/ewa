@@ -8,7 +8,6 @@ import dagger.Provides;
 import service.executor.ContractExecutorService;
 import service.node.NodeApiExecInteractionService;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.FilePermission;
 import java.security.Permission;
@@ -21,10 +20,8 @@ import static org.mockito.Mockito.*;
 @Module
 public class TestModule {
 
-    @Inject
-    PermissionsManager permissionsManager;
-
     @Provides
+    @Singleton
     public ContractExecutorService provideContractExecutorService(PermissionsManager permissionsManager) {
         return new ContractExecutorServiceImpl(mock(NodeApiExecInteractionService.class), permissionsManager);
     }

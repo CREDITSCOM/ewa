@@ -14,5 +14,4 @@ import javax.inject.Singleton;
 public interface TestComponent{
     void inject(ServiceTest serviceTest);
     void inject(ContractExecutorHandlerTest contractExecutorHandlerTest);
-    void inject(TestModule module);
 }
