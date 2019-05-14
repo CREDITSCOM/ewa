@@ -1,11 +1,9 @@
 package com.credits.thrift;
 
 import com.credits.client.executor.thrift.generated.*;
-import com.credits.general.pojo.ApiResponseCode;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
-import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.CompilationException;
@@ -16,14 +14,16 @@ import service.executor.ContractExecutorService;
 import javax.inject.Inject;
 import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.credits.general.pojo.ApiResponseCode.FAILURE;
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.thrift.utils.ContractExecutorUtils.validateVersion;
 import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
 import static com.credits.utils.ContractExecutorServiceUtils.failureApiResponse;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
 
 public class ContractExecutorHandler implements ContractExecutor.Iface {
@@ -45,92 +45,21 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                                                  List<MethodHeader> methodHeaders,
                                                  long executionTime,
                                                  short version) {
+        ExecuteByteCodeResult executeByteCodeResult;
+        try {
+            logger.debug("<-- executeByteCode\naccessId={}\ninitiatorAddress={}\ninvokedContract={}\nmethodHeaders={}\nexecutionTime={}\nversion={}",
+                         accessId, encodeToBASE58(initiatorAddress.array()), invokedContract, methodHeaders, executionTime, version);
 
-        ClassObject classObject = invokedContract.object;
+            validateVersion(version);
 
-        logExecuteByteCodeParams(accessId, initiatorAddress, methodHeaders, version, classObject);
+            final var session = new ExecuteByteCodeSession(ceService, accessId, initiatorAddress, invokedContract, methodHeaders, executionTime);
+            executeByteCodeResult = session.perform();
+        } catch (Throwable e) {
+            executeByteCodeResult = new ExecuteByteCodeResult(failureApiResponse(e), emptyList(), emptyMap());
+        }
 
-        Objects.requireNonNull(classObject, "class object can't be null");
-        validateVersion(version);
-
-//        Variant[] paramsArray = params == null ? null : params.toArray(new Variant[0]);
-        ExecuteByteCodeResult result = new ExecuteByteCodeResult(null, null, null);
-//        try {
-//            // TODO: 3/18/2019 execute smart contract must be throw exception if contract state is empty or null
-//            ReturnValue returnValue =
-//                    isDeployTransaction(classObject, methodHeaders) ?
-//                            service.deploySmartContract(new DeployContractSession(
-//                                    accessId,
-//                                    encodeToBASE58(initiatorAddress.array()),
-//                                    encodeToBASE58(invokedContract.contractAddress.array()),
-//                                    byteCodeObjectsToByteCodeObjectsData(classObject.byteCodeObjects),
-//                                    executionTime))
-//                            :
-//                            service.executeSmartContract(new InvokeMethodSession(
-//                                    accessId,
-//                                    encodeToBASE58(initiatorAddress.array()),
-//                                    encodeToBASE58(invokedContract.contractAddress.array()),
-//                                    byteCodeObjectsToByteCodeObjectsData(classObject.byteCodeObjects),
-//                                    classObject.instance.array(),
-//                                    methodHeaders.stream().map(it -> new MethodHeaderData(it.getMethodName(), it.getParams())).collect(toList()),
-//                                    executionTime));
-//
-//
-//            result.results = Collections.emptyList();
-//            if (returnValue.executeResults != null) {
-//                result.status = returnValue.executeResults.get(0).status;
-////                result.results.r = returnValue.executeResults.get(0).result;
-////
-//
-//                if (returnValue.externalSmartContracts != null) {
-//                    result.externalContractsState = returnValue.externalSmartContracts.keySet().stream().reduce(
-//                            new HashMap<>(),
-//                            (newMap, address) -> {
-//                                if (!Arrays.equals(decodeFromBASE58(address), invokedContract.contractAddress.array())) {
-//                                    newMap.put(
-//                                            ByteBuffer.wrap(decodeFromBASE58(address)),
-//                                            ByteBuffer.wrap(returnValue.externalSmartContracts.get(address).getContractData().getContractState()));
-//                                }
-//                                return newMap;
-//                            },
-//                            (map1, map2) -> map1);
-//                }
-//
-//                logger.debug("\nexecuteByteCode success --> contractStateHash {} {}", Arrays.hashCode(result.getInvokedContractState()), result);
-//
-//            } catch(Throwable e){
-////            return null;
-//                result.status = failureApiResponse(e);
-//                logger.debug("\nexecuteByteCode error --> {}", result);
-//            }
-//            return result;
-//        }
-        return null;
-    }
-
-    private void logExecuteByteCodeParams(long accessId,
-                                          ByteBuffer initiatorAddress,
-                                          List<MethodHeader> methodHeaders,
-                                          short version,
-                                          ClassObject classObject) {
-        logger.debug(
-                "\n" +
-                        "\n<-- executeByteCode(" +
-                        "\naccessId = {}," +
-                        "\naddress = {}," +
-                        "\nobject.byteCodeObjects length= {}, " +
-                        "\nobject.instance length= {}, " +
-                        "\nobject.instance hash= {} " +
-                        "\nmethodHeaders = {}, " +
-                        "\nversion = {}.",
-                accessId,
-                encodeToBASE58(initiatorAddress.array()),
-                (classObject != null && classObject.byteCodeObjects != null ? classObject.byteCodeObjects.size() : "null"),
-                (classObject != null && classObject.instance != null ? classObject.instance.position() : "null"),
-                (classObject != null && classObject.instance != null ? classObject.instance.hashCode() : "null"),
-                methodHeaders,
-                version
-        );
+        logger.debug("--> {}", executeByteCodeResult);
+        return executeByteCodeResult;
     }
 
     @Override
@@ -265,7 +194,7 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                     GeneralConverter.byteCodeObjectsDataToByteCodeObjects(ceService.compileClass(sourceCode)));
         } catch (CompilationException exception) {
             result.setStatus(new APIResponse(
-                    ApiResponseCode.FAILURE.code,
+                    FAILURE.code,
                     exception.getErrors()
                             .stream()
                             .map(e -> "Error on line " + e.getLineNumber() + ": " + e.getErrorMessage())
@@ -276,9 +205,5 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         }
         logger.debug("\ncompileByteCode success --> {}", result);
         return result;
-    }
-
-    private boolean isDeployTransaction(ClassObject classObject, List<MethodHeader> methodHeaders) {
-        return methodHeaders.isEmpty() && (classObject == null || classObject.instance == null || classObject.instance.position() == 0);
     }
 }
