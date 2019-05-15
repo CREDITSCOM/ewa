@@ -100,7 +100,6 @@ public class SmartContractController extends AbstractController {
     private Method currentMethod;
     private HashMap<String, CompiledSmartContract> favoriteContracts;
 
-    private final int INIT_PAGE_SIZE = 100;
     private final int COUNT_ROUNDS_LIFE = 50;
     private final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
     private final List<SmartContractTransactionTabRow> unapprovedList = new ArrayList<>();
@@ -224,10 +223,9 @@ public class SmartContractController extends AbstractController {
         List<SmartContractTransactionData> contractTransactions = getKeptContractsTransactions().getOrDefault(base58Address, new ArrayList<>());
         async(
             () -> {
-//                long transactionCount = nodeApiService.getWalletTransactionsCount(base58Address);
                 SmartContractData smartContractData = nodeApiService.getSmartContract(base58Address);
                 long transactionCount = smartContractData.getTransactionsCount();
-                return nodeApiService.getSmartContractTransactions(base58Address, 0, transactionCount - contractTransactions.size() /* TODO transactionCount - contractTransactions.size()*/);
+                return nodeApiService.getSmartContractTransactions(base58Address, 0, transactionCount - contractTransactions.size());
             },
             handleGetTransactionsResult());
     }
@@ -299,7 +297,6 @@ public class SmartContractController extends AbstractController {
             public void onSuccess(List<SmartContractTransactionData> transactionList) throws CreditsException {
 
                 keepTransactions(selectedContract.getBase58Address(), transactionList);
-//                List<SmartContractTransactionData> smartContractTransactionDataList = transactionList;
                 List<SmartContractTransactionData> smartContractTransactionDataList =
                     getKeptContractsTransactions().getOrDefault(selectedContract.getBase58Address(), new ArrayList<>());
 
@@ -487,15 +484,6 @@ public class SmartContractController extends AbstractController {
             } else {
                 contractClass = clazz;
             }
-
-//            ClassLoader classLoader = this.getClass().getClassLoader();
-//            try {
-//                Class aClass = classLoader.loadClass(byteCodeObject.getName());
-//                System.out.println("aClass.getName() = " + aClass.getName());
-//            } catch (ClassNotFoundException e) {
-//                e.printStackTrace();
-//            }
-
         }
         return new SmartContractClass(contractClass, innerContractClasses);
     }
