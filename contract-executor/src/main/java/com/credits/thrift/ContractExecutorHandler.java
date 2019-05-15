@@ -4,19 +4,25 @@ import com.credits.client.executor.thrift.generated.*;
 import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
+import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.CompilationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pojo.ReturnValue;
+import pojo.session.DeployContractSession;
+import pojo.session.InvokeMethodSession;
 import service.executor.ContractExecutorService;
 
 import javax.inject.Inject;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.credits.general.pojo.ApiResponseCode.FAILURE;
+import static com.credits.general.util.GeneralConverter.byteCodeObjectsToByteCodeObjectsData;
 import static com.credits.general.util.GeneralConverter.encodeToBASE58;
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.thrift.utils.ContractExecutorUtils.validateVersion;
@@ -71,74 +77,70 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             List<List<Variant>> params,
             long executionTime,
             short version) {
-//
-//        ClassObject classObject = invokedContract.object;
-//
-//        logger.debug(
-//                "\n<-- executeByteCodeMultiple(" +
-//                        "\naccessId = {}," +
-//                        "\naddress = {}," +
-//                        "\nobject.byteCodeObjects length= {}, " +
-//                        "\nobject.instance length= {}, " +
-//                        "\nobject.instance hash= {} " +
-//                        "\nmethod = {}, " +
-//                        "\nparams = {}, " +
-//                        "\nversion = {}.",
-//                accessId,
-//                encodeToBASE58(initiatorAddress.array()),
-//                (classObject != null && classObject.byteCodeObjects != null ? classObject.byteCodeObjects.size() : "null"),
-//                (classObject != null && classObject.instance != null ? classObject.instance.position() : "null"),
-//                (classObject != null && classObject.instance != null ? classObject.instance.hashCode() : "null"),
-//                method,
-//                params == null ? "no params" : params.toString(),
-//                version
-//        );
-//
-//        Objects.requireNonNull(classObject, "class object can't be null");
-//        validateVersion(version);
-//
-//        Variant[][] paramsArray = null;
-//        if (params != null) {
-//            paramsArray = new Variant[params.size()][];
-//            for (int i = 0; i < params.size(); i++) {
-//                List<Variant> list = params.get(i);
-//                paramsArray[i] = list.toArray(new Variant[0]);
-//            }
-//        }
-//
-//        ExecuteByteCodeMultipleResult byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(SUCCESS_API_RESPONSE, null);
-//        try {
-//            ReturnValue returnValue =
-//                    isDeployTransaction(classObject, method) ?
-//                            service.deploySmartContract(new DeployContractSession(
-//                                    accessId,
-//                                    encodeToBASE58(initiatorAddress.array()),
-//                                    encodeToBASE58(invokedContract.contractAddress.array()),
-//                                    byteCodeObjectsToByteCodeObjectsData(classObject.byteCodeObjects),
-//                                    executionTime))
-//                            :
-//                            service.executeSmartContract(new InvokeMethodSession(
-//                                    accessId,
-//                                    encodeToBASE58(initiatorAddress.array()),
-//                                    encodeToBASE58(invokedContract.contractAddress.array()),
-//                                    byteCodeObjectsToByteCodeObjectsData(classObject.byteCodeObjects),
-//                                    classObject.instance.array(),
-//                                    method,
-//                                    paramsArray,
-//                                    executionTime));
-//
-//            byteCodeMultipleResult.results = returnValue.executeResults.stream().map(rv -> {
-//                final GetterMethodResult getterMethodResult = new GetterMethodResult(rv.status);
-//                getterMethodResult.ret_val = rv.result;
-//                return getterMethodResult;
-//            }).collect(Collectors.toList());
-//        } catch (Throwable e) {
-//            byteCodeMultipleResult.setStatus(failureApiResponse(e));
-//            logger.debug("\nexecuteByteCodeMultiple error --> {}", byteCodeMultipleResult);
-//        }
-//        logger.debug("\nexecuteByteCodeMultiple success --> {}", byteCodeMultipleResult);
-//        return byteCodeMultipleResult;
-        return null;
+
+        ClassObject classObject = invokedContract.object;
+
+        logger.debug(
+                "\n<-- executeByteCodeMultiple(" +
+                        "\naccessId = {}," +
+                        "\naddress = {}," +
+                        "\nobject.byteCodeObjects length= {}, " +
+                        "\nobject.instance length= {}, " +
+                        "\nobject.instance hash= {} " +
+                        "\nmethod = {}, " +
+                        "\nparams = {}, " +
+                        "\nversion = {}.",
+                accessId,
+                encodeToBASE58(initiatorAddress.array()),
+                (classObject != null && classObject.byteCodeObjects != null ? classObject.byteCodeObjects.size() : "null"),
+                (classObject != null && classObject.instance != null ? classObject.instance.position() : "null"),
+                (classObject != null && classObject.instance != null ? classObject.instance.hashCode() : "null"),
+                method,
+                params == null ? "no params" : params.toString(),
+                version
+        );
+
+        Objects.requireNonNull(classObject, "class object can't be null");
+        validateVersion(version);
+
+        Variant[][] paramsArray = null;
+        if (params != null) {
+            paramsArray = new Variant[params.size()][];
+            for (int i = 0; i < params.size(); i++) {
+                List<Variant> list = params.get(i);
+                paramsArray[i] = list.toArray(new Variant[0]);
+            }
+        }
+
+        ExecuteByteCodeMultipleResult byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(SUCCESS_API_RESPONSE, null);
+        try {
+            ReturnValue returnValue =
+                    classObject.instance == null || classObject.instance.array().length == 0
+                            ? ceService.deploySmartContract(new DeployContractSession(accessId,
+                                                                                      encodeToBASE58(initiatorAddress.array()),
+                                                                                      encodeToBASE58(invokedContract.contractAddress.array()),
+                                                                                      byteCodeObjectsToByteCodeObjectsData(classObject.byteCodeObjects),
+                                                                                      executionTime))
+                            : ceService.executeSmartContract(new InvokeMethodSession(accessId,
+                                                                                     encodeToBASE58(initiatorAddress.array()),
+                                                                                     encodeToBASE58(invokedContract.contractAddress.array()),
+                                                                                     byteCodeObjectsToByteCodeObjectsData(classObject.byteCodeObjects),
+                                                                                     classObject.instance.array(),
+                                                                                     method,
+                                                                                     paramsArray,
+                                                                                     executionTime));
+
+            byteCodeMultipleResult.results = returnValue.executeResults.stream().map(rv -> {
+                final GetterMethodResult getterMethodResult = new GetterMethodResult(rv.status);
+                getterMethodResult.ret_val = rv.result;
+                return getterMethodResult;
+            }).collect(Collectors.toList());
+        } catch (Throwable e) {
+            byteCodeMultipleResult.setStatus(failureApiResponse(e));
+            logger.debug("\nexecuteByteCodeMultiple error --> {}", byteCodeMultipleResult);
+        }
+        logger.debug("\nexecuteByteCodeMultiple success --> {}", byteCodeMultipleResult);
+        return byteCodeMultipleResult;
     }
 
     @Override

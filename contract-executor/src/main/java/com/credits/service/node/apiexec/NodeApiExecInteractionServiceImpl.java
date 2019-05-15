@@ -6,7 +6,6 @@ import com.credits.client.node.pojo.TransactionFlowData;
 import com.credits.client.node.thrift.generated.Amount;
 import com.credits.client.node.thrift.generated.WalletBalanceGetResult;
 import com.credits.client.node.thrift.generated.WalletIdGetResult;
-import com.credits.general.util.Utils;
 import com.credits.ioc.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +20,7 @@ import static com.credits.client.node.util.NodeClientUtils.processApiResponse;
 import static com.credits.client.node.util.NodePojoConverter.amountToBigDecimal;
 import static com.credits.client.node.util.NodePojoConverter.transactionFlowDataToTransaction;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
+import static com.credits.general.util.Utils.calculateActualFee;
 import static com.credits.utils.ApiExecClientPojoConverter.createSmartContractGetResultData;
 
 public class NodeApiExecInteractionServiceImpl implements NodeApiExecInteractionService {
@@ -62,7 +62,7 @@ public class NodeApiExecInteractionServiceImpl implements NodeApiExecInteraction
     @Override
     public void sendTransaction(long accessId, String source, String target, double amount, double fee, byte[] userData) {
         final var decAmount = new BigDecimal(String.valueOf(amount));
-        final var actualOfferedMaxFee = Utils.createActualOfferedMaxFee(fee);
+        final var actualOfferedMaxFee = calculateActualFee(fee);
         final var transactionFlowData = new TransactionFlowData(0,
                                                           decodeFromBASE58(source),
                                                           decodeFromBASE58(target),
