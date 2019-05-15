@@ -14,9 +14,11 @@ public class BackwardCompatibilityService {
         allVersionsSmartContractClass = new ArrayList<>();
         allVersionsBasicStandardClass = new ArrayList<>();
         Utils.rethrowUnchecked(() -> {
-            allVersionsSmartContractClass.add(Class.forName("com.credits.scapi.v0.SmartContract"));
+            allVersionsSmartContractClass.add(com.credits.scapi.v0.SmartContract.class);
+            allVersionsSmartContractClass.add(com.credits.scapi.v1.SmartContract.class);
 
-            allVersionsBasicStandardClass.add(Class.forName("com.credits.scapi.v0.BasicStandard"));
+            allVersionsBasicStandardClass.add(com.credits.scapi.v0.BasicStandard.class);
+            allVersionsBasicStandardClass.add(com.credits.scapi.v1.BasicTokenStandard.class);
         });
     }
 
