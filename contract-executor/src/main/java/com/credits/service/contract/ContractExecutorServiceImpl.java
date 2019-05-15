@@ -2,12 +2,7 @@ package com.credits.service.contract;
 
 import com.credits.ApplicationProperties;
 import com.credits.general.classload.ByteCodeContractClassLoader;
-import com.credits.general.pojo.AnnotationData;
-import com.credits.general.pojo.ApiResponseCode;
-import com.credits.general.pojo.ApiResponseData;
-import com.credits.general.pojo.ByteCodeObjectData;
-import com.credits.general.pojo.MethodArgumentData;
-import com.credits.general.pojo.MethodDescriptionData;
+import com.credits.general.pojo.*;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.CompilationException;
@@ -33,44 +28,27 @@ import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeoutException;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Stream;
 
 import static com.credits.general.serialize.Serializer.deserialize;
 import static com.credits.general.serialize.Serializer.serialize;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
+import static com.credits.general.util.Utils.rethrowUnchecked;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.service.BackwardCompatibilityService.allVersionsBasicStandardClass;
 import static com.credits.service.BackwardCompatibilityService.allVersionsSmartContractClass;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
-import static com.credits.utils.Constants.CREDITS_TOKEN_NAME;
-import static com.credits.utils.Constants.CREDITS_TOKEN_SYMBOL;
-import static com.credits.utils.Constants.TOKEN_NAME_RESERVED_ERROR;
-import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
-import static com.credits.utils.ContractExecutorServiceUtils.failureApiResponse;
-import static com.credits.utils.ContractExecutorServiceUtils.getMethodArgumentsValuesByNameAndParams;
-import static com.credits.utils.ContractExecutorServiceUtils.initializeField;
-import static com.credits.utils.ContractExecutorServiceUtils.initializeSmartContractField;
-import static com.credits.utils.ContractExecutorServiceUtils.readAnnotation;
+import static com.credits.utils.Constants.*;
+import static com.credits.utils.ContractExecutorServiceUtils.*;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
-import static org.apache.commons.lang3.exception.ExceptionUtils.rethrow;
+import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 import static pojo.SmartContractConstants.initSmartContractConstants;
 
 
@@ -103,8 +81,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public ReturnValue deploySmartContract(DeployContractSession session) throws ContractExecutorException {
         final ByteCodeContractClassLoader byteCodeContractClassLoader = getSmartContractClassLoader();
         final Class<?> contractClass = compileClassAndDropPermissions(session.byteCodeObjectDataList, byteCodeContractClassLoader);
-        final Object instance = runForLimitTime(session, byteCodeContractClassLoader, contractClass::newInstance);
-
+        final Object instance = runForLimitTime(session,
+                                                byteCodeContractClassLoader,
+                                                () -> rethrowUnchecked(() -> contractClass.getDeclaredConstructor().newInstance()));
         checkThatIsNotCreditsToken(contractClass, instance);
         return new ReturnValue(serialize(instance), singletonList(new SmartContractMethodResult(SUCCESS_API_RESPONSE, null)), null);
     }
@@ -121,17 +100,17 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         initializeSmartContractField("usedContracts", usedSmartContracts, contractClass, instance);
 
         ExternalSmartContract usedContract = new ExternalSmartContract(
-            new SmartContractGetResultData(
-                new ApiResponseData(ApiResponseCode.SUCCESS, ""),
-                session.byteCodeObjectDataList,
-                session.contractState,
-                true));
+                new SmartContractGetResultData(
+                        new ApiResponseData(ApiResponseCode.SUCCESS, ""),
+                        session.byteCodeObjectDataList,
+                        session.contractState,
+                        true));
         usedContract.setInstance(instance);
         usedSmartContracts.put(session.contractAddress, usedContract);
 
         return session.paramsTable.length < 2
-            ? invokeSingleMethod(session, instance, byteCodeContractClassLoader, usedSmartContracts)
-            : invokeMultipleMethod(session, instance, byteCodeContractClassLoader, usedSmartContracts);
+                ? invokeSingleMethod(session, instance, byteCodeContractClassLoader, usedSmartContracts)
+                : invokeMultipleMethod(session, instance, byteCodeContractClassLoader, usedSmartContracts);
     }
 
     @Override
@@ -140,19 +119,19 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
         ByteCodeContractClassLoader byteCodeContractClassLoader = getSmartContractClassLoader();
         Class<?> contractClass = compileSmartContractByteCode(byteCodeObjectDataList, byteCodeContractClassLoader).stream()
-            .filter(clazz -> !clazz.getName().contains("$"))
-            .findAny()
-            .orElseThrow(() -> new ContractExecutorException("contract class not compiled"));
+                .filter(clazz -> !clazz.getName().contains("$"))
+                .findAny()
+                .orElseThrow(() -> new ContractExecutorException("contract class not compiled"));
 
         Set<String> objectMethods = new HashSet<>(asList(
-            "getClass",
-            "hashCode",
-            "equals",
-            "toString",
-            "notify",
-            "notifyAll",
-            "wait",
-            "finalize"));
+                "getClass",
+                "hashCode",
+                "equals",
+                "toString",
+                "notify",
+                "notifyAll",
+                "wait",
+                "finalize"));
         List<MethodDescriptionData> result = new ArrayList<>();
         for (Method method : contractClass.getMethods()) {
             if (objectMethods.contains(method.getName())) {
@@ -181,7 +160,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     @Override
     public Map<String, Variant> getContractVariables(List<ByteCodeObjectData> byteCodeObjectDataList, byte[] contractState)
-        throws ContractExecutorException {
+    throws ContractExecutorException {
         requireNonNull(byteCodeObjectDataList, "bytecode of contract class is null");
         requireNonNull(contractState, "contract state is null");
 
@@ -206,17 +185,17 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     @Override
     public ReturnValue executeExternalSmartContract(
-        InvokeMethodSession session,
-        Map<String, ExternalSmartContract> usedContracts,
-        ByteCodeContractClassLoader classLoader) {
+            InvokeMethodSession session,
+            Map<String, ExternalSmartContract> usedContracts,
+            ByteCodeContractClassLoader classLoader) {
 
         Object instance = usedContracts.get(session.contractAddress).getInstance();
 
         if (instance == null) {
             final Class<?> contractClass = compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader).stream()
-                .filter(clazz -> !clazz.getName().contains("$"))
-                .findAny()
-                .orElseThrow(() -> new ContractExecutorException("contract class not compiled"));
+                    .filter(clazz -> !clazz.getName().contains("$"))
+                    .findAny()
+                    .orElseThrow(() -> new ContractExecutorException("contract class not compiled"));
             instance = deserialize(session.contractState, classLoader);
 
             initializeField("initiator", session.initiatorAddress, contractClass, instance);
@@ -229,36 +208,36 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     private ReturnValue invokeSingleMethod(
-        InvokeMethodSession session,
-        Object instance,
-        ByteCodeContractClassLoader byteCodeContractClassLoader, Map<String, ExternalSmartContract> usedContracts) {
+            InvokeMethodSession session,
+            Object instance,
+            ByteCodeContractClassLoader byteCodeContractClassLoader, Map<String, ExternalSmartContract> usedContracts) {
 
         final SmartContractMethodResult result = invokeMethodAndCatchErrors(session, instance, session.paramsTable[0], byteCodeContractClassLoader);
         return new ReturnValue(serialize(instance), singletonList(result), usedContracts);
     }
 
     private ReturnValue invokeMultipleMethod(
-        InvokeMethodSession session,
-        Object instance,
-        ByteCodeContractClassLoader byteCodeContractClassLoader,
-        Map<String, ExternalSmartContract> usedContracts) {
+            InvokeMethodSession session,
+            Object instance,
+            ByteCodeContractClassLoader byteCodeContractClassLoader,
+            Map<String, ExternalSmartContract> usedContracts) {
         return stream(session.paramsTable)
-            .flatMap(params -> Stream.of(invokeMethodAndCatchErrors(session, instance, params, byteCodeContractClassLoader)))
-            .reduce(
-                new ReturnValue(null, new ArrayList<>(), usedContracts),
-                (returnValue, result) -> {
-                    returnValue.newContractState = returnValue.newContractState == null ? serialize(instance) : returnValue.newContractState;
-                    returnValue.executeResults.add(result);
-                    return returnValue;
-                },
-                (returnValue, returnValue2) -> returnValue);
+                .flatMap(params -> Stream.of(invokeMethodAndCatchErrors(session, instance, params, byteCodeContractClassLoader)))
+                .reduce(
+                        new ReturnValue(null, new ArrayList<>(), usedContracts),
+                        (returnValue, result) -> {
+                            returnValue.newContractState = returnValue.newContractState == null ? serialize(instance) : returnValue.newContractState;
+                            returnValue.executeResults.add(result);
+                            return returnValue;
+                        },
+                        (returnValue, returnValue2) -> returnValue);
     }
 
     private SmartContractMethodResult invokeMethodAndCatchErrors(
-        InvokeMethodSession session,
-        Object instance,
-        Variant[] params,
-        ByteCodeContractClassLoader byteCodeContractClassLoader) {
+            InvokeMethodSession session,
+            Object instance,
+            Variant[] params,
+            ByteCodeContractClassLoader byteCodeContractClassLoader) {
         try {
             return new SmartContractMethodResult(SUCCESS_API_RESPONSE, invoke(session, instance, params, byteCodeContractClassLoader));
         } catch (Throwable e) {
@@ -268,7 +247,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     private Variant invoke(InvokeMethodSession session, Object instance, Variant[] params, ByteCodeContractClassLoader classLoader)
-        throws Exception {
+    throws Exception {
 
         final MethodData methodData = getMethodArgumentsValuesByNameAndParams(instance.getClass(), session.methodName, params, classLoader);
         final Method method = methodData.method;
@@ -295,40 +274,39 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
 
     private Class<?> compileClassAndDropPermissions(
-        List<ByteCodeObjectData> byteCodeObjectList,
-        ByteCodeContractClassLoader byteCodeContractClassLoader)
-        throws ContractExecutorException {
+            List<ByteCodeObjectData> byteCodeObjectList,
+            ByteCodeContractClassLoader byteCodeContractClassLoader)
+    throws ContractExecutorException {
         return compileSmartContractByteCode(byteCodeObjectList, byteCodeContractClassLoader).stream()
-            .peek(permissionManager::dropSmartContractRights)
-            .filter(clazz -> !clazz.getName().contains("$"))
-            .findAny()
-            .orElseThrow(() -> new CompilationException("contract class not compiled"));
+                .peek(permissionManager::dropSmartContractRights)
+                .filter(clazz -> !clazz.getName().contains("$"))
+                .findAny()
+                .orElseThrow(() -> new CompilationException("contract class not compiled"));
     }
 
     private void checkThatIsNotCreditsToken(Class<?> contractClass, Object instance) {
         stream(contractClass.getInterfaces())
-            .filter(allVersionsBasicStandardClass::contains)
-            .findAny()
-            .ifPresent(ignore -> stream(contractClass.getMethods())
-                .filter(m -> m.getName().equals("getName") || m.getName().equals("getSymbol") && m.getParameters().length == 0)
-
-                .forEach(method -> {
-                    try {
-                        String methodName = method.getName();
-                        if (methodName.equals("getName")) {
-                            if (((String) method.invoke(instance)).equalsIgnoreCase(CREDITS_TOKEN_NAME)) {
-                                throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
+                .filter(allVersionsBasicStandardClass::contains)
+                .findAny()
+                .ifPresent(ignore -> stream(contractClass.getMethods())
+                        .filter(m -> m.getName().equals("getName") || m.getName().equals("getSymbol") && m.getParameters().length == 0)
+                        .forEach(method -> {
+                            try {
+                                String methodName = method.getName();
+                                if (methodName.equals("getName")) {
+                                    if (((String) method.invoke(instance)).equalsIgnoreCase(CREDITS_TOKEN_NAME)) {
+                                        throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
+                                    }
+                                } else if (methodName.equals("getSymbol")) {
+                                    if (((String) method.invoke(instance)).equalsIgnoreCase(CREDITS_TOKEN_SYMBOL)) {
+                                        throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
+                                    }
+                                }
+                            } catch (ContractExecutorException e) {
+                                rethrow(e);
+                            } catch (Throwable ignored) {
                             }
-                        } else if (methodName.equals("getSymbol")) {
-                            if (((String) method.invoke(instance)).equalsIgnoreCase(CREDITS_TOKEN_SYMBOL)) {
-                                throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
-                            }
-                        }
-                    } catch (ContractExecutorException e) {
-                        rethrow(e);
-                    } catch (Throwable ignored) {
-                    }
-                }));
+                        }));
     }
 }
 
