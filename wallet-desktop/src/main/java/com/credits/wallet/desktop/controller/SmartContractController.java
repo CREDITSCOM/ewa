@@ -479,13 +479,23 @@ public class SmartContractController extends AbstractController {
     private SmartContractClass compileContractClass(List<ByteCodeObjectData> byteCodeObjects) {
         Class<?> contractClass = null;
         List<Class<?>> innerContractClasses = new ArrayList<>();
+        ByteCodeContractClassLoader byteCodeContractClassLoader = new ByteCodeContractClassLoader();
         for (ByteCodeObjectData byteCodeObject : byteCodeObjects) {
-            Class<?> clazz = new ByteCodeContractClassLoader().loadClass(byteCodeObject.getName(), byteCodeObject.getByteCode());
+            Class<?> clazz = byteCodeContractClassLoader.loadClass(byteCodeObject.getName(), byteCodeObject.getByteCode());
             if (clazz.getName().contains("$")) {
                 innerContractClasses.add(clazz);
             } else {
                 contractClass = clazz;
             }
+
+//            ClassLoader classLoader = this.getClass().getClassLoader();
+//            try {
+//                Class aClass = classLoader.loadClass(byteCodeObject.getName());
+//                System.out.println("aClass.getName() = " + aClass.getName());
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            }
+
         }
         return new SmartContractClass(contractClass, innerContractClasses);
     }
