@@ -2,6 +2,7 @@ package tests.credits.service.contract;
 
 
 import com.credits.general.pojo.ByteCodeObjectData;
+import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.thrift.generated.object;
 import com.credits.general.util.Base58;
@@ -10,13 +11,16 @@ import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import pojo.ReturnValue;
 import tests.credits.service.ServiceTest;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.credits.general.thrift.generated.Variant._Fields.V_BYTE;
 import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
 import static com.credits.general.thrift.generated.Variant.v_int;
 import static com.credits.general.thrift.generated.Variant.v_string;
@@ -24,10 +28,8 @@ import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
 import static org.apache.commons.lang3.SerializationUtils.deserialize;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -67,11 +69,11 @@ public class ContractExecutorTest extends ServiceTest {
         ReturnValue rvTotalInitialized = executeSmartContract("getTotal", contractState);
         assertEquals(1, rvTotalInitialized.executeResults.get(0).result.getV_int());
 
-        contractState = executeSmartContract("addTokens", new Variant[][] {{v_int(10)}}, contractState).newContractState;
+        contractState = executeSmartContract("addTokens", new Variant[][]{{v_int(10)}}, contractState).newContractState;
         ReturnValue rvTotalAfterSumming = executeSmartContract("getTotal", contractState);
         assertEquals(11, rvTotalAfterSumming.executeResults.get(0).result.getV_int());
 
-        contractState = executeSmartContract("addTokens", new Variant[][] {{v_int(-11)}}, contractState).newContractState;
+        contractState = executeSmartContract("addTokens", new Variant[][]{{v_int(-11)}}, contractState).newContractState;
         ReturnValue rvTotalAfterSubtraction = executeSmartContract("getTotal", contractState);
         assertEquals(0, rvTotalAfterSubtraction.executeResults.get(0).result.getV_int());
     }
@@ -88,7 +90,7 @@ public class ContractExecutorTest extends ServiceTest {
     public void send_transaction_into_contract() throws Exception {
         byte[] contractState = deploySmartContract().newContractState;
 
-        ReturnValue result = executeSmartContract("payable", new Variant[][] {{v_string("10"), v_string("CS")}}, contractState);
+        ReturnValue result = executeSmartContract("payable", new Variant[][]{{v_string("10"), v_string("CS")}}, contractState);
         assertThat(result.executeResults.get(0).result.getV_boolean(), is(true));
     }
 
@@ -105,7 +107,7 @@ public class ContractExecutorTest extends ServiceTest {
         when(mockNodeApiExecService.getBalance(anyString())).thenReturn(new BigDecimal("19.5"));
 
         byte[] contractState = deploySmartContract().newContractState;
-        ReturnValue rvBalance = executeSmartContract("getBalanceTest", new Variant[][] {{v_string("qwerty")}}, contractState);
+        ReturnValue rvBalance = executeSmartContract("getBalanceTest", new Variant[][]{{v_string("qwerty")}}, contractState);
         final object object = rvBalance.executeResults.get(0).result.getV_object();
         BigDecimal bigDecimal = deserialize(object.getInstance());
         Assert.assertEquals(new BigDecimal("19.5"), bigDecimal);
@@ -115,17 +117,17 @@ public class ContractExecutorTest extends ServiceTest {
     public void multipleMethodCall() throws Exception {
         byte[] contractState = deploySmartContract().newContractState;
 
-        ReturnValue singleCallResult = executeSmartContract("addTokens", new Variant[][] {{v_int(10)}}, contractState);
+        ReturnValue singleCallResult = executeSmartContract("addTokens", new Variant[][]{{v_int(10)}}, contractState);
 
         ReturnValue multiplyCallResult = executeSmartContract(
-            "addTokens",
-            new Variant[][] {
-                {v_int(10)},
-                {v_int(10)},
-                {v_int(10)},
-                {v_int(10)}
-            },
-            contractState);
+                "addTokens",
+                new Variant[][]{
+                        {v_int(10)},
+                        {v_int(10)},
+                        {v_int(10)},
+                        {v_int(10)}
+                },
+                contractState);
 
         assertNotEquals(singleCallResult.newContractState, multiplyCallResult.newContractState);
 
@@ -139,6 +141,24 @@ public class ContractExecutorTest extends ServiceTest {
         final List<ByteCodeObjectData> byteCodeObjectData = ceService.compileClass(sourceCode);
         Assert.assertNotNull(byteCodeObjectData);
         assertFalse(byteCodeObjectData.isEmpty());
+    }
+
+
+    @Test
+    @DisplayName("getSeed must be return expectedValue")
+    public void getSeedCallIntoSmartContract() throws Exception {
+        var expectedValue = new byte[]{0xB, 0xA, 0xB, 0xE};
+
+        var executeByteCodeResult = deploySmartContract();
+        assertEquals(new APIResponse((byte) 0, "success"), executeByteCodeResult.executeResults.get(0).status);
+
+        when(mockNodeApiExecService.getSeed(anyLong())).thenReturn(expectedValue);
+        executeByteCodeResult = executeSmartContract("testGetSeed", executeByteCodeResult.newContractState);
+        assertEquals(Arrays.asList(
+                new Variant(V_BYTE, (byte) 0xB),
+                new Variant(V_BYTE, (byte) 0xA),
+                new Variant(V_BYTE, (byte) 0xB),
+                new Variant(V_BYTE, (byte) 0xE)), executeByteCodeResult.executeResults.get(0).result.getV_array());
     }
 }
 

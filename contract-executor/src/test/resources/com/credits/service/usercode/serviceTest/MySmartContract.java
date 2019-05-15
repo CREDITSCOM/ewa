@@ -45,7 +45,11 @@ public class MySmartContract extends SmartContract {
        BigDecimal val = new BigDecimal(nf.parse(amount).doubleValue());
        sendTransaction(initiator, contractAddress, val.doubleValue(), 1.0);
        return true;
-   }
+    }
+
+    public byte[] testGetSeed() {
+        return getSeed();
+    }
 	
     public int externalCall(@ContractAddress(id = 0) String address, @ContractMethod(id = 0) String method) {
         return (int) invokeExternalContract(address, method);

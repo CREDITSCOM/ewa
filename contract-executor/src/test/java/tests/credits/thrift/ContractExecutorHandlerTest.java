@@ -1,120 +1,203 @@
 package tests.credits.thrift;
 
-import com.credits.client.executor.thrift.generated.CompileSourceCodeResult;
 import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
+import com.credits.client.executor.thrift.generated.MethodHeader;
+import com.credits.client.executor.thrift.generated.SetterMethodResult;
 import com.credits.client.executor.thrift.generated.SmartContractBinary;
-import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
 import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.compiler.CompilationException;
 import com.credits.general.util.compiler.model.CompilationUnit;
-import com.credits.secure.PermissionsManager;
 import com.credits.thrift.ContractExecutorHandler;
-import org.apache.thrift.TException;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import service.node.NodeApiExecInteractionService;
-import tests.credits.service.DaggerTestComponent;
+import exception.ContractExecutorException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import pojo.ReturnValue;
+import pojo.SmartContractMethodResult;
+import pojo.session.InvokeMethodSession;
+import service.executor.ContractExecutorService;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import static com.credits.general.thrift.generated.Variant._Fields.V_BYTE;
+import static com.credits.ApplicationProperties.APP_VERSION;
+import static com.credits.general.pojo.ApiResponseCode.FAILURE;
+import static com.credits.general.thrift.generated.Variant._Fields.*;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.compiler.InMemoryCompiler.compileSourceCode;
-import static java.util.Collections.EMPTY_LIST;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
+import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
+import static java.nio.ByteBuffer.allocate;
+import static java.nio.ByteBuffer.wrap;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static tests.credits.TestUtils.readSourceCode;
 
-@Ignore("unable access to FS")
 public class ContractExecutorHandlerTest {
 
-    private static String contractSourcecode;
     private static List<ByteCodeObject> byteCodeObjects;
     private static ByteBuffer initiatorAddress;
     private static ByteBuffer contractAddress;
+    private final Variant voidVariantResult = new Variant(V_VOID, VOID_TYPE_VALUE);
 
     @Inject
-    PermissionsManager permissionsManager;
+    ContractExecutorService mockCEService;
+    @Inject
+    ContractExecutorHandler contractExecutorHandler;
+    private byte[] contractState = new byte[]{0xC, 0xA, 0xF, 0xE};
+    private Variant getTokensVariantResult;
 
-    private ContractExecutorHandler contractExecutorHandler;
-    private NodeApiExecInteractionService mockApiExecInteractionService;
-    ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
-
-    @BeforeClass
+    @BeforeAll
     public static void init() throws IOException, CompilationException {
-        contractSourcecode = readSourceCode("com\\credits\\thrift\\MySmartContract.java");
+        String contractSourcecode = readSourceCode("com/credits/thrift/MySmartContract.java");
 
         List<CompilationUnit> compilationUnits = compileSourceCode(contractSourcecode).getUnits();
         byteCodeObjects = compilationUnits.stream()
-            .map(cu -> new ByteCodeObject(cu.getName(), ByteBuffer.wrap(cu.getByteCode())))
-            .collect(Collectors.toList());
+                .map(cu -> new ByteCodeObject(cu.getName(), wrap(cu.getByteCode())))
+                .collect(Collectors.toList());
 
-        initiatorAddress = ByteBuffer.wrap(decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe"));
-        contractAddress = ByteBuffer.wrap(decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpd"));
+        initiatorAddress = wrap(decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe"));
+        contractAddress = wrap(decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpd"));
     }
 
-    @Before
-    public void setUp(){
-        DaggerTestComponent.builder().build().inject(this);
-        mockApiExecInteractionService = mock(NodeApiExecInteractionService.class);
-        //todo fix it
-//        contractExecutorHandler = new ContractExecutorHandler();
-//        contractExecutorHandler.service = new ContractExecutorServiceImpl(mockApiExecInteractionService, permissionsManager);
+    @BeforeEach
+    public void setUp() {
+        DaggerCEHandlerTestComponent.builder().build().inject(this);
+        when(mockCEService.deploySmartContract(any())).thenReturn(
+                new ReturnValue(new byte[]{0xC, 0xA, 0xF, 0xE},
+                                List.of(new SmartContractMethodResult(SUCCESS_API_RESPONSE, voidVariantResult)),
+                                emptyMap()));
     }
 
     @Test
-    public void getSeedCallIntoSmartContract() throws Exception {
-        ExecuteByteCodeResult executeByteCodeResult = deploySmartContract();
-        assertEquals(new APIResponse((byte) 0, "success"), executeByteCodeResult.status);
-
-        when(mockApiExecInteractionService.getSeed(anyLong())).thenReturn(new byte[]{0xB, 0xA, 0xB, 0xE});
-        executeByteCodeResult = executeSmartContract(ByteBuffer.wrap(executeByteCodeResult.getInvokedContractState()), 1, "testGetSeed", 5000);
-        assertEquals(Arrays.asList(
-                new Variant(V_BYTE, (byte) 0xB),
-                new Variant(V_BYTE, (byte) 0xA),
-                new Variant(V_BYTE, (byte) 0xB),
-                new Variant(V_BYTE, (byte) 0xE)), executeByteCodeResult.getRet_val().getV_array());
+    @DisplayName("MethodHeaders can be null when deploy")
+    public void test0() {
+        var deployResult = executeSmartContract(allocate(0), null);
+        verify(mockCEService).deploySmartContract(any());
+        assertThat(deployResult.status, is(SUCCESS_API_RESPONSE));
+        assertThat(deployResult.results.get(0).getInvokedContractState().length > 0, is(true));
     }
-
-
 
     @Test
-    public void useContractProperties() throws Exception {
-        ExecuteByteCodeResult executeByteCodeResult = deploySmartContract();
-        executeByteCodeResult = executeSmartContract(ByteBuffer.wrap(executeByteCodeResult.getInvokedContractState()), 1234, "getProperties", 1000);
-        assertEquals("1234 5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe 5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpd", executeByteCodeResult.getRet_val().getV_string());
+    @DisplayName("MethodHeaders can be empty when deploy")
+    public void test1() {
+        var deployResult = executeSmartContract(allocate(0), emptyList());
+        verify(mockCEService).deploySmartContract(any());
 
+        assertEquals(SUCCESS_API_RESPONSE, deployResult.status);
+        assertTrue(deployResult.results.get(0).getInvokedContractState().length > 0);
     }
-
 
     @Test
-    public void compileSourceCodeTest() throws Exception {
-        CompileSourceCodeResult sourceCodeResult = contractExecutorHandler.compileSourceCode(contractSourcecode,(byte) 100);
-        assertEquals(new APIResponse((byte) 0, "success"), sourceCodeResult.status);
+    @DisplayName("MethodHeaders can't be null when execute")
+    public void test2() {
+        var contractState = deploySmartContract();
+        var executeByteCodeResult = executeSmartContract(contractState, null);
+        verify(mockCEService, never()).executeSmartContract(any());
+
+
+        assertThat(executeByteCodeResult.status.code, is(FAILURE.code));
+        assertThat(executeByteCodeResult.results.size(), is(0));
+        assertThat(executeByteCodeResult.status.getMessage(), containsString("IllegalArgumentException: method headers list can't be null or empty"));
     }
 
-    @SuppressWarnings("unchecked")
-    private ExecuteByteCodeResult executeSmartContract(ByteBuffer contractState, int accessId, String methodName, int executiontime)
-        throws TException {
+    @Test
+    @DisplayName("MethodHeaders can't be empty when execute")
+    public void test3() {
+        var contractState = deploySmartContract();
+        var executeByteCodeResult = executeSmartContract(contractState, emptyList());
+        verify(mockCEService, never()).executeSmartContract(any());
+
+        assertThat(executeByteCodeResult.status.code, is(FAILURE.code));
+        assertThat(executeByteCodeResult.results.size(), is(0));
+        assertThat(executeByteCodeResult.status.getMessage(), containsString("IllegalArgumentException: method headers list can't be null or empty"));
+    }
+
+    @Test
+    @DisplayName("Amount ExecuteByteCodeResult must be equals amount methodHeaders")
+    public void test5() {
+        var contractState = deploySmartContract();
+
+        getTokensVariantResult = new Variant(V_INT, 5);
+
+        doAnswer(invocationOnMock -> {
+            var methodName = ((InvokeMethodSession) invocationOnMock.getArgument(0)).methodName;
+            switch (methodName) {
+                case "getTokens":
+                    return createSuccessResponse(getTokensVariantResult);
+                case "addTokens":
+                    return createSuccessResponse(voidVariantResult);
+                default:
+                    throw new ContractExecutorException("unknown method");
+            }
+        }).when(mockCEService).executeSmartContract(any());
+
+        var executeByteCodeResult = executeSmartContract(contractState, List.of(new MethodHeader("getTokens", emptyList()),
+                                                                                new MethodHeader("addTokens", List.of(getTokensVariantResult)),
+                                                                                new MethodHeader("unknown", emptyList()),
+                                                                                new MethodHeader("getTokens", emptyList())));
+
+        assertThat(executeByteCodeResult.status, is(SUCCESS_API_RESPONSE));
+        assertThat(executeByteCodeResult.results.size(), is(4));
+
+        List<SetterMethodResult> results = executeByteCodeResult.getResults();
+
+        assertThat(results.get(0).status, is(SUCCESS_API_RESPONSE));
+        assertThat(results.get(0).ret_val, is(getTokensVariantResult));
+
+        assertThat(results.get(1).status, is(SUCCESS_API_RESPONSE));
+        assertThat(results.get(1).ret_val, is(voidVariantResult));
+
+        assertThat(results.get(2).status.code, is(FAILURE.code));
+        assertThat(results.get(2).status.message, containsString("ContractExecutorException: unknown method"));
+        assertThat(results.get(2).ret_val, is(new Variant(V_STRING, "unknown method")));
+
+        assertThat(results.get(3).status, is(SUCCESS_API_RESPONSE));
+        assertThat(results.get(3).ret_val, is(getTokensVariantResult));
+    }
+
+    @Test
+    @DisplayName("Throw exception if version not valid")
+    public void test6() {
+        var contractState = deploySmartContract();
+        var executeByteCodeResult = executeSmartContract(contractState, List.of(new MethodHeader("getTokens", emptyList())), APP_VERSION + 1);
+
+        assertThat(executeByteCodeResult.status.code, is(FAILURE.code));
+        assertThat(executeByteCodeResult.results.size(), is(0));
+        assertThat(executeByteCodeResult.status.getMessage(), containsString("IllegalArgumentException: Invalid version"));
+    }
+
+    private ReturnValue createSuccessResponse(Variant result) {
+        return new ReturnValue(
+                contractState,
+                List.of(new SmartContractMethodResult(SUCCESS_API_RESPONSE, result)),
+                emptyMap());
+    }
+
+    private ExecuteByteCodeResult executeSmartContract(ByteBuffer contractState, List<MethodHeader> methodHeaders) {
+        return executeSmartContract(contractState, methodHeaders, APP_VERSION);
+    }
+
+    private ExecuteByteCodeResult executeSmartContract(ByteBuffer contractState, List<MethodHeader> methodHeaders, int version) {
         SmartContractBinary smartContractBinary = new SmartContractBinary(contractAddress, new ClassObject(byteCodeObjects, contractState), true);
-        return contractExecutorHandler.executeByteCode(accessId, initiatorAddress, smartContractBinary, methodName, EMPTY_LIST, executiontime,
-            (byte) 100);
+        return contractExecutorHandler.executeByteCode(1, initiatorAddress, smartContractBinary, methodHeaders, 500, (short) version);
     }
 
-    private ExecuteByteCodeResult deploySmartContract() throws TException {
-        return executeSmartContract(ByteBuffer.allocate(0), 1123, "", 500);
+
+    private ByteBuffer deploySmartContract() {
+        return wrap(executeSmartContract(allocate(0), emptyList()).getResults().get(0).getInvokedContractState());
     }
 }

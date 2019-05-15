@@ -12,4 +12,5 @@ module contract.executor {
     requires java.compiler;
     requires error.prone.annotations;
     requires commons.beanutils.core;
+    requires java.management;
 }

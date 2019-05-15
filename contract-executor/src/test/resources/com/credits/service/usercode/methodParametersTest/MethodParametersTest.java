@@ -11,6 +11,10 @@ public class MethodParametersTest extends SmartContract {
 
     public void initialize() {}
 
+    public MethodParametersTest(){
+        super();
+    }
+
     public static Integer mainString(List<String> args) {
         System.out.println("Method main(List<String> args) has been invoked");
         

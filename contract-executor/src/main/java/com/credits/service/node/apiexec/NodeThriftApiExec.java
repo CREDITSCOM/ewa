@@ -8,7 +8,7 @@ import com.credits.client.node.thrift.generated.WalletBalanceGetResult;
 import com.credits.client.node.thrift.generated.WalletIdGetResult;
 import com.credits.exception.ApiClientException;
 
-interface NodeThriftApiExec {
+public interface NodeThriftApiExec {
     GetSeedResult getSeed(long accessId) throws ApiClientException;
 
     SmartContractGetResult getSmartContractBinary(long accessId, byte[] address) throws ApiClientException;

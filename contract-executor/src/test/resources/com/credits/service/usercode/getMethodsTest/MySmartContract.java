@@ -24,7 +24,7 @@ public class MySmartContract extends SmartContract {
 
     public boolean payable(String amount, String currency) throws Exception{
        return true;
-   }
+    }
 
     @UsingContract(address = "address", method = "method")
     @UsingContract(address = "address", method = "method")
