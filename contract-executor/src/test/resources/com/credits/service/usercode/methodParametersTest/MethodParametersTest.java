@@ -11,13 +11,8 @@ public class MethodParametersTest extends SmartContract {
 
     public void initialize() {}
 
-<<<<<<< HEAD
-    public Contract(String initiator){
-        super(initiator);
-=======
     public MethodParametersTest(){
         super();
->>>>>>> master
     }
 
     public static Integer mainString(List<String> args) {
