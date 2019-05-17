@@ -3,8 +3,11 @@
 This repository contains following main modules:
 
 - Contract Executor
-- Wallet Desktop
+
+- [Wallet Desktop](https://github.com/CREDITSCOM/ewa/tree/master/wallet-desktop)
+
 - sc-api
+
 - api-client
 
 ##### What is Contract Executor?
