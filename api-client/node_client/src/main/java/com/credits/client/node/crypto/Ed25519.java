@@ -1,8 +1,8 @@
 package com.credits.client.node.crypto;
 
-import com.credits.client.node.thrift.generated.Amount;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.crypto.exception.CryptoException;
+import com.credits.general.thrift.generated.Amount;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.Utils;
 import com.credits.general.util.exception.ConverterException;
@@ -19,11 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SignatureException;
+import java.security.*;
 
 /**
  * Утилита генерации публичных, приватных ключей, подписи

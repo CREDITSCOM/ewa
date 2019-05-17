@@ -1,12 +1,8 @@
 package com.credits.client.tests.util;
 
 import com.credits.client.node.pojo.TransactionData;
-import com.credits.client.node.thrift.generated.Amount;
-import com.credits.client.node.thrift.generated.AmountCommission;
-import com.credits.client.node.thrift.generated.SealedTransaction;
-import com.credits.client.node.thrift.generated.Transaction;
-import com.credits.client.node.thrift.generated.TransactionId;
-import com.credits.client.node.thrift.generated.WalletData;
+import com.credits.client.node.thrift.generated.*;
+import com.credits.general.thrift.generated.Amount;
 import com.credits.general.util.exception.ConverterException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,12 +11,7 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
 import static com.credits.client.node.thrift.generated.TransactionType.TT_Normal;
-import static com.credits.client.node.util.NodePojoConverter.amountToBigDecimal;
-import static com.credits.client.node.util.NodePojoConverter.amountToDouble;
-import static com.credits.client.node.util.NodePojoConverter.bigDecimalToAmount;
-import static com.credits.client.node.util.NodePojoConverter.createTransactionData;
-import static com.credits.client.node.util.NodePojoConverter.doubleToAmount;
-import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
+import static com.credits.client.node.util.NodePojoConverter.*;
 import static com.credits.general.util.GeneralConverter.toBigDecimal;
 
 /**
@@ -90,7 +81,7 @@ public class NodePojoConverterTest {
                 0,
                 ByteBuffer.wrap("source".getBytes()),
                 ByteBuffer.wrap("target".getBytes()),
-                new Amount(0,0),
+                new Amount(0, 0),
                 new Amount(0,0),
                 (byte)1,
                 ByteBuffer.wrap("signature".getBytes()),
