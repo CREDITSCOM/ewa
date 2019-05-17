@@ -1,4 +1,4 @@
-package tests.credits.service;
+package tests.credits;
 
 import com.credits.secure.PermissionsManager;
 import com.credits.secure.Sandbox;
@@ -8,7 +8,6 @@ import dagger.Provides;
 import service.executor.ContractExecutorService;
 import service.node.NodeApiExecInteractionService;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.FilePermission;
 import java.security.Permission;
@@ -16,19 +15,21 @@ import java.security.Permissions;
 import java.util.Enumeration;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 @Module
 public class TestModule {
 
-    @Inject
-    PermissionsManager permissionsManager;
+    @Provides
+    @Singleton
+    public ContractExecutorService provideContractExecutorService(NodeApiExecInteractionService nodeApi, PermissionsManager permissionsManager) {
+        return new ContractExecutorServiceImpl(nodeApi, permissionsManager);
+    }
 
     @Provides
-    public ContractExecutorService provideContractExecutorService(PermissionsManager permissionsManager) {
-        return new ContractExecutorServiceImpl(mock(NodeApiExecInteractionService.class), permissionsManager);
+    @Singleton
+    public NodeApiExecInteractionService provideMockNodeApiInteractionService(){
+       return mock(NodeApiExecInteractionService.class);
     }
 
     @Singleton

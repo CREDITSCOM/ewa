@@ -1,48 +1,9 @@
 package com.credits.client.node.util;
 
-import com.credits.client.node.pojo.PoolData;
-import com.credits.client.node.pojo.SmartContractData;
-import com.credits.client.node.pojo.SmartContractDeployData;
-import com.credits.client.node.pojo.SmartContractInvocationData;
-import com.credits.client.node.pojo.SmartContractTransactionData;
-import com.credits.client.node.pojo.SmartContractTransactionFlowData;
-import com.credits.client.node.pojo.SmartDeployTransInfoData;
-import com.credits.client.node.pojo.SmartExecutionTransInfoData;
-import com.credits.client.node.pojo.SmartOperationStateData;
-import com.credits.client.node.pojo.SmartStateTransInfoData;
-import com.credits.client.node.pojo.SmartTransInfoData;
-import com.credits.client.node.pojo.TokenDeployTransInfoData;
-import com.credits.client.node.pojo.TokenStandartData;
-import com.credits.client.node.pojo.TokenTransferTransInfoData;
-import com.credits.client.node.pojo.TransactionData;
-import com.credits.client.node.pojo.TransactionFlowData;
-import com.credits.client.node.pojo.TransactionFlowResultData;
-import com.credits.client.node.pojo.TransactionIdData;
-import com.credits.client.node.pojo.TransactionStateData;
-import com.credits.client.node.pojo.TransactionTypeData;
-import com.credits.client.node.pojo.TransactionsStateGetResultData;
 import com.credits.client.node.pojo.WalletData;
-import com.credits.client.node.thrift.generated.Amount;
-import com.credits.client.node.thrift.generated.AmountCommission;
-import com.credits.client.node.thrift.generated.Pool;
-import com.credits.client.node.thrift.generated.SealedTransaction;
-import com.credits.client.node.thrift.generated.SmartContract;
-import com.credits.client.node.thrift.generated.SmartContractDeploy;
-import com.credits.client.node.thrift.generated.SmartContractInvocation;
-import com.credits.client.node.thrift.generated.SmartDeployTransInfo;
-import com.credits.client.node.thrift.generated.SmartExecutionTransInfo;
-import com.credits.client.node.thrift.generated.SmartOperationState;
-import com.credits.client.node.thrift.generated.SmartStateTransInfo;
-import com.credits.client.node.thrift.generated.SmartTransInfo;
-import com.credits.client.node.thrift.generated.TokenDeployTransInfo;
-import com.credits.client.node.thrift.generated.TokenStandart;
-import com.credits.client.node.thrift.generated.TokenTransferTransInfo;
-import com.credits.client.node.thrift.generated.Transaction;
-import com.credits.client.node.thrift.generated.TransactionFlowResult;
-import com.credits.client.node.thrift.generated.TransactionId;
-import com.credits.client.node.thrift.generated.TransactionState;
-import com.credits.client.node.thrift.generated.TransactionType;
-import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
+import com.credits.client.node.pojo.*;
+import com.credits.client.node.thrift.generated.*;
+import com.credits.general.thrift.generated.Amount;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.exception.ConverterException;
 import org.apache.commons.codec.binary.Hex;
@@ -53,8 +14,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
-import static com.credits.general.util.GeneralConverter.byteArrayToByteBuffer;
+import static com.credits.general.util.GeneralConverter.*;
 import static com.credits.general.util.GeneralPojoConverter.createApiResponseData;
 
 /**
@@ -81,30 +41,6 @@ public class NodePojoConverter {
         return new Amount(integral, fraction);
     }
 
-    @SuppressWarnings("unsupported")
-    public static Amount bigDecimalToAmount(BigDecimal value) throws ConverterException {
-
-        if (value == null) {
-            throw new ConverterException("value is null");
-        }
-
-        int integral;
-
-        long fraction;
-
-        String valueAsString = GeneralConverter.toString(value);
-
-        if (valueAsString.contains(DECIMAL_SEPARATOR)) {
-            String[] valueDelimited = valueAsString.split("[" + DECIMAL_SEPARATOR + "]");
-            integral = Integer.parseInt(valueDelimited[0]);
-            String fractionAsString = String.format("%-18s", valueDelimited[1]).replace(' ', '0');
-            fraction = Long.parseLong(fractionAsString);
-        } else {
-            integral = Integer.parseInt(valueAsString);
-            fraction = 0L;
-        }
-        return new Amount(integral, fraction);
-    }
 
     public static TransactionData createTransactionData(SealedTransaction sealedTransaction) {
 
@@ -114,7 +50,7 @@ public class NodePojoConverter {
         TransactionData data = new TransactionData();
         Long innerId = transaction.getId();
         data.setBlockId(Hex.encodeHexString(blockTransactionId.getPoolHash()) + "." + blockTransactionId.getIndex());
-        data.setAmount(NodePojoConverter.amountToBigDecimal(transaction.getAmount()));
+        data.setAmount(amountToBigDecimal(transaction.getAmount()));
         data.setCurrency(transaction.getCurrency());
         data.setId(innerId);
         data.setSource(transaction.getSource());
@@ -125,7 +61,7 @@ public class NodePojoConverter {
             data.setParams(transaction.getSmartContract().getParams());
         }
         if (transaction.getSmartInfo() != null) {
-            data.setSmartInfo(NodePojoConverter.createSmartTransInfoData(transaction.getSmartInfo()));
+            data.setSmartInfo(createSmartTransInfoData(transaction.getSmartInfo()));
         }
         data.setType(createTransactionTypeData(transaction.getType()));
         return data;
@@ -137,7 +73,7 @@ public class NodePojoConverter {
         if (transaction.getAmount() == null) {
             data.setAmount(BigDecimal.ZERO);
         } else {
-            data.setAmount(NodePojoConverter.amountToBigDecimal(transaction.getAmount()));
+            data.setAmount(amountToBigDecimal(transaction.getAmount()));
         }
         data.setCurrency(transaction.getCurrency());
         data.setId(innerId);
@@ -148,20 +84,10 @@ public class NodePojoConverter {
         return data;
     }
 
-    public static BigDecimal amountToBigDecimal(Amount amount) {
-
-        int integralPart = amount.getIntegral();
-        long fractionPart = amount.getFraction();
-
-        String integralPartAsString = GeneralConverter.toString(integralPart);
-        String fractionPartAsString = GeneralConverter.toString(fractionPart);
-
-        return new BigDecimal(integralPartAsString + "." + fractionPartAsString);
-    }
 
     public static WalletData walletToWalletData(com.credits.client.node.thrift.generated.WalletData walletData) {
 
-        return new WalletData(walletData.getWalletId(), NodePojoConverter.amountToBigDecimal(walletData.getBalance()),
+        return new WalletData(walletData.getWalletId(), amountToBigDecimal(walletData.getBalance()),
             walletData.getLastTransactionId());
     }
 
@@ -182,7 +108,7 @@ public class NodePojoConverter {
         SmartContract smartContract = new SmartContract();
         smartContract.setAddress(smartContractData.getAddress());
         smartContract.setDeployer(smartContractData.getDeployer());
-        smartContract.setSmartContractDeploy(NodePojoConverter.smartContractDeployDataToSmartContractDeploy(
+        smartContract.setSmartContractDeploy(smartContractDeployDataToSmartContractDeploy(
             smartContractData.getSmartContractDeployData()));
         return smartContract;
     }
@@ -201,7 +127,7 @@ public class NodePojoConverter {
     public static SmartContractData smartContractToSmartContractData(SmartContract smartContract) {
 
         return new SmartContractData(smartContract.getAddress(), smartContract.getDeployer(),
-            NodePojoConverter.createSmartContractDeployData(smartContract.getSmartContractDeploy()),
+            createSmartContractDeployData(smartContract.getSmartContractDeploy()),
             smartContract.getObjectState(), smartContract.getTransactionsCount());
     }
 
@@ -311,7 +237,7 @@ public class NodePojoConverter {
         SmartContractDeployData smartContractDeployData = smartContractInvocationData.getSmartContractDeployData();
         if (smartContractDeployData != null) {
             thriftStruct.setSmartContractDeploy(
-                NodePojoConverter.smartContractDeployDataToSmartContractDeploy(smartContractDeployData));
+                smartContractDeployDataToSmartContractDeploy(smartContractDeployData));
         }
 
         return thriftStruct;

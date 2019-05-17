@@ -8,7 +8,7 @@
     <groupId>com.credits.sc-api</groupId>
     <artifactId>sc-api</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <parent>
         <artifactId>external_node_applications</artifactId>

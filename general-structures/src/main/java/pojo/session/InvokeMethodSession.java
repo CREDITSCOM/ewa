@@ -34,6 +34,4 @@ public class InvokeMethodSession extends DeployContractSession {
             throw new ContractExecutorException("method name is empty");
         }
     }
-
-
 }

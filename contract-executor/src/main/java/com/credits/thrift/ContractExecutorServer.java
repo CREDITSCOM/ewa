@@ -19,13 +19,17 @@ public class ContractExecutorServer implements Runnable {
     private final static Logger logger = LoggerFactory.getLogger(ContractExecutorServer.class);
     private ContractExecutor.Processor processor;
 
-    @Inject
-    ApplicationProperties property;
+    private final ApplicationProperties properties;
 
     @SuppressWarnings("unchecked")
-    public ContractExecutorServer() {
+    @Inject
+    public ContractExecutorServer(ContractExecutorHandler contractExecutorHandler, ApplicationProperties applicationProperties) {
         INJECTOR.component.inject(this);
-        processor = new ContractExecutor.Processor(new ContractExecutorHandler());
+        processor = new ContractExecutor.Processor(contractExecutorHandler);
+        this.properties = applicationProperties;
+    }
+
+    public void start(){
         new Thread(this).start();
     }
 
@@ -36,15 +40,14 @@ public class ContractExecutorServer implements Runnable {
 
     private void serverStart(ContractExecutor.Processor processor) {
         try {
-            TServerTransport serverTransport = new TServerSocket(property.executorPort);
+            TServerTransport serverTransport = new TServerSocket(properties.executorPort);
             TServer server = new TThreadPoolServer(
                 new TThreadPoolServer.Args(serverTransport)
-//                    .executorService(Executors.newCachedThreadPool())
                     .processor(processor));
-            logger.info("Starting the Thrift server on port {}...", property.executorPort);
+            logger.info("Starting the Thrift server on port {}...", properties.executorPort);
             server.serve();
         } catch (TTransportException e) {
-            logger.error("Cannot start Thrift server on port " + property.executorPort + ". " + e.getMessage(), e);
+            logger.error("Cannot start Thrift server on port " + properties.executorPort + ". " + e.getMessage(), e);
         }
     }
 }

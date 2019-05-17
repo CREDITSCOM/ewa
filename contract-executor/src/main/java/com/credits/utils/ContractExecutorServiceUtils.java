@@ -7,6 +7,7 @@ import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodData;
 import com.credits.scapi.annotations.ContractAddress;
 import com.credits.scapi.annotations.ContractMethod;
+import com.credits.scapi.annotations.Payable;
 import com.credits.scapi.annotations.UsingContract;
 import com.credits.scapi.annotations.UsingContracts;
 import exception.ContractExecutorException;
@@ -124,9 +125,10 @@ public class ContractExecutorServiceUtils {
                 field.set(instance, value);
             }));
     }
+
     public static List<AnnotationData> readAnnotation(Annotation annotation) {
         if (annotation instanceof UsingContract) {
-            UsingContract usingContract = ((UsingContract) annotation);
+            var usingContract = ((UsingContract) annotation);
             return singletonList(new AnnotationData(
                 UsingContract.class.getName(),
                 Map.of("address", usingContract.address(), "method", usingContract.method())));
@@ -136,17 +138,19 @@ public class ContractExecutorServiceUtils {
                 .flatMap(a -> readAnnotation(a).stream())
                 .collect(Collectors.toList());
         } else if (annotation instanceof ContractAddress) {
-            ContractAddress contractAddress = ((ContractAddress) annotation);
             return singletonList(new AnnotationData(
                 ContractAddress.class.getName(),
-                Map.of("id", Integer.toString(contractAddress.id()))));
+                Map.of("id", Integer.toString(((ContractAddress) annotation).id()))));
 
         } else if (annotation instanceof ContractMethod) {
-            ContractMethod contractMethod = ((ContractMethod) annotation);
             return singletonList(new AnnotationData(
                 ContractMethod.class.getName(),
-                Map.of("id", Integer.toString(contractMethod.id()))));
+                Map.of("id", Integer.toString(((ContractMethod) annotation).id()))));
 
+        } else if (annotation instanceof Payable){
+            return singletonList(new AnnotationData(
+                Payable.class.getName(),
+                Map.of("amount", Double.toString(((Payable) annotation).amount()))));
         } else {
             return singletonList(new AnnotationData(annotation.annotationType().getName(), emptyMap()));
         }

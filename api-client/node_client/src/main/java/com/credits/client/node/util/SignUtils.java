@@ -2,7 +2,7 @@ package com.credits.client.node.util;
 
 import com.credits.client.node.crypto.Ed25519;
 import com.credits.client.node.pojo.TransactionFlowData;
-import com.credits.client.node.thrift.generated.Amount;
+import com.credits.general.thrift.generated.Amount;
 import com.credits.general.util.GeneralConverter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
@@ -13,7 +13,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.PrivateKey;
 
-import static com.credits.client.node.util.NodePojoConverter.bigDecimalToAmount;
+import static com.credits.general.util.GeneralConverter.bigDecimalToAmount;
+
 
 /**
  * Created by goncharov-eg on 26.01.2018.

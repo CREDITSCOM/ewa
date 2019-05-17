@@ -96,7 +96,7 @@ public class Utils {
      * @param value
      * @return
      */
-    public static Pair<Double, Short> createActualOfferedMaxFee(Double value) {
+    public static Pair<Double, Short> calculateActualFee(Double value) {
         byte sign = (byte) (value < 0.0 ? 1 : 0); // sign
         int exp;   // exponent
         long frac; // mantissa

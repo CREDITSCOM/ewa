@@ -27,10 +27,9 @@ import pojo.session.DeployContractSession;
 import pojo.session.InvokeMethodSession;
 import service.executor.ContractExecutorService;
 import service.node.NodeApiExecInteractionService;
+import tests.credits.DaggerTestComponent;
 
 import javax.inject.Inject;
-import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -39,6 +38,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
@@ -77,7 +77,7 @@ public abstract class ServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        DaggerTestComponent.builder().testModule(new TestModule()).build().inject(this);
+        DaggerTestComponent.builder().build().inject(this);
 
         sourceCode = readSourceCode(sourCodePath);
         byteCodeObjectDataList = compileSourceCode(sourceCode);
@@ -88,8 +88,9 @@ public abstract class ServiceTest {
         when(ceService.getSmartContractClassLoader()).thenReturn(byteCodeContractClassLoader);
     }
 
-    private void initSmartContractStaticField(Object smartContractInstance, String fieldName, Object value)
-        throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+    private void initSmartContractStaticField(Object smartContractInstance,
+                                              String fieldName,
+                                              Object value) throws NoSuchFieldException, IllegalAccessException {
         Class<?> contract = SmartContract.class;
         Field interactionService = contract.getDeclaredField(fieldName);
         interactionService.setAccessible(true);
@@ -111,11 +112,12 @@ public abstract class ServiceTest {
         if (compilationPackage.isCompilationStatusSuccess()) {
             return GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
         } else {
-            List<Diagnostic<? extends JavaFileObject>> diagnostics = compilationPackage.getCollector().getDiagnostics();
-            diagnostics.forEach(action -> {
-                logger.info(String.format("\nLine number: %s; Error message: %s", action.getLineNumber(), action.getMessage(null)));
-            });
-            throw new ContractExecutorException("Cannot compile sourceCode");
+            var errors = compilationPackage.getCollector().getDiagnostics().stream()
+                    .map(e -> "Line number: " + e.getLineNumber() + " Error message:" + e.getMessage(null))
+                    .collect(Collectors.joining("\n"));
+
+            logger.error(errors);
+            throw new ContractExecutorException("Cannot compile sourceCode. \n" + errors);
         }
     }
 
@@ -126,7 +128,7 @@ public abstract class ServiceTest {
     }
 
     protected ReturnValue executeSmartContract(String methodName, byte[] contractState) throws Exception {
-        return executeSmartContract(methodName, new Variant[][] {{}}, contractState);
+        return executeSmartContract(methodName, new Variant[][]{{}}, contractState);
     }
 
 
@@ -141,59 +143,59 @@ public abstract class ServiceTest {
         }
         Map<String, ExternalSmartContract> usedContracts = new HashMap<>();
         usedContracts.putIfAbsent(
-            encodeToBASE58(contractAddress),
-            new ExternalSmartContract(new SmartContractGetResultData(
-                new ApiResponseData(SUCCESS, ""),
-                byteCodeObjectDataList,
-                contractState,
-                true)));
+                encodeToBASE58(contractAddress),
+                new ExternalSmartContract(new SmartContractGetResultData(
+                        new ApiResponseData(SUCCESS, ""),
+                        byteCodeObjectDataList,
+                        contractState,
+                        true)));
 
         return ceService.executeExternalSmartContract(
-            new InvokeMethodSession(
+                new InvokeMethodSession(
+                        0,
+                        encodeToBASE58(initiatorAddress),
+                        encodeToBASE58(contractAddress),
+                        byteCodeObjectDataList,
+                        contractState,
+                        methodName,
+                        variantParams,
+                        Long.MAX_VALUE),
+                usedContracts,
+                byteCodeContractClassLoader);
+    }
+
+    protected ReturnValue executeSmartContract(
+            String methodName,
+            Variant[][] params,
+            byte[] contractState) throws Exception {
+
+        return ceService.executeSmartContract(new InvokeMethodSession(
                 0,
                 encodeToBASE58(initiatorAddress),
                 encodeToBASE58(contractAddress),
                 byteCodeObjectDataList,
                 contractState,
                 methodName,
-                variantParams,
-                Long.MAX_VALUE),
-            usedContracts,
-            byteCodeContractClassLoader);
-    }
-
-    protected ReturnValue executeSmartContract(
-        String methodName,
-        Variant[][] params,
-        byte[] contractState) throws Exception {
-
-        return ceService.executeSmartContract(new InvokeMethodSession(
-            0,
-            encodeToBASE58(initiatorAddress),
-            encodeToBASE58(contractAddress),
-            byteCodeObjectDataList,
-            contractState,
-            methodName,
-            params,
-            Long.MAX_VALUE));
+                params,
+                Long.MAX_VALUE));
     }
 
 
     protected ReturnValue deploySmartContract() {
         return ceService.deploySmartContract(new DeployContractSession(
-            0,
-            encodeToBASE58(initiatorAddress),
-            encodeToBASE58(contractAddress),
-            byteCodeObjectDataList,
-            Long.MAX_VALUE));
+                0,
+                encodeToBASE58(initiatorAddress),
+                encodeToBASE58(contractAddress),
+                byteCodeObjectDataList,
+                Long.MAX_VALUE));
     }
 
     protected void configureGetContractByteCodeNodeResponse(byte[] contractState, boolean isCanModify) {
         when(mockNodeApiExecService.getExternalSmartContractByteCode(anyLong(), anyString()))
-            .thenReturn(new SmartContractGetResultData(
-                new ApiResponseData(SUCCESS, "success"),
-                byteCodeObjectDataList,
-                contractState,
-                isCanModify));
+                .thenReturn(new SmartContractGetResultData(
+                        new ApiResponseData(SUCCESS, "success"),
+                        byteCodeObjectDataList,
+                        contractState,
+                        isCanModify));
     }
 }

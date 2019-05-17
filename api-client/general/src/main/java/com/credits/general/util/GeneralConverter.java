@@ -4,10 +4,7 @@ import com.credits.general.pojo.AnnotationData;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.pojo.MethodArgumentData;
 import com.credits.general.pojo.MethodDescriptionData;
-import com.credits.general.thrift.generated.Annotation;
-import com.credits.general.thrift.generated.ByteCodeObject;
-import com.credits.general.thrift.generated.MethodArgument;
-import com.credits.general.thrift.generated.MethodDescription;
+import com.credits.general.thrift.generated.*;
 import com.credits.general.util.compiler.model.CompilationPackage;
 import com.credits.general.util.exception.ConverterException;
 import com.github.drapostolos.typeparser.TypeParser;
@@ -23,6 +20,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
 
+import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
 import static java.util.Arrays.stream;
 
 /**
@@ -107,6 +105,42 @@ public class GeneralConverter {
             }
         }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
+    }
+
+    @SuppressWarnings("unsupported")
+    public static Amount bigDecimalToAmount(BigDecimal value) throws ConverterException {
+
+        if (value == null) {
+            throw new ConverterException("value is null");
+        }
+
+        int integral;
+
+        long fraction;
+
+        String valueAsString = GeneralConverter.toString(value);
+
+        if (valueAsString.contains(DECIMAL_SEPARATOR)) {
+            String[] valueDelimited = valueAsString.split("[" + DECIMAL_SEPARATOR + "]");
+            integral = Integer.parseInt(valueDelimited[0]);
+            String fractionAsString = String.format("%-18s", valueDelimited[1]).replace(' ', '0');
+            fraction = Long.parseLong(fractionAsString);
+        } else {
+            integral = Integer.parseInt(valueAsString);
+            fraction = 0L;
+        }
+        return new Amount(integral, fraction);
+    }
+
+    public static BigDecimal amountToBigDecimal(Amount amount) {
+
+        int integralPart = amount.getIntegral();
+        long fractionPart = amount.getFraction();
+
+        String integralPartAsString = GeneralConverter.toString(integralPart);
+        String fractionPartAsString = GeneralConverter.toString(fractionPart);
+
+        return new BigDecimal(integralPartAsString + "." + fractionPartAsString);
     }
 
     public static Integer toInteger(Object value) {
