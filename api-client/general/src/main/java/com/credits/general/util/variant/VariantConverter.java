@@ -3,6 +3,7 @@ package com.credits.general.util.variant;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.thrift.generated.object;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -11,6 +12,8 @@ import java.util.stream.Collectors;
 import static com.credits.general.serialize.Serializer.deserialize;
 import static com.credits.general.serialize.Serializer.serialize;
 import static com.credits.general.thrift.generated.Variant._Fields.*;
+import static com.credits.general.util.GeneralConverter.amountToBigDecimal;
+import static com.credits.general.util.GeneralConverter.bigDecimalToAmount;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -19,7 +22,7 @@ public class VariantConverter {
     public static final Byte NULL_TYPE_VALUE = 0;
     public static final Byte VOID_TYPE_VALUE = 0;
 
-    public static Variant toVariant(String classType,  Object object) {
+    public static Variant toVariant(String classType, Object object) {
         return new ObjectToVariantConverter().apply(requireNonNull(classType, "classType can't be null"), object);
     }
 
@@ -39,22 +42,22 @@ public class VariantConverter {
             Variant variant;
             if (object == null) {
                 return classType.equals(Void.TYPE.getTypeName())
-                    ? new Variant(V_VOID, VOID_TYPE_VALUE)
-                    : new Variant(V_NULL, classType);
+                        ? new Variant(V_VOID, VOID_TYPE_VALUE)
+                        : new Variant(V_NULL, classType);
             } else if (object.getClass().isArray()) {
                 variant = mapArray(classType, object);
             } else if (object instanceof List) {
                 List<Variant> variantCollection =
-                    ((List<Object>) object).stream().map(this::map).collect(Collectors.toList());
+                        ((List<Object>) object).stream().map(this::map).collect(Collectors.toList());
                 variant = new Variant(V_LIST, variantCollection);
             } else if (object instanceof Set) {
                 Set<Variant> variantCollection =
-                    ((Set<Object>) object).stream().map(this::map).collect(Collectors.toSet());
+                        ((Set<Object>) object).stream().map(this::map).collect(Collectors.toSet());
                 variant = new Variant(V_SET, variantCollection);
             } else if (object instanceof Map) {
                 Map<Variant, Variant> variantMap = ((Map<Object, Object>) object).entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(entry -> map(entry.getKey()), entry -> map(entry.getValue())));
+                        .stream()
+                        .collect(Collectors.toMap(entry -> map(entry.getKey()), entry -> map(entry.getValue())));
                 variant = new Variant(V_MAP, variantMap);
             } else {
                 variant = mapObject(classType, object);
@@ -85,6 +88,8 @@ public class VariantConverter {
                 return new Variant(classType.equals("double") ? V_DOUBLE : V_DOUBLE_BOX, object);
             } else if (object instanceof String) {
                 return new Variant(V_STRING, object);
+            } else if (object instanceof BigDecimal) {
+                return new Variant(V_BIG_DECIMAL, bigDecimalToAmount(((BigDecimal) object)));
             } else {
                 return new Variant(V_OBJECT, new object(classType, ByteBuffer.wrap(serialize(object))));
             }
@@ -94,8 +99,8 @@ public class VariantConverter {
             List<Variant> variantCollection = new ArrayList<>();
             if (object instanceof Object[]) {
                 variantCollection = Arrays.stream((Object[]) object)
-                    .map(obj -> map(classType != null ? object.getClass().getTypeName().replace("[]", "") : "", obj))
-                    .collect(Collectors.toList());
+                        .map(obj -> map(classType != null ? object.getClass().getTypeName().replace("[]", "") : "", obj))
+                        .collect(Collectors.toList());
             } else if (object instanceof byte[]) {
                 for (byte b : (byte[]) object) {
                     variantCollection.add(new Variant(V_BYTE, b));
@@ -155,6 +160,8 @@ public class VariantConverter {
                         objectMap.put(map(entry.getKey()), map(entry.getValue()));
                     }
                     return objectMap;
+                case V_BIG_DECIMAL:
+                    return amountToBigDecimal(variant.getV_big_decimal());
                 case V_OBJECT:
                     return deserialize(variant.getV_object().instance.array(), classLoader.length > 0 ? classLoader[0] : getClass().getClassLoader());
                 default:
