@@ -13,7 +13,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.PrivateKey;
 
-import static com.credits.client.node.util.NodePojoConverter.bigDecimalToAmount;
+import static com.credits.general.util.GeneralConverter.bigDecimalToAmount;
+
 
 /**
  * Created by goncharov-eg on 26.01.2018.

@@ -1,5 +1,6 @@
 package general.tests.util;
 
+import com.credits.general.thrift.generated.Amount;
 import com.credits.general.util.Constants;
 import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.exception.ConverterException;
@@ -11,6 +12,7 @@ import java.math.RoundingMode;
 import java.util.BitSet;
 
 import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
+import static com.credits.general.util.GeneralConverter.*;
 
 
 /**
@@ -81,9 +83,9 @@ public class GeneralConverterTest {
         String longString = "111111111111111111L";
         String intString = "1111111111";
         String doubleString = "1" + DECIMAL_SEPARATOR + "1111111111111111";
-        long longValue = GeneralConverter.toBigDecimal(longString).longValue();
-        int integerValue = GeneralConverter.toBigDecimal(intString).intValue();
-        double doubleValue = GeneralConverter.toBigDecimal(doubleString).setScale(13, RoundingMode.DOWN).doubleValue();
+        long longValue = toBigDecimal(longString).longValue();
+        int integerValue = toBigDecimal(intString).intValue();
+        double doubleValue = toBigDecimal(doubleString).setScale(13, RoundingMode.DOWN).doubleValue();
         Assert.assertEquals(111111111111111111L, (Object) longValue);
         Assert.assertEquals(1111111111, (Object) integerValue);
         Assert.assertEquals(1.1111111111111, (Object) doubleValue);
@@ -169,5 +171,38 @@ public class GeneralConverterTest {
     public void toDoubleTest03() {
         Float value = 1.2F;
         Assert.assertEquals(GeneralConverter.toDouble(value), (Double) 1.2D);
+    }
+
+    @Test
+    public void bigDecimalToAmountTest1() {
+        String valueAsString = "1.1111111111111";
+        BigDecimal value = toBigDecimal(valueAsString);
+        Amount amount = bigDecimalToAmount(value);
+        Assert.assertEquals(amount.getIntegral(), 1);
+        Assert.assertEquals(amount.getFraction(), 111111111111100000L);
+        valueAsString = "10.0";
+        value = toBigDecimal(valueAsString);
+        amount = bigDecimalToAmount(value);
+        Assert.assertEquals(amount.getIntegral(), 10);
+        Assert.assertEquals(amount.getFraction(), 0L);
+    }
+
+    @Test
+    public void bigDecimalToAmountTest2() {
+        String valueAsString = "0.1000000000000000055511151231257827021181583404541015625" ;
+        BigDecimal value;
+        value = toBigDecimal(valueAsString);
+        Amount amount = bigDecimalToAmount(value);
+        Assert.assertEquals(amount.getIntegral(), 0);
+        Assert.assertEquals(amount.getFraction(), 100000000000000006L);
+    }
+
+    @Test
+    public void amountToBigDecimalTest1(){
+        int integral = 1111111111;
+        long fraction = 999999999999999999L;
+        Amount amount = new Amount(integral, fraction);
+        BigDecimal bigDecimalValue = amountToBigDecimal(amount);
+        Assert.assertEquals((Object) 1111111111.999999999999999999, bigDecimalValue.doubleValue());
     }
 }

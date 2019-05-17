@@ -4,7 +4,6 @@ package tests.credits.service.contract;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
-import com.credits.general.thrift.generated.object;
 import com.credits.general.util.Base58;
 import com.credits.general.util.compiler.CompilationException;
 import junit.framework.TestCase;
@@ -16,6 +15,7 @@ import pojo.ReturnValue;
 import tests.credits.service.ServiceTest;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +24,8 @@ import static com.credits.general.thrift.generated.Variant._Fields.V_BYTE;
 import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
 import static com.credits.general.thrift.generated.Variant.v_int;
 import static com.credits.general.thrift.generated.Variant.v_string;
+import static com.credits.general.util.GeneralConverter.amountToBigDecimal;
 import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
-import static org.apache.commons.lang3.SerializationUtils.deserialize;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -108,8 +108,7 @@ public class ContractExecutorTest extends ServiceTest {
 
         byte[] contractState = deploySmartContract().newContractState;
         ReturnValue rvBalance = executeSmartContract("getBalanceTest", new Variant[][]{{v_string("qwerty")}}, contractState);
-        final object object = rvBalance.executeResults.get(0).result.getV_object();
-        BigDecimal bigDecimal = deserialize(object.getInstance());
+        final BigDecimal bigDecimal = amountToBigDecimal(rvBalance.executeResults.get(0).result.getV_big_decimal()).setScale(1, RoundingMode.CEILING);
         Assert.assertEquals(new BigDecimal("19.5"), bigDecimal);
     }
 

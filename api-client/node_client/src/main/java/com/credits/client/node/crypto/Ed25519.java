@@ -1,6 +1,5 @@
 package com.credits.client.node.crypto;
 
-import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.crypto.exception.CryptoException;
 import com.credits.general.thrift.generated.Amount;
 import com.credits.general.util.GeneralConverter;
@@ -20,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
+
+import static com.credits.general.util.GeneralConverter.bigDecimalToAmount;
 
 /**
  * Утилита генерации публичных, приватных ключей, подписи
@@ -81,12 +82,12 @@ public class Ed25519 {
         BigDecimal balance, byte currency, PrivateKey privateKey)
         throws ConverterException, CryptoException {
 
-        Amount amountValue = NodePojoConverter.bigDecimalToAmount(amount);
+        Amount amountValue = bigDecimalToAmount(amount);
 
         Integer amountIntegral = amountValue.getIntegral();
         Long amountFraction = amountValue.getFraction();
 
-        Amount balanceValue = NodePojoConverter.bigDecimalToAmount(balance);
+        Amount balanceValue = bigDecimalToAmount(balance);
 
         Integer balanceIntegral = balanceValue.getIntegral();
         Long balanceFraction = balanceValue.getFraction();

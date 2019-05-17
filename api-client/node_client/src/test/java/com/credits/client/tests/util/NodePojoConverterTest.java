@@ -7,50 +7,15 @@ import com.credits.general.util.exception.ConverterException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
 import static com.credits.client.node.thrift.generated.TransactionType.TT_Normal;
 import static com.credits.client.node.util.NodePojoConverter.*;
-import static com.credits.general.util.GeneralConverter.toBigDecimal;
 
 /**
  * Created by Rustem.Saidaliyev on 08.02.2018.
  */
 public class NodePojoConverterTest {
-
-    @Test
-    public void bigDecimalToAmountTest1() {
-        String valueAsString = "1.1111111111111";
-        BigDecimal value = toBigDecimal(valueAsString);
-        Amount amount = bigDecimalToAmount(value);
-        Assert.assertEquals(amount.getIntegral(), 1);
-        Assert.assertEquals(amount.getFraction(), 111111111111100000L);
-        valueAsString = "10.0";
-        value = toBigDecimal(valueAsString);
-        amount = bigDecimalToAmount(value);
-        Assert.assertEquals(amount.getIntegral(), 10);
-        Assert.assertEquals(amount.getFraction(), 0L);
-    }
-
-    @Test
-    public void bigDecimalToAmountTest2() {
-        String valueAsString = "0.1000000000000000055511151231257827021181583404541015625" ;
-        BigDecimal value;
-        value = toBigDecimal(valueAsString);
-        Amount amount = bigDecimalToAmount(value);
-        Assert.assertEquals(amount.getIntegral(), 0);
-        Assert.assertEquals(amount.getFraction(), 100000000000000006L);
-    }
-
-    @Test
-    public void amountToBigDecimalTest1(){
-        int integral = 1111111111;
-        long fraction = 999999999999999999L;
-        Amount amount = new Amount(integral, fraction);
-        BigDecimal bigDecimalValue = amountToBigDecimal(amount);
-        Assert.assertEquals((Object) 1111111111.999999999999999999, bigDecimalValue.doubleValue());
-    }
 
     @Test
     public void transactionToTransactionDataTest01() {
