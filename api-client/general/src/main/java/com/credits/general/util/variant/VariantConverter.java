@@ -1,5 +1,7 @@
 package com.credits.general.util.variant;
 
+import com.credits.general.pojo.Amount;
+import com.credits.general.pojo.AmountData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.thrift.generated.object;
 
@@ -86,6 +88,9 @@ public class VariantConverter {
                 return new Variant(classType.equals("double") ? V_DOUBLE : V_DOUBLE_BOX, object);
             } else if (object instanceof String) {
                 return new Variant(V_STRING, object);
+            } else if (object instanceof Amount) {
+                final var amount = (Amount) object;
+                return new Variant(V_AMOUNT, new com.credits.general.thrift.generated.Amount(amount.getIntegral(), amount.getFractional()));
             } else if (object instanceof BigDecimal) {
                 return new Variant(V_BIG_DECIMAL, object.toString());
             } else {
@@ -159,7 +164,9 @@ public class VariantConverter {
                     }
                     return objectMap;
                 case V_BIG_DECIMAL:
-                    return new BigDecimal(variant.getV_big_decimal() );
+                    return new BigDecimal(variant.getV_big_decimal());
+                case V_AMOUNT:
+                    return new AmountData(variant.getV_amount().getIntegral(), variant.getV_amount().getFraction());
                 case V_OBJECT:
                     return deserialize(variant.getV_object().instance.array(), classLoader.length > 0 ? classLoader[0] : getClass().getClassLoader());
                 default:

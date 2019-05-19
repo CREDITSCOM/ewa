@@ -1,5 +1,6 @@
 package general.tests.util.variant;
 
+import com.credits.general.pojo.AmountData;
 import com.credits.general.thrift.generated.Amount;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.thrift.generated.object;
@@ -53,7 +54,7 @@ public class VariantConverterTest {
                 Arguments.of(getClassType("String"), "String", V_STRING, "String"),
                 Arguments.of(getClassType(exampleClass), exampleClass, V_OBJECT, ByteBuffer.wrap(serialize(exampleClass))),
                 Arguments.of(BigDecimal.class.getTypeName(), exampleBigDecimal, V_BIG_DECIMAL, exampleBigDecimal.toString()),
-                Arguments.of(Amount.class.getTypeName(), exampleAmount, V_AMOUNT, exampleAmount),
+                Arguments.of(Amount.class.getTypeName(), new AmountData(exampleAmount), V_AMOUNT, exampleAmount),
 
                 Arguments.of(
                         getClassType(listWithStrings),
