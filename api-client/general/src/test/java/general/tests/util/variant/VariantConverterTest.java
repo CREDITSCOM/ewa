@@ -1,5 +1,6 @@
 package general.tests.util.variant;
 
+import com.credits.general.thrift.generated.Amount;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.thrift.generated.object;
 import com.credits.general.util.variant.VariantConverter;
@@ -29,6 +30,7 @@ public class VariantConverterTest {
 
     private static ExampleClass exampleClass = new ExampleClass(23);
     private static BigDecimal exampleBigDecimal = new BigDecimal(5.55).setScale(2, DOWN);
+    private static Amount exampleAmount = new Amount(5, 500000000000000000L);
     private static List<String> listWithStrings = List.of("1", "2");
 
     private static Map mapStringInteger = Map.of("one", 1);
@@ -50,7 +52,8 @@ public class VariantConverterTest {
                 Arguments.of(getClassType(Double.MAX_VALUE), Double.MAX_VALUE, V_DOUBLE_BOX, Double.MAX_VALUE),
                 Arguments.of(getClassType("String"), "String", V_STRING, "String"),
                 Arguments.of(getClassType(exampleClass), exampleClass, V_OBJECT, ByteBuffer.wrap(serialize(exampleClass))),
-                Arguments.of(BigDecimal.class.getTypeName(), V_BIG_DECIMAL, exampleBigDecimal),
+                Arguments.of(BigDecimal.class.getTypeName(), exampleBigDecimal, V_BIG_DECIMAL, exampleBigDecimal.toString()),
+                Arguments.of(Amount.class.getTypeName(), exampleAmount, V_AMOUNT, exampleAmount),
 
                 Arguments.of(
                         getClassType(listWithStrings),

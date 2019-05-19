@@ -159,7 +159,7 @@ public class VariantConverter {
                     }
                     return objectMap;
                 case V_BIG_DECIMAL:
-                    return new BigDecimal(variant.getV_big_decimal());
+                    return new BigDecimal(variant.getV_big_decimal() );
                 case V_OBJECT:
                     return deserialize(variant.getV_object().instance.array(), classLoader.length > 0 ? classLoader[0] : getClass().getClassLoader());
                 default:
