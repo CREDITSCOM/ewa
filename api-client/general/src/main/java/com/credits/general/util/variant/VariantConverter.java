@@ -12,8 +12,6 @@ import java.util.stream.Collectors;
 import static com.credits.general.serialize.Serializer.deserialize;
 import static com.credits.general.serialize.Serializer.serialize;
 import static com.credits.general.thrift.generated.Variant._Fields.*;
-import static com.credits.general.util.GeneralConverter.amountToBigDecimal;
-import static com.credits.general.util.GeneralConverter.bigDecimalToAmount;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -89,7 +87,7 @@ public class VariantConverter {
             } else if (object instanceof String) {
                 return new Variant(V_STRING, object);
             } else if (object instanceof BigDecimal) {
-                return new Variant(V_BIG_DECIMAL, bigDecimalToAmount(((BigDecimal) object)));
+                return new Variant(V_BIG_DECIMAL, object.toString());
             } else {
                 return new Variant(V_OBJECT, new object(classType, ByteBuffer.wrap(serialize(object))));
             }
@@ -161,7 +159,7 @@ public class VariantConverter {
                     }
                     return objectMap;
                 case V_BIG_DECIMAL:
-                    return amountToBigDecimal(variant.getV_big_decimal());
+                    return new BigDecimal(variant.getV_big_decimal());
                 case V_OBJECT:
                     return deserialize(variant.getV_object().instance.array(), classLoader.length > 0 ? classLoader[0] : getClass().getClassLoader());
                 default:
