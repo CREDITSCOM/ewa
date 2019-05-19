@@ -24,7 +24,6 @@ import static com.credits.general.thrift.generated.Variant._Fields.V_BYTE;
 import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
 import static com.credits.general.thrift.generated.Variant.v_int;
 import static com.credits.general.thrift.generated.Variant.v_string;
-import static com.credits.general.util.GeneralConverter.amountToBigDecimal;
 import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -108,7 +107,7 @@ public class ContractExecutorTest extends ServiceTest {
 
         byte[] contractState = deploySmartContract().newContractState;
         ReturnValue rvBalance = executeSmartContract("getBalanceTest", new Variant[][]{{v_string("qwerty")}}, contractState);
-        final BigDecimal bigDecimal = amountToBigDecimal(rvBalance.executeResults.get(0).result.getV_big_decimal()).setScale(1, RoundingMode.CEILING);
+        final BigDecimal bigDecimal = new BigDecimal(rvBalance.executeResults.get(0).result.getV_big_decimal()).setScale(1, RoundingMode.CEILING);
         Assert.assertEquals(new BigDecimal("19.5"), bigDecimal);
     }
 
