@@ -84,7 +84,6 @@ public class NodePojoConverter {
         return data;
     }
 
-
     public static WalletData walletToWalletData(com.credits.client.node.thrift.generated.WalletData walletData) {
 
         return new WalletData(walletData.getWalletId(), amountToBigDecimal(walletData.getBalance()),
