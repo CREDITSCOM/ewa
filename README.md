@@ -22,8 +22,8 @@ API contains general tools for integrate with node
 
 ##### Used environment
 - [JDK 11](https://openjdk.java.net/projects/jdk/11/)
-- openjfx version 11
-- maven version 3.6.1
+- [OpenjFX version 11](https://openjfx.io/)
+- [Maven version 3.6.1](https://maven.apache.org/docs/3.6.1/release-notes.html) 
 
 ##### How to build
 For build all modules use following maven command on root project level
