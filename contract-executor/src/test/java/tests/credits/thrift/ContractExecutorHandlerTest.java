@@ -1,9 +1,7 @@
 package tests.credits.thrift;
 
-import com.credits.client.executor.thrift.generated.ExecuteByteCodeResult;
-import com.credits.client.executor.thrift.generated.MethodHeader;
-import com.credits.client.executor.thrift.generated.SetterMethodResult;
-import com.credits.client.executor.thrift.generated.SmartContractBinary;
+import com.credits.client.executor.thrift.generated.*;
+import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.ByteCodeObject;
 import com.credits.general.thrift.generated.ClassObject;
 import com.credits.general.thrift.generated.Variant;
@@ -59,10 +57,11 @@ public class ContractExecutorHandlerTest {
     ContractExecutorHandler contractExecutorHandler;
     private byte[] contractState = new byte[]{0xC, 0xA, 0xF, 0xE};
     private Variant getTokensVariantResult;
+    private static String contractSourcecode;
 
     @BeforeAll
     public static void init() throws IOException, CompilationException {
-        String contractSourcecode = readSourceCode("com/credits/thrift/MySmartContract.java");
+        contractSourcecode = readSourceCode("com/credits/thrift/MySmartContract.java");
 
         List<CompilationUnit> compilationUnits = compileSourceCode(contractSourcecode).getUnits();
         byteCodeObjects = compilationUnits.stream()
@@ -170,14 +169,24 @@ public class ContractExecutorHandlerTest {
     }
 
     @Test
-    @DisplayName("Throw exception if version not valid")
-    public void executeByteCodeTest6() {
+    @DisplayName("Throw exception if version is not valid")
+    @SuppressWarnings("unchecked")
+    public void checkAppVersionTest() {
+        short invalidVersion = (short) (APP_VERSION - 1);
         var contractState = deploySmartContract();
-        var executeByteCodeResult = executeSmartContract(contractState, List.of(new MethodHeader("getTokens", emptyList())), APP_VERSION + 1);
 
-        assertThat(executeByteCodeResult.status.code, is(FAILURE.code));
-        assertThat(executeByteCodeResult.results.size(), is(0));
-        assertThat(executeByteCodeResult.status.getMessage(), containsString("IllegalArgumentException: Invalid version"));
+        assertVersionIsInvalid(executeSmartContract(contractState, List.of(new MethodHeader("getTokens", emptyList())), invalidVersion).getStatus());
+        assertVersionIsInvalid(executeByteCodeMultiple(contractState, "getTokens", invalidVersion, emptyList()).getStatus());
+        assertVersionIsInvalid(contractExecutorHandler.compileSourceCode(contractSourcecode, invalidVersion).getStatus());
+        assertVersionIsInvalid(contractExecutorHandler.getContractMethods(List.of(mock(ByteCodeObject.class)), invalidVersion).getStatus());
+        assertVersionIsInvalid(contractExecutorHandler.getContractVariables(List.of(mock(ByteCodeObject.class)),
+                                                                            contractState,
+                                                                            invalidVersion).getStatus());
+    }
+
+    private void assertVersionIsInvalid(APIResponse status) {
+        assertThat(status.code, is(FAILURE.code));
+        assertThat(status.getMessage(), containsString("IllegalArgumentException: Invalid version"));
     }
 
     private ReturnValue createSuccessResponse(Variant result) {
@@ -189,6 +198,21 @@ public class ContractExecutorHandlerTest {
 
     private ExecuteByteCodeResult executeSmartContract(ByteBuffer contractState, List<MethodHeader> methodHeaders) {
         return executeSmartContract(contractState, methodHeaders, APP_VERSION);
+    }
+
+    private ExecuteByteCodeMultipleResult executeByteCodeMultiple(ByteBuffer contractState,
+                                                                  String methodName,
+                                                                  short version,
+                                                                  List<Variant>... params) {
+        return contractExecutorHandler.executeByteCodeMultiple(1,
+                                                               initiatorAddress,
+                                                               new SmartContractBinary(contractAddress,
+                                                                                       new ClassObject(byteCodeObjects, contractState),
+                                                                                       false),
+                                                               methodName,
+                                                               List.of(params),
+                                                               Long.MAX_VALUE,
+                                                               version);
     }
 
     private ExecuteByteCodeResult executeSmartContract(ByteBuffer contractState, List<MethodHeader> methodHeaders, int version) {

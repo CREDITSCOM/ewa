@@ -52,10 +52,16 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                                                  long executionTime,
                                                  short version) {
         ExecuteByteCodeResult executeByteCodeResult;
-        try {
-            logger.debug("<-- executeByteCode\naccessId={}\ninitiatorAddress={}\ninvokedContract={}\nmethodHeaders={}\nexecutionTime={}\nversion={}",
-                         accessId, encodeToBASE58(initiatorAddress.array()), invokedContract, methodHeaders, executionTime, version);
+        logger.debug("<-- executeByteCode\n" +
+                             "accessId={}\n" +
+                             "initiatorAddress={}\n" +
+                             "invokedContract={}\n" +
+                             "methodHeaders={}\n" +
+                             "executionTime={}\n" +
+                             "version={}",
+                     accessId, encodeToBASE58(initiatorAddress.array()), invokedContract, methodHeaders, executionTime, version);
 
+        try {
             validateVersion(version);
 
             final var session = new ExecuteByteCodeSession(ceService, accessId, initiatorAddress, invokedContract, methodHeaders, executionTime);
@@ -101,7 +107,6 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
         );
 
         Objects.requireNonNull(classObject, "class object can't be null");
-        validateVersion(version);
 
         Variant[][] paramsArray = null;
         if (params != null) {
@@ -114,6 +119,8 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
 
         ExecuteByteCodeMultipleResult byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(SUCCESS_API_RESPONSE, null);
         try {
+            validateVersion(version);
+
             ReturnValue returnValue =
                     classObject.instance == null || classObject.instance.array().length == 0
                             ? ceService.deploySmartContract(new DeployContractSession(accessId,
@@ -146,9 +153,9 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     @Override
     public GetContractMethodsResult getContractMethods(List<ByteCodeObject> compilationUnits, short version) {
         logger.debug("\n<-- getContractMethods(\nbytecode = {} bytes, \nversion = {})", compilationUnits.size(), version);
-        validateVersion(version);
         GetContractMethodsResult result = new GetContractMethodsResult();
         try {
+            validateVersion(version);
             List<MethodDescriptionData> contractsMethods =
                     ceService.getContractsMethods(GeneralConverter.byteCodeObjectToByteCodeObjectData(compilationUnits));
             result.methods =
@@ -169,9 +176,9 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             short version) {
         logger.debug("\n<-- getContractVariables(\nbytecode = {} bytes, \ncontractState = {} bytes, \nversion = {})",
                      compilationUnits.size(), contractState.array().length, version);
-        validateVersion(version);
         GetContractVariablesResult result = new GetContractVariablesResult();
         try {
+            validateVersion(version);
             result.setStatus(SUCCESS_API_RESPONSE);
             result.setContractVariables(ceService.getContractVariables(
                     GeneralConverter.byteCodeObjectToByteCodeObjectData(compilationUnits),
@@ -188,9 +195,9 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
     @Override
     public CompileSourceCodeResult compileSourceCode(String sourceCode, short version) {
         logger.debug("\n<-- compileBytecode(sourceCode = {}, \nversion = {})", sourceCode, version);
-        validateVersion(version);
         CompileSourceCodeResult result = new CompileSourceCodeResult();
         try {
+            validateVersion(version);
             result.setStatus(SUCCESS_API_RESPONSE);
             result.setByteCodeObjects(
                     GeneralConverter.byteCodeObjectsDataToByteCodeObjects(ceService.compileClass(sourceCode)));
