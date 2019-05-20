@@ -21,7 +21,7 @@ API contains general tools for integrate with node
 
 
 ##### Used environment
-- Java version openJDK 11
+- [JDK 11](https://openjdk.java.net/projects/jdk/11/)
 - openjfx version 11
 - maven version 3.6.1
 
