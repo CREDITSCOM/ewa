@@ -84,7 +84,7 @@ public class ContractExecutorHandlerTest {
 
     @Test
     @DisplayName("MethodHeaders can be null when deploy")
-    public void test0() {
+    public void executeByteCodeTest0() {
         var deployResult = executeSmartContract(allocate(0), null);
         verify(mockCEService).deploySmartContract(any());
         assertThat(deployResult.status, is(SUCCESS_API_RESPONSE));
@@ -93,7 +93,7 @@ public class ContractExecutorHandlerTest {
 
     @Test
     @DisplayName("MethodHeaders can be empty when deploy")
-    public void test1() {
+    public void executeByteCodeTest1() {
         var deployResult = executeSmartContract(allocate(0), emptyList());
         verify(mockCEService).deploySmartContract(any());
 
@@ -103,7 +103,7 @@ public class ContractExecutorHandlerTest {
 
     @Test
     @DisplayName("MethodHeaders can't be null when execute")
-    public void test2() {
+    public void executeByteCodeTest2() {
         var contractState = deploySmartContract();
         var executeByteCodeResult = executeSmartContract(contractState, null);
         verify(mockCEService, never()).executeSmartContract(any());
@@ -116,7 +116,7 @@ public class ContractExecutorHandlerTest {
 
     @Test
     @DisplayName("MethodHeaders can't be empty when execute")
-    public void test3() {
+    public void executeByteCodeTest3() {
         var contractState = deploySmartContract();
         var executeByteCodeResult = executeSmartContract(contractState, emptyList());
         verify(mockCEService, never()).executeSmartContract(any());
@@ -128,7 +128,7 @@ public class ContractExecutorHandlerTest {
 
     @Test
     @DisplayName("Amount ExecuteByteCodeResult must be equals amount methodHeaders")
-    public void test5() {
+    public void executeByteCodeTest5() {
         var contractState = deploySmartContract();
 
         getTokensVariantResult = new Variant(V_INT, 5);
@@ -171,7 +171,7 @@ public class ContractExecutorHandlerTest {
 
     @Test
     @DisplayName("Throw exception if version not valid")
-    public void test6() {
+    public void executeByteCodeTest6() {
         var contractState = deploySmartContract();
         var executeByteCodeResult = executeSmartContract(contractState, List.of(new MethodHeader("getTokens", emptyList())), APP_VERSION + 1);
 
