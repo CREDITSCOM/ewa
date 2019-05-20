@@ -22,8 +22,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.credits.general.pojo.ApiResponseCode.FAILURE;
-import static com.credits.general.util.GeneralConverter.byteCodeObjectsToByteCodeObjectsData;
-import static com.credits.general.util.GeneralConverter.encodeToBASE58;
+import static com.credits.general.util.GeneralConverter.*;
 import static com.credits.ioc.Injector.INJECTOR;
 import static com.credits.thrift.utils.ContractExecutorUtils.validateVersion;
 import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
@@ -52,16 +51,16 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                                                  long executionTime,
                                                  short version) {
         ExecuteByteCodeResult executeByteCodeResult;
-        logger.debug("<-- executeByteCode\n" +
-                             "accessId={}\n" +
-                             "initiatorAddress={}\n" +
-                             "invokedContract={}\n" +
-                             "methodHeaders={}\n" +
-                             "executionTime={}\n" +
-                             "version={}",
-                     accessId, encodeToBASE58(initiatorAddress.array()), invokedContract, methodHeaders, executionTime, version);
-
         try {
+            logger.debug("<-- executeByteCode\n" +
+                                 "accessId={}\n" +
+                                 "initiatorAddress={}\n" +
+                                 "invokedContract={}\n" +
+                                 "methodHeaders={}\n" +
+                                 "executionTime={}\n" +
+                                 "version={}",
+                         accessId, encodeToBASE58(initiatorAddress.array()), invokedContract, methodHeaders, executionTime, version);
+
             validateVersion(version);
 
             final var session = new ExecuteByteCodeSession(ceService, accessId, initiatorAddress, invokedContract, methodHeaders, executionTime);
@@ -85,40 +84,40 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             short version) {
 
         ClassObject classObject = invokedContract.object;
+        ExecuteByteCodeMultipleResult byteCodeMultipleResult;
 
-        logger.debug(
-                "\n<-- executeByteCodeMultiple(" +
-                        "\naccessId = {}," +
-                        "\naddress = {}," +
-                        "\nobject.byteCodeObjects length= {}, " +
-                        "\nobject.instance length= {}, " +
-                        "\nobject.instance hash= {} " +
-                        "\nmethod = {}, " +
-                        "\nparams = {}, " +
-                        "\nversion = {}.",
-                accessId,
-                encodeToBASE58(initiatorAddress.array()),
-                (classObject != null && classObject.byteCodeObjects != null ? classObject.byteCodeObjects.size() : "null"),
-                (classObject != null && classObject.instance != null ? classObject.instance.position() : "null"),
-                (classObject != null && classObject.instance != null ? classObject.instance.hashCode() : "null"),
-                method,
-                params == null ? "no params" : params.toString(),
-                version
-        );
-
-        Objects.requireNonNull(classObject, "class object can't be null");
-
-        Variant[][] paramsArray = null;
-        if (params != null) {
-            paramsArray = new Variant[params.size()][];
-            for (int i = 0; i < params.size(); i++) {
-                List<Variant> list = params.get(i);
-                paramsArray[i] = list.toArray(new Variant[0]);
-            }
-        }
-
-        ExecuteByteCodeMultipleResult byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(SUCCESS_API_RESPONSE, null);
         try {
+            logger.debug("<-- executeByteCodeMultiple" +
+                                 "\naccessId = {}," +
+                                 "\naddress = {}," +
+                                 "\nobject.byteCodeObjects length= {}, " +
+                                 "\nobject.instance length= {}, " +
+                                 "\nobject.instance hash= {} " +
+                                 "\nmethod = {}, " +
+                                 "\nparams = {}, " +
+                                 "\nversion = {}.",
+                         accessId,
+                         encodeToBASE58(initiatorAddress.array()),
+                         (classObject != null && classObject.byteCodeObjects != null ? classObject.byteCodeObjects.size() : "null"),
+                         (classObject != null && classObject.instance != null ? classObject.instance.position() : "null"),
+                         (classObject != null && classObject.instance != null ? classObject.instance.hashCode() : "null"),
+                         method,
+                         params == null ? "no params" : params.toString(),
+                         version
+            );
+
+            Objects.requireNonNull(classObject, "class object can't be null");
+
+            Variant[][] paramsArray = null;
+            if (params != null) {
+                paramsArray = new Variant[params.size()][];
+                for (int i = 0; i < params.size(); i++) {
+                    List<Variant> list = params.get(i);
+                    paramsArray[i] = list.toArray(new Variant[0]);
+                }
+            }
+
+            byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(SUCCESS_API_RESPONSE, null);
             validateVersion(version);
 
             ReturnValue returnValue =
@@ -142,30 +141,34 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                 getterMethodResult.ret_val = rv.result;
                 return getterMethodResult;
             }).collect(Collectors.toList());
+
         } catch (Throwable e) {
-            byteCodeMultipleResult.setStatus(failureApiResponse(e));
-            logger.debug("\nexecuteByteCodeMultiple error --> {}", byteCodeMultipleResult);
+            byteCodeMultipleResult = new ExecuteByteCodeMultipleResult(failureApiResponse(e), emptyList());
         }
-        logger.debug("\nexecuteByteCodeMultiple success --> {}", byteCodeMultipleResult);
+
+        logger.debug("--> {}", byteCodeMultipleResult);
         return byteCodeMultipleResult;
     }
 
     @Override
     public GetContractMethodsResult getContractMethods(List<ByteCodeObject> compilationUnits, short version) {
-        logger.debug("\n<-- getContractMethods(\nbytecode = {} bytes, \nversion = {})", compilationUnits.size(), version);
-        GetContractMethodsResult result = new GetContractMethodsResult();
+        GetContractMethodsResult result;
         try {
+            logger.debug("<-- getContractMethods(\n" +
+                                 "bytecode = {} bytes, \n" +
+                                 "version = {})",
+                         compilationUnits.size(),
+                         version);
             validateVersion(version);
             List<MethodDescriptionData> contractsMethods =
-                    ceService.getContractsMethods(GeneralConverter.byteCodeObjectToByteCodeObjectData(compilationUnits));
-            result.methods =
-                    contractsMethods.stream().map(GeneralConverter::convertMethodDataToMethodDescription).collect(toList());
-            result.setStatus(SUCCESS_API_RESPONSE);
+                    ceService.getContractsMethods(byteCodeObjectToByteCodeObjectData(compilationUnits));
+
+            result = new GetContractMethodsResult(SUCCESS_API_RESPONSE,
+                                                  contractsMethods.stream().map(GeneralConverter::convertMethodDataToMethodDescription).collect(toList()));
         } catch (Throwable e) {
-            result.setStatus(failureApiResponse(e));
-            logger.debug("\ngetContractMethods error --> {}", result);
+            result = new GetContractMethodsResult(failureApiResponse(e), emptyList());
         }
-        logger.debug("\ngetContractMethods success --> {}", result);
+        logger.debug("--> {}", result);
         return result;
     }
 
@@ -174,34 +177,35 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             List<ByteCodeObject> compilationUnits,
             ByteBuffer contractState,
             short version) {
-        logger.debug("\n<-- getContractVariables(\nbytecode = {} bytes, \ncontractState = {} bytes, \nversion = {})",
-                     compilationUnits.size(), contractState.array().length, version);
-        GetContractVariablesResult result = new GetContractVariablesResult();
+        GetContractVariablesResult result;
         try {
+            logger.debug("<-- getContractVariables(\n" +
+                                 "bytecode = {} bytes, \n" +
+                                 "contractState = {} bytes, \n" +
+                                 "version = {})",
+                         compilationUnits.size(), contractState.array().length, version);
             validateVersion(version);
-            result.setStatus(SUCCESS_API_RESPONSE);
-            result.setContractVariables(ceService.getContractVariables(
-                    GeneralConverter.byteCodeObjectToByteCodeObjectData(compilationUnits),
-                    contractState.array()));
+            result = new GetContractVariablesResult(SUCCESS_API_RESPONSE,
+                                                    ceService.getContractVariables(
+                                                            byteCodeObjectToByteCodeObjectData(compilationUnits),
+                                                            contractState.array()));
         } catch (Throwable e) {
-            result.setStatus(failureApiResponse(e));
-            logger.debug("\ngetContractVariables error --> {}", result);
+            result = new GetContractVariablesResult(failureApiResponse(e), emptyMap());
         }
-        logger.debug("\ngetContractVariables success --> {}", result);
+        logger.debug("--> {}", result);
         return result;
     }
 
 
     @Override
     public CompileSourceCodeResult compileSourceCode(String sourceCode, short version) {
-        logger.debug("\n<-- compileBytecode(sourceCode = {}, \nversion = {})", sourceCode, version);
-        CompileSourceCodeResult result = new CompileSourceCodeResult();
+        CompileSourceCodeResult result;
         try {
+            logger.debug("<-- compileBytecode(\nsourceCode = {},\nversion = {})", sourceCode, version);
             validateVersion(version);
-            result.setStatus(SUCCESS_API_RESPONSE);
-            result.setByteCodeObjects(
-                    GeneralConverter.byteCodeObjectsDataToByteCodeObjects(ceService.compileClass(sourceCode)));
+            result = new CompileSourceCodeResult(SUCCESS_API_RESPONSE, byteCodeObjectsDataToByteCodeObjects(ceService.compileClass(sourceCode)));
         } catch (CompilationException exception) {
+            result = new CompileSourceCodeResult();
             result.setStatus(new APIResponse(
                     FAILURE.code,
                     exception.getErrors()
@@ -209,10 +213,9 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
                             .map(e -> "Error on line " + e.getLineNumber() + ": " + e.getErrorMessage())
                             .collect(Collectors.joining("\n"))));
         } catch (Throwable e) {
-            result.setStatus(failureApiResponse(e));
-            logger.debug("\ncompileByteCode error --> {}", result);
+            result = new CompileSourceCodeResult(failureApiResponse(e), emptyList());
         }
-        logger.debug("\ncompileByteCode success --> {}", result);
+        logger.debug("--> {}", result);
         return result;
     }
 }
