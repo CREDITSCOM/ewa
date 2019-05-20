@@ -204,5 +204,16 @@ public class GeneralConverterTest {
         Amount amount = new Amount(integral, fraction);
         BigDecimal bigDecimalValue = amountToBigDecimal(amount);
         Assert.assertEquals((Object) 1111111111.999999999999999999, bigDecimalValue.doubleValue());
+        integral = 0;
+        fraction = 10000000000000000L;
+        amount = new Amount(integral, fraction);
+        bigDecimalValue = amountToBigDecimal(amount);
+        Assert.assertEquals((Object) 0.01, bigDecimalValue.doubleValue());
+        integral = 0;
+        fraction = 1L;
+        amount = new Amount(integral, fraction);
+        bigDecimalValue = amountToBigDecimal(amount);
+        Assert.assertEquals((Object) 0.000000000000000001, bigDecimalValue.doubleValue());
     }
+
 }

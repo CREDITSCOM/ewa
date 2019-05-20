@@ -138,7 +138,7 @@ public class GeneralConverter {
         long fractionPart = amount.getFraction();
 
         String integralPartAsString = GeneralConverter.toString(integralPart);
-        String fractionPartAsString = GeneralConverter.toString(fractionPart);
+        String fractionPartAsString = String.format("%018d", fractionPart);
 
         return new BigDecimal(integralPartAsString + "." + fractionPartAsString);
     }

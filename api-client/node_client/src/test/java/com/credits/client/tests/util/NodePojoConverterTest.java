@@ -7,15 +7,42 @@ import com.credits.general.util.exception.ConverterException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
 import static com.credits.client.node.thrift.generated.TransactionType.TT_Normal;
 import static com.credits.client.node.util.NodePojoConverter.*;
+import static com.credits.general.util.GeneralConverter.bigDecimalToAmount;
+import static com.credits.general.util.GeneralConverter.toBigDecimal;
 
 /**
  * Created by Rustem.Saidaliyev on 08.02.2018.
  */
 public class NodePojoConverterTest {
+
+    @Test
+    public void bigDecimalToAmountTest1() {
+        String valueAsString = "1.1111111111111";
+        BigDecimal value = toBigDecimal(valueAsString);
+        Amount amount = bigDecimalToAmount(value);
+        Assert.assertEquals(amount.getIntegral(), 1);
+        Assert.assertEquals(amount.getFraction(), 111111111111100000L);
+        valueAsString = "10.0";
+        value = toBigDecimal(valueAsString);
+        amount = bigDecimalToAmount(value);
+        Assert.assertEquals(amount.getIntegral(), 10);
+        Assert.assertEquals(amount.getFraction(), 0L);
+        valueAsString = "0.01";
+        value = toBigDecimal(valueAsString);
+        amount = bigDecimalToAmount(value);
+        Assert.assertEquals(amount.getIntegral(), 0);
+        Assert.assertEquals(amount.getFraction(), 10000000000000000L);
+        valueAsString = "0.1";
+        value = toBigDecimal(valueAsString);
+        amount = bigDecimalToAmount(value);
+        Assert.assertEquals(amount.getIntegral(), 0);
+        Assert.assertEquals(amount.getFraction(), 100000000000000000L);
+    }
 
     @Test
     public void transactionToTransactionDataTest01() {
@@ -36,7 +63,7 @@ public class NodePojoConverterTest {
         TransactionData transactionData = createTransactionData(sealedTransaction);
         Assert.assertEquals(
                 transactionData.toString(),
-                "TransactionData{id=0, blockId='706f6f6c48617368.0', source=[115, 111, 117, 114, 99, 101], target=[116, 97, 114, 103, 101, 116], amount=0.0, currency=1, commentBytes=null, method='null', params=null, type=TT_Normal, smartInfo=null}"
+                "TransactionData{id=0, blockId='706f6f6c48617368.0', source=[115, 111, 117, 114, 99, 101], target=[116, 97, 114, 103, 101, 116], amount=0E-18, currency=1, commentBytes=null, method='null', params=null, type=TT_Normal, smartInfo=null}"
         );
     }
 
@@ -57,7 +84,7 @@ public class NodePojoConverterTest {
         TransactionData transactionData = createTransactionData(transaction);
         Assert.assertEquals(
                 transactionData.toString(),
-                "TransactionData{id=0, blockId='null', source=[115, 111, 117, 114, 99, 101], target=[116, 97, 114, 103, 101, 116], amount=0.0, currency=1, commentBytes=null, method='null', params=null, type=TT_Normal, smartInfo=null}"
+                "TransactionData{id=0, blockId='null', source=[115, 111, 117, 114, 99, 101], target=[116, 97, 114, 103, 101, 116], amount=0E-18, currency=1, commentBytes=null, method='null', params=null, type=TT_Normal, smartInfo=null}"
         );
     }
 
