@@ -225,9 +225,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         return stream(session.paramsTable)
                 .flatMap(params -> Stream.of(invokeMethodAndCatchErrors(session, instance, params, byteCodeContractClassLoader)))
                 .reduce(
-                        new ReturnValue(null, new ArrayList<>(), usedContracts),
+                        new ReturnValue(session.contractState, new ArrayList<>(), usedContracts),
                         (returnValue, result) -> {
-                            returnValue.newContractState = returnValue.newContractState == null ? serialize(instance) : returnValue.newContractState;
                             returnValue.executeResults.add(result);
                             return returnValue;
                         },

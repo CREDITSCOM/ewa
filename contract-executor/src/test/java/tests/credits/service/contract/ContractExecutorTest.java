@@ -2,12 +2,10 @@ package tests.credits.service.contract;
 
 
 import com.credits.general.pojo.ByteCodeObjectData;
-import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.general.util.compiler.CompilationException;
-import junit.framework.TestCase;
-import org.junit.Assert;
+import org.hamcrest.collection.IsMapContaining;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -15,27 +13,26 @@ import pojo.ReturnValue;
 import tests.credits.service.ServiceTest;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import static com.credits.general.pojo.ApiResponseCode.FAILURE;
-import static com.credits.general.thrift.generated.Variant._Fields.V_BYTE;
-import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
+import static com.credits.general.thrift.generated.Variant._Fields.*;
 import static com.credits.general.thrift.generated.Variant.v_int;
 import static com.credits.general.thrift.generated.Variant.v_string;
 import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
+import static com.credits.general.util.variant.VariantConverter.toObject;
 import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ContractExecutorTest extends ServiceTest {
 
-    private byte[] contractState;
+    private byte[] deployContractState;
 
     public ContractExecutorTest() {
         super("/serviceTest/MySmartContract.java");
@@ -44,83 +41,75 @@ public class ContractExecutorTest extends ServiceTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        contractState = deploySmartContract().newContractState;
+        deployContractState = deploySmartContract().newContractState;
     }
 
     @Test
-    public void return_void_type() throws Exception {
-        byte[] contractState = deploySmartContract().newContractState;
-
-        ReturnValue returnValue = executeSmartContract("initialize", contractState);
-        assertEquals(new Variant(V_VOID, VOID_TYPE_VALUE), returnValue.executeResults.get(0).result);
+    public void returnVoidType() {
+        ReturnValue returnValue = executeSmartContract("initialize", deployContractState);
+        assertThat(returnValue.executeResults.get(0).result, is(new Variant(V_VOID, VOID_TYPE_VALUE)));
     }
 
     @Test
-    public void getter_method_have_not_change_contract_state() throws Exception {
-        byte[] initContractState = deploySmartContract().newContractState;
-
-        ReturnValue rv = executeSmartContract("getTotal", initContractState);
-        assertThat(initContractState, equalTo(rv.newContractState));
+    public void getterMethodHaveNotChangeContractState() {
+        ReturnValue rv = executeSmartContract("getTotal", deployContractState);
+        assertThat(deployContractState, equalTo(rv.newContractState));
     }
 
     @Test
-    public void save_state_smart_contract() throws Exception {
-        byte[] contractState = deploySmartContract().newContractState;
+    public void saveStateSmartContract() {
+        var executionResult = executeSmartContract("getTotal", deployContractState);
+        var total = executionResult.executeResults.get(0).result.getV_int();
+        var contractState = executionResult.newContractState;
+        assertThat(contractState, equalTo(deployContractState));
+        assertThat(total, is(0));
 
-        contractState = executeSmartContract("initialize", contractState).newContractState;
+        contractState = executeSmartContract("addTokens", new Variant[][]{{v_int(10)}}, deployContractState).newContractState;
+        assertThat(contractState, not(equalTo(deployContractState)));
 
-        ReturnValue rvTotalInitialized = executeSmartContract("getTotal", contractState);
-        assertEquals(1, rvTotalInitialized.executeResults.get(0).result.getV_int());
-
-        contractState = executeSmartContract("addTokens", new Variant[][]{{v_int(10)}}, contractState).newContractState;
-        ReturnValue rvTotalAfterSumming = executeSmartContract("getTotal", contractState);
-        assertEquals(11, rvTotalAfterSumming.executeResults.get(0).result.getV_int());
-
-        contractState = executeSmartContract("addTokens", new Variant[][]{{v_int(-11)}}, contractState).newContractState;
-        ReturnValue rvTotalAfterSubtraction = executeSmartContract("getTotal", contractState);
-        assertEquals(0, rvTotalAfterSubtraction.executeResults.get(0).result.getV_int());
+        executionResult = executeSmartContract("getTotal", contractState);
+        total = executionResult.executeResults.get(0).result.getV_int();
+        assertThat(total, is(10));
     }
 
     @Test
-    public void initiator_init() throws Exception {
-        byte[] contractState = deploySmartContract().newContractState;
-
-        ReturnValue result = executeSmartContract("getInitiatorAddress", contractState);
-        assertEquals(Base58.encode(initiatorAddress), result.executeResults.get(0).result.getV_string());
+    public void initiatorInit() throws Exception {
+        ReturnValue result = executeSmartContract("getInitiatorAddress", deployContractState);
+        assertThat(result.executeResults.get(0).result.getV_string(), is(Base58.encode(initiatorAddress)));
     }
 
     @Test
-    public void send_transaction_into_contract() throws Exception {
-        byte[] contractState = deploySmartContract().newContractState;
+    public void sendTransactionIntoContract() {
+        ReturnValue result = executeSmartContract("payable", new Variant[][]{{v_string("10"), v_string("CS")}}, deployContractState);
 
-        ReturnValue result = executeSmartContract("payable", new Variant[][]{{v_string("10"), v_string("CS")}}, contractState);
+        verify(mockNodeApiExecService).sendTransaction(accessId, initiatorAddressBase58, contractAddressBase58, 10, 1.0, new byte[]{});
+
         assertThat(result.executeResults.get(0).result.getV_boolean(), is(true));
     }
 
     @Test
-    public void get_contract_variables() throws Exception {
-        byte[] contractState = deploySmartContract().newContractState;
-        Map<String, Variant> contractVariables = ceService.getContractVariables(byteCodeObjectDataList, contractState);
-        Assert.assertTrue(contractVariables.containsKey("total"));
+    public void getContractVariables() {
+        Map<String, Variant> contractVariables = ceService.getContractVariables(byteCodeObjectDataList, deployContractState);
+        assertThat(contractVariables, IsMapContaining.hasEntry("total", new Variant(V_INT_BOX, 0))); //fixme must be V_INT
     }
 
 
     @Test
-    public void get_balance_return_big_decimal() throws Exception {
+    @DisplayName("returned value can be BigDecimal type")
+    public void getBalanceReturnBigDecimal() {
         when(mockNodeApiExecService.getBalance(anyString())).thenReturn(new BigDecimal("19.5"));
 
-        byte[] contractState = deploySmartContract().newContractState;
-        ReturnValue rvBalance = executeSmartContract("getBalanceTest", new Variant[][]{{v_string("qwerty")}}, contractState);
-        final BigDecimal bigDecimal = new BigDecimal(rvBalance.executeResults.get(0).result.getV_big_decimal()).setScale(1, RoundingMode.CEILING);
-        Assert.assertEquals(new BigDecimal("19.5"), bigDecimal);
+        var variantBalance = executeSmartContract("getBalanceTest",
+                                                  new Variant[][]{{v_string("qwerty")}},
+                                                  deployContractState).executeResults.get(0).result;
+        var balance = toObject(variantBalance);
+
+        assertThat(balance, is(new BigDecimal("19.5")));
     }
 
     @Test
-    public void multipleMethodCall() throws Exception {
-        byte[] contractState = deploySmartContract().newContractState;
-
-        ReturnValue singleCallResult = executeSmartContract("addTokens", new Variant[][]{{v_int(10)}}, contractState);
-
+    @DisplayName("multiple call can't be change contract state")
+    public void multipleMethodCall() {
         ReturnValue multiplyCallResult = executeSmartContract(
                 "addTokens",
                 new Variant[][]{
@@ -129,45 +118,39 @@ public class ContractExecutorTest extends ServiceTest {
                         {v_int(10)},
                         {v_int(10)}
                 },
-                contractState);
+                deployContractState);
 
-        assertNotEquals(singleCallResult.newContractState, multiplyCallResult.newContractState);
-
-        singleCallResult = executeSmartContract("getTotal", contractState);
-
-        TestCase.assertEquals(0, singleCallResult.executeResults.get(0).result.getV_int()); //fixme must be int
+        assertThat(multiplyCallResult.newContractState, equalTo(deployContractState));
     }
 
 
     @Test
     public void compileClassCall() throws CompilationException {
         final List<ByteCodeObjectData> byteCodeObjectData = ceService.compileClass(sourceCode);
-        Assert.assertNotNull(byteCodeObjectData);
-        assertFalse(byteCodeObjectData.isEmpty());
+
+        assertThat(byteCodeObjectData, notNullValue());
+        assertThat(byteCodeObjectData.isEmpty(), is(false));
     }
 
 
     @Test
-    @DisplayName("getSeed must be return expectedValue")
+    @DisplayName("call NodeApiExecService and returning result")
     public void getSeedCallIntoSmartContract() throws Exception {
-        var expectedValue = new byte[]{0xB, 0xA, 0xB, 0xE};
+        var seed = new byte[]{0xB, 0xA, 0xB, 0xE};
 
-        var executeByteCodeResult = deploySmartContract();
-        assertEquals(new APIResponse((byte) 0, "success"), executeByteCodeResult.executeResults.get(0).status);
+        when(mockNodeApiExecService.getSeed(anyLong())).thenReturn(seed);
+        var executeByteCodeResult = executeSmartContract("testGetSeed", deployContractState).executeResults.get(0).result;
 
-        when(mockNodeApiExecService.getSeed(anyLong())).thenReturn(expectedValue);
-        executeByteCodeResult = executeSmartContract("testGetSeed", executeByteCodeResult.newContractState);
-        assertEquals(Arrays.asList(
-                new Variant(V_BYTE, (byte) 0xB),
-                new Variant(V_BYTE, (byte) 0xA),
-                new Variant(V_BYTE, (byte) 0xB),
-                new Variant(V_BYTE, (byte) 0xE)), executeByteCodeResult.executeResults.get(0).result.getV_array());
+        assertThat(executeByteCodeResult.getV_array(), is(List.of(new Variant(V_BYTE, seed[0]),
+                                                                  new Variant(V_BYTE, seed[1]),
+                                                                  new Variant(V_BYTE, seed[2]),
+                                                                  new Variant(V_BYTE, seed[3]))));
     }
 
     @Test
     @DisplayName("execution of smart-contract must be stop when execution time expired")
     public void executionTimeTest() {
-        var executionStatus = executeSmartContract("infiniteLoop", contractState, 10).executeResults.get(0).status;
+        var executionStatus = executeSmartContract("infiniteLoop", deployContractState, 10).executeResults.get(0).status;
 
         assertThat(executionStatus.code, is(FAILURE.code));
         assertThat(executionStatus.message, containsString("TimeoutException"));
@@ -176,7 +159,7 @@ public class ContractExecutorTest extends ServiceTest {
     @Test
     @DisplayName("correct interrupt smart contract if time expired")
     public void correctInterruptContractIfTimeExpired() {
-        var executionResult = executeSmartContract("interruptedInfiniteLoop", contractState, 10).executeResults.get(0);
+        var executionResult = executeSmartContract("interruptedInfiniteLoop", deployContractState, 10).executeResults.get(0);
 
         assertThat(executionResult.status, is(SUCCESS_API_RESPONSE));
         assertThat(executionResult.result.getV_string(), is("infinite loop interrupted correctly"));
@@ -185,7 +168,7 @@ public class ContractExecutorTest extends ServiceTest {
     @Test
     @DisplayName("wait a bit delay for correct complete smart contract method")
     public void waitCorrectCompleteOfSmartContract() {
-        var executionResult = executeSmartContract("interruptInfiniteLoopWithDelay", contractState, 10).executeResults.get(0);
+        var executionResult = executeSmartContract("interruptInfiniteLoopWithDelay", deployContractState, 10).executeResults.get(0);
 
         assertThat(executionResult.status, is(SUCCESS_API_RESPONSE));
         assertThat(executionResult.result.getV_string(), is("infinite loop interrupted correctly"));

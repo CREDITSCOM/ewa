@@ -56,11 +56,16 @@ public abstract class ServiceTest {
 
     private final String sourCodePath;
 
+
+    protected final String initiatorAddressBase58 = "5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe";
+    protected final String contractAddressBase58 = "G2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZZ";
     protected final byte[] initiatorAddress = decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpe");
     protected final byte[] contractAddress = decodeFromBASE58("G2iSMjqaEQmA5pvFuFjKbMqJUxJZceAY5oc1uotr7SZZ");
     protected List<ByteCodeObjectData> byteCodeObjectDataList;
     protected String sourceCode;
+    final protected long accessId = 0;
     private final ByteCodeContractClassLoader byteCodeContractClassLoader = new ByteCodeContractClassLoader();
+    private DeployContractSession deployContractSession;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -86,6 +91,13 @@ public abstract class ServiceTest {
         initSmartContractStaticField(null, "nodeApiService", mockNodeApiExecService);
         initSmartContractStaticField(null, "contractExecutorService", ceService);
         when(ceService.getSmartContractClassLoader()).thenReturn(byteCodeContractClassLoader);
+
+        deployContractSession = new DeployContractSession(
+                0,
+                encodeToBASE58(initiatorAddress),
+                encodeToBASE58(contractAddress),
+                byteCodeObjectDataList,
+                Long.MAX_VALUE);
     }
 
     private void initSmartContractStaticField(Object smartContractInstance,
@@ -146,20 +158,12 @@ public abstract class ServiceTest {
                         true)));
 
         return ceService.executeExternalSmartContract(
-                new InvokeMethodSession(
-                        0,
-                        encodeToBASE58(initiatorAddress),
-                        encodeToBASE58(contractAddress),
-                        byteCodeObjectDataList,
-                        contractState,
-                        methodName,
-                        variantParams,
-                        Long.MAX_VALUE),
+                createMethodSession(methodName, contractState, Long.MAX_VALUE, variantParams),
                 usedContracts,
                 byteCodeContractClassLoader);
     }
 
-    protected ReturnValue executeSmartContract(String methodName, byte[] contractState) throws Exception {
+    protected ReturnValue executeSmartContract(String methodName, byte[] contractState) {
         return executeSmartContract(methodName, new Variant[][]{{}}, contractState);
     }
 
@@ -176,24 +180,11 @@ public abstract class ServiceTest {
             Variant[][] params,
             byte[] contractState,
             long executionTime) {
-        return ceService.executeSmartContract(new InvokeMethodSession(
-                0,
-                encodeToBASE58(initiatorAddress),
-                encodeToBASE58(contractAddress),
-                byteCodeObjectDataList,
-                contractState,
-                methodName,
-                params,
-                executionTime));
+        return ceService.executeSmartContract(createMethodSession(methodName, contractState, executionTime, params));
     }
 
     protected ReturnValue deploySmartContract() {
-        return ceService.deploySmartContract(new DeployContractSession(
-                0,
-                encodeToBASE58(initiatorAddress),
-                encodeToBASE58(contractAddress),
-                byteCodeObjectDataList,
-                Long.MAX_VALUE));
+        return ceService.deploySmartContract(deployContractSession);
     }
 
     protected void configureGetContractByteCodeNodeResponse(byte[] contractState, boolean isCanModify) {
@@ -203,5 +194,17 @@ public abstract class ServiceTest {
                         byteCodeObjectDataList,
                         contractState,
                         isCanModify));
+    }
+
+    private InvokeMethodSession createMethodSession(String methodName, byte[] contractState, long maxValue, Variant[][] variantParams) {
+        return new InvokeMethodSession(
+                0,
+                encodeToBASE58(initiatorAddress),
+                encodeToBASE58(contractAddress),
+                byteCodeObjectDataList,
+                contractState,
+                methodName,
+                variantParams,
+                maxValue);
     }
 }
