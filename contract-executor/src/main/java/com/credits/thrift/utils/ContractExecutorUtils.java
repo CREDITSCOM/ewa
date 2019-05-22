@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.credits.ApplicationProperties.APP_VERSION;
-import static com.credits.general.util.Utils.getClassType;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
@@ -43,7 +42,7 @@ public class ContractExecutorUtils {
                         "Cannot getObject access to field: " + name + ". Reason: " + getRootCauseMessage(e), e);
                 }
 
-                variant = toVariant(getClassType(fieldValue), fieldValue);
+                variant = toVariant(field.getType().getTypeName(), fieldValue);
                 contractVariables.put(name, variant);
             }
         }

@@ -90,7 +90,7 @@ public class ContractExecutorTest extends ServiceTest {
     @Test
     public void getContractVariables() {
         Map<String, Variant> contractVariables = ceService.getContractVariables(byteCodeObjectDataList, deployContractState);
-        assertThat(contractVariables, IsMapContaining.hasEntry("total", new Variant(V_INT_BOX, 0))); //fixme must be V_INT
+        assertThat(contractVariables, IsMapContaining.hasEntry("total", new Variant(V_INT, 0)));
     }
 
 
