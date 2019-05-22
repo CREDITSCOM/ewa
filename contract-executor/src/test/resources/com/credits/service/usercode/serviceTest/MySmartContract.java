@@ -40,22 +40,22 @@ public class MySmartContract extends SmartContract {
         return this.total;
     }
 
-    public boolean payable(String amount, String currency) throws Exception{
-	   NumberFormat nf = NumberFormat.getInstance(java.util.Locale.ENGLISH);
-       BigDecimal val = new BigDecimal(nf.parse(amount).doubleValue());
-       sendTransaction(initiator, contractAddress, val.doubleValue(), 1.0);
-       return true;
+    public boolean payable(String amount, String currency) throws Exception {
+        NumberFormat nf = NumberFormat.getInstance(java.util.Locale.ENGLISH);
+        BigDecimal val = new BigDecimal(nf.parse(amount).doubleValue());
+        sendTransaction(initiator, contractAddress, val.doubleValue(), 1.0);
+        return true;
     }
 
     public byte[] testGetSeed() {
         return getSeed();
     }
-	
+
     public int externalCall(@ContractAddress(id = 0) String address, @ContractMethod(id = 0) String method) {
         return (int) invokeExternalContract(address, method);
     }
 
-	@UsingContract(address = "FTWo7QNzweb7JMNL1kuFC32pdkTeQ716mhKThbzXQ9wK", method = "addTokens")
+    @UsingContract(address = "FTWo7QNzweb7JMNL1kuFC32pdkTeQ716mhKThbzXQ9wK", method = "addTokens")
     public void externalCallChangeState(@ContractAddress(id = 0) String address, @ContractMethod(id = 0) String method, Integer value) {
         invokeExternalContract(address, method, value);
     }
@@ -71,25 +71,41 @@ public class MySmartContract extends SmartContract {
 
     @Override
     public int hashCode() {
-        return super.hashCode()+total;
+        return super.hashCode() + total;
     }
 
-    public String getInitiatorAddress(){
+    public String getInitiatorAddress() {
         return initiator;
     }
 
-    public void printGeo(Geo geo){
+    public void printGeo(Geo geo) {
         System.out.println("print geo = " + geo);
     }
 
-    public void useObjectIntoParams(){
-		Geo geo = new Geo(1,"44.0","63.23");
-		System.out.println("init geo" + geo);
+    public void useObjectIntoParams() {
+        Geo geo = new Geo(1, "44.0", "63.23");
+        System.out.println("init geo" + geo);
         invokeExternalContract(contractAddress, "printGeo", geo);
     }
 
-    public void infiniteLoop(){
-       while (true);
+    public void infiniteLoop() {
+        while (true) {
+        }
+    }
+
+    public String interruptedInfiniteLoop() {
+        while (!Thread.currentThread().isInterrupted()) {
+        }
+        return "infinite loop interrupted correctly";
+    }
+
+    public String interruptInfiniteLoopWithDelay() {
+        while (!Thread.currentThread().isInterrupted()) {
+        }
+        for (int j = 0; j < 10000; j++) {
+
+        }
+        return "infinite loop interrupted correctly";
     }
 
     public static class Geo implements Serializable {

@@ -43,6 +43,7 @@ import static com.credits.service.BackwardCompatibilityService.allVersionsSmartC
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
 import static com.credits.utils.Constants.*;
 import static com.credits.utils.ContractExecutorServiceUtils.*;
+import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
@@ -241,7 +242,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         try {
             return new SmartContractMethodResult(SUCCESS_API_RESPONSE, invoke(session, instance, params, byteCodeContractClassLoader));
         } catch (Throwable e) {
-            logger.debug("execution error:\ncontract address {},\nmethod {}\n", session.contractAddress, session.methodName, e);
+            logger.debug("execution error:\ncontract address {},\nmethod {}", session.contractAddress, session.methodName, e);
             return new SmartContractMethodResult(failureApiResponse(e), new Variant(V_STRING, getStackTrace(getRootCause(e))));
         }
     }
@@ -257,15 +258,34 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
     private <R> R runForLimitTime(DeployContractSession session, ClassLoader classLoader, Callable<R> block) {
         Thread limitedTimeThread = null;
+        FutureTask<R> task = new FutureTask<>(block);
         try {
-            FutureTask<R> task = new FutureTask<>(block);
             limitedTimeThread = new Thread(task);
+            limitedTimeThread.setName(session.contractAddress);
             initSmartContractConstants(limitedTimeThread.getId(), session);
             limitedTimeThread.start();
             return task.get(session.executionTime, MILLISECONDS);
         } catch (TimeoutException e) {
-            // TODO: 3/19/2019 create thread wrapper for correct stop thread
-            limitedTimeThread.stop();
+            limitedTimeThread.interrupt();
+
+            if (limitedTimeThread.isAlive()) {
+                try {
+                    sleep(3);
+                } catch (InterruptedException ignored) {
+                }
+                if (!limitedTimeThread.isAlive()) {
+                    limitedTimeThread.stop();
+                }
+            }
+
+            if (task.isDone()) {
+                try {
+                    return task.get();
+                } catch (Throwable ignored) {
+                    throw new ContractExecutorException(e.getMessage(), e);
+                }
+            }
+
             throw new ContractExecutorException(e.getMessage(), e);
         } catch (InterruptedException | ExecutionException e) {
             throw new ContractExecutorException(e.getMessage(), e);

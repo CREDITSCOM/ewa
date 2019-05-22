@@ -26,6 +26,7 @@ import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
 import static com.credits.general.thrift.generated.Variant.v_int;
 import static com.credits.general.thrift.generated.Variant.v_string;
 import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
+import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -34,6 +35,8 @@ import static org.mockito.Mockito.when;
 
 public class ContractExecutorTest extends ServiceTest {
 
+    private byte[] contractState;
+
     public ContractExecutorTest() {
         super("/serviceTest/MySmartContract.java");
     }
@@ -41,6 +44,7 @@ public class ContractExecutorTest extends ServiceTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        contractState = deploySmartContract().newContractState;
     }
 
     @Test
@@ -163,12 +167,28 @@ public class ContractExecutorTest extends ServiceTest {
     @Test
     @DisplayName("execution of smart-contract must be stop when execution time expired")
     public void executionTimeTest() {
-        var contractState = deploySmartContract().newContractState;
-
         var executionStatus = executeSmartContract("infiniteLoop", contractState, 10).executeResults.get(0).status;
 
         assertThat(executionStatus.code, is(FAILURE.code));
         assertThat(executionStatus.message, containsString("TimeoutException"));
+    }
+
+    @Test
+    @DisplayName("correct interrupt smart contract if time expired")
+    public void correctInterruptContractIfTimeExpired() {
+        var executionResult = executeSmartContract("interruptedInfiniteLoop", contractState, 10).executeResults.get(0);
+
+        assertThat(executionResult.status, is(SUCCESS_API_RESPONSE));
+        assertThat(executionResult.result.getV_string(), is("infinite loop interrupted correctly"));
+    }
+
+    @Test
+    @DisplayName("wait a bit delay for correct complete smart contract method")
+    public void waitCorrectCompleteOfSmartContract() {
+        var executionResult = executeSmartContract("interruptInfiniteLoopWithDelay", contractState, 10).executeResults.get(0);
+
+        assertThat(executionResult.status, is(SUCCESS_API_RESPONSE));
+        assertThat(executionResult.result.getV_string(), is("infinite loop interrupted correctly"));
     }
 }
 
