@@ -20,13 +20,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.credits.general.pojo.ApiResponseCode.FAILURE;
 import static com.credits.general.thrift.generated.Variant._Fields.V_BYTE;
 import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
 import static com.credits.general.thrift.generated.Variant.v_int;
 import static com.credits.general.thrift.generated.Variant.v_string;
 import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -134,6 +134,7 @@ public class ContractExecutorTest extends ServiceTest {
         TestCase.assertEquals(0, singleCallResult.executeResults.get(0).result.getV_int()); //fixme must be int
     }
 
+
     @Test
     public void compileClassCall() throws CompilationException {
         final List<ByteCodeObjectData> byteCodeObjectData = ceService.compileClass(sourceCode);
@@ -157,6 +158,17 @@ public class ContractExecutorTest extends ServiceTest {
                 new Variant(V_BYTE, (byte) 0xA),
                 new Variant(V_BYTE, (byte) 0xB),
                 new Variant(V_BYTE, (byte) 0xE)), executeByteCodeResult.executeResults.get(0).result.getV_array());
+    }
+
+    @Test
+    @DisplayName("execution of smart-contract must be stop when execution time expired")
+    public void executionTimeTest() {
+        var contractState = deploySmartContract().newContractState;
+
+        var executionStatus = executeSmartContract("infiniteLoop", contractState, 10).executeResults.get(0).status;
+
+        assertThat(executionStatus.code, is(FAILURE.code));
+        assertThat(executionStatus.message, containsString("TimeoutException"));
     }
 }
 

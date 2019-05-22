@@ -127,11 +127,6 @@ public abstract class ServiceTest {
         return new String(Files.readAllBytes(Paths.get(sourceCodePath)));
     }
 
-    protected ReturnValue executeSmartContract(String methodName, byte[] contractState) throws Exception {
-        return executeSmartContract(methodName, new Variant[][]{{}}, contractState);
-    }
-
-
     protected ReturnValue executeExternalSmartContract(String methodName, byte[] contractState, Object... params) {
         Variant[][] variantParams = null;
         if (params != null) {
@@ -164,11 +159,23 @@ public abstract class ServiceTest {
                 byteCodeContractClassLoader);
     }
 
+    protected ReturnValue executeSmartContract(String methodName, byte[] contractState) throws Exception {
+        return executeSmartContract(methodName, new Variant[][]{{}}, contractState);
+    }
+
+    protected ReturnValue executeSmartContract(String methodName, Variant[][] params, byte[] contractState) {
+        return executeSmartContract(methodName, params, contractState, Long.MAX_VALUE);
+    }
+
+    protected ReturnValue executeSmartContract(String methodName,  byte[] contractState, long executionTime) {
+        return executeSmartContract(methodName, new Variant[][]{{}}, contractState, executionTime);
+    }
+
     protected ReturnValue executeSmartContract(
             String methodName,
             Variant[][] params,
-            byte[] contractState) throws Exception {
-
+            byte[] contractState,
+            long executionTime) {
         return ceService.executeSmartContract(new InvokeMethodSession(
                 0,
                 encodeToBASE58(initiatorAddress),
@@ -177,9 +184,8 @@ public abstract class ServiceTest {
                 contractState,
                 methodName,
                 params,
-                Long.MAX_VALUE));
+                executionTime));
     }
-
 
     protected ReturnValue deploySmartContract() {
         return ceService.deploySmartContract(new DeployContractSession(

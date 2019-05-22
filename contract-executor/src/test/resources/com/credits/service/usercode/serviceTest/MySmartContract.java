@@ -88,6 +88,10 @@ public class MySmartContract extends SmartContract {
         invokeExternalContract(contractAddress, "printGeo", geo);
     }
 
+    public void infiniteLoop(){
+       while (true);
+    }
+
     public static class Geo implements Serializable {
         private final int productId;
         private final String latitude;
