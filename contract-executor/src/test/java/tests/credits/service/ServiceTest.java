@@ -12,12 +12,8 @@ import com.credits.general.util.variant.VariantConverter;
 import com.credits.scapi.v0.SmartContract;
 import exception.ContractExecutorException;
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pojo.ExternalSmartContract;
@@ -47,8 +43,7 @@ import static com.credits.general.util.Utils.getClassType;
 import static java.io.File.separator;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public abstract class ServiceTest {
 
@@ -67,20 +62,16 @@ public abstract class ServiceTest {
     private final ByteCodeContractClassLoader byteCodeContractClassLoader = new ByteCodeContractClassLoader();
     private DeployContractSession deployContractSession;
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
     @Inject
     protected ContractExecutorService ceService;
 
-    @Mock
     protected NodeApiExecInteractionService mockNodeApiExecService;
 
     public ServiceTest(String sourceCodePath) {
         this.sourCodePath = sourceCodePath;
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         DaggerTestComponent.builder().build().inject(this);
 
@@ -88,6 +79,7 @@ public abstract class ServiceTest {
         byteCodeObjectDataList = compileSourceCode(sourceCode);
 
         ceService = spy(ceService);
+        mockNodeApiExecService = mock(NodeApiExecInteractionService.class);
         initSmartContractStaticField(null, "nodeApiService", mockNodeApiExecService);
         initSmartContractStaticField(null, "contractExecutorService", ceService);
         when(ceService.getSmartContractClassLoader()).thenReturn(byteCodeContractClassLoader);
@@ -109,7 +101,7 @@ public abstract class ServiceTest {
         interactionService.set(smartContractInstance, value);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         String dir = System.getProperty("user.dir") + separator + "credits";
         FileUtils.deleteDirectory(new File(dir));

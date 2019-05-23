@@ -6,9 +6,9 @@ import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Base58;
 import com.credits.general.util.compiler.CompilationException;
 import org.hamcrest.collection.IsMapContaining;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import pojo.ReturnValue;
 import tests.credits.service.ServiceTest;
 
@@ -38,7 +38,7 @@ public class ContractExecutorTest extends ServiceTest {
         super("/serviceTest/MySmartContract.java");
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         deployContractState = deploySmartContract().newContractState;
@@ -173,5 +173,6 @@ public class ContractExecutorTest extends ServiceTest {
         assertThat(executionResult.status, is(SUCCESS_API_RESPONSE));
         assertThat(executionResult.result.getV_string(), is("infinite loop interrupted correctly"));
     }
+
 }
 

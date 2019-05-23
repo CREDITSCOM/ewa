@@ -3,7 +3,7 @@ package tests.credits.service.contract;
 import com.credits.general.pojo.AnnotationData;
 import com.credits.general.pojo.MethodArgumentData;
 import com.credits.general.pojo.MethodDescriptionData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.credits.service.ServiceTest;
 
 import java.util.ArrayList;
