@@ -51,12 +51,14 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
     @Test
-    public void getterMethodHaveNotChangeContractState() {
+    @DisplayName("getter method cannot change contract state")
+    public void getterMethodCanNotChangeContractState() {
         ReturnValue rv = executeSmartContract("getTotal", deployContractState);
         assertThat(deployContractState, equalTo(rv.newContractState));
     }
 
     @Test
+    @DisplayName("setter method should be change contract state")
     public void saveStateSmartContract() {
         var executionResult = executeSmartContract("getTotal", deployContractState);
         var total = executionResult.executeResults.get(0).result.getV_int();
@@ -73,12 +75,14 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
     @Test
-    public void initiatorInit() throws Exception {
-        ReturnValue result = executeSmartContract("getInitiatorAddress", deployContractState);
-        assertThat(result.executeResults.get(0).result.getV_string(), is(Base58.encode(initiatorAddress)));
+    @DisplayName("initiator must be initialized")
+    public void initiatorInit() {
+        String initiator = executeSmartContract("getInitiatorAddress", deployContractState).executeResults.get(0).result.getV_string();
+        assertThat(initiator, is(Base58.encode(initiatorAddress)));
     }
 
     @Test
+    @DisplayName("sendTransaction into smartContract must be call NodeApiExecService")
     public void sendTransactionIntoContract() {
         ReturnValue result = executeSmartContract("payable", new Variant[][]{{v_string("10"), v_string("CS")}}, deployContractState);
 
@@ -88,7 +92,7 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
     @Test
-    public void getContractVariables() {
+    public void getContractVariablesTest() {
         Map<String, Variant> contractVariables = ceService.getContractVariables(byteCodeObjectDataList, deployContractState);
         assertThat(contractVariables, IsMapContaining.hasEntry("total", new Variant(V_INT, 0)));
     }
@@ -129,13 +133,13 @@ public class ContractExecutorTest extends ServiceTest {
         final List<ByteCodeObjectData> byteCodeObjectData = ceService.compileClass(sourceCode);
 
         assertThat(byteCodeObjectData, notNullValue());
-        assertThat(byteCodeObjectData.isEmpty(), is(false));
+        assertThat(byteCodeObjectData, not(empty()));
     }
 
 
     @Test
     @DisplayName("call NodeApiExecService and returning result")
-    public void getSeedCallIntoSmartContract() throws Exception {
+    public void getSeedCallIntoSmartContract() {
         var seed = new byte[]{0xB, 0xA, 0xB, 0xE};
 
         when(mockNodeApiExecService.getSeed(anyLong())).thenReturn(seed);
