@@ -61,7 +61,7 @@ public class ContractExecutorHandlerTest {
 
     @BeforeAll
     public static void init() throws IOException, CompilationException {
-        contractSourcecode = readSourceCode("com/credits/thrift/MySmartContract.java");
+        contractSourcecode = readSourceCode("com/credits/service/usercode/contractExecutorHandlerTest/MySmartContract.java");
 
         List<CompilationUnit> compilationUnits = compileSourceCode(contractSourcecode).getUnits();
         byteCodeObjects = compilationUnits.stream()
@@ -77,7 +77,7 @@ public class ContractExecutorHandlerTest {
         DaggerCEHandlerTestComponent.builder().build().inject(this);
         when(mockCEService.deploySmartContract(any())).thenReturn(
                 new ReturnValue(new byte[]{0xC, 0xA, 0xF, 0xE},
-                                List.of(new SmartContractMethodResult(SUCCESS_API_RESPONSE, voidVariantResult)),
+                                List.of(new SmartContractMethodResult(SUCCESS_API_RESPONSE, voidVariantResult, 10)),
                                 emptyMap()));
     }
 
@@ -192,7 +192,7 @@ public class ContractExecutorHandlerTest {
     private ReturnValue createSuccessResponse(Variant result) {
         return new ReturnValue(
                 contractState,
-                List.of(new SmartContractMethodResult(SUCCESS_API_RESPONSE, result)),
+                List.of(new SmartContractMethodResult(SUCCESS_API_RESPONSE, result, 10)),
                 emptyMap());
     }
 

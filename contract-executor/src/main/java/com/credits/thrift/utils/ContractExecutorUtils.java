@@ -13,7 +13,11 @@ import java.util.Map;
 
 import static com.credits.ApplicationProperties.APP_VERSION;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
+import static com.credits.service.BackwardCompatibilityService.allVersionsBasicStandardClass;
+import static com.credits.utils.Constants.*;
+import static java.util.Arrays.stream;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static org.apache.commons.lang3.exception.ExceptionUtils.rethrow;
 
 public class ContractExecutorUtils {
 
@@ -39,7 +43,7 @@ public class ContractExecutorUtils {
                     fieldValue = field.get(object);
                 } catch (IllegalAccessException e) {
                     throw new ContractExecutorException(
-                        "Cannot getObject access to field: " + name + ". Reason: " + getRootCauseMessage(e), e);
+                            "Cannot getObject access to field: " + name + ". Reason: " + getRootCauseMessage(e), e);
                 }
 
                 variant = toVariant(field.getType().getTypeName(), fieldValue);
@@ -50,8 +54,8 @@ public class ContractExecutorUtils {
     }
 
     public static List<Class<?>> compileSmartContractByteCode(
-        List<ByteCodeObjectData> smartContractByteCodeData,
-        ByteCodeContractClassLoader byteCodeContractClassLoader) {
+            List<ByteCodeObjectData> smartContractByteCodeData,
+            ByteCodeContractClassLoader byteCodeContractClassLoader) {
 
         List<Class<?>> compiledClasses = new ArrayList<>(smartContractByteCodeData.size());
         for (ByteCodeObjectData compilationUnit : smartContractByteCodeData) {
@@ -64,5 +68,30 @@ public class ContractExecutorUtils {
         if (version != APP_VERSION) {
             throw new IllegalArgumentException(String.format("Invalid version %s, %s expected", version, APP_VERSION));
         }
+    }
+
+    public static void checkThatIsNotCreditsToken(Class<?> contractClass, Object instance) {
+        stream(contractClass.getInterfaces())
+                .filter(allVersionsBasicStandardClass::contains)
+                .findAny()
+                .ifPresent(ignore -> stream(contractClass.getMethods())
+                        .filter(m -> m.getName().equals("getName") || m.getName().equals("getSymbol") && m.getParameters().length == 0)
+                        .forEach(method -> {
+                            try {
+                                String methodName = method.getName();
+                                if (methodName.equals("getName")) {
+                                    if (((String) method.invoke(instance)).equalsIgnoreCase(CREDITS_TOKEN_NAME)) {
+                                        throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
+                                    }
+                                } else if (methodName.equals("getSymbol")) {
+                                    if (((String) method.invoke(instance)).equalsIgnoreCase(CREDITS_TOKEN_SYMBOL)) {
+                                        throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
+                                    }
+                                }
+                            } catch (ContractExecutorException e) {
+                                rethrow(e);
+                            } catch (Throwable ignored) {
+                            }
+                        }));
     }
 }

@@ -5,13 +5,8 @@ import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodData;
-import com.credits.scapi.annotations.ContractAddress;
-import com.credits.scapi.annotations.ContractMethod;
-import com.credits.scapi.annotations.Payable;
-import com.credits.scapi.annotations.UsingContract;
-import com.credits.scapi.annotations.UsingContracts;
+import com.credits.scapi.annotations.*;
 import exception.ContractExecutorException;
-import org.apache.commons.beanutils.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +23,7 @@ import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Utils.rethrowUnchecked;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.beanutils.MethodUtils.getMatchingAccessibleMethod;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.apache.commons.lang3.reflect.FieldUtils.getAllFieldsList;
 
@@ -49,7 +45,7 @@ public class ContractExecutorServiceUtils {
         }
 
         Class<?>[] argTypes = getArgTypes(params, classLoader);
-        Method method = MethodUtils.getMatchingAccessibleMethod(contractClass, methodName, argTypes);
+        Method method = getMatchingAccessibleMethod(contractClass, methodName, argTypes);
         Object[] argValues = argTypes != null ? castValues(argTypes, params, classLoader) : null;
         if (method != null) {
             return new MethodData(method, argTypes, argValues);

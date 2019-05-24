@@ -89,7 +89,9 @@ public class MySmartContract extends SmartContract {
     }
 
     public void infiniteLoop() {
+        long i = 0;
         while (true) {
+            System.out.println(i++);
         }
     }
 
@@ -102,12 +104,31 @@ public class MySmartContract extends SmartContract {
     public String interruptInfiniteLoopWithDelay() {
         while (!Thread.currentThread().isInterrupted()) {
         }
-        for (int j = 0; j < 10000; j++) {
+        int j;
+        for (j = 0; j < 10000; j++) {
 
         }
+        System.out.println(j);
         return "infinite loop interrupted correctly";
     }
 
+    public void nothingWorkOnlySleep() {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    public void bitWorkingThenSleep() {
+        try {
+            long i;
+            for (i = 0; i < 100_000_000; i++) {
+            }
+            System.out.println(i);
+            Thread.sleep(10);
+        } catch (InterruptedException ignored) {
+        }
+    }
     public static class Geo implements Serializable {
         private final int productId;
         private final String latitude;

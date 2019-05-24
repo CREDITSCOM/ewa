@@ -112,7 +112,7 @@ public class ContractExecutorTest extends ServiceTest {
     }
 
     @Test
-    @DisplayName("multiple call can't be change contract state")
+    @DisplayName("multiple call change contract state")
     public void multipleMethodCall() {
         ReturnValue multiplyCallResult = executeSmartContract(
                 "addTokens",
@@ -123,8 +123,10 @@ public class ContractExecutorTest extends ServiceTest {
                         {v_int(10)}
                 },
                 deployContractState);
+        int addedTokens = ceService.getContractVariables(byteCodeObjectDataList, multiplyCallResult.newContractState).get("total").getV_int();
 
-        assertThat(multiplyCallResult.newContractState, equalTo(deployContractState));
+        assertThat(multiplyCallResult.newContractState, not(equalTo(deployContractState)));
+        assertThat(addedTokens, is(40));
     }
 
 
@@ -178,5 +180,14 @@ public class ContractExecutorTest extends ServiceTest {
         assertThat(executionResult.result.getV_string(), is("infinite loop interrupted correctly"));
     }
 
+    @Test
+    @DisplayName("executeByteCode must be return spent cpu time by execution method thread")
+    public void executeByteCodeMeasureCpuTimeByThread0() {
+        var spentCpuTime = executeSmartContract("nothingWorkOnlySleep", deployContractState, 11).executeResults.get(0).spentCpuTime;
+        assertThat(spentCpuTime, lessThan(1L));
+
+        spentCpuTime = executeSmartContract("bitWorkingThenSleep", deployContractState, 11).executeResults.get(0).spentCpuTime;
+        assertThat(spentCpuTime, greaterThan(10L));
+    }
 }
 

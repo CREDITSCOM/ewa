@@ -7,21 +7,27 @@ public class StopWatch {
     private long startTime;
     private long spentTime;
     private final ThreadMXBean threadMXBean;
+    private final long threadId;
 
-    public StopWatch() {
+    public StopWatch(Thread measuredThread) {
+        threadId = measuredThread.getId();
         threadMXBean = ManagementFactory.getThreadMXBean();
     }
 
     public StopWatch start() {
         spentTime = 0;
-        startTime = threadMXBean.isCurrentThreadCpuTimeSupported() ? getUserTime() : getSystemTime();
+        startTime = threadMXBean.isThreadCpuTimeEnabled() ? getUserTime() : getSystemTime();
         return this;
     }
 
     public long stop() {
         if (spentTime == 0) {
-            spentTime = (threadMXBean.isCurrentThreadCpuTimeSupported() ? getUserTime() : getSystemTime()) - startTime;
+            spentTime = (threadMXBean.isThreadCpuTimeEnabled() ? getUserTime() : getSystemTime()) - startTime;
         }
+        return spentTime;
+    }
+
+    public long getTime(){
         return spentTime;
     }
 
@@ -30,7 +36,7 @@ public class StopWatch {
     }
 
     private long getUserTime() {
-        return threadMXBean.getCurrentThreadUserTime() / 1000_000;
+        return threadMXBean.getThreadUserTime(threadId) / 1000_000;
     }
 
     @Override

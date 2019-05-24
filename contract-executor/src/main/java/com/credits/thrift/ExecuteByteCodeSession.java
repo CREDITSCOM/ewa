@@ -5,7 +5,6 @@ import com.credits.client.executor.thrift.generated.MethodHeader;
 import com.credits.client.executor.thrift.generated.SetterMethodResult;
 import com.credits.client.executor.thrift.generated.SmartContractBinary;
 import com.credits.general.thrift.generated.Variant;
-import com.credits.utils.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pojo.ExternalSmartContract;
@@ -47,7 +46,7 @@ public class ExecuteByteCodeSession {
         this.methodHeaders = methodHeaders;
         this.executionTime = executionTime;
         var classObject = invokedContract.getObject();
-        isDeployContractSession = classObject == null || classObject.instance == null || classObject.instance.array().length== 0;
+        isDeployContractSession = classObject == null || classObject.instance == null || classObject.instance.array().length == 0;
         if (!isDeployContractSession && (methodHeaders == null || methodHeaders.size() == 0)) {
             throw new IllegalArgumentException("method headers list can't be null or empty");
         }
@@ -78,37 +77,33 @@ public class ExecuteByteCodeSession {
     }
 
     private List<SetterMethodResult> executeDeploy(DeployContractSession deploySession) {
-        StopWatch stopWatch = new StopWatch().start();
         final var result = ceService.deploySmartContract(deploySession);
-        final var spentTime = stopWatch.stop();
+        final var firstResult = result.executeResults.get(0);
         return List.of(new SetterMethodResult(SUCCESS_API_RESPONSE,
                                               ByteBuffer.wrap(result.newContractState),
-                                              result.executeResults.get(0).result,
-                                              spentTime));
+                                              firstResult.result,
+                                              firstResult.spentCpuTime));
     }
 
     private List<SetterMethodResult> executeMethodsSequential() {
         return methodHeaders.stream()
                 .reduce(new ArrayList<>(methodHeaders.size()),
                         (results, methodHeader) -> {
-                            final var stopWatch = new StopWatch();
                             try {
                                 requireNonNull(methodHeader, "method header can't be null");
 
-                                stopWatch.start();
                                 final var executionResult = ceService.executeSmartContract(createInvokeMethodSession(methodHeader));
-                                final var spentTime = stopWatch.stop();
-
+                                final var firstResult = executionResult.executeResults.get(0);
                                 results.add(new SetterMethodResult(SUCCESS_API_RESPONSE,
                                                                    ByteBuffer.wrap(executionResult.newContractState),
-                                                                   executionResult.executeResults.get(0).result,
-                                                                   spentTime));
+                                                                   firstResult.result,
+                                                                   firstResult.spentCpuTime));
 
                             } catch (Throwable e) {
                                 results.add(new SetterMethodResult(failureApiResponse(e),
                                                                    ByteBuffer.allocate(0),
                                                                    new Variant(V_STRING, e.getMessage()),
-                                                                   stopWatch.stop()));
+                                                                   0));
 
                             }
                             return results;

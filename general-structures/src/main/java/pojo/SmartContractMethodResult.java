@@ -8,41 +8,35 @@ import java.util.Objects;
 public class SmartContractMethodResult {
     public final APIResponse status;
     public final Variant result;
+    public final long spentCpuTime;
 
-    public SmartContractMethodResult(APIResponse status, Variant result) {
+    public SmartContractMethodResult(APIResponse status, Variant result, long spentCpuTime) {
         this.status = status;
         this.result = result;
+        this.spentCpuTime = spentCpuTime;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof SmartContractMethodResult)) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         SmartContractMethodResult that = (SmartContractMethodResult) o;
-
-        if (!Objects.equals(status, that.status)) {
-            return false;
-        }
-        return Objects.equals(result, that.result);
+        return spentCpuTime == that.spentCpuTime &&
+                Objects.equals(status, that.status) &&
+                Objects.equals(result, that.result);
     }
 
     @Override
     public int hashCode() {
-        int result1 = status != null ? status.hashCode() : 0;
-        result1 = 31 * result1 + (result != null ? result.hashCode() : 0);
-        return result1;
+        return Objects.hash(status, result, spentCpuTime);
     }
 
     @Override
     public String toString() {
-        String sb = "SmartContractMethodResult{" + "status=" + status +
-            ", result=" + result +
-            '}';
-        return sb;
+        return "SmartContractMethodResult{" +
+                "status=" + status +
+                ", result=" + result +
+                ", spentCpuTime=" + spentCpuTime +
+                '}';
     }
 }

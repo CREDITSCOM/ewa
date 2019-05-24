@@ -8,7 +8,6 @@ import com.credits.general.util.GeneralConverter;
 import com.credits.general.util.compiler.CompilationException;
 import com.credits.general.util.compiler.InMemoryCompiler;
 import com.credits.general.util.compiler.model.CompilationPackage;
-import com.credits.pojo.MethodData;
 import com.credits.secure.PermissionsManager;
 import com.credits.service.node.apiexec.NodeApiExecInteractionServiceImpl;
 import com.credits.thrift.utils.ContractExecutorUtils;
@@ -29,28 +28,17 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.stream.Stream;
+import java.util.concurrent.Executors;
 
 import static com.credits.general.serialize.Serializer.deserialize;
 import static com.credits.general.serialize.Serializer.serialize;
-import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
-import static com.credits.general.util.Utils.rethrowUnchecked;
-import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.ioc.Injector.INJECTOR;
-import static com.credits.service.BackwardCompatibilityService.allVersionsBasicStandardClass;
 import static com.credits.service.BackwardCompatibilityService.allVersionsSmartContractClass;
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
-import static com.credits.utils.Constants.*;
 import static com.credits.utils.ContractExecutorServiceUtils.*;
-import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-import static pojo.SmartContractConstants.initSmartContractConstants;
+import static java.util.stream.Collectors.toList;
 
 
 public class ContractExecutorServiceImpl implements ContractExecutorService {
@@ -82,11 +70,8 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public ReturnValue deploySmartContract(DeployContractSession session) throws ContractExecutorException {
         final ByteCodeContractClassLoader byteCodeContractClassLoader = getSmartContractClassLoader();
         final Class<?> contractClass = compileClassAndDropPermissions(session.byteCodeObjectDataList, byteCodeContractClassLoader);
-        final Object instance = runForLimitTime(session,
-                                                byteCodeContractClassLoader,
-                                                () -> rethrowUnchecked(() -> contractClass.getDeclaredConstructor().newInstance()));
-        checkThatIsNotCreditsToken(contractClass, instance);
-        return new ReturnValue(serialize(instance), singletonList(new SmartContractMethodResult(SUCCESS_API_RESPONSE, null)), null);
+
+        return new Deployer(session, contractClass).deploy();
     }
 
     @Override
@@ -95,10 +80,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         final Class<?> contractClass = compileClassAndDropPermissions(session.byteCodeObjectDataList, byteCodeContractClassLoader);
         final Object instance = deserialize(session.contractState, byteCodeContractClassLoader);
 
-        final Map<String, ExternalSmartContract> usedSmartContracts = new HashMap<>();
         initializeSmartContractField("initiator", session.initiatorAddress, contractClass, instance);
         initializeSmartContractField("accessId", session.accessId, contractClass, instance);
-        initializeSmartContractField("usedContracts", usedSmartContracts, contractClass, instance);
+        initializeSmartContractField("usedContracts", session.usedContracts, contractClass, instance);
 
         ExternalSmartContract usedContract = new ExternalSmartContract(
                 new SmartContractGetResultData(
@@ -107,11 +91,9 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                         session.contractState,
                         true));
         usedContract.setInstance(instance);
-        usedSmartContracts.put(session.contractAddress, usedContract);
+        session.usedContracts.put(session.contractAddress, usedContract);
 
-        return session.paramsTable.length < 2
-                ? invokeSingleMethod(session, instance, byteCodeContractClassLoader, usedSmartContracts)
-                : invokeMultipleMethod(session, instance, byteCodeContractClassLoader, usedSmartContracts);
+        return executeContractMethod(session, instance);
     }
 
     @Override
@@ -190,6 +172,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
             Map<String, ExternalSmartContract> usedContracts,
             ByteCodeContractClassLoader classLoader) {
 
+        session.usedContracts.putAll(usedContracts);
         Object instance = usedContracts.get(session.contractAddress).getInstance();
 
         if (instance == null) {
@@ -201,96 +184,24 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
 
             initializeField("initiator", session.initiatorAddress, contractClass, instance);
             initializeField("accessId", session.accessId, contractClass, instance);
-            initializeField("usedContracts", usedContracts, contractClass, instance);
+            initializeField("usedContracts", session.usedContracts, contractClass, instance);
             usedContracts.get(session.contractAddress).setInstance(instance);
         }
 
-        return invokeSingleMethod(session, instance, classLoader, usedContracts);
+        return executeContractMethod(session, instance);
     }
 
-    private ReturnValue invokeSingleMethod(
-            InvokeMethodSession session,
-            Object instance,
-            ByteCodeContractClassLoader byteCodeContractClassLoader, Map<String, ExternalSmartContract> usedContracts) {
-
-        final SmartContractMethodResult result = invokeMethodAndCatchErrors(session, instance, session.paramsTable[0], byteCodeContractClassLoader);
-        return new ReturnValue(serialize(instance), singletonList(result), usedContracts);
+    private ReturnValue executeContractMethod(InvokeMethodSession session, Object contractInstance) {
+        final var executor = new MethodExecutor(session, contractInstance);
+        final var methodResults = executor.execute();
+        return new ReturnValue(serialize(executor.getSmartContractObject()),
+                               methodResults.stream()
+                                       .map(mr -> mr.exception == null
+                                               ? new SmartContractMethodResult(SUCCESS_API_RESPONSE, mr.returnValue, mr.spentCpuTime)
+                                               : new SmartContractMethodResult(failureApiResponse(mr.exception), mr.returnValue, mr.spentCpuTime))
+                                       .collect(toList()),
+                               session.usedContracts);
     }
-
-    private ReturnValue invokeMultipleMethod(
-            InvokeMethodSession session,
-            Object instance,
-            ByteCodeContractClassLoader byteCodeContractClassLoader,
-            Map<String, ExternalSmartContract> usedContracts) {
-        return stream(session.paramsTable)
-                .flatMap(params -> Stream.of(invokeMethodAndCatchErrors(session, instance, params, byteCodeContractClassLoader)))
-                .reduce(
-                        new ReturnValue(session.contractState, new ArrayList<>(), usedContracts),
-                        (returnValue, result) -> {
-                            returnValue.executeResults.add(result);
-                            return returnValue;
-                        },
-                        (returnValue, returnValue2) -> returnValue);
-    }
-
-    private SmartContractMethodResult invokeMethodAndCatchErrors(
-            InvokeMethodSession session,
-            Object instance,
-            Variant[] params,
-            ByteCodeContractClassLoader byteCodeContractClassLoader) {
-        try {
-            return new SmartContractMethodResult(SUCCESS_API_RESPONSE, invoke(session, instance, params, byteCodeContractClassLoader));
-        } catch (Throwable e) {
-            logger.debug("execution error:\ncontract address {},\nmethod {}", session.contractAddress, session.methodName, e);
-            return new SmartContractMethodResult(failureApiResponse(e), new Variant(V_STRING, getStackTrace(getRootCause(e))));
-        }
-    }
-
-    private Variant invoke(InvokeMethodSession session, Object instance, Variant[] params, ByteCodeContractClassLoader classLoader)
-    throws Exception {
-
-        final MethodData methodData = getMethodArgumentsValuesByNameAndParams(instance.getClass(), session.methodName, params, classLoader);
-        final Method method = methodData.method;
-        final String returnTypeName = method.getReturnType().getTypeName();
-        return toVariant(returnTypeName, runForLimitTime(session, classLoader, () -> method.invoke(instance, methodData.argValues)));
-    }
-
-    private <R> R runForLimitTime(DeployContractSession session, ClassLoader classLoader, Callable<R> block) {
-        Thread limitedTimeThread = null;
-        FutureTask<R> task = new FutureTask<>(block);
-        try {
-            limitedTimeThread = new Thread(task);
-            limitedTimeThread.setName(session.contractAddress);
-            initSmartContractConstants(limitedTimeThread.getId(), session);
-            limitedTimeThread.start();
-            return task.get(session.executionTime, MILLISECONDS);
-        } catch (TimeoutException e) {
-            limitedTimeThread.interrupt();
-
-            if (limitedTimeThread.isAlive()) {
-                try {
-                    sleep(3);
-                } catch (InterruptedException ignored) {
-                }
-                if (!limitedTimeThread.isAlive()) {
-                    limitedTimeThread.stop();
-                }
-            }
-
-            if (task.isDone()) {
-                try {
-                    return task.get();
-                } catch (Throwable ignored) {
-                    throw new ContractExecutorException(e.getMessage(), e);
-                }
-            }
-
-            throw new ContractExecutorException(e.getMessage(), e);
-        } catch (InterruptedException | ExecutionException e) {
-            throw new ContractExecutorException(e.getMessage(), e);
-        }
-    }
-
 
     private Class<?> compileClassAndDropPermissions(
             List<ByteCodeObjectData> byteCodeObjectList,
@@ -303,29 +214,4 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                 .orElseThrow(() -> new CompilationException("contract class not compiled"));
     }
 
-    private void checkThatIsNotCreditsToken(Class<?> contractClass, Object instance) {
-        stream(contractClass.getInterfaces())
-                .filter(allVersionsBasicStandardClass::contains)
-                .findAny()
-                .ifPresent(ignore -> stream(contractClass.getMethods())
-                        .filter(m -> m.getName().equals("getName") || m.getName().equals("getSymbol") && m.getParameters().length == 0)
-                        .forEach(method -> {
-                            try {
-                                String methodName = method.getName();
-                                if (methodName.equals("getName")) {
-                                    if (((String) method.invoke(instance)).equalsIgnoreCase(CREDITS_TOKEN_NAME)) {
-                                        throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
-                                    }
-                                } else if (methodName.equals("getSymbol")) {
-                                    if (((String) method.invoke(instance)).equalsIgnoreCase(CREDITS_TOKEN_SYMBOL)) {
-                                        throw new ContractExecutorException(TOKEN_NAME_RESERVED_ERROR);
-                                    }
-                                }
-                            } catch (ContractExecutorException e) {
-                                rethrow(e);
-                            } catch (Throwable ignored) {
-                            }
-                        }));
-    }
 }
-
