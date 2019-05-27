@@ -231,8 +231,8 @@ public class NodePojoConverter {
         SmartContractInvocationData smartContractInvocationData) {
 
         SmartContractInvocation thriftStruct =
-            new SmartContractInvocation(smartContractInvocationData.getMethod(), smartContractInvocationData.getParams(), new ArrayList<>(),
-                smartContractInvocationData.isForgetNewState());//todo add "надо будет передавать потом поля с форм"
+            new SmartContractInvocation(smartContractInvocationData.getMethod(), smartContractInvocationData.getParams(),
+                    smartContractInvocationData.getUsedContracts(), smartContractInvocationData.isForgetNewState());//todo add "надо будет передавать потом поля с форм"
         SmartContractDeployData smartContractDeployData = smartContractInvocationData.getSmartContractDeployData();
         if (smartContractDeployData != null) {
             thriftStruct.setSmartContractDeploy(
