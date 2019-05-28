@@ -18,7 +18,8 @@ public class CEServiceModule {
 
     @Singleton
     @Provides
-    public ContractExecutorService provideContractExecutorService(NodeApiExecInteractionService nodeApiExecService, PermissionsManager permissionManager){
+    public ContractExecutorService provideContractExecutorService(NodeApiExecInteractionService nodeApiExecService,
+                                                                  PermissionsManager permissionManager) {
         return new ContractExecutorServiceImpl(nodeApiExecService, permissionManager);
     }
 
@@ -30,7 +31,7 @@ public class CEServiceModule {
 
     @Singleton
     @Provides
-    public NodeThriftApiExec provideNodeThriftApi(ApplicationProperties properties){
+    public NodeThriftApiExec provideNodeThriftApi(ApplicationProperties properties) {
         return new NodeThriftApiExecClient(properties.apiHost, properties.apiPort);
     }
 }

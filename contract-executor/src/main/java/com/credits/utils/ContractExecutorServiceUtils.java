@@ -1,6 +1,8 @@
 package com.credits.utils;
 
 import com.credits.general.pojo.AnnotationData;
+import com.credits.general.pojo.MethodArgumentData;
+import com.credits.general.pojo.MethodDescriptionData;
 import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.variant.VariantConverter;
@@ -13,16 +15,17 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.credits.general.pojo.ApiResponseCode.FAILURE;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 import static com.credits.general.util.Utils.rethrowUnchecked;
+import static com.credits.thrift.utils.ContractExecutorUtils.OBJECT_METHODS;
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.beanutils.MethodUtils.getMatchingAccessibleMethod;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.apache.commons.lang3.reflect.FieldUtils.getAllFieldsList;
@@ -35,10 +38,10 @@ public class ContractExecutorServiceUtils {
     public final static APIResponse SUCCESS_API_RESPONSE = new APIResponse(SUCCESS.code, "success");
 
     public static MethodData getMethodArgumentsValuesByNameAndParams(
-        Class<?> contractClass,
-        String methodName,
-        Variant[] params,
-        ClassLoader classLoader) throws ClassNotFoundException {
+            Class<?> contractClass,
+            String methodName,
+            Variant[] params,
+            ClassLoader classLoader) throws ClassNotFoundException {
 
         if (params == null) {
             throw new ContractExecutorException("Cannot find method params == null");
@@ -114,39 +117,60 @@ public class ContractExecutorServiceUtils {
 
     public static void initializeSmartContractField(String fieldName, Object value, Class<?> clazz, Object instance) {
         getAllFieldsList(clazz).stream()
-            .filter(field -> field.getName().equals(fieldName))
-            .findAny()
-            .ifPresent(field -> rethrowUnchecked(() -> {
-                field.setAccessible(true);
-                field.set(instance, value);
-            }));
+                .filter(field -> field.getName().equals(fieldName))
+                .findAny()
+                .ifPresent(field -> rethrowUnchecked(() -> {
+                    field.setAccessible(true);
+                    field.set(instance, value);
+                }));
     }
 
-    public static List<AnnotationData> readAnnotation(Annotation annotation) {
+    public static List<MethodDescriptionData> createMethodDescriptionListByClass(Class<?> contractClass) {
+        return stream(contractClass.getMethods())
+                .filter(m -> !OBJECT_METHODS.contains(m.getName()))
+                .map(method -> {
+                    var annotations = toAnnotationDataList(method.getAnnotations());
+                    var parameters = stream(method.getParameters())
+                            .map(p -> new MethodArgumentData(p.getType().getTypeName(), p.getName(), toAnnotationDataList(p.getAnnotations())))
+                            .collect(toList());
+                    return toMethodDescriptionData(method, annotations, parameters);
+                })
+                .collect(toList());
+    }
+
+    private static MethodDescriptionData toMethodDescriptionData(Method m, List<AnnotationData> annotations, List<MethodArgumentData> parameters) {
+        return new MethodDescriptionData(m.getGenericReturnType().getTypeName(), m.getName(), parameters, annotations);
+    }
+
+    private static List<AnnotationData> toAnnotationDataList(Annotation[] annotations) {
+        return stream(annotations).flatMap(a -> readAnnotation(a).stream()).collect(toList());
+    }
+
+    private static List<AnnotationData> readAnnotation(Annotation annotation) {
         if (annotation instanceof UsingContract) {
             var usingContract = ((UsingContract) annotation);
             return singletonList(new AnnotationData(
-                UsingContract.class.getName(),
-                Map.of("address", usingContract.address(), "method", usingContract.method())));
+                    UsingContract.class.getName(),
+                    Map.of("address", usingContract.address(), "method", usingContract.method())));
 
         } else if (annotation instanceof UsingContracts) {
-            return Arrays.stream(((UsingContracts) annotation).value())
-                .flatMap(a -> readAnnotation(a).stream())
-                .collect(Collectors.toList());
+            return stream(((UsingContracts) annotation).value())
+                    .flatMap(a -> readAnnotation(a).stream())
+                    .collect(toList());
         } else if (annotation instanceof ContractAddress) {
             return singletonList(new AnnotationData(
-                ContractAddress.class.getName(),
-                Map.of("id", Integer.toString(((ContractAddress) annotation).id()))));
+                    ContractAddress.class.getName(),
+                    Map.of("id", Integer.toString(((ContractAddress) annotation).id()))));
 
         } else if (annotation instanceof ContractMethod) {
             return singletonList(new AnnotationData(
-                ContractMethod.class.getName(),
-                Map.of("id", Integer.toString(((ContractMethod) annotation).id()))));
+                    ContractMethod.class.getName(),
+                    Map.of("id", Integer.toString(((ContractMethod) annotation).id()))));
 
-        } else if (annotation instanceof Payable){
+        } else if (annotation instanceof Payable) {
             return singletonList(new AnnotationData(
-                Payable.class.getName(),
-                Map.of("amount", Double.toString(((Payable) annotation).amount()))));
+                    Payable.class.getName(),
+                    Map.of("amount", Double.toString(((Payable) annotation).amount()))));
         } else {
             return singletonList(new AnnotationData(annotation.annotationType().getName(), emptyMap()));
         }

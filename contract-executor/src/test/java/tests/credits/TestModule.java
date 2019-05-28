@@ -28,8 +28,8 @@ public class TestModule {
 
     @Provides
     @Singleton
-    public NodeApiExecInteractionService provideMockNodeApiInteractionService(){
-       return mock(NodeApiExecInteractionService.class);
+    public NodeApiExecInteractionService provideMockNodeApiInteractionService() {
+        return mock(NodeApiExecInteractionService.class);
     }
 
     @Singleton

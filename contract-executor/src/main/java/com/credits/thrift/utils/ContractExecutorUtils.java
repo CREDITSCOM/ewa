@@ -6,10 +6,7 @@ import com.credits.general.thrift.generated.Variant;
 import exception.ContractExecutorException;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.credits.ApplicationProperties.APP_VERSION;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
@@ -21,6 +18,16 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.rethrow;
 
 public class ContractExecutorUtils {
 
+
+    public static final Set<String> OBJECT_METHODS = Set.of(
+            "getClass",
+            "hashCode",
+            "equals",
+            "toString",
+            "notify",
+            "notifyAll",
+            "wait",
+            "finalize");
 
     /**
      * Returns null if class instance has no public variables.
@@ -51,6 +58,13 @@ public class ContractExecutorUtils {
             }
         }
         return contractVariables;
+    }
+
+    public static Class<?> getRootClass(List<Class<?>> classes) {
+        return classes.stream()
+                .filter(clazz -> !clazz.getName().contains("$"))
+                .findAny()
+                .orElseThrow(() -> new ContractExecutorException("contract class not compiled"));
     }
 
     public static List<Class<?>> compileSmartContractByteCode(

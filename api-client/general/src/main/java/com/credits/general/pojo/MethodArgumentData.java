@@ -1,11 +1,16 @@
 package com.credits.general.pojo;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class MethodArgumentData {
     public String returnType;
     public String name;
     public List<AnnotationData> annotations;
+
+    public MethodArgumentData(Method method){
+
+    }
 
     public MethodArgumentData(String typeName, String name, List<AnnotationData> annotationData) {
         this.annotations = annotationData;
