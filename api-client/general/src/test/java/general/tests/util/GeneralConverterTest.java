@@ -78,7 +78,7 @@ public class GeneralConverterTest {
 
     @Test
     public void toBigDecimalTest() {
-        String longString = "111111111111111111L";
+        String longString = "111111111111111111";
         String intString = "1111111111";
         String doubleString = "1" + DECIMAL_SEPARATOR + "1111111111111111";
         long longValue = GeneralConverter.toBigDecimal(longString).longValue();
