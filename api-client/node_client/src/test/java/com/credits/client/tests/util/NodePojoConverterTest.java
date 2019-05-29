@@ -1,12 +1,7 @@
 package com.credits.client.tests.util;
 
 import com.credits.client.node.pojo.TransactionData;
-import com.credits.client.node.thrift.generated.Amount;
-import com.credits.client.node.thrift.generated.AmountCommission;
-import com.credits.client.node.thrift.generated.SealedTransaction;
-import com.credits.client.node.thrift.generated.Transaction;
-import com.credits.client.node.thrift.generated.TransactionId;
-import com.credits.client.node.thrift.generated.WalletData;
+import com.credits.client.node.thrift.generated.*;
 import com.credits.general.util.exception.ConverterException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,13 +10,10 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
 import static com.credits.client.node.thrift.generated.TransactionType.TT_Normal;
-import static com.credits.client.node.util.NodePojoConverter.amountToBigDecimal;
-import static com.credits.client.node.util.NodePojoConverter.amountToDouble;
-import static com.credits.client.node.util.NodePojoConverter.bigDecimalToAmount;
-import static com.credits.client.node.util.NodePojoConverter.createTransactionData;
-import static com.credits.client.node.util.NodePojoConverter.doubleToAmount;
-import static com.credits.client.node.util.NodePojoConverter.walletToWalletData;
+import static com.credits.client.node.util.NodePojoConverter.*;
+import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
 import static com.credits.general.util.GeneralConverter.toBigDecimal;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Created by Rustem.Saidaliyev on 08.02.2018.
@@ -30,21 +22,21 @@ public class NodePojoConverterTest {
 
     @Test
     public void bigDecimalToAmountTest1() {
-        String valueAsString = "1.1111111111111";
+        String valueAsString = "1" + DECIMAL_SEPARATOR + "1111111111111";
         BigDecimal value = toBigDecimal(valueAsString);
         Amount amount = bigDecimalToAmount(value);
         Assert.assertEquals(amount.getIntegral(), 1);
         Assert.assertEquals(amount.getFraction(), 111111111111100000L);
-        valueAsString = "10.0";
+        valueAsString = "10" + DECIMAL_SEPARATOR + "0";
         value = toBigDecimal(valueAsString);
         amount = bigDecimalToAmount(value);
-        Assert.assertEquals(amount.getIntegral(), 10);
-        Assert.assertEquals(amount.getFraction(), 0L);
+        Assert.assertThat(amount.getIntegral(), is(10));
+        Assert.assertThat(amount.getFraction(), is(0L));
     }
 
     @Test
     public void bigDecimalToAmountTest2() {
-        String valueAsString = "0.1000000000000000055511151231257827021181583404541015625" ;
+        String valueAsString = "0" + DECIMAL_SEPARATOR + "1000000000000000055511151231257827021181583404541015625" ;
         BigDecimal value;
         value = toBigDecimal(valueAsString);
         Amount amount = bigDecimalToAmount(value);

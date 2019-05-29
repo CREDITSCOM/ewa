@@ -24,7 +24,6 @@ import java.text.ParseException;
 import java.util.*;
 
 import static java.util.Arrays.stream;
-import static org.apache.commons.lang3.math.NumberUtils.createBigDecimal;
 
 /**
  * Created by Rustem.Saidaliyev on 29.01.2018.
@@ -309,15 +308,21 @@ public class GeneralConverter {
             return BigDecimal.ZERO;
         }
 
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Constants.LOCALE);
-
         if (value instanceof String) {
-            return createBigDecimal((String) value);
+            DecimalFormat nf = (DecimalFormat) NumberFormat.getInstance(Locale.getDefault());
+            nf.setParseBigDecimal(true);
+            try {
+                return (BigDecimal) nf.parseObject((String) value);
+            }  catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+
         }
 
         if (value instanceof Double) {
             Double doubleValue = (Double) value;
             String text = GeneralConverter.toString(Math.abs(doubleValue));
+            var symbols = new DecimalFormatSymbols(Constants.LOCALE);
             int integerPlaces = text.indexOf(symbols.getDecimalSeparator());
             int decimalPlaces = text.length() - integerPlaces - 1;
             return new BigDecimal(doubleValue, new MathContext(decimalPlaces));
