@@ -16,6 +16,7 @@ public class PermissionsManager {
         smartContractPermissions.add(new RuntimePermission("getProtectionDomain"));
         smartContractPermissions.add(new RuntimePermission("defineClass"));
         smartContractPermissions.add(new PropertyPermission("sun.io.serialization.extendedDebugInfo","read"));
+        smartContractPermissions.add(new PropertyPermission("java.version","read"));
     }
 
     public void dropSmartContractRights(Class<?> contractClass) {
