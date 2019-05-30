@@ -3,9 +3,7 @@ package com.credits.general.crypto;
 import com.credits.general.crypto.exception.CryptoException;
 import org.bouncycastle.crypto.digests.Blake2sDigest;
 
-/**
- * Created by Rustem Saidaliyev on 27-Mar-18.
- */
+
 public class Blake2S {
 
     public static byte[] generateHash(byte[] hashData) throws CryptoException {

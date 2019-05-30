@@ -5,9 +5,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Objects;
 
-/**
- * Created by Rustem.Saidaliyev on 01.02.2018.
- */
+
 public class TransactionFlowData extends TransactionData implements Serializable {
     private static final long serialVersionUID = 4544650022718657166L;
     protected Short offeredMaxFee16Bits;

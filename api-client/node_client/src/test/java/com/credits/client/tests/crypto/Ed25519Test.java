@@ -20,9 +20,7 @@ import java.util.concurrent.Executors;
 import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
-/**
- * Created by Igor Goryunov on 21.10.2018
- */
+
 @SuppressWarnings("SpellCheckingInspection")
 public class Ed25519Test {
     private static Logger LOGGER = LoggerFactory.getLogger(Ed25519Test.class);

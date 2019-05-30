@@ -17,9 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.general.util.Utils.calculateActualFee;
 
-/**
- * Created by goncharov-eg on 26.01.2018.
- */
+
 public class FormUtils {
 
     public static void showError(String text) {

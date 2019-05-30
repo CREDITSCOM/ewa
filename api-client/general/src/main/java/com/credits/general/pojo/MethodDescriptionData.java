@@ -2,9 +2,7 @@ package com.credits.general.pojo;
 
 import java.util.List;
 
-/**
- * Created by Igor Goryunov on 08.10.2018
- */
+
 public class MethodDescriptionData {
     public final String returnType;
     public final  String name;

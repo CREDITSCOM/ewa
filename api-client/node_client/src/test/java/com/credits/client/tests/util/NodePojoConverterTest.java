@@ -15,9 +15,7 @@ import static com.credits.client.node.util.NodePojoConverter.*;
 import static com.credits.general.util.GeneralConverter.bigDecimalToAmount;
 import static com.credits.general.util.GeneralConverter.toBigDecimal;
 
-/**
- * Created by Rustem.Saidaliyev on 08.02.2018.
- */
+
 public class NodePojoConverterTest {
 
     @Test

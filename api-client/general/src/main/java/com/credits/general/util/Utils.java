@@ -11,9 +11,7 @@ import java.util.concurrent.Executors;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.rethrow;
 
-/**
- * Created by goncharov-eg on 26.01.2018.
- */
+
 public class Utils {
     private static final String ALPHA_LOWER_CASE_NUMERIC_STRING = "abcdefghijklmnopqrstuvwxyz0123456789";
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";

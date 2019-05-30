@@ -13,9 +13,7 @@ import javafx.scene.layout.HBox;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by goncharov-eg on 30.01.2018.
- */
+
 public class TransactionController extends AbstractController{
     private static final String ERR_GETTING_TRANSACTION = "Error getting transaction details";
     public static final int MAX_HEIGHT = 300;

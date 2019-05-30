@@ -27,9 +27,7 @@ import java.util.Map;
 import static com.credits.wallet.desktop.AppState.privateKey;
 import static com.credits.wallet.desktop.AppState.publicKey;
 
-/**
- * Created by goncharov-eg on 18.01.2018.
- */
+
 public class PutKeysController extends AbstractController {
     private static Logger LOGGER = LoggerFactory.getLogger(PutKeysController.class);
 

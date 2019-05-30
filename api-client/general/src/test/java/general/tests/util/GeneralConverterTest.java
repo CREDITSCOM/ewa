@@ -15,9 +15,7 @@ import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
 import static com.credits.general.util.GeneralConverter.*;
 
 
-/**
- * Created by Rustem.Saidaliyev on 29.01.2018.
- */
+
 @SuppressWarnings("SpellCheckingInspection")
 public class GeneralConverterTest {
 

@@ -6,9 +6,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-/**
- * Created by Rustem Saidaliyev on 06.08.2018.
- */
+
 public class SmartContractInvocationData implements Serializable {
     private static final long serialVersionUID = 4544650022718657168L;
     private SmartContractDeployData smartContractDeployData;

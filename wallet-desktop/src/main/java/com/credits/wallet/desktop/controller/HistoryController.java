@@ -32,9 +32,7 @@ import static com.credits.client.node.thrift.generated.TransactionState.VALID;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 
-/**
- * Created by goncharov-eg on 29.01.2018.
- */
+
 public class HistoryController extends AbstractController {
     private final String ERR_GETTING_TRANSACTION_HISTORY = "Error getting transaction history";
     private final int INIT_PAGE_SIZE = 100;

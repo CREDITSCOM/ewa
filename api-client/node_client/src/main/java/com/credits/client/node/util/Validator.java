@@ -9,9 +9,7 @@ import java.math.BigDecimal;
 
 import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 
-/**
- * Created by Rustem Saidaliyev on 20-Mar-18.
- */
+
 public class Validator {
     /**
      * Проверка transaction hash

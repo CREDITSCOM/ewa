@@ -8,9 +8,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by Rustem.Saidaliyev on 18.03.2018.
- */
+
 public class UtilsTest {
     Logger LOGGER = LoggerFactory.getLogger(UtilsTest.class);
 

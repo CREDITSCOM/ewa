@@ -7,9 +7,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by Rustem.Saidaliyev on 01.02.2018.
- */
+
 public class TransactionData implements Serializable {
     private static final long serialVersionUID = 4544650022718657167L;
     protected long id;

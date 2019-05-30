@@ -9,9 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Created by Rustem Saidaliyev on 16.05.2018.
- */
+
 public class SmartContractData implements Serializable {
 
     private static final long serialVersionUID = 4111650022718657167L;

@@ -10,9 +10,7 @@ import javafx.scene.control.TextField;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by goncharov-eg on 18.01.2018.
- */
+
 public class SaveKeysController extends AbstractController {
     @FXML
     private TextField txKey;

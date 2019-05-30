@@ -2,9 +2,6 @@ package com.credits.scapi.v1;
 
 import java.math.BigDecimal;
 
-/**
- * Created by Igor Goryunov on 26.09.2018
- */
 public interface BasicTokenStandard {
 
     String getName();

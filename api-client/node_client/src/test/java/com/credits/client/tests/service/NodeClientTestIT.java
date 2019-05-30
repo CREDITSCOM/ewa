@@ -36,9 +36,7 @@ import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.junit.Assert.fail;
 
-/**
- * Created by Rustem.Saidaliyev on 01.02.2018.
- */
+
 @SuppressWarnings("SpellCheckingInspection")
 @Ignore
 public class NodeClientTestIT {

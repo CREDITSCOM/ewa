@@ -28,9 +28,7 @@ import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static java.math.BigDecimal.ZERO;
 
-/**
- * Created by Rustem Saidaliyev on 20-Mar-18.
- */
+
 public class ApiUtils {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ApiUtils.class);

@@ -28,9 +28,7 @@ import static com.credits.wallet.desktop.AppState.CREDITS_TOKEN_NAME;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
 import static com.credits.wallet.desktop.utils.ApiUtils.createTransaction;
 
-/**
- * Created by Rustem.Saidaliyev on 26.01.2018.
- */
+
 public class GenerateTransactionController extends AbstractController {
     private final static Logger LOGGER = LoggerFactory.getLogger(GenerateTransactionController.class);
 

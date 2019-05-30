@@ -41,9 +41,7 @@ import static com.credits.wallet.desktop.AppState.CREDITS_TOKEN_NAME;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
-/**
- * Created by goncharov-eg on 18.01.2018.
- */
+
 public class WalletController extends AbstractController {
 
     private static final String ERR_FEE = "Fee must be greater than 0";

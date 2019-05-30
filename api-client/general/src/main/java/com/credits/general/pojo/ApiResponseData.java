@@ -3,9 +3,7 @@ package com.credits.general.pojo;
 
 import java.io.Serializable;
 
-/**
- * Created by Rustem Saidaliyev on 17.05.2018.
- */
+
 public class ApiResponseData implements Serializable {
     private static final long serialVersionUID = 4647719018709155500L;
     private final ApiResponseCode code;

@@ -10,9 +10,7 @@ import java.util.stream.Collectors;
 
 import static com.credits.general.util.GeneralPojoConverter.createApiResponseData;
 
-/**
- * Created by Rustem.Saidaliyev on 01.02.2018.
- */
+
 public class ApiExecClientPojoConverter {
 
     public static GetSmartCodeResultData createGetSmartCodeResultData(SmartContractGetResult thriftStruct) {

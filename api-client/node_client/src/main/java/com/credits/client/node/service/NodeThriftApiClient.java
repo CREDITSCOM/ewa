@@ -27,9 +27,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * Created by Rustem.Saidaliyev on 01.02.2018.
- */
+
 public class NodeThriftApiClient implements NodeThriftApi {
     private static volatile NodeThriftApiClient instance;
     private final ExecutorService threadPoolExecutor;

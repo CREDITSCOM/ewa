@@ -24,9 +24,7 @@ import static com.credits.wallet.desktop.AppState.DELAY_AFTER_FULL_SYNC;
 import static com.credits.wallet.desktop.AppState.DELAY_BEFORE_FULL_SYNC;
 import static com.credits.wallet.desktop.AppState.nodeApiService;
 
-/**
- * Created by goncharov-eg on 23.11.2017.
- */
+
 public class HeaderController implements Initializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeaderController.class);

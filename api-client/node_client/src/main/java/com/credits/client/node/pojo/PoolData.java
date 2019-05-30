@@ -1,8 +1,6 @@
 package com.credits.client.node.pojo;
 
-/**
- * Created by Rustem.Saidaliyev on 01.02.2018.
- */
+
 public class PoolData {
 
     private byte[] hash;

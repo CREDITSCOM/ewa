@@ -28,9 +28,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by Igor Goryunov on 29.09.2018
- */
+
 public class UITest {
 
     String walletAddress;

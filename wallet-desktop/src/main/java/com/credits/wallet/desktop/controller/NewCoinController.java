@@ -15,9 +15,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * Created by goncharov-eg on 07.02.2018.
- */
+
 public class NewCoinController extends AbstractController {
     private final static Logger LOGGER = LoggerFactory.getLogger(NewCoinController.class);
 

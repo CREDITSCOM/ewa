@@ -20,9 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
-/**
- * Created by goncharov-eg on 23.11.2017.
- */
+
 public class WalletApp extends Application {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(WalletApp.class);

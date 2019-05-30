@@ -4,9 +4,7 @@ import com.credits.general.thrift.generated.Variant;
 
 import java.util.List;
 
-/**
- * Created by Rustem Saidaliyev on 25.06.2018.
- */
+
 public class TransactionTabRow {
     private Long innerId;
     private String blockId;

@@ -24,9 +24,7 @@ import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTrans
 import static java.util.Arrays.asList;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-/**
- * Created by Igor Goryunov on 28.10.2018
- */
+
 public class ContractInteractionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContractInteractionService.class);
     public static final String TRANSFER_METHOD = "transfer";

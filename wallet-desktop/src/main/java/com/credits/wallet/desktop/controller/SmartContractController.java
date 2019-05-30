@@ -88,9 +88,7 @@ import static com.credits.wallet.desktop.utils.SmartContractsUtils.getSmartsList
 import static java.util.Arrays.asList;
 import static org.apache.commons.io.FileUtils.deleteDirectory;
 
-/**
- * Created by goncharov-eg on 30.01.2018.
- */
+
 public class SmartContractController extends AbstractController {
 
     private static final String ERR_FEE = "Fee must be greater than 0";

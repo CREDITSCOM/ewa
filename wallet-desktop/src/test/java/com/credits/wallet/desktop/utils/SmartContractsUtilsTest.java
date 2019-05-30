@@ -9,9 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.checkCoinNameExist;
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by Rustem Saidaliyev on 20-Mar-18.
- */
+
 public class SmartContractsUtilsTest {
 
     @Test

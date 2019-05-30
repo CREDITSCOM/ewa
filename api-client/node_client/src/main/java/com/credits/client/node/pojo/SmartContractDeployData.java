@@ -4,9 +4,7 @@ import com.credits.general.pojo.ByteCodeObjectData;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Created by Rustem Saidaliyev on 16.05.2018.
- */
+
 public class SmartContractDeployData implements Serializable {
 
     private static final long serialVersionUID = -6187425771734674520L;

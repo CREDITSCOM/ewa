@@ -7,9 +7,7 @@ import org.junit.Test;
 import static com.credits.client.node.util.Validator.validateToAddress;
 import static com.credits.client.node.util.Validator.validateTransactionHash;
 
-/**
- * Created by Rustem Saidaliyev on 20-Mar-18.
- */
+
 @SuppressWarnings("SpellCheckingInspection")
 public class ValidatorTest {
 

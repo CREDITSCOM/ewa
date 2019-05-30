@@ -16,9 +16,7 @@ import java.security.PrivateKey;
 import static com.credits.general.util.GeneralConverter.bigDecimalToAmount;
 
 
-/**
- * Created by goncharov-eg on 26.01.2018.
- */
+
 public class SignUtils {
     private static Logger LOGGER = LoggerFactory.getLogger(SignUtils.class);
 

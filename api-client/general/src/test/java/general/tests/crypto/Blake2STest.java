@@ -7,9 +7,7 @@ import static com.credits.general.crypto.Blake2S.generateHash;
 import static com.credits.general.util.GeneralConverter.byteArrayToHex;
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by Rustem Saidaliyev on 27-Mar-18.
- */
+
 public class Blake2STest {
     @Test
     public void generateHashTest() throws CryptoException {

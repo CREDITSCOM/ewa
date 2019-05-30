@@ -1,8 +1,6 @@
 package com.credits.general.pojo;
 
-/**
- * Created by Igor Goryunov on 17.10.2018
- */
+
 public enum ApiResponseCode {
     SUCCESS(0),
     FAILURE(1),

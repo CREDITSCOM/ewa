@@ -14,9 +14,7 @@ import org.slf4j.LoggerFactory;
 import static com.credits.general.pojo.ApiResponseCode.NOT_FOUND;
 import static com.credits.general.pojo.ApiResponseCode.SUCCESS;
 
-/**
- * Created by Rustem Saidaliyev on 09.05.2018.
- */
+
 public class NodeClientUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeClientUtils.class.getName());
 

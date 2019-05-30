@@ -8,9 +8,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import java.util.Map;
 
-/**
- * Created by Rustem Saidaliyev on 27-Mar-18.
- */
+
 public class EclipseJdt {
 
     public static IProblem[] checkSyntax(String sourceCode) {

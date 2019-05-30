@@ -1,8 +1,6 @@
 package com.credits.wallet.desktop.utils.sourcecode.building;
 
-/**
- * Created by goncharov-eg on 02.03.2018.
- */
+
 public class BuildSourceCodeError {
 
     private String className;

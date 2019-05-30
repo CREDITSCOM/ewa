@@ -23,9 +23,7 @@ import java.util.*;
 import static com.credits.general.util.Constants.DECIMAL_SEPARATOR;
 import static java.util.Arrays.stream;
 
-/**
- * Created by Rustem.Saidaliyev on 29.01.2018.
- */
+
 public class GeneralConverter {
 
     public static final String DOUBLE_FORMAT = "#.##################";

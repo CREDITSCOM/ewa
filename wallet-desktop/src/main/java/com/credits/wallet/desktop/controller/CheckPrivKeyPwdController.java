@@ -16,9 +16,7 @@ import java.util.Map;
 import static com.credits.wallet.desktop.AppState.privateKey;
 import static com.credits.wallet.desktop.AppState.publicKey;
 
-/**
- * Created by Rustem Saidaliyev on 18.04.2018.
- */
+
 public class CheckPrivKeyPwdController extends AbstractController {
 
     private String nonce;

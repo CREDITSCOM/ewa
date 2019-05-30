@@ -6,9 +6,7 @@ import javafx.scene.layout.BorderPane;
 
 import java.util.Map;
 
-/**
- * Created by goncharov-eg on 23.11.2017.
- */
+
 public class WelcomeController extends AbstractController {
 
     public BorderPane bp;

@@ -57,9 +57,7 @@ import static com.credits.wallet.desktop.utils.SmartContractsUtils.saveSmartInTo
 import static com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder.compileSmartSourceCode;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-/**
- * Created by goncharov-eg on 30.01.2018.
- */
+
 public class SmartContractDeployController extends AbstractController {
 
     public static final String BUILD = "Build";
