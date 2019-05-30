@@ -7,7 +7,10 @@ import com.credits.general.thrift.generated.APIResponse;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.variant.VariantConverter;
 import com.credits.pojo.MethodData;
-import com.credits.scapi.annotations.*;
+import com.credits.scapi.annotations.ContractAddress;
+import com.credits.scapi.annotations.ContractMethod;
+import com.credits.scapi.annotations.UsingContract;
+import com.credits.scapi.annotations.UsingContracts;
 import exception.ContractExecutorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,11 +169,6 @@ public class ContractExecutorServiceUtils {
             return singletonList(new AnnotationData(
                     ContractMethod.class.getName(),
                     Map.of("id", Integer.toString(((ContractMethod) annotation).id()))));
-
-        } else if (annotation instanceof Payable) {
-            return singletonList(new AnnotationData(
-                    Payable.class.getName(),
-                    Map.of("amount", Double.toString(((Payable) annotation).amount()))));
         } else {
             return singletonList(new AnnotationData(annotation.annotationType().getName(), emptyMap()));
         }

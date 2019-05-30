@@ -37,11 +37,6 @@ public class AnnotationTest extends SmartContract {
         System.out.println(java.lang.Integer.toString(amount) + " tokens were added to total");
     }
 
-    @Payable(amount = 23.32)
-    public void payable(@PayableAmount BigDecimal amount) {
-
-    }
-
     public void testToken(@ContractAddress(id = 0) int amount) {
 
     }

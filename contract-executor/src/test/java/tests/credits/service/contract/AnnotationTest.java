@@ -3,19 +3,15 @@ package tests.credits.service.contract;
 import com.credits.general.pojo.AnnotationData;
 import com.credits.general.pojo.MethodArgumentData;
 import com.credits.general.pojo.MethodDescriptionData;
-import com.credits.scapi.annotations.Payable;
-import com.credits.scapi.annotations.PayableAmount;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import tests.credits.service.ServiceTest;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AnnotationTest extends ServiceTest {
 
@@ -41,7 +37,6 @@ public class AnnotationTest extends ServiceTest {
         var testNotToken = createTestNotTokenMethodDescriptionData();
         var testMultiple1 = createTestMultiple1MethodDescriptionData();
         var testMultiple2 = createTestMultiple2MethodDescriptionData();
-        var payable = createTestPayableDescriptionData();
 
 
         List<MethodDescriptionData> contractsMethods = ceService.getContractsMethods(byteCodeObjectDataList);
@@ -53,17 +48,6 @@ public class AnnotationTest extends ServiceTest {
         Assert.assertEquals(testNotToken, findMethod(contractsMethods, "testNotToken"));
         Assert.assertEquals(testMultiple1, findMethod(contractsMethods, "testMultiple1"));
         Assert.assertEquals(testMultiple2, findMethod(contractsMethods, "testMultiple2"));
-        Assert.assertEquals(payable, findMethod(contractsMethods, "payable"));
-    }
-
-    private MethodDescriptionData createTestPayableDescriptionData() {
-        var annotationData = new ArrayList<AnnotationData>();
-        annotationData.add(new AnnotationData(Payable.class.getName(), Map.of("amount", "23.32")));
-        var argumentData = new MethodArgumentData(
-            BigDecimal.class.getTypeName(), "amount",
-            List.of(new AnnotationData(PayableAmount.class.getName(), Collections.emptyMap())));
-
-        return new MethodDescriptionData("void", "payable", List.of(argumentData), annotationData);
     }
 
     private MethodDescriptionData createTestMultiple1MethodDescriptionData() {
