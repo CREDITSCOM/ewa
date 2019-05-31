@@ -33,5 +33,5 @@ mvn clean install
 For run wallet you have to install openjfx sdk and then you need specify path to lib folder of openjfx. 
 Use following command as example
 ```shell
-`java --module-path %your_module_path_here% --add-modules=javafx.controls,javafx.fxml,javafx.graphics -jar wallet-desktop.jar`
-```shell
+java --module-path %your_module_path_here% --add-modules=javafx.controls,javafx.fxml,javafx.graphics -jar wallet-desktop.jar`
+```
