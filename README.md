@@ -27,9 +27,11 @@ API contains general tools for integrate with node
 
 ##### How to build
 For build all modules use following maven command on root project level
-<br> `mvn clean install`<br>
+```shell
+mvn clean install
+```
 For run wallet you have to install openjfx sdk and then you need specify path to lib folder of openjfx. 
 Use following command as example
-<br>
+```shell
 `java --module-path %your_module_path_here% --add-modules=javafx.controls,javafx.fxml,javafx.graphics -jar wallet-desktop.jar`
-<br>
+```shell
