@@ -1,3 +1,13 @@
+<img src="https://raw.githubusercontent.com/CREDITSCOM/Documentation/master/Src/Logo_Credits_horizontal_black.png" align="center">
+
+[Documentation](https://developers.credits.com/en/Articles/Platform) \|
+[Guides](https://developers.credits.com/en/Articles/Guides) \|
+[News](https://credits.com/en/Home/News)
+
+[![Twitter](https://img.shields.io/twitter/follow/creditscom.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=creditscom)
+[![AGPL License](https://img.shields.io/github/license/CREDITSCOM/ewa.svg?color=green&style=plastic)](LICENSE)
+[![Build Status](http://161.156.96.18:8080/buildStatus/icon?job=ewa_build&lastBuild)](http://161.156.96.18:8080/job/ewa_build/lastBuild/)
+
 ## EWA
 ###### Contract Executor and Wallet Applications
 This repository contains following main modules:
