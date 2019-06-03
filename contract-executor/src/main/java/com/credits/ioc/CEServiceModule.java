@@ -32,6 +32,6 @@ public class CEServiceModule {
     @Singleton
     @Provides
     public NodeThriftApiExec provideNodeThriftApi(ApplicationProperties properties) {
-        return new NodeThriftApiExecClient(properties.apiHost, properties.apiPort);
+        return new NodeThriftApiExecClient(properties.apiHost, properties.executorNodeApiPort);
     }
 }
