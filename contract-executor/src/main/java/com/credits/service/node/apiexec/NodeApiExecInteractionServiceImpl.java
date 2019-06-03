@@ -36,10 +36,10 @@ public class NodeApiExecInteractionServiceImpl implements NodeApiExecInteraction
 
     @Override
     public byte[] getSeed(long accessId) {
-        logger.debug(String.format("getSeed: ---> accessId = %s", accessId));
+        logger.debug("getSeed: ---> accessId = {}", accessId);
         GetSeedResult seed = nodeClient.getSeed(accessId);
         processApiResponse(seed.getStatus());
-        logger.debug(String.format("getSeed: <--- seed = %s", seed.getSeed()));
+        logger.debug("getSeed: <--- seed = {}", seed.getSeed());
         return seed.getSeed();
     }
 
