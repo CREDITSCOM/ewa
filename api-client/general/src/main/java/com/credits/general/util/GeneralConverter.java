@@ -437,6 +437,11 @@ public class GeneralConverter {
             ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
             buffer.putLong((Long)value);
             return buffer.array();
+        } else
+        if (value instanceof Integer) {
+            ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+            buffer.putInt((Integer)value);
+            return buffer.array();
         }
         throw new ConverterException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
 
