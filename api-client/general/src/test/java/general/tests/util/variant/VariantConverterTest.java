@@ -39,6 +39,7 @@ public class VariantConverterTest {
     private static Object[] objectsArray = new ExampleClass[]{null, exampleClass};
     private static int[] intsArray = new int[]{1, 2, 3};
     private static Integer[] integersArray = new Integer[]{1, 2, 3};
+    private static byte[] byteArray = new byte[]{0xC, 0xA, 0xF, 0xE};
 
     static Stream<Object> provideObjectsForMapping() {
         return Stream.of(
@@ -77,6 +78,12 @@ public class VariantConverterTest {
                         Set.of(new Variant(V_STRING, "object"))),
 
                 Arguments.of(
+                        getClassType(byteArray),
+                        byteArray,
+                        V_BYTE_ARRAY,
+                        byteArray),
+
+                Arguments.of(
                         getClassType(objectsArray),
                         objectsArray,
                         V_ARRAY,
@@ -96,13 +103,19 @@ public class VariantConverterTest {
         if (variantType == V_OBJECT) {
             assertEquals(inputClassName, variant.getV_object().nameClass);
             assertEquals(variantValue, variant.getV_object().instance);
+        } else if (variantType == V_BYTE_ARRAY) {
+            assertArrayEquals((byte[]) variantValue, variant.getV_byte_array());
         } else {
             assertEquals(variantValue, variant.getFieldValue());
         }
 
         if (inputObject != null && inputObject.getClass().isArray()) {
-            Object[] convertedObjects = (Object[]) VariantConverter.toObject(variant);
-            assertArrayEquals((Object[]) inputObject, convertedObjects);
+            Object convertedObjects = VariantConverter.toObject(variant);
+            if (convertedObjects instanceof byte[]) {
+                assertArrayEquals((byte[]) inputObject, (byte[]) convertedObjects);
+            } else {
+                assertArrayEquals((Object[]) inputObject, (Object[]) convertedObjects);
+            }
         } else {
             Object convertedObject = VariantConverter.toObject(variant);
             assertEquals(inputObject, convertedObject);

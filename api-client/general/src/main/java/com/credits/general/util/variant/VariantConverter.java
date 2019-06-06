@@ -104,10 +104,6 @@ public class VariantConverter {
                 variantCollection = Arrays.stream((Object[]) object)
                         .map(obj -> map(classType != null ? object.getClass().getTypeName().replace("[]", "") : "", obj))
                         .collect(Collectors.toList());
-            } else if (object instanceof byte[]) {
-                for (byte b : (byte[]) object) {
-                    variantCollection.add(new Variant(V_BYTE, b));
-                }
             } else if (object instanceof int[]) {
                 for (int i : (int[]) object) {
                     variantCollection.add(new Variant(V_INT, i));
@@ -128,6 +124,8 @@ public class VariantConverter {
                 for (double d : (double[]) object) {
                     variantCollection.add(new Variant(V_DOUBLE, d));
                 }
+            } else if (object instanceof byte[]) {
+                return new Variant(V_BYTE_ARRAY, ByteBuffer.wrap((byte[]) object));
             }
             return new Variant(V_ARRAY, variantCollection);
         }
@@ -151,6 +149,8 @@ public class VariantConverter {
                 case V_FLOAT:
                 case V_FLOAT_BOX:
                     return (float) (double) variant.getFieldValue();
+                case V_BYTE_ARRAY:
+                    return variant.getV_byte_array();
                 case V_ARRAY:
                     return ((Collection<Variant>) variant.getFieldValue()).stream().map(this::map).toArray(Object[]::new);
                 case V_LIST:
