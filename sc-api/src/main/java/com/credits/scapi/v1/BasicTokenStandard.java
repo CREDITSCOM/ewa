@@ -26,5 +26,5 @@ public interface BasicTokenStandard {
 
     boolean burn(BigDecimal amount);
 
-    String payable(String amount, byte[] userData);
+    String payable(BigDecimal amount, byte[] userData);
 }
