@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.credits.general.pojo.ApiResponseCode.FAILURE;
-import static com.credits.general.thrift.generated.Variant._Fields.*;
+import static com.credits.general.thrift.generated.Variant._Fields.V_INT;
+import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
 import static com.credits.general.thrift.generated.Variant.v_int;
 import static com.credits.general.thrift.generated.Variant.v_string;
 import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
@@ -147,10 +148,7 @@ public class ContractExecutorTest extends ServiceTest {
         when(mockNodeApiExecService.getSeed(anyLong())).thenReturn(seed);
         var executeByteCodeResult = executeSmartContract("testGetSeed", deployContractState).executeResults.get(0).result;
 
-        assertThat(executeByteCodeResult.getV_array(), is(List.of(new Variant(V_BYTE, seed[0]),
-                                                                  new Variant(V_BYTE, seed[1]),
-                                                                  new Variant(V_BYTE, seed[2]),
-                                                                  new Variant(V_BYTE, seed[3]))));
+        assertThat(executeByteCodeResult.getV_byte_array(), is(seed));
     }
 
     @Test
