@@ -54,10 +54,4 @@ class MethodExecutor extends LimitedExecutionMethod<Variant> {
             throw new ContractExecutorException(getRootCauseMessage(e));
         }
     }
-
-    private MethodResult prepareResult(Variant returnValue) {
-        return getExceptionOrNull() == null
-                ? new MethodResult(returnValue, spentCpuTime())
-                : new MethodResult(getExceptionOrNull(), spentCpuTime());
-    }
 }

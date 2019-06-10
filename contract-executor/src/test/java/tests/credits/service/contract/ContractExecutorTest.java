@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import pojo.ReturnValue;
 import tests.credits.service.ServiceTest;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -191,7 +192,7 @@ public class ContractExecutorTest extends ServiceTest {
     @Test
     @DisplayName("exception into executeByteCode must be return fail status with exception message")
     public void exceptionDuringExecution(){
-        final var result = executeSmartContract("thisMethodThrowsExcetion", deployContractState, 1).executeResults.get(0);
+        var result = executeSmartContract("thisMethodThrowsExcetion", deployContractState, 1).executeResults.get(0);
 
         assertThat(result.status.code, is(FAILURE.code));
         assertThat(result.status.message, containsString("oops some problem"));
@@ -199,8 +200,13 @@ public class ContractExecutorTest extends ServiceTest {
 
     @Test
     @DisplayName("exception into constructor must be return fail status with exception method")
-    private void constructorWithException(){
+    public void constructorWithException() throws IOException {
+        super.selectSourcecode("/serviceTest/TroubleConstructor.java");
 
+        var result = deploySmartContract().executeResults.get(0);
+
+        assertThat(result.status.code, is(FAILURE.code));
+        assertThat(result.status.message, containsString("some problem found here"));
     }
 }
 

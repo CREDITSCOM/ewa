@@ -1,5 +1,6 @@
 package com.credits.service.contract;
 
+import com.credits.general.thrift.generated.Variant;
 import com.credits.utils.StopWatch;
 import org.apache.thrift.annotation.Nullable;
 import pojo.session.DeployContractSession;
@@ -69,7 +70,13 @@ class LimitedExecutionMethod<R> {
     }
 
     @Nullable
-    public Throwable getExceptionOrNull() {
+    private Throwable getExceptionOrNull() {
         return exception;
+    }
+
+    protected MethodResult prepareResult(Variant returnValue) {
+        return getExceptionOrNull() == null
+                ? new MethodResult(returnValue, spentCpuTime())
+                : new MethodResult(getExceptionOrNull(), spentCpuTime());
     }
 }

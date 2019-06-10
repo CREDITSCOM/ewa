@@ -1,6 +1,6 @@
 public class TroubleConstructor {
 
     public TroubleConstructor() {
-        throw new
+        throw new RuntimeException("some problem found here");
     }
 }
