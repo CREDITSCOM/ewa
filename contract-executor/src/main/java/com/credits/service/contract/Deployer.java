@@ -1,6 +1,7 @@
 package com.credits.service.contract;
 
 import com.credits.general.thrift.generated.Variant;
+import exception.ContractExecutorException;
 import pojo.ReturnValue;
 import pojo.SmartContractMethodResult;
 import pojo.session.DeployContractSession;
@@ -23,6 +24,7 @@ class Deployer extends LimitedExecutionMethod<Object> {
 
     public ReturnValue deploy() {
         final Object instance = runForLimitTime(() -> contractClass.getDeclaredConstructor().newInstance());
+        if (getExceptionOrNull() != null) throw new ContractExecutorException(getExceptionOrNull().getMessage());
         checkThatIsNotCreditsToken(contractClass, instance);
         return new ReturnValue(serialize(instance), singletonList(
                 new SmartContractMethodResult(SUCCESS_API_RESPONSE,

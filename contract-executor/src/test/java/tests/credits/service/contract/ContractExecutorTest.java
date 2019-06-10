@@ -187,5 +187,20 @@ public class ContractExecutorTest extends ServiceTest {
         spentCpuTime = executeSmartContract("bitWorkingThenSleep", deployContractState, 11).executeResults.get(0).spentCpuTime;
         assertThat(spentCpuTime, greaterThan(10L));
     }
+
+    @Test
+    @DisplayName("exception into executeByteCode must be return fail status with exception message")
+    public void exceptionDuringExecution(){
+        final var result = executeSmartContract("thisMethodThrowsExcetion", deployContractState, 1).executeResults.get(0);
+
+        assertThat(result.status.code, is(FAILURE.code));
+        assertThat(result.status.message, containsString("oops some problem"));
+    }
+
+    @Test
+    @DisplayName("exception into constructor must be return fail status with exception method")
+    private void constructorWithException(){
+
+    }
 }
 

@@ -16,7 +16,6 @@ class LimitedExecutionMethod<R> {
     protected DeployContractSession session;
     private StopWatch stopWatch;
     private Throwable exception;
-    private R result;
 
     LimitedExecutionMethod(DeployContractSession session) {
         this.session = session;

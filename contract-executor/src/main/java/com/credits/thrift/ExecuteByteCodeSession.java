@@ -79,7 +79,7 @@ public class ExecuteByteCodeSession {
     private List<SetterMethodResult> executeDeploy(DeployContractSession deploySession) {
         final var result = ceService.deploySmartContract(deploySession);
         final var firstResult = result.executeResults.get(0);
-        return List.of(new SetterMethodResult(SUCCESS_API_RESPONSE,
+        return List.of(new SetterMethodResult(firstResult.status,
                                               ByteBuffer.wrap(result.newContractState),
                                               firstResult.result,
                                               firstResult.spentCpuTime));
@@ -94,7 +94,7 @@ public class ExecuteByteCodeSession {
 
                                 final var executionResult = ceService.executeSmartContract(createInvokeMethodSession(methodHeader));
                                 final var firstResult = executionResult.executeResults.get(0);
-                                results.add(new SetterMethodResult(SUCCESS_API_RESPONSE,
+                                results.add(new SetterMethodResult(firstResult.status,
                                                                    ByteBuffer.wrap(executionResult.newContractState),
                                                                    firstResult.result,
                                                                    firstResult.spentCpuTime));
