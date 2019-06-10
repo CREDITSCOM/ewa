@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.List;
@@ -105,16 +104,6 @@ public class ContractExecutorServiceUtils {
             }
         }
         return classes;
-    }
-
-    public static void initializeField(String fieldName, Object value, Class<?> clazz, Object instance) {
-        try {
-            Field field = clazz.getSuperclass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(instance, value);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Cannot initialize \"{}\" field. Reason:{}", fieldName, getRootCauseMessage(e));
-        }
     }
 
     public static void initializeSmartContractField(String fieldName, Object value, Class<?> clazz, Object instance) {

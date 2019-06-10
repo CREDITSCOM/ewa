@@ -191,7 +191,7 @@ public class ContractExecutorTest extends ServiceTest {
 
     @Test
     @DisplayName("exception into executeByteCode must be return fail status with exception message")
-    public void exceptionDuringExecution(){
+    public void exceptionDuringExecution() {
         var result = executeSmartContract("thisMethodThrowsExcetion", deployContractState, 1).executeResults.get(0);
 
         assertThat(result.status.code, is(FAILURE.code));

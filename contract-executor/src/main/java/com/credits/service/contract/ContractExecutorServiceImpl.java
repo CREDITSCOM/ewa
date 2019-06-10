@@ -53,14 +53,14 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     public ReturnValue deploySmartContract(DeployContractSession session) throws ContractExecutorException {
         final var contractClass = compileClassAndDropPermissions(session.byteCodeObjectDataList, getSmartContractClassLoader());
         final var methodResult = new Deployer(session, contractClass).deploy();
-        return new ReturnValue(
-                serialize(methodResult.getInvokedObject()), singletonList(
-                new SmartContractMethodResult(methodResult.getException() != null
-                                                      ? failureApiResponse(methodResult.getException())
-                                                      : SUCCESS_API_RESPONSE,
-                                              methodResult.getReturnValue(),
-                                              methodResult.getSpentCpuTime())),
-                session.usedContracts);
+        final var newContractState = methodResult.getInvokedObject() != null ? serialize(methodResult.getInvokedObject()) : new byte[0];
+        return new ReturnValue(newContractState,
+                               singletonList(new SmartContractMethodResult(methodResult.getException() != null
+                                                                                   ? failureApiResponse(methodResult.getException())
+                                                                                   : SUCCESS_API_RESPONSE,
+                                                                           methodResult.getReturnValue(),
+                                                                           methodResult.getSpentCpuTime())),
+                               session.usedContracts);
     }
 
     @Override
@@ -165,6 +165,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     private void initNonStaticContractFields(InvokeMethodSession session, Class<?> contractClass, Object instance) {
+        requireNonNull(instance, "instance can't be null for not static fields");
         initializeSmartContractField("initiator", session.initiatorAddress, contractClass, instance);
         initializeSmartContractField("accessId", session.accessId, contractClass, instance);
         initializeSmartContractField("usedContracts", session.usedContracts, contractClass, instance);

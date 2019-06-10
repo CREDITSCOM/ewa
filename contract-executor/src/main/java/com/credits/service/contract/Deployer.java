@@ -19,6 +19,8 @@ class Deployer extends LimitedExecutionMethod<Object> {
     public MethodResult deploy() {
         final Object instance = runForLimitTime(() -> contractClass.getDeclaredConstructor().newInstance());
         checkThatIsNotCreditsToken(contractClass, instance);
-        return prepareResult(new Variant(V_VOID, VOID_TYPE_VALUE));
+        final var deployResult = prepareResult(new Variant(V_VOID, VOID_TYPE_VALUE));
+        deployResult.setInvokedObject(instance);
+        return deployResult;
     }
 }

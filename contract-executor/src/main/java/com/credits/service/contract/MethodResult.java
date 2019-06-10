@@ -9,6 +9,7 @@ class MethodResult {
     private final long spentCpuTime;
     private final Variant returnValue;
     private final Throwable exception;
+    private Object invokedObject;
 
     public MethodResult(Variant returnValue, long spentCpuTime) {
         this.spentCpuTime = spentCpuTime;
@@ -42,7 +43,5 @@ class MethodResult {
     public void setInvokedObject(Object invokedObject) {
         this.invokedObject = invokedObject;
     }
-
-    Object invokedObject;
 
 }

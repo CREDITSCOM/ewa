@@ -4,6 +4,7 @@ import pojo.session.DeployContractSession;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 
 public class SmartContractConstants {
@@ -21,12 +22,13 @@ public class SmartContractConstants {
     }
 
     public static void initSmartContractConstants(long threadId, DeployContractSession session) {
-        sessions.put(threadId, new SmartContractConstants(session.initiatorAddress, session.contractAddress, session.accessId, session.usedContracts));
+        sessions.put(threadId,
+                     new SmartContractConstants(session.initiatorAddress, session.contractAddress, session.accessId, session.usedContracts));
     }
 
 
     public static SmartContractConstants getSessionSmartContractConstants(long threadId) {
-        return sessions.remove(threadId);
+        return Objects.requireNonNull(sessions.remove(threadId), "smart contract constants is null. Thread id=" + threadId);
     }
 
     @Override
