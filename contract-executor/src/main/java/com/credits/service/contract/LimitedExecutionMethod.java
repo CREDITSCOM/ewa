@@ -23,7 +23,16 @@ class LimitedExecutionMethod<R> {
     }
 
     protected R runForLimitTime(Callable<R> block) {
-        final var task = new FutureTask<>(block);
+        final var task = new FutureTask<>(() -> {
+            stopWatch.start();
+            final R res;
+            try {
+                res = block.call();
+            } finally {
+                stopWatch.stop();
+            }
+            return res;
+        });
         final var limitedTimeThread = new Thread(task);
         stopWatch = new StopWatch(limitedTimeThread);
         exception = null;
@@ -31,10 +40,8 @@ class LimitedExecutionMethod<R> {
         try {
             limitedTimeThread.setName(session.contractAddress);
             initSmartContractConstants(limitedTimeThread.getId(), session);
-            stopWatch.start();
             limitedTimeThread.start();
             result = task.get(session.executionTime, MILLISECONDS);
-            stopWatch.stop();
 
         } catch (TimeoutException e) {
             limitedTimeThread.interrupt();
@@ -46,10 +53,10 @@ class LimitedExecutionMethod<R> {
                 }
                 if (limitedTimeThread.isAlive()) {
                     limitedTimeThread.stop();
+                    stopWatch.stop();
                     exception = e;
                 }
             }
-            stopWatch.stop();
 
             if (task.isDone()) {
                 try {
@@ -59,7 +66,6 @@ class LimitedExecutionMethod<R> {
                 }
             }
         } catch (Throwable e) {
-            stopWatch.stop();
             exception = e;
         }
         return result;

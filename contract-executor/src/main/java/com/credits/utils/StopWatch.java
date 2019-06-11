@@ -4,8 +4,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 
 public class StopWatch {
-    private long startTime;
-    private long spentTime;
+    private volatile long startTime;
+    private volatile long spentTime;
     private final ThreadMXBean threadMXBean;
     private final long threadId;
 
@@ -32,11 +32,11 @@ public class StopWatch {
     }
 
     private long getSystemTime() {
-        return System.nanoTime() / 1000_000;
+        return System.nanoTime() ;
     }
 
     private long getUserTime() {
-        return threadMXBean.getThreadUserTime(threadId) / 1000_000;
+        return threadMXBean.getThreadCpuTime(threadId) ;
     }
 
     @Override

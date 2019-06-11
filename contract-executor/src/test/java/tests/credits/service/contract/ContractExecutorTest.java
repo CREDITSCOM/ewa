@@ -183,10 +183,10 @@ public class ContractExecutorTest extends ServiceTest {
     @DisplayName("executeByteCode must be return spent cpu time by execution method thread")
     public void executeByteCodeMeasureCpuTimeByThread0() {
         var spentCpuTime = executeSmartContract("nothingWorkOnlySleep", deployContractState, 11).executeResults.get(0).spentCpuTime;
-        assertThat(spentCpuTime, lessThan(1L));
+        assertThat(spentCpuTime, lessThan(1000_000L));
 
         spentCpuTime = executeSmartContract("bitWorkingThenSleep", deployContractState, 11).executeResults.get(0).spentCpuTime;
-        assertThat(spentCpuTime, greaterThan(10L));
+        assertThat(spentCpuTime, greaterThan(10_000_000L));
     }
 
     @Test
