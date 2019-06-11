@@ -12,12 +12,14 @@ import org.junit.jupiter.api.Test;
 import pojo.ReturnValue;
 import tests.credits.service.ServiceTest;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 import static com.credits.general.pojo.ApiResponseCode.FAILURE;
-import static com.credits.general.thrift.generated.Variant._Fields.*;
+import static com.credits.general.thrift.generated.Variant._Fields.V_INT;
+import static com.credits.general.thrift.generated.Variant._Fields.V_VOID;
 import static com.credits.general.thrift.generated.Variant.v_int;
 import static com.credits.general.thrift.generated.Variant.v_string;
 import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
@@ -147,10 +149,7 @@ public class ContractExecutorTest extends ServiceTest {
         when(mockNodeApiExecService.getSeed(anyLong())).thenReturn(seed);
         var executeByteCodeResult = executeSmartContract("testGetSeed", deployContractState).executeResults.get(0).result;
 
-        assertThat(executeByteCodeResult.getV_array(), is(List.of(new Variant(V_BYTE, seed[0]),
-                                                                  new Variant(V_BYTE, seed[1]),
-                                                                  new Variant(V_BYTE, seed[2]),
-                                                                  new Variant(V_BYTE, seed[3]))));
+        assertThat(executeByteCodeResult.getV_byte_array(), is(seed));
     }
 
     @Test
@@ -188,6 +187,26 @@ public class ContractExecutorTest extends ServiceTest {
 
         spentCpuTime = executeSmartContract("bitWorkingThenSleep", deployContractState, 11).executeResults.get(0).spentCpuTime;
         assertThat(spentCpuTime, greaterThan(10L));
+    }
+
+    @Test
+    @DisplayName("exception into executeByteCode must be return fail status with exception message")
+    public void exceptionDuringExecution() {
+        var result = executeSmartContract("thisMethodThrowsExcetion", deployContractState, 1).executeResults.get(0);
+
+        assertThat(result.status.code, is(FAILURE.code));
+        assertThat(result.status.message, containsString("oops some problem"));
+    }
+
+    @Test
+    @DisplayName("exception into constructor must be return fail status with exception method")
+    public void constructorWithException() throws IOException {
+        super.selectSourcecode("/serviceTest/TroubleConstructor.java");
+
+        var result = deploySmartContract().executeResults.get(0);
+
+        assertThat(result.status.code, is(FAILURE.code));
+        assertThat(result.status.message, containsString("some problem found here"));
     }
 }
 

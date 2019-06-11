@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -52,8 +52,8 @@ public class ContractExecutorServiceUtils {
 
         Class<?>[] argTypes = getArgTypes(params, classLoader);
         Method method = getMatchingAccessibleMethod(contractClass, methodName, argTypes);
-        Object[] argValues = argTypes != null ? castValues(argTypes, params, classLoader) : null;
         if (method != null) {
+            Object[] argValues = argTypes != null ? castValues(argTypes, params, classLoader) : null;
             return new MethodData(method, argTypes, argValues);
         } else {
             throw new ContractExecutorException("Cannot find a method by name and parameters specified");
@@ -69,19 +69,11 @@ public class ContractExecutorServiceUtils {
             throw new ContractExecutorException("not enough arguments passed");
         }
         Object[] retVal = new Object[types.length];
-        int i = 0;
         Variant param;
-        for (Class<?> type : types) {
+        for (int i = 0, typesLength = types.length; i < typesLength; i++) {
             param = params[i];
-            if (type.isArray()) {
-                if (types.length > 1) {
-                    throw new ContractExecutorException("having array with other parameter types is not supported");
-                }
-            }
-
             retVal[i] = VariantConverter.toObject(param, classLoader);
             logger.debug("casted param[{}] = {}", i, retVal[i]);
-            i++;
         }
         return retVal;
     }
@@ -100,22 +92,18 @@ public class ContractExecutorServiceUtils {
                 case V_NULL:
                     classes[i] = Class.forName(variant.getV_null(), false, classLoader);
                     break;
+                case V_BYTE_ARRAY:
+                    classes[i] = byte[].class;
+                    break;
+                case V_BIG_DECIMAL:
+                    classes[i] = BigDecimal.class;
+                    break;
                 default:
                     classes[i] = variant.getFieldValue().getClass();
                     break;
             }
         }
         return classes;
-    }
-
-    public static void initializeField(String fieldName, Object value, Class<?> clazz, Object instance) {
-        try {
-            Field field = clazz.getSuperclass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(instance, value);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Cannot initialize \"{}\" field. Reason:{}", fieldName, getRootCauseMessage(e));
-        }
     }
 
     public static void initializeSmartContractField(String fieldName, Object value, Class<?> clazz, Object instance) {

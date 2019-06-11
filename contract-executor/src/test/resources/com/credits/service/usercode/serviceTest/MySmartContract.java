@@ -40,6 +40,10 @@ public class MySmartContract extends SmartContract {
         return this.total;
     }
 
+    public void thisMethodThrowsExcetion() {
+        throw new RuntimeException("oops some problem");
+    }
+
     public boolean payable(String amount, String currency) throws Exception {
         NumberFormat nf = NumberFormat.getInstance(java.util.Locale.ENGLISH);
         BigDecimal val = new BigDecimal(nf.parse(amount).doubleValue());
@@ -129,6 +133,7 @@ public class MySmartContract extends SmartContract {
         } catch (InterruptedException ignored) {
         }
     }
+
     public static class Geo implements Serializable {
         private final int productId;
         private final String latitude;

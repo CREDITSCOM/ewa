@@ -1,25 +1,25 @@
 package com.credits.general.serialize;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
 
 public class Serializer {
 
     public static Object deserialize(byte[] contractState, ClassLoader classLoader) {
         Object instance;
-
+        requireNonNull(contractState, "contract state can't be null");
         try (ObjectInputStream ous = new ObjectInputStreamWithClassLoader(new ByteArrayInputStream(contractState), classLoader)) {
             instance = ous.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException("Cannot getObject smart contract instance. " + e);
+            throw new RuntimeException("cannot getObject smart contract instance. " + e);
         }
-        return instance;
+        return Optional.ofNullable(instance).orElseThrow(() -> new RuntimeException("cannot deserialize object. Object size = " + contractState.length));
     }
 
     public static byte[] serialize(Object instance) {
+        requireNonNull(instance, "instance can't be null");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ObjectOutputStream ous = new ObjectOutputStream(baos)) {
             ous.writeObject(instance);

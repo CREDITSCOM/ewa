@@ -31,6 +31,7 @@ import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
 import static com.credits.general.util.compiler.InMemoryCompiler.compileSourceCode;
 import static com.credits.general.util.variant.VariantConverter.VOID_TYPE_VALUE;
 import static com.credits.utils.ContractExecutorServiceUtils.SUCCESS_API_RESPONSE;
+import static com.credits.utils.ContractExecutorServiceUtils.failureApiResponse;
 import static java.nio.ByteBuffer.allocate;
 import static java.nio.ByteBuffer.wrap;
 import static java.util.Collections.emptyList;
@@ -182,6 +183,24 @@ public class ContractExecutorHandlerTest {
         assertVersionIsInvalid(contractExecutorHandler.getContractVariables(List.of(mock(ByteCodeObject.class)),
                                                                             contractState,
                                                                             invalidVersion).getStatus());
+    }
+
+    @Test
+    @DisplayName("results with exceptions must be returned with failure status")
+    public void executeByteCodeThrowException() {
+        var contractState = deploySmartContract();
+
+        when(mockCEService.executeSmartContract(any())).thenReturn(
+                new ReturnValue(new byte[1],
+                                List.of(new SmartContractMethodResult(failureApiResponse(new RuntimeException("oops some problem")),
+                                                                      new Variant(V_STRING, "oops some problem"), 0L)),
+                                null));
+
+        var result = executeSmartContract(contractState, List.of(new MethodHeader("methodThrowsException", emptyList())));
+
+        assertThat(result.getStatus(), is(SUCCESS_API_RESPONSE));
+        assertThat(result.getResults().get(0).status.code, is(FAILURE.code));
+        assertThat(result.getResults().get(0).status.message, containsString("oops some problem"));
     }
 
     private void assertVersionIsInvalid(APIResponse status) {

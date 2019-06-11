@@ -33,6 +33,7 @@ import static com.credits.service.BackwardCompatibilityService.allVersionsSmartC
 import static com.credits.thrift.utils.ContractExecutorUtils.compileSmartContractByteCode;
 import static com.credits.thrift.utils.ContractExecutorUtils.getRootClass;
 import static com.credits.utils.ContractExecutorServiceUtils.*;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
@@ -51,7 +52,15 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     @Override
     public ReturnValue deploySmartContract(DeployContractSession session) throws ContractExecutorException {
         final var contractClass = compileClassAndDropPermissions(session.byteCodeObjectDataList, getSmartContractClassLoader());
-        return new Deployer(session, contractClass).deploy();
+        final var methodResult = new Deployer(session, contractClass).deploy();
+        final var newContractState = methodResult.getInvokedObject() != null ? serialize(methodResult.getInvokedObject()) : new byte[0];
+        return new ReturnValue(newContractState,
+                               singletonList(new SmartContractMethodResult(methodResult.getException() != null
+                                                                                   ? failureApiResponse(methodResult.getException())
+                                                                                   : SUCCESS_API_RESPONSE,
+                                                                           methodResult.getReturnValue(),
+                                                                           methodResult.getSpentCpuTime())),
+                               session.usedContracts);
     }
 
     @Override
@@ -63,6 +72,40 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         initNonStaticContractFields(session, contractClass, instance);
         addThisContractToUsedContracts(session, instance);
         return executeContractMethod(session, instance);
+    }
+
+    @Override
+    public ReturnValue executeExternalSmartContract(InvokeMethodSession session,
+                                                    Map<String, ExternalSmartContract> usedContracts,
+                                                    ByteCodeContractClassLoader classLoader) {
+        requireNonNull(usedContracts, "usedContracts is null");
+
+        session.usedContracts.putAll(usedContracts);
+        var instance = usedContracts.get(session.contractAddress).getInstance();
+
+        if (instance == null) {
+            requireNonNull(classLoader, "classLoader is null");
+            final var contractClass = getRootClass(compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader));
+            instance = deserialize(session.contractState, classLoader);
+            initNonStaticContractFields(session, contractClass, instance);
+            usedContracts.get(session.contractAddress).setInstance(instance);
+        }
+
+        return executeContractMethod(session, instance);
+    }
+
+    private ReturnValue executeContractMethod(InvokeMethodSession session, Object contractInstance) {
+        final var executor = new MethodExecutor(session, contractInstance);
+        final var methodResults = executor.execute();
+        return new ReturnValue(serialize(executor.getSmartContractObject()),
+                               methodResults.stream()
+                                       .map(mr -> mr.getException() == null
+                                               ? new SmartContractMethodResult(SUCCESS_API_RESPONSE, mr.getReturnValue(), mr.getSpentCpuTime())
+                                               : new SmartContractMethodResult(failureApiResponse(mr.getException()),
+                                                                               mr.getReturnValue(),
+                                                                               mr.getSpentCpuTime()))
+                                       .collect(toList()),
+                               session.usedContracts);
     }
 
     @Override
@@ -94,26 +137,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
         return GeneralConverter.compilationPackageToByteCodeObjects(compilationPackage);
     }
 
-    @Override
-    public ReturnValue executeExternalSmartContract(InvokeMethodSession session,
-                                                    Map<String, ExternalSmartContract> usedContracts,
-                                                    ByteCodeContractClassLoader classLoader) {
-        requireNonNull(usedContracts, "usedContracts is null");
-
-        session.usedContracts.putAll(usedContracts);
-        var instance = usedContracts.get(session.contractAddress).getInstance();
-
-        if (instance == null) {
-            requireNonNull(classLoader, "classLoader is null");
-            final var contractClass = getRootClass(compileSmartContractByteCode(session.byteCodeObjectDataList, classLoader));
-            instance = deserialize(session.contractState, classLoader);
-            initNonStaticContractFields(session, contractClass, instance);
-            usedContracts.get(session.contractAddress).setInstance(instance);
-        }
-
-        return executeContractMethod(session, instance);
-    }
-
 
     private void addThisContractToUsedContracts(InvokeMethodSession session, Object instance) {
         ExternalSmartContract usedContract = new ExternalSmartContract(
@@ -124,18 +147,6 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
                         true));
         usedContract.setInstance(instance);
         session.usedContracts.put(session.contractAddress, usedContract);
-    }
-
-    private ReturnValue executeContractMethod(InvokeMethodSession session, Object contractInstance) {
-        final var executor = new MethodExecutor(session, contractInstance);
-        final var methodResults = executor.execute();
-        return new ReturnValue(serialize(executor.getSmartContractObject()),
-                               methodResults.stream()
-                                       .map(mr -> mr.exception == null
-                                               ? new SmartContractMethodResult(SUCCESS_API_RESPONSE, mr.returnValue, mr.spentCpuTime)
-                                               : new SmartContractMethodResult(failureApiResponse(mr.exception), mr.returnValue, mr.spentCpuTime))
-                                       .collect(toList()),
-                               session.usedContracts);
     }
 
     private Class<?> compileClassAndDropPermissions(List<ByteCodeObjectData> byteCodeObjectList, ByteCodeContractClassLoader classLoader)
@@ -154,6 +165,7 @@ public class ContractExecutorServiceImpl implements ContractExecutorService {
     }
 
     private void initNonStaticContractFields(InvokeMethodSession session, Class<?> contractClass, Object instance) {
+        requireNonNull(instance, "instance can't be null for not static fields");
         initializeSmartContractField("initiator", session.initiatorAddress, contractClass, instance);
         initializeSmartContractField("accessId", session.accessId, contractClass, instance);
         initializeSmartContractField("usedContracts", session.usedContracts, contractClass, instance);

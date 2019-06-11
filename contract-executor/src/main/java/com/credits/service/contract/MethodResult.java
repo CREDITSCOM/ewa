@@ -6,9 +6,10 @@ import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 class MethodResult {
-    final long spentCpuTime;
-    final Variant returnValue;
-    final Throwable exception;
+    private final long spentCpuTime;
+    private final Variant returnValue;
+    private final Throwable exception;
+    private Object invokedObject;
 
     public MethodResult(Variant returnValue, long spentCpuTime) {
         this.spentCpuTime = spentCpuTime;
@@ -42,7 +43,5 @@ class MethodResult {
     public void setInvokedObject(Object invokedObject) {
         this.invokedObject = invokedObject;
     }
-
-    Object invokedObject;
 
 }

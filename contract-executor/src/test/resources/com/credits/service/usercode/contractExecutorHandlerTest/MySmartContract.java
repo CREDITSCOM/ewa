@@ -20,4 +20,8 @@ public class MySmartContract extends SmartContract {
     public int getTokens(){
         return total;
     }
+
+    public void thisMethodThrowsException() {
+        throw new RuntimeException("oops some problem");
+    }
 }

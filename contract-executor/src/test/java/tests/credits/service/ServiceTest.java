@@ -75,16 +75,28 @@ public abstract class ServiceTest {
     public void setUp() throws Exception {
         DaggerTestComponent.builder().build().inject(this);
 
-        sourceCode = readSourceCode(sourCodePath);
-        byteCodeObjectDataList = compileSourceCode(sourceCode);
-
+        selectSourcecode(sourCodePath);
         ceService = spy(ceService);
         mockNodeApiExecService = mock(NodeApiExecInteractionService.class);
         initSmartContractStaticField(null, "nodeApiService", mockNodeApiExecService);
         initSmartContractStaticField(null, "contractExecutorService", ceService);
         when(ceService.getSmartContractClassLoader()).thenReturn(byteCodeContractClassLoader);
+    }
 
-        deployContractSession = new DeployContractSession(
+    @AfterEach
+    public void tearDown() throws IOException {
+        String dir = System.getProperty("user.dir") + separator + "credits";
+        FileUtils.deleteDirectory(new File(dir));
+    }
+
+    protected void selectSourcecode(String path) throws IOException {
+        sourceCode = readSourceCode(path);
+        byteCodeObjectDataList = compileSourceCode(sourceCode);
+        deployContractSession = initDeployContractSession();
+    }
+
+    private DeployContractSession initDeployContractSession(){
+        return new DeployContractSession(
                 0,
                 encodeToBASE58(initiatorAddress),
                 encodeToBASE58(contractAddress),
@@ -99,12 +111,6 @@ public abstract class ServiceTest {
         Field interactionService = contract.getDeclaredField(fieldName);
         interactionService.setAccessible(true);
         interactionService.set(smartContractInstance, value);
-    }
-
-    @AfterEach
-    public void tearDown() throws IOException {
-        String dir = System.getProperty("user.dir") + separator + "credits";
-        FileUtils.deleteDirectory(new File(dir));
     }
 
     private static List<ByteCodeObjectData> compileSourceCode(String sourceCode) {
