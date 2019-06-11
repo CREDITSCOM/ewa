@@ -33,7 +33,7 @@ public class GeneralConverter {
             return null;
         }
         if (value instanceof String) {
-            return (String)value;
+            return (String) value;
         }
         if (value instanceof Double) {
             NumberFormat nf = NumberFormat.getNumberInstance(Constants.LOCALE);
@@ -45,7 +45,7 @@ public class GeneralConverter {
             return String.valueOf(value);
         }
         if (value instanceof Integer) {
-             return String.valueOf(value);
+            return String.valueOf(value);
         }
         if (value instanceof Long) {
             return String.valueOf(value);
@@ -73,7 +73,7 @@ public class GeneralConverter {
             return null;
         }
         if (value instanceof String) {
-            String stringValue = (String)value;
+            String stringValue = (String) value;
             if (stringValue.equalsIgnoreCase("true")) {
                 return true;
             } else if (stringValue.equalsIgnoreCase("false")) {
@@ -83,7 +83,7 @@ public class GeneralConverter {
             }
         }
         if (value instanceof Integer) {
-            Integer intValue = (Integer)value;
+            Integer intValue = (Integer) value;
             if (intValue == 1) {
                 return true;
             } else if (intValue == 0) {
@@ -93,7 +93,7 @@ public class GeneralConverter {
             }
         }
         if (value instanceof Byte) {
-            Byte byteValue = (Byte)value;
+            Byte byteValue = (Byte) value;
             if (byteValue == 1) {
                 return true;
             } else if (byteValue == 0) {
@@ -146,27 +146,33 @@ public class GeneralConverter {
             return null;
         }
         if (value instanceof String) {
-            return Integer.parseInt((String)value);
+            return Integer.parseInt((String) value);
         }
         if (value instanceof Double) {
-            final Double doubleValue = (Double)value;
+            final Double doubleValue = (Double) value;
             if (Math.abs(doubleValue) < (double) Integer.MIN_VALUE || Math.abs(doubleValue) > (double) Integer.MAX_VALUE) {
-                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Integer [%s %s]", Math.abs(doubleValue), Integer.MIN_VALUE, Integer.MAX_VALUE));
+                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Integer [%s %s]",
+                                                                 Math.abs(doubleValue),
+                                                                 Integer.MIN_VALUE,
+                                                                 Integer.MAX_VALUE));
             }
-            return ((Double)value).intValue();
+            return ((Double) value).intValue();
         }
         if (value instanceof Byte) {
-            return Integer.valueOf((Byte)value);
+            return Integer.valueOf((Byte) value);
         }
         if (value instanceof Short) {
-            return Integer.valueOf((Short)value);
+            return Integer.valueOf((Short) value);
         }
         if (value instanceof Long) {
-            final Long longValue = (Long)value;
+            final Long longValue = (Long) value;
             if (Math.abs(longValue) < (long) Integer.MIN_VALUE || Math.abs(longValue) > (long) Integer.MAX_VALUE) {
-                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Integer [%s %s]", Math.abs(longValue), Integer.MIN_VALUE, Integer.MAX_VALUE));
+                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Integer [%s %s]",
+                                                                 Math.abs(longValue),
+                                                                 Integer.MIN_VALUE,
+                                                                 Integer.MAX_VALUE));
             }
-            return ((Long)value).intValue();
+            return ((Long) value).intValue();
         }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
@@ -179,23 +185,26 @@ public class GeneralConverter {
             return Float.parseFloat((String) value);
         }
         if (value instanceof Double) {
-            Double doubleValue = (Double)value;
-            if (Math.abs(doubleValue) < (double) Float.MIN_NORMAL || Math.abs(doubleValue) > (double)  Float.MAX_VALUE) {
-                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Float [%s %s]", Math.abs(doubleValue), Float.MIN_NORMAL, Float.MAX_VALUE));
+            Double doubleValue = (Double) value;
+            if (Math.abs(doubleValue) < (double) Float.MIN_NORMAL || Math.abs(doubleValue) > (double) Float.MAX_VALUE) {
+                throw new IllegalArgumentException(String.format("Math.abs(value) %s is out of range Float [%s %s]",
+                                                                 Math.abs(doubleValue),
+                                                                 Float.MIN_NORMAL,
+                                                                 Float.MAX_VALUE));
             }
-            return (float)(double)value;
+            return (float) (double) value;
         }
         if (value instanceof Byte) {
-            return (float)(byte)value;
+            return (float) (byte) value;
         }
         if (value instanceof Short) {
-            return (float)(short)value;
+            return (float) (short) value;
         }
         if (value instanceof Integer) {
-            return (float)(int)value;
+            return (float) (int) value;
         }
         if (value instanceof Integer) {
-            return (float)(int)value;
+            return (float) (int) value;
         }
 
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
@@ -206,7 +215,7 @@ public class GeneralConverter {
             return null;
         }
         if (value instanceof String) {
-            return Byte.parseByte((String)value);
+            return Byte.parseByte((String) value);
         }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
@@ -216,9 +225,9 @@ public class GeneralConverter {
             return null;
         }
         if (value instanceof String) {
-            return Short.parseShort((String)value);
+            return Short.parseShort((String) value);
         } else if (value instanceof BigDecimal) {
-            BigDecimal bigDecimal = (BigDecimal)value;
+            BigDecimal bigDecimal = (BigDecimal) value;
             return bigDecimal.shortValueExact();
         }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
@@ -229,56 +238,55 @@ public class GeneralConverter {
             return null;
         }
         if (value instanceof String) {
-            return Long.parseLong((String)value);
+            return Long.parseLong((String) value);
         } else if (value instanceof BitSet) {
             long longValue = 0L;
-            BitSet bits = (BitSet)value;
+            BitSet bits = (BitSet) value;
             for (int i = 0; i < bits.length(); ++i) {
                 longValue += bits.get(i) ? (1L << i) : 0L;
             }
             return longValue;
         } else if (value instanceof byte[]) {
-            byte[] bytes = (byte[])value;
+            byte[] bytes = (byte[]) value;
             ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
             buffer.put(bytes);
             buffer.flip();//need flip
             return buffer.getLong();
         } else if (value instanceof Double) {
-            return ((Double)value).longValue();
+            return ((Double) value).longValue();
         }
         throw new IllegalArgumentException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
     }
 
     public static List<ByteCodeObjectData> compilationPackageToByteCodeObjects(
-        CompilationPackage compilationPackage) {
+            CompilationPackage compilationPackage) {
         List<ByteCodeObjectData> compilationUnits = new ArrayList<>();
-        compilationPackage.getUnits().forEach(unit->compilationUnits.add(new ByteCodeObjectData(unit.getName(),unit.getByteCode())));
+        compilationPackage.getUnits().forEach(unit -> compilationUnits.add(new ByteCodeObjectData(unit.getName(), unit.getByteCode())));
         return compilationUnits;
     }
 
-    public static  List<ByteCodeObject> byteCodeObjectsDataToByteCodeObjects(List<ByteCodeObjectData> byteCodeObjects) {
+    public static List<ByteCodeObject> byteCodeObjectsDataToByteCodeObjects(List<ByteCodeObjectData> byteCodeObjects) {
         if (byteCodeObjects == null) {
             return null;
         }
         List<ByteCodeObject> compilationUnits = new ArrayList<>();
-        byteCodeObjects.forEach(unit->compilationUnits.add(new ByteCodeObject(unit.getName(),ByteBuffer.wrap(unit.getByteCode()))));
+        byteCodeObjects.forEach(unit -> compilationUnits.add(new ByteCodeObject(unit.getName(), ByteBuffer.wrap(unit.getByteCode()))));
         return compilationUnits;
     }
 
 
     public static List<ByteCodeObjectData> byteCodeObjectsToByteCodeObjectsData(
-        List<ByteCodeObject> thriftByteCodeObjects) {
+            List<ByteCodeObject> thriftByteCodeObjects) {
         List<ByteCodeObjectData> compilationUnits = new ArrayList<>();
-        thriftByteCodeObjects.forEach(unit->compilationUnits.add(new ByteCodeObjectData(unit.getName(),unit.getByteCode())));
+        thriftByteCodeObjects.forEach(unit -> compilationUnits.add(new ByteCodeObjectData(unit.getName(), unit.getByteCode())));
         return compilationUnits;
     }
 
     public static List<ByteCodeObjectData> byteCodeObjectToByteCodeObjectData(List<ByteCodeObject> thriftByteCodeObjects) {
         List<ByteCodeObjectData> compilationUnits = new ArrayList<>();
-        thriftByteCodeObjects.forEach(unit->compilationUnits.add(new ByteCodeObjectData(unit.getName(),unit.getByteCode())));
+        thriftByteCodeObjects.forEach(unit -> compilationUnits.add(new ByteCodeObjectData(unit.getName(), unit.getByteCode())));
         return compilationUnits;
     }
-
 
 
     public static Character toCharacter(Object value) {
@@ -300,12 +308,12 @@ public class GeneralConverter {
             return null;
         }
         if (value instanceof String) {
-            return Double.parseDouble((String)value);
+            return Double.parseDouble((String) value);
         } else if (value instanceof Float) {
             String stringValue = GeneralConverter.toString(value);
             return GeneralConverter.toDouble(stringValue);
         } else if (value instanceof Integer) {
-            return ((Integer)value).doubleValue();
+            return ((Integer) value).doubleValue();
         }
         return null;
     }
@@ -332,29 +340,21 @@ public class GeneralConverter {
             return BigDecimal.ZERO;
         }
 
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Constants.LOCALE);
-
         if (value instanceof String) {
-            String valueAsString = (String) value;
-
-            if (Utils.isEmpty(valueAsString)) {
-                return BigDecimal.ZERO;
-            }
-
-            String pattern = "#,##0.0#";
-            DecimalFormat decimalFormat = new DecimalFormat(pattern, symbols);
-            decimalFormat.setParseBigDecimal(true);
-
+            DecimalFormat nf = (DecimalFormat) NumberFormat.getInstance(Locale.getDefault());
+            nf.setParseBigDecimal(true);
             try {
-                return (BigDecimal) decimalFormat.parse(valueAsString);
-            } catch (ParseException e) {
-                throw new IllegalArgumentException(e);
+                return (BigDecimal) nf.parseObject((String) value);
+            }  catch (ParseException e) {
+                throw new RuntimeException(e);
             }
+
         }
 
         if (value instanceof Double) {
             Double doubleValue = (Double) value;
             String text = GeneralConverter.toString(Math.abs(doubleValue));
+            var symbols = new DecimalFormatSymbols(Constants.LOCALE);
             int integerPlaces = text.indexOf(symbols.getDecimalSeparator());
             int decimalPlaces = text.length() - integerPlaces - 1;
             return new BigDecimal(doubleValue, new MathContext(decimalPlaces));
@@ -403,7 +403,7 @@ public class GeneralConverter {
             delimiter = " ";
         }
         StringBuilder stringBuilder = new StringBuilder();
-        for(byte b : bytes) {
+        for (byte b : bytes) {
             stringBuilder.append(b).append(delimiter);
         }
         return stringBuilder.toString();
@@ -414,15 +414,15 @@ public class GeneralConverter {
             throw new IllegalArgumentException("object is null");
         }
         if (object.getClass().equals(Integer.class)) {
-            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).putInt((Integer)object).array();
+            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).putInt((Integer) object).array();
         } else if (object.getClass().equals(Long.class)) {
-            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).putLong((Long)object).array();
+            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).putLong((Long) object).array();
         } else if (object.getClass().equals(Short.class)) {
-            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).putShort((Short)object).array();
+            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).putShort((Short) object).array();
         } else if (object.getClass().equals(Byte.class)) {
-            return ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put((Byte)object).array();
+            return ByteBuffer.allocate(1).order(ByteOrder.LITTLE_ENDIAN).put((Byte) object).array();
         } else if (object instanceof byte[]) {
-            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).put((byte[])object).array();
+            return ByteBuffer.allocate(arraySize).order(ByteOrder.LITTLE_ENDIAN).put((byte[]) object).array();
         } else if (object instanceof Byte[]) {
             Byte[] bigBytes = (Byte[]) object;
             ByteBuffer byteBuffer = ByteBuffer.allocate(bigBytes.length);
@@ -435,7 +435,7 @@ public class GeneralConverter {
     public static byte[] toByteArray(Object value) throws ConverterException {
         if (value instanceof Long) {
             ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-            buffer.putLong((Long)value);
+            buffer.putLong((Long) value);
             return buffer.array();
         } else
         if (value instanceof Integer) {
@@ -450,7 +450,7 @@ public class GeneralConverter {
     public static BitSet toBitSet(Object value) {
         if (value instanceof byte[]) {
             BitSet bits = new BitSet();
-            byte[] bytes = (byte[])value;
+            byte[] bytes = (byte[]) value;
             for (int i = 0; i < bytes.length * 8; i++) {
                 if ((bytes[bytes.length - i / 8 - 1] & (1 << (i % 8))) > 0) {
                     bits.set(i);
@@ -489,22 +489,23 @@ public class GeneralConverter {
         List<MethodArgument> methodArgumentList = new ArrayList<>();
         for (MethodArgumentData arg : data.args) {
             List<Annotation> annotationList = getAnnotations(arg.annotations);
-            methodArgumentList.add(new MethodArgument(arg.returnType,arg.name,annotationList));
+            methodArgumentList.add(new MethodArgument(arg.returnType, arg.name, annotationList));
 
         }
-        return new MethodDescription(data.returnType,data.name,methodArgumentList,getAnnotations(data.annotations));
+        return new MethodDescription(data.returnType, data.name, methodArgumentList, getAnnotations(data.annotations));
     }
 
     public static List<Annotation> getAnnotations(List<AnnotationData> annotations) {
         List<Annotation> annotationList = new ArrayList<>();
         for (AnnotationData annotation : annotations) {
-            annotationList.add(new Annotation(annotation.name,annotation.arguments));
+            annotationList.add(new Annotation(annotation.name, annotation.arguments));
         }
         return annotationList;
     }
 
     private static TypeParser typeParser = TypeParser.newBuilder().build();
-    public static Object createObjectFromString(String value, Class<?> classType){
+
+    public static Object createObjectFromString(String value, Class<?> classType) {
         return typeParser.parse(value, classType);
     }
 }
