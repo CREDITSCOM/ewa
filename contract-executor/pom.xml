@@ -18,7 +18,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring.version>5.0.4.RELEASE</spring.version>
         <skipTests>false</skipTests>
         <skipIntegrationTests>true</skipIntegrationTests>
     </properties>
@@ -133,18 +132,7 @@
             <artifactId>dagger</artifactId>
             <version>2.22.1</version>
         </dependency>
-        <dependency>
-            <groupId>com.credits.sc-api</groupId>
-            <artifactId>sc-api</artifactId>
-            <version>1.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.credits.sc-api</groupId>
-            <artifactId>sc-api</artifactId>
-            <version>1.1</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
