@@ -1,10 +1,23 @@
+<img src="https://raw.githubusercontent.com/CREDITSCOM/Documentation/master/Src/Logo_Credits_horizontal_black.png" align="center">
+
+[Documentation](https://developers.credits.com/en/Articles/Platform) \|
+[Guides](https://developers.credits.com/en/Articles/Guides) \|
+[News](https://credits.com/en/Home/News)
+
+[![Twitter](https://img.shields.io/twitter/follow/creditscom.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=creditscom)
+[![AGPL License](https://img.shields.io/github/license/CREDITSCOM/ewa.svg?color=green&style=plastic)](LICENSE)
+[![Build Status](http://161.156.96.18:8080/buildStatus/icon?job=ewa_build&lastBuild)](http://161.156.96.18:8080/job/ewa_build/lastBuild/)
+
 ## EWA
 ###### Contract Executor and Wallet Applications
 This repository contains following main modules:
 
 - Contract Executor
-- Wallet Desktop
+
+- [Wallet Desktop](https://github.com/CREDITSCOM/ewa/tree/master/wallet-desktop)
+
 - sc-api
+
 - api-client
 
 ##### What is Contract Executor?
@@ -18,15 +31,17 @@ API contains general tools for integrate with node
 
 
 ##### Used environment
-- Java version openJDK 11
-- openjfx version 11
-- maven version 3.6.1
+- [JDK 11](https://openjdk.java.net/projects/jdk/11/)
+- [OpenJFX version 11](https://openjfx.io/)
+- [Maven version 3.6.1](https://maven.apache.org/docs/3.6.1/release-notes.html) 
 
 ##### How to build
 For build all modules use following maven command on root project level
-<br> `mvn clean install`<br>
+```shell
+mvn clean install
+```
 For run wallet you have to install openjfx sdk and then you need specify path to lib folder of openjfx. 
 Use following command as example
-<br>
-`java --module-path %your_module_path_here% --add-modules=javafx.controls,javafx.fxml,javafx.graphics -jar wallet-desktop.jar`
-<br>
+```shell
+java --module-path %your_module_path_here% --add-modules=javafx.controls,javafx.fxml,javafx.graphics -jar wallet-desktop.jar`
+```
