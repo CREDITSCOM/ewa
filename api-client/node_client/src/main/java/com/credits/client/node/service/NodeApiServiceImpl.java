@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ import static com.credits.general.util.Utils.threadPool;
 public class NodeApiServiceImpl implements NodeApiService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeApiServiceImpl.class);
-    private static volatile NodeApiServiceImpl instance;
+    private static AtomicReference<NodeApiServiceImpl> instance = new AtomicReference<>();
     public NodeThriftApiClient nodeClient;
 
     private NodeApiServiceImpl(String host, int port) {
@@ -40,12 +41,12 @@ public class NodeApiServiceImpl implements NodeApiService {
     }
 
     public static NodeApiServiceImpl getInstance(String host, int port) {
-        NodeApiServiceImpl localInstance = NodeApiServiceImpl.instance;
+        NodeApiServiceImpl localInstance = NodeApiServiceImpl.instance.get();
         if (localInstance == null) {
             synchronized (NodeApiServiceImpl.class) {
-                localInstance = NodeApiServiceImpl.instance;
+                localInstance = NodeApiServiceImpl.instance.get();
                 if (localInstance == null) {
-                    NodeApiServiceImpl.instance = localInstance = new NodeApiServiceImpl(host, port);
+                    NodeApiServiceImpl.instance.set(new NodeApiServiceImpl(host, port));
                 }
             }
         }
@@ -89,9 +90,9 @@ public class NodeApiServiceImpl implements NodeApiService {
 
     @Override
     public List<TransactionData> getTransactions(String address, long offset, long limit)
-        throws NodeClientException, ConverterException {
+    throws NodeClientException, ConverterException {
         LOGGER.info(
-            String.format("getTransactions: ---> address = %s, offset = %d, limit = %d", address, offset, limit));
+                String.format("getTransactions: ---> address = %s, offset = %d, limit = %d", address, offset, limit));
         TransactionsGetResult result = nodeClient.getTransactions(decodeFromBASE58(address), offset, limit);
         processApiResponse(result.getStatus());
         List<TransactionData> transactionDataList = new ArrayList<>();
@@ -105,9 +106,9 @@ public class NodeApiServiceImpl implements NodeApiService {
 
     @Override
     public List<SmartContractTransactionData> getSmartContractTransactions(String address, long offset, long limit)
-        throws NodeClientException, ConverterException {
+    throws NodeClientException, ConverterException {
         LOGGER.info(
-            String.format("getTransactions: ---> address = %s, offset = %d, limit = %d", address, offset, limit));
+                String.format("getTransactions: ---> address = %s, offset = %d, limit = %d", address, offset, limit));
         TransactionsGetResult result = nodeClient.getTransactions(decodeFromBASE58(address), offset, limit);
         processApiResponse(result.getStatus());
         List<SmartContractTransactionData> dataList = new ArrayList<>();
@@ -143,7 +144,7 @@ public class NodeApiServiceImpl implements NodeApiService {
 
         if (!result.isIsFound()) {
             throw new NodeClientException(
-                String.format("Pool by hash %s and index %s is not found", Arrays.toString(hash), index));
+                    String.format("Pool by hash %s and index %s is not found", Arrays.toString(hash), index));
         }
         PoolData poolData = poolToPoolData(result.getPool());
         LOGGER.info(String.format("getPoolInfo: <--- index = %d", index));
@@ -165,17 +166,17 @@ public class NodeApiServiceImpl implements NodeApiService {
 
     @Override
     public TransactionFlowResultData smartContractTransactionFlow(SmartContractTransactionFlowData scTransaction)
-        throws NodeClientException, ConverterException {
+    throws NodeClientException, ConverterException {
         Validator.validate(scTransaction);
         Transaction transaction = smartContractTransactionFlowDataToTransaction(scTransaction);
         LOGGER.debug(
-            "smartContractTransactionFlow -> \nsource - {} \ntarget - {} \ninnerId - {} \namount - {} \nscMethod - {} \nscParams - {}",
-            encodeToBASE58(transaction.source.array()),
-            encodeToBASE58(transaction.target.array()),
-            transaction.getId(),
-            transaction.getAmount(),
-            transaction.smartContract.getMethod(),
-            transaction.smartContract.getParams());
+                "smartContractTransactionFlow -> \nsource - {} \ntarget - {} \ninnerId - {} \namount - {} \nscMethod - {} \nscParams - {}",
+                encodeToBASE58(transaction.source.array()),
+                encodeToBASE58(transaction.target.array()),
+                transaction.getId(),
+                transaction.getAmount(),
+                transaction.smartContract.getMethod(),
+                transaction.smartContract.getParams());
         TransactionFlowResultData response = callTransactionFlow(transaction);
         LOGGER.debug("smartContractTransactionFlow <- \nsource - {} \ntarget - {} \ncode - {}, \nmessage - {}, \nscResult - {}",
                      response.getSource(),
@@ -191,13 +192,13 @@ public class NodeApiServiceImpl implements NodeApiService {
         Validator.validate(transactionFlowData);
         Transaction transaction = transactionFlowDataToTransaction(transactionFlowData);
         LOGGER.debug(
-            "smartContractTransactionFlow -> \nsource - {} \ntarget - {} \ninnerId - {} \namount - {}",
-            encodeToBASE58(transaction.source.array()),
-            encodeToBASE58(transaction.target.array()),
-            transaction.getId(),
-            transaction.getAmount());
+                "smartContractTransactionFlow -> \nsource - {} \ntarget - {} \ninnerId - {} \namount - {}",
+                encodeToBASE58(transaction.source.array()),
+                encodeToBASE58(transaction.target.array()),
+                transaction.getId(),
+                transaction.getAmount());
         TransactionFlowResultData response = callTransactionFlow(transaction);
-                LOGGER.debug("smartContractTransactionFlow <- \nsource - {} \ntarget - {} \ncode - {}, \nmessage - {}",
+        LOGGER.debug("smartContractTransactionFlow <- \nsource - {} \ntarget - {} \ncode - {}, \nmessage - {}",
                      response.getSource(),
                      response.getTarget(),
                      response.getCode(),
@@ -223,8 +224,8 @@ public class NodeApiServiceImpl implements NodeApiService {
         SmartContract smartContract = result.getSmartContract();
         SmartContractData smartContractData = smartContractToSmartContractData(smartContract);
         LOGGER.info(String.format(
-            "<--- smart contract hashState = %s",
-            smartContractData.getSmartContractDeployData().getHashState()));
+                "<--- smart contract hashState = %s",
+                smartContractData.getSmartContractDeployData().getHashState()));
         return smartContractData;
     }
 
@@ -236,9 +237,9 @@ public class NodeApiServiceImpl implements NodeApiService {
         processApiResponse(result.getStatus());
         LOGGER.info("<--- smart contracts size = {}", result.getSmartContractsList().size());
         return result.getSmartContractsList()
-            .stream()
-            .map(NodePojoConverter::smartContractToSmartContractData)
-            .collect(Collectors.toList());
+                .stream()
+                .map(NodePojoConverter::smartContractToSmartContractData)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -273,9 +274,9 @@ public class NodeApiServiceImpl implements NodeApiService {
 
     @Override
     public TransactionsStateGetResultData getTransactionsState(String address, List<Long> transactionIdList)
-        throws NodeClientException, ConverterException {
+    throws NodeClientException, ConverterException {
         TransactionsStateGetResult transactionsStateGetResult =
-            nodeClient.getTransactionsState(decodeFromBASE58(address), transactionIdList);
+                nodeClient.getTransactionsState(decodeFromBASE58(address), transactionIdList);
         processApiResponse(transactionsStateGetResult.getStatus());
         return NodePojoConverter.createTransactionsStateGetResultData(transactionsStateGetResult);
     }

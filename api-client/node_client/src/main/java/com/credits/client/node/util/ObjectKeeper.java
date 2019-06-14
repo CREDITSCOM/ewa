@@ -3,17 +3,12 @@ package com.credits.client.node.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.credits.general.util.CriticalSection.doSafe;
@@ -26,7 +21,7 @@ public class ObjectKeeper<T extends Serializable> {
     private final String objectFileName;
     private final String account;
     private final ReentrantLock lock = new ReentrantLock();
-    private volatile T storedObject;
+    private AtomicReference<T> storedObject = new AtomicReference<>();
 
     public ObjectKeeper(String account, String objectName) {
         this.account = account;
@@ -34,22 +29,23 @@ public class ObjectKeeper<T extends Serializable> {
     }
 
     public void keepObject(T object) {
-        if(object != null) {
-            doSafe(() -> storedObject = object, lock);
+        if (object != null) {
+            doSafe(() -> storedObject.set(object), lock);
         }
     }
 
-    public void flush(){
-        if(storedObject != null) {
-            doSafe(() -> serialize(storedObject), lock);
+    public void flush() {
+        if (storedObject != null) {
+            doSafe(() -> serialize(storedObject.get()), lock);
         }
     }
 
     public Optional<T> getKeptObject() {
-        if (storedObject == null) {
-            return Optional.ofNullable(storedObject = doSafe(this::deserialize, lock));
+        if (storedObject.get() == null) {
+            storedObject.set(doSafe(this::deserialize, lock));
+            return Optional.ofNullable(storedObject.get());
         }
-        return Optional.ofNullable(storedObject);
+        return Optional.ofNullable(storedObject.get());
     }
 
     /**
@@ -76,7 +72,7 @@ public class ObjectKeeper<T extends Serializable> {
             Path serObjectFile = getSerializedObjectPath();
             File serFile = serObjectFile.toFile();
             if (!serFile.exists()) {
-                if(!serFile.createNewFile()){
+                if (!serFile.createNewFile()) {
                     throw new IOException("can't create new file");
                 }
             }
@@ -84,7 +80,7 @@ public class ObjectKeeper<T extends Serializable> {
             try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(serObjectFile.toString()))) {
                 oos.writeObject(object);
             }
-        }catch (SecurityException | IOException e) {
+        } catch (SecurityException | IOException e) {
             LOGGER.error("Object can't serialized. Reason: {}", e.getMessage());
         }
     }
@@ -92,9 +88,9 @@ public class ObjectKeeper<T extends Serializable> {
     @SuppressWarnings("unchecked")
     private T deserialize() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getSerializedObjectPath().toString()))) {
-            return storedObject = (T) ois.readObject();
+            return (T) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-                LOGGER.error(e.toString());
+            LOGGER.error(e.toString());
             return null;
         }
     }

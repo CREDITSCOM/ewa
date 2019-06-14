@@ -1,10 +1,6 @@
 package com.credits.secure;
 
-import java.security.AccessControlContext;
-import java.security.AccessControlException;
-import java.security.Permission;
-import java.security.Permissions;
-import java.security.ProtectionDomain;
+import java.security.*;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -50,7 +46,7 @@ public final class Sandbox {
     private Sandbox() {
     }
 
-    public static final Map<Class<?>, AccessControlContext> CHECKED_CLASSES = Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Map<Class<?>, AccessControlContext> CHECKED_CLASSES = Collections.synchronizedMap(new WeakHashMap<>());
 
     static {
         // Install our custom security manager.

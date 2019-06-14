@@ -345,7 +345,7 @@ public class GeneralConverter {
             nf.setParseBigDecimal(true);
             try {
                 return (BigDecimal) nf.parseObject((String) value);
-            }  catch (ParseException e) {
+            } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
 
@@ -354,10 +354,12 @@ public class GeneralConverter {
         if (value instanceof Double) {
             Double doubleValue = (Double) value;
             String text = GeneralConverter.toString(Math.abs(doubleValue));
-            var symbols = new DecimalFormatSymbols(Constants.LOCALE);
-            int integerPlaces = text.indexOf(symbols.getDecimalSeparator());
-            int decimalPlaces = text.length() - integerPlaces - 1;
-            return new BigDecimal(doubleValue, new MathContext(decimalPlaces));
+            if (text != null) {
+                var symbols = new DecimalFormatSymbols(Constants.LOCALE);
+                int integerPlaces = text.indexOf(symbols.getDecimalSeparator());
+                int decimalPlaces = text.length() - integerPlaces - 1;
+                return new BigDecimal(doubleValue, new MathContext(decimalPlaces));
+            }
         }
 
         if (value instanceof Long) {
@@ -437,10 +439,9 @@ public class GeneralConverter {
             ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
             buffer.putLong((Long) value);
             return buffer.array();
-        } else
-        if (value instanceof Integer) {
+        } else if (value instanceof Integer) {
             ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
-            buffer.putInt((Integer)value);
+            buffer.putInt((Integer) value);
             return buffer.array();
         }
         throw new ConverterException(String.format("Unsupported type of value: %s", value.getClass().getSimpleName()));
@@ -452,7 +453,7 @@ public class GeneralConverter {
             BitSet bits = new BitSet();
             byte[] bytes = (byte[]) value;
             for (int i = 0; i < bytes.length * 8; i++) {
-                if ((bytes[bytes.length - i / 8 - 1] & (1 << (i % 8))) > 0) {
+                if ((bytes[bytes.length - i / 8 - 1] & (1 << i % 8 & 0xff)) > 0) {
                     bits.set(i);
                 }
             }

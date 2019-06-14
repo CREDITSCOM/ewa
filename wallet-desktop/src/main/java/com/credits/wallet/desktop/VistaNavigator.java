@@ -41,7 +41,7 @@ public class VistaNavigator {
     public static final String SMART_CONTRACT_DEPLOY = "/fxml/smart_contract_deploy.fxml";
     public static final String TRANSACTION = "/fxml/transaction.fxml";
     public static final String SMART_CONTRACT_TRANSACTION = "/fxml/smart_contract_transaction.fxml";
-    public static final String CHECK_PRIVKEY_PWD = "/fxml/check_privkey_pwd.fxml";
+    public static final String CHECK_PRIVATE_KEY = "/fxml/check_privkey_pwd.fxml";
     private static MainController mainController;
     private static HeaderController headerController;
     private static AbstractController currentVistaController;

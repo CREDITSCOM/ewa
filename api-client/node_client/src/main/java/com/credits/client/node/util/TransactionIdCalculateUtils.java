@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class TransactionIdCalculateUtils {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TransactionIdCalculateUtils.class);
-    public static ConcurrentHashMap<String, AtomicLong> walletLastTransactionIdCache = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<String, AtomicLong> walletLastTransactionIdCache = new ConcurrentHashMap<>();
 
     private static long createTransactionId(boolean senderIndexExists, boolean receiverIndexExists, long transactionId)
         throws ConverterException {

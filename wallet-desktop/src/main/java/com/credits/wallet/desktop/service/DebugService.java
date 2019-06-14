@@ -4,12 +4,7 @@ import com.credits.wallet.desktop.utils.FormUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 
 
 public class DebugService {
@@ -30,9 +25,9 @@ public class DebugService {
 
     public String compile() {
         try {
-            FileWriter writer = new FileWriter(className + ".java");
-            writer.write(text);
-            writer.close();
+            try (FileWriter writer = new FileWriter(className + ".java")) {
+                writer.write(text);
+            }
 
             // Compile class
             Process process = Runtime.getRuntime().exec("javac -g " + className + ".java");

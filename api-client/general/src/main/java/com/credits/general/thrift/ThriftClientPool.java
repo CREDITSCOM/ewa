@@ -6,7 +6,6 @@ import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
-import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * account: https://layer4.fr/blog/2013/11/04/pooling-a-thrift-client/
  */
 public class ThriftClientPool<T extends TServiceClient> implements
-    AutoCloseable {
+        AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThriftClientPool.class);
     public static final int SOCKET_TIMEOUT = 1200000;
@@ -49,7 +48,7 @@ public class ThriftClientPool<T extends TServiceClient> implements
         private final ProtocolFactory protocolFactory;
 
         public ThriftClientFactory(ClientFactory<T> clientFactory,
-            ProtocolFactory protocolFactory) {
+                                   ProtocolFactory protocolFactory) {
             this.clientFactory = clientFactory;
             this.protocolFactory = protocolFactory;
         }
@@ -62,7 +61,7 @@ public class ThriftClientPool<T extends TServiceClient> implements
             } catch (Exception e) {
                 LOGGER.warn("whut?", e);
                 throw new ThriftClientException(
-                    "Can not make a new object for pool", e);
+                        "Can not make a new object for pool", e);
             }
         }
 
@@ -86,7 +85,7 @@ public class ThriftClientPool<T extends TServiceClient> implements
     }
 
     public static class BinaryOverSocketProtocolFactory implements
-        ProtocolFactory {
+            ProtocolFactory {
 
         private final String host;
         private final int port;
@@ -97,14 +96,13 @@ public class ThriftClientPool<T extends TServiceClient> implements
         }
 
         public TProtocol make() {
-            TTransport transport = new TSocket(host, port, SOCKET_TIMEOUT);
-            try {
+            try (var transport = new TSocket(host, port, SOCKET_TIMEOUT)) {
                 transport.open();
+                return new TBinaryProtocol(transport);
             } catch (TTransportException e) {
                 LOGGER.warn("whut?", e);
                 throw new ThriftClientException("Can not make protocol", e);
             }
-            return new TBinaryProtocol(transport);
         }
     }
 
@@ -121,7 +119,7 @@ public class ThriftClientPool<T extends TServiceClient> implements
             return internalPool.borrowObject();
         } catch (Exception e) {
             throw new ThriftClientException(
-                "Could not getObject a resource from the pool", e);
+                    "Could not getObject a resource from the pool", e);
         }
     }
 
@@ -130,7 +128,7 @@ public class ThriftClientPool<T extends TServiceClient> implements
             internalPool.returnObject(resource);
         } catch (Exception e) {
             throw new ThriftClientException(
-                "Could not return the resource to the pool", e);
+                    "Could not return the resource to the pool", e);
         }
     }
 
@@ -147,7 +145,7 @@ public class ThriftClientPool<T extends TServiceClient> implements
             internalPool.invalidateObject(resource);
         } catch (Exception e) {
             throw new ThriftClientException(
-                "Could not return the resource to the pool", e);
+                    "Could not return the resource to the pool", e);
         }
     }
 

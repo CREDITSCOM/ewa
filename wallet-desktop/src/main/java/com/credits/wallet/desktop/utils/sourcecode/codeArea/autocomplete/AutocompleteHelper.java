@@ -9,31 +9,25 @@ import javafx.scene.input.KeyEvent;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
-import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.BASIC_STANDARD_CLASS;
-import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.EXTENSION_STANDARD_CLASS;
-import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.getFieldsAndMethodsFromSourceCode;
+import static com.credits.wallet.desktop.utils.sourcecode.codeArea.autocomplete.CreditsProposalsPopup.*;
 
 public class AutocompleteHelper {
 
-    public static final List<String> TYPE_KEYWORDS =
+    private static final List<String> TYPE_KEYWORDS =
         Arrays.asList("void", "String", "int", "Integer", "boolean", "Boolean", "byte", "Byte", "float", "long", "Long",
                       "Float", "double", "Double", "char", "Character", "short", "Short", "enum");
 
-    public static final List<String> LANGUAGE_KEYWORDS =
+    private static final List<String> LANGUAGE_KEYWORDS =
         Arrays.asList("public", "private", "if", "else", "this", "new", "for", "while", "break", "final", "static",
                       "return", "switch", "case", "super", "throws", "throw", "true", "false", "try", "catch", "class",
                       "implements", "extends", "protected", "abstract", "assert", "const", "interface", "continue", "default",
                       "do", "finally", "goto", "import", "instanceof", "native", "package", "strictfp", "synchronized",
                       "transient", "volatile");
 
-    public static final List<String> INTERFACES_KEYWORDS =
+    private static final List<String> INTERFACES_KEYWORDS =
         Arrays.asList(BASIC_STANDARD_CLASS, EXTENSION_STANDARD_CLASS);
     private CreditsCodeArea codeArea;
 

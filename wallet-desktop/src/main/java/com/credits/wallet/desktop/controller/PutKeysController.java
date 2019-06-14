@@ -19,13 +19,16 @@ import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.credits.wallet.desktop.AppState.privateKey;
 import static com.credits.wallet.desktop.AppState.publicKey;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 
 public class PutKeysController extends AbstractController {
@@ -83,19 +86,17 @@ public class PutKeysController extends AbstractController {
             // create salt for derive key from pass phrase
             byte[] key = new byte[0];
             try {
-                key = SodiumLibrary.cryptoPwhashArgon2i(AppState.pwd.getBytes("UTF8"), salt);
-            } catch (SodiumLibraryException | UnsupportedEncodingException e) {
+                key = SodiumLibrary.cryptoPwhashArgon2i(AppState.pwd.getBytes(UTF_8), salt);
+            } catch (SodiumLibraryException e) {
                 FormUtils.showError(e.getMessage());
             }
             // create nonce for encrypting private key
             byte[] nonce = SodiumLibrary.randomBytes(SodiumLibrary.cryptoSecretBoxNonceBytes().intValue());
 
-            PrintWriter writer;
-            try {
-                // encrypt the private key with nonce and key
+            ;
+            try(PrintWriter writer = new PrintWriter(file.getAbsolutePath(), UTF_8)){
                 byte[] encryptedPrivateKey = SodiumLibrary.cryptoSecretBoxEasy(Ed25519.privateKeyToBytes(privateKey), nonce, key);
 
-                writer = new PrintWriter(file.getAbsolutePath(), "UTF-8");
                 String json = String.format("{\"key\":{\"public\":\"%s\",\"private\":\"%s\", \"nonce\":\"%s\",\"salt\":\"%s\"}}",
                         GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)),
                         GeneralConverter.encodeToBASE58(encryptedPrivateKey),
@@ -104,7 +105,7 @@ public class PutKeysController extends AbstractController {
                 writer.println(json);
                 writer.close();
                 FormUtils.showInfo(String.format("Keys successfully saved in %n%n%s", file.getAbsolutePath()));
-            } catch (FileNotFoundException | UnsupportedEncodingException | SodiumLibraryException e) {
+            } catch (SodiumLibraryException | IOException e) {
                 throw new WalletDesktopException(e);
             }
         }
@@ -146,7 +147,7 @@ public class PutKeysController extends AbstractController {
                 params.put(PutKeysController.SALT_KEY, salt);
                 params.put(PutKeysController.ENCRYPTED_PRIVKEY_KEY, privKey);
                 params.put(PutKeysController.PUBKEY_KEY, pubKey);
-                VistaNavigator.loadVista(VistaNavigator.CHECK_PRIVKEY_PWD, params);
+                VistaNavigator.loadVista(VistaNavigator.CHECK_PRIVATE_KEY, params);
             } else {
                 open(pubKey, privKey);
             }

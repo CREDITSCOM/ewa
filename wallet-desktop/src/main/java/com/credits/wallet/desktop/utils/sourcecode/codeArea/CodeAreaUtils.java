@@ -17,7 +17,7 @@ import static java.util.Collections.singleton;
 public class CodeAreaUtils {
     private final static Logger LOGGER = LoggerFactory.getLogger(CodeAreaUtils.class);
 
-    public static final String[] KEYWORDS =
+    private static final String[] KEYWORDS =
         new String[] {"abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
             "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for",
             "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package",

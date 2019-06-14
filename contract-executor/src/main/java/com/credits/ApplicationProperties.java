@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public class ApplicationProperties {
 
-    public static short APP_VERSION = 1;
+    public static final short APP_VERSION = 1;
 
     public String apiHost = "localhost";
     public int apiPort = 9090;

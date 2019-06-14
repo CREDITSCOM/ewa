@@ -53,7 +53,7 @@ public class ContractExecutorServiceUtils {
         Class<?>[] argTypes = getArgTypes(params, classLoader);
         Method method = getMatchingAccessibleMethod(contractClass, methodName, argTypes);
         if (method != null) {
-            Object[] argValues = argTypes != null ? castValues(argTypes, params, classLoader) : null;
+            Object[] argValues = castValues(argTypes, params, classLoader);
             return new MethodData(method, argTypes, argValues);
         } else {
             throw new ContractExecutorException("Cannot find a method by name and parameters specified");

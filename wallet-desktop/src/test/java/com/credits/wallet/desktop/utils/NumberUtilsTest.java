@@ -9,10 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.swing.*;
-import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class NumberUtilsTest {
 
@@ -32,13 +30,7 @@ public class NumberUtilsTest {
             Assume.assumeNoException("Unable to open DISPLAY", e);
         }
 
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
-        char separator = symbols.getDecimalSeparator();
-        AppState.decimalSeparator = Character.toString(separator);
-        textField = new
-
-            TextField();
-
+        textField = new TextField();
     }
 
 

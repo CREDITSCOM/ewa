@@ -2,22 +2,7 @@ package com.credits.client.node.service;
 
 import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.pojo.TransactionIdData;
-import com.credits.client.node.thrift.generated.API;
-import com.credits.client.node.thrift.generated.PoolInfoGetResult;
-import com.credits.client.node.thrift.generated.PoolListGetResult;
-import com.credits.client.node.thrift.generated.SmartContractAddressesListGetResult;
-import com.credits.client.node.thrift.generated.SmartContractGetResult;
-import com.credits.client.node.thrift.generated.SmartContractsListGetResult;
-import com.credits.client.node.thrift.generated.SyncStateResult;
-import com.credits.client.node.thrift.generated.Transaction;
-import com.credits.client.node.thrift.generated.TransactionFlowResult;
-import com.credits.client.node.thrift.generated.TransactionGetResult;
-import com.credits.client.node.thrift.generated.TransactionsGetResult;
-import com.credits.client.node.thrift.generated.TransactionsStateGetResult;
-import com.credits.client.node.thrift.generated.WalletBalanceGetResult;
-import com.credits.client.node.thrift.generated.WalletDataGetResult;
-import com.credits.client.node.thrift.generated.WalletIdGetResult;
-import com.credits.client.node.thrift.generated.WalletTransactionsCountGetResult;
+import com.credits.client.node.thrift.generated.*;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.general.thrift.ThriftClientPool;
 import org.apache.thrift.TException;
@@ -26,10 +11,11 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class NodeThriftApiClient implements NodeThriftApi {
-    private static volatile NodeThriftApiClient instance;
+    private static AtomicReference<NodeThriftApiClient> instance = new AtomicReference<>();
     private final ExecutorService threadPoolExecutor;
     private final ThriftClientPool<API.Client> pool;
 
@@ -39,12 +25,12 @@ public class NodeThriftApiClient implements NodeThriftApi {
     }
 
     public static NodeThriftApiClient getInstance(String host, Integer port) {
-        NodeThriftApiClient localInstance = instance;
+        NodeThriftApiClient localInstance = instance.get();
         if (localInstance == null) {
             synchronized (NodeThriftApiClient.class) {
-                localInstance = instance;
+                localInstance = instance.get();
                 if (localInstance == null) {
-                    instance = localInstance = new NodeThriftApiClient(host, port);
+                    instance.set(localInstance = new NodeThriftApiClient(host, port));
                 }
             }
         }

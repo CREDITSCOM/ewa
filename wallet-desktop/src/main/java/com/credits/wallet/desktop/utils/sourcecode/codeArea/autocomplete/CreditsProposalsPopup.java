@@ -27,8 +27,8 @@ public class CreditsProposalsPopup extends Popup {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CreditsProposalsPopup.class);
 
-    public static Map<Method, String> parentsMethods;
-    public static Map<Field, String> parentsFields;
+    static Map<Method, String> parentsMethods = new HashMap<>();
+    static Map<Field, String> parentsFields = new HashMap<>();
 
     public static void getFieldsAndMethodsFromSourceCode(String parentClass) throws ClassNotFoundException {
         Class<?> clazz = Class.forName(parentClass);
@@ -87,14 +87,14 @@ public class CreditsProposalsPopup extends Popup {
     public void clearAndHide() {
         this.clear();
         this.hide();
-        parentsMethods = new HashMap<>();
-        parentsFields = new HashMap<>();
+        parentsMethods.clear();
+        parentsFields.clear();
     }
 
     public void addItem(ProposalItem element) {
         ObservableList<ProposalItem> items = listView.getItems();
         items.add(element);
-        if(items.size() == 1){
+        if (items.size() == 1) {
             listView.getSelectionModel().selectFirst();
         }
 

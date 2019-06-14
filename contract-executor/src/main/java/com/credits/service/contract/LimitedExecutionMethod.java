@@ -50,6 +50,7 @@ class LimitedExecutionMethod<R> {
                 try {
                     sleep(3);
                 } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
                 }
                 if (limitedTimeThread.isAlive()) {
                     limitedTimeThread.stop();

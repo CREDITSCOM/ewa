@@ -39,7 +39,7 @@ public enum SmartOperationStateData {
             case 2:
                 return "Failed";
             default:
-                return null;
+                return "Unknown state value";
         }
     }
 }

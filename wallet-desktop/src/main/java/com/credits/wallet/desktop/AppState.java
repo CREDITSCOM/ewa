@@ -19,12 +19,9 @@ public class AppState {
     public static final int DELAY_AFTER_FULL_SYNC = 5;
     public static final int DELAY_BEFORE_FULL_SYNC = 2;
 
-
-
     public static NodeApiService nodeApiService;
-    public static String decimalSeparator = DECIMAL_SEPARATOR;
-    public static Map<String,Session> sessionMap = new HashMap<>();
-
+    public static final String decimalSeparator = DECIMAL_SEPARATOR;
+    public static final Map<String,Session> sessionMap = new HashMap<>();
 
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
