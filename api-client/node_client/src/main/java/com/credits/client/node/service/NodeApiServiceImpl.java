@@ -46,7 +46,8 @@ public class NodeApiServiceImpl implements NodeApiService {
             synchronized (NodeApiServiceImpl.class) {
                 localInstance = NodeApiServiceImpl.instance.get();
                 if (localInstance == null) {
-                    NodeApiServiceImpl.instance.set(new NodeApiServiceImpl(host, port));
+                    localInstance = new NodeApiServiceImpl(host, port);
+                    NodeApiServiceImpl.instance.set(localInstance);
                 }
             }
         }
