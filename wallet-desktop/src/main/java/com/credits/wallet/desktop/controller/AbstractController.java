@@ -16,8 +16,8 @@ public abstract class AbstractController implements FormInitializable, FormDeini
     }
 
     protected void setSession(String pubKey) {
-        if(AppState.sessionMap.get(pubKey)!=null) {
-            this.session = AppState.sessionMap.get(pubKey);
+        if(AppState.getSessionMap().get(pubKey)!=null) {
+            this.session = AppState.getSessionMap().get(pubKey);
         } else {
             this.session = new Session(pubKey);
         }

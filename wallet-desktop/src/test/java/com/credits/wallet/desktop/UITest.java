@@ -21,12 +21,8 @@ import java.math.BigDecimal;
 import java.security.PrivateKey;
 import java.util.Properties;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 
 public class UITest {
@@ -76,7 +72,7 @@ public class UITest {
         addressTwo = "22222222222222222222222222222222222222222222";
         addressThree = "33333333333333333333333333333333333333333333";
 
-        AppState.privateKey = getPrivateKey();
+        AppState.setPrivateKey(getPrivateKey());
     }
 
     private PrivateKey getPrivateKey() {

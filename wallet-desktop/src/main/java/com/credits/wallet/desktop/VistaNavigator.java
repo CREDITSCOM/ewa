@@ -76,7 +76,7 @@ public class VistaNavigator {
         AbstractController controller = loader.getController();
         controller.initializeForm(params);
         Stage stage = new Stage();
-        stage.initOwner(AppState.primaryStage);
+        stage.initOwner(AppState.getPrimaryStage());
         stage.initModality(Modality.WINDOW_MODAL);
         stage.getIcons().add(new Image(WalletApp.class.getResourceAsStream("/img/icon.png")));
         stage.setTitle("Credits");

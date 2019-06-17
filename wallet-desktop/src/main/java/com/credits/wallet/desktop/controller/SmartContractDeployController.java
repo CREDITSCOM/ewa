@@ -9,6 +9,7 @@ import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.compiler.model.CompilationPackage;
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.struct.TokenInfoData;
 import com.credits.wallet.desktop.utils.ApiUtils;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -39,21 +40,13 @@ import java.util.Map;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getCalcTransactionIdSourceTargetResult;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.getIdWithoutFirstTwoBits;
-import static com.credits.general.util.GeneralConverter.compilationPackageToByteCodeObjects;
-import static com.credits.general.util.GeneralConverter.decodeFromBASE58;
-import static com.credits.general.util.GeneralConverter.encodeToBASE58;
-import static com.credits.general.util.GeneralConverter.toBigDecimal;
+import static com.credits.general.util.GeneralConverter.*;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
-import static com.credits.wallet.desktop.AppState.nodeApiService;
-import static com.credits.wallet.desktop.VistaNavigator.SMART_CONTRACT;
-import static com.credits.wallet.desktop.VistaNavigator.WALLET;
-import static com.credits.wallet.desktop.VistaNavigator.loadVista;
+import static com.credits.wallet.desktop.VistaNavigator.*;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static com.credits.wallet.desktop.utils.DeployControllerUtils.getTokenStandard;
-import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
-import static com.credits.wallet.desktop.utils.SmartContractsUtils.getSmartsListFromField;
-import static com.credits.wallet.desktop.utils.SmartContractsUtils.saveSmartInTokenList;
+import static com.credits.wallet.desktop.utils.SmartContractsUtils.*;
 import static com.credits.wallet.desktop.utils.sourcecode.building.SourceCodeBuilder.compileSmartSourceCode;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -177,13 +170,13 @@ public class SmartContractDeployController extends AbstractController {
                 SmartContractDeployData smartContractDeployData =
                     new SmartContractDeployData(javaCode, byteCodeObjectDataList, tokenStandartData);
 
-                long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(nodeApiService, session.account, true);
+                long idWithoutFirstTwoBits = getIdWithoutFirstTwoBits(AppState.getNodeApiService(), session.account, true);
 
                 SmartContractData smartContractData = new SmartContractData(
                     generateSmartContractAddress(decodeFromBASE58(session.account), idWithoutFirstTwoBits,
                                                  byteCodeObjectDataList), decodeFromBASE58(session.account), smartContractDeployData, null, null);
 
-                supplyAsync(() -> getCalcTransactionIdSourceTargetResult(nodeApiService, session.account,
+                supplyAsync(() -> getCalcTransactionIdSourceTargetResult(AppState.getNodeApiService(), session.account,
                                                                          smartContractData.getBase58Address(), idWithoutFirstTwoBits), threadPool)
                     .thenApply(
                         (transactionData) -> createSmartContractTransaction(

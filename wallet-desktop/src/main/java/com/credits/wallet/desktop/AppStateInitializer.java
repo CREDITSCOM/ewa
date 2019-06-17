@@ -14,18 +14,14 @@ public class AppStateInitializer {
 
     private static final String ERR_NO_NODE_API_ADDRESS = "Node API address not found. Please add node.api.host and node.api.port to property file ";
 
-    private static final String ERR_NO_CONTRACT_EXECUTOR_API_ADDRESS = "Contract Executor address not found. Please add contract.executor.host and contract.executor.port to property file ";
-
     public final int DEFAULT_NODE_API_PORT = 9090;
-
-    public final int DEFAULT_CONTRACT_EXECUTOR_API_PORT = 9080;
 
     Properties properties;
 
     public void init() {
         properties = loadProperties();
 
-        AppState.nodeApiService = initializeNodeApiService();
+        AppState.setNodeApiService(initializeNodeApiService());
     }
 
     public Properties loadProperties() {

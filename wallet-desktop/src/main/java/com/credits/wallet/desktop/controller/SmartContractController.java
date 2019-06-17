@@ -1,18 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.CompiledSmartContract;
-import com.credits.client.node.pojo.SmartContractClass;
-import com.credits.client.node.pojo.SmartContractData;
-import com.credits.client.node.pojo.SmartContractTransactionData;
-import com.credits.client.node.pojo.SmartDeployTransInfoData;
-import com.credits.client.node.pojo.SmartExecutionTransInfoData;
-import com.credits.client.node.pojo.SmartOperationStateData;
-import com.credits.client.node.pojo.SmartStateTransInfoData;
-import com.credits.client.node.pojo.SmartTransInfoData;
-import com.credits.client.node.pojo.TransactionFlowResultData;
-import com.credits.client.node.pojo.TransactionStateData;
-import com.credits.client.node.pojo.TransactionsStateGetResultData;
+import com.credits.client.node.pojo.*;
 import com.credits.general.classload.ByteCodeContractClassLoader;
 import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.ByteCodeObjectData;
@@ -36,14 +25,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -59,22 +41,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
 import static com.credits.client.node.service.NodeApiServiceImpl.handleCallback;
-import static com.credits.client.node.thrift.generated.TransactionState.INPROGRESS;
-import static com.credits.client.node.thrift.generated.TransactionState.INVALID;
-import static com.credits.client.node.thrift.generated.TransactionState.VALID;
+import static com.credits.client.node.thrift.generated.TransactionState.*;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.general.util.GeneralConverter.createObjectFromString;
@@ -82,7 +56,6 @@ import static com.credits.general.util.Utils.rethrowUnchecked;
 import static com.credits.general.util.Utils.threadPool;
 import static com.credits.general.util.variant.VariantConverter.toVariant;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
-import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.getSmartsListFromField;
 import static java.util.Arrays.asList;
@@ -155,7 +128,7 @@ public class SmartContractController extends AbstractController {
     @FXML
     private void handleSearch() {
         String address = tfSearchAddress.getText();
-        async(() -> nodeApiService.getSmartContract(address), handleGetSmartContractResult());
+        async(() -> AppState.getNodeApiService().getSmartContract(address), handleGetSmartContractResult());
 
     }
 
@@ -214,16 +187,16 @@ public class SmartContractController extends AbstractController {
             ConcurrentHashMap<Long, TransactionRoundData> sourceTransactionMap = session.sourceMap;
             List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
             async(
-                () -> nodeApiService.getTransactionsState(base58Address, ids),
+                () -> AppState.getNodeApiService().getTransactionsState(base58Address, ids),
                 handleGetTransactionsStateResult(sourceTransactionMap));
         }
 
         List<SmartContractTransactionData> contractTransactions = getKeptContractsTransactions().getOrDefault(base58Address, new ArrayList<>());
         async(
             () -> {
-                SmartContractData smartContractData = nodeApiService.getSmartContract(base58Address);
+                SmartContractData smartContractData = AppState.getNodeApiService().getSmartContract(base58Address);
                 long transactionCount = smartContractData.getTransactionsCount();
-                return nodeApiService.getSmartContractTransactions(base58Address, 0, transactionCount - contractTransactions.size());
+                return AppState.getNodeApiService().getSmartContractTransactions(base58Address, 0, transactionCount - contractTransactions.size());
             },
             handleGetTransactionsResult());
     }
@@ -537,7 +510,7 @@ public class SmartContractController extends AbstractController {
     }
 
     private void refreshContractsTab() {
-        async(() -> nodeApiService.getSmartContracts(session.account), handleGetSmartContractsResult());
+        async(() -> AppState.getNodeApiService().getSmartContracts(session.account), handleGetSmartContractsResult());
     }
 
     private void refreshFavoriteContractsTab() {
@@ -645,7 +618,7 @@ public class SmartContractController extends AbstractController {
             CompletableFuture
                 .supplyAsync(
                     () -> calcTransactionIdSourceTarget(
-                        AppState.nodeApiService,
+                        AppState.getNodeApiService(),
                         session.account,
                         smartContractData.getBase58Address(),
                         true),

@@ -29,7 +29,7 @@ public class SaveKeysController extends AbstractController {
 
     @Override
     public void initializeForm(Map<String, Object> objects) {
-        txKey.setText(GeneralConverter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.privateKey)));
+        txKey.setText(GeneralConverter.encodeToBASE58(Ed25519.privateKeyToBytes(AppState.getPrivateKey())));
     }
 
     @Override

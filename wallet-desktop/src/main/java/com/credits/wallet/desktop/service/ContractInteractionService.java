@@ -5,6 +5,7 @@ import com.credits.client.node.pojo.SmartContractData;
 import com.credits.client.node.pojo.TransactionFlowResultData;
 import com.credits.general.thrift.generated.Variant;
 import com.credits.general.util.Callback;
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.Session;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import static com.credits.client.node.util.TransactionIdCalculateUtils.CalcTrans
 import static com.credits.client.node.util.TransactionIdCalculateUtils.calcTransactionIdSourceTarget;
 import static com.credits.general.thrift.generated.Variant._Fields.V_STRING;
 import static com.credits.general.util.Utils.threadPool;
-import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.ApiUtils.createSmartContractTransaction;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -37,7 +37,7 @@ public class ContractInteractionService {
     }
 
     public void getSmartContractBalance(String smartContractAddress, Callback<BigDecimal> callback) {
-        supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
+        supplyAsync(() -> AppState.getNodeApiService().getSmartContract(smartContractAddress), threadPool)
             .thenApply(this::getBalance)
             .whenComplete(handleCallback(callback));
     }
@@ -65,12 +65,12 @@ public class ContractInteractionService {
     }*/
 
     public void transferTo(String smartContractAddress, String target, BigDecimal amount, short offeredMaxFee, Callback<String> callback) {
-        supplyAsync(() -> nodeApiService.getSmartContract(smartContractAddress), threadPool)
+        supplyAsync(() -> AppState.getNodeApiService().getSmartContract(smartContractAddress), threadPool)
             .thenApply((sc) -> {
                 sc.setMethod(TRANSFER_METHOD);
                 sc.setParams(asList(new Variant(V_STRING, target), new Variant(V_STRING, amount.toString())));
                 CalcTransactionIdSourceTargetResult transactionData = calcTransactionIdSourceTarget(
-                    nodeApiService,
+                    AppState.getNodeApiService(),
                     session.account,
                     sc.getBase58Address(),
                     true);
@@ -88,7 +88,7 @@ public class ContractInteractionService {
         sc.getParams().addAll(Arrays.asList(params));
         sc.setObjectState(new byte[] {});
         CalcTransactionIdSourceTargetResult calcTransactionIdSourceTargetResult =
-            calcTransactionIdSourceTarget(nodeApiService, session.account, sc.getBase58Address(), true);
+            calcTransactionIdSourceTarget(AppState.getNodeApiService(), session.account, sc.getBase58Address(), true);
 
         //todo Коммисию пофиксить надо С НУЛЕМ НЕ РАБОТАЕТ
         Pair<Long, TransactionFlowResultData> smartContractTransaction =

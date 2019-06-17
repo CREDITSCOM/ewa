@@ -22,7 +22,7 @@ public class SignUtilsTest {
 
     @Test
     public void signUtilsTestSmartContractTransactionFlow() throws CreditsException, IOException {
-        AppState.privateKey = getPrivateKey();
+        AppState.setPrivateKey(getPrivateKey());
 
 
         long id = 211106232532995L;
@@ -38,7 +38,7 @@ public class SignUtilsTest {
 
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(id, source, target, amount, offeredMaxFee, smartContractBytes, null);
-        SignUtils.signTransaction(transactionFlowData,AppState.privateKey);
+        SignUtils.signTransaction(transactionFlowData,AppState.getPrivateKey());
         Assert.assertEquals("47WZiPHggsXydSvGyRwDHh1nVfsxPYQrn9kczkg4tvgoMHdm9KbTvRHnSSHEejMdnoMYu94ZnboP15hEweuNuqma",
             GeneralConverter.encodeToBASE58(transactionFlowData.getSignature()));
     }
@@ -53,7 +53,7 @@ public class SignUtilsTest {
     @Test
     public void signUtilsTestTransactionFlow() throws CreditsException {
         String privKey = "3rUevsW5xfob6qDxWMDFwwTQCq39SYhzstuyfUGSDvF2QHBRyPD8fSk49wFXaPk3GztfxtuU85QHfMV3ozfqa7rN";
-        AppState.privateKey = getPrivateKey();
+        AppState.setPrivateKey(getPrivateKey());
         long id = 140737488355333L;
         byte[] source = GeneralConverter.decodeFromBASE58("3xyZh");
         byte[] target = GeneralConverter.decodeFromBASE58("5B3YXqDTcWQFGAqEJQJP3Bg1ZK8FFtHtgCiFLT5VAxpd");
@@ -63,7 +63,7 @@ public class SignUtilsTest {
 
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(id, source, target, amount, offeredMaxFee, smartContractBytes, null);
-        SignUtils.signTransaction(transactionFlowData,AppState.privateKey);
+        SignUtils.signTransaction(transactionFlowData,AppState.getPrivateKey());
         Assert.assertEquals("2jDcD15fkTb4z3Yic1s4hZqNzwtEBVHjncfmRZpFJVztnLNKZHurQPPJHK8NeyFRiQrsxNSrZdKXYXiANnmAbN9f",
             GeneralConverter.encodeToBASE58(transactionFlowData.getSignature()));
     }

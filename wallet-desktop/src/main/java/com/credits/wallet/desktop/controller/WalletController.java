@@ -4,6 +4,7 @@ import com.credits.client.node.exception.NodeClientException;
 import com.credits.client.node.util.Validator;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.CoinTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -33,7 +34,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
-import static com.credits.wallet.desktop.AppState.*;
+import static com.credits.wallet.desktop.AppState.CREDITS_DECIMAL;
+import static com.credits.wallet.desktop.AppState.CREDITS_TOKEN_NAME;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 
@@ -179,7 +181,7 @@ public class WalletController extends AbstractController {
     private void addOrUpdateCsCoinRow(ObservableList<CoinTabRow> tableViewItems) {
         CoinTabRow coinRow = getCoinTabRow(tableViewItems, CREDITS_TOKEN_NAME, null);
         changeTableViewValue(coinRow, WAITING_STATE_MESSAGE);
-        async(() -> nodeApiService.getBalance(session.account), handleUpdateCoinValue(coinRow, creditsDecimalFormat));
+        async(() -> AppState.getNodeApiService().getBalance(session.account), handleUpdateCoinValue(coinRow, creditsDecimalFormat));
     }
 
     private void addOrUpdateUserCoinRow(ObservableList<CoinTabRow> tableViewItems, String coinName,

@@ -30,9 +30,9 @@ public class GenerateKeysController extends AbstractController {
     @FXML
     private void handleGenerate() {
         KeyPair keyPair = Ed25519.generateKeyPair();
-        AppState.publicKey = keyPair.getPublic();
-        AppState.privateKey = keyPair.getPrivate();
-        AppState.pwd = txPassword.getText();
+        AppState.setPublicKey(keyPair.getPublic());
+        AppState.setPrivateKey(keyPair.getPrivate());
+        AppState.setPwd(txPassword.getText());
         VistaNavigator.loadVista(VistaNavigator.FORM_4);
     }
 

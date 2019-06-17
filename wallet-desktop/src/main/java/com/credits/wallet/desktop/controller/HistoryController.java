@@ -8,6 +8,7 @@ import com.credits.general.exception.CreditsException;
 import com.credits.general.pojo.TransactionRoundData;
 import com.credits.general.util.Callback;
 import com.credits.general.util.GeneralConverter;
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import com.credits.wallet.desktop.struct.TransactionTabRow;
 import com.credits.wallet.desktop.utils.FormUtils;
@@ -26,11 +27,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.service.NodeApiServiceImpl.async;
-import static com.credits.client.node.thrift.generated.TransactionState.INPROGRESS;
-import static com.credits.client.node.thrift.generated.TransactionState.INVALID;
-import static com.credits.client.node.thrift.generated.TransactionState.VALID;
+import static com.credits.client.node.thrift.generated.TransactionState.*;
 import static com.credits.wallet.desktop.AppState.NODE_ERROR;
-import static com.credits.wallet.desktop.AppState.nodeApiService;
 
 
 public class HistoryController extends AbstractController {
@@ -81,13 +79,13 @@ public class HistoryController extends AbstractController {
                 transactionsList.stream().map(TransactionData::getId).collect(Collectors.toList());
             sourceTransactionMap.remove(validIds)*/
             List<Long> ids = new ArrayList<>(sourceTransactionMap.keySet());
-            async(() -> nodeApiService.getTransactionsState(session.account, ids),
+            async(() -> AppState.getNodeApiService().getTransactionsState(session.account, ids),
                 handleGetTransactionsStateResult(sourceTransactionMap));
         }
     }
 
     private void fillApprovedTable() {
-        async(() -> nodeApiService.getTransactions(session.account, FIRST_TRANSACTION_NUMBER, INIT_PAGE_SIZE),
+        async(() -> AppState.getNodeApiService().getTransactions(session.account, FIRST_TRANSACTION_NUMBER, INIT_PAGE_SIZE),
             handleGetTransactionsResult());
     }
 

@@ -1,6 +1,7 @@
 package com.credits.wallet.desktop.controller;
 
 import com.credits.general.thrift.ThriftClientPool;
+import com.credits.wallet.desktop.AppState;
 import com.credits.wallet.desktop.VistaNavigator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -22,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.credits.wallet.desktop.AppState.DELAY_AFTER_FULL_SYNC;
 import static com.credits.wallet.desktop.AppState.DELAY_BEFORE_FULL_SYNC;
-import static com.credits.wallet.desktop.AppState.nodeApiService;
 
 
 public class HeaderController implements Initializable {
@@ -84,7 +84,7 @@ public class HeaderController implements Initializable {
         headerExecService = Executors.newScheduledThreadPool(1);
         runnable = () -> {
             try {
-                Pair<Integer, Long> blockAndSynchronizePercent = nodeApiService.getBlockAndSynchronizePercent();
+                Pair<Integer, Long> blockAndSynchronizePercent = AppState.getNodeApiService().getBlockAndSynchronizePercent();
                 Long lastRound = blockAndSynchronizePercent.getRight();
                 int synchronizePercent = blockAndSynchronizePercent.getLeft();
                 Platform.runLater(() -> {

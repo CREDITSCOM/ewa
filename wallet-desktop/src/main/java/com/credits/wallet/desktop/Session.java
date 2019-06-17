@@ -28,7 +28,7 @@ public class Session {
         deployContractsKeeper = new ObjectKeeper<>(this.account,"deployedContracts");
         coinsKeeper = new ObjectKeeper<>(this.account, "coins");
         contractsTransactionsKeeper = new ObjectKeeper<>(this.account, "contractsTransactions");
-        AppState.sessionMap.put(pubKey,this);
+        AppState.getSessionMap().put(pubKey,this);
     }
 
     public ContractInteractionService initializeContractInteractionService() {

@@ -13,8 +13,8 @@ import javafx.scene.control.PasswordField;
 
 import java.util.Map;
 
-import static com.credits.wallet.desktop.AppState.privateKey;
-import static com.credits.wallet.desktop.AppState.publicKey;
+import static com.credits.wallet.desktop.AppState.setPrivateKey;
+import static com.credits.wallet.desktop.AppState.setPublicKey;
 
 
 public class CheckPrivKeyPwdController extends AbstractController {
@@ -72,11 +72,11 @@ public class CheckPrivKeyPwdController extends AbstractController {
 
         setSession(pubKey);
 
-        privateKey = Ed25519.bytesToPrivateKey(decryptedPrivateKey);
+        setPrivateKey(Ed25519.bytesToPrivateKey(decryptedPrivateKey));
         byte[] publicKeyByteArr;
         try {
             publicKeyByteArr = GeneralConverter.decodeFromBASE58(pubKey);
-            publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
+            setPublicKey(Ed25519.bytesToPublicKey(publicKeyByteArr));
         } catch (Exception e) {
             FormUtils.showError(e.getMessage());
             return;

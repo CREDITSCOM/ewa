@@ -1,11 +1,7 @@
 package com.credits.wallet.desktop.utils;
 
 import com.credits.client.node.exception.NodeClientException;
-import com.credits.client.node.pojo.SmartContractData;
-import com.credits.client.node.pojo.SmartContractInvocationData;
-import com.credits.client.node.pojo.SmartContractTransactionFlowData;
-import com.credits.client.node.pojo.TransactionFlowData;
-import com.credits.client.node.pojo.TransactionFlowResultData;
+import com.credits.client.node.pojo.*;
 import com.credits.client.node.util.NodePojoConverter;
 import com.credits.client.node.util.SignUtils;
 import com.credits.general.pojo.TransactionRoundData;
@@ -24,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.credits.client.node.util.NodeClientUtils.serializeByThrift;
 import static com.credits.client.node.util.TransactionIdCalculateUtils.CalcTransactionIdSourceTargetResult;
-import static com.credits.wallet.desktop.AppState.nodeApiService;
 import static com.credits.wallet.desktop.utils.SmartContractsUtils.generateSmartContractAddress;
 import static java.math.BigDecimal.ZERO;
 
@@ -39,7 +34,7 @@ public class ApiUtils {
         throws NodeClientException, ConverterException {
         return Pair.of(
             transactionData.getTransactionId(),
-            nodeApiService.transactionFlow(getTransactionFlowData(transactionData, amount, offeredMaxFee16Bits, null, text, session)));
+            AppState.getNodeApiService().transactionFlow(getTransactionFlowData(transactionData, amount, offeredMaxFee16Bits, null, text, session)));
     }
 
     public static Pair<Long, TransactionFlowResultData> createSmartContractTransaction(
@@ -65,7 +60,7 @@ public class ApiUtils {
             getTransactionFlowData(transactionData, ZERO, offeredMaxFee, serializeByThrift(smartContractInvocationData), null,
                                    session), smartContractInvocationData);
 
-        return Pair.of(transactionData.getTransactionId(), nodeApiService.smartContractTransactionFlow(scData));
+        return Pair.of(transactionData.getTransactionId(), AppState.getNodeApiService().smartContractTransactionFlow(scData));
     }
 
     private static TransactionFlowData getTransactionFlowData(
@@ -84,7 +79,7 @@ public class ApiUtils {
 
         TransactionFlowData transactionFlowData =
             new TransactionFlowData(id, source, target, amount, offeredMaxFee16Bits, smartContractBytes, textBytes);
-        SignUtils.signTransaction(transactionFlowData, AppState.privateKey);
+        SignUtils.signTransaction(transactionFlowData, AppState.getPrivateKey());
         return transactionFlowData;
     }
 

@@ -26,8 +26,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.credits.wallet.desktop.AppState.privateKey;
-import static com.credits.wallet.desktop.AppState.publicKey;
+import static com.credits.wallet.desktop.AppState.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 
@@ -86,7 +85,7 @@ public class PutKeysController extends AbstractController {
             // create salt for derive key from pass phrase
             byte[] key = new byte[0];
             try {
-                key = SodiumLibrary.cryptoPwhashArgon2i(AppState.pwd.getBytes(UTF_8), salt);
+                key = SodiumLibrary.cryptoPwhashArgon2i(AppState.getPwd().getBytes(UTF_8), salt);
             } catch (SodiumLibraryException e) {
                 FormUtils.showError(e.getMessage());
             }
@@ -95,10 +94,10 @@ public class PutKeysController extends AbstractController {
 
             ;
             try(PrintWriter writer = new PrintWriter(file.getAbsolutePath(), UTF_8)){
-                byte[] encryptedPrivateKey = SodiumLibrary.cryptoSecretBoxEasy(Ed25519.privateKeyToBytes(privateKey), nonce, key);
+                byte[] encryptedPrivateKey = SodiumLibrary.cryptoSecretBoxEasy(Ed25519.privateKeyToBytes(getPrivateKey()), nonce, key);
 
                 String json = String.format("{\"key\":{\"public\":\"%s\",\"private\":\"%s\", \"nonce\":\"%s\",\"salt\":\"%s\"}}",
-                        GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)),
+                        GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(getPublicKey())),
                         GeneralConverter.encodeToBASE58(encryptedPrivateKey),
                         GeneralConverter.encodeToBASE58(nonce),
                         GeneralConverter.encodeToBASE58(salt));
@@ -160,8 +159,8 @@ public class PutKeysController extends AbstractController {
         if (objects != null && objects.get("isNewAccount") != null) {
             hideElementsForUploadExistAccount();
 
-            privateKeyField.setText(GeneralConverter.encodeToBASE58(Ed25519.privateKeyToBytes(privateKey)));
-            publicKeyField.setText(GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(publicKey)));
+            privateKeyField.setText(GeneralConverter.encodeToBASE58(Ed25519.privateKeyToBytes(getPrivateKey())));
+            publicKeyField.setText(GeneralConverter.encodeToBASE58(Ed25519.publicKeyToBytes(getPublicKey())));
             try {
                 handleSaveKeys();
             } catch (WalletDesktopException e) {
@@ -203,7 +202,7 @@ public class PutKeysController extends AbstractController {
         setSession(pubKey);
         try {
             byte[] privateKeyByteArr = GeneralConverter.decodeFromBASE58(privKey);
-            privateKey = Ed25519.bytesToPrivateKey(privateKeyByteArr);
+            setPrivateKey(Ed25519.bytesToPrivateKey(privateKeyByteArr));
         } catch (Exception e) {
             if (e.getMessage() != null) {
                 privateKeyErrorLabel.setText(e.getMessage());
@@ -215,7 +214,7 @@ public class PutKeysController extends AbstractController {
         }
         try {
             byte[] publicKeyByteArr = GeneralConverter.decodeFromBASE58(pubKey);
-            publicKey = Ed25519.bytesToPublicKey(publicKeyByteArr);
+            setPublicKey(Ed25519.bytesToPublicKey(publicKeyByteArr));
         } catch (Exception e) {
             if (e.getMessage() != null) {
                 publicKeyErrorLabel.setText(e.getMessage());

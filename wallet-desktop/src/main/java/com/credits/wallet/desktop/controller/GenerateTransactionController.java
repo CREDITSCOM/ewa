@@ -65,7 +65,8 @@ public class GenerateTransactionController extends AbstractController {
         try {
             if(coinType.getText().equals(CREDITS_TOKEN_NAME)) {
                 CompletableFuture
-                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.nodeApiService,session.account,toAddress,
+                    .supplyAsync(() -> TransactionIdCalculateUtils.calcTransactionIdSourceTarget(AppState.getNodeApiService(),session.account,
+                                                                                                                             toAddress,
                         true),threadPool)
                     .thenApply((transactionData) -> createTransaction(transactionData, GeneralConverter.toBigDecimal(
                         transactionAmount.getText()), actualOfferedMaxFee16Bits, transactionText.getText(),session))
