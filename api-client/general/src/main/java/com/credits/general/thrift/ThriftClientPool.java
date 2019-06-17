@@ -6,6 +6,7 @@ import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,13 +97,14 @@ public class ThriftClientPool<T extends TServiceClient> implements
         }
 
         public TProtocol make() {
-            try (var transport = new TSocket(host, port, SOCKET_TIMEOUT)) {
+            TTransport transport = new TSocket(host, port, SOCKET_TIMEOUT);
+            try {
                 transport.open();
-                return new TBinaryProtocol(transport);
             } catch (TTransportException e) {
                 LOGGER.warn("whut?", e);
                 throw new ThriftClientException("Can not make protocol", e);
             }
+            return new TBinaryProtocol(transport);
         }
     }
 
