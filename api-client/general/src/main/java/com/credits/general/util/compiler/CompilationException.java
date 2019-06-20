@@ -27,10 +27,6 @@ public class CompilationException extends CreditsException {
         this.errors = errors;
     }
 
-    public List<Error> getErrors() {
-        return errors;
-    }
-
     public static class Error implements Serializable {
         private static final long serialVersionUID = -3815357061263341409L;
         private final long lineNumber;

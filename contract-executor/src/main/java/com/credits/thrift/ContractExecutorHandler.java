@@ -208,10 +208,8 @@ public class ContractExecutorHandler implements ContractExecutor.Iface {
             result = new CompileSourceCodeResult();
             result.setStatus(new APIResponse(
                     FAILURE.code,
-                    exception.getErrors()
-                            .stream()
-                            .map(e -> "Error on line " + e.getLineNumber() + ": " + e.getErrorMessage())
-                            .collect(Collectors.joining("\n"))));
+                    exception.getMessage()
+            ));
         } catch (Throwable e) {
             result = new CompileSourceCodeResult(failureApiResponse(e), emptyList());
         }
