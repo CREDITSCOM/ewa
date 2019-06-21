@@ -6,7 +6,7 @@
 
 [![Twitter](https://img.shields.io/twitter/follow/creditscom.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=creditscom)
 [![AGPL License](https://img.shields.io/github/license/CREDITSCOM/ewa.svg?color=green&style=plastic)](LICENSE)
-[![Build Status](http://161.156.96.18:8080/buildStatus/icon?job=ewa_build&lastBuild)](http://161.156.96.18:8080/job/ewa_build/lastBuild/)
+[![Build Status](http://89.111.33.166:8080/buildStatus/icon?job=ewa)](http://89.111.33.166:8080/view/release-pipeline/job/ewa/lastBuild/)
 
 ## EWA
 ###### Contract Executor and Wallet Applications
